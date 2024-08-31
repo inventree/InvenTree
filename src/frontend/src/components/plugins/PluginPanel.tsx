@@ -1,11 +1,10 @@
 import { t } from '@lingui/macro';
-import { Alert, Loader, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { PluginContext } from './PluginContext';
-import { loadExternalPluginSource } from './PluginSource';
+import { findExternalPluginFunction } from './PluginSource';
 
 // Definition of the plugin panel properties, provided by the server API
 export type PluginPanelProps = {
@@ -19,16 +18,41 @@ export type PluginPanelProps = {
   hidden_function?: string;
 };
 
-export function isPluginPanelHidden({
+export async function isPluginPanelHidden({
   pluginProps,
   pluginContext
 }: {
   pluginProps: PluginPanelProps;
   pluginContext: PluginContext;
-}): boolean {
-  console.log('isPluginPanelHidden', pluginProps, pluginContext);
+}): Promise<boolean> {
+  if (!pluginProps.source) {
+    // No custom source supplied - panel is not hidden
+    return false;
+  }
 
-  return false;
+  const hiddenFunction = pluginProps.hidden_function ?? 'isPanelHidden';
+
+  let result: boolean = false;
+
+  await findExternalPluginFunction(pluginProps.source, hiddenFunction).then(
+    (func) => {
+      if (func) {
+        try {
+          result = func(pluginContext);
+        } catch (error) {
+          console.error(
+            'Error occurred while checking if plugin panel is hidden:',
+            error
+          );
+          result = true;
+        }
+      } else {
+        result = false;
+      }
+    }
+  );
+
+  return result;
 }
 
 /**
@@ -60,29 +84,23 @@ export default function PluginPanelContent({
     if (pluginProps.source) {
       const renderFunc = pluginProps.render_function || 'renderPanel';
 
-      loadExternalPluginSource(pluginProps.source).then((module) => {
-        if (module && module[renderFunc]) {
-          try {
-            module[renderFunc]({
-              ...pluginContext,
-              target: ref.current
-            });
-            setError('');
-          } catch (error) {
-            setError(t`Error occurred while rendering plugin content`);
-          }
-        } else {
-          if (!module) {
-            setError(
-              t`Failed to load plugin source` + ': ' + pluginProps.source
-            );
-          } else if (!module[renderFunc]) {
-            setError(t`Failed to find render function`);
+      findExternalPluginFunction(pluginProps.source, renderFunc).then(
+        (func) => {
+          if (func) {
+            try {
+              func(ref.current, pluginContext);
+              setError('');
+            } catch (error) {
+              setError(t`Error occurred while rendering plugin content`);
+            }
           } else {
-            setError(t`Failed to render plugin content`);
+            setError(
+              t`Failed to load plugin method` +
+                `: ${pluginProps.source} -> ${renderFunc}`
+            );
           }
         }
-      });
+      );
     } else if (pluginProps.content) {
       // If content is provided directly, render it into the panel
       if (ref.current) {

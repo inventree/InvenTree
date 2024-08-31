@@ -8,9 +8,7 @@
  * as well as dynamically hidden, based on the provided context.
  */
 
-export function renderPanel(context) {
-
-    const target = context.target;
+export function renderPanel(target, context) {
 
     if (!target) {
         console.error("No target provided to renderPanel");
@@ -22,16 +20,33 @@ export function renderPanel(context) {
 
     <p>This panel has been dynamically rendered by the plugin system.</p>
     <p>It can be hidden or displayed based on the provided context.</p>
+
+    <hr>
+    <h5>Context:</h5>
+
+    <ul>
+    <li>Username: ${context.user.username()}</li>
+    <li>Is Staff: ${context.user.isStaff() ? "YES": "NO"}</li>
+    <li>Model Type: ${context.model}</li>
+    <li>Instance ID: ${context.id}</li>
     `;
 
-    console.log("renderPanel:", context);
 }
 
 
 // Dynamically hide the panel based on the provided context
 export function isPanelHidden(context) {
-    console.log("isPanelHidden:");
-    console.log("context:", context);
+
+    // Hide the panel if the user is not staff
+    if (!context?.user?.isStaff()) {
+        return true;
+    }
+
+    // Hide the panel if the model type is not 'part', and the part is not active
+    if (context.model == 'part' && context.instance && !context.instance.active) {
+        console.log("Hiding panel because part is not active");
+        return true;
+    }
 
     return false;
 }

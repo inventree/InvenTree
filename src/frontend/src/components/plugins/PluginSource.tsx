@@ -24,9 +24,24 @@ export async function loadExternalPluginSource(source: string) {
       return null;
     })
     .then((module) => {
-      console.log('Loaded external plugin source:', module);
       return module;
     });
 
   return module;
+}
+
+/*
+ * Find a named function in an external plugin source.
+ */
+export async function findExternalPluginFunction(
+  source: string,
+  functionName: string
+) {
+  const module = await loadExternalPluginSource(source);
+
+  if (module && module[functionName]) {
+    return module[functionName];
+  }
+
+  return null;
 }

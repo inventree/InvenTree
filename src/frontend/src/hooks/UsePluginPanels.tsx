@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
@@ -62,60 +62,65 @@ export function usePluginPanels({
     }
   });
 
+  // Cache the context data which is delivered to the plugins
+  const contextData: PluginContext = useMemo(() => {
+    return {
+      model: model,
+      id: id,
+      instance: instance,
+      user: user,
+      host: host,
+      api: api,
+      navigate: navigate
+    };
+  }, [instance, model, id, user, host, api, navigate]);
+
+  // Track which panels are hidden: { panelName: true/false }
+  // We need to memoize this as the plugins can determine this dynamically
+  const [panelState, setPanelState] = useState<Record<string, boolean>>({});
+
+  // Clear the visibility cache when the plugin data changes
+  // This will force the plugin panels to re-calculate their visibility
+  useEffect(() => {
+    pluginData?.forEach((props: PluginPanelProps) => {
+      const identifier = identifierString(
+        `plugin-panel-${props.plugin}-${props.name}`
+      );
+
+      // Check if the panel is hidden (defaults to true until we know otherwise)
+      isPluginPanelHidden({
+        pluginProps: props,
+        pluginContext: contextData
+      }).then((result) => {
+        setPanelState((prev) => ({ ...prev, [identifier]: result }));
+      });
+    });
+  }, [pluginData, contextData]);
+
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
       pluginData?.map((props: PluginPanelProps) => {
         const iconName: string = props.icon || 'plugin';
-        const content: any = props.content || 'some content here';
-
-        // Construct the plugin attributes - to be passed through for rendering
-        const pluginContext: PluginContext = {
-          pluginName: props.plugin,
-          target: undefined,
-          model: model,
-          id: id,
-          instance: instance,
-          user: user,
-          navigate: navigate,
-          host: host,
-          api: api
-        };
-
-        const isHidden = isPluginPanelHidden({
-          pluginProps: props,
-          pluginContext: pluginContext
-        });
+        const identifier = identifierString(
+          `plugin-panel-${props.plugin}-${props.name}`
+        );
+        const isHidden: boolean = panelState[identifier] ?? true;
 
         return {
-          name: identifierString(`plugin-panel-${props.plugin}-${props.name}`),
+          name: identifier,
           label: props.label,
           icon: <InvenTreeIcon icon={iconName as InvenTreeIconType} />,
           content: (
             <PluginPanelContent
               pluginProps={props}
-              pluginContext={pluginContext}
+              pluginContext={contextData}
             />
           ),
           hidden: isHidden
         };
-
-        /*
-      return PluginPanel({
-        ...pluginPanelProps,
-        name: identifierString(
-          `plugin-panel-${pluginPanelProps.plugin}-${pluginPanelProps.name}`
-        ),
-        label: pluginPanelProps.label || t`Plugin Panel`,
-        icon: <InvenTreeIcon icon={iconName as InvenTreeIconType} />,
-        id: id,
-        model: model,
-        instance: instance,
-        pluginKey: pluginPanelProps.plugin || 'plugin'
-      });
-      */
       }) ?? []
     );
-  }, [pluginData, id, model, instance, user, navigate, host]);
+  }, [panelState, pluginData, contextData]);
 
   return pluginPanels;
 }
