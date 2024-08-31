@@ -6,6 +6,10 @@ title: User Interface Mixin
 
 The *User Interface* mixin class provides a set of methods to implement custom functionality for the InvenTree web interface.
 
+### Enable User Interface Mixin
+
+To enable user interface plugins, the global setting `ENABLE_PLUGINS_INTERFACE` must be enabled, in the [plugin settings](../../settings/global.md#plugin-settings).
+
 ## Custom Panels
 
 Many of the pages in the InvenTree web interface are built using a series of "panels" which are displayed on the page. Custom panels can be added to these pages, by implementing the `get_custom_panels` method:
