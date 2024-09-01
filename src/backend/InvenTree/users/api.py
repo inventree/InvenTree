@@ -342,8 +342,8 @@ class GetAuthToken(APIView):
 
             return Response(data)
 
-        else:  # pragma: no cover
-            raise exceptions.NotAuthenticated()
+        else:
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
 class TokenListView(DestroyAPIView, ListAPI):
