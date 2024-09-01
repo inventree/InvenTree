@@ -345,7 +345,7 @@ class GetAuthToken(APIView):
 
             return Response(data)
 
-        else:
+        else:  # pragma: no cover
             raise exceptions.NotAuthenticated()
 
 
