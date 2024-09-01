@@ -235,3 +235,7 @@ class UserTokenTests(InvenTreeAPITestCase):
             reverse('api-token-detail', kwargs={'pk': response.data[0]['id']}),
             expected_code=204,
         )
+
+        # Get token without auth (should fail)
+        self.client.logout()
+        self.get(reverse('api-token'), expected_code=401)
