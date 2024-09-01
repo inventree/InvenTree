@@ -40,6 +40,8 @@ from .models import (
     NotificationEntry,
     NotificationMessage,
     ProjectCode,
+    SelectionList,
+    SelectionListEntry,
     WebhookEndpoint,
     WebhookMessage,
 )
@@ -1675,3 +1677,48 @@ class CustomStatusTest(TestCase):
         self.assertEqual(
             instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
         )
+
+
+class SelectionListTest(InvenTreeAPITestCase):
+    """Tests for the SelectionList and SelectionListEntry model and API endpoints."""
+
+    def setUp(self):
+        """Setup for all tests."""
+        super().setUp()
+
+        self.list = SelectionList.objects.create(name='Test List')
+        self.entry1 = SelectionListEntry.objects.create(
+            list=self.list,
+            value='test1',
+            label='Test Entry',
+            description='Test Description',
+        )
+        self.entry2 = SelectionListEntry.objects.create(
+            list=self.list,
+            value='test2',
+            label='Test Entry 2',
+            description='Test Description 2',
+            active=False,
+        )
+
+    def test_api(self):
+        """Test the SelectionList and SelctionListEntry API endpoints."""
+        url = reverse('api-selectionlist-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        url = reverse('api-selectionlist-detail', kwargs={'pk': self.list.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data['name'], 'Test List')
+        self.assertEqual(len(response.data['choices']), 2)
+        self.assertEqual(response.data['choices'][0]['value'], 'test1')
+        self.assertEqual(response.data['choices'][0]['label'], 'Test Entry')
+
+        url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'entrypk': self.entry1.pk, 'pk': self.list.pk},
+        )
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data['value'], 'test1')
+        self.assertEqual(response.data['label'], 'Test Entry')
+        self.assertEqual(response.data['description'], 'Test Description')

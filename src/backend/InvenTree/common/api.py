@@ -775,6 +775,78 @@ class IconList(ListAPI):
         return get_icon_packs().values()
 
 
+class SelectionListList(ListAPI):
+    """List view for SelectionList objects."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class SelectionListDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a SelectionList object."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class EntryMixin:
+    """Mixin for SelectionEntry views."""
+
+    queryset = common.models.SelectionListEntry.objects.all()
+    serializer_class = common.serializers.SelectionEntrySerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_url_kwarg = 'entrypk'
+
+    def get_queryset(self):
+        """Prefetch related fields."""
+        pk = self.kwargs.get('pk', None)
+        queryset = super().get_queryset().filter(list=pk)
+        queryset = queryset.prefetch_related('list')
+        return queryset
+
+
+class SelectionEntryList(EntryMixin, ListCreateAPI):
+    """List view for SelectionEntry objects."""
+
+
+class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a SelectionEntry object."""
+
+
+selection_urls = [
+    path(
+        '<int:pk>/',
+        include([
+            # Entries
+            path(
+                'entry/',
+                include([
+                    path(
+                        '<int:entrypk>/',
+                        include([
+                            path(
+                                '',
+                                SelectionEntryDetail.as_view(),
+                                name='api-selectionlistentry-detail',
+                            )
+                        ]),
+                    ),
+                    path(
+                        '',
+                        SelectionEntryList.as_view(),
+                        name='api-selectionlistentry-list',
+                    ),
+                ]),
+            ),
+            path('', SelectionListDetail.as_view(), name='api-selectionlist-detail'),
+        ]),
+    ),
+    path('', SelectionListList.as_view(), name='api-selectionlist-list'),
+]
+
+# API URL patterns
 settings_api_urls = [
     # User settings
     path(
@@ -982,6 +1054,8 @@ common_api_urls = [
     ),
     # Icons
     path('icons/', IconList.as_view(), name='api-icon-list'),
+    # Selection lists
+    path('selection/', include(selection_urls)),
 ]
 
 admin_api_urls = [
