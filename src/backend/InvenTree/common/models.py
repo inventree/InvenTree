@@ -2530,9 +2530,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
         'ENABLE_LAST_BREADCRUMB': {
             'name': _('Show Last Breadcrumb'),
-            'description': _(
-                'Show the current page in breadcrumbs of the navigation bar (if available)'
-            ),
+            'description': _('Show the current page in breadcrumbs'),
             'default': False,
             'validator': bool,
         },
