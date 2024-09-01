@@ -6,7 +6,7 @@ from django.test import TestCase, tag
 from django.urls import reverse
 
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner, RuleSet
 
 
@@ -339,21 +339,15 @@ class MFALoginTest(InvenTreeAPITestCase):
         self.post(login_url, auth_data, expected_code=401)
 
 
-class AdminTest(InvenTreeAPITestCase):
+class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""
 
     superuser = True
 
-    def test_admin_url(self):
+    def test_admin(self):
         """Test the admin URL."""
-        # Add token
-        my_token = ApiToken.objects.create(user=self.user, name='test-token')
-        self.assertEqual(str(my_token), my_token.token)
-
-        response = self.get(reverse('admin:users_apitoken_changelist'))
-        self.assertEqual(response.status_code, 200)
-
-        response = self.get(
-            reverse('admin:users_apitoken_change', kwargs={'object_id': my_token.pk})
+        my_token = self.helper(
+            model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
         )
-        self.assertEqual(response.status_code, 200)
+        # Additionally test str fnc
+        self.assertEqual(str(my_token), my_token.token)
