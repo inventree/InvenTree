@@ -23,7 +23,12 @@ import PIL
 import common.validators
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from InvenTree.unit_test import (
+    AdminTestCase,
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    PluginMixin,
+)
 from part.models import Part
 from plugin import registry
 from plugin.models import NotificationUserSetting
@@ -1675,3 +1680,11 @@ class CustomStatusTest(TestCase):
         self.assertEqual(
             instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
         )
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=Attachment, model_kwargs={'link': 'https://aa.example.org'})
