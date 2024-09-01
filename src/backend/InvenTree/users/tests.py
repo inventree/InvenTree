@@ -322,5 +322,14 @@ class AdminTest(InvenTreeAPITestCase):
 
     def test_admin_url(self):
         """Test the admin URL."""
-        response = self.get(reverse('admin:auth_user_changelist'))
+        # Add token
+        my_token = ApiToken.objects.create(user=self.user, name='test-token')
+        self.assertEqual(str(my_token), my_token.token)
+
+        response = self.get(reverse('admin:users_apitoken_changelist'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.get(
+            reverse('admin:users_apitoken_change', kwargs={'object_id': 1})
+        )
         self.assertEqual(response.status_code, 200)
