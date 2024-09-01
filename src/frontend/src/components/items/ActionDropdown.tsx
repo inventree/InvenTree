@@ -10,6 +10,7 @@ import { modals } from '@mantine/modals';
 import {
   IconChevronDown,
   IconCopy,
+  IconDotsVertical,
   IconEdit,
   IconLink,
   IconQrcode,
@@ -120,6 +121,26 @@ export function ActionDropdown({
       </Menu.Dropdown>
     </Menu>
   ) : null;
+}
+
+export function OptionsActionDropdown({
+  actions = [],
+  tooltip = t`Options`,
+  hidden = false
+}: {
+  actions: ActionDropdownItem[];
+  tooltip?: string;
+  hidden?: boolean;
+}) {
+  return (
+    <ActionDropdown
+      icon={<IconDotsVertical />}
+      tooltip={tooltip}
+      actions={actions}
+      hidden={hidden}
+      noindicator
+    />
+  );
 }
 
 // Dropdown menu for barcode actions
