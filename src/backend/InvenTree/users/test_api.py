@@ -64,12 +64,21 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), Group.objects.count())
 
         # Check detail URL
+        pk = response.data[0]['pk']
         response = self.get(
-            reverse('api-group-detail', kwargs={'pk': response.data[0]['pk']}),
+            reverse('api-group-detail', kwargs={'pk': pk}), expected_code=200
+        )
+        self.assertIn('name', response.data)
+        self.assertNotIn('permissions', response.data)
+
+        # Check more detailed URL
+        response = self.get(
+            reverse('api-group-detail', kwargs={'pk': pk}),
+            data={'permission_detail': True},
             expected_code=200,
         )
-
         self.assertIn('name', response.data)
+        self.assertIn('permissions', response.data)
 
     def test_logout(self):
         """Test api logout endpoint."""
