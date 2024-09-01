@@ -330,6 +330,6 @@ class AdminTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         response = self.get(
-            reverse('admin:users_apitoken_change', kwargs={'object_id': 1})
+            reverse('admin:users_apitoken_change', kwargs={'object_id': my_token.pk})
         )
         self.assertEqual(response.status_code, 200)
