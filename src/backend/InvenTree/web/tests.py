@@ -78,6 +78,11 @@ class TemplateTagTest(InvenTreeTestCase):
             self.assertNotIn('show_server_selector', rsp)
             self.assertEqual(rsp['server_list'], ['aa', 'bb'])
 
+    def test_redirects(self):
+        """Test the redirect helper."""
+        response = self.client.get('/assets/testpath')
+        self.assertEqual(response.url, '/static/web/assets/testpath')
+
 
 class TestWebHelpers(InvenTreeAPITestCase):
     """Tests for the web helpers."""
