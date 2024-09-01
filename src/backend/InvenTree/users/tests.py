@@ -313,3 +313,14 @@ class MFALoginTest(InvenTreeAPITestCase):
         # Wrong login should not work
         auth_data['password'] = 'wrong'
         self.post(login_url, auth_data, expected_code=401)
+
+
+class AdminTest(InvenTreeAPITestCase):
+    """Tests for the admin interface integration."""
+
+    superuser = True
+
+    def test_admin_url(self):
+        """Test the admin URL."""
+        response = self.get(reverse('admin:auth_user_changelist'))
+        self.assertEqual(response.status_code, 200)
