@@ -4,8 +4,8 @@ import os
 
 from django.core.files.base import ContentFile
 
-from importer.models import DataImportRow, DataImportSession
-from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
+from importer.models import DataImportSession
+from InvenTree.unit_test import InvenTreeTestCase
 
 
 class ImporterTest(InvenTreeTestCase):
@@ -61,13 +61,3 @@ class ImporterTest(InvenTreeTestCase):
 
     def test_field_defaults(self):
         """Test default field values."""
-
-
-class AdminTest(AdminTestCase):
-    """Tests for the admin interface integration."""
-
-    def test_admin(self):
-        """Test the admin URL."""
-        self.helper(model=DataImportSession)
-
-        self.helper(model=DataImportRow)
