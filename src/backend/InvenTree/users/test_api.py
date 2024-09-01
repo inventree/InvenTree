@@ -208,3 +208,30 @@ class UserTokenTests(InvenTreeAPITestCase):
         )
         self.assertIn('key', response.data)
         self.assertTrue(response.data['key'].startswith('inv-'))
+
+    def test_token_api(self):
+        """Test the token API."""
+        url = reverse('api-token-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data, [])
+
+        # Get token
+        response = self.get(reverse('api-token'), expected_code=200)
+        self.assertIn('token', response.data)
+
+        # Now there should be one token
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['active'], True)
+        self.assertEqual(response.data[0]['revoked'], False)
+        self.assertEqual(response.data[0]['in_use'], False)
+        expected_day = str(
+            datetime.datetime.now().date() + datetime.timedelta(days=365)
+        )
+        self.assertEqual(response.data[0]['expiry'], expected_day)
+
+        # Destroy token
+        self.delete(
+            reverse('api-token-detail', kwargs={'pk': response.data[0]['id']}),
+            expected_code=204,
+        )
