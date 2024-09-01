@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, tag
 from django.urls import reverse
 
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner, RuleSet
 
@@ -269,6 +270,29 @@ class OwnerModelTest(InvenTreeTestCase):
             reverse('api-user-me'), {'name': 'another-token'}, 200
         )
         self.assertEqual(response['username'], self.username)
+
+    def test_display_name(self):
+        """Test the display name for the owner."""
+        owner = Owner.get_owner(self.user)
+        self.assertEqual(owner.name(), 'testuser')
+        self.assertEqual(str(owner), 'testuser (tag)')
+
+        # Change setting
+        set_global_setting('DISPLAY_FULL_NAMES', True)
+        self.user.first_name = 'first'
+        self.user.last_name = 'last'
+        self.user.save()
+        owner = Owner.get_owner(self.user)
+
+        # Now first / last should be used
+        self.assertEqual(owner.name(), 'first last')
+        self.assertEqual(str(owner), 'first last (tag)')
+
+        # Reset
+        set_global_setting('DISPLAY_FULL_NAMES', False)
+        self.user.first_name = ''
+        self.user.last_name = ''
+        self.user.save()
 
 
 class MFALoginTest(InvenTreeAPITestCase):
