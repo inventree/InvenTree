@@ -4,8 +4,8 @@ import os
 
 from django.core.files.base import ContentFile
 
-from importer.models import DataImportSession
-from InvenTree.unit_test import InvenTreeTestCase
+from importer.models import DataImportRow, DataImportSession
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 
 
 class ImporterMixin:
