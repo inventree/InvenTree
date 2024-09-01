@@ -275,7 +275,7 @@ class OwnerModelTest(InvenTreeTestCase):
         """Test the display name for the owner."""
         owner = Owner.get_owner(self.user)
         self.assertEqual(owner.name(), 'testuser')
-        self.assertEqual(str(owner), 'testuser (tag)')
+        self.assertEqual(str(owner), 'testuser (user)')
 
         # Change setting
         set_global_setting('DISPLAY_FULL_NAMES', True)
@@ -286,7 +286,7 @@ class OwnerModelTest(InvenTreeTestCase):
 
         # Now first / last should be used
         self.assertEqual(owner.name(), 'first last')
-        self.assertEqual(str(owner), 'first last (tag)')
+        self.assertEqual(str(owner), 'first last (user)')
 
         # Reset
         set_global_setting('DISPLAY_FULL_NAMES', False)
