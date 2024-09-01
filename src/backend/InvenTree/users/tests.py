@@ -342,8 +342,6 @@ class MFALoginTest(InvenTreeAPITestCase):
 class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""
 
-    superuser = True
-
     def test_admin(self):
         """Test the admin URL."""
         my_token = self.helper(
