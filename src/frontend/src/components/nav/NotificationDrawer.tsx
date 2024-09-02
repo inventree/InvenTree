@@ -19,6 +19,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
@@ -103,9 +104,9 @@ export function NotificationDrawer({
             </Tooltip>
             <Tooltip label={t`View all notifications`}>
               <ActionIcon
-                onClick={() => {
+                onClick={(event: any) => {
                   onClose();
-                  navigate('/notifications/unread');
+                  navigateToLink('/notifications/unread', navigate, event);
                 }}
                 variant="transparent"
               >

@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-27 23:27\n"
+"PO-Revision-Date: 2024-08-29 04:38\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -71,7 +71,7 @@ msgstr ""
 #: src/pages/part/PartPricingPanel.tsx:67
 #: src/tables/InvenTreeTable.tsx:494
 #: src/tables/bom/BomTable.tsx:450
-#: src/tables/stock/StockItemTestResultTable.tsx:300
+#: src/tables/stock/StockItemTestResultTable.tsx:317
 msgid "Error"
 msgstr ""
 
@@ -1316,7 +1316,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:92
+#: src/components/nav/NotificationDrawer.tsx:93
 #: src/pages/Index/Settings/SystemSettings.tsx:109
 #: src/pages/Index/Settings/UserSettings.tsx:126
 #: src/pages/Notifications.tsx:65
@@ -1324,25 +1324,25 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:94
+#: src/components/nav/NotificationDrawer.tsx:95
 msgid "Mark all as read"
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:104
+#: src/components/nav/NotificationDrawer.tsx:105
 msgid "View all notifications"
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:123
+#: src/components/nav/NotificationDrawer.tsx:124
 msgid "You have no unread notifications."
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:139
-#: src/components/nav/NotificationDrawer.tsx:145
+#: src/components/nav/NotificationDrawer.tsx:140
+#: src/components/nav/NotificationDrawer.tsx:146
 #: src/tables/notifications/NotificationsTable.tsx:36
 msgid "Notification"
 msgstr ""
 
-#: src/components/nav/NotificationDrawer.tsx:168
+#: src/components/nav/NotificationDrawer.tsx:169
 #: src/pages/Notifications.tsx:73
 msgid "Mark as read"
 msgstr ""
@@ -1665,7 +1665,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:203
 #: src/tables/settings/ImportSessionTable.tsx:121
-#: src/tables/stock/StockItemTestResultTable.tsx:198
+#: src/tables/stock/StockItemTestResultTable.tsx:204
 #: src/tables/stock/StockTrackingTable.tsx:195
 msgid "User"
 msgstr ""
@@ -3032,7 +3032,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:549
 #: src/pages/stock/StockDetail.tsx:502
-#: src/tables/stock/StockItemTestResultTable.tsx:329
+#: src/tables/stock/StockItemTestResultTable.tsx:346
 msgid "Add"
 msgstr ""
 
@@ -3891,6 +3891,14 @@ msgstr ""
 msgid "Plugin Settings"
 msgstr ""
 
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:17
+msgid "Page Size"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:20
+msgid "Landscape"
+msgstr ""
+
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 msgid "Background Worker Not Running"
 msgstr ""
@@ -3998,7 +4006,7 @@ msgid "Stocktake"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:237
-#: src/pages/build/BuildDetail.tsx:539
+#: src/pages/build/BuildDetail.tsx:536
 #: src/pages/build/BuildIndex.tsx:22
 #: src/pages/part/PartDetail.tsx:624
 #: src/pages/sales/SalesOrderDetail.tsx:329
@@ -4231,18 +4239,18 @@ msgstr ""
 msgid "Child Build Orders"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:322
+#: src/pages/build/BuildDetail.tsx:319
 #: src/tables/build/BuildOutputTable.tsx:384
-#: src/tables/stock/StockItemTestResultTable.tsx:150
+#: src/tables/stock/StockItemTestResultTable.tsx:156
 msgid "Test Results"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:333
+#: src/pages/build/BuildDetail.tsx:330
 #: src/pages/part/PartDetail.tsx:707
 msgid "Test Statistics"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:347
+#: src/pages/build/BuildDetail.tsx:344
 #: src/pages/company/CompanyDetail.tsx:259
 #: src/pages/company/ManufacturerPartDetail.tsx:179
 #: src/pages/part/PartDetail.tsx:729
@@ -4253,7 +4261,7 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:355
+#: src/pages/build/BuildDetail.tsx:352
 #: src/pages/company/CompanyDetail.tsx:270
 #: src/pages/company/ManufacturerPartDetail.tsx:190
 #: src/pages/company/SupplierPartDetail.tsx:253
@@ -4271,7 +4279,7 @@ msgstr ""
 #~ msgid "Reporting Actions"
 #~ msgstr "Reporting Actions"
 
-#: src/pages/build/BuildDetail.tsx:373
+#: src/pages/build/BuildDetail.tsx:370
 msgid "Edit Build Order"
 msgstr ""
 
@@ -4279,123 +4287,123 @@ msgstr ""
 #~ msgid "Print build report"
 #~ msgstr "Print build report"
 
-#: src/pages/build/BuildDetail.tsx:380
+#: src/pages/build/BuildDetail.tsx:377
 #: src/tables/build/BuildOrderTable.tsx:164
 #: src/tables/build/BuildOrderTable.tsx:179
 msgid "Add Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:394
+#: src/pages/build/BuildDetail.tsx:391
 msgid "Cancel Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:396
+#: src/pages/build/BuildDetail.tsx:393
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:344
 #: src/pages/sales/SalesOrderDetail.tsx:376
 msgid "Order cancelled"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:397
+#: src/pages/build/BuildDetail.tsx:394
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:343
 #: src/pages/sales/ReturnOrderDetail.tsx:342
 #: src/pages/sales/SalesOrderDetail.tsx:375
 msgid "Cancel this order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:406
+#: src/pages/build/BuildDetail.tsx:403
 msgid "Hold Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:408
+#: src/pages/build/BuildDetail.tsx:405
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:351
 #: src/pages/sales/ReturnOrderDetail.tsx:350
 #: src/pages/sales/SalesOrderDetail.tsx:383
 msgid "Place this order on hold"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:409
+#: src/pages/build/BuildDetail.tsx:406
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:352
 #: src/pages/sales/ReturnOrderDetail.tsx:351
 #: src/pages/sales/SalesOrderDetail.tsx:384
 msgid "Order placed on hold"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:414
+#: src/pages/build/BuildDetail.tsx:411
 msgid "Issue Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:416
+#: src/pages/build/BuildDetail.tsx:413
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:335
 #: src/pages/sales/ReturnOrderDetail.tsx:334
 #: src/pages/sales/SalesOrderDetail.tsx:367
 msgid "Issue this order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:417
+#: src/pages/build/BuildDetail.tsx:414
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:336
 #: src/pages/sales/ReturnOrderDetail.tsx:335
 #: src/pages/sales/SalesOrderDetail.tsx:368
 msgid "Order issued"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:422
+#: src/pages/build/BuildDetail.tsx:419
 msgid "Complete Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:424
+#: src/pages/build/BuildDetail.tsx:421
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:364
 #: src/pages/sales/ReturnOrderDetail.tsx:358
 #: src/pages/sales/SalesOrderDetail.tsx:391
 msgid "Mark this order as complete"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:425
+#: src/pages/build/BuildDetail.tsx:422
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:358
 #: src/pages/sales/ReturnOrderDetail.tsx:359
 #: src/pages/sales/SalesOrderDetail.tsx:392
 msgid "Order completed"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:456
+#: src/pages/build/BuildDetail.tsx:453
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:387
 #: src/pages/sales/ReturnOrderDetail.tsx:388
 #: src/pages/sales/SalesOrderDetail.tsx:421
 msgid "Issue Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:463
+#: src/pages/build/BuildDetail.tsx:460
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:394
 #: src/pages/sales/ReturnOrderDetail.tsx:395
 #: src/pages/sales/SalesOrderDetail.tsx:435
 msgid "Complete Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:481
+#: src/pages/build/BuildDetail.tsx:478
 msgid "Build Order Actions"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:487
+#: src/pages/build/BuildDetail.tsx:484
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:417
 #: src/pages/sales/ReturnOrderDetail.tsx:418
 #: src/pages/sales/SalesOrderDetail.tsx:459
 msgid "Edit order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:491
+#: src/pages/build/BuildDetail.tsx:488
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:425
 #: src/pages/sales/ReturnOrderDetail.tsx:424
 #: src/pages/sales/SalesOrderDetail.tsx:464
 msgid "Duplicate order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:495
+#: src/pages/build/BuildDetail.tsx:492
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:428
 #: src/pages/sales/ReturnOrderDetail.tsx:429
 #: src/pages/sales/SalesOrderDetail.tsx:467
 msgid "Hold order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:500
+#: src/pages/build/BuildDetail.tsx:497
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:433
 #: src/pages/sales/ReturnOrderDetail.tsx:434
 #: src/pages/sales/SalesOrderDetail.tsx:472
@@ -4921,7 +4929,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:872
 #: src/tables/part/PartTestTemplateTable.tsx:106
-#: src/tables/stock/StockItemTestResultTable.tsx:366
+#: src/tables/stock/StockItemTestResultTable.tsx:383
 msgid "Required"
 msgstr ""
 
@@ -5598,7 +5606,7 @@ msgstr ""
 #: src/tables/FilterSelectDrawer.tsx:143
 #: src/tables/build/BuildOrderTestTable.tsx:135
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
-#: src/tables/stock/StockItemTestResultTable.tsx:186
+#: src/tables/stock/StockItemTestResultTable.tsx:192
 msgid "Value"
 msgstr ""
 
@@ -6148,19 +6156,19 @@ msgstr ""
 
 #: src/tables/build/BuildOrderTestTable.tsx:76
 #: src/tables/build/BuildOrderTestTable.tsx:112
-#: src/tables/stock/StockItemTestResultTable.tsx:258
-#: src/tables/stock/StockItemTestResultTable.tsx:330
-#: src/tables/stock/StockItemTestResultTable.tsx:385
+#: src/tables/stock/StockItemTestResultTable.tsx:275
+#: src/tables/stock/StockItemTestResultTable.tsx:347
+#: src/tables/stock/StockItemTestResultTable.tsx:402
 msgid "Add Test Result"
 msgstr ""
 
 #: src/tables/build/BuildOrderTestTable.tsx:83
-#: src/tables/stock/StockItemTestResultTable.tsx:260
+#: src/tables/stock/StockItemTestResultTable.tsx:277
 msgid "Test result added"
 msgstr ""
 
 #: src/tables/build/BuildOrderTestTable.tsx:111
-#: src/tables/stock/StockItemTestResultTable.tsx:174
+#: src/tables/stock/StockItemTestResultTable.tsx:180
 msgid "No Result"
 msgstr ""
 
@@ -6299,67 +6307,67 @@ msgstr ""
 msgid "Add contact"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:130
+#: src/tables/general/AttachmentTable.tsx:135
 msgid "File uploaded"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:131
+#: src/tables/general/AttachmentTable.tsx:136
 msgid "File {0} uploaded successfully"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:142
+#: src/tables/general/AttachmentTable.tsx:147
 msgid "Upload Error"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:143
+#: src/tables/general/AttachmentTable.tsx:148
 msgid "File could not be uploaded"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:191
+#: src/tables/general/AttachmentTable.tsx:196
 msgid "Upload Attachment"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:201
+#: src/tables/general/AttachmentTable.tsx:206
 msgid "Edit Attachment"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:215
+#: src/tables/general/AttachmentTable.tsx:220
 msgid "Delete Attachment"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:225
+#: src/tables/general/AttachmentTable.tsx:230
 msgid "Is Link"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:226
+#: src/tables/general/AttachmentTable.tsx:231
 msgid "Show link attachments"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:230
+#: src/tables/general/AttachmentTable.tsx:235
 msgid "Is File"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:231
+#: src/tables/general/AttachmentTable.tsx:236
 msgid "Show file attachments"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:240
+#: src/tables/general/AttachmentTable.tsx:245
 msgid "Add attachment"
-msgstr ""
-
-#: src/tables/general/AttachmentTable.tsx:251
-msgid "Add external link"
 msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:254
 #~ msgid "Upload attachment"
 #~ msgstr "Upload attachment"
 
-#: src/tables/general/AttachmentTable.tsx:299
+#: src/tables/general/AttachmentTable.tsx:256
+msgid "Add external link"
+msgstr ""
+
+#: src/tables/general/AttachmentTable.tsx:304
 msgid "No attachments found"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:337
+#: src/tables/general/AttachmentTable.tsx:343
 msgid "Drag attachment file here to upload"
 msgstr ""
 
@@ -6869,8 +6877,8 @@ msgid "Show required tests"
 msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:111
-#: src/tables/settings/TemplateTable.tsx:167
-#: src/tables/settings/TemplateTable.tsx:283
+#: src/tables/settings/TemplateTable.tsx:170
+#: src/tables/settings/TemplateTable.tsx:286
 msgid "Enabled"
 msgstr ""
 
@@ -7488,7 +7496,7 @@ msgid "Task ID"
 msgstr ""
 
 #: src/tables/settings/FailedTasksTable.tsx:36
-#: src/tables/stock/StockItemTestResultTable.tsx:211
+#: src/tables/stock/StockItemTestResultTable.tsx:218
 msgid "Started"
 msgstr ""
 
@@ -7551,12 +7559,12 @@ msgid "Imported Rows"
 msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:109
-#: src/tables/settings/TemplateTable.tsx:289
+#: src/tables/settings/TemplateTable.tsx:292
 msgid "Model Type"
 msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:110
-#: src/tables/settings/TemplateTable.tsx:290
+#: src/tables/settings/TemplateTable.tsx:293
 msgid "Filter by target model type"
 msgstr ""
 
@@ -7616,21 +7624,17 @@ msgstr ""
 #~ msgid "actions"
 #~ msgstr "actions"
 
-#: src/tables/settings/TemplateTable.tsx:177
+#: src/tables/settings/TemplateTable.tsx:180
 msgid "Modify"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:178
+#: src/tables/settings/TemplateTable.tsx:181
 msgid "Modify template file"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:234
-#: src/tables/settings/TemplateTable.tsx:302
+#: src/tables/settings/TemplateTable.tsx:237
+#: src/tables/settings/TemplateTable.tsx:305
 msgid "Edit Template"
-msgstr ""
-
-#: src/tables/settings/TemplateTable.tsx:242
-msgid "Delete template"
 msgstr ""
 
 #: src/tables/settings/TemplateTable.tsx:243
@@ -7641,15 +7645,19 @@ msgstr ""
 #~ msgid "Create new"
 #~ msgstr "Create new"
 
-#: src/tables/settings/TemplateTable.tsx:248
+#: src/tables/settings/TemplateTable.tsx:245
+msgid "Delete template"
+msgstr ""
+
+#: src/tables/settings/TemplateTable.tsx:251
 msgid "Add Template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:261
+#: src/tables/settings/TemplateTable.tsx:264
 msgid "Add template"
 msgstr ""
 
-#: src/tables/settings/TemplateTable.tsx:284
+#: src/tables/settings/TemplateTable.tsx:287
 msgid "Filter by enabled status"
 msgstr ""
 
@@ -7949,82 +7957,82 @@ msgstr ""
 msgid "Delete stock items"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:131
+#: src/tables/stock/StockItemTestResultTable.tsx:137
 msgid "Test"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:157
+#: src/tables/stock/StockItemTestResultTable.tsx:163
 msgid "Test result for installed stock item"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:168
+#: src/tables/stock/StockItemTestResultTable.tsx:174
 msgid "Result"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:190
+#: src/tables/stock/StockItemTestResultTable.tsx:196
 msgid "Attachment"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:206
+#: src/tables/stock/StockItemTestResultTable.tsx:212
 msgid "Test station"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:226
+#: src/tables/stock/StockItemTestResultTable.tsx:234
 msgid "Finished"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:269
-#: src/tables/stock/StockItemTestResultTable.tsx:340
+#: src/tables/stock/StockItemTestResultTable.tsx:286
+#: src/tables/stock/StockItemTestResultTable.tsx:357
 msgid "Edit Test Result"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:271
+#: src/tables/stock/StockItemTestResultTable.tsx:288
 msgid "Test result updated"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:277
-#: src/tables/stock/StockItemTestResultTable.tsx:349
+#: src/tables/stock/StockItemTestResultTable.tsx:294
+#: src/tables/stock/StockItemTestResultTable.tsx:366
 msgid "Delete Test Result"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:279
+#: src/tables/stock/StockItemTestResultTable.tsx:296
 msgid "Test result deleted"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:293
+#: src/tables/stock/StockItemTestResultTable.tsx:310
 msgid "Test Passed"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:294
+#: src/tables/stock/StockItemTestResultTable.tsx:311
 msgid "Test result has been recorded"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:301
+#: src/tables/stock/StockItemTestResultTable.tsx:318
 msgid "Failed to record test result"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:318
+#: src/tables/stock/StockItemTestResultTable.tsx:335
 msgid "Pass Test"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:367
+#: src/tables/stock/StockItemTestResultTable.tsx:384
 msgid "Show results for required tests"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:371
+#: src/tables/stock/StockItemTestResultTable.tsx:388
 msgid "Include Installed"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:372
+#: src/tables/stock/StockItemTestResultTable.tsx:389
 msgid "Show results for installed stock items"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:376
+#: src/tables/stock/StockItemTestResultTable.tsx:393
 #: src/tables/stock/TestStatisticsTable.tsx:74
 msgid "Passed"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:377
+#: src/tables/stock/StockItemTestResultTable.tsx:394
 msgid "Show only passed tests"
 msgstr ""
 

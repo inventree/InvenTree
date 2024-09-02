@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-26 23:06+0000\n"
-"PO-Revision-Date: 2024-08-26 23:08\n"
+"POT-Creation-Date: 2024-08-29 07:07+0000\n"
+"PO-Revision-Date: 2024-08-29 07:10\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -683,23 +683,23 @@ msgstr "Controlli di sistema InvenTree falliti"
 msgid "Unknown database"
 msgstr "Database sconosciuto"
 
-#: InvenTree/validators.py:32 InvenTree/validators.py:34
+#: InvenTree/validators.py:32
 msgid "Invalid physical unit"
 msgstr "Unità fisica non valida"
 
-#: InvenTree/validators.py:40
+#: InvenTree/validators.py:38
 msgid "Not a valid currency code"
 msgstr "Non è un codice valuta valido"
 
-#: InvenTree/validators.py:117 InvenTree/validators.py:133
+#: InvenTree/validators.py:115 InvenTree/validators.py:131
 msgid "Overage value must not be negative"
 msgstr "Il sovra-valore non può essere negativo"
 
-#: InvenTree/validators.py:135
+#: InvenTree/validators.py:133
 msgid "Overage must not exceed 100%"
 msgstr "L'eccesso non deve superare il 100%"
 
-#: InvenTree/validators.py:141
+#: InvenTree/validators.py:139
 msgid "Invalid value for overage"
 msgstr "Valore non valido per eccedenza"
 
@@ -7246,8 +7246,8 @@ msgid "Choices must be unique"
 msgstr ""
 
 #: part/models.py:3587
-msgid "Test templates can only be created for trackable parts"
-msgstr "Il modello di prova può essere creato solo per gli articoli rintracciabili"
+msgid "Test templates can only be created for testable parts"
+msgstr ""
 
 #: part/models.py:3598
 msgid "Test template with the same key already exists for part"

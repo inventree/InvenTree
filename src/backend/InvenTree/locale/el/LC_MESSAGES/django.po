@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-26 23:06+0000\n"
-"PO-Revision-Date: 2024-08-26 23:08\n"
+"POT-Creation-Date: 2024-08-29 07:07+0000\n"
+"PO-Revision-Date: 2024-08-29 07:10\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -683,23 +683,23 @@ msgstr "Ο έλεγχος συστήματος για το Inventree απέτυ�
 msgid "Unknown database"
 msgstr "Άγνωστη βάση δεδομένων"
 
-#: InvenTree/validators.py:32 InvenTree/validators.py:34
+#: InvenTree/validators.py:32
 msgid "Invalid physical unit"
 msgstr "Μη έγκυρη φυσική μονάδα"
 
-#: InvenTree/validators.py:40
+#: InvenTree/validators.py:38
 msgid "Not a valid currency code"
 msgstr "Μη έγκυρος κωδικός συναλλάγματος"
 
-#: InvenTree/validators.py:117 InvenTree/validators.py:133
+#: InvenTree/validators.py:115 InvenTree/validators.py:131
 msgid "Overage value must not be negative"
 msgstr "Η μέση τιμή δεν πρέπει να είναι αρνητική"
 
-#: InvenTree/validators.py:135
+#: InvenTree/validators.py:133
 msgid "Overage must not exceed 100%"
 msgstr "Η μέση τιμή δεν πρέπει να υπερβαίνει το 100%"
 
-#: InvenTree/validators.py:141
+#: InvenTree/validators.py:139
 msgid "Invalid value for overage"
 msgstr "Μη έγκυρη τιμή για υπέρβαση"
 
@@ -7246,7 +7246,7 @@ msgid "Choices must be unique"
 msgstr ""
 
 #: part/models.py:3587
-msgid "Test templates can only be created for trackable parts"
+msgid "Test templates can only be created for testable parts"
 msgstr ""
 
 #: part/models.py:3598
