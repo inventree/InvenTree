@@ -24,7 +24,7 @@ import common.validators
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
-from part.models import Part
+from part.models import Part, PartParameterTemplate
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
@@ -1682,6 +1682,8 @@ class CustomStatusTest(TestCase):
 class SelectionListTest(InvenTreeAPITestCase):
     """Tests for the SelectionList and SelectionListEntry model and API endpoints."""
 
+    fixtures = ['category', 'part', 'location', 'params', 'test_templates']
+
     def setUp(self):
         """Setup for all tests."""
         super().setUp()
@@ -1722,3 +1724,36 @@ class SelectionListTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['value'], 'test1')
         self.assertEqual(response.data['label'], 'Test Entry')
         self.assertEqual(response.data['description'], 'Test Description')
+
+    def test_parameter(self):
+        """Test the SelectionList parameter."""
+        self.assertEqual(self.list.get_choices(), ['test1'])
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Add to parameter
+        part = Part.objects.get(pk=1)
+        template = PartParameterTemplate.objects.create(
+            name='test_parameter', units='', selectionlist=self.list
+        )
+        rsp = self.get(
+            reverse('api-part-parameter-template-detail', kwargs={'pk': template.pk})
+        )
+        self.assertEqual(rsp.data['name'], 'test_parameter')
+        self.assertEqual(rsp.data['choices'], '')
+
+        # Add to part
+        url = reverse('api-part-parameter-list')
+        response = self.post(
+            url,
+            {'part': part.pk, 'template': template.pk, 'data': 70},
+            expected_code=400,
+        )
+        self.assertIn('Invalid choice for parameter value', response.data['data'])
+
+        response = self.post(
+            url,
+            {'part': part.pk, 'template': template.pk, 'data': self.entry1.value},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['data'], self.entry1.value)
