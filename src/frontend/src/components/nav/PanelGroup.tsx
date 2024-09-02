@@ -90,7 +90,7 @@ function BasePanelGroup({
 
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
-    (panel: string | null, event?: any) => {
+    (panel: string, event?: any) => {
       if (event && (event?.ctrlKey || event?.shiftKey)) {
         const url = `${location.pathname}/../${panel}`;
         cancelEvent(event);
@@ -98,6 +98,8 @@ function BasePanelGroup({
       } else {
         navigate(`../${panel}`);
       }
+
+      localState.setLastUsedPanel(pageKey)(panel);
 
       // Optionally call external callback hook
       if (panel && onPanelChange) {
