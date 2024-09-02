@@ -28,27 +28,21 @@ export async function isPluginPanelHidden({
     return false;
   }
 
-  let result: boolean = false;
+  const func = await findExternalPluginFunction(pluginProps.source, 'isPanelHidden');
+  
+  if (!func) {
+    return false;
+  }
 
-  await findExternalPluginFunction(pluginProps.source, 'isPanelHidden').then(
-    (func) => {
-      if (func) {
-        try {
-          result = func(pluginContext);
-        } catch (error) {
-          console.error(
-            'Error occurred while checking if plugin panel is hidden:',
-            error
-          );
-          result = true;
-        }
-      } else {
-        result = false;
-      }
-    }
-  );
-
-  return result;
+  try {
+    return func(pluginContext);
+  } catch (error) {
+    console.error(
+      'Error occurred while checking if plugin panel is hidden:',
+      error
+    );
+    return true;
+  }
 }
 
 /**
