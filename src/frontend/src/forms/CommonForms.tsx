@@ -46,3 +46,16 @@ export function extraLineItemFields(): ApiFormFieldSet {
     link: {}
   };
 }
+
+export function selectionListFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    active: {},
+    locked: {},
+    source_plugin: {},
+    source_string: {},
+    default: {}
+    //choices: {},
+  };
+}

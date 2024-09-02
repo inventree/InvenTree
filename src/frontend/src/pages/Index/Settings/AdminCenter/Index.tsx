@@ -60,6 +60,8 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
+const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
+
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
@@ -78,10 +80,6 @@ const CustomStateTable = Loadable(
 
 const CustomUnitsTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
-);
-
-const PartParameterTemplateTable = Loadable(
-  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
 
 const PartCategoryTemplateTable = Loadable(
@@ -155,7 +153,7 @@ export default function AdminCenter() {
         name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
-        content: <PartParameterTemplateTable />
+        content: <PartParameterPanel />
       },
       {
         name: 'category-parameters',
