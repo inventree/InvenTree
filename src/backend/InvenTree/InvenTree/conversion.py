@@ -2,6 +2,7 @@
 
 import logging
 import re
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -95,7 +96,7 @@ def from_engineering_notation(value):
     """
     value = str(value).strip()
 
-    pattern = '(\d+)([a-zA-Z]+)(\d+)(.*)'
+    pattern = r'(\d+)([a-zA-Z]+)(\d+)(.*)'
 
     if match := re.match(pattern, value):
         left, prefix, right, suffix = match.groups()
@@ -133,7 +134,7 @@ def convert_value(value, unit):
     return value
 
 
-def convert_physical_value(value: str, unit: str = None, strip_units=True):
+def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=True):
     """Validate that the provided value is a valid physical quantity.
 
     Arguments:
@@ -245,8 +246,4 @@ def is_dimensionless(value):
     if value.units == ureg.dimensionless:
         return True
 
-    if value.to_base_units().units == ureg.dimensionless:
-        return True
-
-    # At this point, the value is not dimensionless
-    return False
+    return value.to_base_units().units == ureg.dimensionless

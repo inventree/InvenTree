@@ -62,7 +62,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         # If we are importing data, don't send emails
         return
 
-    if not InvenTree.email.is_email_configured() and not settings.TESTING:
+    if not is_email_configured() and not settings.TESTING:
         # Email is not configured / enabled
         return
 

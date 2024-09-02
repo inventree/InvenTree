@@ -55,7 +55,7 @@ import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 
-interface ScanItem {
+export interface ScanItem {
   id: string;
   ref: string;
   data: any;
@@ -222,7 +222,21 @@ export default function Scan() {
       case InputMethod.Manual:
         return <InputManual action={addItems} />;
       case InputMethod.ImageBarcode:
-        return <InputImageBarcode action={addItems} />;
+        return (
+          <InputImageBarcode
+            action={(decodedText: string) => {
+              addItems([
+                {
+                  id: randomId(),
+                  ref: decodedText,
+                  data: decodedText,
+                  timestamp: new Date(),
+                  source: InputMethod.ImageBarcode
+                }
+              ]);
+            }}
+          />
+        );
       default:
         return <Text>No input selected</Text>;
     }
@@ -489,8 +503,13 @@ enum InputMethod {
   ImageBarcode = 'imageBarcode'
 }
 
-interface ScanInputInterface {
+export interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
+}
+
+interface BarcodeInputProps {
+  action: (decodedText: string) => void;
+  notScanningPlaceholder?: string;
 }
 
 function InputManual({ action }: Readonly<ScanInputInterface>) {
@@ -545,7 +564,10 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
+export function InputImageBarcode({
+  action,
+  notScanningPlaceholder = t`Start scanning by selecting a camera and pressing the play button.`
+}: Readonly<BarcodeInputProps>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
@@ -601,15 +623,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
     lastValue = decodedText;
 
     // submit value upstream
-    action([
-      {
-        id: randomId(),
-        ref: decodedText,
-        data: decodedText,
-        timestamp: new Date(),
-        source: InputMethod.ImageBarcode
-      }
-    ]);
+    action(decodedText);
 
     qrCodeScanner?.resume();
   }
@@ -714,17 +728,19 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
 
   return (
     <Stack gap="xs">
-      <Group gap="xs">
+      <Group gap="xs" preventGrowOverflow>
         <Select
           value={cameraValue}
           onChange={setCameraValue}
           data={cameras.map((device) => {
             return { value: device.id, label: device.label };
           })}
+          maw={200}
           size="sm"
         />
         {scanningEnabled ? (
           <ActionIcon
+            size="input-sm"
             onClick={btnStopScanning}
             title={t`Stop scanning`}
             variant="default"
@@ -733,6 +749,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           </ActionIcon>
         ) : (
           <ActionIcon
+            size="input-sm"
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
@@ -746,7 +763,13 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           {scanningEnabled ? t`Scanning` : t`Not scanning`}
         </Badge>
       </Group>
-      <Container px={0} id="reader" w={'100%'} mih="300px" />
+      {scanningEnabled ? (
+        <Container px={0} id="reader" w={'100%'} mih="300px" />
+      ) : (
+        <Container px={0} id="reader" w={'100%'} mih="300px">
+          {notScanningPlaceholder}
+        </Container>
+      )}
       {!camId && (
         <Button onClick={btnSelectCamera}>
           <Trans>Select Camera</Trans>

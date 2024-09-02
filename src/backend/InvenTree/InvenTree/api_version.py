@@ -1,12 +1,34 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 243
+INVENTREE_API_VERSION = 249
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v249 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7978
+    - Sort status enums
+
+v248 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7965
+    - Small adjustments to labels for new custom status fields
+
+v247 - 2024-08-22 : https://github.com/inventree/InvenTree/pull/7956
+    - Adjust "attachment" field on StockItemTestResult serializer
+    - Allow null values for attachment
+
+v246 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7862
+    - Adds custom status fields to various serializers
+    - Adds endpoints to admin custom status fields
+
+v245 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7520
+    - Documented pagination fields (no functional changes)
+
+v244 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7941
+    - Adds "create_child_builds" field to the Build API
+    - Write-only field to create child builds from the API
+    - Only available when creating a new build order
 
 v243 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7940
     - Expose "ancestor" filter to the BuildOrder API

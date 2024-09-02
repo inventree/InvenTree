@@ -384,7 +384,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
             return orders_intersection if orders_intersection else orders_union
 
     @staticmethod
-    def get_supplier_parts(sku: str = None, supplier: Company = None, mpn: str = None):
+    def get_supplier_parts(
+        sku: str | None = None, supplier: Company = None, mpn: str | None = None
+    ):
         """Get a supplier part from SKU or by supplier and MPN."""
         if not (sku or supplier or mpn):
             return SupplierPart.objects.none()
@@ -420,10 +422,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def receive_purchase_order_item(
         supplier_part: SupplierPart,
         user: User,
-        quantity: Decimal | str = None,
+        quantity: Decimal | str | None = None,
         purchase_order: PurchaseOrder = None,
         location: StockLocation = None,
-        barcode: str = None,
+        barcode: str | None = None,
     ) -> dict:
         """Try to receive a purchase order item.
 
@@ -471,9 +473,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # 2. check if it's defined on the part
             # 3. check if there's 1 or 0 stock locations defined in InvenTree
             #    -> assume all stock is going into that location (or no location)
-            if location := line_item.destination:
-                pass
-            elif location := supplier_part.part.get_default_location():
+            if (location := line_item.destination) or (
+                location := supplier_part.part.get_default_location()
+            ):
                 pass
             elif StockLocation.objects.count() <= 1:
                 if not (location := StockLocation.objects.first()):

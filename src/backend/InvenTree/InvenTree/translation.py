@@ -15,7 +15,7 @@ def reload_translation_stats():
     STATS_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
 
     try:
-        with open(STATS_FILE, 'r') as f:
+        with open(STATS_FILE, encoding='utf-8') as f:
             _translation_stats = json.load(f)
     except Exception:
         _translation_stats = None

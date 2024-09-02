@@ -167,10 +167,9 @@ class CategoryFilter(rest_filters.FilterSet):
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent or top_level:
-            if not value:
-                # If "cascade" is False, only return top-level categories
-                queryset = queryset.filter(parent=None)
+        if (not parent or top_level) and not value:
+            # If "cascade" is False, only return top-level categories
+            queryset = queryset.filter(parent=None)
 
         return queryset
 
@@ -416,7 +415,7 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
 
     part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.filter(trackable=True),
+        queryset=Part.objects.filter(testable=True),
         label='Part',
         field_name='part',
         method='filter_part',
@@ -465,8 +464,6 @@ class PartTestTemplateMixin:
 
 class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
-
-    pass
 
 
 class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreateAPI):
@@ -1570,8 +1567,6 @@ class PartParameterTemplateList(
 class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
-    pass
-
 
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
@@ -1662,8 +1657,6 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 
 class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
-
-    pass
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
@@ -1921,8 +1914,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
-
-    pass
 
 
 class BomImportUpload(CreateAPI):

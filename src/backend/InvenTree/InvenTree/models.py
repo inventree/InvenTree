@@ -390,10 +390,7 @@ class ReferenceIndexingMixin(models.Model):
             except Exception:
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
-                if recent:
-                    reference = recent.reference
-                else:
-                    reference = ''
+                reference = recent.reference if recent else ''
 
         return reference
 
@@ -410,14 +407,14 @@ class ReferenceIndexingMixin(models.Model):
             })
 
         # Check that only 'allowed' keys are provided
-        for key in info.keys():
-            if key not in ctx.keys():
+        for key in info:
+            if key not in ctx:
                 raise ValidationError({
                     'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
-        if 'ref' not in info.keys():
+        if 'ref' not in info:
             raise ValidationError({
                 'value': _('Missing required format key') + ": 'ref'"
             })
@@ -859,7 +856,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Returns:
             List of category names from the top level to this category
         """
-        return self.parentpath + [self]
+        return [*self.parentpath, self]
 
     def get_path(self):
         """Return a list of element in the item tree.
@@ -1099,4 +1096,4 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
         except Exception as exc:
             """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)  # noqa: LOG005
+            logger.error(exc)

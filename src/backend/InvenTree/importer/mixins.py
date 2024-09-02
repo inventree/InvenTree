@@ -213,8 +213,6 @@ class DataImportExportSerializerMixin(
 ):
     """Mixin class for adding data import/export functionality to a DRF serializer."""
 
-    pass
-
 
 class DataExportViewMixin:
     """Mixin class for exporting a dataset via the API.

@@ -337,8 +337,6 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
 class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrder object."""
 
-    pass
-
 
 class PurchaseOrderContextMixin:
     """Mixin to add purchase order object as serializer context variable."""
@@ -603,8 +601,6 @@ class PurchaseOrderLineItemList(
 class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for PurchaseOrderLineItem object."""
 
-    pass
-
 
 class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
@@ -746,8 +742,6 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
 class SalesOrderDetail(SalesOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
 
-    pass
-
 
 class SalesOrderLineItemFilter(LineItemFilter):
     """Custom filters for SalesOrderLineItemList endpoint."""
@@ -864,8 +858,6 @@ class SalesOrderLineItemList(
 
 class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderLineItem object."""
-
-    pass
 
 
 class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
@@ -1181,8 +1173,6 @@ class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
 class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single ReturnOrder object."""
 
-    pass
-
 
 class ReturnOrderContextMixin:
     """Simple mixin class to add a ReturnOrder to the serializer context."""
@@ -1310,8 +1300,6 @@ class ReturnOrderLineItemList(
 class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a ReturnOrderLineItem object."""
 
-    pass
-
 
 class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
@@ -1368,10 +1356,9 @@ class OrderCalendarExport(ICalFeed):
                 if auth[0].lower() == 'basic':
                     uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
                     user = authenticate(username=uname, password=passwd)
-                    if user is not None:
-                        if user.is_active:
-                            login(request, user)
-                            request.user = user
+                    if user is not None and user.is_active:
+                        login(request, user)
+                        request.user = user
 
         # Check again
         if request.user.is_authenticated:
