@@ -1725,6 +1725,16 @@ class SelectionListTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['label'], 'Test Entry')
         self.assertEqual(response.data['description'], 'Test Description')
 
+    def test_model_meta(self):
+        """Test model meta functions."""
+        # Models str
+        self.assertEqual(str(self.list), 'Test List')
+        self.assertEqual(str(self.entry1), 'Test Entry')
+        self.assertEqual(str(self.entry2), 'Test Entry 2 (Inactive)')
+
+        # API urls
+        self.assertEqual(self.list.get_api_url(), '/api/selection/')
+
     def test_parameter(self):
         """Test the SelectionList parameter."""
         self.assertEqual(self.list.get_choices(), ['test1'])
