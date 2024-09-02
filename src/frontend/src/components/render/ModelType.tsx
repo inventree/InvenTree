@@ -246,6 +246,11 @@ export const ModelInformationDict: ModelDict = {
     label: t`Content Type`,
     label_multiple: t`Content Types`,
     api_endpoint: ApiEndpoints.content_type_list
+  },
+  selectionlist: {
+    label: t`Selection List`,
+    label_multiple: t`Selection Lists`,
+    api_endpoint: ApiEndpoints.selectionlist_list
   }
 };
 
