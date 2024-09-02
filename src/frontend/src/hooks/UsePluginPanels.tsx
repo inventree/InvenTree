@@ -17,7 +17,10 @@ import { identifierString } from '../functions/conversion';
 import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsState';
 import { useUserState } from '../states/UserState';
 
 export function usePluginPanels({
@@ -34,6 +37,7 @@ export function usePluginPanels({
   const user = useUserState();
   const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
     () => globalSettings.isSet('ENABLE_PLUGINS_INTERFACE'),
@@ -43,7 +47,7 @@ export function usePluginPanels({
   // API query to fetch initial information on available plugin panels
   const { data: pluginData } = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
-    queryKey: ["custom-plugin-panels", model, id],
+    queryKey: ['custom-plugin-panels', model, id],
     queryFn: async () => {
       if (!pluginPanelsEnabled || !model) {
         return Promise.resolve([]);
@@ -74,9 +78,22 @@ export function usePluginPanels({
       host: host,
       api: api,
       navigate: navigate,
+      globalSettings: globalSettings,
+      userSettings: userSettings,
       theme: theme
     };
-  }, [instance, model, theme, id, user, host, api, navigate]);
+  }, [
+    model,
+    id,
+    instance,
+    user,
+    host,
+    api,
+    navigate,
+    globalSettings,
+    userSettings,
+    theme
+  ]);
 
   // Track which panels are hidden: { panelName: true/false }
   // We need to memoize this as the plugins can determine this dynamically

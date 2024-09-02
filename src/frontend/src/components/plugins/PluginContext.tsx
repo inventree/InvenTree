@@ -3,6 +3,7 @@ import { AxiosInstance } from 'axios';
 import { NavigateFunction } from 'react-router-dom';
 
 import { ModelType } from '../../enums/ModelType';
+import { SettingsStateProps } from '../../states/SettingsState';
 import { UserStateProps } from '../../states/UserState';
 
 /*
@@ -14,6 +15,8 @@ import { UserStateProps } from '../../states/UserState';
  * @param instance - The model instance data (if available)
  * @param api - The Axios API instance (see ../states/ApiState.tsx)
  * @param user - The current user instance (see ../states/UserState.tsx)
+ * @param userSettings - The current user settings (see ../states/SettingsState.tsx)
+ * @param globalSettings - The global settings (see ../states/SettingsState.tsx)
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  */
@@ -23,6 +26,8 @@ export type PluginContext = {
   instance?: any;
   api: AxiosInstance;
   user: UserStateProps;
+  userSettings: SettingsStateProps;
+  globalSettings: SettingsStateProps;
   host: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
