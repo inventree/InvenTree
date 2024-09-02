@@ -3538,7 +3538,8 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
             return f'{self.name} (Inactive)'
         return self.name
 
-    def get_api_url(self):
+    @staticmethod
+    def get_api_url():
         """Return the API URL associated with the SelectionList model."""
         return reverse('api-selectionlist-list')
 

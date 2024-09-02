@@ -99,6 +99,8 @@ function getModelRenderer(model) {
         return renderReportTemplate;
     case 'pluginconfig':
         return renderPluginConfig;
+    case 'selectionlist':
+        return renderSelectionList;
     default:
         // Un-handled model type
         console.error(`Rendering not implemented for model '${model}'`);
@@ -582,6 +584,18 @@ function renderPluginConfig(data, parameters={}) {
         {
             text: data.name,
             textSecondary: data.meta?.description,
+        },
+        parameters
+    );
+}
+
+// Render for "SelectionList" model
+function renderSelectionList(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.name,
+            textSecondary: data.description,
         },
         parameters
     );

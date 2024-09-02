@@ -1356,6 +1356,19 @@ function partParameterFields(options={}) {
                                         display_name: choice,
                                     });
                                 });
+                            } else if (response.selectionlist) {
+                                // Selection list - get choices from the API
+                                inventreeGet(`{% url "api-selectionlist-list" %}${response.selectionlist}/`, {}, {
+                                    async: false,
+                                    success: function(data) {
+                                        data.choices.forEach(function(item) {
+                                            choices.push({
+                                                value: item.value,
+                                                display_name: item.label,
+                                            });
+                                        });
+                                    }
+                                });
                             }
                         }
                     });
@@ -1576,6 +1589,7 @@ function partParameterTemplateFields() {
             icon: 'fa-th-list',
         },
         checkbox: {},
+        selectionlist: {},
     };
 }
 
