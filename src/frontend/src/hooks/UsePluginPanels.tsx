@@ -43,7 +43,7 @@ export function usePluginPanels({
   // API query to fetch initial information on available plugin panels
   const { data: pluginData } = useQuery({
     enabled: pluginPanelsEnabled && !!model && id !== undefined,
-    queryKey: [model, id],
+    queryKey: ["custom-plugin-panels", model, id],
     queryFn: async () => {
       if (!pluginPanelsEnabled || !model) {
         return Promise.resolve([]);
