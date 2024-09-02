@@ -775,7 +775,7 @@ class IconList(ListAPI):
         return get_icon_packs().values()
 
 
-class SelectionListList(ListAPI):
+class SelectionListList(ListCreateAPI):
     """List view for SelectionList objects."""
 
     queryset = common.models.SelectionList.objects.all()

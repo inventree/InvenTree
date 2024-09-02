@@ -631,7 +631,7 @@ class SelectionEntrySerializer(InvenTreeModelSerializer):
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
         ret = super().validate(attrs)
-        if self.instance.list.locked:
+        if self.instance and self.instance.list.locked:
             raise serializers.ValidationError({'list': _('Selection list is locked')})
         return ret
 
@@ -663,6 +663,6 @@ class SelectionListSerializer(InvenTreeModelSerializer):
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
         ret = super().validate(attrs)
-        if self.instance.locked:
+        if self.instance and self.instance.locked:
             raise serializers.ValidationError({'locked': _('Selection list is locked')})
         return ret
