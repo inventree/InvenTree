@@ -10,7 +10,7 @@ from django.test import override_settings
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode
@@ -1347,3 +1347,11 @@ class StockLocationTest(InvenTreeTestCase):
         loc.location_type = None
         loc.save()
         self.assertEqual(loc.icon, '')
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=StockLocationType)
