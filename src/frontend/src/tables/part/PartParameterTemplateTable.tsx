@@ -76,7 +76,8 @@ export default function PartParameterTemplateTable() {
       description: {},
       units: {},
       choices: {},
-      checkbox: {}
+      checkbox: {},
+      selectionlist: {}
     };
   }, []);
 
