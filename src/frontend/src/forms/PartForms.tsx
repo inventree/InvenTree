@@ -177,7 +177,7 @@ export function usePartParameterFields({
               setChoices(
                 _choices.map((choice) => {
                   return {
-                    label: choice.trim(),
+                    display_name: choice.trim(),
                     value: choice.trim()
                   };
                 })
