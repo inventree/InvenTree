@@ -28,8 +28,11 @@ export async function isPluginPanelHidden({
     return false;
   }
 
-  const func = await findExternalPluginFunction(pluginProps.source, 'isPanelHidden');
-  
+  const func = await findExternalPluginFunction(
+    pluginProps.source,
+    'isPanelHidden'
+  );
+
   if (!func) {
     return false;
   }

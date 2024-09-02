@@ -10,6 +10,12 @@ The *User Interface* mixin class provides a set of methods to implement custom f
 
 To enable user interface plugins, the global setting `ENABLE_PLUGINS_INTERFACE` must be enabled, in the [plugin settings](../../settings/global.md#plugin-settings).
 
+## Plugin Context
+
+When rendering certain content in the user interface, the rendering functions are passed a `context` object which contains information about the current page being rendered. The type of the `context` object is defined in the `PluginContext` file:
+
+{{ includefile("src/frontend/src/components/plugins/PluginContext.tsx", title="Plugin Context", fmt="javascript") }}
+
 ## Custom Panels
 
 Many of the pages in the InvenTree web interface are built using a series of "panels" which are displayed on the page. Custom panels can be added to these pages, by implementing the `get_custom_panels` method:
@@ -57,16 +63,6 @@ The JavaScript file must implement a `renderPanel` function, which is called by 
 - `target`: The HTML element which the panel content should be rendered into
 - `context`: A dictionary of context data which can be used to render the panel content
 
-The following data are provided in the `context` dictionary:
-
-| Key | Description |
-| --- | --- |
-| model | The model class which the panel is associated with, e.g. 'part' |
-| id | The primary key of the object which the panel is associated with |
-| instance | The object instance which the panel is associated with |
-| user | The current user object |
-| host | The current host URL |
-| api | The axios API object |
 
 **Example**
 
