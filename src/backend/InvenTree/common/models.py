@@ -3605,7 +3605,3 @@ class SelectionListEntry(models.Model):
         if not self.active:
             return f'{self.label} (Inactive)'
         return self.label
-
-    def get_api_url(self):
-        """Return the API URL associated with the SelectionListEntry model."""
-        return reverse('api-selectionlistentry-list', kwargs={'pk': self.pk})
