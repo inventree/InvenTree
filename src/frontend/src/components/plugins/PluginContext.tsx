@@ -1,5 +1,6 @@
 import { MantineTheme } from '@mantine/core';
 import { AxiosInstance } from 'axios';
+import { NavigateFunction } from 'react-router-dom';
 
 import { ModelType } from '../../enums/ModelType';
 import { UserStateProps } from '../../states/UserState';
