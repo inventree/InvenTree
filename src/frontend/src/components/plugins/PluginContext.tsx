@@ -23,6 +23,6 @@ export type PluginContext = {
   api: AxiosInstance;
   user: UserStateProps;
   host: string;
-  navigate: any;
+  navigate: NavigateFunction;
   theme: MantineTheme;
 };
