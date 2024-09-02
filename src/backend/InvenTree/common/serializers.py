@@ -628,6 +628,13 @@ class SelectionEntrySerializer(InvenTreeModelSerializer):
         model = common_models.SelectionListEntry
         fields = '__all__'
 
+    def validate(self, attrs):
+        """Ensure that the selection list is not locked."""
+        ret = super().validate(attrs)
+        if self.instance.list.locked:
+            raise serializers.ValidationError({'list': _('Selection list is locked')})
+        return ret
+
 
 class SelectionListSerializer(InvenTreeModelSerializer):
     """Serializer for a selection list."""
@@ -652,3 +659,10 @@ class SelectionListSerializer(InvenTreeModelSerializer):
 
     default = SelectionEntrySerializer(read_only=True, many=False)
     choices = SelectionEntrySerializer(source='entries', read_only=True, many=True)
+
+    def validate(self, attrs):
+        """Ensure that the selection list is not locked."""
+        ret = super().validate(attrs)
+        if self.instance.locked:
+            raise serializers.ValidationError({'locked': _('Selection list is locked')})
+        return ret

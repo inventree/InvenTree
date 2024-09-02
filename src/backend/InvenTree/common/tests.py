@@ -1704,27 +1704,47 @@ class SelectionListTest(InvenTreeAPITestCase):
         )
         self.list2 = SelectionList.objects.create(name='Test List 2', active=False)
 
+        # Urls
+        self.list_url = reverse('api-selectionlist-detail', kwargs={'pk': self.list.pk})
+        self.entry_url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'entrypk': self.entry1.pk, 'pk': self.list.pk},
+        )
+
     def test_api(self):
         """Test the SelectionList and SelctionListEntry API endpoints."""
         url = reverse('api-selectionlist-list')
         response = self.get(url, expected_code=200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
 
-        url = reverse('api-selectionlist-detail', kwargs={'pk': self.list.pk})
-        response = self.get(url, expected_code=200)
+        response = self.get(self.list_url, expected_code=200)
         self.assertEqual(response.data['name'], 'Test List')
         self.assertEqual(len(response.data['choices']), 2)
         self.assertEqual(response.data['choices'][0]['value'], 'test1')
         self.assertEqual(response.data['choices'][0]['label'], 'Test Entry')
 
-        url = reverse(
-            'api-selectionlistentry-detail',
-            kwargs={'entrypk': self.entry1.pk, 'pk': self.list.pk},
-        )
-        response = self.get(url, expected_code=200)
+        response = self.get(self.entry_url, expected_code=200)
         self.assertEqual(response.data['value'], 'test1')
         self.assertEqual(response.data['label'], 'Test Entry')
         self.assertEqual(response.data['description'], 'Test Description')
+
+    def test_api_locked(self):
+        """Test editing with locked/unlocked list."""
+        # Lock list
+        self.list.locked = True
+        self.list.save()
+        response = self.patch(self.entry_url, {'label': 'New Label'}, expected_code=400)
+        self.assertIn('Selection list is locked', response.data['list'])
+        response = self.patch(self.list_url, {'name': 'New Name'}, expected_code=400)
+        self.assertIn('Selection list is locked', response.data['locked'])
+
+        # Unlock the list
+        self.list.locked = False
+        self.list.save()
+        response = self.patch(self.entry_url, {'label': 'New Label'}, expected_code=200)
+        self.assertEqual(response.data['label'], 'New Label')
+        response = self.patch(self.list_url, {'name': 'New Name'}, expected_code=200)
+        self.assertEqual(response.data['name'], 'New Name')
 
     def test_model_meta(self):
         """Test model meta functions."""
