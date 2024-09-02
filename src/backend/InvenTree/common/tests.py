@@ -438,7 +438,7 @@ class SettingsTest(InvenTreeTestCase):
 
             try:
                 InvenTreeSetting.set_setting(key, value, change_user=self.user)
-            except Exception as exc:
+            except Exception as exc:  # pragma: no cover
                 print(f"test_defaults: Failed to set default value for setting '{key}'")
                 raise exc
 
