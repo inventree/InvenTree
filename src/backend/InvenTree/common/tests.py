@@ -1702,6 +1702,7 @@ class SelectionListTest(InvenTreeAPITestCase):
             description='Test Description 2',
             active=False,
         )
+        self.list2 = SelectionList.objects.create(name='Test List 2', active=False)
 
     def test_api(self):
         """Test the SelectionList and SelctionListEntry API endpoints."""
@@ -1729,6 +1730,7 @@ class SelectionListTest(InvenTreeAPITestCase):
         """Test model meta functions."""
         # Models str
         self.assertEqual(str(self.list), 'Test List')
+        self.assertEqual(str(self.list2), 'Test List 2 (Inactive)')
         self.assertEqual(str(self.entry1), 'Test Entry')
         self.assertEqual(str(self.entry2), 'Test Entry 2 (Inactive)')
 
