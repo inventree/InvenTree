@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
-  IconDots,
   IconInfoCircle,
   IconListDetails,
   IconSitemap
@@ -14,9 +13,9 @@ import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -212,9 +211,8 @@ export default function CategoryDetail() {
   const categoryActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.partcategory} pk={category.pk} />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Category Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.part_category),
