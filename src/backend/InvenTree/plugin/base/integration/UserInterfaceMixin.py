@@ -4,10 +4,29 @@ Allows integration of custom UI elements into the React user interface.
 """
 
 import logging
+from typing import TypedDict
 
 from rest_framework.request import Request
 
 logger = logging.getLogger('inventree')
+
+
+class CustomPanel(TypedDict):
+    """Type definition for a custom panel.
+
+    Attributes:
+        name: The name of the panel (required, used as a DOM identifier).
+        label: The label of the panel (required, human readable).
+        icon: The icon of the panel (optional, must be a valid icon identifier).
+        content: The content of the panel (optional, raw HTML).
+        source: The source of the panel (optional, path to a JavaScript file).
+    """
+
+    name: str
+    label: str
+    icon: str
+    content: str
+    source: str
 
 
 class UserInterfaceMixin:
@@ -29,7 +48,7 @@ class UserInterfaceMixin:
 
     def get_custom_panels(
         self, instance_type: str, instance_id: int, request: Request
-    ) -> list:
+    ) -> list[CustomPanel]:
         """Return a list of custom panels to be injected into the UI.
 
         Args:
