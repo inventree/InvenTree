@@ -181,7 +181,8 @@ export default function NotesEditor({
           className: 'fa fa-eye',
           title: t`Preview notes`
         });
-        icons.push('|');
+
+        icons.push('|', 'side-by-side', '|');
       } else {
         icons.push({
           name: 'edit-enabled',
