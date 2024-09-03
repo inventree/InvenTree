@@ -179,7 +179,7 @@ export default function NotesEditor({
           name: 'edit-disabled',
           action: () => setEditing(false),
           className: 'fa fa-eye',
-          title: t`Preview notes`
+          title: t`Disable Editing`
         });
 
         icons.push('|', 'side-by-side', '|');
@@ -188,7 +188,7 @@ export default function NotesEditor({
           name: 'edit-enabled',
           action: () => setEditing(true),
           className: 'fa fa-edit',
-          title: t`Edit notes`
+          title: t`Enable Editing`
         });
       }
     }
