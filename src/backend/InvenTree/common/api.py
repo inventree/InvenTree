@@ -549,12 +549,14 @@ class AllUnitList(ListAPI):
         data = {
             'default_system': reg.default_system,
             'available_systems': dir(reg.sys),
-            'available_units': all_units,
+            'available_units': {k: v for k, v in all_units.items() if v},
         }
         return Response(data)
 
     def get_unit(self, reg, k):
         """Parse a unit from the registry."""
+        if not hasattr(reg, k):
+            return None
         unit: Type[UnitLike] = getattr(reg, k)
         return {
             'name': k,
