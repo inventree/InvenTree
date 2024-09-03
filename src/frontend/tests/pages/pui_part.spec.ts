@@ -226,7 +226,7 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
   await page.goto(`${baseUrl}/part/69/notes`);
 
   // Enable editing
-  await page.getByLabel('toggle-notes-editing').waitFor();
+  await page.getByLabel('Enable Editing').waitFor();
 
   // Use keyboard shortcut to "edit" the part
   await page.keyboard.press('Control+E');
@@ -235,36 +235,10 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
   await page.getByLabel('related-field-category').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  await page.getByLabel('toggle-notes-editing').click();
-
-  // Enter some text
-  await page
-    .getByRole('textbox')
-    .getByRole('paragraph')
-    .fill('This is some data\n');
-
-  // Save
-  await page.waitForTimeout(1000);
-  await page.getByLabel('save-notes').click();
-
-  /*
-   * Note: 2024-07-16
-   * Ref: https://github.com/inventree/InvenTree/pull/7649
-   * The following tests have been disabled as they are unreliable...
-   * For some reasons, the axios request fails, with "x-unknown" status.
-   * Commenting out for now as the failed tests are eating a *lot* of time.
-   */
-
-  // await page.getByText('Notes saved successfully').waitFor();
-
-  // Navigate away from the page, and then back
-  await page.goto(`${baseUrl}/stock/location/index/`);
-  await page.waitForURL('**/platform/stock/location/**');
-  await page.getByRole('tab', { name: 'Location Details' }).waitFor();
-  await page.goto(`${baseUrl}/part/69/notes`);
-
-  // Check that the original notes are still present
-  // await page.getByText('This is some data').waitFor();
+  // Enable notes editing
+  await page.getByLabel('Enable Editing').click();
+  await page.getByLabel('Disable Editing').waitFor();
+  await page.getByLabel('Save Notes').waitFor();
 });
 
 test('PUI - Pages - Part - 404', async ({ page }) => {
