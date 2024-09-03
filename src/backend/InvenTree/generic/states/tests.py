@@ -27,7 +27,6 @@ class GeneralStatus(StatusCode):
 
     def GHI(self):  # This should be ignored
         """A invalid function."""
-        ...
 
 
 class GeneralStateTest(InvenTreeTestCase):

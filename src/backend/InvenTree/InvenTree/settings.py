@@ -281,7 +281,7 @@ QUERYCOUNT = {
         'MIN_TIME_TO_LOG': 0.1,
         'MIN_QUERY_COUNT_TO_LOG': 25,
     },
-    'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
+    'IGNORE_REQUEST_PATTERNS': [r'^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
     'DISPLAY_DUPLICATES': 1,
     'RESPONSE_HEADER': 'X-Django-Query-Count',
@@ -298,7 +298,7 @@ if (
     and INVENTREE_ADMIN_ENABLED
     and not TESTING
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):  # noqa
+):
     try:
         import django_admin_shell  # noqa: F401
 
@@ -949,10 +949,7 @@ USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
-if not TESTING:
-    USE_TZ = True  # pragma: no cover
-else:
-    USE_TZ = False
+USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
@@ -1065,7 +1062,7 @@ COOKIE_MODE = (
 
 valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
 
-if COOKIE_MODE not in valid_cookie_modes.keys():
+if COOKIE_MODE not in valid_cookie_modes:
     logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
     sys.exit(-1)
 

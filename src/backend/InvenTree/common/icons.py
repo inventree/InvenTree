@@ -55,7 +55,7 @@ def get_icon_packs():
         tabler_icons_path = Path(__file__).parent.parent.joinpath(
             'InvenTree/static/tabler-icons/icons.json'
         )
-        with open(tabler_icons_path, 'r') as tabler_icons_file:
+        with open(tabler_icons_path, encoding='utf-8') as tabler_icons_file:
             tabler_icons = json.load(tabler_icons_file)
 
         icon_packs = [

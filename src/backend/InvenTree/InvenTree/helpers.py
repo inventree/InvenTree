@@ -9,15 +9,15 @@ import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import TypeVar, Union
+from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
 
-import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import Storage, default_storage
 from django.http import StreamingHttpResponse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import pytz
@@ -97,10 +97,7 @@ def generateTestKey(test_name: str) -> str:
         if char.isidentifier():
             return True
 
-        if char.isalnum():
-            return True
-
-        return False
+        return bool(char.isalnum())
 
     # Remove any characters that cannot be used to represent a variable
     key = ''.join([c for c in key if valid_char(c)])
@@ -490,10 +487,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     except ValueError:
         raise ValidationError([_('Invalid quantity provided')])
 
-    if input_string:
-        input_string = str(input_string).strip()
-    else:
-        input_string = ''
+    input_string = str(input_string).strip() if input_string else ''
 
     if len(input_string) == 0:
         raise ValidationError([_('Empty serial number string')])
@@ -800,10 +794,10 @@ def remove_non_printable_characters(
     if remove_unicode:
         # Remove Unicode control characters
         if remove_newline:
-            cleaned = regex.sub('[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub(r'[^\P{C}]+', '', cleaned)
         else:
             # Use 'negative-lookahead' to exclude newline character
-            cleaned = regex.sub('(?![\x0a])[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub('(?![\x0a])[^\\P{C}]+', '', cleaned)
 
     return cleaned
 
@@ -827,7 +821,7 @@ def hash_barcode(barcode_data):
 def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
     """Return the MD5 hash of a file."""
     content = (
-        open(filename, 'rb').read()
+        open(filename, 'rb').read()  # noqa: SIM115
         if storage is None
         else storage.open(str(filename), 'rb').read()
     )
@@ -865,7 +859,7 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: str = None):
+def to_local_time(time, target_tz: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:

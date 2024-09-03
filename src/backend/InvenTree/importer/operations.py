@@ -36,7 +36,7 @@ def load_data_file(data_file, file_format=None):
 
     try:
         data = file_object.read()
-    except (IOError, FileNotFoundError):
+    except (OSError, FileNotFoundError):
         raise ValidationError(_('Failed to open data file'))
 
     # Excel formats expect binary data
@@ -113,9 +113,8 @@ def get_field_label(field) -> str:
     Returns:
         str: Field label
     """
-    if field:
-        if label := getattr(field, 'label', None):
-            return label
+    if field and (label := getattr(field, 'label', None)):
+        return label
 
     # TODO: Check if the field is a model field
 

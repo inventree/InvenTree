@@ -253,7 +253,7 @@ export default function BuildDetail() {
         label: t`Line Items`,
         icon: <IconListNumbers />,
         content: build?.pk ? (
-          <BuildLineTable buildId={build.pk} />
+          <BuildLineTable build={build} buildId={build.pk} />
         ) : (
           <Skeleton />
         )
@@ -309,10 +309,7 @@ export default function BuildDetail() {
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
         content: build.pk ? (
-          <BuildOrderTable
-            parentBuildId={build.pk}
-            salesOrderId={build.sales_order}
-          />
+          <BuildOrderTable parentBuildId={build.pk} />
         ) : (
           <Skeleton />
         )
