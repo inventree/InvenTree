@@ -80,6 +80,7 @@ export default function AdminButton(props: AdminButtonProps) {
       tooltip={t`Open in admin interface`}
       hidden={!enabled}
       onClick={openAdmin}
+      tooltipAlignment="bottom"
     />
   );
 }
