@@ -19,11 +19,7 @@ function AllUnitTable() {
         title: t`Name`
       },
       BooleanColumn({ accessor: 'is_alias', title: t`Alias` }),
-      BooleanColumn({ accessor: 'isdimensionless', title: t`Dimensionless` }),
-      {
-        accessor: 'default_format',
-        title: t`default_format`
-      }
+      BooleanColumn({ accessor: 'isdimensionless', title: t`Dimensionless` })
     ];
   }, []);
 
@@ -44,8 +40,7 @@ function AllUnitTable() {
               name: values.name,
               is_alias: values.is_alias,
               compatible_units: values.compatible_units,
-              isdimensionless: values.isdimensionless,
-              default_format: values.default_format
+              isdimensionless: values.isdimensionless
             };
           });
         }

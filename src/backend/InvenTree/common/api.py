@@ -561,7 +561,6 @@ class AllUnitList(ListAPI):
             'is_alias': reg.get_name(k) == k,
             'compatible_units': [str(a) for a in unit.compatible_units()],
             'isdimensionless': unit.dimensionless,
-            'default_format': unit.default_format,
         }
 
 

@@ -392,7 +392,6 @@ class AllUnitListResponseSerializer(serializers.Serializer):
         is_alias = serializers.BooleanField()
         compatible_units = serializers.ListField(child=serializers.CharField())
         isdimensionless = serializers.BooleanField()
-        default_format = serializers.CharField()
 
     default_system = serializers.CharField()
     available_systems = serializers.ListField(child=serializers.CharField())
