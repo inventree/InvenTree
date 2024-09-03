@@ -1444,7 +1444,7 @@ def clear_generated(c):
 
 
 # Collection sorting
-dev = Collection(
+development = Collection(
     delete_data,
     docs_server,
     frontend_dev,
@@ -1458,7 +1458,7 @@ dev = Collection(
     test_translations,
     translate,
 )
-int = Collection(
+internal = Collection(
     clean_settings,
     clear_generated,
     export_settings_definitions,
@@ -1490,5 +1490,5 @@ ns = Collection(
     version,
     wait,
 )
-ns.add_collection(dev, 'dev')
-ns.add_collection(int, 'int')
+ns.add_collection(development, 'dev')
+ns.add_collection(internal, 'int')
