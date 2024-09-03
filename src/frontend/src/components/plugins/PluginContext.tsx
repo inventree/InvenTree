@@ -1,4 +1,4 @@
-import { MantineTheme } from '@mantine/core';
+import { MantineColorScheme, MantineTheme } from '@mantine/core';
 import { AxiosInstance } from 'axios';
 import { NavigateFunction } from 'react-router-dom';
 
@@ -19,6 +19,7 @@ import { UserStateProps } from '../../states/UserState';
  * @param globalSettings - The global settings (see ../states/SettingsState.tsx)
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
+ * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  */
 export type PluginContext = {
   model?: ModelType | string;
@@ -31,4 +32,5 @@ export type PluginContext = {
   host: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
+  colorScheme: MantineColorScheme;
 };

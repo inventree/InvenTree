@@ -1,4 +1,4 @@
-import { useMantineTheme } from '@mantine/core';
+import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +35,7 @@ export function usePluginPanels({
   const host = useLocalState.getState().host;
   const navigate = useNavigate();
   const user = useUserState();
+  const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
@@ -80,7 +81,8 @@ export function usePluginPanels({
       navigate: navigate,
       globalSettings: globalSettings,
       userSettings: userSettings,
-      theme: theme
+      theme: theme,
+      colorScheme: colorScheme
     };
   }, [
     model,
@@ -92,7 +94,8 @@ export function usePluginPanels({
     navigate,
     globalSettings,
     userSettings,
-    theme
+    theme,
+    colorScheme
   ]);
 
   // Track which panels are hidden: { panelName: true/false }
