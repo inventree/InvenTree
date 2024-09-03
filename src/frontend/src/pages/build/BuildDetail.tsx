@@ -4,7 +4,6 @@ import {
   IconChecklist,
   IconClipboardCheck,
   IconClipboardList,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconListCheck,
@@ -25,12 +24,12 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction
+  HoldItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -475,9 +474,8 @@ export default function BuildDetail() {
         items={[build.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Build Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
