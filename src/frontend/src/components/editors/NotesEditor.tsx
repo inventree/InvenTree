@@ -178,28 +178,27 @@ export default function NotesEditor({
         icons.push({
           name: 'edit-disabled',
           action: () => setEditing(false),
-          className: 'fa fa-eye-slash',
-          title: t`Disable Editing`
+          className: 'fa fa-eye',
+          title: t`Preview notes`
         });
+        icons.push('|');
       } else {
         icons.push({
           name: 'edit-enabled',
           action: () => setEditing(true),
-          className: 'fa fa-eye',
-          title: t`Enable Editing`
+          className: 'fa fa-edit',
+          title: t`Edit notes`
         });
       }
-
-      icons.push('|');
     }
 
-    icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
-    icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
-    icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
-    icons.push('table', 'link', 'image', '|');
-    icons.push('horizontal-rule', '|', 'guide'); // Misc
-
     if (editing) {
+      icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
+      icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
+      icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
+      icons.push('table', 'link', 'image', '|');
+      icons.push('horizontal-rule', '|', 'guide'); // Misc
+
       icons.push('|', 'undo', 'redo'); // Undo/Redo
       icons.push('|');
 
@@ -219,7 +218,8 @@ export default function NotesEditor({
       imagePathAbsolute: true,
       imageUploadFunction: imageUploadHandler,
       sideBySideFullscreen: false,
-      shortcuts: {}
+      shortcuts: {},
+      spellChecker: false
     };
   }, [editable, editing]);
 
