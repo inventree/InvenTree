@@ -39,14 +39,18 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   barcode = 'barcode/',
+  barcode_link = 'barcode/link/',
+  barcode_unlink = 'barcode/unlink/',
   generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
+  custom_state_list = 'generic/status/custom/',
   version = 'version/',
   license = 'license/',
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  content_type_list = 'contenttype/',
   icons = 'icons/',
 
   // Data import endpoints
@@ -70,6 +74,9 @@ export enum ApiEndpoints {
   build_output_create = 'build/:id/create-output/',
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
+  build_order_auto_allocate = 'build/:id/auto-allocate/',
+  build_order_allocate = 'build/:id/allocate/',
+  build_order_deallocate = 'build/:id/unallocate/',
   build_line_list = 'build/line/',
   build_item_list = 'build/item/',
 
@@ -132,6 +139,7 @@ export enum ApiEndpoints {
   purchase_order_cancel = 'order/po/:id/cancel/',
   purchase_order_complete = 'order/po/:id/complete/',
   purchase_order_line_list = 'order/po-line/',
+  purchase_order_extra_line_list = 'order/po-extra-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 
   sales_order_list = 'order/so/',
@@ -141,6 +149,7 @@ export enum ApiEndpoints {
   sales_order_ship = 'order/so/:id/ship/',
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_line_list = 'order/so-line/',
+  sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
   sales_order_shipment_list = 'order/so/shipment/',
 
@@ -150,6 +159,7 @@ export enum ApiEndpoints {
   return_order_cancel = 'order/ro/:id/cancel/',
   return_order_complete = 'order/ro/:id/complete/',
   return_order_line_list = 'order/ro-line/',
+  return_order_extra_line_list = 'order/ro-extra-line/',
 
   // Template API endpoints
   label_list = 'label/template/',

@@ -37,6 +37,7 @@ from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (
     InvenTreeModelMoneyField,
@@ -470,7 +471,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         validators=[order.validators.validate_purchase_order_reference],
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=PurchaseOrderStatus.PENDING.value,
         choices=PurchaseOrderStatus.items(),
         verbose_name=_('Status'),
@@ -996,7 +997,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base."""
         return self.customer
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
         verbose_name=_('Status'),
@@ -1047,19 +1048,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_fully_allocated(self):
         """Return True if all line items are fully allocated."""
-        for line in self.lines.all():
-            if not line.is_fully_allocated():
-                return False
-
-        return True
+        return all(line.is_fully_allocated() for line in self.lines.all())
 
     def is_overallocated(self):
         """Return true if any lines in the order are over-allocated."""
-        for line in self.lines.all():
-            if line.is_overallocated():
-                return True
-
-        return False
+        return any(line.is_overallocated() for line in self.lines.all())
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
@@ -2153,7 +2146,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base class."""
         return self.customer
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
         verbose_name=_('Status'),
@@ -2404,7 +2397,7 @@ class ReturnOrderLineItem(OrderLineItem):
         """Return True if this item has been received."""
         return self.received_date is not None
 
-    outcome = models.PositiveIntegerField(
+    outcome = InvenTreeCustomStatusModelField(
         default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
         verbose_name=_('Outcome'),

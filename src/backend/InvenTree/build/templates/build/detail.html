@@ -60,7 +60,7 @@
                 <tr>
                     <td><span class='fas fa-info'></span></td>
                     <td>{% trans "Status" %}</td>
-                    <td>{% status_label 'build' build.status %}</td>
+                    <td>{% display_status_label 'build' build.status_custom_key build.status %}</td>
                 </tr>
                 <tr>
                     <td><span class='fas fa-check-circle'></span></td>
@@ -388,6 +388,7 @@ onPanelLoad('outputs', function() {
         source_location: {{ build.take_from.pk }},
         {% endif %}
         tracked_parts: true,
+        testable: {% js_bool build.part.testable %},
         trackable: {% js_bool build.part.trackable %}
     };
 

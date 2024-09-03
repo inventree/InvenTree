@@ -49,7 +49,7 @@ class BomExportTest(InvenTreeTestCase):
         with open(filename, 'wb') as f:
             f.write(response.getvalue())
 
-        with open(filename, 'r') as f:
+        with open(filename, encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
 
             for line in reader:
@@ -96,7 +96,7 @@ class BomExportTest(InvenTreeTestCase):
             f.write(response.getvalue())
 
         # Read the file
-        with open(filename, 'r') as f:
+        with open(filename, encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
 
             for line in reader:

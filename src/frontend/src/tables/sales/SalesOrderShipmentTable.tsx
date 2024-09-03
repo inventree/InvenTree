@@ -6,6 +6,7 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -18,7 +19,7 @@ import { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId
@@ -97,14 +98,15 @@ export default function SalesOrderShipmentTable({
   }, []);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       const shipped: boolean = !!record.shipment_date;
 
       return [
         {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,
-          icon: <IconTruckDelivery />
+          icon: <IconTruckDelivery />,
+          onClick: notYetImplemented
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.sales_order),

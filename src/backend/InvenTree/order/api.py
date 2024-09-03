@@ -77,7 +77,7 @@ class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
-    status = rest_filters.NumberFilter(label='Order Status', method='filter_status')
+    status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code."""
@@ -85,11 +85,11 @@ class OrderFilter(rest_filters.FilterSet):
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
-        label='Filter by exact reference', field_name='reference', lookup_expr='iexact'
+        label=_('Order Reference'), field_name='reference', lookup_expr='iexact'
     )
 
     assigned_to_me = rest_filters.BooleanFilter(
-        label='assigned_to_me', method='filter_assigned_to_me'
+        label=_('Assigned to me'), method='filter_assigned_to_me'
     )
 
     def filter_assigned_to_me(self, queryset, name, value):
@@ -113,7 +113,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(self.Meta.model.overdue_filter())
 
     outstanding = rest_filters.BooleanFilter(
-        label='outstanding', method='filter_outstanding'
+        label=_('Outstanding'), method='filter_outstanding'
     )
 
     def filter_outstanding(self, queryset, name, value):
@@ -123,11 +123,13 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=common.models.ProjectCode.objects.all(), field_name='project_code'
+        queryset=common.models.ProjectCode.objects.all(),
+        field_name='project_code',
+        label=_('Project Code'),
     )
 
     has_project_code = rest_filters.BooleanFilter(
-        label='has_project_code', method='filter_has_project_code'
+        method='filter_has_project_code', label=_('Has Project Code')
     )
 
     def filter_has_project_code(self, queryset, name, value):
@@ -137,7 +139,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.filter(project_code=None)
 
     assigned_to = rest_filters.ModelChoiceFilter(
-        queryset=Owner.objects.all(), field_name='responsible'
+        queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
     )
 
 
@@ -334,8 +336,6 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
 
 class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrder object."""
-
-    pass
 
 
 class PurchaseOrderContextMixin:
@@ -601,8 +601,6 @@ class PurchaseOrderLineItemList(
 class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for PurchaseOrderLineItem object."""
 
-    pass
-
 
 class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
@@ -744,8 +742,6 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
 class SalesOrderDetail(SalesOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
 
-    pass
-
 
 class SalesOrderLineItemFilter(LineItemFilter):
     """Custom filters for SalesOrderLineItemList endpoint."""
@@ -862,8 +858,6 @@ class SalesOrderLineItemList(
 
 class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderLineItem object."""
-
-    pass
 
 
 class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
@@ -1179,8 +1173,6 @@ class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
 class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single ReturnOrder object."""
 
-    pass
-
 
 class ReturnOrderContextMixin:
     """Simple mixin class to add a ReturnOrder to the serializer context."""
@@ -1308,8 +1300,6 @@ class ReturnOrderLineItemList(
 class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a ReturnOrderLineItem object."""
 
-    pass
-
 
 class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
@@ -1366,10 +1356,9 @@ class OrderCalendarExport(ICalFeed):
                 if auth[0].lower() == 'basic':
                     uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
                     user = authenticate(username=uname, password=passwd)
-                    if user is not None:
-                        if user.is_active:
-                            login(request, user)
-                            request.user = user
+                    if user is not None and user.is_active:
+                        login(request, user)
+                        request.user = user
 
         # Check again
         if request.user.is_authenticated:

@@ -59,9 +59,36 @@ test('PUI - Purchase Orders', async ({ page }) => {
   await page.getByRole('cell', { name: 'PO0013' }).click();
 
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+});
+
+test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
   await page.getByLabel('action-menu-barcode-actions').click();
   await page.getByLabel('action-menu-barcode-actions-view').click();
   await page.getByRole('img', { name: 'QR Code' }).waitFor();
+  await page.getByRole('banner').getByRole('button').click();
+
+  // Link to barcode
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
+  await page.getByRole('heading', { name: 'Link Barcode' }).waitFor();
+  await page
+    .getByPlaceholder('Scan barcode data here using')
+    .fill('1234567890');
+  await page.getByRole('button', { name: 'Link' }).click();
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Unlink barcode
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+  await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
+  await page.getByText('This will remove the link to').waitFor();
+  await page.getByRole('button', { name: 'Unlink Barcode' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });

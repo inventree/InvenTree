@@ -1,12 +1,53 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 238
+INVENTREE_API_VERSION = 249
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v249 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7978
+    - Sort status enums
+
+v248 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7965
+    - Small adjustments to labels for new custom status fields
+
+v247 - 2024-08-22 : https://github.com/inventree/InvenTree/pull/7956
+    - Adjust "attachment" field on StockItemTestResult serializer
+    - Allow null values for attachment
+
+v246 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7862
+    - Adds custom status fields to various serializers
+    - Adds endpoints to admin custom status fields
+
+v245 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7520
+    - Documented pagination fields (no functional changes)
+
+v244 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7941
+    - Adds "create_child_builds" field to the Build API
+    - Write-only field to create child builds from the API
+    - Only available when creating a new build order
+
+v243 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7940
+    - Expose "ancestor" filter to the BuildOrder API
+
+v242 - 2024-08-20 : https://github.com/inventree/InvenTree/pull/7932
+    - Adds "level" attribute to BuildOrder serializer
+    - Allow ordering of BuildOrder API by "level" attribute
+    - Allow "parent" filter for BuildOrder API to have "cascade=True" option
+
+v241 - 2024-08-18 : https://github.com/inventree/InvenTree/pull/7906
+    - Adjusts required fields for the MeUserDetail endpoint
+
+v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
+    - Adjust "issued_by" filter for the BuildOrder list endpoint
+    - Adjust "assigned_to" filter for the BuildOrder list endpoint
+
+v239 - 2024-08-15 : https://github.com/inventree/InvenTree/pull/7888
+    - Adds "testable" field to the Part model
+    - Adds associated filters to various API endpoints
 
 v238 - 2024-08-14 : https://github.com/inventree/InvenTree/pull/7874
     - Add "assembly" filter to BuildLine API endpoint

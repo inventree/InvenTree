@@ -39,7 +39,7 @@ def collect_plugins_static_files():
 
     logger.info('Collecting static files for all installed plugins.')
 
-    for slug in registry.plugins.keys():
+    for slug in registry.plugins:
         copy_plugin_static_files(slug, check_reload=False)
 
 

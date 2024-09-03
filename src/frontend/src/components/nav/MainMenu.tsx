@@ -1,9 +1,18 @@
 import { Trans } from '@lingui/macro';
-import { Group, Menu, Skeleton, Text, UnstyledButton } from '@mantine/core';
+import {
+  Group,
+  Menu,
+  Skeleton,
+  Text,
+  UnstyledButton,
+  useMantineColorScheme
+} from '@mantine/core';
 import {
   IconChevronDown,
   IconLogout,
+  IconMoonStars,
   IconSettings,
+  IconSun,
   IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
@@ -20,6 +29,7 @@ export function MainMenu() {
     state.user,
     state.username
   ]);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (
     <Menu width={260} position="bottom-end">
@@ -57,6 +67,15 @@ export function MainMenu() {
             <Trans>System Settings</Trans>
           </Menu.Item>
         )}
+        <Menu.Item
+          onClick={toggleColorScheme}
+          leftSection={colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
+          c={
+            colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
+          }
+        >
+          <Trans>Change Color Mode</Trans>
+        </Menu.Item>
         {user?.is_staff && <Menu.Divider />}
         {user?.is_staff && (
           <Menu.Item

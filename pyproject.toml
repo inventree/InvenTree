@@ -20,13 +20,30 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "I", "N", "F"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
 
 ignore = [
+    "PLE1205",
+    # - PLE1205 - Too many arguments for logging format string
+    "PLW2901",
+    # - PLW2901 - Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
+    "PLW0602","PLW0603","PLW0604",  # global variable things
+    "RUF015",
+    # - RUF015 - Prefer next({iterable}) over single element slice
+    "RUF012",
+    # - RUF012 - Mutable class attributes should be annotated with typing.ClassVar
+    "SIM117",
+    # - SIM117 - Use a single with statement with multiple contexts instead of nested with statements
+    "SIM102",
+    # - SIM102 - Use a single if statement instead of nested if statements
+    "SIM105",
+    # - SIM105 - Use contextlib.suppress({exception}) instead of try-except-pass
+    "C901",
+    # - C901 - function is too complex
     "N999",
     # - N802 - function name should be lowercase
 	"N802",
@@ -42,7 +59,7 @@ ignore = [
     "B904",
 
     # Remove fast
-    "A001", "A002","A003","B018"
+    "A002", "B018"
 ]
 
 [tool.ruff.lint.pydocstyle]

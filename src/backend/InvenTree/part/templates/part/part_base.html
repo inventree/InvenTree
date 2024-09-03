@@ -211,6 +211,13 @@
             <td>{% decimal on_order %} {% include "part/part_units.html" %}</td>
         </tr>
         {% endif %}
+        {% if required > 0 %}
+        <tr>
+            <td><span class='fas fa-clipboard-check'></span></td>
+            <td>{% trans "Required for Orders" %}</td>
+            <td>{% decimal required %}</td>
+        </tr>
+        {% endif %}
         {% if part.component %}
         {% if required_build_order_quantity > 0 or allocated_build_order_quantity > 0 %}
         <tr>

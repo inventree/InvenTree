@@ -29,7 +29,7 @@ import common.models
 import common.serializers
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
-from generic.states.api import AllStatusViews, StatusView
+from generic.states.api import urlpattern as generic_states_api_urls
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
@@ -47,7 +47,7 @@ from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
 
-class CsrfExemptMixin(object):
+class CsrfExemptMixin:
     """Exempts the view from CSRF requirements."""
 
     @method_decorator(csrf_exempt)
@@ -136,7 +136,7 @@ class CurrencyExchangeView(APIView):
     serializer_class = None
 
     @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
-    def get(self, request, format=None):
+    def get(self, request, fmt=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
         try:
@@ -244,10 +244,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
         """Attempt to find a global setting object with the provided key."""
         key = str(self.kwargs['key']).upper()
 
-        if (
-            key.startswith('_')
-            or key not in common.models.InvenTreeSetting.SETTINGS.keys()
-        ):
+        if key.startswith('_') or key not in common.models.InvenTreeSetting.SETTINGS:
             raise NotFound()
 
         return common.models.InvenTreeSetting.get_setting_object(
@@ -318,7 +315,7 @@ class UserSettingsDetail(RetrieveUpdateAPI):
 
         if (
             key.startswith('_')
-            or key not in common.models.InvenTreeUserSetting.SETTINGS.keys()
+            or key not in common.models.InvenTreeUserSetting.SETTINGS
         ):
             raise NotFound()
 
@@ -566,7 +563,7 @@ class BackgroundTaskOverview(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
     serializer_class = None
 
-    def get(self, request, format=None):
+    def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
 
@@ -655,6 +652,8 @@ class ContentTypeList(ListAPI):
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['app_label', 'model']
 
 
 class ContentTypeDetail(RetrieveAPI):
@@ -965,16 +964,7 @@ common_api_urls = [
         ]),
     ),
     # Status
-    path(
-        'generic/status/',
-        include([
-            path(
-                f'<str:{StatusView.MODEL_REF}>/',
-                include([path('', StatusView.as_view(), name='api-status')]),
-            ),
-            path('', AllStatusViews.as_view(), name='api-status-all'),
-        ]),
-    ),
+    path('generic/status/', include(generic_states_api_urls)),
     # Contenttype
     path(
         'contenttype/',

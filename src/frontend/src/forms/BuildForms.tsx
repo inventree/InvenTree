@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Stack, Text } from '@mantine/core';
+import { Alert, Stack, Table, Text } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -10,16 +10,26 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
+import { StandaloneField } from '../components/forms/StandaloneField';
+import {
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from '../components/forms/fields/ApiFormField';
+import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import { ProgressBar } from '../components/items/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
+import { resolveItem } from '../functions/conversion';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
+import { useSelectedRows } from '../hooks/UseSelectedRows';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn, StatusColumn } from '../tables/ColumnRenderers';
@@ -47,7 +57,7 @@ export function useBuildOrderFields({
   const globalSettings = useGlobalSettingsState();
 
   return useMemo(() => {
-    return {
+    let fields: ApiFormFieldSet = {
       reference: {},
       part: {
         disabled: !create,
@@ -119,6 +129,12 @@ export function useBuildOrderFields({
         }
       }
     };
+
+    if (create) {
+      fields.create_child_builds = {};
+    }
+
+    return fields;
   }, [create, destination, batchCode, globalSettings]);
 }
 
@@ -234,7 +250,7 @@ function buildOutputFormTable(outputs: any[], onRemove: (output: any) => void) {
               tooltip={t`Remove output`}
               icon={<InvenTreeIcon icon="cancel" />}
               color="red"
-              onClick={() => onRemove(record)}
+              onClick={() => onRemove(record.pk)}
               disabled={outputs.length <= 1}
             />
           )
@@ -253,13 +269,11 @@ export function useCompleteBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
-  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
-
   const [location, setLocation] = useState<number | null>(null);
 
-  useEffect(() => {
-    setSelectedOutputs(outputs);
-  }, [outputs]);
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
 
   useEffect(() => {
     if (location) {
@@ -271,31 +285,21 @@ export function useCompleteBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
-  // Remove a selected output from the list
-  const removeOutput = useCallback(
-    (output: any) => {
-      setSelectedOutputs(
-        selectedOutputs.filter((item) => item.pk != output.pk)
-      );
-    },
-    [selectedOutputs]
-  );
-
   const preFormContent = useMemo(() => {
-    return buildOutputFormTable(selectedOutputs, removeOutput);
-  }, [selectedOutputs, removeOutput]);
+    return buildOutputFormTable(selectedRows, removeRow);
+  }, [selectedRows, removeRow]);
 
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         hidden: true,
-        value: selectedOutputs.map((output) => {
+        value: selectedRows.map((output: any) => {
           return {
             output: output.pk
           };
         })
       },
-      status: {},
+      status_custom_key: {},
       location: {
         filters: {
           structural: false
@@ -308,7 +312,7 @@ export function useCompleteBuildOutputsForm({
       notes: {},
       accept_incomplete_allocation: {}
     };
-  }, [selectedOutputs, location]);
+  }, [selectedRows, location]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_complete, build.pk),
@@ -321,6 +325,9 @@ export function useCompleteBuildOutputsForm({
   });
 }
 
+/*
+ * Dynamic form for scraping multiple build outputs
+ */
 export function useScrapBuildOutputsForm({
   build,
   outputs,
@@ -331,21 +338,10 @@ export function useScrapBuildOutputsForm({
   onFormSuccess: (response: any) => void;
 }) {
   const [location, setLocation] = useState<number | null>(null);
-  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
 
-  useEffect(() => {
-    setSelectedOutputs(outputs);
-  }, [outputs]);
-
-  // Remove a selected output from the list
-  const removeOutput = useCallback(
-    (output: any) => {
-      setSelectedOutputs(
-        selectedOutputs.filter((item) => item.pk != output.pk)
-      );
-    },
-    [selectedOutputs]
-  );
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
 
   useEffect(() => {
     if (location) {
@@ -358,14 +354,14 @@ export function useScrapBuildOutputsForm({
   }, [location, build.destination, build.part_detail]);
 
   const preFormContent = useMemo(() => {
-    return buildOutputFormTable(selectedOutputs, removeOutput);
-  }, [selectedOutputs, removeOutput]);
+    return buildOutputFormTable(selectedRows, removeRow);
+  }, [selectedRows, removeRow]);
 
   const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         hidden: true,
-        value: selectedOutputs.map((output) => {
+        value: selectedRows.map((output: any) => {
           return {
             output: output.pk,
             quantity: output.quantity
@@ -381,7 +377,7 @@ export function useScrapBuildOutputsForm({
       notes: {},
       discard_allocations: {}
     };
-  }, [location, selectedOutputs]);
+  }, [location, selectedRows]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
@@ -403,21 +399,9 @@ export function useCancelBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
-  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
-
-  useEffect(() => {
-    setSelectedOutputs(outputs);
-  }, [outputs]);
-
-  // Remove a selected output from the list
-  const removeOutput = useCallback(
-    (output: any) => {
-      setSelectedOutputs(
-        selectedOutputs.filter((item) => item.pk != output.pk)
-      );
-    },
-    [selectedOutputs]
-  );
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
 
   const preFormContent = useMemo(() => {
     return (
@@ -425,23 +409,23 @@ export function useCancelBuildOutputsForm({
         <Alert color="red" title={t`Cancel Build Outputs`}>
           <Text>{t`Selected build outputs will be deleted`}</Text>
         </Alert>
-        {buildOutputFormTable(selectedOutputs, removeOutput)}
+        {buildOutputFormTable(selectedRows, removeRow)}
       </Stack>
     );
-  }, [selectedOutputs, removeOutput]);
+  }, [selectedRows, removeRow]);
 
   const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         hidden: true,
-        value: selectedOutputs.map((output) => {
+        value: selectedRows.map((output: any) => {
           return {
             output: output.pk
           };
         })
       }
     };
-  }, [selectedOutputs]);
+  }, [selectedRows]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
@@ -451,5 +435,235 @@ export function useCancelBuildOutputsForm({
     preFormContent: preFormContent,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been cancelled`
+  });
+}
+
+function buildAllocationFormTable(
+  outputs: any[],
+  onRemove: (output: any) => void
+) {
+  return (
+    <DataTable
+      idAccessor="pk"
+      records={outputs}
+      columns={[
+        {
+          accessor: 'part',
+          title: t`Part`,
+          render: (record: any) => PartColumn(record.part_detail)
+        },
+        {
+          accessor: 'allocated',
+          title: t`Allocated`,
+          render: (record: any) => (
+            <ProgressBar
+              value={record.allocated}
+              maximum={record.quantity}
+              progressLabel
+            />
+          )
+        },
+        {
+          accessor: 'actions',
+          title: '',
+          render: (record: any) => (
+            <ActionButton
+              key={`remove-line-${record.pk}`}
+              tooltip={t`Remove line`}
+              icon={<InvenTreeIcon icon="cancel" />}
+              color="red"
+              onClick={() => onRemove(record.pk)}
+              disabled={outputs.length <= 1}
+            />
+          )
+        }
+      ]}
+    />
+  );
+}
+
+// Construct a single row in the 'allocate stock to build' table
+function BuildAllocateLineRow({
+  props,
+  record,
+  sourceLocation
+}: {
+  props: TableFieldRowProps;
+  record: any;
+  sourceLocation: number | undefined;
+}) {
+  const stockField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.stock_item_list),
+      model: ModelType.stockitem,
+      filters: {
+        available: true,
+        part_detail: true,
+        location_detail: true,
+        bom_item: record.bom_item,
+        location: sourceLocation,
+        cascade: sourceLocation ? true : undefined
+      },
+      value: props.item.stock_item,
+      name: 'stock_item',
+      onValueChange: (value: any, instance: any) => {
+        props.changeFn(props.idx, 'stock_item', value);
+
+        // Update the allocated quantity based on the selected stock item
+        if (instance) {
+          let available = instance.quantity - instance.allocated;
+
+          props.changeFn(
+            props.idx,
+            'quantity',
+            Math.min(props.item.quantity, available)
+          );
+        }
+      }
+    };
+  }, [props]);
+
+  const quantityField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'number',
+      name: 'quantity',
+      required: true,
+      value: props.item.quantity,
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'quantity', value);
+      }
+    };
+  }, [props]);
+
+  const partDetail = useMemo(
+    () => PartColumn(record.part_detail),
+    [record.part_detail]
+  );
+
+  return (
+    <>
+      <Table.Tr key={`table-row-${record.pk}`}>
+        <Table.Td>{partDetail}</Table.Td>
+        <Table.Td>
+          <ProgressBar
+            value={record.allocated}
+            maximum={record.quantity}
+            progressLabel
+          />
+        </Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldName="stock_item"
+            fieldDefinition={stockField}
+            error={props.rowErrors?.stock_item?.message}
+          />
+        </Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldName="quantity"
+            fieldDefinition={quantityField}
+            error={props.rowErrors?.quantity?.message}
+          />
+        </Table.Td>
+        <Table.Td>
+          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        </Table.Td>
+      </Table.Tr>
+    </>
+  );
+}
+
+/*
+ * Dynamic form for allocating stock against multiple build order line items
+ */
+export function useAllocateStockToBuildForm({
+  buildId,
+  outputId,
+  build,
+  lineItems,
+  onFormSuccess
+}: {
+  buildId: number;
+  outputId?: number | null;
+  build: any;
+  lineItems: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const [sourceLocation, setSourceLocation] = useState<number | undefined>(
+    undefined
+  );
+
+  const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      items: {
+        field_type: 'table',
+        value: [],
+        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        modelRenderer: (row: TableFieldRowProps) => {
+          // Find the matching record from the passed 'lineItems'
+          const record =
+            lineItems.find((item) => item.pk == row.item.build_line) ?? {};
+          return (
+            <BuildAllocateLineRow
+              props={row}
+              record={record}
+              sourceLocation={sourceLocation}
+            />
+          );
+        }
+      }
+    };
+
+    return fields;
+  }, [lineItems, sourceLocation]);
+
+  useEffect(() => {
+    setSourceLocation(build.take_from);
+  }, [build.take_from]);
+
+  const sourceLocationField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.stock_location_list),
+      model: ModelType.stocklocation,
+      required: false,
+      label: t`Source Location`,
+      description: t`Select the source location for the stock allocation`,
+      name: 'source_location',
+      value: build.take_from,
+      onValueChange: (value: any) => {
+        setSourceLocation(value);
+      }
+    };
+  }, [build?.take_from]);
+
+  const preFormContent = useMemo(() => {
+    return (
+      <Stack gap="xs">
+        <StandaloneField fieldDefinition={sourceLocationField} />
+      </Stack>
+    );
+  }, [sourceLocationField]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_allocate,
+    pk: buildId,
+    title: t`Allocate Stock`,
+    fields: buildAllocateFields,
+    preFormContent: preFormContent,
+    successMessage: t`Stock items allocated`,
+    onFormSuccess: onFormSuccess,
+    initialData: {
+      items: lineItems.map((item) => {
+        return {
+          build_line: item.pk,
+          stock_item: undefined,
+          quantity: Math.max(0, item.quantity - item.allocated),
+          output: null
+        };
+      })
+    },
+    size: '80%'
   });
 }

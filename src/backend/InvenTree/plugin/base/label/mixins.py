@@ -251,8 +251,6 @@ class LabelPrintingMixin:
 
     def before_printing(self):
         """Hook method called before printing labels."""
-        pass
 
     def after_printing(self):
         """Hook method called after printing labels."""
-        pass

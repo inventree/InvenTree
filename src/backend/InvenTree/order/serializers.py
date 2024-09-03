@@ -32,6 +32,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import (
@@ -161,10 +162,12 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'address_detail',
             'status',
             'status_text',
+            'status_custom_key',
             'notes',
             'barcode_hash',
             'overdue',
-        ] + extra_fields
+            *extra_fields,
+        ]
 
 
 class AbstractLineItemSerializer:
@@ -216,7 +219,11 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -318,12 +325,6 @@ class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
 
 class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for cancelling a PurchaseOrder."""
-
-    def get_context_data(self):
-        """Return custom context information about the order."""
-        self.order = self.context['order']
-
-        return {'can_cancel': self.order.can_cancel}
 
     def save(self):
         """Save the serializer to 'cancel' the order."""
@@ -433,7 +434,7 @@ class PurchaseOrderLineItemSerializer(
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
-        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
+        return ['auto_pricing', 'merge_items', *super().skip_create_fields()]
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -740,13 +741,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         base_quantity = line_item.part.base_quantity(quantity)
 
         # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable:
-            if Decimal(base_quantity) != int(base_quantity):
-                raise ValidationError({
-                    'quantity': _(
-                        'An integer quantity must be provided for trackable parts'
-                    )
-                })
+        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
+            raise ValidationError({
+                'quantity': _(
+                    'An integer quantity must be provided for trackable parts'
+                )
+            })
 
         # If serial numbers are provided
         if serial_numbers:
@@ -865,7 +865,11 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -1648,7 +1652,11 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    TotalPriceMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the ReturnOrder model class."""
 

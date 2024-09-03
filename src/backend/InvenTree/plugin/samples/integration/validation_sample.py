@@ -121,7 +121,7 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if d >= 100:
                 self.raise_error('Value must be less than 100')
 
-    def validate_serial_number(self, serial: str, part):
+    def validate_serial_number(self, serial: str, part, stock_item=None):
         """Validate serial number for a given StockItem.
 
         These examples are silly, but serve to demonstrate how the feature could be used

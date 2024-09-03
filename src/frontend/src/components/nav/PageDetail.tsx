@@ -1,4 +1,5 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { useHotkeys } from '@mantine/hooks';
 import { Fragment, ReactNode } from 'react';
 
 import { ApiImage } from '../images/ApiImage';
@@ -15,6 +16,8 @@ interface PageDetailInterface {
   breadcrumbs?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
+  editAction?: () => void;
+  editEnabled?: boolean;
 }
 
 /**
@@ -32,8 +35,21 @@ export function PageDetail({
   imageUrl,
   breadcrumbs,
   breadcrumbAction,
-  actions
+  actions,
+  editAction,
+  editEnabled
 }: Readonly<PageDetailInterface>) {
+  useHotkeys([
+    [
+      'mod+E',
+      () => {
+        if (editEnabled ?? true) {
+          editAction?.();
+        }
+      }
+    ]
+  ]);
+
   return (
     <Stack gap="xs">
       {breadcrumbs && breadcrumbs.length > 0 && (

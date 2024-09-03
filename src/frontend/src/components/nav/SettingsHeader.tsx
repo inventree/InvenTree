@@ -30,7 +30,7 @@ export function SettingsHeader({
         {shorthand && <Text c="dimmed">({shorthand})</Text>}
       </Group>
       <Group>
-        <Text c="dimmed">{subtitle}</Text>
+        {subtitle ? <Text c="dimmed">{subtitle}</Text> : null}
         {switch_text && switch_link && switch_condition && (
           <Anchor component={Link} to={switch_link}>
             <IconSwitch size={14} />

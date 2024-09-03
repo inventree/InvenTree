@@ -4,14 +4,12 @@ import {
   IconChecklist,
   IconClipboardCheck,
   IconClipboardList,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconListCheck,
   IconListNumbers,
   IconNotes,
   IconPaperclip,
-  IconQrcode,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -26,15 +24,12 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -257,7 +252,7 @@ export default function BuildDetail() {
         label: t`Line Items`,
         icon: <IconListNumbers />,
         content: build?.pk ? (
-          <BuildLineTable buildId={build.pk} />
+          <BuildLineTable build={build} buildId={build.pk} />
         ) : (
           <Skeleton />
         )
@@ -322,7 +317,7 @@ export default function BuildDetail() {
         name: 'test-results',
         label: t`Test Results`,
         icon: <IconChecklist />,
-        hidden: !build.part_detail?.trackable,
+        hidden: !build.part_detail?.testable,
         content: build.pk ? (
           <BuildOrderTestTable buildId={build.pk} partId={build.part} />
         ) : (
@@ -341,7 +336,7 @@ export default function BuildDetail() {
             }}
           />
         ),
-        hidden: !build?.part_detail?.trackable
+        hidden: !build?.part_detail?.testable
       },
       {
         name: 'attachments',
@@ -469,27 +464,17 @@ export default function BuildDetail() {
       />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.build,
-            pk: build.pk
-          }),
-          LinkBarcodeAction({
-            hidden: build?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash
-          })
-        ]}
+        model={ModelType.build}
+        pk={build.pk}
+        hash={build?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Build Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
@@ -521,7 +506,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status}
+            status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />
@@ -542,6 +527,8 @@ export default function BuildDetail() {
             title={build.reference}
             subtitle={build.title}
             badges={buildBadges}
+            editAction={editBuild.open}
+            editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
               { name: t`Build Orders`, url: '/build' },

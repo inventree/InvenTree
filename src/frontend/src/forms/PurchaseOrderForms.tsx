@@ -5,7 +5,6 @@ import {
   FocusTrap,
   Group,
   Modal,
-  NumberInput,
   Table,
   TextInput
 } from '@mantine/core';
@@ -28,12 +27,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldExtraRow } from '../components/forms/fields/TableField';
+import {
+  TableFieldExtraRow,
+  TableFieldRowProps
+} from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
@@ -191,67 +194,53 @@ export function usePurchaseOrderFields(): ApiFormFieldSet {
  * Render a table row for a single TableField entry
  */
 function LineItemFormRow({
-  input,
+  props,
   record,
   statuses
 }: {
-  input: any;
+  props: TableFieldRowProps;
   record: any;
   statuses: any;
 }) {
   // Barcode Modal state
-  const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(false, {
+    onClose: () => props.changeFn(props.idx, 'barcode', undefined)
+  });
 
-  // Location value
-  const [location, setLocation] = useState(
-    input.item.location ??
-      record.part_detail.default_location ??
-      record.part_detail.category_default_location
-  );
-  const [locationOpen, locationHandlers] = useDisclosure(
-    location ? true : false,
-    {
-      onClose: () => input.changeFn(input.idx, 'location', null),
-      onOpen: () => input.changeFn(input.idx, 'location', location)
-    }
-  );
+  const [locationOpen, locationHandlers] = useDisclosure(false, {
+    onClose: () => props.changeFn(props.idx, 'location', undefined)
+  });
 
-  // Change form value when state is altered
-  useEffect(() => {
-    input.changeFn(input.idx, 'location', location);
-  }, [location]);
-
+  // Batch code generator
   const batchCodeGenerator = useBatchCodeGenerator((value: any) => {
-    if (!batchCode) {
-      setBatchCode(value);
+    if (value) {
+      props.changeFn(props.idx, 'batch_code', value);
     }
   });
 
+  // Serial numbebr generator
   const serialNumberGenerator = useSerialNumberGenerator((value: any) => {
-    if (!serials) {
-      setSerials(value);
+    if (value) {
+      props.changeFn(props.idx, 'serial_numbers', value);
     }
   });
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onClose: () => {
-      input.changeFn(input.idx, 'packaging', undefined);
+      props.changeFn(props.idx, 'packaging', undefined);
     }
   });
 
   const [noteOpen, noteHandlers] = useDisclosure(false, {
     onClose: () => {
-      input.changeFn(input.idx, 'note', undefined);
+      props.changeFn(props.idx, 'note', undefined);
     }
   });
 
-  // State for serializing
-  const [batchCode, setBatchCode] = useState<string>('');
-  const [serials, setSerials] = useState<string>('');
   const [batchOpen, batchHandlers] = useDisclosure(false, {
     onClose: () => {
-      input.changeFn(input.idx, 'batch_code', undefined);
-      input.changeFn(input.idx, 'serial_numbers', '');
+      props.changeFn(props.idx, 'batch_code', undefined);
+      props.changeFn(props.idx, 'serial_numbers', undefined);
     },
     onOpen: () => {
       // Generate a new batch code
@@ -262,23 +251,23 @@ function LineItemFormRow({
       // Generate new serial numbers
       serialNumberGenerator.update({
         part: record?.supplier_part_detail?.part,
-        quantity: input.item.quantity
+        quantity: props.item.quantity
       });
     }
   });
 
   // Status value
   const [statusOpen, statusHandlers] = useDisclosure(false, {
-    onClose: () => input.changeFn(input.idx, 'status', 10)
+    onClose: () => props.changeFn(props.idx, 'status', undefined)
   });
 
   // Barcode value
   const [barcodeInput, setBarcodeInput] = useState<any>('');
-  const [barcode, setBarcode] = useState(null);
+  const [barcode, setBarcode] = useState<String | undefined>(undefined);
 
   // Change form value when state is altered
   useEffect(() => {
-    input.changeFn(input.idx, 'barcode', barcode);
+    props.changeFn(props.idx, 'barcode', barcode);
   }, [barcode]);
 
   // Update location field description on state change
@@ -370,13 +359,16 @@ function LineItemFormRow({
             progressLabel
           />
         </Table.Td>
-        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-          <NumberInput
-            value={input.item.quantity}
-            style={{ width: '100px' }}
-            max={input.item.quantity}
-            min={0}
-            onChange={(value) => input.changeFn(input.idx, 'quantity', value)}
+        <Table.Td style={{ whiteSpace: 'nowrap' }}>
+          <StandaloneField
+            fieldName="quantity"
+            fieldDefinition={{
+              field_type: 'number',
+              value: props.item.quantity,
+              onValueChange: (value) =>
+                props.changeFn(props.idx, 'quantity', value)
+            }}
+            error={props.rowErrors?.quantity?.message}
           />
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
@@ -403,6 +395,7 @@ function LineItemFormRow({
               size="sm"
               icon={<InvenTreeIcon icon="packaging" />}
               tooltip={t`Adjust Packaging`}
+              tooltipAlignment="top"
               onClick={() => packagingHandlers.toggle()}
               variant={packagingOpen ? 'filled' : 'transparent'}
             />
@@ -427,7 +420,7 @@ function LineItemFormRow({
                 tooltipAlignment="top"
                 variant="filled"
                 color="red"
-                onClick={() => setBarcode(null)}
+                onClick={() => setBarcode(undefined)}
               />
             ) : (
               <ActionButton
@@ -438,13 +431,7 @@ function LineItemFormRow({
                 onClick={() => open()}
               />
             )}
-            <ActionButton
-              onClick={() => input.removeFn(input.idx)}
-              icon={<InvenTreeIcon icon="square_x" />}
-              tooltip={t`Remove item from list`}
-              tooltipAlignment="top"
-              color="red"
-            />
+            <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
           </Flex>
         </Table.Td>
       </Table.Tr>
@@ -464,7 +451,7 @@ function LineItemFormRow({
                     structural: false
                   },
                   onValueChange: (value) => {
-                    setLocation(value);
+                    props.changeFn(props.idx, 'location', value);
                   },
                   description: locationDescription,
                   value: location,
@@ -485,7 +472,9 @@ function LineItemFormRow({
                     icon={<InvenTreeIcon icon="default_location" />}
                     tooltip={t`Store at default location`}
                     onClick={() =>
-                      setLocation(
+                      props.changeFn(
+                        props.idx,
+                        'location',
                         record.part_detail.default_location ??
                           record.part_detail.category_default_location
                       )
@@ -497,7 +486,9 @@ function LineItemFormRow({
                   <ActionButton
                     icon={<InvenTreeIcon icon="destination" />}
                     tooltip={t`Store at line item destination `}
-                    onClick={() => setLocation(record.destination)}
+                    onClick={() =>
+                      props.changeFn(props.idx, 'location', record.destination)
+                    }
                     tooltipAlignment="top"
                   />
                 )}
@@ -507,7 +498,13 @@ function LineItemFormRow({
                     <ActionButton
                       icon={<InvenTreeIcon icon="repeat_destination" />}
                       tooltip={t`Store with already received stock`}
-                      onClick={() => setLocation(record.destination_detail.pk)}
+                      onClick={() =>
+                        props.changeFn(
+                          props.idx,
+                          'location',
+                          record.destination_detail.pk
+                        )
+                      }
                       tooltipAlignment="top"
                     />
                   )}
@@ -518,51 +515,56 @@ function LineItemFormRow({
       )}
       <TableFieldExtraRow
         visible={batchOpen}
-        onValueChange={(value) => input.changeFn(input.idx, 'batch', value)}
+        onValueChange={(value) => props.changeFn(props.idx, 'batch', value)}
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
-          value: batchCode
+          value: props.item.batch_code
         }}
+        error={props.rowErrors?.batch_code?.message}
       />
       <TableFieldExtraRow
         visible={batchOpen && record.trackable}
         onValueChange={(value) =>
-          input.changeFn(input.idx, 'serial_numbers', value)
+          props.changeFn(props.idx, 'serial_numbers', value)
         }
         fieldDefinition={{
           field_type: 'string',
           label: t`Serial numbers`,
-          value: serials
+          value: props.item.serial_numbers
         }}
+        error={props.rowErrors?.serial_numbers?.message}
       />
       <TableFieldExtraRow
         visible={packagingOpen}
-        onValueChange={(value) => input.changeFn(input.idx, 'packaging', value)}
+        onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
         fieldDefinition={{
           field_type: 'string',
           label: t`Packaging`
         }}
         defaultValue={record?.supplier_part_detail?.packaging}
+        error={props.rowErrors?.packaging?.message}
       />
       <TableFieldExtraRow
         visible={statusOpen}
         defaultValue={10}
-        onValueChange={(value) => input.changeFn(input.idx, 'status', value)}
+        onValueChange={(value) => props.changeFn(props.idx, 'status', value)}
         fieldDefinition={{
           field_type: 'choice',
           api_url: apiUrl(ApiEndpoints.stock_status),
           choices: statuses,
           label: t`Status`
         }}
+        error={props.rowErrors?.status?.message}
       />
       <TableFieldExtraRow
         visible={noteOpen}
-        onValueChange={(value) => input.changeFn(input.idx, 'note', value)}
+        onValueChange={(value) => props.changeFn(props.idx, 'note', value)}
         fieldDefinition={{
           field_type: 'string',
           label: t`Note`
         }}
+        error={props.rowErrors?.note?.message}
       />
     </>
   );
@@ -624,12 +626,12 @@ export function useReceiveLineItems(props: LineItemsForm) {
           barcode: null
         };
       }),
-      modelRenderer: (instance) => {
-        const record = records[instance.item.line_item];
+      modelRenderer: (row: TableFieldRowProps) => {
+        const record = records[row.item.line_item];
 
         return (
           <LineItemFormRow
-            input={instance}
+            props={row}
             record={record}
             statuses={data}
             key={record.pk}
@@ -645,18 +647,14 @@ export function useReceiveLineItems(props: LineItemsForm) {
     }
   };
 
-  const url = apiUrl(ApiEndpoints.purchase_order_receive, null, {
-    id: props.orderPk
-  });
-
   return useCreateApiFormModal({
     ...props.formProps,
-    url: url,
+    url: apiUrl(ApiEndpoints.purchase_order_receive, props.orderPk),
     title: t`Receive Line Items`,
     fields: fields,
     initialData: {
       location: null
     },
-    size: 'xl'
+    size: '80%'
   });
 }
