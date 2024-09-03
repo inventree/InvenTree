@@ -3,7 +3,6 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
-  IconDots,
   IconInfoCircle,
   IconMap2,
   IconNotes,
@@ -25,9 +24,9 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -302,9 +301,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const companyActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.company} pk={company.pk} />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Company Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
