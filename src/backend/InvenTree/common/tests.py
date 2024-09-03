@@ -1502,6 +1502,14 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
 
+    def test_api(self):
+        """Test the CustomUnit API."""
+        response = self.get(reverse('api-all-unit-list'))
+        self.assertIn('default_system', response.data)
+        self.assertIn('available_systems', response.data)
+        self.assertIn('available_units', response.data)
+        self.assertEqual(len(response.data['available_units']) > 100, True)
+
 
 class ContentTypeAPITest(InvenTreeAPITestCase):
     """Unit tests for the ContentType API."""
