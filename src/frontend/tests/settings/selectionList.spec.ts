@@ -18,7 +18,7 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   await page.waitForTimeout(200);
 
   // Add parameter
-  await page.getByLabel('action-button-add-parameter-').click();
+  await page.getByLabel('action-button-add-parameter').click();
   await page.getByLabel('text-field-name').fill('my custom parameter');
   await page.getByLabel('text-field-description').fill('description');
   await page
