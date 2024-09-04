@@ -933,7 +933,7 @@ common_api_urls = [
                     path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
                 ]),
             ),
-            path('all', AllUnitList.as_view(), name='api-all-unit-list'),
+            path('all/', AllUnitList.as_view(), name='api-all-unit-list'),
             path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
         ]),
     ),

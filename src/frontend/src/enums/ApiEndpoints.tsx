@@ -31,7 +31,7 @@ export enum ApiEndpoints {
   // Generic API endpoints
   currency_list = 'currency/exchange/',
   currency_refresh = 'currency/refresh/',
-  all_units = 'units/all',
+  all_units = 'units/all/',
   task_overview = 'background-task/',
   task_pending_list = 'background-task/pending/',
   task_scheduled_list = 'background-task/scheduled/',
