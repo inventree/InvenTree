@@ -18,6 +18,8 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   await page.waitForTimeout(200);
 
   // Add parameter
+  await page.waitForLoadState('networkidle');
+  await page.getByLabel('action-button-add-parameter').waitFor();
   await page.getByLabel('action-button-add-parameter').click();
   await page.getByLabel('text-field-name').fill('my custom parameter');
   await page.getByLabel('text-field-description').fill('description');
@@ -37,6 +39,8 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   // Fill parameter
   await page.goto(`${baseUrl}/part/104/parameters/`);
   await page.getByLabel('Parameters').getByText('Parameters').waitFor();
+  await page.waitForLoadState('networkidle');
+  await page.getByLabel('action-button-add-parameter').waitFor();
   await page.getByLabel('action-button-add-parameter').click();
   await page.waitForTimeout(200);
   await page.getByText('New Part Parameter').waitFor();
