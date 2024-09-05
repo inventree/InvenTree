@@ -16,7 +16,7 @@ from PIL import Image
 import report.models as report_models
 from build.models import Build
 from common.models import Attachment, InvenTreeSetting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
@@ -591,3 +591,11 @@ class TestReportTest(PrintTestMixins, ReportTest):
     def test_mdl_salesorder(self):
         """Test the SalesOrder model."""
         self.run_print_test(SalesOrder, 'salesorder', label=False)
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=ReportTemplate)

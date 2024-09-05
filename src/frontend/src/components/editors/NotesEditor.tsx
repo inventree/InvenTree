@@ -1,42 +1,17 @@
+// import SimpleMDE from "react-simplemde-editor";
 import { t } from '@lingui/macro';
+import { useMantineColorScheme } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import {
-  AdmonitionDirectiveDescriptor,
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
-  ButtonWithTooltip,
-  CodeToggle,
-  CreateLink,
-  InsertAdmonition,
-  InsertImage,
-  InsertTable,
-  ListsToggle,
-  MDXEditor,
-  type MDXEditorMethods,
-  Separator,
-  UndoRedo,
-  directivesPlugin,
-  headingsPlugin,
-  imagePlugin,
-  linkDialogPlugin,
-  linkPlugin,
-  listsPlugin,
-  markdownShortcutPlugin,
-  quotePlugin,
-  tablePlugin,
-  toolbarPlugin
-} from '@mdxeditor/editor';
-import '@mdxeditor/editor/style.css';
-import { IconDeviceFloppy, IconEdit, IconEye } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import React from 'react';
+import EasyMDE, { default as SimpleMde } from 'easymde';
+import 'easymde/dist/easymde.min.css';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import SimpleMDE from 'react-simplemde-editor';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { ModelInformationDict } from '../render/ModelType';
 
 /*
@@ -74,7 +49,7 @@ async function uploadNotesImage(
 
 /*
  * A text editor component for editing notes against a model type and instance.
- * Uses the MDXEditor component - https://mdxeditor.dev/
+ * Uses the react-simple-mde editor: https://github.com/RIP21/react-simplemde-editor
  *
  * TODO:
  * - Disable editing by default when the component is launched - user can click an "edit" button to enable
@@ -90,12 +65,12 @@ export default function NotesEditor({
   modelId: number;
   editable?: boolean;
 }) {
-  const ref = React.useRef<MDXEditorMethods>(null);
-
-  const { host } = useLocalState();
+  const { colorScheme } = useMantineColorScheme();
 
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
+
+  const [markdown, setMarkdown] = useState<string>('');
 
   useEffect(() => {
     // Initially disable editing mode on load
@@ -107,27 +82,51 @@ export default function NotesEditor({
     return apiUrl(modelInfo.api_endpoint, modelId);
   }, [modelType, modelId]);
 
+  // Image upload handler
   const imageUploadHandler = useCallback(
-    (image: File): Promise<string> => {
-      return uploadNotesImage(image, modelType, modelId);
+    (
+      file: File,
+      onSuccess: (url: string) => void,
+      onError: (error: string) => void
+    ) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      formData.append('model_type', modelType);
+      formData.append('model_id', modelId.toString());
+
+      api
+        .post(apiUrl(ApiEndpoints.notes_image_upload), formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .catch((error) => {
+          onError(error.message);
+          notifications.hide('notes');
+          notifications.show({
+            id: 'notes',
+            title: t`Error`,
+            message: t`Image upload failed`,
+            color: 'red'
+          });
+        })
+        .then((response: any) => {
+          onSuccess(response.data.image);
+          notifications.hide('notes');
+          notifications.show({
+            id: 'notes',
+            title: t`Success`,
+            message: t`Image uploaded successfully`,
+            color: 'green'
+          });
+        });
     },
     [modelType, modelId]
   );
 
-  const imagePreviewHandler = useCallback(
-    async (image: string): Promise<string> => {
-      // If the image is a relative URL, then we need to prepend the base URL
-      if (image.startsWith('/media/')) {
-        image = host + image;
-      }
-
-      return image;
-    },
-    [host]
-  );
-
   const dataQuery = useQuery({
-    queryKey: [noteUrl],
+    queryKey: ['notes-editor', noteUrl, modelType, modelId],
     queryFn: () =>
       api
         .get(noteUrl)
@@ -137,124 +136,119 @@ export default function NotesEditor({
   });
 
   useEffect(() => {
-    ref.current?.setMarkdown(dataQuery.data ?? '');
-  }, [dataQuery.data, ref.current]);
+    setMarkdown(dataQuery.data ?? '');
+  }, [dataQuery.data]);
 
   // Callback to save notes to the server
-  const saveNotes = useCallback(() => {
-    const markdown = ref.current?.getMarkdown();
+  const saveNotes = useCallback(
+    (markdown: string) => {
+      if (!noteUrl) {
+        return;
+      }
 
-    if (!noteUrl || markdown === undefined) {
-      return;
-    }
-
-    api
-      .patch(noteUrl, { notes: markdown })
-      .then(() => {
-        notifications.hide('notes');
-        notifications.show({
-          title: t`Success`,
-          message: t`Notes saved successfully`,
-          color: 'green',
-          id: 'notes'
+      api
+        .patch(noteUrl, { notes: markdown })
+        .then(() => {
+          notifications.hide('notes');
+          notifications.show({
+            title: t`Success`,
+            message: t`Notes saved successfully`,
+            color: 'green',
+            id: 'notes'
+          });
+        })
+        .catch(() => {
+          notifications.hide('notes');
+          notifications.show({
+            title: t`Error`,
+            message: t`Failed to save notes`,
+            color: 'red',
+            id: 'notes'
+          });
         });
-      })
-      .catch(() => {
-        notifications.hide('notes');
-        notifications.show({
-          title: t`Error`,
-          message: t`Failed to save notes`,
-          color: 'red',
-          id: 'notes'
-        });
-      });
-  }, [api, noteUrl, ref.current]);
+    },
+    [api, noteUrl]
+  );
 
-  const plugins: any[] = useMemo(() => {
-    let plg = [
-      directivesPlugin({
-        directiveDescriptors: [AdmonitionDirectiveDescriptor]
-      }),
-      headingsPlugin(),
-      imagePlugin({
-        imageUploadHandler: imageUploadHandler,
-        imagePreviewHandler: imagePreviewHandler,
-        disableImageResize: true // Note: To enable image resize, we must allow HTML tags in the server
-      }),
-      linkPlugin(),
-      linkDialogPlugin(),
-      listsPlugin(),
-      markdownShortcutPlugin(),
-      quotePlugin(),
-      tablePlugin()
-    ];
+  const editorOptions: SimpleMde.Options = useMemo(() => {
+    let icons: any[] = [];
 
-    let toolbar: ReactNode[] = [];
     if (editable) {
-      toolbar = [
-        <ButtonWithTooltip
-          key="toggle-editing"
-          aria-label="toggle-notes-editing"
-          title={editing ? t`Preview Notes` : t`Edit Notes`}
-          onClick={() => setEditing(!editing)}
-        >
-          {editing ? <IconEye /> : <IconEdit />}
-        </ButtonWithTooltip>
-      ];
-
       if (editing) {
-        toolbar = [
-          ...toolbar,
-          <ButtonWithTooltip
-            key="save-notes"
-            aria-label="save-notes"
-            onClick={() => saveNotes()}
-            title={t`Save Notes`}
-            disabled={false}
-          >
-            <IconDeviceFloppy />
-          </ButtonWithTooltip>,
-          <Separator key="separator-1" />,
-          <UndoRedo key="undo-redo" />,
-          <Separator key="separator-2" />,
-          <BoldItalicUnderlineToggles key="bold-italic-underline" />,
-          <CodeToggle key="code-toggle" />,
-          <ListsToggle key="lists-toggle" />,
-          <Separator key="separator-3" />,
-          <BlockTypeSelect key="block-type" />,
-          <Separator key="separator-4" />,
-          <CreateLink key="create-link" />,
-          <InsertTable key="insert-table" />,
-          <InsertAdmonition key="insert-admonition" />
-        ];
+        icons.push({
+          name: 'edit-disabled',
+          action: () => setEditing(false),
+          className: 'fa fa-eye',
+          title: t`Disable Editing`
+        });
+
+        icons.push('|', 'side-by-side', '|');
+      } else {
+        icons.push({
+          name: 'edit-enabled',
+          action: () => setEditing(true),
+          className: 'fa fa-edit',
+          title: t`Enable Editing`
+        });
       }
     }
 
-    // If the user is allowed to edit, then add the toolbar
-    if (editable) {
-      plg.push(
-        toolbarPlugin({
-          toolbarContents: () => (
-            <>
-              {toolbar.map((item, index) => item)}
-              {editing && <InsertImage />}
-            </>
-          )
-        })
-      );
+    if (editing) {
+      icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
+      icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
+      icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
+      icons.push('table', 'link', 'image', '|');
+      icons.push('horizontal-rule', '|', 'guide'); // Misc
+
+      icons.push('|', 'undo', 'redo'); // Undo/Redo
+      icons.push('|');
+
+      icons.push({
+        name: 'save-notes',
+        action: (editor: SimpleMde) => {
+          saveNotes(editor.value());
+        },
+        className: 'fa fa-save',
+        title: t`Save Notes`
+      });
     }
 
-    return plg;
-  }, [
-    dataQuery.data,
-    editable,
-    editing,
-    imageUploadHandler,
-    imagePreviewHandler,
-    saveNotes
-  ]);
+    return {
+      toolbar: icons,
+      uploadImage: true,
+      imagePathAbsolute: true,
+      imageUploadFunction: imageUploadHandler,
+      sideBySideFullscreen: false,
+      shortcuts: {},
+      spellChecker: false
+    };
+  }, [editable, editing]);
+
+  const [mdeInstance, setMdeInstance] = useState<SimpleMde | null>(null);
+
+  useEffect(() => {
+    if (mdeInstance) {
+      let previewMode = !(editable && editing);
+
+      mdeInstance.codemirror?.setOption('readOnly', previewMode);
+
+      // Ensure the preview mode is toggled if required
+      if (mdeInstance.isPreviewActive() != previewMode) {
+        let sibling = mdeInstance?.codemirror.getWrapperElement()?.nextSibling;
+
+        if (sibling != null) {
+          EasyMDE.togglePreview(mdeInstance);
+        }
+      }
+    }
+  }, [mdeInstance, editable, editing]);
 
   return (
-    <MDXEditor ref={ref} markdown={''} readOnly={!editable} plugins={plugins} />
+    <SimpleMDE
+      value={markdown}
+      onChange={setMarkdown}
+      options={editorOptions}
+      getMdeInstance={(instance: SimpleMde) => setMdeInstance(instance)}
+    />
   );
 }

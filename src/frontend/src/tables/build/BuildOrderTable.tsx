@@ -194,6 +194,7 @@ export function BuildOrderTable({
           params: {
             part: partId,
             ancestor: parentBuildId,
+            sales_order: salesOrderId,
             part_detail: true
           },
           tableActions: tableActions,
