@@ -39,7 +39,7 @@ jobs:
           npm: true
           apt-dependency: gettext
       - name: Make Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Remove compiled static files
         run: rm -rf src/backend/InvenTree/static
       - name: Remove all local changes that are not *.po files
