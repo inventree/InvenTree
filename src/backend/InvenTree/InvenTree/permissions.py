@@ -108,8 +108,7 @@ class IsSuperuserOrReadOnly(permissions.IsAdminUser):
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
         return bool(
-            request.user
-            and request.user.is_superuser
+            (request.user and request.user.is_superuser)
             or request.method in permissions.SAFE_METHODS
         )
 
