@@ -210,9 +210,6 @@ def render_currency(
         except Exception:
             pass
 
-    if decimal_places is None:
-        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
-
     if min_decimal_places is None:
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
@@ -222,17 +219,19 @@ def render_currency(
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, min_decimal_places)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
+    if decimal_places is not None:
+        # Decimal place count is provided, use it
+        pass
+    elif '.' in value:
+        # If the value has a decimal point, use the number of decimal places in the value
+        decimal_places = len(value.split('.')[-1])
     else:
-        decimal_places = max(decimal_places, 2)
+        # No decimal point, use 2 as a default
+        decimal_places = 2
 
-    decimal_places = max(decimal_places, max_decimal_places)
+    # Clip the decimal places to the specified range
+    decimal_places = max(decimal_places, min_decimal_places)
+    decimal_places = min(decimal_places, max_decimal_places)
 
     return format_money(
         money, decimal_places=decimal_places, include_symbol=include_symbol

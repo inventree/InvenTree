@@ -15,6 +15,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
+import { LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -91,11 +92,7 @@ export function AddressTable({
         sortable: false,
         switchable: true
       },
-      {
-        accessor: 'link',
-        sortable: false,
-        switchable: true
-      }
+      LinkColumn({})
     ];
   }, []);
 

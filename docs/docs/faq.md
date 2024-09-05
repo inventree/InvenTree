@@ -107,7 +107,7 @@ The background worker process must be started separately to the web-server appli
 From the top-level source directory, run the following command from a separate terminal, while the server is already running:
 
 ```
-invoke worker
+invoke int.worker
 ```
 
 !!! info "Supervisor"

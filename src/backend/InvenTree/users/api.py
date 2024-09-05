@@ -175,13 +175,10 @@ class GroupMixin:
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-            kwargs['permission_detail'] = InvenTree.helpers.str2bool(
-                params.get('permission_detail', None)
-            )
-        except AttributeError:
-            pass
+        params = self.request.query_params
+        kwargs['permission_detail'] = InvenTree.helpers.str2bool(
+            params.get('permission_detail', None)
+        )
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args, **kwargs)
 
@@ -346,7 +343,7 @@ class GetAuthToken(APIView):
             return Response(data)
 
         else:
-            raise exceptions.NotAuthenticated()
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
 class TokenListView(DestroyAPIView, ListAPI):

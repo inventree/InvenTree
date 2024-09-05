@@ -28,11 +28,12 @@ export default function TextField({
 
   const { value } = field;
 
-  const [rawText, setRawText] = useState(value);
+  const [rawText, setRawText] = useState<string>(value || '');
+
   const [debouncedText] = useDebouncedValue(rawText, 250);
 
   useEffect(() => {
-    setRawText(value);
+    setRawText(value || '');
   }, [value]);
 
   const onTextChange = useCallback((value: any) => {

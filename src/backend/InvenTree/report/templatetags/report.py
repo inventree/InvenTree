@@ -110,7 +110,7 @@ def uploaded_image(
     validate=True,
     **kwargs,
 ):
-    """Return a fully-qualified path for an 'uploaded' image.
+    """Return raw image data from an 'uploaded' image.
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
@@ -124,7 +124,7 @@ def uploaded_image(
         rotate: Optional rotation to apply to the image
 
     Returns:
-        A fully qualified path to the image
+        Binary image data to be rendered directly in a <img> tag
 
     Raises:
         FileNotFoundError if the file does not exist
