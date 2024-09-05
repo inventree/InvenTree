@@ -1,6 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, Stack, Table, Title } from '@mantine/core';
-import { IconDots, IconKey, IconUser } from '@tabler/icons-react';
+import { IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
@@ -42,7 +42,7 @@ export function AccountDetailPanel() {
           </Title>
           <ActionDropdown
             tooltip={t`User Actions`}
-            icon={<IconDots />}
+            icon={<IconUser />}
             actions={[
               {
                 name: t`Edit User`,
