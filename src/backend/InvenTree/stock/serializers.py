@@ -274,7 +274,7 @@ class StockItemTestResultSerializer(
                     test_name,
                 )
 
-                # Create a new test template based on the provided dasta
+                # Create a new test template based on the provided data
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
                 )
