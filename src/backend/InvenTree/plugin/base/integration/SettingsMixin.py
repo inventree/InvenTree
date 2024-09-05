@@ -15,8 +15,6 @@ else:
     class SettingsKeyType:
         """Dummy class, so that python throws no error."""
 
-        pass
-
 
 class SettingsMixin:
     """Mixin that enables global settings for the plugin."""

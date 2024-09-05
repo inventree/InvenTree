@@ -16,7 +16,7 @@ from PIL import Image
 import report.models as report_models
 from build.models import Build
 from common.models import Attachment, InvenTreeSetting
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
@@ -580,24 +580,6 @@ class TestReportTest(PrintTestMixins, ReportTest):
             Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
         )
 
-        return
-        # TODO @matmair - Re-add this test after https://github.com/inventree/InvenTree/pull/7074/files#r1600694356 is resolved
-        # Change the setting, now the test report should be attached automatically
-        InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
-
-        response = self.post(
-            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
-        )
-
-        # There should be a link to the generated PDF
-        self.assertEqual(response.data['output'].startswith('/media/report/'), True)
-
-        # Check that a report has been uploaded
-        attachment = Attachment.objects.filter(
-            model_id=item.pk, model_type='stockitem'
-        ).first()
-        self.assertIsNotNone(attachment)
-
     def test_mdl_build(self):
         """Test the Build model."""
         self.run_print_test(Build, 'build', label=False)
@@ -609,3 +591,11 @@ class TestReportTest(PrintTestMixins, ReportTest):
     def test_mdl_salesorder(self):
         """Test the SalesOrder model."""
         self.run_print_test(SalesOrder, 'salesorder', label=False)
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=ReportTemplate)

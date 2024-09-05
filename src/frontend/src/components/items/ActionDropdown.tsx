@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
+  Button,
   Indicator,
   IndicatorProps,
   Menu,
@@ -8,7 +8,9 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
+  IconChevronDown,
   IconCopy,
+  IconDotsVertical,
   IconEdit,
   IconLink,
   IconQrcode,
@@ -42,13 +44,15 @@ export function ActionDropdown({
   tooltip,
   actions,
   disabled = false,
-  hidden = false
+  hidden = false,
+  noindicator = false
 }: {
   icon: ReactNode;
   tooltip: string;
   actions: ActionDropdownItem[];
   disabled?: boolean;
   hidden?: boolean;
+  noindicator?: boolean;
 }) {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
@@ -66,16 +70,25 @@ export function ActionDropdown({
     <Menu position="bottom-end" key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
-          <Tooltip label={tooltip} hidden={!tooltip}>
-            <ActionIcon
-              size="lg"
+          <Tooltip label={tooltip} hidden={!tooltip} position="bottom">
+            <Button
               radius="sm"
-              variant="transparent"
+              variant={noindicator ? 'transparent' : 'light'}
               disabled={disabled}
               aria-label={menuName}
+              p="0"
+              size="sm"
+              rightSection={
+                noindicator || disabled ? null : (
+                  <IconChevronDown stroke={1.5} />
+                )
+              }
+              styles={{
+                section: { margin: 0 }
+              }}
             >
               {icon}
-            </ActionIcon>
+            </Button>
           </Tooltip>
         </Menu.Target>
       </Indicator>
@@ -108,6 +121,26 @@ export function ActionDropdown({
       </Menu.Dropdown>
     </Menu>
   ) : null;
+}
+
+export function OptionsActionDropdown({
+  actions = [],
+  tooltip = t`Options`,
+  hidden = false
+}: {
+  actions: ActionDropdownItem[];
+  tooltip?: string;
+  hidden?: boolean;
+}) {
+  return (
+    <ActionDropdown
+      icon={<IconDotsVertical />}
+      tooltip={tooltip}
+      actions={actions}
+      hidden={hidden}
+      noindicator
+    />
+  );
 }
 
 // Dropdown menu for barcode actions

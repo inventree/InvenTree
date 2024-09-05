@@ -203,13 +203,11 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         ordering: 'SKU'
       },
-      {
-        accessor: 'supplier_link',
+      LinkColumn({
+        accessor: 'supplier_part_detail.link',
         title: t`Supplier Link`,
-
-        sortable: false,
-        render: (record: any) => record?.supplier_part_detail?.link
-      },
+        sortable: false
+      }),
       {
         accessor: 'MPN',
         title: t`Manufacturer Code`,

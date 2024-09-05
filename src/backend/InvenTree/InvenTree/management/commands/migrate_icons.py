@@ -103,14 +103,14 @@ class Command(BaseCommand):
                         })
 
             self.stdout.write(f'Writing icon map for {len(icons.keys())} icons')
-            with open(kwargs['output_file'], 'w') as f:
+            with open(kwargs['output_file'], 'w', encoding='utf-8') as f:
                 json.dump(icons, f, indent=2)
 
             self.stdout.write(f'Icon map written to {kwargs["output_file"]}')
 
         # Import icon map file
         if kwargs['input_file']:
-            with open(kwargs['input_file'], 'r') as f:
+            with open(kwargs['input_file'], encoding='utf-8') as f:
                 icons = json.load(f)
 
             self.stdout.write(f'Loaded icon map for {len(icons.keys())} icons')

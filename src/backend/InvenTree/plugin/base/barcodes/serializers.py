@@ -41,7 +41,7 @@ class BarcodeGenerateSerializer(serializers.Serializer):
             plugin.base.barcodes.helper.get_supported_barcode_models_map()
         )
 
-        if model not in supported_models.keys():
+        if model not in supported_models:
             raise ValidationError(_('Model is not supported'))
 
         return model

@@ -15,7 +15,6 @@ import {
   IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
-  IconDots,
   IconInfoCircle,
   IconLayersLinked,
   IconList,
@@ -51,7 +50,8 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
@@ -403,17 +403,17 @@ export default function PartDetail() {
                     case 200:
                       return response.data;
                     default:
-                      return null;
+                      return {};
                   }
                 })
                 .catch(() => {
-                  return null;
+                  return {};
                 });
             }
           });
 
           return (
-            data &&
+            data.overall_min &&
             `${formatPriceRange(data.overall_min, data.overall_max)}${
               part.units && ' / ' + part.units
             }`
@@ -443,19 +443,19 @@ export default function PartDetail() {
                       if (response.data.length > 0) {
                         return response.data[response.data.length - 1];
                       } else {
-                        return null;
+                        return {};
                       }
                     default:
-                      return null;
+                      return {};
                   }
                 })
                 .catch(() => {
-                  return null;
+                  return {};
                 });
             }
           });
 
-          if (data.quantity) {
+          if (data && data.quantity) {
             return `${data.quantity} (${data.date})`;
           } else {
             return '-';
@@ -482,11 +482,11 @@ export default function PartDetail() {
                     case 200:
                       return response.data[response.data.length - 1];
                     default:
-                      return null;
+                      return {};
                   }
                 })
                 .catch(() => {
-                  return null;
+                  return {};
                 });
             }
           });
@@ -587,6 +587,7 @@ export default function PartDetail() {
                     modelField="build"
                     modelTarget={ModelType.build}
                     showBuildInfo
+                    allowEdit
                   />
                 </Accordion.Panel>
               </Accordion.Item>
@@ -1029,9 +1030,8 @@ export default function PartDetail() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.part),

@@ -161,8 +161,11 @@ export function TemplateTable({
       },
       ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
         accessor: key,
+        ...field,
+        title: field.label,
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
     ];

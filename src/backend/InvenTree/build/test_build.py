@@ -55,6 +55,7 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+            testable=True,
         )
 
         # create one build with one required test template
@@ -63,6 +64,7 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+            testable=True,
         )
 
         cls.test_template_required = PartTestTemplate.objects.create(
@@ -98,6 +100,7 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+            testable=True,
         )
 
         cls.test_template_non_required = PartTestTemplate.objects.create(

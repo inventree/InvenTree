@@ -410,10 +410,7 @@ def progress_bar(val, max_val, *args, **kwargs):
     else:
         style = ''
 
-    if max_val != 0:
-        percent = float(val / max_val) * 100
-    else:
-        percent = 0
+    percent = float(val / max_val) * 100 if max_val != 0 else 0
 
     if percent > 100:
         percent = 100
@@ -498,7 +495,7 @@ def primitive_to_javascript(primitive):
     elif type(primitive) in [int, float]:
         return primitive
     # Wrap with quotes
-    return format_html("'{}'", primitive)  # noqa: P103
+    return format_html("'{}'", primitive)
 
 
 @register.simple_tag()

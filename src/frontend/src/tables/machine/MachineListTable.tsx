@@ -16,7 +16,7 @@ import {
   Title
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconDots, IconRefresh } from '@tabler/icons-react';
+import { IconCheck, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,9 +25,9 @@ import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
-  ActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
@@ -255,9 +255,8 @@ function MachineDrawer({
               <Trans>Restart required</Trans>
             </Badge>
           )}
-          <ActionDropdown
+          <OptionsActionDropdown
             tooltip={t`Machine Actions`}
-            icon={<IconDots />}
             actions={[
               EditItemAction({
                 tooltip: t`Edit machine`,

@@ -164,7 +164,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         """
         # If the token has not yet been saved, return the raw key
         if self.pk is None:
-            return self.key
+            return self.key  # pragma: no cover
 
         M = len(self.key) - 20
 
@@ -490,10 +490,7 @@ def split_model(model):
     *app, model = model.split('_')
 
     # handle models that have
-    if len(app) > 1:
-        app = '_'.join(app)
-    else:
-        app = app[0]
+    app = '_'.join(app) if len(app) > 1 else app[0]
 
     return model, app
 
@@ -558,10 +555,8 @@ def update_group_roles(group, debug=False):
 
             permissions_to_add.add(permission_string)
 
-        else:
-            # A forbidden action will be ignored if we have already allowed it
-            if permission_string not in permissions_to_add:
-                permissions_to_delete.add(permission_string)
+        elif permission_string not in permissions_to_add:
+            permissions_to_delete.add(permission_string)
 
     # Pre-fetch all the RuleSet objects
     rulesets = {
@@ -677,7 +672,7 @@ def clear_user_role_cache(user: User):
     Args:
         user: The User object to be expunged from the cache
     """
-    for role in RuleSet.get_ruleset_models().keys():
+    for role in RuleSet.get_ruleset_models():
         for perm in ['add', 'change', 'view', 'delete']:
             key = f'role_{user.pk}_{role}_{perm}'
             cache.delete(key)
