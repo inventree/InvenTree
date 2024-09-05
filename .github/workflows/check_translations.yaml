@@ -37,6 +37,6 @@ jobs:
           install: true
           apt-dependency: gettext
       - name: Test Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py

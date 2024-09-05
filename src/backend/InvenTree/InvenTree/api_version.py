@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 250
+INVENTREE_API_VERSION = 251
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v250 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/####
+v251 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/####
     - Adds "SelectionList" and "SelectionListEntry" API endpoints
+
+v250 - 2024-09-04 : https://github.com/inventree/InvenTree/pull/8069
+    - Fixes 'revision' field definition in Part serializer
 
 v249 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7978
     - Sort status enums

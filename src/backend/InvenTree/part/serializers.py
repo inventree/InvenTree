@@ -363,11 +363,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         help_text=_('Internal Part Number'),
         max_length=100,
     )
+
     revision = serializers.CharField(
-        required=False,
-        allow_null=True,
-        help_text=_('Part revision or version number'),
-        max_length=100,
+        required=False, default='', allow_blank=True, allow_null=True, max_length=100
     )
 
     # Pricing fields
@@ -918,7 +916,7 @@ class PartSerializer(
     )
 
     revision = serializers.CharField(
-        required=False, default='', allow_blank=True, max_length=100
+        required=False, default='', allow_blank=True, allow_null=True, max_length=100
     )
 
     # Annotated fields
