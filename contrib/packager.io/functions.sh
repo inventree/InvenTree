@@ -365,7 +365,9 @@ function update_checks() {
   echo "# Running upgrade"
   local old_version=$1
   local old_version_rev=$(echo ${old_version} | cut -d'-' -f1 | cut -d'.' -f2)
-  echo "# Old version is: ${old_version} - release: ${old_version_rev}"
+  local new_version=$(dpkg-query --show --showformat='${Version}' inventree)
+  local new_version_rev=$(echo ${new_version} | cut -d'-' -f1 | cut -d'.' -f2)
+  echo "# Old version is: ${old_version} | ${old_version_rev} - updating to ${new_version} | ${old_version_rev}"
 
   local ABORT=false
   function check_config_value() {
