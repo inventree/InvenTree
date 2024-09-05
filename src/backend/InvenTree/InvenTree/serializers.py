@@ -479,7 +479,8 @@ class MeUserSerializer(ExtendedUserSerializer):
         but ensures that certain fields are read-only.
         """
 
-        read_only_fields = ExtendedUserSerializer.Meta.read_only_fields + [
+        read_only_fields = [
+            *ExtendedUserSerializer.Meta.read_only_fields,
             'is_active',
             'is_staff',
             'is_superuser',
