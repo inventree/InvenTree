@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 251
 
 INVENTREE_API_TEXT = """
 
-v251 - 2024-09-04 : https://github.com/inventree/InvenTree/pull/7470
+v251 - 2024-09-06 : https://github.com/inventree/InvenTree/pull/7470
     - Implements new API endpoints for enabling custom UI functionality
 
 v250 - 2024-09-04 : https://github.com/inventree/InvenTree/pull/8069

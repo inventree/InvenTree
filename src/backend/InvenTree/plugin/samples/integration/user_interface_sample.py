@@ -98,7 +98,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             except (Part.DoesNotExist, ValueError):
                 part = None
 
-            if part:
+            # Note: This panel will *only* be available if the part is active
+            if part and part.active:
                 content = render_template(
                     self, 'uidemo/custom_part_panel.html', context={'part': part}
                 )
