@@ -42,6 +42,7 @@ class ReportSerializerBase(InvenTreeModelSerializer):
             'filename_pattern',
             'enabled',
             'revision',
+            'attach_to_model',
         ]
 
     template = InvenTreeAttachmentSerializerField(required=True)

@@ -555,7 +555,15 @@ class TestReportTest(PrintTestMixins, ReportTest):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='stockitem'
         ).first()
+
         self.assertIsNotNone(template)
+
+        # Ensure that the 'attach_to_model' attribute is initially False
+        template.attach_to_model = False
+        template.save()
+        template.refresh_from_db()
+
+        self.assertFalse(template.attach_to_model)
 
         url = reverse(self.print_url)
 
@@ -568,17 +576,36 @@ class TestReportTest(PrintTestMixins, ReportTest):
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
+        n = item.attachments.count()
+
         response = self.post(
             url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
         )
 
         # There should be a link to the generated PDF
-        self.assertEqual(response.data['output'].startswith('/media/report/'), True)
+        self.assertTrue(response.data['output'].startswith('/media/report/'))
+        self.assertTrue(response.data['output'].endswith('.pdf'))
 
         # By default, this should *not* have created an attachment against this stockitem
+        self.assertEqual(n, item.attachments.count())
         self.assertFalse(
             Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
         )
+
+        # Now try again, but attach the generated PDF to the StockItem
+        template.attach_to_model = True
+        template.save()
+
+        response = self.post(
+            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
+        )
+
+        # A new attachment should have been created
+        self.assertEqual(n + 1, item.attachments.count())
+        attachment = item.attachments.order_by('-pk').first()
+
+        # The attachment should be a PDF
+        self.assertTrue(attachment.attachment.name.endswith('.pdf'))
 
     def test_mdl_build(self):
         """Test the Build model."""
