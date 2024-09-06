@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import {
+  IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
   IconTools
@@ -261,6 +262,17 @@ export default function SalesOrderLineItemTable({
             !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate stock`,
           icon: <IconSquareArrowRight />,
+          color: 'green',
+          onClick: notYetImplemented
+        },
+        {
+          hidden:
+            !record?.part_detail?.trackable ||
+            allocated ||
+            !editable ||
+            !user.hasChangeRole(UserRoles.sales_order),
+          title: t`Allocate Serials`,
+          icon: <IconHash />,
           color: 'green',
           onClick: notYetImplemented
         },
