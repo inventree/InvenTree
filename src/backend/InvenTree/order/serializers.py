@@ -1522,6 +1522,8 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         stock_items_to_allocate = []
 
         for serial in data['serials']:
+            serial = str(serial).strip()
+
             items = stock.models.StockItem.objects.filter(
                 part=part, serial=serial, quantity=1
             )
