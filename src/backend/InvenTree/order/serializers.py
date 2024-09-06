@@ -1517,37 +1517,45 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
 
-        serials_not_exist = []
-        serials_allocated = []
+        serials_not_exist = set()
+        serials_unavailable = set()
         stock_items_to_allocate = []
 
         for serial in data['serials']:
+            serial = str(serial).strip()
+
             items = stock.models.StockItem.objects.filter(
                 part=part, serial=serial, quantity=1
             )
 
             if not items.exists():
-                serials_not_exist.append(str(serial))
+                serials_not_exist.add(str(serial))
                 continue
 
             stock_item = items[0]
 
-            if stock_item.unallocated_quantity() == 1:
-                stock_items_to_allocate.append(stock_item)
-            else:
-                serials_allocated.append(str(serial))
+            if not stock_item.in_stock:
+                serials_unavailable.add(str(serial))
+                continue
+
+            if stock_item.unallocated_quantity() < 1:
+                serials_unavailable.add(str(serial))
+                continue
+
+            # At this point, the serial number is valid, and can be added to the list
+            stock_items_to_allocate.append(stock_item)
 
         if len(serials_not_exist) > 0:
             error_msg = _('No match found for the following serial numbers')
             error_msg += ': '
-            error_msg += ','.join(serials_not_exist)
+            error_msg += ','.join(sorted(serials_not_exist))
 
             raise ValidationError({'serial_numbers': error_msg})
 
-        if len(serials_allocated) > 0:
-            error_msg = _('The following serial numbers are already allocated')
+        if len(serials_unavailable) > 0:
+            error_msg = _('The following serial numbers are unavailable')
             error_msg += ': '
-            error_msg += ','.join(serials_allocated)
+            error_msg += ','.join(sorted(serials_unavailable))
 
             raise ValidationError({'serial_numbers': error_msg})
 
