@@ -490,6 +490,12 @@ class MeUserSerializer(ExtendedUserSerializer):
 class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
 
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options for the UserCreateSerializer."""
+
+        # Prevent creation of users with superuser or staff permissions
+        read_only_fields = ['groups', 'is_staff', 'is_superuser']
+
     def validate(self, attrs):
         """Expanded valiadation for auth."""
         # Check that the user trying to create a new user is a superuser
