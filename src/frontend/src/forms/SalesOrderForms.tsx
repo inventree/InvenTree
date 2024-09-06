@@ -84,6 +84,31 @@ export function useSalesOrderLineItemFields({
   return fields;
 }
 
+export function useSalesOrderAllocateSerialsFields({
+  itemId,
+  orderId
+}: {
+  itemId: number;
+  orderId: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      line_item: {
+        value: itemId,
+        hidden: true
+      },
+      quantity: {},
+      serial_numbers: {},
+      shipment: {
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      }
+    };
+  }, [itemId, orderId]);
+}
+
 export function useSalesOrderShipmentFields(): ApiFormFieldSet {
   return useMemo(() => {
     return {
