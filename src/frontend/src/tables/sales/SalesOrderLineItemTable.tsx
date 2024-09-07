@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import {
+  IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
   IconTools
@@ -14,7 +15,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useSalesOrderLineItemFields } from '../../forms/SalesOrderForms';
+import {
+  useSalesOrderAllocateSerialsFields,
+  useSalesOrderLineItemFields
+} from '../../forms/SalesOrderForms';
 import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
@@ -223,6 +227,19 @@ export default function SalesOrderLineItemTable({
     table: table
   });
 
+  const allocateSerialFields = useSalesOrderAllocateSerialsFields({
+    itemId: selectedLine,
+    orderId: orderId
+  });
+
+  const allocateBySerials = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_allocate_serials,
+    pk: orderId,
+    title: t`Allocate Serial Numbers`,
+    fields: allocateSerialFields,
+    table: table
+  });
+
   const buildOrderFields = useBuildOrderFields({ create: true });
 
   const newBuildOrder = useCreateApiFormModal({
@@ -263,6 +280,20 @@ export default function SalesOrderLineItemTable({
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: notYetImplemented
+        },
+        {
+          hidden:
+            !record?.part_detail?.trackable ||
+            allocated ||
+            !editable ||
+            !user.hasChangeRole(UserRoles.sales_order),
+          title: t`Allocate Serials`,
+          icon: <IconHash />,
+          color: 'green',
+          onClick: () => {
+            setSelectedLine(record.pk);
+            allocateBySerials.open();
+          }
         },
         {
           hidden:
@@ -323,6 +354,7 @@ export default function SalesOrderLineItemTable({
       {deleteLine.modal}
       {newLine.modal}
       {newBuildOrder.modal}
+      {allocateBySerials.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}
