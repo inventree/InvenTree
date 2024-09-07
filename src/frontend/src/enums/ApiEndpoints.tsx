@@ -154,6 +154,7 @@ export enum ApiEndpoints {
   sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
   sales_order_shipment_list = 'order/so/shipment/',
+  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
 
   return_order_list = 'order/ro/',
   return_order_issue = 'order/ro/:id/issue/',
