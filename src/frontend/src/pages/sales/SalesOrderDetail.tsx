@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -21,12 +20,12 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction
+  HoldItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -449,9 +448,8 @@ export default function SalesOrderDetail() {
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !canEdit,

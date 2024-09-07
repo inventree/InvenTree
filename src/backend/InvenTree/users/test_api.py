@@ -64,12 +64,21 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), Group.objects.count())
 
         # Check detail URL
+        pk = response.data[0]['pk']
         response = self.get(
-            reverse('api-group-detail', kwargs={'pk': response.data[0]['pk']}),
+            reverse('api-group-detail', kwargs={'pk': pk}), expected_code=200
+        )
+        self.assertIn('name', response.data)
+        self.assertNotIn('permissions', response.data)
+
+        # Check more detailed URL
+        response = self.get(
+            reverse('api-group-detail', kwargs={'pk': pk}),
+            data={'permission_detail': True},
             expected_code=200,
         )
-
         self.assertIn('name', response.data)
+        self.assertIn('permissions', response.data)
 
     def test_logout(self):
         """Test api logout endpoint."""
@@ -208,3 +217,34 @@ class UserTokenTests(InvenTreeAPITestCase):
         )
         self.assertIn('key', response.data)
         self.assertTrue(response.data['key'].startswith('inv-'))
+
+    def test_token_api(self):
+        """Test the token API."""
+        url = reverse('api-token-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data, [])
+
+        # Get token
+        response = self.get(reverse('api-token'), expected_code=200)
+        self.assertIn('token', response.data)
+
+        # Now there should be one token
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['active'], True)
+        self.assertEqual(response.data[0]['revoked'], False)
+        self.assertEqual(response.data[0]['in_use'], False)
+        expected_day = str(
+            datetime.datetime.now().date() + datetime.timedelta(days=365)
+        )
+        self.assertEqual(response.data[0]['expiry'], expected_day)
+
+        # Destroy token
+        self.delete(
+            reverse('api-token-detail', kwargs={'pk': response.data[0]['id']}),
+            expected_code=204,
+        )
+
+        # Get token without auth (should fail)
+        self.client.logout()
+        self.get(reverse('api-token'), expected_code=401)

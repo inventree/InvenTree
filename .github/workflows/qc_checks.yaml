@@ -94,7 +94,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -115,7 +115,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -157,9 +157,9 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
+        run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # pin@v4.3.6
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4.4.0
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -191,7 +191,7 @@ jobs:
           diff --color -u src/backend/InvenTree/schema.yml api.yaml
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
-        run: invoke schema
+        run: invoke dev.schema
         continue-on-error: true
       - name: Extract version for publishing
         id: version
@@ -262,9 +262,9 @@ jobs:
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
-          invoke delete-data -f
-          invoke import-fixtures
-          invoke server -a 127.0.0.1:12345 &
+          invoke dev.delete-data -f
+          invoke dev.import-fixtures
+          invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
       - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
@@ -302,11 +302,11 @@ jobs:
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke test --coverage
+        run: invoke dev.test --coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
         if: always()
@@ -355,7 +355,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -399,7 +399,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -438,7 +438,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
         if: always()
@@ -525,17 +525,17 @@ jobs:
           install: true
           update: true
       - name: Set up test data
-        run: invoke setup-test -i
+        run: invoke dev.setup-test -i
       - name: Rebuild thumbnails
-        run: invoke rebuild-thumbnails
+        run: invoke int.rebuild-thumbnails
       - name: Install dependencies
-        run: inv frontend-compile
+        run: invoke int.frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # pin@v4
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -573,7 +573,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # pin@v4.3.6
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4.4.0
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
