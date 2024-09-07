@@ -285,9 +285,9 @@ function update_or_install() {
   chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
 
   # Run update as app user
-  echo "# Updating InvenTree"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update | sed -e 's/^/# inv update| /;'"
+  echo "# POI12| Updating InvenTree"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install uv wheel"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update --uv | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
   echo "# Set permissions for data dir and media: ${DATA_DIR}"
