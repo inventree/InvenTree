@@ -8,8 +8,41 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Part Parameters' }).click();
 
-  // Add selection list
   await page.getByRole('button', { name: 'Selection Lists' }).click();
+  await page.waitForLoadState('networkidle');
+
+  // clean old data if exists
+  await page
+    .getByRole('cell', { name: 'some list' })
+    .waitFor({ timeout: 200 })
+    .then(async (cell) => {
+      await page
+        .getByRole('cell', { name: 'some list' })
+        .locator('..')
+        .getByLabel('row-action-menu-')
+        .click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    })
+    .catch(() => {});
+
+  // clean old data if exists
+  await page
+    .getByRole('cell', { name: 'my custom parameter' })
+    .waitFor({ timeout: 200 })
+    .then(async (cell) => {
+      await page
+        .getByRole('cell', { name: 'my custom parameter' })
+        .locator('..')
+        .getByLabel('row-action-menu-')
+        .click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    })
+    .catch(() => {});
+
+  // Add selection list
+  await page.getByLabel('action-button-add-selection-').waitFor();
   await page.getByLabel('action-button-add-selection-').click();
   await page.getByLabel('text-field-name').fill('some list');
   await page.getByLabel('text-field-description').fill('Listdescription');
