@@ -12,21 +12,40 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { LocationColumn, PartColumn } from '../ColumnRenderers';
+import {
+  LocationColumn,
+  PartColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Render a table of allocated stock for a build.
  */
 export default function BuildAllocatedStockTable({
-  buildId
+  buildId,
+  stockId,
+  partId,
+  showBuildInfo,
+  showPartInfo,
+  allowEdit,
+  modelTarget,
+  modelField
 }: {
-  buildId: number;
+  buildId?: number;
+  stockId?: number;
+  partId?: number;
+  showPartInfo?: boolean;
+  showBuildInfo?: boolean;
+  allowEdit?: boolean;
+  modelTarget?: ModelType;
+  modelField?: string;
 }) {
   const user = useUserState();
-  const table = useTable('build-allocated-stock');
+  const table = useTable('buildallocatedstock');
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -40,14 +59,33 @@ export default function BuildAllocatedStockTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      ReferenceColumn({
+        accessor: 'build_detail.reference',
+        title: t`Build Order`,
+        switchable: false,
+        hidden: showBuildInfo != true
+      }),
+      {
+        accessor: 'build_detail.title',
+        title: t`Description`,
+        hidden: showBuildInfo != true
+      },
+      StatusColumn({
+        accessor: 'build_detail.status',
+        model: ModelType.build,
+        title: t`Order Status`,
+        hidden: showBuildInfo != true
+      }),
       {
         accessor: 'part',
+        hidden: !showPartInfo,
         title: t`Part`,
         sortable: true,
         switchable: false,
         render: (record: any) => PartColumn(record.part_detail)
       },
       {
+        hidden: !showPartInfo,
         accessor: 'bom_reference',
         title: t`Reference`,
         sortable: true,
@@ -117,7 +155,7 @@ export default function BuildAllocatedStockTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.build),
@@ -149,18 +187,21 @@ export default function BuildAllocatedStockTable({
         props={{
           params: {
             build: buildId,
-            part_detail: true,
+            part: partId,
+            stock_item: stockId,
+            build_detail: showBuildInfo ?? false,
+            part_detail: showPartInfo ?? false,
             location_detail: true,
             stock_detail: true,
             supplier_detail: true
           },
-          enableBulkDelete: true,
+          enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: true,
+          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
           rowActions: rowActions,
           tableFilters: tableFilters,
-          modelField: 'stock_item',
-          modelType: ModelType.stockitem
+          modelField: modelField ?? 'stock_item',
+          modelType: modelTarget ?? ModelType.stockitem
         }}
       />
     </>

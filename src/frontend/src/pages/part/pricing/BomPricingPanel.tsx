@@ -32,13 +32,18 @@ function BomPieChart({
 }) {
   // Construct donut data
   const maxPricing = useMemo(() => {
-    return data.map((entry, index) => {
-      return {
-        name: entry.name,
-        value: entry.total_price_max,
-        color: CHART_COLORS[index % CHART_COLORS.length] + '.5'
-      };
-    });
+    return (
+      data
+        ?.filter((el: any) => !!el.total_price_max)
+        .map((entry, index) => {
+          return {
+            // Note: Replace '.' in name to avoid issues with tooltip
+            name: entry?.name?.replace('.', '') ?? '',
+            value: entry?.total_price_max,
+            color: CHART_COLORS[index % CHART_COLORS.length] + '.5'
+          };
+        }) ?? []
+    );
   }, [data]);
 
   return (
@@ -170,8 +175,8 @@ export default function BomPricingPanel({
   const [chartType, setChartType] = useState<string>('pie');
 
   const hasData: boolean = useMemo(() => {
-    return !table.isLoading && bomPricingData.length > 0;
-  }, [table.isLoading, bomPricingData.length]);
+    return !table.isLoading && bomPricingData && bomPricingData.length > 0;
+  }, [table.isLoading, bomPricingData]);
 
   return (
     <Stack gap="xs">

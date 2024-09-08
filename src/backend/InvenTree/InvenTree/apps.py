@@ -11,7 +11,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
-from allauth.socialaccount.signals import social_account_added, social_account_updated
+from allauth.socialaccount.signals import social_account_updated
 
 import InvenTree.conversion
 import InvenTree.ready
@@ -125,7 +125,7 @@ class InvenTreeConfig(AppConfig):
         for task in tasks:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
-            if ref_name in existing_tasks.keys():
+            if ref_name in existing_tasks:
                 # This task already exists - update the details if required
                 existing_task = existing_tasks[ref_name]
 

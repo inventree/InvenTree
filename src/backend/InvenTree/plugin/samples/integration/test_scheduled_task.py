@@ -85,8 +85,6 @@ class ScheduledTaskPluginTests(TestCase):
         class NoSchedules(Base):
             """Plugin without schedules."""
 
-            pass
-
         with self.assertRaises(MixinImplementationError):
             NoSchedules().register_tasks()
 

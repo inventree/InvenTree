@@ -12,7 +12,7 @@ import company.models
 import order.models
 import part.models
 import stock.models
-from common.settings import get_global_setting, set_global_setting
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from order.status_codes import PurchaseOrderStatus
 
@@ -111,7 +111,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_invalid_rate(self):
         """Ensure that conversion behaves properly with missing rates."""
-        ...
 
     def test_simple(self):
         """Tests for hard-coded values."""

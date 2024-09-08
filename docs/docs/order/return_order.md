@@ -45,6 +45,7 @@ Each Return Order has a specific status code, as follows:
 | --- | --- |
 | Pending | The return order has been created, but not sent to the customer |
 | In Progress | The return order has been issued to the customer |
+| On Hold | The return order has been placed on hold, but is still active |
 | Complete | The return order was marked as complete, and is now closed |
 | Cancelled | The return order was cancelled, and is now closed |
 
@@ -59,6 +60,8 @@ Refer to the source code for the Return Order status codes:
         show_root_toc_entry: False
         show_source: True
         members: []
+
+Return Order Status supports [custom states](../concepts/custom_states.md).
 
 ## Create a Return Order
 
@@ -120,3 +123,14 @@ This view can be accessed externally as an ICS calendar using a URL like the fol
 `http://inventree.example.org/api/order/calendar/return-order/calendar.ics`
 
 by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.
+
+## Return Order Settings
+
+The following [global settings](../settings/global.md) are available for return orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("RETURNORDER_ENABLED") }}
+{{ globalsetting("RETURNORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("RETURNORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("RETURNORDER_EDIT_COMPLETED_ORDERS") }}

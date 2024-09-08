@@ -1,12 +1,95 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 228
+INVENTREE_API_VERSION = 251
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v251 - 2024-09-06 : https://github.com/inventree/InvenTree/pull/8018
+    - Adds "attach_to_model" field to the ReporTemplate model
+
+v250 - 2024-09-04 : https://github.com/inventree/InvenTree/pull/8069
+    - Fixes 'revision' field definition in Part serializer
+
+v249 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7978
+    - Sort status enums
+
+v248 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7965
+    - Small adjustments to labels for new custom status fields
+
+v247 - 2024-08-22 : https://github.com/inventree/InvenTree/pull/7956
+    - Adjust "attachment" field on StockItemTestResult serializer
+    - Allow null values for attachment
+
+v246 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7862
+    - Adds custom status fields to various serializers
+    - Adds endpoints to admin custom status fields
+
+v245 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7520
+    - Documented pagination fields (no functional changes)
+
+v244 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7941
+    - Adds "create_child_builds" field to the Build API
+    - Write-only field to create child builds from the API
+    - Only available when creating a new build order
+
+v243 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7940
+    - Expose "ancestor" filter to the BuildOrder API
+
+v242 - 2024-08-20 : https://github.com/inventree/InvenTree/pull/7932
+    - Adds "level" attribute to BuildOrder serializer
+    - Allow ordering of BuildOrder API by "level" attribute
+    - Allow "parent" filter for BuildOrder API to have "cascade=True" option
+
+v241 - 2024-08-18 : https://github.com/inventree/InvenTree/pull/7906
+    - Adjusts required fields for the MeUserDetail endpoint
+
+v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
+    - Adjust "issued_by" filter for the BuildOrder list endpoint
+    - Adjust "assigned_to" filter for the BuildOrder list endpoint
+
+v239 - 2024-08-15 : https://github.com/inventree/InvenTree/pull/7888
+    - Adds "testable" field to the Part model
+    - Adds associated filters to various API endpoints
+
+v238 - 2024-08-14 : https://github.com/inventree/InvenTree/pull/7874
+    - Add "assembly" filter to BuildLine API endpoint
+
+v237 - 2024-08-13 : https://github.com/inventree/InvenTree/pull/7863
+    - Reimplement "bulk delete" operation for Attachment model
+    - Fix permission checks for Attachment API endpoints
+
+v236 - 2024-08-10 : https://github.com/inventree/InvenTree/pull/7844
+    - Adds "supplier_name" to the PurchaseOrder API serializer
+
+v235 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7837
+    - Adds "on_order" quantity to SalesOrderLineItem serializer
+    - Adds "building" quantity to SalesOrderLineItem serializer
+
+v234 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7829
+    - Fixes bug in the plugin metadata endpoint
+
+v233 - 2024-08-04 : https://github.com/inventree/InvenTree/pull/7807
+    - Adds new endpoints for managing state of build orders
+    - Adds new endpoints for managing state of purchase orders
+    - Adds new endpoints for managing state of sales orders
+    - Adds new endpoints for managing state of return orders
+
+v232 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7793
+    - Allow ordering of SalesOrderShipment API by 'shipment_date' and 'delivery_date'
+
+v231 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7794
+    - Optimize BuildItem and BuildLine serializers to improve API efficiency
+
+v230 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7164
+    - Adds test statistics endpoint
+
+v229 - 2024-07-31 : https://github.com/inventree/InvenTree/pull/7775
+    - Add extra exportable fields to the BomItem serializer
+
 v228 - 2024-07-18 : https://github.com/inventree/InvenTree/pull/7684
     - Adds "icon" field to the PartCategory.path and StockLocation.path API
     - Adds icon packages API endpoint

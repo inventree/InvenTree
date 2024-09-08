@@ -188,6 +188,9 @@ function partFields(options={}) {
             default: global_settings.PART_TEMPLATE,
             group: 'attributes',
         },
+        testable: {
+            group: 'attributes',
+        },
         trackable: {
             default: global_settings.PART_TRACKABLE,
             group: 'attributes',
@@ -1758,7 +1761,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     var html = renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
-                        order.status,
+                        order.status_custom_key,
                         {
                             classes: 'float-right',
                         }

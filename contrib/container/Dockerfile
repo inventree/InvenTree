@@ -11,6 +11,7 @@
 
 ARG base_image=python:3.11-alpine3.18
 FROM ${base_image} AS inventree_base
+ARG base_image
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -48,13 +49,18 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.label-schema.schema-version="1.0" \
-      org.label-schema.build-date=${DATE} \
-      org.label-schema.vendor="inventree" \
-      org.label-schema.name="inventree/inventree" \
-      org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
-      org.label-schema.vcs-ref=${commit_tag}
+LABEL org.opencontainers.image.created=${DATE} \
+      org.opencontainers.image.vendor="inventree" \
+      org.opencontainers.image.title="InvenTree backend server" \
+      org.opencontainers.image.description="InvenTree is the open-source inventory management system" \
+      org.opencontainers.image.url="https://inventree.org" \
+      org.opencontainers.image.documentation="https://docs.inventree.org" \
+      org.opencontainers.image.source="https://github.com/inventree/InvenTree" \
+      org.opencontainers.image.revision=${commit_hash} \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.base.name="docker.io/library/${base_image}" \
+      org.opencontainers.image.version=${commit_tag}
+
 
 # Install required system level packages
 RUN apk add --no-cache \
@@ -68,8 +74,9 @@ RUN apk add --no-cache \
     # MySQL / MariaDB client
     mariadb-client mariadb-connector-c \
     && \
-    # fonts
-    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
+    # font support
+    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-terminus font-noto font-noto-cjk font-noto-extra \
+    && fc-cache -f
 
 EXPOSE 8000
 
@@ -108,7 +115,7 @@ RUN apk add --no-cache --update nodejs npm yarn
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
-RUN cd ${INVENTREE_HOME} && inv frontend-compile
+RUN cd ${INVENTREE_HOME} && invoke int.frontend-compile
 
 # InvenTree production image:
 # - Copies required files from local directory

@@ -1788,12 +1788,12 @@ function loadPurchaseOrderTable(table, options) {
                 }
             },
             {
-                field: 'status',
+                field: 'status_custom_key',
                 title: '{% trans "Status" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return purchaseOrderStatusDisplay(row.status);
+                    return purchaseOrderStatusDisplay(row.status_custom_key);
                 }
             },
             {

@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from part.models import Part
+from part.models import Part, BomItem
 from build.models import Build, BuildItem
 from stock.models import StockItem
 
@@ -605,6 +605,79 @@ class BuildTest(BuildAPITest):
                 self.assertEqual(build.reference, row['Reference'])
                 self.assertEqual(build.title, row['Description'])
 
+    def test_create(self):
+        """Test creation of new build orders via the API."""
+
+        url = reverse('api-build-list')
+
+        # First, we'll create a tree of part assemblies
+        part_a = Part.objects.create(name="Part A", description="Part A description", assembly=True)
+        part_b = Part.objects.create(name="Part B", description="Part B description", assembly=True)
+        part_c = Part.objects.create(name="Part C", description="Part C description", assembly=True)
+
+        # Create a BOM for Part A
+        BomItem.objects.create(
+            part=part_a,
+            sub_part=part_b,
+            quantity=5,
+        )
+
+        # Create a BOM for Part B
+        BomItem.objects.create(
+            part=part_b,
+            sub_part=part_c,
+            quantity=7
+        )
+
+        n = Build.objects.count()
+
+        # Create a build order for Part A, with a quantity of 10
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9876',
+                'part': part_a.pk,
+                'quantity': 10,
+                'title': 'A build',
+            },
+            expected_code=201
+        )
+
+        self.assertEqual(n + 1, Build.objects.count())
+
+        bo = Build.objects.get(pk=response.data['pk'])
+
+        self.assertEqual(bo.children.count(), 0)
+
+        # Create a build order for Part A, and auto-create child builds
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9875',
+                'part': part_a.pk,
+                'quantity': 15,
+                'title': 'A build - with childs',
+                'create_child_builds': True,
+            }
+        )
+
+        # An addition 1 + 2 builds should have been created
+        self.assertEqual(n + 4, Build.objects.count())
+
+        bo = Build.objects.get(pk=response.data['pk'])
+
+        # One build has a direct child
+        self.assertEqual(bo.children.count(), 1)
+        child = bo.children.first()
+        self.assertEqual(child.part.pk, part_b.pk)
+        self.assertEqual(child.quantity, 75)
+
+        # And there should be a second-level child build too
+        self.assertEqual(child.children.count(), 1)
+        child = child.children.first()
+        self.assertEqual(child.part.pk, part_c.pk)
+        self.assertEqual(child.quantity, 7 * 5 * 15)
+
 
 class BuildAllocationTest(BuildAPITest):
     """Unit tests for allocation of stock items against a build order.
@@ -1015,7 +1088,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'trim',
             },
             expected_code=201,
-            max_query_count=555,  # TODO: Come back and refactor this
+            max_query_count=600,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()

@@ -1,6 +1,5 @@
 """JSON API for the Stock app."""
 
-import json
 from collections import OrderedDict
 from datetime import timedelta
 
@@ -13,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import permissions, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -59,7 +58,6 @@ from order.serializers import (
 )
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
-from stock.admin import LocationResource, StockItemResource
 from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
@@ -356,10 +354,9 @@ class StockLocationFilter(rest_filters.FilterSet):
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent or top_level:
-            if not value:
-                # If "cascade" is False, only return top-level location
-                queryset = queryset.filter(parent=None)
+        if (not parent or top_level) and not value:
+            # If "cascade" is False, only return top-level location
+            queryset = queryset.filter(parent=None)
 
         return queryset
 
@@ -418,7 +415,7 @@ class StockLocationList(DataExportViewMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = ['name', 'description', 'tags__name', 'tags__slug']
+    search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
 
     ordering_fields = ['name', 'pathstring', 'items', 'level', 'tree_id', 'lft']
 
@@ -976,23 +973,17 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                             'The supplier part has a pack size defined, but flag use_pack_size not set'
                         )
                     })
-                else:
-                    if bool(data.get('use_pack_size')):
-                        quantity = data['quantity'] = supplier_part.base_quantity(
-                            quantity
-                        )
+                elif bool(data.get('use_pack_size')):
+                    quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
-                        # Divide purchase price by pack size, to save correct price per stock item
-                        if (
-                            data['purchase_price']
-                            and supplier_part.pack_quantity_native
-                        ):
-                            try:
-                                data['purchase_price'] = float(
-                                    data['purchase_price']
-                                ) / float(supplier_part.pack_quantity_native)
-                            except ValueError:
-                                pass
+                    # Divide purchase price by pack size, to save correct price per stock item
+                    if data['purchase_price'] and supplier_part.pack_quantity_native:
+                        try:
+                            data['purchase_price'] = float(
+                                data['purchase_price']
+                            ) / float(supplier_part.pack_quantity_native)
+                        except ValueError:
+                            pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
@@ -1034,7 +1025,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     msg += ' : '
                     msg += ','.join([str(e) for e in invalid])
 
-                    raise ValidationError({'serial_numbers': errors + [msg]})
+                    raise ValidationError({'serial_numbers': [*errors, msg]})
 
             except DjangoValidationError as e:
                 raise ValidationError({
@@ -1243,8 +1234,6 @@ class StockItemTestResultMixin:
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
 
-    pass
-
 
 class StockItemTestResultFilter(rest_filters.FilterSet):
     """API filter for the StockItemTestResult list."""
@@ -1286,6 +1275,54 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         """
         key = generateTestKey(value)
         return queryset.filter(template__key=key)
+
+
+class TestStatisticsFilter(rest_filters.FilterSet):
+    """API filter for the filtering the test results belonging to a specific build."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTestResult
+        fields = []
+
+    # Created date filters
+    finished_before = InvenTreeDateFilter(
+        label='Finished before', field_name='finished_datetime', lookup_expr='lte'
+    )
+    finished_after = InvenTreeDateFilter(
+        label='Finished after', field_name='finished_datetime', lookup_expr='gte'
+    )
+
+
+class TestStatistics(GenericAPIView):
+    """API endpoint for accessing a test statistics broken down by test templates."""
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockSerializers.TestStatisticsSerializer
+    pagination_class = None
+    filterset_class = TestStatisticsFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    @extend_schema(
+        responses={200: StockSerializers.TestStatisticsSerializer(many=False)}
+    )
+    def get(self, request, pk, *args, **kwargs):
+        """Return test execution count matrix broken down by test result."""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        if request.resolver_match.url_name == 'api-test-statistics-by-part':
+            serializer.context['type'] = 'by-part'
+        elif request.resolver_match.url_name == 'api-test-statistics-by-build':
+            serializer.context['type'] = 'by-build'
+        serializer.context['finished_datetime_after'] = self.request.query_params.get(
+            'finished_datetime_after'
+        )
+        serializer.context['finished_datetime_before'] = self.request.query_params.get(
+            'finished_datetime_before'
+        )
+        serializer.context['pk'] = pk
+        return Response([serializer.data])
 
 
 class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
@@ -1414,17 +1451,17 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
         delta_models = self.get_delta_model_map()
 
         # Construct a set of related models we need to lookup for later
-        related_model_lookups = {key: set() for key in delta_models.keys()}
+        related_model_lookups = {key: set() for key in delta_models}
 
         # Run a first pass through the data to determine which related models we need to lookup
         for item in data:
             deltas = item['deltas'] or {}
 
-            for key in delta_models.keys():
+            for key in delta_models:
                 if key in deltas:
                     related_model_lookups[key].add(deltas[key])
 
-        for key in delta_models.keys():
+        for key in delta_models:
             model, serializer = delta_models[key]
 
             # Fetch all related models in one go
@@ -1662,4 +1699,28 @@ stock_api_urls = [
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),
+]
+
+test_statistics_api_urls = [
+    # Test statistics endpoints
+    path(
+        'by-part/',
+        include([
+            path(
+                '<int:pk>/',
+                TestStatistics.as_view(),
+                name='api-test-statistics-by-part',
+            )
+        ]),
+    ),
+    path(
+        'by-build/',
+        include([
+            path(
+                '<int:pk>/',
+                TestStatistics.as_view(),
+                name='api-test-statistics-by-build',
+            )
+        ]),
+    ),
 ]

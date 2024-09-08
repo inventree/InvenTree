@@ -166,6 +166,10 @@ class CompanySerializer(
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
+    email = serializers.EmailField(
+        required=False, default='', allow_blank=True, allow_null=True
+    )
+
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
     address_count = serializers.IntegerField(read_only=True)
@@ -381,8 +385,13 @@ class SupplierPartSerializer(
             self.fields.pop('manufacturer_detail', None)
             self.fields.pop('manufacturer_part_detail', None)
 
-        if prettify is not True:
+        if brief or prettify is not True:
             self.fields.pop('pretty_name', None)
+
+        if brief:
+            self.fields.pop('tags')
+            self.fields.pop('available')
+            self.fields.pop('availability_updated')
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))

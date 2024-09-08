@@ -27,6 +27,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
@@ -238,7 +239,10 @@ class StockItemTestResultSerializer(
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
-        required=False
+        required=False,
+        allow_null=True,
+        label=_('Attachment'),
+        help_text=_('Test result attachment'),
     )
 
     def validate(self, data):
@@ -264,13 +268,13 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
 
-            else:
+            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
                 logger.debug(
                     "No matching test template found for '%s' - creating a new template",
                     test_name,
                 )
 
-                # Create a new test template based on the provided dasta
+                # Create a new test template based on the provided data
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
                 )
@@ -326,7 +330,9 @@ class StockItemSerializerBrief(
 
 @register_importer()
 class StockItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for a StockItem.
 
@@ -373,6 +379,7 @@ class StockItemSerializer(
             'serial',
             'status',
             'status_text',
+            'status_custom_key',
             'stocktake_date',
             'supplier_part',
             'sku',
@@ -421,7 +428,7 @@ class StockItemSerializer(
         tests = kwargs.pop('tests', False)
         path_detail = kwargs.pop('path_detail', False)
 
-        super(StockItemSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -506,7 +513,10 @@ class StockItemSerializer(
             'part__category',
             'part__pricing_data',
             'supplier_part',
+            'supplier_part__part',
+            'supplier_part__supplier',
             'supplier_part__manufacturer_part',
+            'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
             'tags',
@@ -868,6 +878,36 @@ class UninstallStockItemSerializer(serializers.Serializer):
         note = data.get('note', '')
 
         item.uninstall_into_location(location, request.user, note)
+
+
+class TestStatisticsLineField(serializers.DictField):
+    """DRF field definition for one column of the test statistics."""
+
+    test_name = serializers.CharField()
+    results = serializers.DictField(child=serializers.IntegerField(min_value=0))
+
+
+class TestStatisticsSerializer(serializers.Serializer):
+    """DRF serializer class for the test statistics."""
+
+    results = serializers.ListField(child=TestStatisticsLineField(), read_only=True)
+
+    def to_representation(self, obj):
+        """Just pass through the test statistics from the model."""
+        if self.context['type'] == 'by-part':
+            return obj.part_test_statistics(
+                self.context['pk'],
+                self.context['finished_datetime_after'],
+                self.context['finished_datetime_before'],
+            )
+        elif self.context['type'] == 'by-build':
+            return obj.build_test_statistics(
+                self.context['pk'],
+                self.context['finished_datetime_after'],
+                self.context['finished_datetime_before'],
+            )
+
+        raise ValidationError(_('Unsupported statistic type: ' + self.context['type']))
 
 
 class ConvertStockItemSerializer(serializers.Serializer):
@@ -1486,7 +1526,7 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change'))] + stock.status_codes.StockStatus.items()
+    return [(None, _('No Change')), *stock.status_codes.StockStatus.items()]
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):

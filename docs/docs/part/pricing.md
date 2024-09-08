@@ -46,7 +46,7 @@ Additionally, the following information is stored for each part, in relation to 
 
 InvenTree supports pricing data in multiple currencies, allowing integration with suppliers and customers using different currency systems.
 
-Supported currencies must be configured as part of [the InvenTree setup process](../start/config.md#supported-currencies).
+Supported currencies can be configured in the [InvenTree settings](../settings/currency.md).
 
 !!! info "Currency Support"
     InvenTree provides multi-currency pricing support via the [django-money](https://django-money.readthedocs.io/en/latest/) library.

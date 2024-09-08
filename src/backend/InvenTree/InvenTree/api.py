@@ -8,7 +8,6 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
-from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
@@ -21,15 +20,13 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
-from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.permissions import RolePermission
 from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
-from .email import is_email_configured
+from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
@@ -80,7 +77,7 @@ class LicenseView(APIView):
         # Ensure we do not have any duplicate 'name' values in the list
         for entry in data:
             name = None
-            for key in entry.keys():
+            for key in entry:
                 if key.lower() == 'name':
                     name = entry[key]
                     break
@@ -324,7 +321,6 @@ class BulkDeleteMixin:
         Raises:
             ValidationError: If the deletion should not proceed
         """
-        pass
 
     def filter_delete_queryset(self, queryset, request):
         """Provide custom filtering for the queryset *before* it is deleted.
@@ -400,8 +396,6 @@ class BulkDeleteMixin:
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create."""
-
-    ...
 
 
 class APISearchViewSerializer(serializers.Serializer):

@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Docker compose recipe for a production-ready InvenTree setup, with the following containers:
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
@@ -85,7 +83,7 @@ services:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-worker
-        command: invoke worker
+        command: invoke int.worker
         depends_on:
             - inventree-server
         env_file:

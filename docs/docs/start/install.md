@@ -239,6 +239,7 @@ Run the following command to initialize the database with the required tables.
 cd /home/inventree/src
 invoke update
 ```
+NOTE: If you are on Debian, and get "No module named 'django', it might be that `/usr/bin/invoke` are used. Make sure that the python environment (`/home/inventree/env/bin`) is ahead in the PATH variable.
 
 ### Create Admin Account
 

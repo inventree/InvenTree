@@ -20,6 +20,7 @@ Each Purchase Order has a specific status code which indicates the current state
 | --- | --- |
 | Pending | The purchase order has been created, but has not been submitted to the supplier |
 | In Progress | The purchase order has been issued to the supplier, and is in progress |
+| On Hold | The purchase order has been placed on hold, but is still active |
 | Complete | The purchase order has been completed, and is now closed |
 | Cancelled | The purchase order was cancelled, and is now closed |
 | Lost | The purchase order was lost, and is now closed |
@@ -36,6 +37,8 @@ Refer to the source code for the Purchase Order status codes:
         show_root_toc_entry: False
         show_source: True
         members: []
+
+Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Purchase Order Currency
 
@@ -138,3 +141,14 @@ This view can be accessed externally as an ICS calendar using a URL like the fol
 `http://inventree.example.org/api/order/calendar/purchase-order/calendar.ics`
 
 by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.
+
+## Purchase Order Settings
+
+The following [global settings](../settings/global.md) are available for purchase orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
+{{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}

@@ -180,9 +180,9 @@ class PartImport(FileManagementFormView):
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                     try:
-                        exact_match = self.allowed_items[idx].get(**{
-                            a: data for a in self.matches[idx]
-                        })
+                        exact_match = self.allowed_items[idx].get(
+                            **dict.fromkeys(self.matches[idx], data)
+                        )
                     except (
                         ValueError,
                         self.allowed_items[idx].model.DoesNotExist,
@@ -414,7 +414,7 @@ class PartDetailFromIPN(PartDetail):
         if not self.object:
             return HttpResponseRedirect(reverse('part-index'))
 
-        return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class PartImageSelect(AjaxUpdateView):

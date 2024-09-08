@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import decimal
 import hashlib
+import inspect
 import logging
 import math
 import os
@@ -51,8 +52,7 @@ from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
-from common.models import InvenTreeSetting
-from common.settings import get_global_setting, set_global_setting
+from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
@@ -231,10 +231,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Get all unique parameter names for all parts from this category."""
         unique_parameters_names = []
 
-        if prefetch:
-            parts = prefetch
-        else:
-            parts = self.prefetch_parts_parameters(cascade=cascade)
+        parts = prefetch or self.prefetch_parts_parameters(cascade=cascade)
 
         for part in parts:
             for parameter in part.parameters.all():
@@ -248,10 +245,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Get all parameter names and values for all parts from this category."""
         category_parameters = []
 
-        if prefetch:
-            parts = prefetch
-        else:
-            parts = self.prefetch_parts_parameters(cascade=cascade)
+        parts = prefetch or self.prefetch_parts_parameters(cascade=cascade)
 
         for part in parts:
             part_parameters = {
@@ -404,6 +398,7 @@ class Part(
         component: Can this part be used to make other parts?
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
+        testable: Testable parts can have test results recorded against their stock items
         active: Is this part active? Parts are deactivated instead of being deleted
         locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
@@ -775,7 +770,22 @@ class Part(
             for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
-                if plugin.validate_serial_number(serial, self):
+
+                result = False
+
+                if hasattr(plugin, 'validate_serial_number'):
+                    signature = inspect.signature(plugin.validate_serial_number)
+
+                    if 'stock_item' in signature.parameters:
+                        # 2024-08-21: New method signature accepts a 'stock_item' parameter
+                        result = plugin.validate_serial_number(
+                            serial, self, stock_item=stock_item
+                        )
+                    else:
+                        # Old method signature - does not accept a 'stock_item' parameter
+                        result = plugin.validate_serial_number(serial, self)
+
+                if result is True:
                     return True
         except ValidationError as exc:
             if raise_error:
@@ -917,24 +927,26 @@ class Part(
                     'IPN': _('Duplicate IPN not allowed in part settings')
                 })
 
-        if self.revision_of and self.revision:
-            if (
+        if (
+            self.revision_of
+            and self.revision
+            and (
                 Part.objects.exclude(pk=self.pk)
                 .filter(revision_of=self.revision_of, revision=self.revision)
                 .exists()
-            ):
-                raise ValidationError(_('Duplicate part revision already exists.'))
+            )
+        ):
+            raise ValidationError(_('Duplicate part revision already exists.'))
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if self.revision or self.IPN:
-            if (
-                Part.objects.exclude(pk=self.pk)
-                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-                .exists()
-            ):
-                raise ValidationError(
-                    _('Part with this Name, IPN and Revision already exists.')
-                )
+        if (self.revision or self.IPN) and (
+            Part.objects.exclude(pk=self.pk)
+            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+            .exists()
+        ):
+            raise ValidationError(
+                _('Part with this Name, IPN and Revision already exists.')
+            )
 
     def clean(self):
         """Perform cleaning operations for the Part model.
@@ -1165,6 +1177,12 @@ class Part(
         default=part_settings.part_trackable_default,
         verbose_name=_('Trackable'),
         help_text=_('Does this part have tracking for unique items?'),
+    )
+
+    testable = models.BooleanField(
+        default=False,
+        verbose_name=_('Testable'),
+        help_text=_('Can this part have test results recorded against it?'),
     )
 
     purchaseable = models.BooleanField(
@@ -3564,9 +3582,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
     def validate_unique(self, exclude=None):
         """Test that this test template is 'unique' within this part tree."""
-        if not self.part.trackable:
+        if not self.part.testable:
             raise ValidationError({
-                'part': _('Test templates can only be created for trackable parts')
+                'part': _('Test templates can only be created for testable parts')
             })
 
         # Check that this test is unique within the part tree
@@ -3587,7 +3605,7 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         Part,
         on_delete=models.CASCADE,
         related_name='test_templates',
-        limit_choices_to={'trackable': True},
+        limit_choices_to={'testable': True},
         verbose_name=_('Part'),
     )
 
@@ -3866,16 +3884,18 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # Validate the parameter data against the template units
-        if get_global_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        if (
+            get_global_setting(
+                'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.template.units
         ):
-            if self.template.units:
-                try:
-                    InvenTree.conversion.convert_physical_value(
-                        self.data, self.template.units
-                    )
-                except ValidationError as e:
-                    raise ValidationError({'data': e.message})
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'data': e.message})
 
         # Validate the parameter data against the template choices
         if choices := self.template.get_choices():
@@ -4183,9 +4203,8 @@ class BomItem(
         # Check if the part was changed
         deltas = self.get_field_deltas()
 
-        if 'part' in deltas:
-            if old_part := deltas['part'].get('old', None):
-                self.check_part_lock(old_part)
+        if 'part' in deltas and (old_part := deltas['part'].get('old', None)):
+            self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid
@@ -4322,7 +4341,7 @@ class BomItem(
         - allow_variants
         """
         # Seed the hash with the ID of this BOM item
-        result_hash = hashlib.md5(''.encode())
+        result_hash = hashlib.md5(b'')
 
         # The following components are used to calculate the checksum
         components = [
@@ -4416,8 +4435,7 @@ class BomItem(
         try:
             ovg = float(overage)
 
-            if ovg < 0:
-                ovg = 0
+            ovg = max(ovg, 0)
 
             return ovg
         except ValueError:
@@ -4429,10 +4447,8 @@ class BomItem(
 
             try:
                 percent = float(overage) / 100.0
-                if percent > 1:
-                    percent = 1
-                if percent < 0:
-                    percent = 0
+                percent = min(percent, 1)
+                percent = max(percent, 0)
 
                 # Must be represented as a decimal
                 percent = Decimal(percent)
@@ -4510,7 +4526,8 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated."""
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -4526,7 +4543,8 @@ def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted."""
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):

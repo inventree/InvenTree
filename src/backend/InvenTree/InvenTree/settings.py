@@ -18,7 +18,6 @@ import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
 from django.http import Http404
-from django.utils.translation import gettext_lazy as _
 
 import pytz
 from dotenv import load_dotenv
@@ -282,7 +281,7 @@ QUERYCOUNT = {
         'MIN_TIME_TO_LOG': 0.1,
         'MIN_QUERY_COUNT_TO_LOG': 25,
     },
-    'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
+    'IGNORE_REQUEST_PATTERNS': [r'^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
     'DISPLAY_DUPLICATES': 1,
     'RESPONSE_HEADER': 'X-Django-Query-Count',
@@ -299,9 +298,9 @@ if (
     and INVENTREE_ADMIN_ENABLED
     and not TESTING
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):  # noqa
+):
     try:
-        import django_admin_shell
+        import django_admin_shell  # noqa: F401
 
         INSTALLED_APPS.append('django_admin_shell')
         ADMIN_SHELL_ENABLE = True
@@ -950,10 +949,7 @@ USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
-if not TESTING:
-    USE_TZ = True  # pragma: no cover
-else:
-    USE_TZ = False
+USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
@@ -1066,7 +1062,7 @@ COOKIE_MODE = (
 
 valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
 
-if COOKIE_MODE not in valid_cookie_modes.keys():
+if COOKIE_MODE not in valid_cookie_modes:
     logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
     sys.exit(-1)
 
@@ -1210,6 +1206,9 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
+ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
+# Determine if multi-factor authentication is enabled for this server (default = True)
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'

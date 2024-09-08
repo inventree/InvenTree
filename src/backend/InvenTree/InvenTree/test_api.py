@@ -70,11 +70,11 @@ class APITests(InvenTreeAPITestCase):
         """Helper function to use basic auth."""
         # Use basic authentication
 
-        authstring = bytes('{u}:{p}'.format(u=self.username, p=self.password), 'ascii')
+        authstring = bytes(f'{self.username}:{self.password}', 'ascii')
 
         # Use "basic" auth by default
         auth = b64encode(authstring).decode('ascii')
-        self.client.credentials(HTTP_AUTHORIZATION='Basic {auth}'.format(auth=auth))
+        self.client.credentials(HTTP_AUTHORIZATION=f'Basic {auth}')
 
     def tokenAuth(self):
         """Helper function to use token auth."""
@@ -92,9 +92,7 @@ class APITests(InvenTreeAPITestCase):
         """Test token resolve endpoint does not work without basic auth."""
         # Test token endpoint without basic auth
         url = reverse('api-token')
-        response = self.client.get(url, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.get(url, expected_code=401)
         self.assertIsNone(self.token)
 
     def test_token_success(self):
@@ -106,7 +104,7 @@ class APITests(InvenTreeAPITestCase):
         """Test that we can read the 'info-view' endpoint."""
         url = reverse('api-inventree-info')
 
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         data = response.json()
         self.assertIn('server', data)
@@ -126,7 +124,7 @@ class APITests(InvenTreeAPITestCase):
         self.group.rule_sets.all().delete()
         update_group_roles(self.group)
 
-        response = self.client.get(url, format='json')
+        response = self.get(url, expected_code=401)
 
         # Not logged in, so cannot access user role data
         self.assertIn(response.status_code, [401, 403])

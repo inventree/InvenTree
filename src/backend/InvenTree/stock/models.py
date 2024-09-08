@@ -9,7 +9,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, Sum
@@ -33,15 +33,22 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from build import models as BuildModels
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from order.status_codes import SalesOrderStatusGroups
+from InvenTree.status_codes import (
+    SalesOrderStatusGroups,
+    StockHistoryCode,
+    StockStatus,
+    StockStatusGroups,
+)
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock import models as StockModels  # noqa: PLW0406
 from stock.generators import generate_batch_code
-from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -475,8 +482,7 @@ class StockItem(
 
                 serial_int = abs(serial_int)
 
-                if serial_int > clip:
-                    serial_int = clip
+                serial_int = min(serial_int, clip)
 
                 self.serial_int = serial_int
                 return
@@ -582,7 +588,7 @@ class StockItem(
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        super(StockItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # If user information is provided, and no existing note exists, create one!
         if user and self.tracking_info.count() == 0:
@@ -617,7 +623,7 @@ class StockItem(
         If the StockItem is serialized, the same serial number.
         cannot exist for the same part (or part tree).
         """
-        super(StockItem, self).validate_unique(exclude)
+        super().validate_unique(exclude)
 
         # If the serial number is set, make sure it is not a duplicate
         if self.serial:
@@ -938,7 +944,7 @@ class StockItem(
         help_text=_('Delete this Stock Item when stock is depleted'),
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=StockStatus.OK.value,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)],
@@ -1182,10 +1188,7 @@ class StockItem(
         if self.allocations.count() > 0:
             return True
 
-        if self.sales_order_allocations.count() > 0:
-            return True
-
-        return False
+        return self.sales_order_allocations.count() > 0
 
     def build_allocation_count(self):
         """Return the total quantity allocated to builds."""
@@ -1259,10 +1262,7 @@ class StockItem(
         if self.installed_item_count() > 0:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return not self.sales_order is not None
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1421,10 +1421,7 @@ class StockItem(
         if self.belongs_to is not None:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return not self.sales_order is not None
 
     @property
     def tracking_info_count(self):
@@ -1440,7 +1437,7 @@ class StockItem(
         self,
         entry_type: int,
         user: User,
-        deltas: dict = None,
+        deltas: dict | None = None,
         notes: str = '',
         **kwargs,
     ):
@@ -2020,8 +2017,7 @@ class StockItem(
         except (InvalidOperation, ValueError):
             return
 
-        if quantity < 0:
-            quantity = 0
+        quantity = max(quantity, 0)
 
         self.quantity = quantity
 
@@ -2204,9 +2200,9 @@ class StockItem(
             for item in installed_items:
                 item_results = item.testResultMap()
 
-                for key in item_results.keys():
+                for key in item_results:
                     # Results from sub items should not override master ones
-                    if key not in result_map.keys():
+                    if key not in result_map:
                         result_map[key] = item_results[key]
 
         return result_map
@@ -2291,7 +2287,8 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2310,7 +2307,8 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
@@ -2351,7 +2349,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def label(self):
         """Return label."""
-        if self.tracking_type in StockHistoryCode.keys():
+        if self.tracking_type in StockHistoryCode.keys():  # noqa: SIM118
             return StockHistoryCode.label(self.tracking_type)
 
         return getattr(self, 'title', '')
@@ -2431,33 +2429,91 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        template = self.template
+        try:
+            template = self.template
+        except PartModels.PartTestTemplate.DoesNotExist:
+            template = None
 
-        if template is None:
-            # Fallback if there is no matching template
-            for template in self.stock_item.part.getTestTemplates():
-                if self.key == template.key:
-                    break
+        if not template:
+            raise ValidationError({'template': _('Test template does not exist')})
 
-        if template:
-            if template.requires_value and not self.value:
-                raise ValidationError({
-                    'value': _('Value must be provided for this test')
-                })
+        if template.requires_value and not self.value:
+            raise ValidationError({'value': _('Value must be provided for this test')})
 
-            if template.requires_attachment and not self.attachment:
-                raise ValidationError({
-                    'attachment': _('Attachment must be uploaded for this test')
-                })
+        if template.requires_attachment and not self.attachment:
+            raise ValidationError({
+                'attachment': _('Attachment must be uploaded for this test')
+            })
 
-            if choices := template.get_choices():
-                if self.value not in choices:
-                    raise ValidationError({'value': _('Invalid value for this test')})
+        if choices := template.get_choices():
+            if self.value not in choices:
+                raise ValidationError({'value': _('Invalid value for this test')})
 
     @property
     def key(self):
         """Return key for test."""
         return InvenTree.helpers.generateTestKey(self.test_name)
+
+    def calculate_test_statistics_for_test_template(
+        self, query_base, test_template, ret, start, end
+    ):
+        """Helper function to calculate the passed/failed/total tests count per test template type."""
+        query = query_base & Q(template=test_template.pk)
+        if start is not None and end is not None:
+            query = query & Q(started_datetime__range=(start, end))
+        elif start is not None and end is None:
+            query = query & Q(started_datetime__gt=start)
+        elif start is None and end is not None:
+            query = query & Q(started_datetime__lt=end)
+
+        passed = StockModels.StockItemTestResult.objects.filter(
+            query & Q(result=True)
+        ).count()
+        failed = StockModels.StockItemTestResult.objects.filter(
+            query & ~Q(result=True)
+        ).count()
+        if test_template.test_name not in ret:
+            ret[test_template.test_name] = {'passed': 0, 'failed': 0, 'total': 0}
+        ret[test_template.test_name]['passed'] += passed
+        ret[test_template.test_name]['failed'] += failed
+        ret[test_template.test_name]['total'] += passed + failed
+        ret['total']['passed'] += passed
+        ret['total']['failed'] += failed
+        ret['total']['total'] += passed + failed
+        return ret
+
+    def build_test_statistics(self, build_order_pk, start, end):
+        """Generate a statistics matrix for each test template based on the test executions result counts."""
+        build = BuildModels.Build.objects.get(pk=build_order_pk)
+        if not build or not build.part.trackable:
+            return {}
+
+        test_templates = build.part.getTestTemplates()
+        ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
+        for build_item in build.get_build_outputs():
+            for test_template in test_templates:
+                query_base = Q(stock_item=build_item)
+                ret = self.calculate_test_statistics_for_test_template(
+                    query_base, test_template, ret, start, end
+                )
+        return ret
+
+    def part_test_statistics(self, part_pk, start, end):
+        """Generate a statistics matrix for each test template based on the test executions result counts."""
+        part = PartModels.Part.objects.get(pk=part_pk)
+
+        if not part or not part.trackable:
+            return {}
+
+        test_templates = part.getTestTemplates()
+        ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
+        for bo in part.stock_entries():
+            for test_template in test_templates:
+                query_base = Q(stock_item=bo)
+                ret = self.calculate_test_statistics_for_test_template(
+                    query_base, test_template, ret, start, end
+                )
+        return ret
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='test_results'
@@ -2520,7 +2576,5 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Finished'),
         help_text=_('The timestamp of the test finish'),
     )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

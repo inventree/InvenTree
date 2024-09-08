@@ -63,7 +63,7 @@ class PluginFilter(rest_filters.FilterSet):
             match = True
 
             for mixin in mixins:
-                if mixin not in result.mixins().keys():
+                if mixin not in result.mixins():
                     match = False
                     break
 
@@ -414,6 +414,13 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
+class PluginMetadataView(MetadataView):
+    """Metadata API endpoint for the PluginConfig model."""
+
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
+
+
 plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
@@ -438,7 +445,7 @@ plugin_api_urls = [
                     )
                 ]),
             ),
-            # Lookup for individual plugins (based on 'key', not 'pk')
+            # Lookup for individual plugins (based on 'plugin', not 'pk')
             path(
                 '<str:plugin>/',
                 include([
@@ -459,7 +466,7 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
+                        PluginMetadataView.as_view(),
                         {'model': PluginConfig, 'lookup_field': 'key'},
                         name='api-plugin-metadata',
                     ),

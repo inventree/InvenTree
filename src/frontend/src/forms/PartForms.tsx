@@ -13,6 +13,8 @@ export function usePartFields({
 }: {
   create?: boolean;
 }): ApiFormFieldSet {
+  const settings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       category: {
@@ -53,6 +55,7 @@ export function usePartFields({
       component: {},
       assembly: {},
       is_template: {},
+      testable: {},
       trackable: {},
       purchaseable: {},
       salable: {},
@@ -93,8 +96,6 @@ export function usePartFields({
       };
     }
 
-    const settings = useGlobalSettingsState.getState();
-
     if (settings.isSet('PART_REVISION_ASSEMBLY_ONLY')) {
       fields.revision_of.filters['assembly'] = true;
     }
@@ -111,7 +112,7 @@ export function usePartFields({
     }
 
     return fields;
-  }, [create]);
+  }, [create, settings]);
 }
 
 /**
@@ -140,7 +141,11 @@ export function partCategoryFields(): ApiFormFieldSet {
   return fields;
 }
 
-export function usePartParameterFields(): ApiFormFieldSet {
+export function usePartParameterFields({
+  editTemplate
+}: {
+  editTemplate?: boolean;
+}): ApiFormFieldSet {
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 
@@ -155,6 +160,7 @@ export function usePartParameterFields(): ApiFormFieldSet {
         disabled: true
       },
       template: {
+        disabled: editTemplate == false,
         onValueChange: (value: any, record: any) => {
           // Adjust the type of the "data" field based on the selected template
           if (record?.checkbox) {
@@ -194,7 +200,7 @@ export function usePartParameterFields(): ApiFormFieldSet {
         }
       }
     };
-  }, [fieldType, choices]);
+  }, [editTemplate, fieldType, choices]);
 }
 
 export function partStocktakeFields(): ApiFormFieldSet {

@@ -154,6 +154,9 @@ function newBuildOrder(options={}) {
 
     var fields = buildFormFields();
 
+    // Add "create_child_builds" field
+    fields.create_child_builds = {};
+
     // Specify the target part
     if (options.part) {
         fields.part.value = options.part;
@@ -612,7 +615,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         method: 'POST',
         preFormContent: html,
         fields: {
-            status: {},
+            status_custom_key: {},
             location: {
                 filters: {
                     structural: false,
@@ -641,7 +644,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             // Extract data elements from the form
             var data = {
                 outputs: [],
-                status: getFormFieldValue('status', {}, opts),
+                status_custom_key: getFormFieldValue('status_custom_key', {}, opts),
                 location: getFormFieldValue('location', {}, opts),
                 notes: getFormFieldValue('notes', {}, opts),
                 accept_incomplete_allocation: getFormFieldValue('accept_incomplete_allocation', {type: 'boolean'}, opts),
@@ -1150,7 +1153,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                     if (row.build_detail) {
                         html += `- <small>${row.build_detail.title}</small>`;
 
-                        html += buildStatusDisplay(row.build_detail.status, {
+                        html += buildStatusDisplay(row.build_detail.status_custom_key, {
                             classes: 'float-right',
                         });
                     }
@@ -1297,7 +1300,7 @@ function loadBuildOutputTable(build_info, options={}) {
     });
 
     // Request list of required tests for the part being assembled
-    if (build_info.trackable) {
+    if (build_info.testable) {
         inventreeGet(
             '{% url "api-part-test-template-list" %}',
             {
@@ -1553,7 +1556,7 @@ function loadBuildOutputTable(build_info, options={}) {
                         text += ` <small>({% trans "Batch" %}: ${row.batch})</small>`;
                     }
 
-                    text += stockStatusDisplay(row.status, {classes: 'float-right'});
+                    text += stockStatusDisplay(row.status_custom_key, {classes: 'float-right'});
 
                     return text;
                 }
@@ -2359,7 +2362,7 @@ function loadBuildTable(table, options) {
                 }
             },
             {
-                field: 'status',
+                field: 'status_custom_key',
                 title: '{% trans "Status" %}',
                 sortable: true,
                 formatter: function(value) {

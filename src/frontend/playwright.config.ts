@@ -36,7 +36,7 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: 'invoke server -a 127.0.0.1:8000',
+      command: 'invoke dev.server -a 127.0.0.1:8000',
       env: {
         INVENTREE_DEBUG: 'True'
       },

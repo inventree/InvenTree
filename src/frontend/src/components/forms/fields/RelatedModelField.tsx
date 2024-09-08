@@ -207,7 +207,7 @@ export function RelatedModelField({
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.(_pk, value.data ?? {});
+      definition.onValueChange?.(_pk, value?.data ?? {});
     },
     [field.onChange, definition]
   );
@@ -236,25 +236,23 @@ export function RelatedModelField({
   // Field doesn't follow Mantine theming
   // Define color theme to pass to field based on Mantine theme
   const theme = useMantineTheme();
-
-  const colorschema = vars.colors.primaryColors;
   const { colorScheme } = useMantineColorScheme();
 
   const colors = useMemo(() => {
     let colors: any;
     if (colorScheme === 'dark') {
       colors = {
-        neutral0: colorschema[6],
-        neutral5: colorschema[4],
-        neutral10: colorschema[4],
-        neutral20: colorschema[4],
-        neutral30: colorschema[3],
-        neutral40: colorschema[2],
-        neutral50: colorschema[1],
-        neutral60: colorschema[0],
-        neutral70: colorschema[0],
-        neutral80: colorschema[0],
-        neutral90: colorschema[0],
+        neutral0: vars.colors.dark[6],
+        neutral5: vars.colors.dark[4],
+        neutral10: vars.colors.dark[4],
+        neutral20: vars.colors.dark[4],
+        neutral30: vars.colors.dark[3],
+        neutral40: vars.colors.dark[2],
+        neutral50: vars.colors.dark[1],
+        neutral60: vars.colors.dark[0],
+        neutral70: vars.colors.dark[0],
+        neutral80: vars.colors.dark[0],
+        neutral90: vars.colors.dark[0],
         primary: vars.colors.primaryColors[7],
         primary25: vars.colors.primaryColors[6],
         primary50: vars.colors.primaryColors[5],

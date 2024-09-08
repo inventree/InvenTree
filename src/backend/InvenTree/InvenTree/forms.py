@@ -15,6 +15,7 @@ from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
+from allauth_2fa.forms import TOTPDeviceForm
 from allauth_2fa.utils import user_has_valid_totp_device
 from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
 from crispy_forms.helper import FormHelper
@@ -211,6 +212,16 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
+class CustomTOTPDeviceForm(TOTPDeviceForm):
+    """Ensure that db registration is enabled."""
+
+    def __init__(self, user, metadata=None, **kwargs):
+        """Override to check if registration is open."""
+        if not settings.MFA_ENABLED:
+            raise forms.ValidationError(_('MFA Registration is disabled.'))
+        super().__init__(user, metadata, **kwargs)
+
+
 def registration_enabled():
     """Determine whether user registration is enabled."""
     if get_global_setting('LOGIN_ENABLE_REG') or InvenTree.sso.registration_enabled():
@@ -255,9 +266,8 @@ class RegistratonMixin:
                 raise forms.ValidationError(
                     _('The provided primary email address is not valid.')
                 )
-            else:
-                if split_email[1] == option[1:]:
-                    return super().clean_email(email)
+            elif split_email[1] == option[1:]:
+                return super().clean_email(email)
 
         logger.info('The provided email domain for %s is not approved', email)
         raise forms.ValidationError(_('The provided email domain is not approved.'))

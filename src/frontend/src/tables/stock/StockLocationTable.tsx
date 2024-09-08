@@ -20,7 +20,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { RowAction, RowEditAction } from '../RowActions';
 
 /**
  * Stock location table
@@ -138,7 +138,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let can_edit = user.hasChangeRole(UserRoles.stock_location);
 
       return [

@@ -1,10 +1,9 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconDots,
   IconHistory,
   IconInfoCircle,
   IconNotes,
@@ -28,11 +27,9 @@ import {
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -58,7 +55,9 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
@@ -117,7 +116,7 @@ export default function StockDetail() {
         name: 'tests',
         label: `Completed Tests`,
         icon: 'progress',
-        hidden: !part?.trackable
+        hidden: !part?.testable
       },
       {
         type: 'text',
@@ -268,6 +267,19 @@ export default function StockDetail() {
     );
   }, [stockitem, instanceQuery]);
 
+  const showBuildAllocations = useMemo(() => {
+    // Determine if "build allocations" should be shown for this stock item
+    return (
+      stockitem?.part_detail?.component && // Must be a "component"
+      !stockitem?.sales_order && // Must not be assigned to a sales order
+      !stockitem?.belongs_to
+    ); // Must not be installed into another item
+  }, [stockitem]);
+
+  const showSalesAlloctions = useMemo(() => {
+    return stockitem?.part_detail?.salable;
+  }, [stockitem]);
+
   const stockPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -290,16 +302,50 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        hidden:
-          !stockitem?.part_detail?.salable &&
-          !stockitem?.part_detail?.component,
-        content: <PlaceholderPanel />
+        hidden: !showSalesAlloctions && !showBuildAllocations,
+        content: (
+          <Accordion
+            multiple={true}
+            defaultValue={['buildallocations', 'salesallocations']}
+          >
+            {showBuildAllocations && (
+              <Accordion.Item value="buildallocations" key="buildallocations">
+                <Accordion.Control>
+                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <BuildAllocatedStockTable
+                    stockId={stockitem.pk}
+                    modelField="build"
+                    modelTarget={ModelType.build}
+                    showBuildInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+            {showSalesAlloctions && (
+              <Accordion.Item value="salesallocations" key="salesallocations">
+                <Accordion.Control>
+                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <SalesOrderAllocationTable
+                    stockId={stockitem.pk}
+                    modelField="order"
+                    modelTarget={ModelType.salesorder}
+                    showOrderInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+          </Accordion>
+        )
       },
       {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable,
+        hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (
           <StockItemTestResultTable
             itemId={stockitem.pk}
@@ -427,20 +473,10 @@ export default function StockDetail() {
     () => [
       <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.stockitem,
-            pk: stockitem.pk
-          }),
-          LinkBarcodeAction({
-            hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
-          }),
-          UnlinkBarcodeAction({
-            hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
-          })
-        ]}
+        model={ModelType.stockitem}
+        pk={stockitem.pk}
+        hash={stockitem?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.stock)}
       />,
       <PrintingActions
         modelType={ModelType.stockitem}
@@ -490,9 +526,8 @@ export default function StockDetail() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Stock Item Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.stock),
@@ -549,7 +584,7 @@ export default function StockDetail() {
             key="batch"
           />,
           <StatusRenderer
-            status={stockitem.status}
+            status={stockitem.status_custom_key}
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
             key="status"
@@ -572,6 +607,8 @@ export default function StockDetail() {
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
           imageUrl={stockitem.part_detail?.thumbnail}
+          editAction={editStockItem.open}
+          editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {

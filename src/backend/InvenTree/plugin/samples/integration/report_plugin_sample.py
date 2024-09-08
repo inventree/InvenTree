@@ -4,7 +4,6 @@ import random
 
 from plugin import InvenTreePlugin
 from plugin.mixins import ReportMixin
-from report.models import ReportTemplate
 
 
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):

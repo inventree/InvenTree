@@ -3,8 +3,6 @@
 from typing import Union
 
 from django.core.exceptions import ValidationError
-from django.db.models.query import QuerySet
-from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 import pdf2image
@@ -253,8 +251,6 @@ class LabelPrintingMixin:
 
     def before_printing(self):
         """Hook method called before printing labels."""
-        pass
 
     def after_printing(self):
         """Hook method called after printing labels."""
-        pass

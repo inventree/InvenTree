@@ -43,7 +43,6 @@ from InvenTree.mixins import (
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
-from part.admin import PartCategoryResource, PartResource
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -168,10 +167,9 @@ class CategoryFilter(rest_filters.FilterSet):
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent or top_level:
-            if not value:
-                # If "cascade" is False, only return top-level categories
-                queryset = queryset.filter(parent=None)
+        if (not parent or top_level) and not value:
+            # If "cascade" is False, only return top-level categories
+            queryset = queryset.filter(parent=None)
 
         return queryset
 
@@ -245,7 +243,7 @@ class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
     # Use hierarchical ordering by default
     ordering = ['tree_id', 'lft', 'name']
 
-    search_fields = ['name', 'description']
+    search_fields = ['name', 'description', 'pathstring']
 
 
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
@@ -417,7 +415,7 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
 
     part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.filter(trackable=True),
+        queryset=Part.objects.filter(testable=True),
         label='Part',
         field_name='part',
         method='filter_part',
@@ -466,8 +464,6 @@ class PartTestTemplateMixin:
 
 class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
-
-    pass
 
 
 class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreateAPI):
@@ -1127,9 +1123,9 @@ class PartFilter(rest_filters.FilterSet):
         # TODO: We should cache BOM checksums to make this process more efficient
         pks = []
 
-        for part in queryset:
-            if part.is_bom_valid() == value:
-                pks.append(part.pk)
+        for item in queryset:
+            if item.is_bom_valid() == value:
+                pks.append(item.pk)
 
         return queryset.filter(pk__in=pks)
 
@@ -1157,6 +1153,8 @@ class PartFilter(rest_filters.FilterSet):
     component = rest_filters.BooleanFilter()
 
     trackable = rest_filters.BooleanFilter()
+
+    testable = rest_filters.BooleanFilter()
 
     purchaseable = rest_filters.BooleanFilter()
 
@@ -1195,6 +1193,10 @@ class PartMixin:
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
+        # Annotate with parameter template data?
+        if str2bool(self.request.query_params.get('parameters', False)):
+            queryset = queryset.prefetch_related('parameters', 'parameters__template')
 
         return queryset
 
@@ -1565,8 +1567,6 @@ class PartParameterTemplateList(
 class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
-    pass
-
 
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
@@ -1657,8 +1657,6 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 
 class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
-
-    pass
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
@@ -1752,20 +1750,28 @@ class BomFilter(rest_filters.FilterSet):
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(
-        label='Master part is active', field_name='part__active'
+        label='Assembly part is active', field_name='part__active'
     )
 
     part_trackable = rest_filters.BooleanFilter(
-        label='Master part is trackable', field_name='part__trackable'
+        label='Assembly part is trackable', field_name='part__trackable'
+    )
+
+    part_testable = rest_filters.BooleanFilter(
+        label=_('Assembly part is testable'), field_name='part__testable'
     )
 
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(
-        label='Sub part is trackable', field_name='sub_part__trackable'
+        label='Component part is trackable', field_name='sub_part__trackable'
+    )
+
+    sub_part_testable = rest_filters.BooleanFilter(
+        label=_('Component part is testable'), field_name='sub_part__testable'
     )
 
     sub_part_assembly = rest_filters.BooleanFilter(
-        label='Sub part is an assembly', field_name='sub_part__assembly'
+        label='Component part is an assembly', field_name='sub_part__assembly'
     )
 
     available_stock = rest_filters.BooleanFilter(
@@ -1915,8 +1921,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
-
-    pass
 
 
 class BomImportUpload(CreateAPI):

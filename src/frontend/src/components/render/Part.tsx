@@ -56,13 +56,18 @@ export function RenderPartCategory(
   props: Readonly<InstanceRenderInterface>
 ): ReactNode {
   const { instance } = props;
-  const lvl = '-'.repeat(instance.level || 0);
 
   return (
     <RenderInlineModel
       {...props}
-      prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      primary={`${lvl} ${instance.name}`}
+      tooltip={instance.pathstring}
+      prefix={
+        <>
+          <div style={{ width: 10 * (instance.level || 0) }}></div>
+          {instance.icon && <ApiIcon name={instance.icon} />}
+        </>
+      }
+      primary={instance.name}
       secondary={instance.description}
       url={
         props.link

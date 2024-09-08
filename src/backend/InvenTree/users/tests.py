@@ -5,7 +5,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, tag
 from django.urls import reverse
 
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from common.settings import set_global_setting
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner, RuleSet
 
 
@@ -62,7 +63,7 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.get_ruleset_models().keys():
+        for key in RuleSet.get_ruleset_models():
             models = RuleSet.get_ruleset_models()[key]
 
             for m in models:
@@ -270,6 +271,29 @@ class OwnerModelTest(InvenTreeTestCase):
         )
         self.assertEqual(response['username'], self.username)
 
+    def test_display_name(self):
+        """Test the display name for the owner."""
+        owner = Owner.get_owner(self.user)
+        self.assertEqual(owner.name(), 'testuser')
+        self.assertEqual(str(owner), 'testuser (user)')
+
+        # Change setting
+        set_global_setting('DISPLAY_FULL_NAMES', True)
+        self.user.first_name = 'first'
+        self.user.last_name = 'last'
+        self.user.save()
+        owner = Owner.get_owner(self.user)
+
+        # Now first / last should be used
+        self.assertEqual(owner.name(), 'first last')
+        self.assertEqual(str(owner), 'first last (user)')
+
+        # Reset
+        set_global_setting('DISPLAY_FULL_NAMES', False)
+        self.user.first_name = ''
+        self.user.last_name = ''
+        self.user.save()
+
 
 class MFALoginTest(InvenTreeAPITestCase):
     """Some simplistic tests to ensure that MFA is working."""
@@ -313,3 +337,15 @@ class MFALoginTest(InvenTreeAPITestCase):
         # Wrong login should not work
         auth_data['password'] = 'wrong'
         self.post(login_url, auth_data, expected_code=401)
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        my_token = self.helper(
+            model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
+        )
+        # Additionally test str fnc
+        self.assertEqual(str(my_token), my_token.token)

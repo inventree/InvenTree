@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Docker compose recipe for InvenTree development server
 # - Runs PostgreSQL as the database backend
 # - Uses built-in django webserver
@@ -58,7 +56,7 @@ services:
     inventree-dev-worker:
         image: inventree-dev-image
         build: *build_config
-        command: invoke worker
+        command: invoke int.worker
         depends_on:
             - inventree-dev-server
         volumes:

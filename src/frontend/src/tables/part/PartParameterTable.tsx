@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { usePartParameterFields } from '../../forms/PartForms';
@@ -20,7 +21,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -85,7 +86,8 @@ export function PartParameterTable({
             record.data_numeric &&
             record.data_numeric != record.data
           ) {
-            extra.push(`${record.data_numeric} [${template.units}]`);
+            const numeric = formatDecimal(record.data_numeric, { digits: 15 });
+            extra.push(`${numeric} [${template.units}]`);
           }
 
           return (
@@ -105,7 +107,7 @@ export function PartParameterTable({
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields({});
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
@@ -140,7 +142,7 @@ export function PartParameterTable({
 
   // Callback for row actions
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       // Actions not allowed for "variant" rows
       if (String(partId) != String(record.part)) {
         return [];

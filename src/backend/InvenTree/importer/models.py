@@ -2,6 +2,7 @@
 
 import json
 import logging
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -117,8 +118,8 @@ class DataImportSession(models.Model):
         """
         mapping = {}
 
-        for map in self.column_mappings.all():
-            mapping[map.field] = map.column
+        for i in self.column_mappings.all():
+            mapping[i.field] = i.column
 
         return mapping
 
@@ -209,13 +210,13 @@ class DataImportSession(models.Model):
 
         missing_fields = []
 
-        for field in required_fields.keys():
+        for field in required_fields:
             # An override value exists
             if field in field_overrides:
                 continue
 
             # A default value exists
-            if field in field_defaults and field_defaults[field]:
+            if field_defaults.get(field):
                 continue
 
             # The field has been mapped to a data column
@@ -537,7 +538,10 @@ class DataImportRow(models.Model):
         return overrides
 
     def extract_data(
-        self, available_fields: dict = None, field_mapping: dict = None, commit=True
+        self,
+        available_fields: Optional[dict] = None,
+        field_mapping: Optional[dict] = None,
+        commit=True,
     ):
         """Extract row data from the provided data dictionary."""
         if not field_mapping:

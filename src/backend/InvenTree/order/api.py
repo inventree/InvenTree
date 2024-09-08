@@ -77,7 +77,7 @@ class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
-    status = rest_filters.NumberFilter(label='Order Status', method='filter_status')
+    status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code."""
@@ -85,11 +85,11 @@ class OrderFilter(rest_filters.FilterSet):
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
-        label='Filter by exact reference', field_name='reference', lookup_expr='iexact'
+        label=_('Order Reference'), field_name='reference', lookup_expr='iexact'
     )
 
     assigned_to_me = rest_filters.BooleanFilter(
-        label='assigned_to_me', method='filter_assigned_to_me'
+        label=_('Assigned to me'), method='filter_assigned_to_me'
     )
 
     def filter_assigned_to_me(self, queryset, name, value):
@@ -113,7 +113,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(self.Meta.model.overdue_filter())
 
     outstanding = rest_filters.BooleanFilter(
-        label='outstanding', method='filter_outstanding'
+        label=_('Outstanding'), method='filter_outstanding'
     )
 
     def filter_outstanding(self, queryset, name, value):
@@ -123,11 +123,13 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=common.models.ProjectCode.objects.all(), field_name='project_code'
+        queryset=common.models.ProjectCode.objects.all(),
+        field_name='project_code',
+        label=_('Project Code'),
     )
 
     has_project_code = rest_filters.BooleanFilter(
-        label='has_project_code', method='filter_has_project_code'
+        method='filter_has_project_code', label=_('Has Project Code')
     )
 
     def filter_has_project_code(self, queryset, name, value):
@@ -137,7 +139,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.filter(project_code=None)
 
     assigned_to = rest_filters.ModelChoiceFilter(
-        queryset=Owner.objects.all(), field_name='responsible'
+        queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
     )
 
 
@@ -335,8 +337,6 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
 class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrder object."""
 
-    pass
-
 
 class PurchaseOrderContextMixin:
     """Mixin to add purchase order object as serializer context variable."""
@@ -358,6 +358,12 @@ class PurchaseOrderContextMixin:
         context['request'] = self.request
 
         return context
+
+
+class PurchaseOrderHold(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to place a PurchaseOrder on hold."""
+
+    serializer_class = serializers.PurchaseOrderHoldSerializer
 
 
 class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
@@ -595,8 +601,6 @@ class PurchaseOrderLineItemList(
 class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for PurchaseOrderLineItem object."""
 
-    pass
-
 
 class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
@@ -738,8 +742,6 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
 class SalesOrderDetail(SalesOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
 
-    pass
-
 
 class SalesOrderLineItemFilter(LineItemFilter):
     """Custom filters for SalesOrderLineItemList endpoint."""
@@ -857,8 +859,6 @@ class SalesOrderLineItemList(
 class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderLineItem object."""
 
-    pass
-
 
 class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
@@ -891,6 +891,12 @@ class SalesOrderContextMixin:
             pass
 
         return ctx
+
+
+class SalesOrderHold(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to place a SalesOrder on hold."""
+
+    serializer_class = serializers.SalesOrderHoldSerializer
 
 
 class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
@@ -1042,7 +1048,9 @@ class SalesOrderShipmentList(ListCreateAPI):
     serializer_class = serializers.SalesOrderShipmentSerializer
     filterset_class = SalesOrderShipmentFilter
 
-    filter_backends = [rest_filters.DjangoFilterBackend]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = ['delivery_date', 'shipment_date']
 
 
 class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
@@ -1165,8 +1173,6 @@ class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
 class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single ReturnOrder object."""
 
-    pass
-
 
 class ReturnOrderContextMixin:
     """Simple mixin class to add a ReturnOrder to the serializer context."""
@@ -1194,6 +1200,12 @@ class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
     """API endpoint to cancel a ReturnOrder."""
 
     serializer_class = serializers.ReturnOrderCancelSerializer
+
+
+class ReturnOrderHold(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to hold a ReturnOrder."""
+
+    serializer_class = serializers.ReturnOrderHoldSerializer
 
 
 class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
@@ -1288,8 +1300,6 @@ class ReturnOrderLineItemList(
 class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a ReturnOrderLineItem object."""
 
-    pass
-
 
 class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
@@ -1346,10 +1356,9 @@ class OrderCalendarExport(ICalFeed):
                 if auth[0].lower() == 'basic':
                     uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
                     user = authenticate(username=uname, password=passwd)
-                    if user is not None:
-                        if user.is_active:
-                            login(request, user)
-                            request.user = user
+                    if user is not None and user.is_active:
+                        login(request, user)
+                        request.user = user
 
         # Check again
         if request.user.is_authenticated:
@@ -1479,6 +1488,7 @@ order_api_urls = [
                     path(
                         'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),
+                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
                     path(
                         'complete/',
                         PurchaseOrderComplete.as_view(),
@@ -1608,6 +1618,7 @@ order_api_urls = [
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
                     ),
+                    path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
                     path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
                     path('issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
                     path(
@@ -1707,6 +1718,7 @@ order_api_urls = [
                         ReturnOrderCancel.as_view(),
                         name='api-return-order-cancel',
                     ),
+                    path('hold/', ReturnOrderHold.as_view(), name='api-ro-hold'),
                     path(
                         'complete/',
                         ReturnOrderComplete.as_view(),

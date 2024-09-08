@@ -30,7 +30,11 @@ export function formatDecimal(
     return value;
   }
 
-  let formatter = new Intl.NumberFormat(locale);
+  let formatter = new Intl.NumberFormat(locale, {
+    style: 'decimal',
+    maximumFractionDigits: options.digits ?? 6,
+    minimumFractionDigits: options.minDigits ?? 0
+  });
 
   return formatter.format(value);
 }

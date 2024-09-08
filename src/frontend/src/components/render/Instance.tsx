@@ -16,11 +16,16 @@ import {
   RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
-import { RenderImportSession, RenderProjectCode } from './Generic';
+import {
+  RenderContentType,
+  RenderImportSession,
+  RenderProjectCode
+} from './Generic';
 import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
+  RenderReturnOrderLineItem,
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
@@ -73,6 +78,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
+  [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
@@ -85,7 +91,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.importsession]: RenderImportSession,
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
-  [ModelType.pluginconfig]: RenderPlugin
+  [ModelType.pluginconfig]: RenderPlugin,
+  [ModelType.contenttype]: RenderContentType
 };
 
 export type RenderInstanceProps = {
@@ -157,7 +164,8 @@ export function RenderInlineModel({
   labels,
   url,
   navigate,
-  showSecondary = true
+  showSecondary = true,
+  tooltip
 }: {
   primary: string;
   secondary?: string;
@@ -168,6 +176,7 @@ export function RenderInlineModel({
   labels?: string[];
   url?: string;
   navigate?: any;
+  tooltip?: string;
 }): ReactNode {
   // TODO: Handle labels
 
@@ -181,7 +190,7 @@ export function RenderInlineModel({
   );
 
   return (
-    <Group gap="xs" justify="space-between" wrap="nowrap">
+    <Group gap="xs" justify="space-between" wrap="nowrap" title={tooltip}>
       <Group gap="xs" justify="left" wrap="nowrap">
         {prefix}
         {image && <Thumbnail src={image} size={18} />}

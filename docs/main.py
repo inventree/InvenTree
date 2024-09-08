@@ -1,5 +1,6 @@
 """Main entry point for the documentation build process."""
 
+import json
 import os
 import subprocess
 import textwrap
@@ -7,12 +8,26 @@ import textwrap
 import requests
 import yaml
 
+# Cached settings dict values
+global GLOBAL_SETTINGS
+global USER_SETTINGS
+
+# Read in the InvenTree settings file
+here = os.path.dirname(__file__)
+settings_file = os.path.join(here, 'inventree_settings.json')
+
+with open(settings_file, encoding='utf-8') as sf:
+    settings = json.load(sf)
+
+    GLOBAL_SETTINGS = settings['global']
+    USER_SETTINGS = settings['user']
+
 
 def get_repo_url(raw=False):
     """Return the repository URL for the current project."""
     mkdocs_yml = os.path.join(os.path.dirname(__file__), 'mkdocs.yml')
 
-    with open(mkdocs_yml, 'r') as f:
+    with open(mkdocs_yml, encoding='utf-8') as f:
         mkdocs_config = yaml.safe_load(f)
         repo_name = mkdocs_config['repo_name']
 
@@ -32,7 +47,7 @@ def check_link(url) -> bool:
 
     # Keep a local cache file of URLs we have already checked
     if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE, 'r') as f:
+        with open(CACHE_FILE, encoding='utf-8') as f:
             cache = f.read().splitlines()
 
         if url in cache:
@@ -44,7 +59,7 @@ def check_link(url) -> bool:
         response = requests.head(url, timeout=5000)
         if response.status_code == 200:
             # Update the cache file
-            with open(CACHE_FILE, 'a') as f:
+            with open(CACHE_FILE, 'a', encoding='utf-8') as f:
                 f.write(f'{url}\n')
 
             return True
@@ -54,11 +69,23 @@ def check_link(url) -> bool:
     return False
 
 
+def get_build_enviroment() -> str:
+    """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
+    # Check if we are in ReadTheDocs
+    if os.environ.get('READTHEDOCS') == 'True':
+        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+    # We are in GitHub Actions
+    elif os.environ.get('GITHUB_ACTIONS') == 'true':
+        return os.environ.get('GITHUB_REF')
+    else:
+        return 'master'
+
+
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
     @env.macro
-    def sourcedir(dirname, branch='master'):
+    def sourcedir(dirname, branch=None):
         """Return a link to a directory within the source code repository.
 
         Arguments:
@@ -70,6 +97,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the directory does not exist, or the generated URL is invalid
         """
+        if branch == None:
+            branch = get_build_enviroment()
+
         if dirname.startswith('/'):
             dirname = dirname[1:]
 
@@ -94,7 +124,7 @@ def define_env(env):
         return url
 
     @env.macro
-    def sourcefile(filename, branch='master', raw=False):
+    def sourcefile(filename, branch=None, raw=False):
         """Return a link to a file within the source code repository.
 
         Arguments:
@@ -106,6 +136,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
+        if branch == None:
+            branch = get_build_enviroment()
+
         if filename.startswith('/'):
             filename = filename[1:]
 
@@ -144,7 +177,7 @@ def define_env(env):
 
         assert subprocess.call(command, shell=True) == 0
 
-        with open(output, 'r') as f:
+        with open(output, encoding='utf-8') as f:
             content = f.read()
 
         return content
@@ -167,12 +200,13 @@ def define_env(env):
         return assets
 
     @env.macro
-    def includefile(filename: str, title: str, format: str = ''):
+    def includefile(filename: str, title: str, fmt: str = ''):
         """Include a file in the documentation, in a 'collapse' block.
 
         Arguments:
             - filename: The name of the file to include (relative to the top-level directory)
             - title:
+            - fmt:
         """
         here = os.path.dirname(__file__)
         path = os.path.join(here, '..', filename)
@@ -181,11 +215,11 @@ def define_env(env):
         if not os.path.exists(path):
             raise FileNotFoundError(f'Required file {path} does not exist.')
 
-        with open(path, 'r') as f:
+        with open(path, encoding='utf-8') as f:
             content = f.read()
 
         data = f'??? abstract "{title}"\n\n'
-        data += f'    ```{format}\n'
+        data += f'    ```{fmt}\n'
         data += textwrap.indent(content, '    ')
         data += '\n\n'
         data += '    ```\n\n'
@@ -200,4 +234,38 @@ def define_env(env):
             'src', 'backend', 'InvenTree', 'report', 'templates', filename
         )
 
-        return includefile(fn, f'Template: {base}', format='html')
+        return includefile(fn, f'Template: {base}', fmt='html')
+
+    @env.macro
+    def rendersetting(setting: dict):
+        """Render a provided setting object into a table row."""
+        name = setting['name']
+        description = setting['description']
+        default = setting.get('default')
+        units = setting.get('units')
+
+        return f'| {name} | {description} | {default if default is not None else ""} | {units if units is not None else ""} |'
+
+    @env.macro
+    def globalsetting(key: str):
+        """Extract information on a particular global setting.
+
+        Arguments:
+            - key: The name of the global setting to extract information for.
+        """
+        global GLOBAL_SETTINGS
+        setting = GLOBAL_SETTINGS[key]
+
+        return rendersetting(setting)
+
+    @env.macro
+    def usersetting(key: str):
+        """Extract information on a particular user setting.
+
+        Arguments:
+            - key: The name of the user setting to extract information for.
+        """
+        global USER_SETTINGS
+        setting = USER_SETTINGS[key]
+
+        return rendersetting(setting)

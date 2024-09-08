@@ -159,9 +159,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
-              'REPORT_LOG_ERRORS',
-              'REPORT_ENABLE_TEST_REPORT',
-              'REPORT_ATTACH_TEST_REPORT'
+              'REPORT_LOG_ERRORS'
             ]}
           />
         )
@@ -219,7 +217,8 @@ export default function SystemSettings() {
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
               'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
-              'TEST_STATION_DATA'
+              'TEST_STATION_DATA',
+              'TEST_UPLOAD_CREATE_TEMPLATE'
             ]}
           />
         )
@@ -236,6 +235,7 @@ export default function SystemSettings() {
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
               'BUILDORDER_REQUIRE_VALID_BOM',
+              'BUILDORDER_REQUIRE_CLOSED_CHILDS',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />

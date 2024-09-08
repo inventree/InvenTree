@@ -2,7 +2,6 @@
 
 import decimal
 import logging
-import os
 from datetime import datetime
 from django.conf import settings
 
@@ -26,6 +25,7 @@ from build.status_codes import BuildStatus, BuildStatusGroups
 from stock.status_codes import StockStatus, StockHistoryCode
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
+from generic.states import StateTransitionMixin
 
 import InvenTree.fields
 import InvenTree.helpers
@@ -43,6 +43,7 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
+import generic.states
 
 
 logger = logging.getLogger('inventree')
@@ -56,6 +57,7 @@ class Build(
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
+    StateTransitionMixin,
     MPTTModel):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
@@ -314,7 +316,7 @@ class Build(
         help_text=_('Number of stock items which have been completed')
     )
 
-    status = models.PositiveIntegerField(
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
         verbose_name=_('Build Status'),
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
@@ -394,9 +396,9 @@ class Build(
     def sub_builds(self, cascade=True):
         """Return all Build Order objects under this one."""
         if cascade:
-            return Build.objects.filter(parent=self.pk)
-        descendants = self.get_descendants(include_self=True)
-        Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
+            return self.get_descendants(include_self=False)
+        else:
+            return self.get_children()
 
     def sub_build_count(self, cascade=True):
         """Return the number of sub builds under this one.
@@ -405,6 +407,11 @@ class Build(
             cascade: If True (default), include cascading builds under sub builds
         """
         return self.sub_builds(cascade=cascade).count()
+
+    @property
+    def has_open_child_builds(self):
+        """Return True if this build order has any open child builds."""
+        return self.sub_builds().filter(status__in=BuildStatusGroups.ACTIVE_CODES).exists()
 
     @property
     def is_overdue(self):
@@ -574,6 +581,13 @@ class Build(
         - Completed count must meet the required quantity
         - Untracked parts must be allocated
         """
+
+        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and self.has_open_child_builds:
+            return False
+
+        if self.status != BuildStatus.PRODUCTION.value:
+            return False
+
         if self.incomplete_count > 0:
             return False
 
@@ -602,7 +616,21 @@ class Build(
     def complete_build(self, user, trim_allocated_stock=False):
         """Mark this build as complete."""
 
+        return self.handle_transition(
+            self.status, BuildStatus.COMPLETE.value, self, self._action_complete, user=user, trim_allocated_stock=trim_allocated_stock
+        )
+
+    def _action_complete(self, *args, **kwargs):
+        """Action to be taken when a build is completed."""
+
         import build.tasks
+
+        trim_allocated_stock = kwargs.pop('trim_allocated_stock', False)
+        user = kwargs.pop('user', None)
+
+        # Prevent completion if there are open child builds
+        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and self.has_open_child_builds:
+            return
 
         if self.incomplete_count > 0:
             return
@@ -666,6 +694,59 @@ class Build(
         )
 
     @transaction.atomic
+    def issue_build(self):
+        """Mark the Build as IN PRODUCTION.
+
+        Args:
+            user: The user who is issuing the build
+        """
+        return self.handle_transition(
+            self.status, BuildStatus.PENDING.value, self, self._action_issue
+        )
+
+    @property
+    def can_issue(self):
+        """Returns True if this BuildOrder can be issued."""
+        return self.status in [
+            BuildStatus.PENDING.value,
+            BuildStatus.ON_HOLD.value,
+        ]
+
+    def _action_issue(self, *args, **kwargs):
+        """Perform the action to mark this order as PRODUCTION."""
+
+        if self.can_issue:
+            self.status = BuildStatus.PRODUCTION.value
+            self.save()
+
+            trigger_event('build.issued', id=self.pk)
+
+    @transaction.atomic
+    def hold_build(self):
+        """Mark the Build as ON HOLD."""
+
+        return self.handle_transition(
+            self.status, BuildStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @property
+    def can_hold(self):
+        """Returns True if this BuildOrder can be placed on hold"""
+        return self.status in [
+            BuildStatus.PENDING.value,
+            BuildStatus.PRODUCTION.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Action to be taken when a build is placed on hold."""
+
+        if self.can_hold:
+            self.status = BuildStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('build.hold', id=self.pk)
+
+    @transaction.atomic
     def cancel_build(self, user, **kwargs):
         """Mark the Build as CANCELLED.
 
@@ -674,7 +755,16 @@ class Build(
         - Save the Build object
         """
 
+        return self.handle_transition(
+            self.status, BuildStatus.CANCELLED.value, self, self._action_cancel, user=user, **kwargs
+        )
+
+    def _action_cancel(self, *args, **kwargs):
+        """Action to be taken when a build is cancelled."""
+
         import build.tasks
+
+        user = kwargs.pop('user', None)
 
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
@@ -897,7 +987,10 @@ class Build(
         items_to_save = []
         items_to_delete = []
 
-        for build_line in self.untracked_line_items:
+        lines = self.untracked_line_items
+        lines = lines.prefetch_related('allocations')
+
+        for build_line in lines:
 
             reduce_by = build_line.allocated_quantity() - build_line.quantity
 
@@ -1276,7 +1369,7 @@ class Build(
     @property
     def is_complete(self):
         """Returns True if the build status is COMPLETE."""
-        return self.status == BuildStatus.COMPLETE
+        return self.status == BuildStatus.COMPLETE.value
 
     @transaction.atomic
     def create_build_line_items(self, prevent_duplicates=True):

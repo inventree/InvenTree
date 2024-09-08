@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from enum import IntEnum
 
 import django.http
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
@@ -17,7 +18,7 @@ from rest_framework import status
 import build.models
 import company.models
 import part.models
-from common.models import InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -640,7 +641,7 @@ class StockItemListTest(StockAPITestCase):
             StockStatus.REJECTED.value: 0,
         }
 
-        for code in codes.keys():
+        for code in codes:
             num = codes[code]
 
             response = self.get_stock(status=code)
@@ -923,6 +924,108 @@ class StockItemListTest(StockAPITestCase):
         self.get(
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
+
+
+class CustomStockItemStatusTest(StockAPITestCase):
+    """Tests for custom stock item statuses."""
+
+    list_url = reverse('api-stock-list')
+
+    def setUp(self):
+        """Setup for all tests."""
+        super().setUp()
+        self.status = InvenTreeCustomUserStateModel.objects.create(
+            key=11,
+            name='OK - advanced',
+            label='OK - adv.',
+            color='secondary',
+            logical_key=10,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+        self.status2 = InvenTreeCustomUserStateModel.objects.create(
+            key=51,
+            name='attention 2',
+            label='attention 2',
+            color='secondary',
+            logical_key=50,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+    def test_custom_status(self):
+        """Tests interaction with states."""
+        # Create a stock item with the custom status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_custom_key': self.status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.key)
+        pk = response.data['pk']
+
+        # Update the stock item with another custom status code via the API
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
+            {'status_custom_key': self.status2.key},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['status'], self.status2.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status2.key)
+
+        # Try if status_custom_key is rewrite with status bying set
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
+            {'status': self.status.logical_key},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
+
+        # Create a stock item with a normal status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_key': self.status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
+
+        # Test case with wrong key
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
+            {'status_custom_key': 23456789},
+            expected_code=400,
+        )
+        self.assertIn('Invalid choice', str(response.data))
+
+    def test_options(self):
+        """Test the StockItem OPTIONS endpoint to contain custom StockStatuses."""
+        response = self.options(self.list_url)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response contains the custom StockStatuses
+        actions = response.data['actions']['POST']
+        self.assertIn('status_custom_key', actions)
+        status_custom_key = actions['status_custom_key']
+        self.assertEqual(len(status_custom_key['choices']), 10)
+        status = status_custom_key['choices'][1]
+        self.assertEqual(status['value'], self.status.key)
+        self.assertEqual(status['display_name'], self.status.label)
 
 
 class StockItemTest(StockAPITestCase):
@@ -1424,6 +1527,11 @@ class StocktakeTest(StockAPITestCase):
 
     def test_action(self):
         """Test each stocktake action endpoint, for validation."""
+        target = {
+            'api-stock-count': '10.00000',
+            'api-stock-add': '10.00000',
+            'api-stock-remove': '10.00000',
+        }
         for endpoint in ['api-stock-count', 'api-stock-add', 'api-stock-remove']:
             url = reverse(endpoint)
 
@@ -1481,6 +1589,12 @@ class StocktakeTest(StockAPITestCase):
                 'Ensure this value is greater than or equal to 0',
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
+
+            # Valid POST
+            data = {'items': [{'pk': 1234, 'quantity': 10}]}
+            response = self.post(url, data, expected_code=201)
+            self.assertEqual(response.data['items'][0]['pk'], 1234)
+            self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
 
     def test_transfer(self):
         """Test stock transfers."""
@@ -1602,6 +1716,14 @@ class StockTestResultTest(StockAPITestCase):
             'notes': 'I guess there was just too much pressure?',
         }
 
+        # First, test with TEST_UPLOAD_CREATE_TEMPLATE set to False
+        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', False, self.user)
+
+        response = self.post(url, data, expected_code=400)
+
+        # Again, with the setting enabled
+        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', True, self.user)
+
         response = self.post(url, data, expected_code=201)
 
         # Check that a new test template has been created
@@ -1681,9 +1803,9 @@ class StockTestResultTest(StockAPITestCase):
 
         stock_item = StockItem.objects.get(pk=1)
 
-        # Ensure the part is marked as "trackable"
+        # Ensure the part is marked as "testable"
         p = stock_item.part
-        p.trackable = True
+        p.testable = True
         p.save()
 
         # Create some objects (via the API)
@@ -1696,7 +1818,6 @@ class StockTestResultTest(StockAPITestCase):
                     'result': True,
                     'value': 'Test result value',
                 },
-                # expected_code=201,
             )
 
             tests.append(response.data['pk'])

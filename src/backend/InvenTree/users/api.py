@@ -19,7 +19,7 @@ from rest_framework import exceptions, permissions
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import authentication_classes
 from rest_framework.generics import DestroyAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -175,13 +175,10 @@ class GroupMixin:
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-            kwargs['permission_detail'] = InvenTree.helpers.str2bool(
-                params.get('permission_detail', None)
-            )
-        except AttributeError:
-            pass
+        params = self.request.query_params
+        kwargs['permission_detail'] = InvenTree.helpers.str2bool(
+            params.get('permission_detail', None)
+        )
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args, **kwargs)
 
@@ -346,7 +343,7 @@ class GetAuthToken(APIView):
             return Response(data)
 
         else:
-            raise exceptions.NotAuthenticated()
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
 class TokenListView(DestroyAPIView, ListAPI):

@@ -49,6 +49,10 @@ const TaskManagementPanel = Loadable(
   lazy(() => import('./TaskManagementPanel'))
 );
 
+const CurrencyManagmentPanel = Loadable(
+  lazy(() => import('./CurrencyManagmentPanel'))
+);
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
@@ -69,6 +73,10 @@ const ProjectCodeTable = Loadable(
   lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
 
+const CustomStateTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CustomStateTable'))
+);
+
 const CustomUnitsTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
 );
@@ -86,10 +94,6 @@ const LocationTypesTable = Loadable(
 );
 
 const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
-
-const CurrencyTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CurrencyTable'))
-);
 
 export default function AdminCenter() {
   const user = useUserState();
@@ -124,7 +128,7 @@ export default function AdminCenter() {
         name: 'currencies',
         label: t`Currencies`,
         icon: <IconCoins />,
-        content: <CurrencyTable />
+        content: <CurrencyManagmentPanel />
       },
       {
         name: 'projectcodes',
@@ -137,6 +141,12 @@ export default function AdminCenter() {
             <ProjectCodeTable />
           </Stack>
         )
+      },
+      {
+        name: 'customstates',
+        label: t`Custom States`,
+        icon: <IconListDetails />,
+        content: <CustomStateTable />
       },
       {
         name: 'customunits',
