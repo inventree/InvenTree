@@ -111,5 +111,7 @@ Parameter sorting takes unit conversion into account, meaning that values provid
 
 Selection Lists can be used to add a large number of predefined values to a parameter template. This can be useful for parameters which must be selected from a large predefined list of values (e.g. a list of standardised colo codes). Choices on templates are limited to 5000 characters, selection lists can be used to overcome this limitation.
 
-
 It is possible that plugins lock selection lists to ensure a known state.
+
+
+Administration of lists can be done through the Part Parameter section in the Admin Center or via the API.
