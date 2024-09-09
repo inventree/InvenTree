@@ -675,7 +675,7 @@ export function EditApiForm({
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      submitText: t`Update` ?? props.submitText,
+      submitText: props.submitText ?? t`Update`,
       method: 'PUT'
     }),
     [props]
