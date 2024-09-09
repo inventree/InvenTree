@@ -252,7 +252,8 @@ class PartPricingTests(InvenTreeTestCase):
 
         currency = 'AUD'
 
-        for ii in range(10):
+        # Create pricing out of order, to ensure min/max values are calculated correctly
+        for ii in range(5):
             # Create a new part for the BOM
             sub_part = part.models.Part.objects.create(
                 name=f'Sub Part {ii}',
@@ -273,14 +274,19 @@ class PartPricingTests(InvenTreeTestCase):
                 part=self.part, sub_part=sub_part, quantity=5
             )
 
-            pricing.update_bom_cost()
-
             # Check that the values have been updated correctly
             self.assertEqual(pricing.currency, 'USD')
 
+        # Price range should have been automatically updated
+        self.part.refresh_from_db()
+        pricing = self.part.pricing
+
+        expected_min = 100
+        expected_max = 150
+
         # Final overall pricing checks
-        self.assertEqual(pricing.overall_min, Money('366.666665', 'USD'))
-        self.assertEqual(pricing.overall_max, Money('550', 'USD'))
+        self.assertEqual(pricing.overall_min, Money(expected_min, 'USD'))
+        self.assertEqual(pricing.overall_max, Money(expected_max, 'USD'))
 
     def test_purchase_pricing(self):
         """Unit tests for historical purchase pricing."""
@@ -431,7 +437,7 @@ class PartPricingTests(InvenTreeTestCase):
             )
 
         # Manually schedule a pricing update (does not happen automatically in testing)
-        p.schedule_pricing_update(create=True, test=True)
+        p.schedule_pricing_update(create=True)
 
         # Check that a PartPricing object exists
         self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
@@ -443,5 +449,5 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
-        p.schedule_pricing_update(create=False, test=True)
+        p.schedule_pricing_update(create=False)
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())

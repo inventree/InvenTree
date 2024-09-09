@@ -1949,7 +1949,7 @@ class Part(
 
         return pricing
 
-    def schedule_pricing_update(self, create: bool = False, test: bool = False):
+    def schedule_pricing_update(self, create: bool = False):
         """Helper function to schedule a pricing update.
 
         Importantly, catches any errors which may occur during deletion of related objects,
@@ -1959,7 +1959,6 @@ class Part(
 
         Arguments:
             create: Whether or not a new PartPricing object should be created if it does not already exist
-            test: Whether or not the pricing update is allowed during unit tests
         """
         try:
             self.refresh_from_db()
@@ -1970,7 +1969,7 @@ class Part(
             pricing = self.pricing
 
             if create or pricing.pk:
-                pricing.schedule_for_update(test=test)
+                pricing.schedule_for_update()
         except IntegrityError:
             # If this part instance has been deleted,
             # some post-delete or post-save signals may still be fired
@@ -2580,13 +2579,9 @@ class PartPricing(common.models.MetaMixin):
 
         return result
 
-    def schedule_for_update(self, counter: int = 0, test: bool = False):
+    def schedule_for_update(self, counter: int = 0):
         """Schedule this pricing to be updated."""
         import InvenTree.ready
-
-        # If we are running within CI, only schedule the update if the test flag is set
-        if settings.TESTING and not test:
-            return
 
         # If importing data, skip pricing update
         if InvenTree.ready.isImportingData():
@@ -2653,7 +2648,10 @@ class PartPricing(common.models.MetaMixin):
         # Offload task to update the pricing
         # Force async, to prevent running in the foreground (unless in testing mode)
         InvenTree.tasks.offload_task(
-            part_tasks.update_part_pricing, self, counter=counter, force_async=not test
+            part_tasks.update_part_pricing,
+            self,
+            counter=counter,
+            force_async=not settings.TESTING,
         )
 
     def update_pricing(
@@ -4515,7 +4513,10 @@ def update_bom_build_lines(sender, instance, created, **kwargs):
 def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated."""
     # Update part pricing *unless* we are importing data
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=True)
+        and not InvenTree.ready.isImportingData()
+    ):
         if instance.part:
             instance.part.schedule_pricing_update(create=True)
 
@@ -4532,7 +4533,10 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
 def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted."""
     # Update part pricing *unless* we are importing data
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=True)
+        and not InvenTree.ready.isImportingData()
+    ):
         if instance.part:
             instance.part.schedule_pricing_update(create=False)
 
