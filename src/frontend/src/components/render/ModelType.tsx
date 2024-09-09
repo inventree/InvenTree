@@ -191,8 +191,6 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.content_type_list
   },
   selectionlist: {
-    label: t`Selection List`,
-    label_multiple: t`Selection Lists`,
     api_endpoint: ApiEndpoints.selectionlist_list
   }
 };
@@ -265,6 +263,8 @@ export function getModelLabel(type: ModelType): string {
       return t`Plugin Configuration`;
     case ModelType.contenttype:
       return t`Content Type`;
+    case ModelType.selectionlist:
+      return t`Selection List`;
     default:
       return t`Unknown Model`;
   }
@@ -338,6 +338,8 @@ export function getModelLabelMultiple(type: ModelType): string {
       return t`Plugin Configurations`;
     case ModelType.contenttype:
       return t`Content Types`;
+    case ModelType.selectionlist:
+      return t`Selection Lists`;
     default:
       return t`Unknown Models`;
   }
