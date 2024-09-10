@@ -188,7 +188,8 @@ class PartPricingTests(InvenTreeTestCase):
                 part=self.part, quantity=ii + 1, price=10 - ii, price_currency=currency
             )
 
-            pricing.update_internal_cost()
+            pricing = self.part.pricing
+            pricing.refresh_from_db()
 
             # Expected money value
             m_expected = Money(10 - ii, currency)

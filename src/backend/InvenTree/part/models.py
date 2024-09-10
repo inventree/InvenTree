@@ -2740,13 +2740,13 @@ class PartPricing(common.models.MetaMixin):
 
         try:
             self.update_overall_cost()
-        except IntegrityError:
+        except Exception:
             # If something has happened to the Part model, might throw an error
             pass
 
         try:
             super().save(*args, **kwargs)
-        except IntegrityError:
+        except Exception:
             # This error may be thrown if there is already duplicate pricing data
             pass
 
