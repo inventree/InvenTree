@@ -13,14 +13,14 @@ export interface ModelInformationInterface {
   admin_url?: string;
 }
 
-export interface ModelInternalInformationInterface
+export interface TranslatableModelInformationInterface
   extends Omit<ModelInformationInterface, 'label' | 'label_multiple'> {
   label: () => string;
   label_multiple: () => string;
 }
 
 export type ModelDict = {
-  [key in keyof typeof ModelType]: ModelInternalInformationInterface;
+  [key in keyof typeof ModelType]: TranslatableModelInformationInterface;
 };
 
 export const ModelInformationDict: ModelDict = {
