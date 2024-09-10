@@ -93,9 +93,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         allow_negative = kwargs.pop('allow_negative', False)
 
         # If no validators are provided, add some "standard" ones
-        if len(validators) == 0:
-            if not allow_negative:
-                validators.append(MinMoneyValidator(0))
+        if len(validators) == 0 and not allow_negative:
+            validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
 

@@ -13,7 +13,6 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
   DateColumn,
@@ -27,63 +26,6 @@ import {
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-/**
- * Construct a list of columns for the build order table
- */
-function buildOrderTableColumns(): TableColumn[] {
-  return [
-    ReferenceColumn({}),
-    {
-      accessor: 'part',
-      sortable: true,
-      switchable: false,
-      render: (record: any) => PartColumn(record.part_detail)
-    },
-    {
-      accessor: 'part_detail.IPN',
-      sortable: true,
-      switchable: true,
-      title: t`IPN`
-    },
-    {
-      accessor: 'title',
-      sortable: false
-    },
-    {
-      accessor: 'completed',
-      sortable: true,
-      switchable: false,
-      render: (record: any) => (
-        <ProgressBar
-          progressLabel={true}
-          value={record.completed}
-          maximum={record.quantity}
-        />
-      )
-    },
-    StatusColumn({ model: ModelType.build }),
-    ProjectCodeColumn({}),
-    {
-      accessor: 'priority',
-      sortable: true
-    },
-    CreationDateColumn({}),
-    TargetDateColumn({}),
-    DateColumn({
-      accessor: 'completion_date',
-      sortable: true
-    }),
-    {
-      accessor: 'issued_by',
-      sortable: true,
-      render: (record: any) => (
-        <RenderUser instance={record?.issued_by_detail} />
-      )
-    },
-    ResponsibleColumn({})
-  ];
-}
-
 /*
  * Construct a table of build orders, according to the provided parameters
  */
@@ -96,7 +38,65 @@ export function BuildOrderTable({
   parentBuildId?: number;
   salesOrderId?: number;
 }) {
-  const tableColumns = useMemo(() => buildOrderTableColumns(), []);
+  const tableColumns = useMemo(() => {
+    return [
+      ReferenceColumn({}),
+      {
+        accessor: 'part',
+        sortable: true,
+        switchable: false,
+        render: (record: any) => PartColumn(record.part_detail)
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: true,
+        switchable: true,
+        title: t`IPN`
+      },
+      {
+        accessor: 'title',
+        sortable: false
+      },
+      {
+        accessor: 'completed',
+        sortable: true,
+        switchable: false,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel={true}
+            value={record.completed}
+            maximum={record.quantity}
+          />
+        )
+      },
+      StatusColumn({ model: ModelType.build }),
+      ProjectCodeColumn({}),
+      {
+        accessor: 'level',
+        sortable: true,
+        switchable: true,
+        hidden: !parentBuildId
+      },
+      {
+        accessor: 'priority',
+        sortable: true
+      },
+      CreationDateColumn({}),
+      TargetDateColumn({}),
+      DateColumn({
+        accessor: 'completion_date',
+        sortable: true
+      }),
+      {
+        accessor: 'issued_by',
+        sortable: true,
+        render: (record: any) => (
+          <RenderUser instance={record?.issued_by_detail} />
+        )
+      },
+      ResponsibleColumn({})
+    ];
+  }, [parentBuildId]);
 
   const projectCodeFilters = useProjectCodeFilters();
   const ownerFilters = useOwnerFilters();
@@ -151,7 +151,7 @@ export function BuildOrderTable({
         choices: ownerFilters.choices
       }
     ];
-  }, [projectCodeFilters.choices, ownerFilters.choices]);
+  }, [parentBuildId, projectCodeFilters.choices, ownerFilters.choices]);
 
   const user = useUserState();
 
@@ -193,8 +193,8 @@ export function BuildOrderTable({
         props={{
           params: {
             part: partId,
+            ancestor: parentBuildId,
             sales_order: salesOrderId,
-            parent: parentBuildId,
             part_detail: true
           },
           tableActions: tableActions,

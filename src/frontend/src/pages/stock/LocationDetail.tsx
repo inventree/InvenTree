@@ -1,11 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import {
-  IconDots,
-  IconInfoCircle,
-  IconPackages,
-  IconSitemap
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -19,9 +14,7 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -38,6 +31,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
@@ -280,27 +274,26 @@ export default function Stock() {
       <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
       <ActionButton
         icon={<InvenTreeIcon icon="stocktake" />}
+        onClick={notYetImplemented}
         variant="outline"
         size="lg"
       />,
       location.pk ? (
         <BarcodeActionDropdown
+          model={ModelType.stocklocation}
+          pk={location.pk}
           actions={[
-            ViewBarcodeAction({
-              model: ModelType.stocklocation,
-              pk: location.pk
-            }),
-            LinkBarcodeAction({}),
-            UnlinkBarcodeAction({}),
             {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon="stock" />,
-              tooltip: 'Scan items'
+              tooltip: 'Scan items',
+              onClick: notYetImplemented
             },
             {
               name: 'Scan in container',
               icon: <InvenTreeIcon icon="unallocated_stock" />,
-              tooltip: 'Scan container'
+              tooltip: 'Scan container',
+              onClick: notYetImplemented
             }
           ]}
         />
@@ -334,9 +327,8 @@ export default function Stock() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Location Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),

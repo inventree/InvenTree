@@ -3,6 +3,7 @@
 import json as json_pkg
 import logging
 from collections.abc import Iterable
+from typing import Optional
 
 import requests
 
@@ -117,10 +118,10 @@ class APICallMixin:
         self,
         endpoint: str,
         method: str = 'GET',
-        url_args: dict = None,
+        url_args: Optional[dict] = None,
         data=None,
         json=None,
-        headers: dict = None,
+        headers: Optional[dict] = None,
         simple_response: bool = True,
         endpoint_is_url: bool = False,
     ):

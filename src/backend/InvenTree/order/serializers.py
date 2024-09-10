@@ -32,6 +32,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import (
@@ -161,10 +162,12 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'address_detail',
             'status',
             'status_text',
+            'status_custom_key',
             'notes',
             'barcode_hash',
             'overdue',
-        ] + extra_fields
+            *extra_fields,
+        ]
 
 
 class AbstractLineItemSerializer:
@@ -216,7 +219,11 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -318,12 +325,6 @@ class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
 
 class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for cancelling a PurchaseOrder."""
-
-    def get_context_data(self):
-        """Return custom context information about the order."""
-        self.order = self.context['order']
-
-        return {'can_cancel': self.order.can_cancel}
 
     def save(self):
         """Save the serializer to 'cancel' the order."""
@@ -433,7 +434,7 @@ class PurchaseOrderLineItemSerializer(
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
-        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
+        return ['auto_pricing', 'merge_items', *super().skip_create_fields()]
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -740,13 +741,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         base_quantity = line_item.part.base_quantity(quantity)
 
         # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable:
-            if Decimal(base_quantity) != int(base_quantity):
-                raise ValidationError({
-                    'quantity': _(
-                        'An integer quantity must be provided for trackable parts'
-                    )
-                })
+        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
+            raise ValidationError({
+                'quantity': _(
+                    'An integer quantity must be provided for trackable parts'
+                )
+            })
 
         # If serial numbers are provided
         if serial_numbers:
@@ -865,7 +865,11 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -1513,37 +1517,45 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
 
-        serials_not_exist = []
-        serials_allocated = []
+        serials_not_exist = set()
+        serials_unavailable = set()
         stock_items_to_allocate = []
 
         for serial in data['serials']:
+            serial = str(serial).strip()
+
             items = stock.models.StockItem.objects.filter(
                 part=part, serial=serial, quantity=1
             )
 
             if not items.exists():
-                serials_not_exist.append(str(serial))
+                serials_not_exist.add(str(serial))
                 continue
 
             stock_item = items[0]
 
-            if stock_item.unallocated_quantity() == 1:
-                stock_items_to_allocate.append(stock_item)
-            else:
-                serials_allocated.append(str(serial))
+            if not stock_item.in_stock:
+                serials_unavailable.add(str(serial))
+                continue
+
+            if stock_item.unallocated_quantity() < 1:
+                serials_unavailable.add(str(serial))
+                continue
+
+            # At this point, the serial number is valid, and can be added to the list
+            stock_items_to_allocate.append(stock_item)
 
         if len(serials_not_exist) > 0:
             error_msg = _('No match found for the following serial numbers')
             error_msg += ': '
-            error_msg += ','.join(serials_not_exist)
+            error_msg += ','.join(sorted(serials_not_exist))
 
             raise ValidationError({'serial_numbers': error_msg})
 
-        if len(serials_allocated) > 0:
-            error_msg = _('The following serial numbers are already allocated')
+        if len(serials_unavailable) > 0:
+            error_msg = _('The following serial numbers are unavailable')
             error_msg += ': '
-            error_msg += ','.join(serials_allocated)
+            error_msg += ','.join(sorted(serials_unavailable))
 
             raise ValidationError({'serial_numbers': error_msg})
 
@@ -1648,7 +1660,11 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    TotalPriceMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the ReturnOrder model class."""
 

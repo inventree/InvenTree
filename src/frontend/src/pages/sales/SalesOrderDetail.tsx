@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -21,15 +20,12 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -443,47 +439,37 @@ export default function SalesOrderDetail() {
       />,
       <AdminButton model={ModelType.salesorder} pk={order.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.salesorder,
-            pk: order.pk
-          }),
-          LinkBarcodeAction({
-            hidden: order?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash
-          })
-        ]}
+        model={ModelType.salesorder}
+        pk={order.pk}
+        hash={order?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.salesorder}
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !canEdit,
-            onClick: () => editSalesOrder.open(),
+            onClick: editSalesOrder.open,
             tooltip: t`Edit order`
           }),
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.sales_order),
-            onClick: () => duplicateSalesOrder.open(),
+            onClick: duplicateSalesOrder.open,
             tooltip: t`Duplicate order`
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
             hidden: !canHold,
-            onClick: () => holdOrder.open()
+            onClick: holdOrder.open
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
             hidden: !canCancel,
-            onClick: () => cancelOrder.open()
+            onClick: cancelOrder.open
           })
         ]}
       />
@@ -495,7 +481,7 @@ export default function SalesOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status}
+            status={order.status_custom_key}
             type={ModelType.salesorder}
             options={{ size: 'lg' }}
             key={order.pk}

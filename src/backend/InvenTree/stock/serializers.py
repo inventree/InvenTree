@@ -27,6 +27,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
@@ -238,7 +239,10 @@ class StockItemTestResultSerializer(
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
-        required=False
+        required=False,
+        allow_null=True,
+        label=_('Attachment'),
+        help_text=_('Test result attachment'),
     )
 
     def validate(self, data):
@@ -264,13 +268,13 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
 
-            else:
+            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
                 logger.debug(
                     "No matching test template found for '%s' - creating a new template",
                     test_name,
                 )
 
-                # Create a new test template based on the provided dasta
+                # Create a new test template based on the provided data
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
                 )
@@ -326,7 +330,9 @@ class StockItemSerializerBrief(
 
 @register_importer()
 class StockItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for a StockItem.
 
@@ -373,6 +379,7 @@ class StockItemSerializer(
             'serial',
             'status',
             'status_text',
+            'status_custom_key',
             'stocktake_date',
             'supplier_part',
             'sku',
@@ -421,7 +428,7 @@ class StockItemSerializer(
         tests = kwargs.pop('tests', False)
         path_detail = kwargs.pop('path_detail', False)
 
-        super(StockItemSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -1519,7 +1526,7 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change'))] + stock.status_codes.StockStatus.items()
+    return [(None, _('No Change')), *stock.status_codes.StockStatus.items()]
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):

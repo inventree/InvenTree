@@ -502,7 +502,20 @@ export function ApiForm({
                   }
 
                   if (typeof v === 'object' && Array.isArray(v)) {
-                    form.setError(path, { message: v.join(', ') });
+                    if (field?.field_type == 'table') {
+                      // Special handling for "table" fields - they have nested errors
+                      v.forEach((item: any, idx: number) => {
+                        for (const [key, value] of Object.entries(item)) {
+                          const path: string = `${k}.${idx}.${key}`;
+                          if (Array.isArray(value)) {
+                            form.setError(path, { message: value.join(', ') });
+                          }
+                        }
+                      });
+                    } else {
+                      // Standard error handling for other fields
+                      form.setError(path, { message: v.join(', ') });
+                    }
                   } else {
                     processErrors(v, path);
                   }
@@ -662,7 +675,7 @@ export function EditApiForm({
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      submitText: t`Update` ?? props.submitText,
+      submitText: props.submitText ?? t`Update`,
       method: 'PUT'
     }),
     [props]

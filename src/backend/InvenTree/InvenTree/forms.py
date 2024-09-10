@@ -266,9 +266,8 @@ class RegistratonMixin:
                 raise forms.ValidationError(
                     _('The provided primary email address is not valid.')
                 )
-            else:
-                if split_email[1] == option[1:]:
-                    return super().clean_email(email)
+            elif split_email[1] == option[1:]:
+                return super().clean_email(email)
 
         logger.info('The provided email domain for %s is not approved', email)
         raise forms.ValidationError(_('The provided email domain is not approved.'))

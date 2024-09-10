@@ -10,10 +10,11 @@ from pathlib import Path
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.db import connections
+from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
+from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
@@ -246,8 +247,6 @@ class ExchangeRateMixin:
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup build in."""
 
-    pass
-
 
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
@@ -283,9 +282,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             )  # pragma: no cover
 
         if verbose or n >= value:
-            msg = '\r\n%s' % json.dumps(
-                context.captured_queries, indent=4
-            )  # pragma: no cover
+            msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover
         else:
             msg = None
 
@@ -490,3 +487,30 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     def assertDictContainsSubset(self, a, b):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
+
+
+class AdminTestCase(InvenTreeAPITestCase):
+    """Tests for the admin interface integration."""
+
+    superuser = True
+
+    def helper(self, model: type[models.Model], model_kwargs=None):
+        """Test the admin URL."""
+        if model_kwargs is None:
+            model_kwargs = {}
+
+        # Add object
+        obj = model.objects.create(**model_kwargs)
+        app_app, app_mdl = model._meta.app_label, model._meta.model_name
+
+        # 'Test listing
+        response = self.get(reverse(f'admin:{app_app}_{app_mdl}_changelist'))
+        self.assertEqual(response.status_code, 200)
+
+        # Test change view
+        response = self.get(
+            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return obj

@@ -10,7 +10,7 @@ Certain stock item status codes will restrict the availability of the stock item
 
 Below is the list of available stock status codes and their meaning:
 
-| Status      | Description | Available |
+| Status | Description | Available |
 | ----------- | ----------- | --- |
 | <span class='badge inventree success'>OK</span> | Stock item is healthy, nothing wrong to report | <span class='badge inventree success'>Yes</span> |
 | <span class='badge inventree warning'>Attention needed</span> | Stock item hasn't been checked or tested yet | <span class='badge inventree success'>Yes</span> |
@@ -37,6 +37,8 @@ Refer to the source code for the Stock status codes:
         show_root_toc_entry: False
         show_source: True
         members: []
+
+Stock Status supports [custom states](../concepts/custom_states.md).
 
 ### Default Status Code
 

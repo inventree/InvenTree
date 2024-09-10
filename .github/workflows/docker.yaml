@@ -68,7 +68,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
         with:
           python-version: ${{ env.python_version }}
       - name: Version Check
@@ -97,7 +97,7 @@ jobs:
         run: |
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke install
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke setup-dev
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke wait
       - name: Check Data Directory
@@ -115,10 +115,10 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke test --disable-pty
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty
       - name: Run Migration Tests
         run: |
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke test --migrations
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --migrations
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
@@ -166,7 +166,7 @@ jobs:
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # pin@v6.6.1
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # pin@v6.7.0
         with:
           context: .
           file: ./contrib/container/Dockerfile

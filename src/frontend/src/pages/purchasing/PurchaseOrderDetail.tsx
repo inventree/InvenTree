@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -19,15 +18,12 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -402,27 +398,17 @@ export default function PurchaseOrderDetail() {
       />,
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.purchaseorder,
-            pk: order.pk
-          }),
-          LinkBarcodeAction({
-            hidden: order?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash
-          })
-        ]}
+        model={ModelType.purchaseorder}
+        pk={order.pk}
+        hash={order?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.purchaseorder}
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !canEdit,
@@ -456,7 +442,7 @@ export default function PurchaseOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status}
+            status={order.status_custom_key}
             type={ModelType.purchaseorder}
             options={{ size: 'lg' }}
           />

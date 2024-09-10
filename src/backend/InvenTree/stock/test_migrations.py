@@ -200,7 +200,7 @@ class TestTestResultMigration(MigratorTestCase):
                 )
 
                 # Create some test results
-                for _k, v in self.test_keys.items():
+                for v in self.test_keys.values():
                     StockItemTestResult.objects.create(
                         stock_item=si, test=v, result=True, value=f'Result: {ii} : {jj}'
                     )
@@ -226,7 +226,7 @@ class TestTestResultMigration(MigratorTestCase):
         # Two more test templates should have been created
         self.assertEqual(PartTestTemplate.objects.count(), 3)
 
-        for k in self.test_keys.keys():
+        for k in self.test_keys:
             self.assertTrue(PartTestTemplate.objects.filter(key=k).exists())
 
         for result in StockItemTestResult.objects.all():

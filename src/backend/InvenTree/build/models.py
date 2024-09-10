@@ -43,6 +43,7 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
+import generic.states
 
 
 logger = logging.getLogger('inventree')
@@ -315,7 +316,7 @@ class Build(
         help_text=_('Number of stock items which have been completed')
     )
 
-    status = models.PositiveIntegerField(
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
         verbose_name=_('Build Status'),
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),

@@ -26,7 +26,7 @@ import {
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /*
@@ -221,7 +221,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
 
   // Row action callback
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),

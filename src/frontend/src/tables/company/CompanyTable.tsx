@@ -19,7 +19,7 @@ import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { RowAction, RowEditAction } from '../RowActions';
 
 /**
  * A table which displays a list of company records,
@@ -128,7 +128,7 @@ export function CompanyTable({
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden:

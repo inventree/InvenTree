@@ -13,10 +13,11 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  synchronize-with-crowdin:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -38,17 +39,30 @@ jobs:
           npm: true
           apt-dependency: gettext
       - name: Make Translations
-        run: invoke translate
-      - name: Commit files
+        run: invoke dev.translate
+      - name: Remove compiled static files
+        run: rm -rf src/backend/InvenTree/static
+      - name: Remove all local changes that are not *.po files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git checkout -b l10_local
-          git add "*.po"
-          git commit -m "updated translation base"
-      - name: Push changes
-        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
+          git add src/backend/InvenTree/locale/en/LC_MESSAGES/django.po src/frontend/src/locales/en/messages.po
+          git commit -m "add translations" || true
+          git reset --hard
+          git reset HEAD~
+      - name: crowdin action
+        uses: crowdin/github-action@cf0ccf9a71f614e66e011d461ea11e5dbabb93ca # pin@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: l10
-          force: true
+          upload_sources: true
+          upload_translations: false
+          download_translations: true
+          localization_branch_name: l10_crowdin
+          create_pull_request: true
+          pull_request_title: 'New Crowdin updates'
+          pull_request_body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action)'
+          pull_request_base_branch_name: 'master'
+          pull_request_labels: 'translations'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

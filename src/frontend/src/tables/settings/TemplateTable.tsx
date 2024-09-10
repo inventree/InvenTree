@@ -15,6 +15,7 @@ import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -160,8 +161,11 @@ export function TemplateTable({
       },
       ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
         accessor: key,
+        ...field,
+        title: field.label,
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
     ];
@@ -187,8 +191,9 @@ export function TemplateTable({
           }
         }),
         RowDuplicateAction({
-          hidden: true
+          hidden: true,
           // TODO: Duplicate selected template
+          onClick: notYetImplemented
         }),
         RowDeleteAction({
           hidden: !user.hasDeletePermission(templateProps.modelType),

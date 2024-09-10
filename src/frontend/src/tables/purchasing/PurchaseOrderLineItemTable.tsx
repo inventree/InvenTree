@@ -37,6 +37,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
+  RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -202,13 +203,11 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         ordering: 'SKU'
       },
-      {
-        accessor: 'supplier_link',
+      LinkColumn({
+        accessor: 'supplier_part_detail.link',
         title: t`Supplier Link`,
-
-        sortable: false,
-        render: (record: any) => record?.supplier_part_detail?.link
-      },
+        sortable: false
+      }),
       {
         accessor: 'MPN',
         title: t`Manufacturer Code`,
@@ -290,7 +289,7 @@ export function PurchaseOrderLineItemTable({
   }, [order, poStatus]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [

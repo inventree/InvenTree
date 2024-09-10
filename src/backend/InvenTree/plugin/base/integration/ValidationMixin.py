@@ -1,5 +1,7 @@
 """Validation mixin class definition."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.db.models import Model
 
@@ -63,11 +65,13 @@ class ValidationMixin:
             None: or True (refer to class docstring)
 
         Raises:
-            ValidationError: if the instance cannot be deleted
+            ValidationError: If the instance cannot be deleted
         """
         return None
 
-    def validate_model_instance(self, instance: Model, deltas: dict = None) -> None:
+    def validate_model_instance(
+        self, instance: Model, deltas: Optional[dict] = None
+    ) -> None:
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -81,11 +85,11 @@ class ValidationMixin:
             None: or True (refer to class docstring)
 
         Raises:
-            ValidationError: if the instance is invalid
+            ValidationError: If the instance is invalid
         """
         return None
 
-    def validate_part_name(self, name: str, part: part.models.Part):
+    def validate_part_name(self, name: str, part: part.models.Part) -> None:
         """Perform validation on a proposed Part name.
 
         Arguments:
@@ -96,11 +100,11 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed name is objectionable
+            ValidationError: If the proposed name is objectionable
         """
         return None
 
-    def validate_part_ipn(self, ipn: str, part: part.models.Part):
+    def validate_part_ipn(self, ipn: str, part: part.models.Part) -> None:
         """Perform validation on a proposed Part IPN (internal part number).
 
         Arguments:
@@ -111,11 +115,13 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed IPN is objectionable
+            ValidationError: If the proposed IPN is objectionable
         """
         return None
 
-    def validate_batch_code(self, batch_code: str, item: stock.models.StockItem):
+    def validate_batch_code(
+        self, batch_code: str, item: stock.models.StockItem
+    ) -> None:
         """Validate the supplied batch code.
 
         Arguments:
@@ -126,11 +132,11 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed batch code is objectionable
+            ValidationError: If the proposed batch code is objectionable
         """
         return None
 
-    def generate_batch_code(self, **kwargs):
+    def generate_batch_code(self, **kwargs) -> str:
         """Generate a new batch code.
 
         This method is called when a new batch code is required.
@@ -143,22 +149,28 @@ class ValidationMixin:
         """
         return None
 
-    def validate_serial_number(self, serial: str, part: part.models.Part):
+    def validate_serial_number(
+        self,
+        serial: str,
+        part: part.models.Part,
+        stock_item: stock.models.StockItem = None,
+    ) -> None:
         """Validate the supplied serial number.
 
         Arguments:
             serial: The proposed serial number (string)
             part: The Part instance for which this serial number is being validated
+            stock_item: The StockItem instance for which this serial number is being validated (if applicable)
 
         Returns:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed serial is objectionable
+            ValidationError: If the proposed serial is objectionable
         """
         return None
 
-    def convert_serial_to_int(self, serial: str):
+    def convert_serial_to_int(self, serial: str) -> int:
         """Convert a serial number (string) into an integer representation.
 
         This integer value is used for efficient sorting based on serial numbers.
@@ -179,7 +191,7 @@ class ValidationMixin:
         """
         return None
 
-    def increment_serial_number(self, serial: str):
+    def increment_serial_number(self, serial: str) -> str:
         """Return the next sequential serial based on the provided value.
 
         A plugin which implements this method can either return:
@@ -189,10 +201,15 @@ class ValidationMixin:
 
         Arguments:
             serial: Current serial value (string)
+
+        Returns:
+            The next serial number in the sequence (string), or None
         """
         return None
 
-    def validate_part_parameter(self, parameter, data):
+    def validate_part_parameter(
+        self, parameter: part.models.PartParameter, data: str
+    ) -> None:
         """Validate a parameter value.
 
         Arguments:
@@ -203,6 +220,5 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed parameter value is objectionable
+            ValidationError: If the proposed parameter value is objectionable
         """
-        pass

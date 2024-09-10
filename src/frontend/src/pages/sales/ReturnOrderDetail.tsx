@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -18,15 +17,12 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -299,7 +295,7 @@ export default function ReturnOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status}
+            status={order.status_custom_key}
             type={ModelType.returnorder}
             options={{ size: 'lg' }}
           />
@@ -403,27 +399,17 @@ export default function ReturnOrderDetail() {
       />,
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.returnorder,
-            pk: order.pk
-          }),
-          LinkBarcodeAction({
-            hidden: order?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash
-          })
-        ]}
+        model={ModelType.returnorder}
+        pk={order.pk}
+        hash={order?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.returnorder}
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.return_order),

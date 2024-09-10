@@ -15,7 +15,6 @@ import {
   IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
-  IconDots,
   IconInfoCircle,
   IconLayersLinked,
   IconList,
@@ -52,9 +51,7 @@ import {
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
@@ -128,6 +125,10 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
+
+  part.required =
+    (part?.required_for_build_orders ?? 0) +
+    (part?.required_for_sales_orders ?? 0);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -258,6 +259,13 @@ export default function PartDetail() {
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
+        type: 'string',
+        name: 'required',
+        label: t`Required for Orders`,
+        hidden: part.required <= 0,
+        icon: 'tick_off'
+      },
+      {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
         total: part.required_for_build_orders,
@@ -284,7 +292,7 @@ export default function PartDetail() {
         type: 'string',
         name: 'building',
         unit: true,
-        label: t`Building`,
+        label: t`In Production`,
         hidden: !part.assembly || !part.building
       }
     ];
@@ -395,17 +403,17 @@ export default function PartDetail() {
                     case 200:
                       return response.data;
                     default:
-                      return null;
+                      return {};
                   }
                 })
                 .catch(() => {
-                  return null;
+                  return {};
                 });
             }
           });
 
           return (
-            data &&
+            data.overall_min &&
             `${formatPriceRange(data.overall_min, data.overall_max)}${
               part.units && ' / ' + part.units
             }`
@@ -435,19 +443,19 @@ export default function PartDetail() {
                       if (response.data.length > 0) {
                         return response.data[response.data.length - 1];
                       } else {
-                        return null;
+                        return {};
                       }
                     default:
-                      return null;
+                      return {};
                   }
                 })
                 .catch(() => {
-                  return null;
+                  return {};
                 });
             }
           });
 
-          if (data.quantity) {
+          if (data && data.quantity) {
             return `${data.quantity} (${data.date})`;
           } else {
             return '-';
@@ -474,11 +482,11 @@ export default function PartDetail() {
                     case 200:
                       return response.data[response.data.length - 1];
                     default:
-                      return null;
+                      return {};
                   }
                 })
                 .catch(() => {
-                  return null;
+                  return {};
                 });
             }
           });
@@ -579,6 +587,7 @@ export default function PartDetail() {
                     modelField="build"
                     modelTarget={ModelType.build}
                     showBuildInfo
+                    allowEdit
                   />
                 </Accordion.Panel>
               </Accordion.Item>
@@ -614,7 +623,7 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !part.active,
         content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
@@ -837,6 +846,9 @@ export default function PartDetail() {
       return [];
     }
 
+    const required =
+      part.required_for_build_orders + part.required_for_sales_orders;
+
     return [
       <DetailsBadge
         label={t`In Stock` + `: ${part.total_in_stock}`}
@@ -855,6 +867,12 @@ export default function PartDetail() {
         color="orange"
         visible={part.total_in_stock == 0}
         key="no_stock"
+      />,
+      <DetailsBadge
+        label={t`Required` + `: ${required}`}
+        color="grape"
+        visible={required > 0}
+        key="required"
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
@@ -972,18 +990,10 @@ export default function PartDetail() {
     return [
       <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.part,
-            pk: part.pk
-          }),
-          LinkBarcodeAction({
-            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
-          }),
-          UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
-          })
-        ]}
+        model={ModelType.part}
+        pk={part.pk}
+        hash={part?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.part)}
         key="action_dropdown"
       />,
       <PrintingActions
@@ -1020,9 +1030,8 @@ export default function PartDetail() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.part),

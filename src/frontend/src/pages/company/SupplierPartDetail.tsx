@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
-  IconDots,
   IconInfoCircle,
   IconNotes,
   IconPackages,
@@ -18,14 +17,11 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -270,26 +266,13 @@ export default function SupplierPartDetail() {
     return [
       <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.supplierpart,
-            pk: supplierPart.pk
-          }),
-          LinkBarcodeAction({
-            hidden:
-              supplierPart.barcode_hash ||
-              !user.hasChangeRole(UserRoles.purchase_order)
-          }),
-          UnlinkBarcodeAction({
-            hidden:
-              !supplierPart.barcode_hash ||
-              !user.hasChangeRole(UserRoles.purchase_order)
-          })
-        ]}
+        model={ModelType.supplierpart}
+        pk={supplierPart.pk}
+        hash={supplierPart.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Supplier Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),

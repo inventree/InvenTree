@@ -4,7 +4,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconDots,
   IconHistory,
   IconInfoCircle,
   IconNotes,
@@ -28,9 +27,7 @@ import {
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -476,20 +473,10 @@ export default function StockDetail() {
     () => [
       <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.stockitem,
-            pk: stockitem.pk
-          }),
-          LinkBarcodeAction({
-            hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
-          }),
-          UnlinkBarcodeAction({
-            hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
-          })
-        ]}
+        model={ModelType.stockitem}
+        pk={stockitem.pk}
+        hash={stockitem?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.stock)}
       />,
       <PrintingActions
         modelType={ModelType.stockitem}
@@ -539,9 +526,8 @@ export default function StockDetail() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Stock Item Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.stock),
@@ -598,7 +584,7 @@ export default function StockDetail() {
             key="batch"
           />,
           <StatusRenderer
-            status={stockitem.status}
+            status={stockitem.status_custom_key}
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
             key="status"

@@ -2,24 +2,28 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from generic.states import StatusCode
+from generic.states import ColorEnum, StatusCode
 
 
 class StockStatus(StatusCode):
     """Status codes for Stock."""
 
-    OK = 10, _('OK'), 'success'  # Item is OK
-    ATTENTION = 50, _('Attention needed'), 'warning'  # Item requires attention
-    DAMAGED = 55, _('Damaged'), 'warning'  # Item is damaged
-    DESTROYED = 60, _('Destroyed'), 'danger'  # Item is destroyed
-    REJECTED = 65, _('Rejected'), 'danger'  # Item is rejected
-    LOST = 70, _('Lost'), 'dark'  # Item has been lost
+    OK = 10, _('OK'), ColorEnum.success  # Item is OK
+    ATTENTION = 50, _('Attention needed'), ColorEnum.warning  # Item requires attention
+    DAMAGED = 55, _('Damaged'), ColorEnum.warning  # Item is damaged
+    DESTROYED = 60, _('Destroyed'), ColorEnum.danger  # Item is destroyed
+    REJECTED = 65, _('Rejected'), ColorEnum.danger  # Item is rejected
+    LOST = 70, _('Lost'), ColorEnum.dark  # Item has been lost
     QUARANTINED = (
         75,
         _('Quarantined'),
-        'info',
+        ColorEnum.info,
     )  # Item has been quarantined and is unavailable
-    RETURNED = 85, _('Returned'), 'warning'  # Item has been returned from a customer
+    RETURNED = (
+        85,
+        _('Returned'),
+        ColorEnum.warning,
+    )  # Item has been returned from a customer
 
 
 class StockStatusGroups:
