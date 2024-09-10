@@ -18,7 +18,7 @@ os.environ.setdefault(
     'DJANGO_SETTINGS_MODULE', 'InvenTree.settings'
 )  # pragma: no cover
 
-from InvenTree import routing  # noqa: E402
+from InvenTree import routing
 
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),
