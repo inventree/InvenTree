@@ -1527,6 +1527,11 @@ class StocktakeTest(StockAPITestCase):
 
     def test_action(self):
         """Test each stocktake action endpoint, for validation."""
+        target = {
+            'api-stock-count': '10.00000',
+            'api-stock-add': '10.00000',
+            'api-stock-remove': '10.00000',
+        }
         for endpoint in ['api-stock-count', 'api-stock-add', 'api-stock-remove']:
             url = reverse(endpoint)
 
@@ -1584,6 +1589,12 @@ class StocktakeTest(StockAPITestCase):
                 'Ensure this value is greater than or equal to 0',
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
+
+            # Valid POST
+            data = {'items': [{'pk': 1234, 'quantity': 10}]}
+            response = self.post(url, data, expected_code=201)
+            self.assertEqual(response.data['items'][0]['pk'], 1234)
+            self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
 
     def test_transfer(self):
         """Test stock transfers."""
@@ -1704,6 +1715,14 @@ class StockTestResultTest(StockAPITestCase):
             'value': '150kPa',
             'notes': 'I guess there was just too much pressure?',
         }
+
+        # First, test with TEST_UPLOAD_CREATE_TEMPLATE set to False
+        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', False, self.user)
+
+        response = self.post(url, data, expected_code=400)
+
+        # Again, with the setting enabled
+        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', True, self.user)
 
         response = self.post(url, data, expected_code=201)
 

@@ -4,7 +4,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconDots,
   IconHistory,
   IconInfoCircle,
   IconNotes,
@@ -27,7 +26,8 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -526,9 +526,8 @@ export default function StockDetail() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Stock Item Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.stock),

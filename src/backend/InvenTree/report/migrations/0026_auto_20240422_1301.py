@@ -2,9 +2,9 @@
 
 import os
 
-from django.db import connection, migrations
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.db import connection, migrations
 
 import InvenTree.ready
 
@@ -48,7 +48,7 @@ def convert_legacy_labels(table_name, model_name, template_model):
         except Exception:
             # Table likely does not exist
             if not InvenTree.ready.isInTestMode():
-                print(f"Legacy label table {table_name} not found - skipping migration")
+                print(f"\nLegacy label table {table_name} not found - skipping migration")
             return 0
 
         rows = cursor.fetchall()

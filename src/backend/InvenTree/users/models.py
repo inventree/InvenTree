@@ -164,7 +164,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         """
         # If the token has not yet been saved, return the raw key
         if self.pk is None:
-            return self.key
+            return self.key  # pragma: no cover
 
         M = len(self.key) - 20
 

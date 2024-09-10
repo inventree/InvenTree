@@ -161,9 +161,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
-              'REPORT_LOG_ERRORS',
-              'REPORT_ENABLE_TEST_REPORT',
-              'REPORT_ATTACH_TEST_REPORT'
+              'REPORT_LOG_ERRORS'
             ]}
           />
         )
@@ -221,7 +219,8 @@ export default function SystemSettings() {
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
               'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
-              'TEST_STATION_DATA'
+              'TEST_STATION_DATA',
+              'TEST_UPLOAD_CREATE_TEMPLATE'
             ]}
           />
         )

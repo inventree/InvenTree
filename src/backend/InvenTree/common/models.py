@@ -1704,20 +1704,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'A4',
             'choices': report.helpers.report_page_size_options,
         },
-        'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Enable Test Reports'),
-            'description': _('Enable generation of test reports'),
-            'default': True,
-            'validator': bool,
-        },
-        'REPORT_ATTACH_TEST_REPORT': {
-            'name': _('Attach Test Reports'),
-            'description': _(
-                'When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'
-            ),
-            'default': False,
-            'validator': bool,
-        },
         'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
             'name': _('Globally Unique Serials'),
             'description': _('Serial numbers for stock items must be globally unique'),
@@ -2158,6 +2144,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Enable Test Station Data'),
             'description': _('Enable test station data collection for test results'),
             'default': False,
+            'validator': bool,
+        },
+        'TEST_UPLOAD_CREATE_TEMPLATE': {
+            'name': _('Create Template on Upload'),
+            'description': _(
+                'Create a new test template when uploading test data which does not match an existing template'
+            ),
+            'default': True,
             'validator': bool,
         },
     }

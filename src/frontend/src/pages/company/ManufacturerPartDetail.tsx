@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -17,10 +16,10 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -236,9 +235,8 @@ export default function ManufacturerPartDetail() {
         model={ModelType.manufacturerpart}
         pk={manufacturerPart.pk}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Manufacturer Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),

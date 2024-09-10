@@ -1,11 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import {
-  IconDots,
-  IconInfoCircle,
-  IconPackages,
-  IconSitemap
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -18,7 +13,8 @@ import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -331,9 +327,8 @@ export default function Stock() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Location Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
