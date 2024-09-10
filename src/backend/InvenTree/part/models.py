@@ -2645,13 +2645,17 @@ class PartPricing(common.models.MetaMixin):
 
         import part.tasks as part_tasks
 
+        # Pricing calculations are performed in the background,
+        # unless the TESTING_PRICING flag is set
+        background = not settings.TESTING_PRICING
+
         # Offload task to update the pricing
         # Force async, to prevent running in the foreground (unless in testing mode)
         InvenTree.tasks.offload_task(
             part_tasks.update_part_pricing,
             self,
             counter=counter,
-            force_async=not settings.TESTING,
+            force_async=background,
         )
 
     def update_pricing(
