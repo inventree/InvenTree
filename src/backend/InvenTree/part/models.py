@@ -2704,12 +2704,7 @@ class PartPricing(common.models.MetaMixin):
         pricing_changed = False
 
         # Without previous pricing data, we assume that the pricing has changed
-        if (
-            previous_min is None
-            or previous_max is None
-            or previous_min != self.overall_min
-            or previous_max != self.overall_max
-        ):
+        if previous_min != self.overall_min or previous_max != self.overall_max:
             pricing_changed = True
 
         # Update parent assemblies and templates
