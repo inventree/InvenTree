@@ -452,3 +452,81 @@ class PartPricingTests(InvenTreeTestCase):
         # Try to update pricing (should fail gracefully as the Part has been deleted)
         p.schedule_pricing_update(create=False)
         self.assertFalse(part.models.PartPricing.objects.filter(part=p).exists())
+
+    def test_multi_level_bom(self):
+        """Test that pricing for multi-level BOMs is calculated correctly."""
+        # Create some parts
+        A1 = part.models.Part.objects.create(
+            name='A1', description='A1', assembly=True, component=True
+        )
+        B1 = part.models.Part.objects.create(
+            name='B1', description='B1', assembly=True, component=True
+        )
+        C1 = part.models.Part.objects.create(
+            name='C1', description='C1', assembly=True, component=True
+        )
+        D1 = part.models.Part.objects.create(
+            name='D1', description='D1', assembly=True, component=True
+        )
+        D2 = part.models.Part.objects.create(
+            name='D2', description='D2', assembly=True, component=True
+        )
+        D3 = part.models.Part.objects.create(
+            name='D3', description='D3', assembly=True, component=True
+        )
+
+        # BOM Items
+        part.models.BomItem.objects.create(part=A1, sub_part=B1, quantity=10)
+        part.models.BomItem.objects.create(part=B1, sub_part=C1, quantity=2)
+        part.models.BomItem.objects.create(part=C1, sub_part=D1, quantity=3)
+        part.models.BomItem.objects.create(part=C1, sub_part=D2, quantity=4)
+        part.models.BomItem.objects.create(part=C1, sub_part=D3, quantity=5)
+
+        # Pricing data (only for low-level D parts)
+        P1 = D1.pricing
+        P1.override_min = 4.50
+        P1.override_max = 5.50
+        P1.save()
+        P1.update_pricing()
+
+        P2 = D2.pricing
+        P2.override_min = 6.50
+        P2.override_max = 7.50
+        P2.save()
+        P2.update_pricing()
+
+        P3 = D3.pricing
+        P3.override_min = 8.50
+        P3.override_max = 9.50
+        P3.save()
+        P3.update_pricing()
+
+        # Simple checks for low-level BOM items
+        self.assertEqual(D1.pricing.overall_min, Money(4.50, 'USD'))
+        self.assertEqual(D1.pricing.overall_max, Money(5.50, 'USD'))
+
+        self.assertEqual(D2.pricing.overall_min, Money(6.50, 'USD'))
+        self.assertEqual(D2.pricing.overall_max, Money(7.50, 'USD'))
+
+        self.assertEqual(D3.pricing.overall_min, Money(8.50, 'USD'))
+        self.assertEqual(D3.pricing.overall_max, Money(9.50, 'USD'))
+
+        # Calculate pricing for "C" level part
+        c_min = 3 * 4.50 + 4 * 6.50 + 5 * 8.50
+        c_max = 3 * 5.50 + 4 * 7.50 + 5 * 9.50
+
+        self.assertEqual(C1.pricing.overall_min, Money(c_min, 'USD'))
+        self.assertEqual(C1.pricing.overall_max, Money(c_max, 'USD'))
+
+        # Calculate pricing for "A" and "B" level parts
+        b_min = 2 * c_min
+        b_max = 2 * c_max
+
+        a_min = 10 * b_min
+        a_max = 10 * b_max
+
+        self.assertEqual(B1.pricing.overall_min, Money(b_min, 'USD'))
+        self.assertEqual(B1.pricing.overall_max, Money(b_max, 'USD'))
+
+        self.assertEqual(A1.pricing.overall_min, Money(a_min, 'USD'))
+        self.assertEqual(A1.pricing.overall_max, Money(a_max, 'USD'))
