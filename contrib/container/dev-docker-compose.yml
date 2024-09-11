@@ -56,7 +56,7 @@ services:
     inventree-dev-worker:
         image: inventree-dev-image
         build: *build_config
-        command: invoke worker
+        command: invoke int.worker
         depends_on:
             - inventree-dev-server
         volumes:

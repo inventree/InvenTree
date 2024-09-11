@@ -83,7 +83,7 @@ services:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-worker
-        command: invoke worker
+        command: invoke int.worker
         depends_on:
             - inventree-server
         env_file:

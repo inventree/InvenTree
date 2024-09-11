@@ -228,9 +228,6 @@ class SettingsTest(InvenTreeTestCase):
         report_size_obj = InvenTreeSetting.get_setting_object(
             'REPORT_DEFAULT_PAGE_SIZE'
         )
-        report_test_obj = InvenTreeSetting.get_setting_object(
-            'REPORT_ENABLE_TEST_REPORT'
-        )
 
         # check settings base fields
         self.assertEqual(instance_obj.name, 'Server Instance Name')
@@ -260,7 +257,6 @@ class SettingsTest(InvenTreeTestCase):
 
         # check setting_type
         self.assertEqual(instance_obj.setting_type(), 'string')
-        self.assertEqual(report_test_obj.setting_type(), 'boolean')
         self.assertEqual(stale_days.setting_type(), 'integer')
 
         # check as_int
@@ -268,9 +264,6 @@ class SettingsTest(InvenTreeTestCase):
         self.assertEqual(
             instance_obj.as_int(), 'InvenTree'
         )  # not an int -> return default
-
-        # check as_bool
-        self.assertEqual(report_test_obj.as_bool(), True)
 
         # check to_native_value
         self.assertEqual(stale_days.to_native_value(), 0)
