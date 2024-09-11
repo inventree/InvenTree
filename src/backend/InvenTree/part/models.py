@@ -2647,7 +2647,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Pricing calculations are performed in the background,
         # unless the TESTING_PRICING flag is set
-        background = not settings.TESTING_PRICING
+        background = not settings.TESTING or not settings.TESTING_PRICING
 
         # Offload task to update the pricing
         # Force async, to prevent running in the foreground (unless in testing mode)
@@ -4513,7 +4513,7 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated."""
     # Update part pricing *unless* we are importing data
     if (
-        InvenTree.ready.canAppAccessDatabase(allow_test=True)
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
         and not InvenTree.ready.isImportingData()
     ):
         if instance.part:
@@ -4533,7 +4533,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted."""
     # Update part pricing *unless* we are importing data
     if (
-        InvenTree.ready.canAppAccessDatabase(allow_test=True)
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
         and not InvenTree.ready.isImportingData()
     ):
         if instance.part:
