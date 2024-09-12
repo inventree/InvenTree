@@ -298,7 +298,7 @@ function stockItemTableFilters(): TableFilter[] {
     {
       name: 'assembly',
       label: t`Assembly`,
-      description: t`Show stock for assmebled parts`
+      description: t`Show stock for assembled parts`
     },
     {
       name: 'allocated',
