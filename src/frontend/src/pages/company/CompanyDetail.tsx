@@ -39,6 +39,7 @@ import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -143,7 +144,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           <Grid.Col span={4}>
             <DetailsImage
               appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
+              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
               src={company.image}
               pk={company.pk}
               refresh={refreshInstance}
