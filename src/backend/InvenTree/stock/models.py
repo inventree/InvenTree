@@ -2284,14 +2284,16 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData() and InvenTree.ready.canAppAccessDatabase(
-        allow_test=True
-    ):
+    if InvenTree.ready.isImportingData():
+        return
+
+    if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
+    if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         # Schedule an update on parent part pricing
         if instance.part:
             instance.part.schedule_pricing_update(create=False)
@@ -2302,19 +2304,15 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if (
-        created
-        and not InvenTree.ready.isImportingData()
-        and InvenTree.ready.canAppAccessDatabase(allow_test=True)
-    ):
-        # Run this check in the background
-        InvenTree.tasks.offload_task(
-            part_tasks.notify_low_stock_if_required, instance.part
-        )
+    if created and not InvenTree.ready.isImportingData():
+        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            InvenTree.tasks.offload_task(
+                part_tasks.notify_low_stock_if_required, instance.part
+            )
 
-        # Schedule an update on parent part pricing
-        if instance.part:
-            instance.part.schedule_pricing_update(create=True)
+        if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+            if instance.part:
+                instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

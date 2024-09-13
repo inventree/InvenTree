@@ -264,7 +264,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     MAX_QUERY_TIME = 7.5
 
     @contextmanager
-    def assertNumQueriesLessThan(self, value, using='default', verbose=None, url=None):
+    def assertNumQueriesLessThan(self, value, using='default', verbose=False, url=None):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -282,10 +282,8 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
 
-        if verbose or n >= value:
-            msg = '\r\n%s' % json.dumps(
-                context.captured_queries, indent=4
-            )  # pragma: no cover
+        if verbose and n >= value:
+            msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover
         else:
             msg = None
 

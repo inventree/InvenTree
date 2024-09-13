@@ -966,6 +966,12 @@ class BuildOverallocationTest(BuildAPITest):
         outputs = cls.build.build_outputs.all()
         cls.build.complete_build_output(outputs[0], cls.user)
 
+    def setUp(self):
+        """Basic operation as part of test suite setup"""
+        super().setUp()
+
+        self.generate_exchange_rates()
+
     def test_setup(self):
         """Validate expected state after set-up."""
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -994,7 +1000,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'accept',
             },
             expected_code=201,
-            max_query_count=550,  # TODO: Come back and refactor this
+            max_query_count=1000,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()
@@ -1015,8 +1021,10 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'trim',
             },
             expected_code=201,
-            max_query_count=555,  # TODO: Come back and refactor this
+            max_query_count=1000,  # TODO: Come back and refactor this
         )
+
+        # Note: Large number of queries is due to pricing recalculation for each stock item
 
         self.build.refresh_from_db()
 
