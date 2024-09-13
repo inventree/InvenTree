@@ -52,6 +52,8 @@ const CurrencyManagmentPanel = Loadable(
   lazy(() => import('./CurrencyManagmentPanel'))
 );
 
+const UnitManagmentPanel = Loadable(lazy(() => import('./UnitManagmentPanel')));
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
@@ -80,6 +82,10 @@ const CustomStateTable = Loadable(
 
 const CustomUnitsTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
+);
+
+const PartParameterTemplateTable = Loadable(
+  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
 
 const PartCategoryTemplateTable = Loadable(
@@ -147,7 +153,7 @@ export default function AdminCenter() {
         name: 'customunits',
         label: t`Custom Units`,
         icon: <IconScale />,
-        content: <CustomUnitsTable />
+        content: <UnitManagmentPanel />
       },
       {
         name: 'part-parameters',
