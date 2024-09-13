@@ -1473,7 +1473,6 @@ internal = Collection(
     rebuild_thumbnails,
     showmigrations,
     translate_stats,
-    worker,
 )
 
 ns = Collection(
@@ -1491,6 +1490,7 @@ ns = Collection(
     update,
     version,
     wait,
+    worker,
 )
 
 ns.add_collection(development, 'dev')

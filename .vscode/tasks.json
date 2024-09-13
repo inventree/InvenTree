@@ -9,7 +9,7 @@
     {
       "label": "worker",
       "type": "shell",
-      "command": "invoke int.worker",
+      "command": "invoke worker",
       "problemMatcher": [],
     },
     {
