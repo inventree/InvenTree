@@ -1,50 +1,75 @@
-import test, { Page, expect } from 'playwright/test';
+import test, { Page, expect, request } from 'playwright/test';
 
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
-const setPluginState = async (
-  page: Page,
-  pluginName: string,
-  state: boolean
-) => {
-  await page.goto(`${baseUrl}/settings/admin/`);
-  await page.getByRole('tab', { name: 'Plugins' }).click();
+/*
+ * Set the value of a global setting in the database
+ */
+const setSettingState = async ({
+  request,
+  setting,
+  value
+}: {
+  request: any;
+  setting: string;
+  value: any;
+}) => {
+  const url = `http://localhost:8000/api/settings/global/${setting}/`;
 
-  // Search for the plugin, to ensure it is visible in the table
-  await page.getByPlaceholder('Search').fill(pluginName);
-  await page.waitForTimeout(500);
+  const response = await request.patch(url, {
+    data: {
+      value: value
+    },
+    headers: {
+      // Basic username: password authorization
+      Authorization: `Basic ${btoa('admin:inventree')}`
+    }
+  });
 
-  // Click on the plugin row actions
-  await page
-    .getByRole('row', { name: pluginName })
-    .getByLabel(/row-action-menu-/)
-    .click();
-  await page.waitForTimeout(500);
-
-  const action: string = state ? 'Activate' : 'Deactivate';
-  const success: string = state
-    ? 'The plugin was activated'
-    : 'The plugin was deactivated';
-
-  const actionButton = await page
-    .getByRole('row', { name: pluginName })
-    .getByRole('menuitem', { name: action })
-    .first();
-
-  if ((await actionButton.count()) > 0) {
-    await actionButton.click();
-    await page.getByRole('button', { name: 'Submit' }).click();
-
-    await page.getByText(success).waitFor();
-  }
+  expect(await response.status()).toBe(200);
 };
 
-test('Plugins - Panels', async ({ page }) => {
+const setPluginState = async ({
+  request,
+  plugin,
+  state
+}: {
+  request: any;
+  plugin: string;
+  state: boolean;
+}) => {
+  const url = `http://localhost:8000/api/plugins/${plugin}/activate/`;
+
+  const response = await request.patch(url, {
+    data: {
+      active: state
+    },
+    headers: {
+      // Basic username: password authorization
+      Authorization: `Basic ${btoa('admin:inventree')}`
+    }
+  });
+
+  expect(await response.status()).toBe(200);
+};
+
+test('Plugins - Panels', async ({ page, request }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
+  // Ensure that UI plugins are enabled
+  await setSettingState({
+    request,
+    setting: 'ENABLE_PLUGINS_INTERFACE',
+    value: true
+  });
+
   // Ensure that the SampleUI plugin is enabled
-  await setPluginState(page, 'SampleUI', true);
+  await setPluginState({
+    request,
+    plugin: 'sampleui',
+    state: true
+  });
 
   // Navigate to the "part" page
   await page.goto(`${baseUrl}/part/69/`);
@@ -69,4 +94,11 @@ test('Plugins - Panels', async ({ page }) => {
 
   await page.getByRole('tab', { name: 'Part Panel', exact: true }).click();
   await page.getByText('This content has been rendered by a custom plugin');
+
+  // Disable the plugin, and ensure it is no longer visible
+  await setPluginState({
+    request,
+    plugin: 'sampleui',
+    state: false
+  });
 });
