@@ -61,40 +61,42 @@ export function AccountDetailPanel() {
         </Group>
 
         <Table>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Username</Trans>
-            </Table.Td>
-            <Table.Td>{user?.username}</Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>First Name</Trans>
-            </Table.Td>
-            <Table.Td>{user?.first_name}</Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Last Name</Trans>
-            </Table.Td>
-            <Table.Td>{user?.last_name}</Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Staff Access</Trans>
-            </Table.Td>
-            <Table.Td>
-              <YesNoUndefinedButton value={user?.is_staff} />
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Superuser</Trans>
-            </Table.Td>
-            <Table.Td>
-              <YesNoUndefinedButton value={user?.is_superuser} />
-            </Table.Td>
-          </Table.Tr>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Username</Trans>
+              </Table.Td>
+              <Table.Td>{user?.username}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>First Name</Trans>
+              </Table.Td>
+              <Table.Td>{user?.first_name}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Last Name</Trans>
+              </Table.Td>
+              <Table.Td>{user?.last_name}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Staff Access</Trans>
+              </Table.Td>
+              <Table.Td>
+                <YesNoUndefinedButton value={user?.is_staff} />
+              </Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Superuser</Trans>
+              </Table.Td>
+              <Table.Td>
+                <YesNoUndefinedButton value={user?.is_superuser} />
+              </Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
         </Table>
       </Stack>
     </>
