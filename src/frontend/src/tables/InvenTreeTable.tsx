@@ -153,7 +153,8 @@ export function InvenTreeTable<T = any>({
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
-    setTableSorting
+    setTableSorting,
+    loader
   } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
@@ -192,8 +193,9 @@ export function InvenTreeTable<T = any>({
             // Extract field information from the API
 
             let names: Record<string, string> = {};
+
             let fields: ApiFormFieldSet =
-              extractAvailableFields(response, 'POST', true) || {};
+              extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
             mapFields(fields, (path, field) => {
@@ -720,7 +722,7 @@ export function InvenTreeTable<T = any>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType="dots"
+              loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
               minHeight={300}
