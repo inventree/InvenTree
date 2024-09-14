@@ -1,3 +1,4 @@
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { platform, release } from 'node:os';
@@ -40,6 +41,11 @@ export default defineConfig({
       exclude: ['node_modules', 'test/'],
       extension: ['.js', '.ts', '.tsx'],
       requireEnv: true
+    }),
+    codecovVitePlugin({
+      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+      bundleName: 'pui_v1',
+      uploadToken: process.env.CODECOV_TOKEN
     })
   ],
   build: {

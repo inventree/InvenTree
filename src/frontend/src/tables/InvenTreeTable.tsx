@@ -519,6 +519,11 @@ export function InvenTreeTable<T = any>({
   // Update tableState.records when new data received
   useEffect(() => {
     tableState.setRecords(data ?? []);
+
+    // set pagesize to length if pagination is disabled
+    if (!tableProps.enablePagination) {
+      tableState.setPageSize(data?.length ?? defaultPageSize);
+    }
   }, [data]);
 
   const deleteRecords = useDeleteApiFormModal({
@@ -595,6 +600,15 @@ export function InvenTreeTable<T = any>({
     tableState.setPage(1);
     tableState.refreshTable();
   }
+
+  const optionalParams = useMemo(() => {
+    let optionalParamsa: Record<string, any> = {};
+    if (tableProps.enablePagination) {
+      optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
+      optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
+    }
+    return optionalParamsa;
+  }, [tableProps.enablePagination]);
 
   return (
     <>
@@ -741,8 +755,7 @@ export function InvenTreeTable<T = any>({
                   overflow: 'hidden'
                 })
               }}
-              recordsPerPageOptions={PAGE_SIZES}
-              onRecordsPerPageChange={updatePageSize}
+              {...optionalParams}
             />
           </Box>
         </Stack>
