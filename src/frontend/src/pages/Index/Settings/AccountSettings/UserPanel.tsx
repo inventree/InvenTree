@@ -1,7 +1,6 @@
 import { Container, Grid, SimpleGrid } from '@mantine/core';
 
 import { AccountDetailPanel } from './AccountDetailPanel';
-import { DisplaySettingsPanel } from './DisplaySettingsPanel';
 import { UserTheme } from './UserThemePanel';
 
 export function AccountContent() {
@@ -17,9 +16,6 @@ export function AccountContent() {
         <Grid gutter="md">
           <Grid.Col>
             <UserTheme height={SECONDARY_COL_HEIGHT} />
-          </Grid.Col>
-          <Grid.Col>
-            <DisplaySettingsPanel height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>
         </Grid>
       </SimpleGrid>

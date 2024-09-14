@@ -71,6 +71,7 @@
         "@babel/core": "^7.25.2",
         "@babel/preset-react": "^7.24.7",
         "@babel/preset-typescript": "^7.24.7",
+        "@codecov/vite-plugin": "^1.0.0",
         "@lingui/cli": "^4.11.4",
         "@lingui/macro": "^4.11.4",
         "@playwright/test": "^1.47.0",

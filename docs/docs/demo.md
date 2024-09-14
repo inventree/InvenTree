@@ -16,6 +16,7 @@ The demo instance has a number of user accounts which you can use to explore the
 
 | Username | Password | Staff Access | Enabled | Description |
 | -------- | -------- | ------------ | ------- | ----------- |
+| noaccess | youshallnotpass | No | Yes | Can login, but has no permissions |
 | allaccess | nolimits | No | Yes | View / create / edit all pages and items |
 | reader | readonly | No | Yes | Can view all pages but cannot create, edit or delete database records |
 | engineer | partsonly | No | Yes | Can manage parts, view stock, but no access to purchase orders or sales orders |

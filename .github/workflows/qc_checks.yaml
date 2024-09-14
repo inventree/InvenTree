@@ -551,6 +551,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: pui
+      - name: Upload bundler info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          cd src/frontend
+          yarn install
+          yarn run build
 
   platform_ui_build:
     name: Build - UI Platform
