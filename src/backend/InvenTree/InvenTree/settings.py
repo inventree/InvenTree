@@ -1291,6 +1291,9 @@ MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBac
 # Flag to allow table events during testing
 TESTING_TABLE_EVENTS = False
 
+# Flag to allow pricing recalculations during testing
+TESTING_PRICING = False
+
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
     'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True

@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 252
+INVENTREE_API_VERSION = 253
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v252 - 2024-09-07 : https://github.com/inventree/InvenTree/pull/7470
+v253 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7470
     - Implements new API endpoints for enabling custom UI functionality
+
+v252 - 2024-09-13 : https://github.com/inventree/InvenTree/pull/8040
+    - Add endpoint for listing all known units
 
 v251 - 2024-09-06 : https://github.com/inventree/InvenTree/pull/8018
     - Adds "attach_to_model" field to the ReporTemplate model
