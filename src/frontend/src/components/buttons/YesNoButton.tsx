@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Badge } from '@mantine/core';
+import { Badge, Skeleton } from '@mantine/core';
 
 import { isTrue } from '../../functions/conversion';
 
@@ -31,4 +31,12 @@ export function PassFailButton({
 
 export function YesNoButton({ value }: { value: any }) {
   return <PassFailButton value={value} passText={t`Yes`} failText={t`No`} />;
+}
+
+export function YesNoUndefinedButton({ value }: { value?: boolean }) {
+  if (value === undefined) {
+    return <Skeleton height={15} width={32} />;
+  } else {
+    return <YesNoButton value={value} />;
+  }
 }
