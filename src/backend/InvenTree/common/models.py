@@ -3501,7 +3501,7 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
     source_string = models.CharField(
         max_length=1000,
         verbose_name=_('Source String'),
-        help_text=_('Source string for this selection lists entries'),
+        help_text=_('Optional string identifying the source used for this list'),
         blank=True,
     )
 
