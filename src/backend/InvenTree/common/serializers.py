@@ -382,6 +382,22 @@ class CustomUnitSerializer(DataImportExportSerializerMixin, InvenTreeModelSerial
         fields = ['pk', 'name', 'symbol', 'definition']
 
 
+class AllUnitListResponseSerializer(serializers.Serializer):
+    """Serializer for the AllUnitList."""
+
+    class Unit(serializers.Serializer):
+        """Serializer for the AllUnitListResponseSerializer."""
+
+        name = serializers.CharField()
+        is_alias = serializers.BooleanField()
+        compatible_units = serializers.ListField(child=serializers.CharField())
+        isdimensionless = serializers.BooleanField()
+
+    default_system = serializers.CharField()
+    available_systems = serializers.ListField(child=serializers.CharField())
+    available_units = Unit(many=True)
+
+
 class ErrorMessageSerializer(InvenTreeModelSerializer):
     """DRF serializer for server error messages."""
 

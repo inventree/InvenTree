@@ -1,6 +1,7 @@
 """Provides a JSON API for common components."""
 
 import json
+from typing import Type
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -19,6 +20,7 @@ from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from pint._typing import UnitLike
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser
@@ -27,6 +29,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+import InvenTree.conversion
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from generic.states.api import urlpattern as generic_states_api_urls
@@ -533,6 +536,36 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
+class AllUnitList(ListAPI):
+    """List of all defined units."""
+
+    serializer_class = common.serializers.AllUnitListResponseSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        """Return a list of all available units."""
+        reg = InvenTree.conversion.get_unit_registry()
+        all_units = {k: self.get_unit(reg, k) for k in reg}
+        data = {
+            'default_system': reg.default_system,
+            'available_systems': dir(reg.sys),
+            'available_units': {k: v for k, v in all_units.items() if v},
+        }
+        return Response(data)
+
+    def get_unit(self, reg, k):
+        """Parse a unit from the registry."""
+        if not hasattr(reg, k):
+            return None
+        unit: Type[UnitLike] = getattr(reg, k)
+        return {
+            'name': k,
+            'is_alias': reg.get_name(k) == k,
+            'compatible_units': [str(a) for a in unit.compatible_units()],
+            'isdimensionless': unit.dimensionless,
+        }
+
+
 class ErrorMessageList(BulkDeleteMixin, ListAPI):
     """List view for server error messages."""
 
@@ -900,6 +933,7 @@ common_api_urls = [
                     path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
                 ]),
             ),
+            path('all/', AllUnitList.as_view(), name='api-all-unit-list'),
             path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
         ]),
     ),

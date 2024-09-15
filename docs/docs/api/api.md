@@ -22,10 +22,10 @@ The API is self-documenting, and the documentation is provided alongside any Inv
 
 ### Generating Schema File
 
-If you want to generate the API schema file yourself (for example to use with an external client, use the `invoke schema` command. Run with the `-help` command to see available options.
+If you want to generate the API schema file yourself (for example to use with an external client, use the `invoke dev.schema` command. Run with the `-help` command to see available options.
 
 ```
-invoke schema -help
+invoke dev.schema -help
 ```
 
 ## Authentication

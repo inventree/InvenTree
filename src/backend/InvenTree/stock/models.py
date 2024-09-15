@@ -2278,14 +2278,16 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData() and InvenTree.ready.canAppAccessDatabase(
-        allow_test=True
-    ):
+    if InvenTree.ready.isImportingData():
+        return
+
+    if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
+    if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         # Schedule an update on parent part pricing
         if instance.part:
             instance.part.schedule_pricing_update(create=False)
@@ -2296,19 +2298,15 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if (
-        created
-        and not InvenTree.ready.isImportingData()
-        and InvenTree.ready.canAppAccessDatabase(allow_test=True)
-    ):
-        # Run this check in the background
-        InvenTree.tasks.offload_task(
-            part_tasks.notify_low_stock_if_required, instance.part
-        )
+    if created and not InvenTree.ready.isImportingData():
+        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
+            InvenTree.tasks.offload_task(
+                part_tasks.notify_low_stock_if_required, instance.part
+            )
 
-        # Schedule an update on parent part pricing
-        if instance.part:
-            instance.part.schedule_pricing_update(create=True)
+        if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+            if instance.part:
+                instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
@@ -2429,28 +2427,25 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        template = self.template
+        try:
+            template = self.template
+        except PartModels.PartTestTemplate.DoesNotExist:
+            template = None
 
-        if template is None:
-            # Fallback if there is no matching template
-            for template in self.stock_item.part.getTestTemplates():
-                if self.key == template.key:
-                    break
+        if not template:
+            raise ValidationError({'template': _('Test template does not exist')})
 
-        if template:
-            if template.requires_value and not self.value:
-                raise ValidationError({
-                    'value': _('Value must be provided for this test')
-                })
+        if template.requires_value and not self.value:
+            raise ValidationError({'value': _('Value must be provided for this test')})
 
-            if template.requires_attachment and not self.attachment:
-                raise ValidationError({
-                    'attachment': _('Attachment must be uploaded for this test')
-                })
+        if template.requires_attachment and not self.attachment:
+            raise ValidationError({
+                'attachment': _('Attachment must be uploaded for this test')
+            })
 
-            if choices := template.get_choices():
-                if self.value not in choices:
-                    raise ValidationError({'value': _('Invalid value for this test')})
+        if choices := template.get_choices():
+            if self.value not in choices:
+                raise ValidationError({'value': _('Invalid value for this test')})
 
     @property
     def key(self):
