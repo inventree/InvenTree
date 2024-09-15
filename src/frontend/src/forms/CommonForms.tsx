@@ -54,8 +54,6 @@ export function selectionListFields(): ApiFormFieldSet {
     active: {},
     locked: {},
     source_plugin: {},
-    source_string: {},
-    default: {}
-    //choices: {},
+    source_string: {}
   };
 }
