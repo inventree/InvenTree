@@ -227,9 +227,7 @@ export function ApiFormField({
             fieldName={fieldName}
             onChange={onChange}
             onKeyDown={(value) => {
-              if (onKeyDown) {
-                onKeyDown(value);
-              }
+              onKeyDown?.(value);
             }}
           />
         );
