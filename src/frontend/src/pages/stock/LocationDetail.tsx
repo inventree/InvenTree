@@ -310,11 +310,11 @@ export default function Stock() {
         icon={<InvenTreeIcon icon="stock" />}
         actions={[
           {
-            name: 'Count Stock',
+            name: t`Count Stock`,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
-            tooltip: 'Count Stock',
+            tooltip: t`Count Stock`,
             onClick: () => countStockItems.open()
           },
           {
