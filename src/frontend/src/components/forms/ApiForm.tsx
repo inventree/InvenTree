@@ -602,6 +602,15 @@ export function ApiForm({
                           control={form.control}
                           url={url}
                           setFields={setFields}
+                          onKeyDown={(value) => {
+                            if (
+                              value == 'Enter' &&
+                              !isLoading &&
+                              (!props.fetchInitialData || isDirty)
+                            ) {
+                              form.handleSubmit(submitForm, onFormError)();
+                            }
+                          }}
                         />
                       );
                     })}
