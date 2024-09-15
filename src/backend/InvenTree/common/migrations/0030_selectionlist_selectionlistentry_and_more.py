@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                     "source_string",
                     models.CharField(
                         blank=True,
-                        help_text="Source string for this selection lists entries",
+                        help_text="Optional string identifying the source used for this list",
                         max_length=1000,
                         verbose_name="Source String",
                     ),
