@@ -31,6 +31,7 @@ export enum ApiEndpoints {
   // Generic API endpoints
   currency_list = 'currency/exchange/',
   currency_refresh = 'currency/refresh/',
+  all_units = 'units/all/',
   task_overview = 'background-task/',
   task_pending_list = 'background-task/pending/',
   task_scheduled_list = 'background-task/scheduled/',
@@ -152,6 +153,7 @@ export enum ApiEndpoints {
   sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
   sales_order_shipment_list = 'order/so/shipment/',
+  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
 
   return_order_list = 'order/ro/',
   return_order_issue = 'order/ro/:id/issue/',
@@ -179,6 +181,9 @@ export enum ApiEndpoints {
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:key/activate/',
   plugin_uninstall = 'plugins/:key/uninstall/',
+
+  // User interface plugin endpoints
+  plugin_panel_list = 'plugins/ui/panels/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

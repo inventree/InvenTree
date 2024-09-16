@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import plugin.models
+import plugin.staticfiles
 from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
@@ -118,6 +119,10 @@ def install_plugins_file():
         logger.exception('Plugin file installation failed: %s', exc)
         log_error('pip')
         return False
+
+    # Update static files
+    plugin.staticfiles.collect_plugins_static_files()
+    plugin.staticfiles.clear_plugins_static_files()
 
     # At this point, the plugins file has been installed
     return True
@@ -256,6 +261,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
+    # Update static files
+    plugin.staticfiles.collect_plugins_static_files()
+
     return ret
 
 
@@ -319,6 +327,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     if delete_config:
         # Remove the plugin configuration from the database
         cfg.delete()
+
+    # Remove static files associated with this plugin
+    plugin.staticfiles.clear_plugin_static_files(cfg.key)
 
     # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

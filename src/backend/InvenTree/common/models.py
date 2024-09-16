@@ -1704,20 +1704,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'A4',
             'choices': report.helpers.report_page_size_options,
         },
-        'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Enable Test Reports'),
-            'description': _('Enable generation of test reports'),
-            'default': True,
-            'validator': bool,
-        },
-        'REPORT_ATTACH_TEST_REPORT': {
-            'name': _('Attach Test Reports'),
-            'description': _(
-                'When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'
-            ),
-            'default': False,
-            'validator': bool,
-        },
         'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
             'name': _('Globally Unique Serials'),
             'description': _('Serial numbers for stock items must be globally unique'),
@@ -2105,6 +2091,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
             'description': _('Enable plugins to respond to internal events'),
+            'default': False,
+            'validator': bool,
+            'after_save': reload_plugin_registry,
+        },
+        'ENABLE_PLUGINS_INTERFACE': {
+            'name': _('Enable interface integration'),
+            'description': _('Enable plugins to integrate into the user interface'),
             'default': False,
             'validator': bool,
             'after_save': reload_plugin_registry,

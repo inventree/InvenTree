@@ -31,7 +31,8 @@ import {
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -41,6 +42,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -145,7 +147,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           <Grid.Col span={4}>
             <DetailsImage
               appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
+              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
               src={company.image}
               pk={company.pk}
               refresh={refreshInstance}
@@ -343,7 +345,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             editAction={editCompany.open}
             editEnabled={user.hasChangePermission(ModelType.company)}
           />
-          <PanelGroup pageKey="company" panels={companyPanels} />
+          <PanelGroup
+            pageKey="company"
+            panels={companyPanels}
+            instance={company}
+            model={ModelType.company}
+            id={company.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

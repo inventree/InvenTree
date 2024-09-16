@@ -69,7 +69,7 @@ test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
     .getByRole('table')
     .getByText('Wood Screw')
     .click();
-  await page.waitForURL('**/part/98/pricing');
+  await page.waitForURL('**/part/98/**');
 });
 
 test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
@@ -121,7 +121,7 @@ test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
   let target = page.getByText('Green Chair').first();
   await target.waitFor();
   await target.click();
-  await page.waitForURL('**/part/109/pricing');
+  await page.waitForURL('**/part/109/**');
 });
 
 test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {

@@ -1,0 +1,30 @@
+{% load i18n %}
+
+<h4>Custom Plugin Panel</h4>
+
+<p>
+This content has been rendered by a custom plugin, and will be displayed for any "part" instance
+(as long as the plugin is enabled).
+This content has been rendered on the server, using the django templating system.
+</p>
+
+<h5>Part Details</h5>
+
+<table class='table table-striped table-condensed'>
+    <tr>
+        <th>Part Name</th>
+        <td>{{ part.name }}</td>
+    </tr>
+    <tr>
+        <th>Part Description</th>
+        <td>{{ part.description }}</td>
+    </tr>
+    <tr>
+        <th>Part Category</th>
+        <td>{{ part.category.pathstring }}</td>
+    </tr>
+    <tr>
+        <th>Part IPN</th>
+        <td>{% if part.IPN %}{{ part.IPN }}{% else %}<i>No IPN specified</i>{% endif %}</td>
+    </tr>
+</table>

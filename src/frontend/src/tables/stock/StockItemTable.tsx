@@ -298,7 +298,7 @@ function stockItemTableFilters(): TableFilter[] {
     {
       name: 'assembly',
       label: t`Assembly`,
-      description: t`Show stock for assmebled parts`
+      description: t`Show stock for assembled parts`
     },
     {
       name: 'allocated',
@@ -464,11 +464,11 @@ export function StockItemTable({
             }
           },
           {
-            name: 'Count Stock',
+            name: t`Count Stock`,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
-            tooltip: 'Count Stock',
+            tooltip: t`Count Stock`,
             disabled: !can_add_stocktake,
             onClick: () => {
               countStock.open();

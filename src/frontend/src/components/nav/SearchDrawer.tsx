@@ -39,7 +39,7 @@ import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
+import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -65,7 +65,7 @@ function QueryResultGroup({
     return null;
   }
 
-  const model = ModelInformationDict[query.model];
+  const model = getModelInfo(query.model);
 
   return (
     <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>

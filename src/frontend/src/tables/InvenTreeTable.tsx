@@ -153,7 +153,8 @@ export function InvenTreeTable<T = any>({
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
-    setTableSorting
+    setTableSorting,
+    loader
   } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
@@ -192,8 +193,9 @@ export function InvenTreeTable<T = any>({
             // Extract field information from the API
 
             let names: Record<string, string> = {};
+
             let fields: ApiFormFieldSet =
-              extractAvailableFields(response, 'POST', true) || {};
+              extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
             mapFields(fields, (path, field) => {
@@ -517,6 +519,11 @@ export function InvenTreeTable<T = any>({
   // Update tableState.records when new data received
   useEffect(() => {
     tableState.setRecords(data ?? []);
+
+    // set pagesize to length if pagination is disabled
+    if (!tableProps.enablePagination) {
+      tableState.setPageSize(data?.length ?? defaultPageSize);
+    }
   }, [data]);
 
   const deleteRecords = useDeleteApiFormModal({
@@ -593,6 +600,15 @@ export function InvenTreeTable<T = any>({
     tableState.setPage(1);
     tableState.refreshTable();
   }
+
+  const optionalParams = useMemo(() => {
+    let optionalParamsa: Record<string, any> = {};
+    if (tableProps.enablePagination) {
+      optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
+      optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
+    }
+    return optionalParamsa;
+  }, [tableProps.enablePagination]);
 
   return (
     <>
@@ -706,7 +722,7 @@ export function InvenTreeTable<T = any>({
               withColumnBorders
               striped
               highlightOnHover
-              loaderType="dots"
+              loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
               minHeight={300}
@@ -739,8 +755,7 @@ export function InvenTreeTable<T = any>({
                   overflow: 'hidden'
                 })
               }}
-              recordsPerPageOptions={PAGE_SIZES}
-              onRecordsPerPageChange={updatePageSize}
+              {...optionalParams}
             />
           </Box>
         </Stack>

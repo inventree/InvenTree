@@ -57,6 +57,7 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPlug,
   IconPoint,
   IconPrinter,
   IconProgressCheck,
@@ -217,7 +218,8 @@ const icons = {
   destination: IconFlag,
   repeat_destination: IconFlagShare,
   unlink: IconUnlink,
-  success: IconCircleCheck
+  success: IconCircleCheck,
+  plugin: IconPlug
 };
 
 export type InvenTreeIconType = keyof typeof icons;
