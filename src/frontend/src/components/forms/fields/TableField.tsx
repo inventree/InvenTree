@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Container, Group, Table } from '@mantine/core';
+import { Container, Group, Input, Table } from '@mantine/core';
 import { useCallback, useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
@@ -44,6 +44,16 @@ export function TableField({
     field.onChange(val);
   };
 
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      modelRenderer: undefined,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined
+    };
+  }, [definition]);
+
   // Extract errors associated with the current row
   const rowErrors = useCallback(
     (idx: number) => {
@@ -55,54 +65,56 @@ export function TableField({
   );
 
   return (
-    <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
-      <Table.Thead>
-        <Table.Tr>
-          {definition.headers?.map((header) => {
-            return <Table.Th key={header}>{header}</Table.Th>;
-          })}
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {value.length > 0 ? (
-          value.map((item: any, idx: number) => {
-            // Table fields require render function
-            if (!definition.modelRenderer) {
-              return (
-                <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
-              );
-            }
-
-            return definition.modelRenderer({
-              item: item,
-              idx: idx,
-              rowErrors: rowErrors(idx),
-              control: control,
-              changeFn: onRowFieldChange,
-              removeFn: removeRow
-            });
-          })
-        ) : (
-          <Table.Tr key="table-row-no-entries">
-            <Table.Td
-              style={{ textAlign: 'center' }}
-              colSpan={definition.headers?.length}
-            >
-              <span
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '5px'
-                }}
-              >
-                <InvenTreeIcon icon="info" />
-                <Trans>No entries available</Trans>
-              </span>
-            </Table.Td>
+    <Input.Wrapper {...fieldDefinition}>
+      <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
+        <Table.Thead>
+          <Table.Tr>
+            {definition.headers?.map((header) => {
+              return <Table.Th key={header}>{header}</Table.Th>;
+            })}
           </Table.Tr>
-        )}
-      </Table.Tbody>
-    </Table>
+        </Table.Thead>
+        <Table.Tbody>
+          {value.length > 0 ? (
+            value.map((item: any, idx: number) => {
+              // Table fields require render function
+              if (!definition.modelRenderer) {
+                return (
+                  <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
+                );
+              }
+
+              return definition.modelRenderer({
+                item: item,
+                idx: idx,
+                rowErrors: rowErrors(idx),
+                control: control,
+                changeFn: onRowFieldChange,
+                removeFn: removeRow
+              });
+            })
+          ) : (
+            <Table.Tr key="table-row-no-entries">
+              <Table.Td
+                style={{ textAlign: 'center' }}
+                colSpan={definition.headers?.length}
+              >
+                <span
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '5px'
+                  }}
+                >
+                  <InvenTreeIcon icon="info" />
+                  <Trans>No entries available</Trans>
+                </span>
+              </Table.Td>
+            </Table.Tr>
+          )}
+        </Table.Tbody>
+      </Table>
+    </Input.Wrapper>
   );
 }
 
