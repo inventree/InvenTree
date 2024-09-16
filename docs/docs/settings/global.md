@@ -208,7 +208,6 @@ Refer to the [return order settings](../order/return_order.md#return-order-setti
 
 ### Plugin Settings
 
-
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("PLUGIN_ON_STARTUP") }}
@@ -218,3 +217,4 @@ Refer to the [return order settings](../order/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_APP") }}
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
+{{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}

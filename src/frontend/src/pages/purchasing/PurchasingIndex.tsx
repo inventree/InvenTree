@@ -58,7 +58,12 @@ export default function PurchasingIndex() {
   return (
     <Stack>
       <PageDetail title={t`Purchasing`} />
-      <PanelGroup pageKey="purchasing-index" panels={panels} />
+      <PanelGroup
+        pageKey="purchasing-index"
+        panels={panels}
+        model={'purchasing'}
+        id={null}
+      />
     </Stack>
   );
 }

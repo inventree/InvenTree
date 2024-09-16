@@ -29,7 +29,8 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
+import { PanelType } from '../../../../components/nav/Panel';
+import { PanelGroup } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -53,6 +54,8 @@ const CurrencyManagmentPanel = Loadable(
   lazy(() => import('./CurrencyManagmentPanel'))
 );
 
+const UnitManagmentPanel = Loadable(lazy(() => import('./UnitManagmentPanel')));
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
@@ -75,10 +78,6 @@ const ProjectCodeTable = Loadable(
 
 const CustomStateTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomStateTable'))
-);
-
-const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
 );
 
 const PartParameterTemplateTable = Loadable(
@@ -152,7 +151,7 @@ export default function AdminCenter() {
         name: 'customunits',
         label: t`Custom Units`,
         icon: <IconScale />,
-        content: <CustomUnitsTable />
+        content: <UnitManagmentPanel />
       },
       {
         name: 'part-parameters',

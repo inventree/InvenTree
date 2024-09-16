@@ -1,3 +1,4 @@
+import { Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
@@ -70,7 +71,9 @@ export function RenderSupplierPart(
       primary={supplier?.name}
       secondary={instance.SKU}
       image={part?.thumbnail ?? part?.image}
-      suffix={part.full_name}
+      suffix={
+        part.full_name ? <Text size="sm">{part.full_name}</Text> : undefined
+      }
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)
@@ -95,7 +98,9 @@ export function RenderManufacturerPart(
       {...props}
       primary={manufacturer.name}
       secondary={instance.MPN}
-      suffix={part.full_name}
+      suffix={
+        part.full_name ? <Text size="sm">{part.full_name}</Text> : undefined
+      }
       image={manufacturer?.thumnbnail ?? manufacturer.image}
       url={
         props.link
