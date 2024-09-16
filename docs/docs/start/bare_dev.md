@@ -52,7 +52,7 @@ source ./env/bin/activate
 ### Start Background Worker
 
 ```
-(env) invoke int.worker
+(env) invoke worker
 ```
 
 This will start the background process manager in the current shell.

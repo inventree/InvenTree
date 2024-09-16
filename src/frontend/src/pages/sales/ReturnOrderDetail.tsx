@@ -27,7 +27,8 @@ import {
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -461,7 +462,13 @@ export default function ReturnOrderDetail() {
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
-          <PanelGroup pageKey="returnorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="returnorder"
+            panels={orderPanels}
+            model={ModelType.returnorder}
+            instance={order}
+            id={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

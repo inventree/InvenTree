@@ -30,7 +30,8 @@ import {
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -512,7 +513,13 @@ export default function SalesOrderDetail() {
             editAction={editSalesOrder.open}
             editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
-          <PanelGroup pageKey="salesorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="salesorder"
+            panels={orderPanels}
+            model={ModelType.salesorder}
+            id={order.pk}
+            instance={order}
+          />
         </Stack>
       </InstanceDetail>
     </>

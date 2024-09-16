@@ -33,7 +33,8 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -534,7 +535,13 @@ export default function BuildDetail() {
             last_crumb={[{ name: build.reference, url: `/build/${build.pk}` }]}
             actions={buildActions}
           />
-          <PanelGroup pageKey="build" panels={buildPanels} />
+          <PanelGroup
+            pageKey="build"
+            panels={buildPanels}
+            instance={build}
+            model={ModelType.build}
+            id={build.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

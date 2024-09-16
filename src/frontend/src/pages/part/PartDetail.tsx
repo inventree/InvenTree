@@ -58,7 +58,8 @@ import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -1128,7 +1129,13 @@ export default function PartDetail() {
               )
             }
           />
-          <PanelGroup pageKey="part" panels={partPanels} />
+          <PanelGroup
+            pageKey="part"
+            panels={partPanels}
+            instance={part}
+            model={ModelType.part}
+            id={part.pk}
+          />
           {transferStockItems.modal}
           {countStockItems.modal}
         </Stack>

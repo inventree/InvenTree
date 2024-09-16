@@ -17,7 +17,10 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assignRole('admin.add')
         response = self.options(reverse('api-user-list'), expected_code=200)
 
-        fields = response.data['actions']['POST']
+        # User is *not* a superuser, so user account API is read-only
+        self.assertNotIn('POST', response.data['actions'])
+
+        fields = response.data['actions']['GET']
 
         # Check some of the field values
         self.assertEqual(fields['username']['label'], 'Username')

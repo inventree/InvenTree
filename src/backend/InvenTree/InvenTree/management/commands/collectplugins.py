@@ -8,6 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Run the management command."""
-        from plugin.staticfiles import collect_plugins_static_files
+        import plugin.staticfiles
 
-        collect_plugins_static_files()
+        plugin.staticfiles.collect_plugins_static_files()
+        plugin.staticfiles.clear_plugins_static_files()
