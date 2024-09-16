@@ -1,17 +1,8 @@
 import { t } from '@lingui/macro';
 import { Table } from '@mantine/core';
-import { useMemo } from 'react';
 
-import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
-import {
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '../components/forms/fields/ApiFormField';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { TableFieldRowProps } from '../components/forms/fields/TableField';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { apiUrl } from '../states/ApiState';
 
 export function selectionRenderer(row: TableFieldRowProps) {
   const item = row.item;
