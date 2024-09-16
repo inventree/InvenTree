@@ -31,7 +31,8 @@ import {
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -344,7 +345,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             editAction={editCompany.open}
             editEnabled={user.hasChangePermission(ModelType.company)}
           />
-          <PanelGroup pageKey="company" panels={companyPanels} />
+          <PanelGroup
+            pageKey="company"
+            panels={companyPanels}
+            instance={company}
+            model={ModelType.company}
+            id={company.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

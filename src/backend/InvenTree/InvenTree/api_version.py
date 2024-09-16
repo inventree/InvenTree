@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 254
+INVENTREE_API_VERSION = 255
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v254 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8054
+v255 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8054
     - Adds "SelectionList" and "SelectionListEntry" API endpoints
+
+v254 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7470
+    - Implements new API endpoints for enabling custom UI functionality via plugins
 
 v253 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7944
     - Adjustments for user API endpoints

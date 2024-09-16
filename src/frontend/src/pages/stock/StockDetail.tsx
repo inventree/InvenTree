@@ -33,7 +33,8 @@ import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -616,7 +617,13 @@ export default function StockDetail() {
           }}
           actions={stockActions}
         />
-        <PanelGroup pageKey="stockitem" panels={stockPanels} />
+        <PanelGroup
+          pageKey="stockitem"
+          panels={stockPanels}
+          model={ModelType.stockitem}
+          id={stockitem.pk}
+          instance={stockitem}
+        />
         {editStockItem.modal}
         {duplicateStockItem.modal}
         {deleteStockItem.modal}

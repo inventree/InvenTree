@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Sum, Q
+from django.db.models import F, Sum, Q
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -24,6 +24,7 @@ from rest_framework import serializers
 from build.status_codes import BuildStatus, BuildStatusGroups
 from stock.status_codes import StockStatus, StockHistoryCode
 
+from build.filters import annotate_allocated_quantity
 from build.validators import generate_next_build_reference, validate_build_order_reference
 from generic.states import StateTransitionMixin
 
@@ -124,8 +125,7 @@ class Build(
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
-        self.validate_reference_field(self.reference)
-        self.reference_int = self.rebuild_reference_field(self.reference)
+        self.reference_int = self.validate_reference_field(self.reference)
 
         # Check part when initially creating the build order
         if not self.pk or self.has_field_changed('part'):
@@ -987,12 +987,13 @@ class Build(
         items_to_save = []
         items_to_delete = []
 
-        lines = self.untracked_line_items
-        lines = lines.prefetch_related('allocations')
+        lines = self.untracked_line_items.all()
+        lines = lines.exclude(bom_item__consumable=True)
+        lines = annotate_allocated_quantity(lines)
 
         for build_line in lines:
 
-            reduce_by = build_line.allocated_quantity() - build_line.quantity
+            reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
                 continue
@@ -1290,18 +1291,20 @@ class Build(
         """Returns a list of BuildLine objects which have not been fully allocated."""
         lines = self.build_lines.all()
 
+        # Remove any 'consumable' line items
+        lines = lines.exclude(bom_item__consumable=True)
+
         if tracked is True:
             lines = lines.filter(bom_item__sub_part__trackable=True)
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        unallocated_lines = []
+        lines = annotate_allocated_quantity(lines)
 
-        for line in lines:
-            if not line.is_fully_allocated():
-                unallocated_lines.append(line)
+        # Filter out any lines which have been fully allocated
+        lines = lines.filter(allocated__lt=F('quantity'))
 
-        return unallocated_lines
+        return lines
 
     def is_fully_allocated(self, tracked=None):
         """Test if the BuildOrder has been fully allocated.
@@ -1314,19 +1317,24 @@ class Build(
         Returns:
             True if the BuildOrder has been fully allocated, otherwise False
         """
-        lines = self.unallocated_lines(tracked=tracked)
-        return len(lines) == 0
+
+        return self.unallocated_lines(tracked=tracked).count() == 0
 
     def is_output_fully_allocated(self, output):
         """Determine if the specified output (StockItem) has been fully allocated for this build
 
         Args:
-            output: StockItem object
+            output: StockItem object (the "in production" output to test against)
 
         To determine if the output has been fully allocated,
         we need to test all "trackable" BuildLine objects
         """
-        for line in self.build_lines.filter(bom_item__sub_part__trackable=True):
+
+        lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
+        lines = lines.exclude(bom_item__consumable=True)
+
+        # Find any lines which have not been fully allocated
+        for line in lines:
             # Grab all BuildItem objects which point to this output
             allocations = BuildItem.objects.filter(
                 build_line=line,
@@ -1350,11 +1358,14 @@ class Build(
         Returns:
             True if any BuildLine has been over-allocated.
         """
-        for line in self.build_lines.all():
-            if line.is_overallocated():
-                return True
 
-        return False
+        lines = self.build_lines.all().exclude(bom_item__consumable=True)
+        lines = annotate_allocated_quantity(lines)
+
+        # Find any lines which have been over-allocated
+        lines = lines.filter(allocated__gt=F('quantity'))
+
+        return lines.count() > 0
 
     @property
     def is_active(self):
@@ -1692,6 +1703,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
         - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
+
+        TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
+
         """
         item = self.stock_item
 
