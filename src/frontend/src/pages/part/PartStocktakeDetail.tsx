@@ -95,7 +95,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
       <AddItemButton
         tooltip={t`New Stocktake Report`}
         onClick={() => generateReport.open()}
-        hidden={!user.hasAddRole(UserRoles.part)}
+        hidden={!user.hasAddRole(UserRoles.stocktake)}
       />
     ];
   }, [user]);
@@ -104,14 +104,14 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
     (record: any) => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.part),
+          hidden: !user.hasChangeRole(UserRoles.stocktake),
           onClick: () => {
             setSelectedStocktake(record.pk);
             editStocktakeEntry.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.part),
+          hidden: !user.hasDeleteRole(UserRoles.stocktake),
           onClick: () => {
             setSelectedStocktake(record.pk);
             deleteStocktakeEntry.open();

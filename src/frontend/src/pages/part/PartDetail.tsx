@@ -691,6 +691,7 @@ export default function PartDetail() {
         icon: <IconClipboardList />,
         content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
         hidden:
+          !user.hasViewRole(UserRoles.stocktake) ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
