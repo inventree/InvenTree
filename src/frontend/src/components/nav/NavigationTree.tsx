@@ -40,14 +40,14 @@ export default function NavigationTree({
   selectedId,
   modelType,
   endpoint
-}: {
+}: Readonly<{
   title: string;
   opened: boolean;
   onClose: () => void;
   selectedId?: number | null;
   modelType: ModelType;
   endpoint: ApiEndpoints;
-}) {
+}>) {
   const navigate = useNavigate();
   const treeState = useTree();
 

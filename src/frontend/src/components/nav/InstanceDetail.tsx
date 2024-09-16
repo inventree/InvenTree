@@ -8,11 +8,11 @@ export default function InstanceDetail({
   status,
   loading,
   children
-}: {
+}: Readonly<{
   status: number;
   loading: boolean;
   children: React.ReactNode;
-}) {
+}>) {
   const user = useUserState();
 
   if (loading || !user.isLoggedIn()) {

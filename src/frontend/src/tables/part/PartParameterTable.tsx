@@ -30,10 +30,10 @@ import { TableHoverCard } from '../TableHoverCard';
 export function PartParameterTable({
   partId,
   partLocked
-}: {
+}: Readonly<{
   partId: any;
   partLocked?: boolean;
-}) {
+}>) {
   const table = useTable('part-parameters');
 
   const user = useUserState();

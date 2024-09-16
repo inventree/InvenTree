@@ -73,7 +73,7 @@ export interface PluginI {
   >;
 }
 
-export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
+export function PluginDrawer({ pluginKey }: Readonly<{ pluginKey: string }>) {
   const {
     instance: plugin,
     instanceQuery: { isFetching, error }
@@ -151,7 +151,7 @@ export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
               />
             </Stack>
           ) : (
-            <Text color="red">{t`Plugin is not active`}</Text>
+            <Text c="red">{t`Plugin is not active`}</Text>
           )}
         </Stack>
       </Card>
@@ -207,7 +207,7 @@ export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
 /**
  * Construct an indicator icon for a single plugin
  */
-function PluginIcon({ plugin }: { plugin: PluginI }) {
+function PluginIcon({ plugin }: Readonly<{ plugin: PluginI }>) {
   if (plugin?.is_installed) {
     if (plugin?.active) {
       return (
@@ -514,12 +514,14 @@ export default function PluginListTable() {
 
     return [
       <ActionButton
+        key="reload"
         color="green"
         icon={<IconRefresh />}
         tooltip={t`Reload Plugins`}
         onClick={reloadPlugins}
       />,
       <ActionButton
+        key="install"
         color="green"
         icon={<IconPlaylistAdd />}
         tooltip={t`Install Plugin`}

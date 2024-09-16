@@ -23,9 +23,9 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId
-}: {
+}: Readonly<{
   orderId: number;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('sales-order-shipment');
 
@@ -130,6 +130,7 @@ export default function SalesOrderShipmentTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-shipment"
         tooltip={t`Add shipment`}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
         onClick={() => {
