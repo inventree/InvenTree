@@ -65,6 +65,7 @@ export default function PartStocktakeTable({ partId }: { partId: number }) {
       },
       {
         accessor: 'item_count',
+        title: t`Stock Items`,
         switchable: true,
         sortable: true
       },
