@@ -2,7 +2,9 @@ import { t } from '@lingui/macro';
 import {
   Accordion,
   Alert,
+  Center,
   Grid,
+  Loader,
   Skeleton,
   Space,
   Stack,
@@ -555,7 +557,7 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
-        content: part.pk && (
+        content: part.pk ? (
           <StockItemTable
             tableName="part-stock"
             allowAdd
@@ -563,6 +565,10 @@ export default function PartDetail() {
               part: part.pk
             }}
           />
+        ) : (
+          <Center>
+            <Loader />
+          </Center>
         )
       },
       {
