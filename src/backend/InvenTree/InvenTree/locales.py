@@ -10,6 +10,8 @@ Additionally, update the following files with the new locale code:
 
 - /src/frontend/.linguirc file
 - /src/frontend/src/contexts/LanguageContext.tsx
+
+(and then run "invoke int.frontend-trans")
 """
 
 from django.utils.translation import gettext_lazy as _
@@ -34,6 +36,7 @@ LOCALES = [
     ('it', _('Italian')),
     ('ja', _('Japanese')),
     ('ko', _('Korean')),
+    ('lt', _('Lithuanian')),
     ('lv', _('Latvian')),
     ('nl', _('Dutch')),
     ('no', _('Norwegian')),
