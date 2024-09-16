@@ -1,19 +1,88 @@
 import { t } from '@lingui/macro';
 import { Table } from '@mantine/core';
+import { useMemo } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
+import { StandaloneField } from '../components/forms/StandaloneField';
+import {
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from '../components/forms/fields/ApiFormField';
 import { TableFieldRowProps } from '../components/forms/fields/TableField';
 
-export function selectionRenderer(row: TableFieldRowProps) {
-  const item = row.item;
+function BuildAllocateLineRow({
+  props
+}: Readonly<{
+  props: TableFieldRowProps;
+}>) {
+  const valueField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'string',
+      name: 'value',
+      required: true,
+      value: props.item.value,
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'value', value);
+      }
+    };
+  }, [props]);
+
+  const labelField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'string',
+      name: 'label',
+      required: true,
+      value: props.item.label,
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'label', value);
+      }
+    };
+  }, [props]);
+
+  const descriptionField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'string',
+      name: 'description',
+      required: true,
+      value: props.item.description,
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'description', value);
+      }
+    };
+  }, [props]);
+
+  const activeField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'boolean',
+      name: 'active',
+      required: true,
+      value: props.item.active,
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'active', value);
+      }
+    };
+  }, [props]);
+
   return (
-    <Table.Tr key={item.pk}>
+    <Table.Tr key={`table-row-${props.item.pk}`}>
       <Table.Td>
-        <strong>{item.value}</strong>
+        <StandaloneField fieldName="value" fieldDefinition={valueField} />
       </Table.Td>
-      <Table.Td>{item.label}</Table.Td>
-      <Table.Td>{item.description}</Table.Td>
-      <Table.Td>{item.active ? 'Active' : 'Inactive'}</Table.Td>
+      <Table.Td>
+        <StandaloneField fieldName="label" fieldDefinition={labelField} />
+      </Table.Td>
+      <Table.Td>
+        <StandaloneField
+          fieldName="description"
+          fieldDefinition={descriptionField}
+        />
+      </Table.Td>
+      <Table.Td>
+        <StandaloneField fieldName="active" fieldDefinition={activeField} />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
     </Table.Tr>
   );
 }
@@ -32,7 +101,9 @@ export function selectionListFields(): ApiFormFieldSet {
       field_type: 'table',
       value: [],
       headers: [t`Value`, t`Label`, t`Description`, t`Active`],
-      modelRenderer: selectionRenderer
+      modelRenderer: (row: TableFieldRowProps) => (
+        <BuildAllocateLineRow props={row} />
+      )
     }
   };
 }
