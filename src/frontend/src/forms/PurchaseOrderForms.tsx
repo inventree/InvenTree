@@ -197,11 +197,11 @@ function LineItemFormRow({
   props,
   record,
   statuses
-}: {
+}: Readonly<{
   props: TableFieldRowProps;
   record: any;
   statuses: any;
-}) {
+}>) {
   // Barcode Modal state
   const [opened, { open, close }] = useDisclosure(false, {
     onClose: () => props.changeFn(props.idx, 'barcode', undefined)
@@ -263,7 +263,7 @@ function LineItemFormRow({
 
   // Barcode value
   const [barcodeInput, setBarcodeInput] = useState<any>('');
-  const [barcode, setBarcode] = useState<String | undefined>(undefined);
+  const [barcode, setBarcode] = useState<string | undefined>(undefined);
 
   // Change form value when state is altered
   useEffect(() => {

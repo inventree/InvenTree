@@ -1,4 +1,4 @@
-import test, { Page, expect, request } from 'playwright/test';
+import test, { expect } from 'playwright/test';
 
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
