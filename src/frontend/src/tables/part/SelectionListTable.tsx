@@ -104,6 +104,7 @@ export default function SelectionListTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-selection-list"
         onClick={() => newSelectionList.open()}
         tooltip={t`Add Selection List`}
       />
