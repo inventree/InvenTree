@@ -80,7 +80,10 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
@@ -113,6 +116,7 @@ export default function PartDetail() {
   const [treeOpen, setTreeOpen] = useState(false);
 
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const {
     instance: part,
@@ -682,17 +686,20 @@ export default function PartDetail() {
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
+        name: 'stocktake',
+        label: t`Stock History`,
+        icon: <IconClipboardList />,
+        content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
+        hidden:
+          !globalSettings.isSet('STOCKTAKE_ENABLE') ||
+          !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
+      },
+      {
         name: 'scheduling',
         label: t`Scheduling`,
         icon: <IconCalendarStats />,
-        content: <PlaceholderPanel />
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardList />,
-        content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
-        hidden: !globalSettings.isSet('STOCKTAKE_ENABLE')
+        content: <PlaceholderPanel />,
+        hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
       },
       {
         name: 'test_templates',
@@ -748,7 +755,7 @@ export default function PartDetail() {
         )
       }
     ];
-  }, [id, part, user, globalSettings]);
+  }, [id, part, user, globalSettings, userSettings]);
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
