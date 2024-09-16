@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { InvenTreeIcon } from '../../../functions/icons';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
 import { ApiFormFieldType } from './ApiFormField';
 
@@ -113,6 +114,26 @@ export function TableField({
             </Table.Tr>
           )}
         </Table.Tbody>
+        {definition.addRow && (
+          <Table.Tfoot>
+            <Table.Tr>
+              <Table.Td colSpan={definition.headers?.length}>
+                <AddItemButton
+                  tooltip={t`Add new row`}
+                  onClick={() => {
+                    if (definition.addRow === undefined) return;
+                    const ret = definition.addRow();
+                    if (ret) {
+                      const val = field.value;
+                      val.push(ret);
+                      field.onChange(val);
+                    }
+                  }}
+                />
+              </Table.Td>
+            </Table.Tr>
+          </Table.Tfoot>
+        )}
       </Table>
     </Input.Wrapper>
   );

@@ -103,7 +103,15 @@ export function selectionListFields(): ApiFormFieldSet {
       headers: [t`Value`, t`Label`, t`Description`, t`Active`],
       modelRenderer: (row: TableFieldRowProps) => (
         <BuildAllocateLineRow props={row} />
-      )
+      ),
+      addRow: () => {
+        return {
+          value: '',
+          label: '',
+          description: '',
+          active: true
+        };
+      }
     }
   };
 }
