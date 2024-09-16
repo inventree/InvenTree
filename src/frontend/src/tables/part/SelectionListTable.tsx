@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { selectionListFields } from '../../forms/CommonForms';
+import { selectionListFields } from '../../forms/selectionListFields';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
