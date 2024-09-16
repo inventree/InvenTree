@@ -291,6 +291,18 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         self.assertLess(n, value, msg=msg)
 
+    @classmethod
+    def setUpTestData(cls):
+        """Setup for API tests.
+
+        - Ensure that all global settings are assigned default values.
+        """
+        from common.models import InvenTreeSetting
+
+        InvenTreeSetting.build_default_values()
+
+        super().setUpTestData()
+
     def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
         # Check that the response returned the expected status code

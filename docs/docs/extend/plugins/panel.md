@@ -4,6 +4,12 @@ title: Panel Mixin
 
 ## PanelMixin
 
+!!! warning "Legacy User Interface"
+    This plugin mixin class is designed specifically for the the *legacy* user interface (which is rendered on the server using django templates). The new user interface (which is rendered on the client using React) does not support this mixin class. Instead, refer to the new [User Interface Mixin](./ui.md) class.
+
+!!! warning "Deprecated Class"
+    This mixin class is considered deprecated, and will be removed in the 1.0.0 release.
+
 The `PanelMixin` enables plugins to render custom content to "panels" on individual pages in the web interface.
 
 Most pages in the web interface support multiple panels, which are selected via the sidebar menu on the left side of the screen:

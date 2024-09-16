@@ -28,7 +28,8 @@ import {
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -469,7 +470,13 @@ export default function PurchaseOrderDetail() {
             editAction={editPurchaseOrder.open}
             editEnabled={user.hasChangePermission(ModelType.purchaseorder)}
           />
-          <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="purchaseorder"
+            panels={orderPanels}
+            model={ModelType.purchaseorder}
+            instance={order}
+            id={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

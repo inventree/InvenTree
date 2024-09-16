@@ -2095,6 +2095,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'after_save': reload_plugin_registry,
         },
+        'ENABLE_PLUGINS_INTERFACE': {
+            'name': _('Enable interface integration'),
+            'description': _('Enable plugins to integrate into the user interface'),
+            'default': False,
+            'validator': bool,
+            'after_save': reload_plugin_registry,
+        },
         'PROJECT_CODES_ENABLED': {
             'name': _('Enable project codes'),
             'description': _('Enable project codes for tracking projects'),

@@ -213,6 +213,7 @@ nav:
       - Schedule Mixin: extend/plugins/schedule.md
       - Settings Mixin: extend/plugins/settings.md
       - URL Mixin: extend/plugins/urls.md
+      - User Interface Mixin: extend/plugins/ui.md
       - Validation Mixin: extend/plugins/validation.md
     - Machines:
       - Overview: extend/machines/overview.md

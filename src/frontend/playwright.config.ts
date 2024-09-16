@@ -38,7 +38,8 @@ export default defineConfig({
     {
       command: 'invoke dev.server -a 127.0.0.1:8000',
       env: {
-        INVENTREE_DEBUG: 'True'
+        INVENTREE_DEBUG: 'True',
+        INVENTREE_PLUGINS_ENABLED: 'True'
       },
       url: 'http://127.0.0.1:8000/api/',
       reuseExistingServer: !process.env.CI,
