@@ -20,7 +20,6 @@ import {
 } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { UserPermissions } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -51,10 +50,10 @@ export interface UserDetailI {
 export function UserDrawer({
   id,
   refreshTable
-}: {
+}: Readonly<{
   id: string;
   refreshTable: () => void;
-}) {
+}>) {
   const {
     instance: userDetail,
     refreshInstance,

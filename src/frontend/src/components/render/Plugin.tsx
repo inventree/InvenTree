@@ -6,9 +6,9 @@ import { RenderInlineModel } from './Instance';
 
 export function RenderPlugin({
   instance
-}: {
+}: Readonly<{
   instance: Readonly<any>;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.name}

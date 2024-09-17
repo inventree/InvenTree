@@ -12,7 +12,9 @@ import { DateColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
-export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
+export default function SaleHistoryPanel({
+  part
+}: Readonly<{ part: any }>): ReactNode {
   const table = useTable('pricing-sale-history');
 
   const columns: TableColumn[] = useMemo(() => {
@@ -50,13 +52,6 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
       }
     ];
   }, []);
-
-  const currency: string = useMemo(() => {
-    if (table.records.length === 0) {
-      return '';
-    }
-    return table.records[0].sale_price_currency;
-  }, [table.records]);
 
   const saleHistoryData = useMemo(() => {
     return table.records.map((record: any) => {

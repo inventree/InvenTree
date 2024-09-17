@@ -28,10 +28,10 @@ import { TableHoverCard } from '../TableHoverCard';
 export default function BuildOrderTestTable({
   buildId,
   partId
-}: {
+}: Readonly<{
   buildId: number;
   partId: number;
-}) {
+}>) {
   const table = useTable('build-tests');
   const user = useUserState();
 

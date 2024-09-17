@@ -6,11 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
 import { PluginContext } from '../components/plugins/PluginContext';
-import {
+import PluginPanelContent, {
   PluginPanelProps,
   isPluginPanelHidden
 } from '../components/plugins/PluginPanel';
-import PluginPanelContent from '../components/plugins/PluginPanel';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';

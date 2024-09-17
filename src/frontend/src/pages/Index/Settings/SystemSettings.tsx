@@ -11,7 +11,6 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconSitemap,
   IconTag,
   IconTools,
   IconTruckDelivery,
