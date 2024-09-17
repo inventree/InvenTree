@@ -10,9 +10,14 @@ import {
   PdfPreview,
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
+import { Editor } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
+import {
+  TemplateEditorRenderContextType,
+  getPluginTemplateEditor
+} from '../../components/plugins/PluginUIFeature';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { notYetImplemented } from '../../functions/notifications';
@@ -23,6 +28,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -49,6 +55,7 @@ export type TemplateI = {
 };
 
 export interface TemplateProps {
+  templateType: 'label' | 'report';
   modelType: ModelType;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
@@ -62,7 +69,8 @@ export function TemplateDrawer({
   id: string | number;
   templateProps: TemplateProps;
 }) {
-  const { templateEndpoint, printingEndpoint } = templateProps;
+  const { modelType, templateType, templateEndpoint, printingEndpoint } =
+    templateProps;
 
   const {
     instance: template,
@@ -73,6 +81,42 @@ export function TemplateDrawer({
     pk: id,
     throwError: true
   });
+
+  const extraEditors = usePluginUIFeature<
+    {
+      template_type: string;
+      template_model: string;
+    },
+    {
+      title: string;
+      slug: string;
+    },
+    TemplateEditorRenderContextType
+  >({
+    featureType: 'template_editor',
+    context: { template_type: templateType, template_model: modelType }
+  });
+  const editors = useMemo(() => {
+    const editors = [CodeEditor];
+
+    if (!template) {
+      return editors;
+    }
+
+    editors.push(
+      ...(extraEditors?.map(
+        (editor) =>
+          ({
+            key: editor.options.slug,
+            name: editor.options.title,
+            icon: IconFileCode,
+            component: getPluginTemplateEditor(editor.func, template)
+          } as Editor)
+      ) || [])
+    );
+
+    return editors;
+  }, [extraEditors, template]);
 
   if (isFetching) {
     return <LoadingOverlay visible={true} />;
@@ -100,7 +144,7 @@ export function TemplateDrawer({
         templateUrl={apiUrl(templateEndpoint, id)}
         printingUrl={apiUrl(printingEndpoint)}
         template={template}
-        editors={[CodeEditor]}
+        editors={editors}
         previewAreas={[PdfPreview]}
       />
     </Stack>

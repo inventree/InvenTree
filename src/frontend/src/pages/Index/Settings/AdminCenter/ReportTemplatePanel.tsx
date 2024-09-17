@@ -9,6 +9,7 @@ export default function ReportTemplateTable() {
   return (
     <TemplateTable
       templateProps={{
+        templateType: 'report',
         modelType: ModelType.reporttemplate,
         templateEndpoint: ApiEndpoints.report_list,
         printingEndpoint: ApiEndpoints.report_print,

@@ -1,10 +1,22 @@
-import { MantineColorScheme, MantineTheme } from '@mantine/core';
+import {
+  MantineColorScheme,
+  MantineTheme,
+  useMantineColorScheme,
+  useMantineTheme
+} from '@mantine/core';
 import { AxiosInstance } from 'axios';
-import { NavigateFunction } from 'react-router-dom';
+import { useMemo } from 'react';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
-import { SettingsStateProps } from '../../states/SettingsState';
-import { UserStateProps } from '../../states/UserState';
+import { useLocalState } from '../../states/LocalState';
+import {
+  SettingsStateProps,
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
+import { UserStateProps, useUserState } from '../../states/UserState';
 
 /*
  * A set of properties which are passed to a plugin,
@@ -33,4 +45,38 @@ export type PluginContext = {
   navigate: NavigateFunction;
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
+};
+
+export const usePluginContext = () => {
+  const host = useLocalState.getState().host;
+  const navigate = useNavigate();
+  const user = useUserState();
+  const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
+  const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
+
+  const contextData: PluginContext = useMemo(() => {
+    return {
+      user: user,
+      host: host,
+      api: api,
+      navigate: navigate,
+      globalSettings: globalSettings,
+      userSettings: userSettings,
+      theme: theme,
+      colorScheme: colorScheme
+    };
+  }, [
+    user,
+    host,
+    api,
+    navigate,
+    globalSettings,
+    userSettings,
+    theme,
+    colorScheme
+  ]);
+
+  return contextData;
 };
