@@ -81,10 +81,10 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
 function UploadModal({
   apiPath,
   setImage
-}: {
+}: Readonly<{
   apiPath: string;
   setImage: (image: string) => void;
-}) {
+}>) {
   const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
@@ -96,7 +96,7 @@ function UploadModal({
         <Text size="xl" inline>
           <Trans>Drag and drop to upload</Trans>
         </Text>
-        <Text size="sm" color="dimmed" inline mt={7}>
+        <Text size="sm" c="dimmed" inline mt={7}>
           <Trans>Click to select file(s)</Trans>
         </Text>
       </div>
@@ -131,7 +131,7 @@ function UploadModal({
           <Text size="xl" inline style={{ wordBreak: 'break-all' }}>
             {file.name}
           </Text>
-          <Text size="sm" color="dimmed" inline mt={7}>
+          <Text size="sm" c="dimmed" inline mt={7}>
             {size.toFixed(2)} MB
           </Text>
         </div>
@@ -246,14 +246,14 @@ function ImageActionButtons({
   hasImage,
   pk,
   setImage
-}: {
+}: Readonly<{
   actions?: DetailImageButtonProps;
   visible: boolean;
   apiPath: string;
   hasImage: boolean;
   pk: string;
   setImage: (image: string) => void;
-}) {
+}>) {
   return (
     <>
       {visible && (

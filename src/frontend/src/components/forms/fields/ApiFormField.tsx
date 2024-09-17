@@ -107,14 +107,14 @@ export function ApiFormField({
   hideLabels,
   url,
   setFields
-}: {
+}: Readonly<{
   fieldName: string;
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
   hideLabels?: boolean;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
-}) {
+}>) {
   const fieldId = useId();
   const controller = useController({
     name: fieldName,

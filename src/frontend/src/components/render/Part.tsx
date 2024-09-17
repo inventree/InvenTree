@@ -83,9 +83,9 @@ export function RenderPartCategory(
  */
 export function RenderPartParameterTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.name}
@@ -97,9 +97,9 @@ export function RenderPartParameterTemplate({
 
 export function RenderPartTestTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.test_name}

@@ -5,10 +5,10 @@ import { IconAdjustments } from '@tabler/icons-react';
 export function TableColumnSelect({
   columns,
   onToggleColumn
-}: {
+}: Readonly<{
   columns: any[];
   onToggleColumn: (columnName: string) => void;
-}) {
+}>) {
   return (
     <Menu shadow="xs" closeOnItemClick={false}>
       <Menu.Target>

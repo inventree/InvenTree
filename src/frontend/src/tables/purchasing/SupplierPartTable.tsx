@@ -33,7 +33,9 @@ import { TableHoverCard } from '../TableHoverCard';
  * Construct a table listing supplier parts
  */
 
-export function SupplierPartTable({ params }: { params: any }): ReactNode {
+export function SupplierPartTable({
+  params
+}: Readonly<{ params: any }>): ReactNode {
   const table = useTable('supplierparts');
 
   const user = useUserState();
@@ -173,6 +175,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-supplier-part"
         tooltip={t`Add supplier part`}
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}

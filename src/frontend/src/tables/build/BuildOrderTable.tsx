@@ -33,11 +33,11 @@ export function BuildOrderTable({
   partId,
   parentBuildId,
   salesOrderId
-}: {
+}: Readonly<{
   partId?: number;
   parentBuildId?: number;
   salesOrderId?: number;
-}) {
+}>) {
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
