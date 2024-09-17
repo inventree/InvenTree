@@ -10,9 +10,9 @@ import { StylishText } from '../items/StylishText';
 
 export default function ImporterImportProgress({
   session
-}: {
+}: Readonly<{
   session: ImportSessionState;
-}) {
+}>) {
   const importSessionStatus = useStatusCodes({
     modelType: ModelType.importsession
   });

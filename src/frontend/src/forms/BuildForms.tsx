@@ -11,7 +11,6 @@ import {
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -25,7 +24,6 @@ import { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
-import { resolveItem } from '../functions/conversion';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
@@ -487,11 +485,11 @@ function BuildAllocateLineRow({
   props,
   record,
   sourceLocation
-}: {
+}: Readonly<{
   props: TableFieldRowProps;
   record: any;
   sourceLocation: number | undefined;
-}) {
+}>) {
   const stockField: ApiFormFieldType = useMemo(() => {
     return {
       field_type: 'related field',
@@ -542,35 +540,33 @@ function BuildAllocateLineRow({
   );
 
   return (
-    <>
-      <Table.Tr key={`table-row-${record.pk}`}>
-        <Table.Td>{partDetail}</Table.Td>
-        <Table.Td>
-          <ProgressBar
-            value={record.allocated}
-            maximum={record.quantity}
-            progressLabel
-          />
-        </Table.Td>
-        <Table.Td>
-          <StandaloneField
-            fieldName="stock_item"
-            fieldDefinition={stockField}
-            error={props.rowErrors?.stock_item?.message}
-          />
-        </Table.Td>
-        <Table.Td>
-          <StandaloneField
-            fieldName="quantity"
-            fieldDefinition={quantityField}
-            error={props.rowErrors?.quantity?.message}
-          />
-        </Table.Td>
-        <Table.Td>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
-        </Table.Td>
-      </Table.Tr>
-    </>
+    <Table.Tr key={`table-row-${record.pk}`}>
+      <Table.Td>{partDetail}</Table.Td>
+      <Table.Td>
+        <ProgressBar
+          value={record.allocated}
+          maximum={record.quantity}
+          progressLabel
+        />
+      </Table.Td>
+      <Table.Td>
+        <StandaloneField
+          fieldName="stock_item"
+          fieldDefinition={stockField}
+          error={props.rowErrors?.stock_item?.message}
+        />
+      </Table.Td>
+      <Table.Td>
+        <StandaloneField
+          fieldName="quantity"
+          fieldDefinition={quantityField}
+          error={props.rowErrors?.quantity?.message}
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
+    </Table.Tr>
   );
 }
 

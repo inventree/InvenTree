@@ -1,26 +1,14 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { stockLocationFields } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function TestStatisticsTable({ params = {} }: { params?: any }) {
+export function TestStatisticsTable({
+  params = {}
+}: Readonly<{ params?: any }>) {
   const initialColumns: TableColumn[] = [];
   const [templateColumnList, setTemplateColumnList] = useState(initialColumns);
 

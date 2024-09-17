@@ -34,11 +34,11 @@ export default function ReturnOrderLineItemTable({
   orderId,
   customerId,
   currency
-}: {
+}: Readonly<{
   orderId: number;
   customerId: number;
   currency: string;
-}) {
+}>) {
   const table = useTable('return-order-line-item');
   const user = useUserState();
 
@@ -139,6 +139,7 @@ export default function ReturnOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
         onClick={() => {

@@ -123,10 +123,10 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
 export function RenderRemoteInstance({
   model,
   pk
-}: {
+}: Readonly<{
   model: ModelType;
   pk: number;
-}): ReactNode {
+}>): ReactNode {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {
@@ -168,7 +168,7 @@ export function RenderInlineModel({
   navigate,
   showSecondary = true,
   tooltip
-}: {
+}: Readonly<{
   primary: string;
   secondary?: string;
   showSecondary?: boolean;
@@ -179,7 +179,7 @@ export function RenderInlineModel({
   url?: string;
   navigate?: any;
   tooltip?: string;
-}): ReactNode {
+}>): ReactNode {
   // TODO: Handle labels
 
   const onClick = useCallback(
@@ -217,9 +217,9 @@ export function RenderInlineModel({
 
 export function UnknownRenderer({
   model
-}: {
+}: Readonly<{
   model: ModelType | undefined;
-}): ReactNode {
+}>): ReactNode {
   return (
     <Alert color="red" title={t`Unknown model: ${model}`}>
       <></>

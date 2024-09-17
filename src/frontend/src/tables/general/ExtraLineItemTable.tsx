@@ -29,12 +29,12 @@ export default function ExtraLineItemTable({
   orderId,
   currency,
   role
-}: {
+}: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
   currency: string;
   role: UserRoles;
-}) {
+}>) {
   const table = useTable('extra-line-item');
   const user = useUserState();
 
@@ -139,6 +139,7 @@ export default function ExtraLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add Extra Line Item`}
         hidden={!user.hasAddRole(role)}
         onClick={() => {
