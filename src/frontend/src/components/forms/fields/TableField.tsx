@@ -51,7 +51,8 @@ export function TableField({
       modelRenderer: undefined,
       onValueChange: undefined,
       adjustFilters: undefined,
-      read_only: undefined
+      read_only: undefined,
+      addRow: undefined
     };
   }, [definition]);
 
