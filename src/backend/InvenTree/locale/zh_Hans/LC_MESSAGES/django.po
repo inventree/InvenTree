@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-16 00:37+0000\n"
-"PO-Revision-Date: 2024-09-16 00:40\n"
+"POT-Creation-Date: 2024-09-16 23:56+0000\n"
+"PO-Revision-Date: 2024-09-16 23:59\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -211,151 +211,155 @@ msgstr "远程服务器返回了空响应"
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
-#: InvenTree/locales.py:18
+#: InvenTree/locales.py:20
 msgid "Arabic"
 msgstr "阿拉伯语"
 
-#: InvenTree/locales.py:19
+#: InvenTree/locales.py:21
 msgid "Bulgarian"
 msgstr "Bulgarian"
 
-#: InvenTree/locales.py:20
+#: InvenTree/locales.py:22
 msgid "Czech"
 msgstr "Czech"
 
-#: InvenTree/locales.py:21
+#: InvenTree/locales.py:23
 msgid "Danish"
 msgstr "Danish"
 
-#: InvenTree/locales.py:22
+#: InvenTree/locales.py:24
 msgid "German"
 msgstr "German"
 
-#: InvenTree/locales.py:23
+#: InvenTree/locales.py:25
 msgid "Greek"
 msgstr "Greek"
 
-#: InvenTree/locales.py:24
+#: InvenTree/locales.py:26
 msgid "English"
 msgstr "English"
 
-#: InvenTree/locales.py:25
+#: InvenTree/locales.py:27
 msgid "Spanish"
 msgstr "Spanish"
 
-#: InvenTree/locales.py:26
+#: InvenTree/locales.py:28
 msgid "Spanish (Mexican)"
 msgstr "Spanish (Mexican)"
 
-#: InvenTree/locales.py:27
+#: InvenTree/locales.py:29
 msgid "Estonian"
 msgstr "爱沙尼亚语"
 
-#: InvenTree/locales.py:28
+#: InvenTree/locales.py:30
 msgid "Farsi / Persian"
 msgstr "Farsi / Persian"
 
-#: InvenTree/locales.py:29
+#: InvenTree/locales.py:31
 msgid "Finnish"
 msgstr "Finnish"
 
-#: InvenTree/locales.py:30
+#: InvenTree/locales.py:32
 msgid "French"
 msgstr "French"
 
-#: InvenTree/locales.py:31
+#: InvenTree/locales.py:33
 msgid "Hebrew"
 msgstr "Hebrew"
 
-#: InvenTree/locales.py:32
+#: InvenTree/locales.py:34
 msgid "Hindi"
 msgstr "Hindi"
 
-#: InvenTree/locales.py:33
+#: InvenTree/locales.py:35
 msgid "Hungarian"
 msgstr "Hungarian"
 
-#: InvenTree/locales.py:34
+#: InvenTree/locales.py:36
 msgid "Italian"
 msgstr "Italian"
 
-#: InvenTree/locales.py:35
+#: InvenTree/locales.py:37
 msgid "Japanese"
 msgstr "Japanese"
 
-#: InvenTree/locales.py:36
+#: InvenTree/locales.py:38
 msgid "Korean"
 msgstr "Korean"
 
-#: InvenTree/locales.py:37
+#: InvenTree/locales.py:39
+msgid "Lithuanian"
+msgstr ""
+
+#: InvenTree/locales.py:40
 msgid "Latvian"
 msgstr "Latvian"
 
-#: InvenTree/locales.py:38
+#: InvenTree/locales.py:41
 msgid "Dutch"
 msgstr "Dutch"
 
-#: InvenTree/locales.py:39
+#: InvenTree/locales.py:42
 msgid "Norwegian"
 msgstr "Norwegian"
 
-#: InvenTree/locales.py:40
+#: InvenTree/locales.py:43
 msgid "Polish"
 msgstr "Polish"
 
-#: InvenTree/locales.py:41
+#: InvenTree/locales.py:44
 msgid "Portuguese"
 msgstr "Portuguese"
 
-#: InvenTree/locales.py:42
+#: InvenTree/locales.py:45
 msgid "Portuguese (Brazilian)"
 msgstr "Portuguese (Brazilian)"
 
-#: InvenTree/locales.py:43
+#: InvenTree/locales.py:46
 msgid "Romanian"
 msgstr "罗马尼亚语"
 
-#: InvenTree/locales.py:44
+#: InvenTree/locales.py:47
 msgid "Russian"
 msgstr "Russian"
 
-#: InvenTree/locales.py:45
+#: InvenTree/locales.py:48
 msgid "Slovak"
 msgstr "Slovak"
 
-#: InvenTree/locales.py:46
+#: InvenTree/locales.py:49
 msgid "Slovenian"
 msgstr "Slovenian"
 
-#: InvenTree/locales.py:47
+#: InvenTree/locales.py:50
 msgid "Serbian"
 msgstr "Serbian"
 
-#: InvenTree/locales.py:48
+#: InvenTree/locales.py:51
 msgid "Swedish"
 msgstr "Swedish"
 
-#: InvenTree/locales.py:49
+#: InvenTree/locales.py:52
 msgid "Thai"
 msgstr "Thai"
 
-#: InvenTree/locales.py:50
+#: InvenTree/locales.py:53
 msgid "Turkish"
 msgstr "Turkish"
 
-#: InvenTree/locales.py:51
+#: InvenTree/locales.py:54
 msgid "Ukrainian"
 msgstr "乌克兰语"
 
-#: InvenTree/locales.py:52
+#: InvenTree/locales.py:55
 msgid "Vietnamese"
 msgstr "Vietnamese"
 
-#: InvenTree/locales.py:53
+#: InvenTree/locales.py:56
 msgid "Chinese (Simplified)"
 msgstr "中文 (简体)"
 
-#: InvenTree/locales.py:54
+#: InvenTree/locales.py:57
 msgid "Chinese (Traditional)"
 msgstr "中文 (繁体)"
 
@@ -753,7 +757,7 @@ msgstr "发布者"
 
 #: build/api.py:114
 msgid "Assigned To"
-msgstr "已分配到"
+msgstr "负责人"
 
 #: build/api.py:275
 msgid "Build must be cancelled before it can be deleted"
@@ -1273,11 +1277,11 @@ msgstr "项目编码标签"
 
 #: build/serializers.py:133
 msgid "Create Child Builds"
-msgstr "新建子版本"
+msgstr "新建子生产项目"
 
 #: build/serializers.py:134
 msgid "Automatically generate child build orders"
-msgstr ""
+msgstr "自动生成子生成工单"
 
 #: build/serializers.py:216 build/serializers.py:968
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -3982,7 +3986,7 @@ msgstr "将保存到模型数据库中的值"
 
 #: common/models.py:3352
 msgid "Name of the state"
-msgstr ""
+msgstr "状态名"
 
 #: common/models.py:3356
 msgid "Label"
@@ -3990,79 +3994,79 @@ msgstr ""
 
 #: common/models.py:3357
 msgid "Label that will be displayed in the frontend"
-msgstr ""
+msgstr "在前端显示的标签"
 
 #: common/models.py:3363
 msgid "Color"
-msgstr ""
+msgstr "颜色"
 
 #: common/models.py:3364
 msgid "Color that will be displayed in the frontend"
-msgstr ""
+msgstr "将在前端显示颜色"
 
 #: common/models.py:3367
 msgid "Logical Key"
-msgstr ""
+msgstr "逻辑密钥"
 
 #: common/models.py:3369
 msgid "State logical key that is equal to this custom state in business logic"
-msgstr ""
+msgstr "等同于商业逻辑中自定义状态的状态逻辑键"
 
 #: common/models.py:3377
 msgid "Model"
-msgstr ""
+msgstr "模式"
 
 #: common/models.py:3378
 msgid "Model this state is associated with"
-msgstr ""
+msgstr "该状态关联的模型"
 
 #: common/models.py:3382
 msgid "Reference Status Set"
-msgstr ""
+msgstr "参考状态设定"
 
 #: common/models.py:3383
 msgid "Status set that is extended with this custom state"
-msgstr ""
+msgstr "使用此自定义状态扩展状态的状态集"
 
 #: common/models.py:3389
 msgid "Custom State"
-msgstr ""
+msgstr "自定状态"
 
 #: common/models.py:3390
 msgid "Custom States"
-msgstr ""
+msgstr "定制状态"
 
 #: common/models.py:3405
 msgid "Model must be selected"
-msgstr ""
+msgstr "必须选定模型"
 
 #: common/models.py:3408
 msgid "Key must be selected"
-msgstr ""
+msgstr "必须选取密钥"
 
 #: common/models.py:3411
 msgid "Logical key must be selected"
-msgstr ""
+msgstr "必须选中逻辑密钥"
 
 #: common/models.py:3415
 msgid "Key must be different from logical key"
-msgstr ""
+msgstr "密钥必须不同于逻辑密钥"
 
 #: common/models.py:3419
 msgid "Reference status must be selected"
-msgstr ""
+msgstr "必须选中参考状态"
 
 #: common/models.py:3431
 msgid "Reference status set not found"
-msgstr ""
+msgstr "未找到参考状态集"
 
 #: common/models.py:3437
 msgid "Key must be different from the logical keys of the reference status"
-msgstr ""
+msgstr "密钥必须不同于参考状态的逻辑密钥"
 
 #: common/models.py:3443
 msgid "Logical key must be in the logical keys of the reference status"
-msgstr ""
+msgstr "逻辑密钥必须在参考状态的逻辑键中"
 
 #: common/notifications.py:310
 #, python-brace-format
@@ -5122,11 +5126,11 @@ msgstr "新建公司信息"
 
 #: generic/states/fields.py:118
 msgid "Custom status key"
-msgstr ""
+msgstr "自定义状态密钥"
 
 #: generic/states/fields.py:119
 msgid "Additional status information for this item"
-msgstr ""
+msgstr "此项目的附加状态信息"
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -5440,7 +5444,7 @@ msgstr "未完成"
 
 #: order/api.py:132
 msgid "Has Project Code"
-msgstr ""
+msgstr "有项目编码"
 
 #: order/api.py:155 templates/js/translated/table_filters.js:201
 #: templates/js/translated/table_filters.js:791
@@ -6727,11 +6731,11 @@ msgstr "类别"
 
 #: part/api.py:1754
 msgid "Assembly part is testable"
-msgstr ""
+msgstr "装配部份是可测试的"
 
 #: part/api.py:1763
 msgid "Component part is testable"
-msgstr ""
+msgstr "组件部份是可测试的"
 
 #: part/api.py:1814
 msgid "Uses"
@@ -6957,7 +6961,7 @@ msgstr "此零件是否有唯一物品的追踪功能"
 
 #: part/models.py:1185
 msgid "Can this part have test results recorded against it?"
-msgstr ""
+msgstr "这一部分能否记录到测试结果？"
 
 #: part/models.py:1191
 msgid "Can this part be purchased from external suppliers?"
@@ -8291,7 +8295,7 @@ msgstr "显示零件详情"
 
 #: part/templates/part/part_base.html:217
 msgid "Required for Orders"
-msgstr ""
+msgstr "订单所需的"
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:384
