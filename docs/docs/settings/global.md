@@ -121,7 +121,6 @@ Configuration of report generation:
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
-{{ globalsetting("REPORT_ENABLE_TEST_REPORT") }}
 {{ globalsetting("REPORT_ATTACH_TEST_REPORT") }}
 
 ### Parts
