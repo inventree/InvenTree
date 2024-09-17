@@ -65,11 +65,11 @@ export function BomTable({
   partId,
   partLocked,
   params = {}
-}: {
+}: Readonly<{
   partId: number;
   partLocked?: boolean;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
@@ -507,18 +507,21 @@ export function BomTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
+        key="import-bom"
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Import BOM Data`}
         icon={<IconFileArrowLeft />}
         onClick={() => importBomItem.open()}
       />,
       <ActionButton
+        key="validate-bom"
         hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
         tooltip={t`Validate BOM`}
         icon={<IconCircleCheck />}
         onClick={() => validateBom.open()}
       />,
       <AddItemButton
+        key="add-bom-item"
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}

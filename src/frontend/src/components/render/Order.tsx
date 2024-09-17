@@ -110,9 +110,9 @@ export function RenderSalesOrder(
  */
 export function RenderSalesOrderShipment({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   let order = instance.sales_order_detail || {};
 
   return (

@@ -88,7 +88,10 @@ export function DetailDrawer(props: Readonly<DrawerProps>) {
   );
 }
 
-export function DetailDrawerLink({ to, text }: { to: To; text: string }) {
+export function DetailDrawerLink({
+  to,
+  text
+}: Readonly<{ to: To; text: string }>) {
   const addDetailDrawer = useLocalState((state) => state.addDetailDrawer);
 
   const onNavigate = useCallback(() => {

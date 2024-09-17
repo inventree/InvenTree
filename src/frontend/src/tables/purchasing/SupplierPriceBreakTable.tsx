@@ -112,9 +112,9 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
 
 export default function SupplierPriceBreakTable({
   supplierPartId
-}: {
+}: Readonly<{
   supplierPartId: number;
-}) {
+}>) {
   const table = useTable('supplierpricebreaks');
 
   const user = useUserState();
@@ -165,6 +165,7 @@ export default function SupplierPriceBreakTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-price-break"
         tooltip={t`Add Price Break`}
         onClick={() => {
           newPriceBreak.open();

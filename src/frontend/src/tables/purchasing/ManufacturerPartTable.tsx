@@ -23,7 +23,9 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 /*
  * Construct a table listing manufacturer parts
  */
-export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
+export function ManufacturerPartTable({
+  params
+}: Readonly<{ params: any }>): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
@@ -100,6 +102,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
 
     return [
       <AddItemButton
+        key="add-manufacturer-part"
         tooltip={t`Add Manufacturer Part`}
         onClick={() => createManufacturerPart.open()}
         hidden={!can_add}

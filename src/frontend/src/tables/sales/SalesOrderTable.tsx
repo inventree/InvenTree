@@ -36,10 +36,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function SalesOrderTable({
   partId,
   customerId
-}: {
+}: Readonly<{
   partId?: number;
   customerId?: number;
-}) {
+}>) {
   const table = useTable('sales-order');
   const user = useUserState();
 
@@ -93,6 +93,7 @@ export function SalesOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-sales-order"
         tooltip={t`Add Sales Order`}
         onClick={() => newSalesOrder.open()}
         hidden={!user.hasAddRole(UserRoles.sales_order)}

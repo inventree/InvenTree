@@ -45,7 +45,9 @@ export interface MachineDriverI {
   driver_errors: string[];
 }
 
-function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
+function MachineTypeDrawer({
+  machineTypeSlug
+}: Readonly<{ machineTypeSlug: string }>) {
   const navigate = useNavigate();
 
   const { machineTypes, refresh, isFetching } = useMachineTypeDriver({
@@ -169,9 +171,9 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
 
 function MachineDriverDrawer({
   machineDriverSlug
-}: {
+}: Readonly<{
   machineDriverSlug: string;
-}) {
+}>) {
   const { machineDrivers, machineTypes, refresh, isFetching } =
     useMachineTypeDriver();
   const machineDriver = useMemo(
@@ -306,9 +308,9 @@ function MachineDriverDrawer({
  */
 export function MachineTypeListTable({
   props
-}: {
+}: Readonly<{
   props: InvenTreeTableProps;
-}) {
+}>) {
   const table = useTable('machineTypes');
   const navigate = useNavigate();
 

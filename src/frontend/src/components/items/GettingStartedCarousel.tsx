@@ -33,9 +33,9 @@ function StartedCard({
 
 export function GettingStartedCarousel({
   items
-}: {
+}: Readonly<{
   items: DocumentationLinkItem[];
-}) {
+}>) {
   const slides = items.map((item) => (
     <Carousel.Slide key={item.id}>
       <StartedCard {...item} />
