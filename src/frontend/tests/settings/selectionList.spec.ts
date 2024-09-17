@@ -77,7 +77,6 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   await page.getByLabel('action-button-add-parameter').click();
   await page.waitForTimeout(200);
   await page.getByText('New Part Parameter').waitFor();
-  // await page.getByText('Blue Square Table').waitFor();
   await page
     .getByText('Template *Parameter')
     .locator('div')
