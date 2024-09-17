@@ -13,9 +13,9 @@ import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({
   part
-}: {
+}: Readonly<{
   part: any;
-}): ReactNode {
+}>): ReactNode {
   const table = useTable('pricing-purchase-history');
 
   const calculateUnitPrice = useCallback((record: any) => {
@@ -85,13 +85,6 @@ export default function PurchaseHistoryPanel({
       }
     ];
   }, []);
-
-  const currency: string = useMemo(() => {
-    if (table.records.length === 0) {
-      return '';
-    }
-    return table.records[0].purchase_price_currency;
-  }, [table.records]);
 
   const purchaseHistoryData = useMemo(() => {
     return table.records.map((record: any) => {

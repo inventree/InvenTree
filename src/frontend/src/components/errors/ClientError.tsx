@@ -5,7 +5,7 @@ import NotAuthenticated from './NotAuthenticated';
 import NotFound from './NotFound';
 import PermissionDenied from './PermissionDenied';
 
-export default function ClientError({ status }: { status?: number }) {
+export default function ClientError({ status }: Readonly<{ status?: number }>) {
   switch (status) {
     case 401:
       return <NotAuthenticated />;

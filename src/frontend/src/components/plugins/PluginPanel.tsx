@@ -64,10 +64,10 @@ export async function isPluginPanelHidden({
 export default function PluginPanelContent({
   pluginProps,
   pluginContext
-}: {
+}: Readonly<{
   pluginProps: PluginPanelProps;
   pluginContext: PluginContext;
-}): ReactNode {
+}>): ReactNode {
   const ref = useRef<HTMLDivElement>();
 
   const [error, setError] = useState<string | undefined>(undefined);

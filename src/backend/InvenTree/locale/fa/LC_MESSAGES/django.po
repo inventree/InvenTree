@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-16 00:37+0000\n"
-"PO-Revision-Date: 2024-09-16 00:40\n"
+"POT-Creation-Date: 2024-09-16 23:56+0000\n"
+"PO-Revision-Date: 2024-09-16 23:59\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -211,151 +211,155 @@ msgstr ""
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: InvenTree/locales.py:18
+#: InvenTree/locales.py:20
 msgid "Arabic"
 msgstr ""
 
-#: InvenTree/locales.py:19
+#: InvenTree/locales.py:21
 msgid "Bulgarian"
 msgstr ""
 
-#: InvenTree/locales.py:20
+#: InvenTree/locales.py:22
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/locales.py:21
+#: InvenTree/locales.py:23
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/locales.py:22
+#: InvenTree/locales.py:24
 msgid "German"
 msgstr ""
 
-#: InvenTree/locales.py:23
+#: InvenTree/locales.py:25
 msgid "Greek"
 msgstr ""
 
-#: InvenTree/locales.py:24
+#: InvenTree/locales.py:26
 msgid "English"
 msgstr ""
 
-#: InvenTree/locales.py:25
+#: InvenTree/locales.py:27
 msgid "Spanish"
 msgstr ""
 
-#: InvenTree/locales.py:26
+#: InvenTree/locales.py:28
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/locales.py:27
+#: InvenTree/locales.py:29
 msgid "Estonian"
 msgstr ""
 
-#: InvenTree/locales.py:28
+#: InvenTree/locales.py:30
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/locales.py:29
+#: InvenTree/locales.py:31
 msgid "Finnish"
 msgstr ""
 
-#: InvenTree/locales.py:30
+#: InvenTree/locales.py:32
 msgid "French"
 msgstr ""
 
-#: InvenTree/locales.py:31
+#: InvenTree/locales.py:33
 msgid "Hebrew"
 msgstr ""
 
-#: InvenTree/locales.py:32
+#: InvenTree/locales.py:34
 msgid "Hindi"
 msgstr ""
 
-#: InvenTree/locales.py:33
+#: InvenTree/locales.py:35
 msgid "Hungarian"
 msgstr ""
 
-#: InvenTree/locales.py:34
+#: InvenTree/locales.py:36
 msgid "Italian"
 msgstr ""
 
-#: InvenTree/locales.py:35
+#: InvenTree/locales.py:37
 msgid "Japanese"
 msgstr ""
 
-#: InvenTree/locales.py:36
+#: InvenTree/locales.py:38
 msgid "Korean"
 msgstr ""
 
-#: InvenTree/locales.py:37
-msgid "Latvian"
-msgstr ""
-
-#: InvenTree/locales.py:38
-msgid "Dutch"
-msgstr ""
-
 #: InvenTree/locales.py:39
-msgid "Norwegian"
+msgid "Lithuanian"
 msgstr ""
 
 #: InvenTree/locales.py:40
-msgid "Polish"
+msgid "Latvian"
 msgstr ""
 
 #: InvenTree/locales.py:41
-msgid "Portuguese"
+msgid "Dutch"
 msgstr ""
 
 #: InvenTree/locales.py:42
-msgid "Portuguese (Brazilian)"
+msgid "Norwegian"
 msgstr ""
 
 #: InvenTree/locales.py:43
-msgid "Romanian"
+msgid "Polish"
 msgstr ""
 
 #: InvenTree/locales.py:44
-msgid "Russian"
+msgid "Portuguese"
 msgstr ""
 
 #: InvenTree/locales.py:45
-msgid "Slovak"
+msgid "Portuguese (Brazilian)"
 msgstr ""
 
 #: InvenTree/locales.py:46
-msgid "Slovenian"
+msgid "Romanian"
 msgstr ""
 
 #: InvenTree/locales.py:47
-msgid "Serbian"
+msgid "Russian"
 msgstr ""
 
 #: InvenTree/locales.py:48
-msgid "Swedish"
+msgid "Slovak"
 msgstr ""
 
 #: InvenTree/locales.py:49
-msgid "Thai"
+msgid "Slovenian"
 msgstr ""
 
 #: InvenTree/locales.py:50
-msgid "Turkish"
+msgid "Serbian"
 msgstr ""
 
 #: InvenTree/locales.py:51
-msgid "Ukrainian"
+msgid "Swedish"
 msgstr ""
 
 #: InvenTree/locales.py:52
-msgid "Vietnamese"
+msgid "Thai"
 msgstr ""
 
 #: InvenTree/locales.py:53
-msgid "Chinese (Simplified)"
+msgid "Turkish"
 msgstr ""
 
 #: InvenTree/locales.py:54
+msgid "Ukrainian"
+msgstr ""
+
+#: InvenTree/locales.py:55
+msgid "Vietnamese"
+msgstr ""
+
+#: InvenTree/locales.py:56
+msgid "Chinese (Simplified)"
+msgstr ""
+
+#: InvenTree/locales.py:57
 msgid "Chinese (Traditional)"
 msgstr ""
 
