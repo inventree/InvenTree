@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-16 00:37+0000\n"
-"PO-Revision-Date: 2024-09-16 00:40\n"
+"POT-Creation-Date: 2024-09-16 23:56+0000\n"
+"PO-Revision-Date: 2024-09-17 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -211,151 +211,155 @@ msgstr "Uzak sunucu boş cevap döndü"
 msgid "Supplied URL is not a valid image file"
 msgstr "Sağlanan URL geçerli bir resim dosyası değil"
 
-#: InvenTree/locales.py:18
+#: InvenTree/locales.py:20
 msgid "Arabic"
 msgstr "Arapça"
 
-#: InvenTree/locales.py:19
+#: InvenTree/locales.py:21
 msgid "Bulgarian"
 msgstr "Bulgarca"
 
-#: InvenTree/locales.py:20
+#: InvenTree/locales.py:22
 msgid "Czech"
 msgstr "Çekçe"
 
-#: InvenTree/locales.py:21
+#: InvenTree/locales.py:23
 msgid "Danish"
 msgstr "Danca"
 
-#: InvenTree/locales.py:22
+#: InvenTree/locales.py:24
 msgid "German"
 msgstr "Almanca"
 
-#: InvenTree/locales.py:23
+#: InvenTree/locales.py:25
 msgid "Greek"
 msgstr "Yunanca"
 
-#: InvenTree/locales.py:24
+#: InvenTree/locales.py:26
 msgid "English"
 msgstr "İngilizce"
 
-#: InvenTree/locales.py:25
+#: InvenTree/locales.py:27
 msgid "Spanish"
 msgstr "İspanyolca"
 
-#: InvenTree/locales.py:26
+#: InvenTree/locales.py:28
 msgid "Spanish (Mexican)"
 msgstr "İspanyolca(Meksika)"
 
-#: InvenTree/locales.py:27
+#: InvenTree/locales.py:29
 msgid "Estonian"
 msgstr "Estonca"
 
-#: InvenTree/locales.py:28
+#: InvenTree/locales.py:30
 msgid "Farsi / Persian"
 msgstr "Farsça"
 
-#: InvenTree/locales.py:29
+#: InvenTree/locales.py:31
 msgid "Finnish"
 msgstr "Fince"
 
-#: InvenTree/locales.py:30
+#: InvenTree/locales.py:32
 msgid "French"
 msgstr "Fransızca"
 
-#: InvenTree/locales.py:31
+#: InvenTree/locales.py:33
 msgid "Hebrew"
 msgstr "İbranice"
 
-#: InvenTree/locales.py:32
+#: InvenTree/locales.py:34
 msgid "Hindi"
 msgstr "Hintçe"
 
-#: InvenTree/locales.py:33
+#: InvenTree/locales.py:35
 msgid "Hungarian"
 msgstr "Macarca"
 
-#: InvenTree/locales.py:34
+#: InvenTree/locales.py:36
 msgid "Italian"
 msgstr "İtalyanca"
 
-#: InvenTree/locales.py:35
+#: InvenTree/locales.py:37
 msgid "Japanese"
 msgstr "Japonca"
 
-#: InvenTree/locales.py:36
+#: InvenTree/locales.py:38
 msgid "Korean"
 msgstr "Korece"
 
-#: InvenTree/locales.py:37
+#: InvenTree/locales.py:39
+msgid "Lithuanian"
+msgstr ""
+
+#: InvenTree/locales.py:40
 msgid "Latvian"
 msgstr "Letonca"
 
-#: InvenTree/locales.py:38
+#: InvenTree/locales.py:41
 msgid "Dutch"
 msgstr "Flemenkçe"
 
-#: InvenTree/locales.py:39
+#: InvenTree/locales.py:42
 msgid "Norwegian"
 msgstr "Norveççe"
 
-#: InvenTree/locales.py:40
+#: InvenTree/locales.py:43
 msgid "Polish"
 msgstr "Polonyaca"
 
-#: InvenTree/locales.py:41
+#: InvenTree/locales.py:44
 msgid "Portuguese"
 msgstr "Portekizce"
 
-#: InvenTree/locales.py:42
+#: InvenTree/locales.py:45
 msgid "Portuguese (Brazilian)"
 msgstr "Portekizce (Brezilya)"
 
-#: InvenTree/locales.py:43
+#: InvenTree/locales.py:46
 msgid "Romanian"
 msgstr "Romen"
 
-#: InvenTree/locales.py:44
+#: InvenTree/locales.py:47
 msgid "Russian"
 msgstr "Rusça"
 
-#: InvenTree/locales.py:45
+#: InvenTree/locales.py:48
 msgid "Slovak"
 msgstr "Slovakça"
 
-#: InvenTree/locales.py:46
+#: InvenTree/locales.py:49
 msgid "Slovenian"
 msgstr "Slovakça"
 
-#: InvenTree/locales.py:47
+#: InvenTree/locales.py:50
 msgid "Serbian"
 msgstr "Sırpça"
 
-#: InvenTree/locales.py:48
+#: InvenTree/locales.py:51
 msgid "Swedish"
 msgstr "İsveççe"
 
-#: InvenTree/locales.py:49
+#: InvenTree/locales.py:52
 msgid "Thai"
 msgstr "Tay dili"
 
-#: InvenTree/locales.py:50
+#: InvenTree/locales.py:53
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: InvenTree/locales.py:51
+#: InvenTree/locales.py:54
 msgid "Ukrainian"
 msgstr "Ukraynaca"
 
-#: InvenTree/locales.py:52
+#: InvenTree/locales.py:55
 msgid "Vietnamese"
 msgstr "Vietnamca"
 
-#: InvenTree/locales.py:53
+#: InvenTree/locales.py:56
 msgid "Chinese (Simplified)"
 msgstr "Çince (Basitleştirilmiş)"
 
-#: InvenTree/locales.py:54
+#: InvenTree/locales.py:57
 msgid "Chinese (Traditional)"
 msgstr "Çince (Geleneksel)"
 
