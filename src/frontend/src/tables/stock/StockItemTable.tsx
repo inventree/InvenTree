@@ -173,7 +173,7 @@ function stockItemTableColumns(): TableColumn[] {
         if (available != quantity) {
           if (available > 0) {
             extra.push(
-              <Text key="available" size="sm" color="orange">
+              <Text key="available" size="sm" c="orange">
                 {t`Available` + `: ${available}`}
               </Text>
             );
@@ -182,7 +182,7 @@ function stockItemTableColumns(): TableColumn[] {
               <Text
                 key="no-stock"
                 size="sm"
-                color="red"
+                c="red"
               >{t`No stock available`}</Text>
             );
           }
@@ -207,7 +207,7 @@ function stockItemTableColumns(): TableColumn[] {
               <Group gap="xs" justify="left" wrap="nowrap">
                 <Text c={color}>{text}</Text>
                 {part.units && (
-                  <Text size="xs" color={color}>
+                  <Text size="xs" c={color}>
                     [{part.units}]
                   </Text>
                 )}
@@ -388,11 +388,11 @@ export function StockItemTable({
   params = {},
   allowAdd = false,
   tableName = 'stockitems'
-}: {
+}: Readonly<{
   params?: any;
   allowAdd?: boolean;
   tableName: string;
-}) {
+}>) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
@@ -441,6 +441,7 @@ export function StockItemTable({
     let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
       <ActionDropdown
+        key="stock-actions"
         tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon="stock" />}
         disabled={table.selectedRecords.length === 0}
@@ -531,6 +532,7 @@ export function StockItemTable({
         ]}
       />,
       <AddItemButton
+        key="add-stock-item"
         hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
         tooltip={t`Add Stock Item`}
         onClick={() => newStockItem.open()}

@@ -23,10 +23,10 @@ const onlyItems = Object.values(menuItems);
 export function NavigationDrawer({
   opened,
   close
-}: {
+}: Readonly<{
   opened: boolean;
   close: () => void;
-}) {
+}>) {
   return (
     <Drawer
       opened={opened}

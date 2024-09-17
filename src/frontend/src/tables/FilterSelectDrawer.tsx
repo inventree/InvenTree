@@ -28,10 +28,10 @@ import {
 function FilterItem({
   flt,
   tableState
-}: {
+}: Readonly<{
   flt: TableFilter;
   tableState: TableState;
-}) {
+}>) {
   const removeFilter = useCallback(() => {
     let newFilters = tableState.activeFilters.filter(
       (f) => f.name !== flt.name
@@ -60,10 +60,10 @@ function FilterItem({
 function FilterAddGroup({
   tableState,
   availableFilters
-}: {
+}: Readonly<{
   tableState: TableState;
   availableFilters: TableFilter[];
-}) {
+}>) {
   const filterOptions: TableFilterChoice[] = useMemo(() => {
     // List of filter names which are already active on this table
     let activeFilterNames: string[] = [];
@@ -156,12 +156,12 @@ export function FilterSelectDrawer({
   tableState,
   opened,
   onClose
-}: {
+}: Readonly<{
   availableFilters: TableFilter[];
   tableState: TableState;
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const [addFilter, setAddFilter] = useState<boolean>(false);
 
   // Hide the "add filter" selection whenever the selected filters change

@@ -16,7 +16,7 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
-export function LicenceView(entries: Readonly<any[]>) {
+export function LicenceView(entries: any[]) {
   return (
     <Stack gap="xs">
       <Divider />

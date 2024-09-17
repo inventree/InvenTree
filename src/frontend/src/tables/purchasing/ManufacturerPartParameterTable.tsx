@@ -19,9 +19,9 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ManufacturerPartParameterTable({
   params
-}: {
+}: Readonly<{
   params: any;
-}) {
+}>) {
   const table = useTable('manufacturer-part-parameter');
   const user = useUserState();
 

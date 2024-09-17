@@ -57,7 +57,9 @@ export const getSupportedLanguages = (): Record<string, string> => {
   };
 };
 
-export function LanguageContext({ children }: { children: JSX.Element }) {
+export function LanguageContext({
+  children
+}: Readonly<{ children: JSX.Element }>) {
   const [language] = useLocalState((state) => [state.language]);
   const [server] = useServerApiState((state) => [state.server]);
 

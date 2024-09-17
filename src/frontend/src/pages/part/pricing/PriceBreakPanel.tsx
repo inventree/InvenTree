@@ -29,10 +29,10 @@ import { NoPricingData } from './PricingPanel';
 export default function PriceBreakPanel({
   part,
   endpoint
-}: {
+}: Readonly<{
   part: any;
   endpoint: ApiEndpoints;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('pricing-internal');
 
@@ -107,6 +107,7 @@ export default function PriceBreakPanel({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-price-break"
         tooltip={t`Add Price Break`}
         onClick={() => {
           newPriceBreak.open();

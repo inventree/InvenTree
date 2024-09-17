@@ -11,9 +11,9 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function InstalledItemsTable({
   parentId
-}: {
+}: Readonly<{
   parentId?: number | string;
-}) {
+}>) {
   const table = useTable('stock_item_install');
   const user = useUserState();
 

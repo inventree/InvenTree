@@ -17,10 +17,10 @@ import { NoPricingData } from './PricingPanel';
 export default function VariantPricingPanel({
   part,
   pricing
-}: {
+}: Readonly<{
   part: any;
   pricing: any;
-}): ReactNode {
+}>): ReactNode {
   const table = useTable('pricing-variants');
 
   const columns: TableColumn[] = useMemo(() => {

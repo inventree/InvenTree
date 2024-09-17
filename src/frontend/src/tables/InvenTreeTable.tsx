@@ -143,12 +143,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
   tableState,
   columns,
   props
-}: {
+}: Readonly<{
   url: string;
   tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-}) {
+}>) {
   const {
     getTableColumnNames,
     setTableColumnNames,

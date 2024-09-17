@@ -22,11 +22,11 @@ function SettingValue({
   setting,
   onEdit,
   onToggle
-}: {
+}: Readonly<{
   setting: Setting;
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
-}) {
+}>) {
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
     let value = setting.value;
@@ -81,12 +81,12 @@ export function SettingItem({
   shaded,
   onEdit,
   onToggle
-}: {
+}: Readonly<{
   setting: Setting;
   shaded: boolean;
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
-}) {
+}>) {
   const { colorScheme } = useMantineColorScheme();
 
   const style: Record<string, string> = { paddingLeft: '8px' };
