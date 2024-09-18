@@ -89,6 +89,38 @@ export function isPanelHidden(context) {
 }
 ```
 
+## Custom UI Functions
+
+User interface plugins can also provide additional user interface functions. These functions can be provided via the `get_ui_features` method:
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_features
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+::: plugin.samples.integration.user_interface_sample.SampleUserInterfacePlugin.get_ui_features
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
+
+Currently the following functions can be extended:
+
+### Template editors
+
+The `template_editor` feature type can be used to provide custom template editors. For an example see [`sample_template.js`](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js).
+
+### Template previews
+
+The `template_preview` feature type can be used to provide custom template previews. For an example see [`sample_template.js`](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js).
+
 ## Sample Plugin
 
 A sample plugin which implements custom user interface functionality is provided in the InvenTree source code:
