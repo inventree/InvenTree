@@ -141,5 +141,14 @@ test('PUI - Report Editing', async ({ page }) => {
   expect(await msg[0].jsonValue()).toBe('updatePreview');
   expect((await msg[1].jsonValue())[0]).toBe(newTextareaValue);
 
+  // deactivate the sample plugin again after the test
+  await page.request.patch(`${classicUrl}/api/plugins/sampleui/activate/`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic YWRtaW46aW52ZW50cmVl`
+    },
+    data: { active: false }
+  });
+
   await page.context().close();
 });
