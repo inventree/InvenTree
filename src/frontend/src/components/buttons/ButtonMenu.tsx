@@ -9,12 +9,12 @@ export function ButtonMenu({
   actions,
   tooltip = '',
   label = ''
-}: {
+}: Readonly<{
   icon: any;
   actions: React.ReactNode[];
   label?: string;
   tooltip?: string;
-}) {
+}>) {
   return (
     <Menu shadow="xs">
       <Menu.Target>

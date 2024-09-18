@@ -14,12 +14,12 @@ export default function TextField({
   fieldName,
   definition,
   onChange
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
   onChange: (value: any) => void;
-}) {
+}>) {
   const fieldId = useId();
   const {
     field,

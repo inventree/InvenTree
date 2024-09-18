@@ -162,6 +162,7 @@ export enum ApiEndpoints {
   return_order_hold = 'order/ro/:id/hold/',
   return_order_cancel = 'order/ro/:id/cancel/',
   return_order_complete = 'order/ro/:id/complete/',
+  return_order_receive = 'order/ro/:id/receive/',
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
 

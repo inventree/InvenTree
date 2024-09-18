@@ -31,7 +31,9 @@ interface LocalStateProps {
   ) => (names: Record<string, string>) => void;
   tableSorting: Record<string, any>;
   getTableSorting: (tableKey: string) => DataTableSortStatus;
-  setTableSorting: (tableKey: string) => (sorting: DataTableSortStatus) => void;
+  setTableSorting: (
+    tableKey: string
+  ) => (sorting: DataTableSortStatus<any>) => void;
   clearTableColumnNames: () => void;
   detailDrawerStack: number;
   addDetailDrawer: (value: number | false) => void;

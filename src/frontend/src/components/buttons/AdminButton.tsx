@@ -22,7 +22,7 @@ export type AdminButtonProps = {
  * - The user has "superuser" role
  * - The user has at least read rights for the selected item
  */
-export default function AdminButton(props: AdminButtonProps) {
+export default function AdminButton(props: Readonly<AdminButtonProps>) {
   const user = useUserState();
 
   const enabled: boolean = useMemo(() => {

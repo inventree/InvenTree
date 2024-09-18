@@ -43,10 +43,10 @@ import {
 export default function StockItemTestResultTable({
   partId,
   itemId
-}: {
+}: Readonly<{
   partId: number;
   itemId: number;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('stocktests');
 
@@ -399,6 +399,7 @@ export default function StockItemTestResultTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-test-result"
         tooltip={t`Add Test Result`}
         onClick={() => {
           setSelectedTemplate(undefined);

@@ -26,9 +26,9 @@ const onlyItems = Object.values(menuItems);
 
 export function NavHoverMenu({
   openDrawer: openDrawer
-}: {
+}: Readonly<{
   openDrawer: () => void;
-}) {
+}>) {
   const [hostKey, hostList] = useLocalState((state) => [
     state.hostKey,
     state.hostList
@@ -99,7 +99,7 @@ export function NavHoverMenu({
               <Text fw={500} fz="sm">
                 <Trans>Get started</Trans>
               </Text>
-              <Text size="xs" color="dimmed">
+              <Text size="xs" c="dimmed">
                 <Trans>
                   Overview over high-level objects, functions and possible
                   usecases.

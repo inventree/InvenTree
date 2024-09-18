@@ -137,17 +137,17 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable<T = any>({
+export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
   columns,
   props
-}: {
+}: Readonly<{
   url: string;
   tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-}) {
+}>) {
   const {
     getTableColumnNames,
     setTableColumnNames,
@@ -397,7 +397,7 @@ export function InvenTreeTable<T = any>({
   }
 
   // Data Sorting
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
     columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
@@ -431,7 +431,7 @@ export function InvenTreeTable<T = any>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus) => {
+  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
     tableState.setPage(1);
     setSortStatus(status);
 

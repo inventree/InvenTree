@@ -32,7 +32,7 @@ import {
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function ReturnOrderTable({ params }: { params?: any }) {
+export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
   const table = useTable('return-orders');
   const user = useUserState();
 
@@ -125,6 +125,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-return-order"
         tooltip={t`Add Return Order`}
         onClick={() => newReturnOrder.open()}
         hidden={!user.hasAddRole(UserRoles.return_order)}

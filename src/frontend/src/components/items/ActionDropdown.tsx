@@ -127,11 +127,11 @@ export function OptionsActionDropdown({
   actions = [],
   tooltip = t`Options`,
   hidden = false
-}: {
+}: Readonly<{
   actions: ActionDropdownItem[];
   tooltip?: string;
   hidden?: boolean;
-}) {
+}>) {
   return (
     <ActionDropdown
       icon={<IconDotsVertical />}

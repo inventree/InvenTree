@@ -15,7 +15,9 @@ import {
 } from '../../../tables/purchasing/SupplierPriceBreakTable';
 import { NoPricingData } from './PricingPanel';
 
-export default function SupplierPricingPanel({ part }: { part: any }) {
+export default function SupplierPricingPanel({
+  part
+}: Readonly<{ part: any }>) {
   const table = useTable('pricing-supplier');
 
   const columns: TableColumn[] = useMemo(() => {
