@@ -137,7 +137,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                         'title': 'Sample Template Editor',
                         'icon': 'keywords',
                     },
-                    'source': '/static/plugin/sample_template_editor.js',
+                    'source': '/static/plugin/sample_template.js:getTemplateEditor',
                 }
             ]
 
@@ -150,7 +150,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                         'title': 'Sample Template Preview',
                         'icon': 'category',
                     },
-                    'source': '/static/plugin/sample_template_preview.js',
+                    'source': '/static/plugin/sample_template.js:getTemplatePreview',
                 }
             ]
 
