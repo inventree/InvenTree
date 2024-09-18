@@ -532,13 +532,9 @@ jobs:
         run: invoke int.frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
       - name: Run Playwright tests
         id: tests
-        run: cd src/frontend && npx nyc playwright test -g "PUI - Report Editing"
+        run: cd src/frontend && npx nyc playwright test
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:

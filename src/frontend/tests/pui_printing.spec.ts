@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
+import { baseUrl, classicUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
 /*
@@ -83,6 +83,15 @@ test('PUI - Report Printing', async ({ page }) => {
 
 test('PUI - Report Editing', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
+
+  // activate the sample plugin for this test
+  await page.request.patch(`${classicUrl}/api/plugins/sampleui/activate/`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic YWRtaW46aW52ZW50cmVl`
+    },
+    data: { active: true }
+  });
 
   // Navigate to the admin center
   await page.getByRole('button', { name: 'admin' }).click();
