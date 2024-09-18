@@ -244,6 +244,7 @@ export default function ReturnOrderDetail() {
               <Accordion.Panel>
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
+                  order={order}
                   customerId={order.customer}
                   currency={orderCurrency}
                 />
