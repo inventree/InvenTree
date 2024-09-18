@@ -72,7 +72,7 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
     return (
       pluginData?.map((feature) => ({
         options: feature.options,
-        func: (async (renderContext) => {
+        func: (async (featureContext) => {
           const func = await findExternalPluginFunction(
             feature.source,
             'getFeature'
@@ -80,7 +80,7 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
           if (!func) return;
 
           return func({
-            renderContext,
+            featureContext,
             inventreeContext
           });
         }) as PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>

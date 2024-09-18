@@ -1,8 +1,8 @@
-export function getFeature({ renderContext, pluginContext }) {
-  const { ref } = renderContext;
-  console.log("Template preview feature was called with", renderContext, pluginContext);
+export function getFeature({ featureContext, pluginContext }) {
+  const { ref } = featureContext;
+  console.log("Template preview feature was called with", featureContext, pluginContext);
 
-  renderContext.registerHandlers({
+  featureContext.registerHandlers({
     updatePreview: (...args) => {
       console.log("updatePreview", args);
     }

@@ -9,18 +9,18 @@ export type BaseUIFeature = {
   featureType: string;
   requestContext: Record<string, any>;
   responseOptions: Record<string, any>;
-  renderContext: Record<string, any>;
-  renderReturnType: any;
+  featureContext: Record<string, any>;
+  featureReturnType: any;
 };
 
 export type PluginUIGetFeatureType<T extends BaseUIFeature> = (params: {
-  renderContext: T['renderContext'];
+  featureContext: T['featureContext'];
   inventreeContext: InvenTreeContext;
-}) => T['renderReturnType'];
+}) => T['featureReturnType'];
 
 export type PluginUIFuncWithoutInvenTreeContextType<T extends BaseUIFeature> = (
-  renderContext: T['renderContext']
-) => T['renderReturnType'];
+  featureContext: T['featureContext']
+) => T['featureReturnType'];
 
 export type PluginUIFeatureAPIResponse<T extends BaseUIFeature> = {
   feature_type: T['featureType'];
@@ -40,7 +40,7 @@ export type TemplateEditorUIFeature = {
     title: string;
     icon: InvenTreeIconType;
   };
-  renderContext: {
+  featureContext: {
     ref: HTMLDivElement;
     registerHandlers: (handlers: {
       setCode: (code: string) => void;
@@ -48,7 +48,7 @@ export type TemplateEditorUIFeature = {
     }) => void;
     template: TemplateI;
   };
-  renderReturnType: void;
+  featureReturnType: void;
 };
 
 export type TemplatePreviewUIFeature = {
@@ -62,7 +62,7 @@ export type TemplatePreviewUIFeature = {
     title: string;
     icon: InvenTreeIconType;
   };
-  renderContext: {
+  featureContext: {
     ref: HTMLDivElement;
     template: TemplateI;
     registerHandlers: (handlers: {
@@ -74,5 +74,5 @@ export type TemplatePreviewUIFeature = {
       ) => void | Promise<void>;
     }) => void;
   };
-  renderReturnType: void;
+  featureReturnType: void;
 };
