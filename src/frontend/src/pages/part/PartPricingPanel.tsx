@@ -28,7 +28,7 @@ export enum panelOptions {
   overall = 'overall'
 }
 
-export default function PartPricingPanel({ part }: { part: any }) {
+export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
   const user = useUserState();
 
   const { instance: pricing, instanceQuery } = useInstance({

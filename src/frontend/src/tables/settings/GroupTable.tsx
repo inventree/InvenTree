@@ -38,10 +38,10 @@ export interface GroupDetailI {
 export function GroupDrawer({
   id,
   refreshTable
-}: {
+}: Readonly<{
   id: string;
   refreshTable: () => void;
-}) {
+}>) {
   const {
     instance,
     refreshInstance,

@@ -18,10 +18,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function UsedInTable({
   partId,
   params = {}
-}: {
+}: Readonly<{
   partId: number;
   params?: any;
-}) {
+}>) {
   const table = useTable('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {

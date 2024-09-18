@@ -65,10 +65,10 @@ export interface TemplateProps {
 export function TemplateDrawer({
   id,
   templateProps
-}: {
+}: Readonly<{
   id: string | number;
   templateProps: TemplateProps;
-}) {
+}>) {
   const { modelType, templateType, templateEndpoint, printingEndpoint } =
     templateProps;
 
@@ -153,9 +153,9 @@ export function TemplateDrawer({
 
 export function TemplateTable({
   templateProps
-}: {
+}: Readonly<{
   templateProps: TemplateProps;
-}) {
+}>) {
   const { templateEndpoint, additionalFormFields } = templateProps;
 
   const table = useTable(`${templateEndpoint}-template`);

@@ -190,10 +190,10 @@ export function useCreateStockItem() {
 function StockItemDefaultMove({
   stockItem,
   value
-}: {
+}: Readonly<{
   stockItem: any;
   value: any;
-}) {
+}>) {
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',

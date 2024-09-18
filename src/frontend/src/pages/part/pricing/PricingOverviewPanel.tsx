@@ -39,11 +39,11 @@ export default function PricingOverviewPanel({
   part,
   pricing,
   doNavigation
-}: {
+}: Readonly<{
   part: any;
   pricing: any;
   doNavigation: (panel: panelOptions) => void;
-}): ReactNode {
+}>): ReactNode {
   const columns: any[] = useMemo(() => {
     return [
       {

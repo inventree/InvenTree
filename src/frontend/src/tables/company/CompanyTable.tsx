@@ -28,10 +28,10 @@ import { RowAction, RowEditAction } from '../RowActions';
 export function CompanyTable({
   params,
   path
-}: {
+}: Readonly<{
   params?: any;
   path?: string;
-}) {
+}>) {
   const table = useTable('company');
 
   const navigate = useNavigate();
@@ -120,6 +120,7 @@ export function CompanyTable({
 
     return [
       <AddItemButton
+        key="add-company"
         tooltip={t`Add Company`}
         onClick={() => newCompany.open()}
         hidden={!can_add}

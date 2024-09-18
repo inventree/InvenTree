@@ -12,10 +12,10 @@ import { InvenTreeIcon } from '../../functions/icons';
 export function CopyButton({
   value,
   label
-}: {
+}: Readonly<{
   value: any;
   label?: JSX.Element;
-}) {
+}>) {
   const ButtonComponent = label ? Button : ActionIcon;
 
   return (

@@ -22,10 +22,10 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export function AddressTable({
   companyId,
   params
-}: {
+}: Readonly<{
   companyId: number;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
 
   const table = useTable('address');
@@ -179,6 +179,7 @@ export function AddressTable({
 
     return [
       <AddItemButton
+        key="add-address"
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
         hidden={!can_add}

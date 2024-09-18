@@ -50,12 +50,12 @@ function ConstBody({
   detail,
   docchildren,
   link
-}: {
+}: Readonly<{
   text: string | JSX.Element;
   detail?: string | JSX.Element;
   docchildren?: React.ReactNode;
   link?: string;
-}) {
+}>) {
   const [height, setHeight] = useState(0);
   const ref = useRef(null);
 
@@ -78,7 +78,7 @@ function ConstBody({
         <ScrollArea h={height} mah={250}>
           <div ref={ref}>
             {detail && (
-              <Text size="xs" color="dimmed">
+              <Text size="xs" c="dimmed">
                 {detail}
               </Text>
             )}

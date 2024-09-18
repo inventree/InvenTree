@@ -23,7 +23,7 @@ export const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
     </Suspense>
   );
 
-export function LoadingItem({ item }: { item: any }): JSX.Element {
+export function LoadingItem({ item }: Readonly<{ item: any }>): JSX.Element {
   const Itm = Loadable(item);
   return <Itm />;
 }

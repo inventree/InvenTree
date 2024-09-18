@@ -11,10 +11,10 @@ dayjs.extend(customParseFormat);
 export default function DateField({
   controller,
   definition
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
-}) {
+}>) {
   const fieldId = useId();
 
   const {
