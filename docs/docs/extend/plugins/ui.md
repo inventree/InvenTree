@@ -115,11 +115,19 @@ Currently the following functions can be extended:
 
 ### Template editors
 
-The `template_editor` feature type can be used to provide custom template editors. For an example see [`sample_template.js`](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js).
+The `template_editor` feature type can be used to provide custom template editors.
+
+**Example:**
+
+{{ includefile("src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js", title="sample_template.js", fmt="javascript") }}
 
 ### Template previews
 
-The `template_preview` feature type can be used to provide custom template previews. For an example see [`sample_template.js`](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js).
+The `template_preview` feature type can be used to provide custom template previews. For an example see:
+
+**Example:**
+
+{{ includefile("src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js", title="sample_template.js", fmt="javascript") }}
 
 ## Sample Plugin
 
