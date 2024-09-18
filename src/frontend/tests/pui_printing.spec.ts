@@ -1,4 +1,4 @@
-import { test } from './baseFixtures.js';
+import { expect, test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
@@ -103,6 +103,34 @@ test('PUI - Report Editing', async ({ page }) => {
   await page.getByRole('button', { name: 'Save & Reload' }).click();
 
   await page.getByText('The preview has been updated').waitFor();
+
+  // Test plugin provided editors
+  await page.getByRole('tab', { name: 'Sample Template Editor' }).click();
+  const textarea = page.locator('#sample-template-editor-textarea');
+  const textareaValue = await textarea.inputValue();
+  expect(textareaValue).toContain(
+    `<img class='qr' alt="{% trans 'QR Code' %}" src='{% qrcode qr_data %}'>`
+  );
+  textarea.fill(textareaValue + '\nHello world');
+
+  // Switch back and forth to see if the changed contents get correctly passed between the hooks
+  await page.getByRole('tab', { name: 'Code', exact: true }).click();
+  await page.getByRole('tab', { name: 'Sample Template Editor' }).click();
+  const newTextareaValue = await page
+    .locator('#sample-template-editor-textarea')
+    .inputValue();
+  expect(newTextareaValue).toMatch(/\nHello world$/);
+
+  // Test plugin provided previews
+  await page.getByRole('tab', { name: 'Sample Template Preview' }).click();
+  await page.getByRole('heading', { name: 'Hello world' }).waitFor();
+  const consoleLogPromise = page.waitForEvent('console');
+  await page
+    .getByLabel('split-button-preview-options', { exact: true })
+    .click();
+  const msg = (await consoleLogPromise).args();
+  expect(await msg[0].jsonValue()).toBe('updatePreview');
+  expect((await msg[1].jsonValue())[0]).toBe(newTextareaValue);
 
   await page.context().close();
 });
