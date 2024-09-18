@@ -14,12 +14,11 @@ import { Editor } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import {
-  TemplateEditorRenderContextType,
-  getPluginTemplateEditor
-} from '../../components/plugins/PluginUIFeature';
+import { getPluginTemplateEditor } from '../../components/plugins/PluginUIFeature';
+import { TemplateEditorUIFeature } from '../../components/plugins/PluginUIFeatureTypes';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { GetIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
 import {
@@ -82,17 +81,7 @@ export function TemplateDrawer({
     throwError: true
   });
 
-  const extraEditors = usePluginUIFeature<
-    {
-      template_type: string;
-      template_model: string;
-    },
-    {
-      title: string;
-      slug: string;
-    },
-    TemplateEditorRenderContextType
-  >({
+  const extraEditors = usePluginUIFeature<TemplateEditorUIFeature>({
     featureType: 'template_editor',
     context: { template_type: templateType, template_model: modelType }
   });
@@ -107,9 +96,9 @@ export function TemplateDrawer({
       ...(extraEditors?.map(
         (editor) =>
           ({
-            key: editor.options.slug,
+            key: editor.options.key,
             name: editor.options.title,
-            icon: IconFileCode,
+            icon: GetIcon(editor.options.icon),
             component: getPluginTemplateEditor(editor.func, template)
           } as Editor)
       ) || [])

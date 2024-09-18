@@ -11,36 +11,15 @@ import {
 
 import { TemplateI } from '../../tables/settings/TemplateTable';
 import { EditorComponent } from '../editors/TemplateEditor/TemplateEditor';
+import {
+  PluginUIFuncWithoutInvenTreeContextType,
+  TemplateEditorUIFeature
+} from './PluginUIFeatureTypes';
 
-// Definition of the plugin ui feature properties, provided by the server API
-export type PluginUIFeatureProps = (
-  | {
-      feature_type: 'template_editor';
-      options: {
-        title: string;
-        slug: string;
-      };
-    }
-  | {
-      feature_type: 'template_preview';
-      options: {
-        title: string;
-        slug: string;
-      };
-    }
-) & {
-  source: string;
-};
-
-export type TemplateEditorRenderContextType = {
-  registerHandlers: (params: {
-    setCode: (code: string) => void;
-    getCode: () => string;
-  }) => void;
-  template: TemplateI;
-};
-
-export const getPluginTemplateEditor = (func: any, template: any) =>
+export const getPluginTemplateEditor = (
+  func: PluginUIFuncWithoutInvenTreeContextType<TemplateEditorUIFeature>,
+  template: TemplateI
+) =>
   forwardRef((props, ref) => {
     const elRef = useRef<HTMLDivElement>();
     const [error, setError] = useState<string | undefined>(undefined);
@@ -64,7 +43,7 @@ export const getPluginTemplateEditor = (func: any, template: any) =>
     useEffect(() => {
       (async () => {
         try {
-          await func(elRef.current, {
+          await func(elRef.current!, {
             registerHandlers: ({ getCode, setCode }) => {
               setCodeRef.current = setCode;
               getCodeRef.current = getCode;
@@ -74,7 +53,7 @@ export const getPluginTemplateEditor = (func: any, template: any) =>
               }
             },
             template
-          } as TemplateEditorRenderContextType);
+          });
         } catch (error) {
           setError(t`Error occurred while rendering the template editor.`);
           console.error(error);

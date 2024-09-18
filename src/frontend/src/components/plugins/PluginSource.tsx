@@ -36,7 +36,7 @@ export async function loadExternalPluginSource(source: string) {
 export async function findExternalPluginFunction(
   source: string,
   functionName: string
-) {
+): Promise<Function | null> {
   const module = await loadExternalPluginSource(source);
 
   if (module && module[functionName]) {

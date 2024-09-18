@@ -9,7 +9,6 @@ import { useMemo } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
 import { useLocalState } from '../../states/LocalState';
 import {
   SettingsStateProps,
@@ -18,13 +17,10 @@ import {
 } from '../../states/SettingsState';
 import { UserStateProps, useUserState } from '../../states/UserState';
 
-/*
+/**
  * A set of properties which are passed to a plugin,
  * for rendering an element in the user interface.
  *
- * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')
- * @param id - The ID (primary key) of the model instance for the plugin
- * @param instance - The model instance data (if available)
  * @param api - The Axios API instance (see ../states/ApiState.tsx)
  * @param user - The current user instance (see ../states/UserState.tsx)
  * @param userSettings - The current user settings (see ../states/SettingsState.tsx)
@@ -33,10 +29,7 @@ import { UserStateProps, useUserState } from '../../states/UserState';
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  */
-export type PluginContext = {
-  model?: ModelType | string;
-  id?: string | number | null;
-  instance?: any;
+export type InvenTreeContext = {
   api: AxiosInstance;
   user: UserStateProps;
   userSettings: SettingsStateProps;
@@ -47,7 +40,7 @@ export type PluginContext = {
   colorScheme: MantineColorScheme;
 };
 
-export const usePluginContext = () => {
+export const useInvenTreeContext = () => {
   const host = useLocalState.getState().host;
   const navigate = useNavigate();
   const user = useUserState();
@@ -56,7 +49,7 @@ export const usePluginContext = () => {
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
-  const contextData: PluginContext = useMemo(() => {
+  const contextData = useMemo<InvenTreeContext>(() => {
     return {
       user: user,
       host: host,

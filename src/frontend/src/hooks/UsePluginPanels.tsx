@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
 import {
-  PluginContext,
-  usePluginContext
+  InvenTreeContext,
+  useInvenTreeContext
 } from '../components/plugins/PluginContext';
 import PluginPanelContent, {
   PluginPanelProps,
@@ -17,6 +17,17 @@ import { identifierString } from '../functions/conversion';
 import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
+
+/**
+ * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')
+ * @param id - The ID (primary key) of the model instance for the plugin
+ * @param instance - The model instance data (if available)
+ */
+export type PluginPanelContext = InvenTreeContext & {
+  model?: ModelType | string;
+  id?: string | number | null;
+  instance?: any;
+};
 
 export function usePluginPanels({
   instance,
@@ -59,13 +70,13 @@ export function usePluginPanels({
   });
 
   // Cache the context data which is delivered to the plugins
-  const pluginContext = usePluginContext();
-  const contextData: PluginContext = useMemo(() => {
+  const inventreeContext = useInvenTreeContext();
+  const contextData = useMemo<PluginPanelContext>(() => {
     return {
       model: model,
       id: id,
       instance: instance,
-      ...pluginContext
+      ...inventreeContext
     };
   }, [model, id, instance]);
 

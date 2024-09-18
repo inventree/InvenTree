@@ -2,20 +2,24 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { api } from '../App';
-import {
-  PluginContext,
-  usePluginContext
-} from '../components/plugins/PluginContext';
+import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';
+import {
+  BaseUIFeature,
+  PluginUIFeatureAPIResponse,
+  PluginUIFuncWithoutInvenTreeContextType
+} from '../components/plugins/PluginUIFeatureTypes';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
-export function usePluginUIFeature<
-  RequestContextT extends Record<string, any>,
-  ResponseOptionsT extends Record<string, any>,
-  RenderContextT extends Record<string, any>
->({ featureType, context }: { featureType: string; context: RequestContextT }) {
+export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
+  featureType,
+  context
+}: {
+  featureType: UIFeatureT['featureType'];
+  context: UIFeatureT['requestContext'];
+}) {
   const globalSettings = useGlobalSettingsState();
 
   const pluginUiFeaturesEnabled: boolean = useMemo(
@@ -24,7 +28,9 @@ export function usePluginUIFeature<
   );
 
   // API query to fetch initial information on available plugin panels
-  const { data: pluginData } = useQuery({
+  const { data: pluginData } = useQuery<
+    PluginUIFeatureAPIResponse<UIFeatureT>[]
+  >({
     enabled: pluginUiFeaturesEnabled && !!featureType,
     queryKey: ['custom-ui-features', featureType, JSON.stringify(context)],
     queryFn: async () => {
@@ -53,31 +59,30 @@ export function usePluginUIFeature<
   });
 
   // Cache the context data which is delivered to the plugins
-  const pluginContext = usePluginContext();
+  const inventreeContext = useInvenTreeContext();
 
   return useMemo<
     {
-      options: ResponseOptionsT;
-      func: (
-        ref: HTMLDivElement,
-        params: { renderContext: RenderContextT; pluginContext: PluginContext }
-      ) => void;
+      options: UIFeatureT['responseOptions'];
+      func: PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>;
     }[]
   >(() => {
     return (
-      pluginData?.map((feature: any) => ({
+      pluginData?.map((feature) => ({
         options: feature.options,
-        func: async (ref: HTMLDivElement, renderContext: RenderContextT) => {
+        func: (async (ref, renderContext) => {
           const func = await findExternalPluginFunction(
             feature.source,
             'getFeature'
           );
+          if (!func) return;
+
           return func(ref, {
             renderContext,
-            pluginContext
+            inventreeContext
           });
-        }
+        }) as PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>
       })) || []
     );
-  }, [pluginData, pluginContext]);
+  }, [pluginData, inventreeContext]);
 }
