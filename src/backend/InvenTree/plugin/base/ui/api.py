@@ -72,8 +72,8 @@ class PluginUIFeatureList(APIView):
                 if not plugin_features or type(plugin_features) is not list:
                     continue
 
-                for feature in plugin_features:
-                    features.append(feature)
+                for _feature in plugin_features:
+                    features.append(_feature)
 
         return Response(
             UIPluginSerializers.PluginUIFeatureSerializer(features, many=True).data

@@ -6,7 +6,6 @@ export default function LabelTemplatePanel() {
   return (
     <TemplateTable
       templateProps={{
-        templateType: 'label',
         modelType: ModelType.labeltemplate,
         templateEndpoint: ApiEndpoints.label_list,
         printingEndpoint: ApiEndpoints.label_print,

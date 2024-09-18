@@ -14,9 +14,11 @@ import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
+  enabled = true,
   featureType,
   context
 }: {
+  enabled?: boolean;
   featureType: UIFeatureT['featureType'];
   context: UIFeatureT['requestContext'];
 }) {
@@ -31,7 +33,7 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
   const { data: pluginData } = useQuery<
     PluginUIFeatureAPIResponse<UIFeatureT>[]
   >({
-    enabled: pluginUiFeaturesEnabled && !!featureType,
+    enabled: pluginUiFeaturesEnabled && !!featureType && enabled,
     queryKey: ['custom-ui-features', featureType, JSON.stringify(context)],
     queryFn: async () => {
       if (!pluginUiFeaturesEnabled || !featureType) {
@@ -70,14 +72,14 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
     return (
       pluginData?.map((feature) => ({
         options: feature.options,
-        func: (async (ref, renderContext) => {
+        func: (async (renderContext) => {
           const func = await findExternalPluginFunction(
             feature.source,
             'getFeature'
           );
           if (!func) return;
 
-          return func(ref, {
+          return func({
             renderContext,
             inventreeContext
           });

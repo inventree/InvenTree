@@ -10,10 +10,15 @@ import {
 } from 'react';
 
 import { TemplateI } from '../../tables/settings/TemplateTable';
-import { EditorComponent } from '../editors/TemplateEditor/TemplateEditor';
+import {
+  EditorComponent,
+  PreviewAreaComponent,
+  PreviewAreaRef
+} from '../editors/TemplateEditor/TemplateEditor';
 import {
   PluginUIFuncWithoutInvenTreeContextType,
-  TemplateEditorUIFeature
+  TemplateEditorUIFeature,
+  TemplatePreviewUIFeature
 } from './PluginUIFeatureTypes';
 
 export const getPluginTemplateEditor = (
@@ -43,7 +48,8 @@ export const getPluginTemplateEditor = (
     useEffect(() => {
       (async () => {
         try {
-          await func(elRef.current!, {
+          await func({
+            ref: elRef.current!,
             registerHandlers: ({ getCode, setCode }) => {
               setCodeRef.current = setCode;
               getCodeRef.current = getCode;
@@ -76,3 +82,50 @@ export const getPluginTemplateEditor = (
       </Stack>
     );
   }) as EditorComponent;
+
+export const getPluginTemplatePreview = (
+  func: PluginUIFuncWithoutInvenTreeContextType<TemplatePreviewUIFeature>,
+  template: TemplateI
+) =>
+  forwardRef((props, ref) => {
+    const elRef = useRef<HTMLDivElement>();
+    const [error, setError] = useState<string | undefined>(undefined);
+
+    const updatePreviewRef = useRef<PreviewAreaRef['updatePreview']>();
+
+    useImperativeHandle(ref, () => ({
+      updatePreview: (...args) => updatePreviewRef.current?.(...args)
+    }));
+
+    useEffect(() => {
+      (async () => {
+        try {
+          await func({
+            ref: elRef.current!,
+            registerHandlers: ({ updatePreview }) => {
+              updatePreviewRef.current = updatePreview;
+            },
+            template
+          });
+        } catch (error) {
+          setError(t`Error occurred while rendering the template preview.`);
+          console.error(error);
+        }
+      })();
+    }, []);
+
+    return (
+      <Stack gap="xs" style={{ display: 'flex', flex: 1 }}>
+        {error && (
+          <Alert
+            color="red"
+            title={t`Error Loading Plugin`}
+            icon={<IconExclamationCircle />}
+          >
+            <Text>{error}</Text>
+          </Alert>
+        )}
+        <div ref={elRef as any} style={{ display: 'flex', flex: 1 }}></div>
+      </Stack>
+    );
+  }) as PreviewAreaComponent;
