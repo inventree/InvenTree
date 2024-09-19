@@ -72,7 +72,7 @@ export const getPluginTemplateEditor = (
         {error && (
           <Alert
             color="red"
-            title={t`Error Loading Plugin`}
+            title={t`Error Loading Plugin Editor`}
             icon={<IconExclamationCircle />}
           >
             <Text>{error}</Text>
@@ -119,7 +119,7 @@ export const getPluginTemplatePreview = (
         {error && (
           <Alert
             color="red"
-            title={t`Error Loading Plugin`}
+            title={t`Error Loading Plugin Preview`}
             icon={<IconExclamationCircle />}
           >
             <Text>{error}</Text>
