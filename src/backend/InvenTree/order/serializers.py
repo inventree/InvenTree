@@ -206,6 +206,11 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             *extra_fields,
         ]
 
+    def clean_line_item(self, line):
+        """Clean a line item object (when duplicating)."""
+        line.pk = None
+        line.order = self
+
     @transaction.atomic
     def create(self, validated_data):
         """Create a new order object.
@@ -229,9 +234,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
 
             if copy_lines:
                 for line in copy_from.lines.all():
-                    line.pk = None
-                    line.order = instance
-                    line.received = 0
+                    instance.clean_line_item(line)
                     line.save()
 
             if copy_extra_lines:
@@ -978,6 +981,12 @@ class SalesOrderSerializer(
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1770,6 +1779,12 @@ class ReturnOrderSerializer(
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
