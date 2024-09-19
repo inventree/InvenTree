@@ -436,9 +436,7 @@ class PluginPanelList(APIView):
             for _plugin in registry.with_mixin('ui', active=True):
                 try:
                     # Allow plugins to fill this data out
-                    plugin_panels = _plugin.get_ui_panels(
-                        target_model, target_id, request
-                    )
+                    plugin_panels = _plugin.ui_panels(target_model, target_id, request)
 
                     if plugin_panels and type(plugin_panels) is list:
                         for panel in plugin_panels:
@@ -449,7 +447,7 @@ class PluginPanelList(APIView):
                 except Exception:
                     # Custom panels could not load
                     # Log the error and continue
-                    log_error(f'{_plugin.slug}.get_ui_panels')
+                    log_error(f'{_plugin.slug}.ui_panels')
 
         return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
 

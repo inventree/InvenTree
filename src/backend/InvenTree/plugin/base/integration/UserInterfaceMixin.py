@@ -36,7 +36,7 @@ class UserInterfaceMixin:
     - This means that content can be dynamically generated, based on the current state of the system.
 
     The following custom UI methods are available:
-    - get_ui_panels: Return a list of custom panels to be injected into the UI
+    - ui_panels: Return a list of custom panels to be injected into the UI
 
     """
 
@@ -50,7 +50,7 @@ class UserInterfaceMixin:
         super().__init__()
         self.add_mixin('ui', True, __class__)
 
-    def get_ui_panels(
+    def ui_panels(
         self, instance_type: str, instance_id: int, request: Request, **kwargs
     ) -> list[CustomPanel]:
         """Return a list of custom panels to be injected into the UI.
