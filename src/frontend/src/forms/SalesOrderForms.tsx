@@ -6,12 +6,17 @@ import {
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 
-export function useSalesOrderFields(): ApiFormFieldSet {
+export function useSalesOrderFields({
+  duplicateOrderId
+}: {
+  duplicateOrderId?: number;
+}): ApiFormFieldSet {
   return useMemo(() => {
-    return {
+    let fields: ApiFormFieldSet = {
       reference: {},
       description: {},
       customer: {
+        disabled: duplicateOrderId != undefined,
         filters: {
           is_customer: true,
           active: true
@@ -44,7 +49,23 @@ export function useSalesOrderFields(): ApiFormFieldSet {
         icon: <IconUsers />
       }
     };
-  }, []);
+
+    // Order duplication fields
+    if (!!duplicateOrderId) {
+      fields.duplicate = {
+        children: {
+          order_id: {
+            hidden: true,
+            value: duplicateOrderId
+          },
+          copy_lines: {},
+          copy_extra_lines: {}
+        }
+      };
+    }
+
+    return fields;
+  }, [duplicateOrderId]);
 }
 
 export function useSalesOrderLineItemFields({
