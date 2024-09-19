@@ -34,7 +34,7 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -304,7 +304,11 @@ export default function ReturnOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
+
+  const duplicateReturnOrderFields = useReturnOrderFields({
+    duplicateOrderId: order.pk
+  });
 
   const editReturnOrder = useEditApiFormModal({
     url: ApiEndpoints.return_order_list,
@@ -319,7 +323,7 @@ export default function ReturnOrderDetail() {
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
-    fields: returnOrderFields,
+    fields: duplicateReturnOrderFields,
     initialData: {
       ...order,
       reference: undefined

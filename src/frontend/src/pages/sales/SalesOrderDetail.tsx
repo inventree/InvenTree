@@ -231,7 +231,7 @@ export default function SalesOrderDetail() {
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
-  const salesOrderFields = useSalesOrderFields();
+  const salesOrderFields = useSalesOrderFields({});
 
   const editSalesOrder = useEditApiFormModal({
     url: ApiEndpoints.sales_order_list,
@@ -243,10 +243,14 @@ export default function SalesOrderDetail() {
     }
   });
 
+  const duplicateOrderFields = useSalesOrderFields({
+    duplicateOrderId: order.pk
+  });
+
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
-    fields: salesOrderFields,
+    fields: duplicateOrderFields,
     initialData: {
       ...order,
       reference: undefined
