@@ -18,9 +18,9 @@ When rendering certain content in the user interface, the rendering functions ar
 
 ## Custom Panels
 
-Many of the pages in the InvenTree web interface are built using a series of "panels" which are displayed on the page. Custom panels can be added to these pages, by implementing the `get_custom_panels` method:
+Many of the pages in the InvenTree web interface are built using a series of "panels" which are displayed on the page. Custom panels can be added to these pages, by implementing the `ui_panels` method:
 
-::: plugin.base.integration.UserInterfaceMixin.UserInterfaceMixin.get_custom_panels
+::: plugin.base.integration.UserInterfaceMixin.UserInterfaceMixin.ui_panels
     options:
       show_bases: False
       show_root_heading: False
