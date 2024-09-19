@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react';
 import { platform, release } from 'node:os';
 import license from 'rollup-plugin-license';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
-import istanbul from 'vite-plugin-istanbul';
 
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 const is_coverage = process.env.VITE_COVERAGE === 'true';
@@ -35,12 +34,6 @@ export default defineConfig({
           }
         }
       }
-    }),
-    istanbul({
-      include: 'src/*',
-      exclude: ['node_modules', 'test/'],
-      extension: ['.js', '.ts', '.tsx'],
-      requireEnv: true
     }),
     codecovVitePlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
