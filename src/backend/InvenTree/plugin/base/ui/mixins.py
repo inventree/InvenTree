@@ -51,6 +51,10 @@ class UserInterfaceMixin:
 
     - All content is accessed via the API, as requested by the user interface.
     - This means that content can be dynamically generated, based on the current state of the system.
+
+    The following custom UI methods are available:
+    - get_ui_panels: Return a list of custom panels to be injected into the UI
+
     """
 
     class MixinMeta:
@@ -63,8 +67,8 @@ class UserInterfaceMixin:
         super().__init__()
         self.add_mixin('ui', True, __class__)  # type: ignore
 
-    def get_custom_panels(
-        self, instance_type: str, instance_id: int, request: Request
+    def get_ui_panels(
+        self, instance_type: str, instance_id: int, request: Request, **kwargs
     ) -> list[CustomPanel]:
         """Return a list of custom panels to be injected into the UI.
 

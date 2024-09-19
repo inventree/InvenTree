@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 import plugin.base.ui.serializers as UIPluginSerializers
 from common.settings import get_global_setting
+from InvenTree.exceptions import log_error
 from plugin import registry
 
 
@@ -31,17 +32,22 @@ class PluginPanelList(APIView):
         if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
             # Extract all plugins from the registry which provide custom panels
             for _plugin in registry.with_mixin('ui', active=True):
-                # Allow plugins to fill this data out
-                plugin_panels = _plugin.get_custom_panels(
-                    target_model, target_id, request
-                )
+                try:
+                    # Allow plugins to fill this data out
+                    plugin_panels = _plugin.get_ui_panels(
+                        target_model, target_id, request
+                    )
 
-                if plugin_panels and type(plugin_panels) is list:
-                    for panel in plugin_panels:
-                        panel['plugin'] = _plugin.slug
+                    if plugin_panels and type(plugin_panels) is list:
+                        for panel in plugin_panels:
+                            panel['plugin'] = _plugin.slug
 
-                        # TODO: Validate each panel before inserting
-                        panels.append(panel)
+                            # TODO: Validate each panel before inserting
+                            panels.append(panel)
+                except Exception:
+                    # Custom panels could not load
+                    # Log the error and continue
+                    log_error(f'{_plugin.slug}.get_ui_panels')
 
         return Response(
             UIPluginSerializers.PluginPanelSerializer(panels, many=True).data
