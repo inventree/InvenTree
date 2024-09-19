@@ -81,7 +81,11 @@ export default function PurchaseOrderDetail() {
     );
   }, [order, globalSettings]);
 
-  const purchaseOrderFields = usePurchaseOrderFields();
+  const purchaseOrderFields = usePurchaseOrderFields({});
+
+  const duplicatePurchaseOrderFields = usePurchaseOrderFields({
+    duplicateOrderId: order.pk
+  });
 
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,
@@ -96,7 +100,7 @@ export default function PurchaseOrderDetail() {
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
-    fields: purchaseOrderFields,
+    fields: duplicatePurchaseOrderFields,
     initialData: {
       ...order,
       reference: undefined

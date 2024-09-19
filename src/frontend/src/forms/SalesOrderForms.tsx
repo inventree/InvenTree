@@ -6,12 +6,17 @@ import {
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 
-export function useSalesOrderFields(): ApiFormFieldSet {
+export function useSalesOrderFields({
+  duplicateOrderId
+}: {
+  duplicateOrderId?: number;
+}): ApiFormFieldSet {
   return useMemo(() => {
-    return {
+    let fields: ApiFormFieldSet = {
       reference: {},
       description: {},
       customer: {
+        disabled: duplicateOrderId != undefined,
         filters: {
           is_customer: true,
           active: true
@@ -44,7 +49,23 @@ export function useSalesOrderFields(): ApiFormFieldSet {
         icon: <IconUsers />
       }
     };
-  }, []);
+
+    // Order duplication fields
+    if (!!duplicateOrderId) {
+      fields.duplicate = {
+        children: {
+          order_id: {
+            hidden: true,
+            value: duplicateOrderId
+          },
+          copy_lines: {},
+          copy_extra_lines: {}
+        }
+      };
+    }
+
+    return fields;
+  }, [duplicateOrderId]);
 }
 
 export function useSalesOrderLineItemFields({
@@ -122,50 +143,6 @@ export function useSalesOrderShipmentFields(): ApiFormFieldSet {
       invoice_number: {},
       link: {},
       notes: {}
-    };
-  }, []);
-}
-
-export function useReturnOrderFields(): ApiFormFieldSet {
-  return useMemo(() => {
-    return {
-      reference: {},
-      description: {},
-      customer: {
-        filters: {
-          is_customer: true,
-          active: true
-        }
-      },
-      customer_reference: {},
-      project_code: {},
-      order_currency: {},
-      target_date: {},
-      link: {},
-      contact: {
-        icon: <IconUser />,
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          return {
-            ...value.filters,
-            company: value.data.customer
-          };
-        }
-      },
-      address: {
-        icon: <IconAddressBook />,
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          return {
-            ...value.filters,
-            company: value.data.customer
-          };
-        }
-      },
-      responsible: {
-        filters: {
-          is_active: true
-        },
-        icon: <IconUsers />
-      }
     };
   }, []);
 }
