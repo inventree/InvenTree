@@ -44,7 +44,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         },
     }
 
-    def ui_panels(self, instance_type: str, instance_id: int, request, **kwargs):
+    def get_ui_panels(self, instance_type: str, instance_id: int, request, **kwargs):
         """Return a list of custom panels to be injected into the UI."""
         panels = []
 
