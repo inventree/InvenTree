@@ -77,7 +77,7 @@ export function SalesOrderTable({
     ];
   }, [projectCodeFilters.choices, responsibleFilters.choices]);
 
-  const salesOrderFields = useSalesOrderFields();
+  const salesOrderFields = useSalesOrderFields({});
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
