@@ -46,8 +46,8 @@ class UserInterfaceMixin:
         super().__init__()
         self.add_mixin('ui', True, __class__)
 
-    def get_custom_panels(
-        self, instance_type: str, instance_id: int, request: Request
+    def get_ui_panels(
+        self, instance_type: str, instance_id: int, request: Request, **kwargs
     ) -> list[CustomPanel]:
         """Return a list of custom panels to be injected into the UI.
 
