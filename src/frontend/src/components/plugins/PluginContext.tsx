@@ -41,7 +41,7 @@ export type InvenTreeContext = {
 };
 
 export const useInvenTreeContext = () => {
-  const host = useLocalState.getState().host;
+  const host = useLocalState((s) => s.host);
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();

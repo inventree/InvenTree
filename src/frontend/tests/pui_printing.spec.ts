@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { baseUrl, classicUrl } from './defaults.js';
-import { doQuickLogin } from './login.js';
+import { createBasicAuthHeader, doQuickLogin } from './login.js';
 
 /*
  * Test for label printing.
@@ -82,13 +82,14 @@ test('PUI - Report Printing', async ({ page }) => {
 });
 
 test('PUI - Report Editing', async ({ page }) => {
-  await doQuickLogin(page, 'admin', 'inventree');
+  const [username, password] = ['admin', 'inventree'];
+  await doQuickLogin(page, username, password);
 
   // activate the sample plugin for this test
   await page.request.patch(`${classicUrl}/api/plugins/sampleui/activate/`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic YWRtaW46aW52ZW50cmVl`
+      ...createBasicAuthHeader(username, password)
     },
     data: { active: true }
   });
@@ -145,7 +146,7 @@ test('PUI - Report Editing', async ({ page }) => {
   await page.request.patch(`${classicUrl}/api/plugins/sampleui/activate/`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic YWRtaW46aW52ZW50cmVl`
+      ...createBasicAuthHeader(username, password)
     },
     data: { active: false }
   });

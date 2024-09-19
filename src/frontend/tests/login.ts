@@ -42,3 +42,9 @@ export const doLogout = async (page) => {
   await page.goto(`${baseUrl}/logout/`);
   await page.waitForURL('**/platform/login');
 };
+
+export const createBasicAuthHeader = (username: string, password: string) => {
+  return {
+    Authorization: `Basic ${btoa(`${username}:${password}`)}`
+  };
+};
