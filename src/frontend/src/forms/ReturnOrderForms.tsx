@@ -1,15 +1,87 @@
 import { t } from '@lingui/macro';
 import { Flex, Table } from '@mantine/core';
-import { IconUsers } from '@tabler/icons-react';
+import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 import { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+
+export function useReturnOrderFields({
+  duplicateOrderId
+}: {
+  duplicateOrderId?: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    let fields: ApiFormFieldSet = {
+      reference: {},
+      description: {},
+      customer: {
+        disabled: duplicateOrderId != undefined,
+        filters: {
+          is_customer: true,
+          active: true
+        }
+      },
+      customer_reference: {},
+      project_code: {},
+      order_currency: {},
+      target_date: {},
+      link: {},
+      contact: {
+        icon: <IconUser />,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.customer
+          };
+        }
+      },
+      address: {
+        icon: <IconAddressBook />,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.customer
+          };
+        }
+      },
+      responsible: {
+        filters: {
+          is_active: true
+        },
+        icon: <IconUsers />
+      }
+    };
+
+    // Order duplication fields
+    if (!!duplicateOrderId) {
+      fields.duplicate = {
+        children: {
+          order_id: {
+            hidden: true,
+            value: duplicateOrderId
+          },
+          copy_lines: {
+            // Cannot duplicate lines from a return order!
+            value: false,
+            hidden: true
+          },
+          copy_extra_lines: {}
+        }
+      };
+    }
+
+    return fields;
+  }, [duplicateOrderId]);
+}
 
 export function useReturnOrderLineItemFields({
   orderId,
