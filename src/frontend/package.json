@@ -72,6 +72,7 @@
         "@babel/preset-react": "^7.24.7",
         "@babel/preset-typescript": "^7.24.7",
         "@codecov/vite-plugin": "^1.1.0",
+        "@istanbuljs/nyc-config-typescript": "^1.0.2",
         "@lingui/cli": "^4.11.4",
         "@lingui/macro": "^4.11.4",
         "@playwright/test": "^1.47.1",
