@@ -1405,6 +1405,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BARCODE_RESULTS_MAX_AGE': {
+            'name': _('Barcode Results Max Age'),
+            'description': _('Maximum age of barcode scan results to store'),
+            'default': 30,
+            'units': _('days'),
+            'validator': [int, MinValueValidator(1)],
+        },
         'BARCODE_INPUT_DELAY': {
             'name': _('Barcode Input Delay'),
             'description': _('Barcode input processing delay time'),

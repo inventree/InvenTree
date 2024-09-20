@@ -96,11 +96,12 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BARCODE_ENABLE',
-              'BARCODE_STORE_RESULTS',
               'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
               'BARCODE_SHOW_TEXT',
-              'BARCODE_GENERATION_PLUGIN'
+              'BARCODE_GENERATION_PLUGIN',
+              'BARCODE_STORE_RESULTS',
+              'BARCODE_RESULTS_MAX_AGE'
             ]}
           />
         )
