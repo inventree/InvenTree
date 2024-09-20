@@ -6,6 +6,7 @@ from django.db.models import F
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
+from django_filters import rest_framework as rest_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import permissions, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -629,9 +630,20 @@ class BarcodeScanResultMixin:
         return queryset
 
 
+class BarcodeScanResultFilter(rest_filters.FilterSet):
+    """Custom filterset for the BarcodeScanResult API."""
+
+    class Meta:
+        """Meta class for the BarcodeScanResultFilter."""
+
+        model = common.models.BarcodeScan
+        fields = ['user', 'plugin', 'status']
+
+
 class BarcodeScanResultList(BarcodeScanResultMixin, ListAPI):
     """List API endpoint for BarcodeScan objects."""
 
+    filterset_class = BarcodeScanResultFilter
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['status', 'user', 'plugin', 'timestamp', 'endpoint']
