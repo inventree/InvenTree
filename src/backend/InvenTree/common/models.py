@@ -3445,3 +3445,65 @@ class InvenTreeCustomUserStateModel(models.Model):
             })
 
         return super().clean()
+
+
+class BarcodeScan(InvenTree.models.InvenTreeModel):
+    """Model for storing barcode scans results."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Barcode Scan')
+
+    data = models.CharField(
+        max_length=250,
+        verbose_name=_('Data'),
+        help_text=_('Barcode data'),
+        blank=False,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User who scanned the barcode'),
+    )
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Timestamp'),
+        help_text=_('Date and time of the barcode scan'),
+    )
+
+    endpoint = models.CharField(
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('URL endpoint which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    plugin = models.CharField(
+        max_length=250,
+        verbose_name=_('Plugin'),
+        help_text=_('Plugin which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    status = models.IntegerField(
+        verbose_name=_('Status'),
+        help_text=_('Response status code'),
+        blank=True,
+        null=True,
+    )
+
+    response = models.JSONField(
+        verbose_name=_('Response'),
+        help_text=_('Response data from the barcode scan'),
+        blank=True,
+        null=True,
+    )
