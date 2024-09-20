@@ -39,10 +39,6 @@ export enum ApiEndpoints {
   api_search = 'search/',
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
-  barcode = 'barcode/',
-  barcode_link = 'barcode/link/',
-  barcode_unlink = 'barcode/unlink/',
-  generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
   custom_state_list = 'generic/status/custom/',
@@ -53,6 +49,13 @@ export enum ApiEndpoints {
   owner_list = 'user/owner/',
   content_type_list = 'contenttype/',
   icons = 'icons/',
+
+  // Barcode API endpoints
+  barcode = 'barcode/',
+  barcode_history = 'barcode/history/',
+  barcode_link = 'barcode/link/',
+  barcode_unlink = 'barcode/unlink/',
+  barcode_generate = 'barcode/generate/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',
