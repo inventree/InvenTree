@@ -1398,6 +1398,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_STORE_RESULTS': {
+            'name': _('Store Barcode Results'),
+            'description': _('Store barcode scan results in the database'),
+            'default': False,
+            'validator': bool,
+        },
         'BARCODE_INPUT_DELAY': {
             'name': _('Barcode Input Delay'),
             'description': _('Barcode input processing delay time'),
