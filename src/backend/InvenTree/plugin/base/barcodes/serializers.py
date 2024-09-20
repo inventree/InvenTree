@@ -5,10 +5,33 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+import common.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
 from order.status_codes import PurchaseOrderStatus, SalesOrderStatus
+
+
+class BarcodeScanResultSerializer(serializers.ModelSerializer):
+    """Serializer for barcode scan results."""
+
+    class Meta:
+        """Meta class for BarcodeScanResultSerializer."""
+
+        model = common.models.BarcodeScan
+
+        fields = [
+            'id',
+            'data',
+            'timestamp',
+            'endpoint',
+            'plugin',
+            'status',
+            'response',
+            'user',
+        ]
+
+        read_only_fields = fields
 
 
 class BarcodeSerializer(serializers.Serializer):

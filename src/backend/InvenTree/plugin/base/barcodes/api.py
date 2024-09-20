@@ -3,7 +3,7 @@
 import logging
 
 from django.db.models import F
-from django.urls import path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -12,10 +12,14 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
+import common.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
+from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
+from InvenTree.permissions import IsStaffOrReadOnly
 from plugin import registry
 from users.models import RuleSet
 
@@ -608,7 +612,46 @@ class BarcodeSOAllocate(BarcodeView):
         raise ValidationError(response)
 
 
+class BarcodeScanResultMixin:
+    """Mixin class for BarcodeScan API endpoints."""
+
+    queryset = common.models.BarcodeScan.objects.all()
+    serializer_class = barcode_serializers.BarcodeScanResultSerializer
+
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
+class BarcodeScanResultList(BarcodeScanResultMixin, ListAPI):
+    """List API endpoint for BarcodeScan objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['status', 'user', 'plugin', 'timestamp', 'endpoint']
+
+    ordering = '-timestamp'
+
+    search_fields = ['plugin']
+
+
+class BarcodeScanResultDetail(BarcodeScanResultMixin, RetrieveDestroyAPI):
+    """Detail endpoint for a BarcodeScan object."""
+
+
 barcode_api_urls = [
+    # Barcode scan history
+    path(
+        'history/',
+        include([
+            path(
+                '<int:pk>/',
+                BarcodeScanResultDetail.as_view(),
+                name='api-barcode-scan-result-detail',
+            ),
+            path(
+                '', BarcodeScanResultList.as_view(), name='api-barcode-scan-result-list'
+            ),
+        ]),
+    ),
     # Generate a barcode for a database object
     path('generate/', BarcodeGenerate.as_view(), name='api-barcode-generate'),
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
