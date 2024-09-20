@@ -132,7 +132,7 @@ class BarcodeScan(BarcodeView):
 
             # Log the scan result
             common.models.BarcodeScanResult.log_scan_result(
-                data=barcode, request=request, status=400, response=result
+                barcode, request, 400, response=result
             )
 
             raise ValidationError(result)
@@ -141,7 +141,7 @@ class BarcodeScan(BarcodeView):
 
         # Log the scan result
         common.models.BarcodeScanResult.log_scan_result(
-            data=barcode, request=request, status=200, response=result
+            barcode, request, 200, response=result
         )
 
         return Response(result)
@@ -432,6 +432,8 @@ class BarcodePOReceive(BarcodeView):
 
         plugins = registry.with_mixin('barcode')
 
+        context = {'purchase_order': purchase_order, 'location': location}
+
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
 
@@ -446,7 +448,7 @@ class BarcodePOReceive(BarcodeView):
                 response['error'] = _('Item has already been received')
 
                 common.models.BarcodeScanResult.log_scan_result(
-                    data=barcode, request=request, status=400, response=response
+                    barcode, request, 400, context=context, response=response
                 )
 
                 raise ValidationError(response)
@@ -489,12 +491,12 @@ class BarcodePOReceive(BarcodeView):
 
         if 'error' in response:
             common.models.BarcodeScanResult.log_scan_result(
-                data=barcode, request=request, status=400, response=response
+                barcode, request, 400, context=context, response=response
             )
             raise ValidationError(response)
 
         common.models.BarcodeScanResult.log_scan_result(
-            data=barcode, request=request, status=200, response=response
+            barcode, request, 200, context=context, response=response
         )
 
         return Response(response)
