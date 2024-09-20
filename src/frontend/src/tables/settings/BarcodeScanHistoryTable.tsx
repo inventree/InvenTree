@@ -1,15 +1,18 @@
 import { t } from '@lingui/macro';
 import { Badge, Group, Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { UserRoles } from '../../enums/Roles';
 import { useUserFilters } from '../../hooks/UseFilter';
+import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction } from '../RowActions';
 
 /*
  * Display the barcode scan history table
@@ -71,14 +74,45 @@ export default function BarcodeScanHistoryTable() {
     ];
   }, [userFilters]);
 
+  const canDelete: boolean = useMemo(() => {
+    return user.isStaff() && user.hasDeleteRole(UserRoles.admin);
+  }, [user]);
+
+  const [selectedResult, setSelectedResult] = useState<number>(0);
+
+  const deleteResult = useDeleteApiFormModal({
+    url: ApiEndpoints.barcode_history,
+    pk: selectedResult,
+    title: t`Delete Barcode Scan Record`,
+    table: table
+  });
+
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        RowDeleteAction({
+          hidden: !canDelete,
+          onClick: () => {
+            setSelectedResult(record.pk);
+            deleteResult.open();
+          }
+        })
+      ];
+    },
+    [canDelete, user]
+  );
+
   return (
     <>
+      {deleteResult.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.barcode_history)}
         tableState={table}
         columns={tableColumns}
         props={{
-          tableFilters: filters
+          tableFilters: filters,
+          enableBulkDelete: canDelete,
+          rowActions: rowActions
         }}
       />
     </>

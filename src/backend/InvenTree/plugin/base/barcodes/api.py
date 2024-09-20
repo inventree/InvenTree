@@ -17,6 +17,7 @@ import common.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
+from InvenTree.api import BulkDeleteMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
@@ -651,7 +652,7 @@ class BarcodeScanResultFilter(rest_filters.FilterSet):
         fields = ['user', 'status']
 
 
-class BarcodeScanResultList(BarcodeScanResultMixin, ListAPI):
+class BarcodeScanResultList(BarcodeScanResultMixin, BulkDeleteMixin, ListAPI):
     """List API endpoint for BarcodeScan objects."""
 
     filterset_class = BarcodeScanResultFilter

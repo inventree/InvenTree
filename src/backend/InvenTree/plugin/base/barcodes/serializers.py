@@ -22,7 +22,7 @@ class BarcodeScanResultSerializer(serializers.ModelSerializer):
         model = common.models.BarcodeScanResult
 
         fields = [
-            'id',
+            'pk',
             'data',
             'timestamp',
             'endpoint',
