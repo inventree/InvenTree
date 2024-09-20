@@ -1,14 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Badge,
-  Divider,
-  Drawer,
-  Group,
-  Stack,
-  Table,
-  Text
-} from '@mantine/core';
+import { Alert, Badge, Drawer, Group, Stack, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -52,10 +43,6 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
             <Table.Tr>
               <Table.Th>{t`Endpoint`}</Table.Th>
               <Table.Td>{scan.endpoint}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t`Status`}</Table.Th>
-              <Table.Td>{scan.status}</Table.Td>
             </Table.Tr>
             {scan.response && (
               <Table.Tr>
@@ -171,10 +158,6 @@ export default function BarcodeScanHistoryTable() {
       },
       {
         accessor: 'endpoint',
-        sortable: true
-      },
-      {
-        accessor: 'status',
         sortable: true
       }
     ];

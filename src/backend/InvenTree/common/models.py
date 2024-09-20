@@ -3470,62 +3470,6 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
 
         verbose_name = _('Barcode Scan')
 
-    @staticmethod
-    def log_scan_result(data, request, status, response=None, context=None):
-        """Log a barcode scan to the database."""
-        # Exit if BARCODE_STORE_RESULTS is False
-        if not InvenTreeSetting.get_setting(
-            'BARCODE_STORE_RESULTS', backup=False, create=False
-        ):
-            return
-
-        # Extract information from the request
-        user = request.user if request.user and request.user.is_authenticated else None
-        endpoint = request.path
-
-        # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
-        if type(response) is dict:
-            response = {key: str(value) for key, value in response.items()}
-        elif response is None:
-            pass
-        else:
-            response = str(response)
-
-        # Ensure that the context data is stringified first, otherwise cannot be JSON encoded
-        if type(context) is dict:
-            context = {key: str(value) for key, value in context.items()}
-        elif context is None:
-            pass
-        else:
-            context = str(context)
-
-        # Ensure data is not too long
-        if len(data) > BarcodeScanResult.BARCODE_SCAN_MAX_LEN:
-            data = data[: BarcodeScanResult.BARCODE_SCAN_MAX_LEN]
-
-        try:
-            BarcodeScanResult.objects.create(
-                data=data,
-                user=user,
-                endpoint=endpoint,
-                status=status,
-                response=response,
-                context=context,
-            )
-
-            # Ensure that we do not store too many scans
-            max_scans = int(
-                InvenTreeSetting.get_setting('BARCODE_RESULTS_MAX_NUM', create=False)
-            )
-            num_scans = BarcodeScanResult.objects.count()
-
-            if num_scans > max_scans:
-                n = num_scans - max_scans
-                BarcodeScanResult.objects.all().order_by('timestamp')[:n].delete()
-        except Exception:
-            # Gracefully log error to database
-            InvenTree.exceptions.log_error('barcode.log_scan_result')
-
     data = models.CharField(
         max_length=BARCODE_SCAN_MAX_LEN,
         verbose_name=_('Data'),
@@ -3553,13 +3497,6 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
         max_length=250,
         verbose_name=_('Path'),
         help_text=_('URL endpoint which processed the barcode'),
-        blank=True,
-        null=True,
-    )
-
-    status = models.IntegerField(
-        verbose_name=_('Status'),
-        help_text=_('Response status code'),
         blank=True,
         null=True,
     )

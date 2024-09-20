@@ -39,9 +39,9 @@ class AttachmentAdmin(admin.ModelAdmin):
 class BarcodeScanResultAdmin(admin.ModelAdmin):
     """Admin interface for BarcodeScanResult objects."""
 
-    list_display = ('data', 'timestamp', 'user', 'endpoint', 'status')
+    list_display = ('data', 'timestamp', 'user', 'endpoint')
 
-    list_filter = ('user', 'endpoint', 'status')
+    list_filter = ('user', 'endpoint')
 
 
 @admin.register(common.models.ProjectCode)
