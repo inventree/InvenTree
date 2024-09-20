@@ -43,6 +43,7 @@ from taggit.managers import TaggableManager
 import build.validators
 import common.currency
 import common.validators
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -3456,6 +3457,8 @@ class InvenTreeCustomUserStateModel(models.Model):
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""
 
+    BARCODE_SCAN_MAX_LEN = 250
+
     class Meta:
         """Model meta options."""
 
@@ -3474,12 +3477,30 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
         user = request.user if request.user and request.user.is_authenticated else None
         endpoint = request.path
 
-        BarcodeScanResult.objects.create(
-            data=data, user=user, endpoint=endpoint, status=status, response=response
-        )
+        # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
+        if type(response) is dict:
+            for key, value in response.items():
+                if value is not None:
+                    response[key] = str(value)
+
+        # Ensure data is not too long
+        if len(data) > BarcodeScanResult.BARCODE_SCAN_MAX_LEN:
+            data = data[: BarcodeScanResult.BARCODE_SCAN_MAX_LEN]
+
+        try:
+            BarcodeScanResult.objects.create(
+                data=data,
+                user=user,
+                endpoint=endpoint,
+                status=status,
+                response=response,
+            )
+        except Exception:
+            # Gracefully log error to database
+            InvenTree.exceptions.log_error('barcode.log_scan_result')
 
     data = models.CharField(
-        max_length=250,
+        max_length=BARCODE_SCAN_MAX_LEN,
         verbose_name=_('Data'),
         help_text=_('Barcode data'),
         blank=False,
@@ -3517,6 +3538,7 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     )
 
     response = models.JSONField(
+        max_length=1000,
         verbose_name=_('Response'),
         help_text=_('Response data from the barcode scan'),
         blank=True,
