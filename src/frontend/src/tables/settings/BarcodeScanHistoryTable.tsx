@@ -28,7 +28,7 @@ export default function BarcodeScanHistoryTable() {
         switchable: false,
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify="space-between" wrap="nowrap">
               <Text>{record.timestamp}</Text>
               {record.user_detail && (
                 <Badge size="xs">{record.user_detail.username}</Badge>
@@ -40,7 +40,14 @@ export default function BarcodeScanHistoryTable() {
       {
         accessor: 'data',
         sortable: true,
-        switchable: false
+        switchable: true,
+        render: (record: any) => {
+          return (
+            <Text size="xs" style={{ textWrap: 'wrap', lineBreak: 'auto' }}>
+              {record.data}
+            </Text>
+          );
+        }
       },
       {
         accessor: 'endpoint',

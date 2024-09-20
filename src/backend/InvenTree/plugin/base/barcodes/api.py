@@ -129,9 +129,19 @@ class BarcodeScan(BarcodeView):
         if result['plugin'] is None:
             result['error'] = _('No match found for barcode data')
 
+            # Log the scan result
+            common.models.BarcodeScanResult.log_scan_result(
+                data=barcode, request=request, status=400, response=result
+            )
+
             raise ValidationError(result)
 
         result['success'] = _('Match found for barcode data')
+
+        # Log the scan result
+        common.models.BarcodeScanResult.log_scan_result(
+            data=barcode, request=request, status=200, response=result
+        )
 
         return Response(result)
 
