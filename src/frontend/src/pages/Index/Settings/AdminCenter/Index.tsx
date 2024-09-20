@@ -18,6 +18,7 @@ import {
   IconListDetails,
   IconPackages,
   IconPlugConnected,
+  IconQrcode,
   IconReport,
   IconScale,
   IconSitemap,
@@ -67,6 +68,10 @@ const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
+const BarcodeScanHistoryTable = Loadable(
+  lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
+);
+
 const ImportSesssionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
@@ -107,6 +112,12 @@ export default function AdminCenter() {
         label: t`Data Import`,
         icon: <IconFileUpload />,
         content: <ImportSesssionTable />
+      },
+      {
+        name: 'barcode-history',
+        label: t`Barcode Scan History`,
+        icon: <IconQrcode />,
+        content: <BarcodeScanHistoryTable />
       },
       {
         name: 'background',

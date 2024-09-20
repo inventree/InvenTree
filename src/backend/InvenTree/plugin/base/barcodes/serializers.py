@@ -9,6 +9,7 @@ import common.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
+from InvenTree.serializers import UserSerializer
 from order.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
 
@@ -29,9 +30,12 @@ class BarcodeScanResultSerializer(serializers.ModelSerializer):
             'status',
             'response',
             'user',
+            'user_detail',
         ]
 
         read_only_fields = fields
+
+    user_detail = UserSerializer(source='user', read_only=True)
 
 
 class BarcodeSerializer(serializers.Serializer):

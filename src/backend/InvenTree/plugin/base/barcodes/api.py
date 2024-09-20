@@ -617,8 +617,16 @@ class BarcodeScanResultMixin:
 
     queryset = common.models.BarcodeScan.objects.all()
     serializer_class = barcode_serializers.BarcodeScanResultSerializer
-
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+    def get_queryset(self):
+        """Return the queryset for the BarcodeScan API."""
+        queryset = super().get_queryset()
+
+        # Pre-fetch user data
+        queryset = queryset.prefetch_related('user')
+
+        return queryset
 
 
 class BarcodeScanResultList(BarcodeScanResultMixin, ListAPI):
