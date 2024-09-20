@@ -3472,7 +3472,7 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
         verbose_name = _('Barcode Scan')
 
     @staticmethod
-    def log_scan_result(data, request, status, response):
+    def log_scan_result(data, request, status, response=None, context=None):
         """Log a barcode scan to the database."""
         # Exit if BARCODE_STORE_RESULTS is False
         if not InvenTreeSetting.get_setting(
@@ -3486,9 +3486,19 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
 
         # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
         if type(response) is dict:
-            for key, value in response.items():
-                if value is not None:
-                    response[key] = str(value)
+            response = {key: str(value) for key, value in response.items()}
+        elif response is None:
+            pass
+        else:
+            response = str(response)
+
+        # Ensure that the context data is stringified first, otherwise cannot be JSON encoded
+        if type(context) is dict:
+            context = {key: str(value) for key, value in context.items()}
+        elif context is None:
+            pass
+        else:
+            context = str(context)
 
         # Ensure data is not too long
         if len(data) > BarcodeScanResult.BARCODE_SCAN_MAX_LEN:
@@ -3501,6 +3511,7 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
                 endpoint=endpoint,
                 status=status,
                 response=response,
+                context=context,
             )
         except Exception:
             # Gracefully log error to database
@@ -3540,6 +3551,14 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     status = models.IntegerField(
         verbose_name=_('Status'),
         help_text=_('Response status code'),
+        blank=True,
+        null=True,
+    )
+
+    context = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Context'),
+        help_text=_('Context data for the barcode scan'),
         blank=True,
         null=True,
     )
