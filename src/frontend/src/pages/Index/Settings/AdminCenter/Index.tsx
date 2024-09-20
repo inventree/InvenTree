@@ -115,7 +115,7 @@ export default function AdminCenter() {
       },
       {
         name: 'barcode-history',
-        label: t`Barcode Scan History`,
+        label: t`Barcode Scans`,
         icon: <IconQrcode />,
         content: <BarcodeScanHistoryTable />
       },
