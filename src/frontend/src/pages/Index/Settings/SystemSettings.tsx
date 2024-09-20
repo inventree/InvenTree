@@ -101,7 +101,7 @@ export default function SystemSettings() {
               'BARCODE_SHOW_TEXT',
               'BARCODE_GENERATION_PLUGIN',
               'BARCODE_STORE_RESULTS',
-              'BARCODE_RESULTS_MAX_AGE'
+              'BARCODE_RESULTS_MAX_NUM'
             ]}
           />
         )

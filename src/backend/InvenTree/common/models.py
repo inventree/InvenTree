@@ -1405,11 +1405,10 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        'BARCODE_RESULTS_MAX_AGE': {
-            'name': _('Barcode Results Max Age'),
-            'description': _('Maximum age of barcode scan results to store'),
-            'default': 30,
-            'units': _('days'),
+        'BARCODE_RESULTS_MAX_NUM': {
+            'name': _('Barcode Scans Maximum Count'),
+            'description': _('Maximum number of barcode scan results to store'),
+            'default': 100,
             'validator': [int, MinValueValidator(1)],
         },
         'BARCODE_INPUT_DELAY': {
@@ -3513,6 +3512,16 @@ class BarcodeScanResult(InvenTree.models.InvenTreeModel):
                 response=response,
                 context=context,
             )
+
+            # Ensure that we do not store too many scans
+            max_scans = int(
+                InvenTreeSetting.get_setting('BARCODE_RESULTS_MAX_NUM', create=False)
+            )
+            num_scans = BarcodeScanResult.objects.count()
+
+            if num_scans > max_scans:
+                n = num_scans - max_scans
+                BarcodeScanResult.objects.all().order_by('timestamp')[:n].delete()
         except Exception:
             # Gracefully log error to database
             InvenTree.exceptions.log_error('barcode.log_scan_result')

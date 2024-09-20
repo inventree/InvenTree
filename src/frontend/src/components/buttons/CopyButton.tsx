@@ -17,7 +17,7 @@ export function CopyButton({
   size
 }: Readonly<{
   value: any;
-  label?: JSX.Element;
+  label?: string;
   content?: JSX.Element;
   size?: MantineSize;
 }>) {
@@ -39,7 +39,11 @@ export function CopyButton({
               <InvenTreeIcon icon="copy" />
             )}
             {content}
-            {label && <Text ml={10}>{label}</Text>}
+            {label && (
+              <Text p={size ?? 'sm'} size={size ?? 'sm'}>
+                {label}
+              </Text>
+            )}
           </ButtonComponent>
         </Tooltip>
       )}

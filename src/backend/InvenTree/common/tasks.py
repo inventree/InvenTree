@@ -13,27 +13,11 @@ import feedparser
 import requests
 
 import InvenTree.helpers
-from common.settings import get_global_setting
 from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
 logger = logging.getLogger('inventree')
-
-
-@scheduled_task(ScheduledTask.DAILY)
-def delete_old_barcode_results():
-    """Remove old barcode scan results from the database."""
-    try:
-        from common.models import BarcodeScanResult
-    except Exception:  # pragma: no cover
-        return
-
-    n_days = int(get_global_setting('BARCODE_RESULTS_MAX_AGE', 30))
-    before = timezone.now() - timedelta(days=n_days)
-
-    # Remove any barcode scan results older than the specified date
-    BarcodeScanResult.objects.filter(timestamp__lte=before).delete()
 
 
 @scheduled_task(ScheduledTask.DAILY)
