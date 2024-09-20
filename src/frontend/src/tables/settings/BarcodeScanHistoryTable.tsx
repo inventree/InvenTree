@@ -167,7 +167,7 @@ export default function BarcodeScanHistoryTable() {
       },
       {
         accessor: 'data',
-        sortable: true,
+        sortable: false,
         switchable: true,
         render: (record: any) => {
           return (
