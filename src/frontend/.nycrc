@@ -1,4 +1,9 @@
 {
-    "extends": "@istanbuljs/nyc-config-typescript",
-    "all": true
+    "extends": "./nyc-config.js",
+    "reporter": ["cobertura", "lcov"],
+    "all": true,
+    "include": [
+      "**/*.tsx",
+      "**/*.ts"
+    ]
 }
