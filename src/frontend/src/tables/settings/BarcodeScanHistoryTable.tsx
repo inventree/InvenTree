@@ -57,11 +57,13 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
               <Table.Th>{t`Status`}</Table.Th>
               <Table.Td>{scan.status}</Table.Td>
             </Table.Tr>
-            <Table.Tr>
-              <Table.Td colSpan={2}>
-                <StylishText size="sm">{t`Response`}</StylishText>
-              </Table.Td>
-            </Table.Tr>
+            {scan.response && (
+              <Table.Tr>
+                <Table.Td colSpan={2}>
+                  <StylishText size="sm">{t`Response`}</StylishText>
+                </Table.Td>
+              </Table.Tr>
+            )}
             {scan.response &&
               Object.keys(scan.response).map((key) => (
                 <Table.Tr key={key}>
@@ -80,6 +82,34 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
                   </Table.Td>
                   <Table.Td>
                     <CopyButton value={scan.response[key]} size="xs" />
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            {scan.context && (
+              <Table.Tr>
+                <Table.Td colSpan={2}>
+                  <StylishText size="sm">{t`Context`}</StylishText>
+                </Table.Td>
+              </Table.Tr>
+            )}
+            {scan.context &&
+              Object.keys(scan.context).map((key) => (
+                <Table.Tr key={key}>
+                  <Table.Th>{key}</Table.Th>
+                  <Table.Td>
+                    <Text
+                      size="sm"
+                      style={{
+                        textWrap: 'wrap',
+                        lineBreak: 'auto',
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {scan.context[key]}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <CopyButton value={scan.context[key]} size="xs" />
                   </Table.Td>
                 </Table.Tr>
               ))}
