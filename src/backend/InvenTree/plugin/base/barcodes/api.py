@@ -48,9 +48,9 @@ class BarcodeView(CreateAPIView):
         from common.models import BarcodeScanResult
 
         # Extract context data from the request
-        context = {**request.GET.dict(), **request.POST.dict()}
+        context = {**request.GET.dict(), **request.POST.dict(), **request.data}
 
-        barcode = context.pop('barcode', None)
+        barcode = context.pop('barcode', '')
 
         # Exit if storing barcode scans is disabled
         if not get_global_setting('BARCODE_STORE_RESULTS', backup=False, create=False):
@@ -81,7 +81,6 @@ class BarcodeView(CreateAPIView):
                 data=barcode,
                 user=request.user,
                 endpoint=request.path,
-                status=status,
                 response=response,
                 context=context,
             )
