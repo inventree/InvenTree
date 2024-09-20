@@ -132,6 +132,7 @@ class BarcodeScan(BarcodeView):
             raise ValidationError(result)
 
         result['success'] = _('Match found for barcode data')
+
         return Response(result)
 
 
@@ -616,7 +617,7 @@ class BarcodeSOAllocate(BarcodeView):
 class BarcodeScanResultMixin:
     """Mixin class for BarcodeScan API endpoints."""
 
-    queryset = common.models.BarcodeScan.objects.all()
+    queryset = common.models.BarcodeScanResult.objects.all()
     serializer_class = barcode_serializers.BarcodeScanResultSerializer
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
@@ -636,8 +637,8 @@ class BarcodeScanResultFilter(rest_filters.FilterSet):
     class Meta:
         """Meta class for the BarcodeScanResultFilter."""
 
-        model = common.models.BarcodeScan
-        fields = ['user', 'plugin', 'status']
+        model = common.models.BarcodeScanResult
+        fields = ['user', 'status']
 
 
 class BarcodeScanResultList(BarcodeScanResultMixin, ListAPI):

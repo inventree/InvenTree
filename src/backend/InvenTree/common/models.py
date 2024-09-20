@@ -3453,13 +3453,30 @@ class InvenTreeCustomUserStateModel(models.Model):
         return super().clean()
 
 
-class BarcodeScan(InvenTree.models.InvenTreeModel):
+class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""
 
     class Meta:
         """Model meta options."""
 
         verbose_name = _('Barcode Scan')
+
+    @staticmethod
+    def log_scan_result(data, request, status, response):
+        """Log a barcode scan to the database."""
+        # Exit if BARCODE_STORE_RESULTS is False
+        if not InvenTreeSetting.get_setting(
+            'BARCODE_STORE_RESULTS', backup=False, create=False
+        ):
+            return
+
+        # Extract information from the request
+        user = request.user if request.user and request.user.is_authenticated else None
+        endpoint = request.path
+
+        BarcodeScanResult.objects.create(
+            data=data, user=user, endpoint=endpoint, status=status, response=response
+        )
 
     data = models.CharField(
         max_length=250,
@@ -3488,14 +3505,6 @@ class BarcodeScan(InvenTree.models.InvenTreeModel):
         max_length=250,
         verbose_name=_('Path'),
         help_text=_('URL endpoint which processed the barcode'),
-        blank=True,
-        null=True,
-    )
-
-    plugin = models.CharField(
-        max_length=250,
-        verbose_name=_('Plugin'),
-        help_text=_('Plugin which processed the barcode'),
         blank=True,
         null=True,
     )

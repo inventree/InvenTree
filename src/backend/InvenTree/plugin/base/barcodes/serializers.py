@@ -19,14 +19,13 @@ class BarcodeScanResultSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta class for BarcodeScanResultSerializer."""
 
-        model = common.models.BarcodeScan
+        model = common.models.BarcodeScanResult
 
         fields = [
             'id',
             'data',
             'timestamp',
             'endpoint',
-            'plugin',
             'status',
             'response',
             'user',

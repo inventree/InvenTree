@@ -47,10 +47,6 @@ export default function BarcodeScanHistoryTable() {
         sortable: true
       },
       {
-        accessor: 'plugin',
-        sortable: true
-      },
-      {
         accessor: 'status',
         sortable: true
       }
