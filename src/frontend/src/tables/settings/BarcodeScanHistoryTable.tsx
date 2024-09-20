@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Alert,
   Badge,
   Divider,
   Drawer,
@@ -9,6 +10,7 @@ import {
   Text
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { CopyButton } from '../../components/buttons/CopyButton';
@@ -21,6 +23,7 @@ import { useUserFilters } from '../../hooks/UseFilter';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -93,6 +96,8 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
 export default function BarcodeScanHistoryTable() {
   const user = useUserState();
   const table = useTable('barcode-history');
+
+  const globalSettings = useGlobalSettingsState();
 
   const userFilters = useUserFilters();
 
@@ -196,20 +201,31 @@ export default function BarcodeScanHistoryTable() {
       >
         <BarcodeScanDetail scan={selectedResult} />
       </Drawer>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.barcode_history)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          tableFilters: filters,
-          enableBulkDelete: canDelete,
-          rowActions: rowActions,
-          onRowClick: (row) => {
-            setSelectedResult(row);
-            open();
-          }
-        }}
-      />
+      <Stack gap="xs">
+        {!globalSettings.isSet('BARCODE_STORE_RESULTS') && (
+          <Alert
+            color="red"
+            icon={<IconExclamationCircle />}
+            title={t`Logging Disabled`}
+          >
+            <Text>{t`Barcode logging is not enabled`}</Text>
+          </Alert>
+        )}
+        <InvenTreeTable
+          url={apiUrl(ApiEndpoints.barcode_history)}
+          tableState={table}
+          columns={tableColumns}
+          props={{
+            tableFilters: filters,
+            enableBulkDelete: canDelete,
+            rowActions: rowActions,
+            onRowClick: (row) => {
+              setSelectedResult(row);
+              open();
+            }
+          }}
+        />
+      </Stack>
     </>
   );
 }
