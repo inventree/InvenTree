@@ -1,9 +1,22 @@
 import { t } from '@lingui/macro';
-import { Badge, Group, Text } from '@mantine/core';
+import {
+  Badge,
+  Divider,
+  Drawer,
+  Group,
+  Stack,
+  Table,
+  Text
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 
+import { CopyButton } from '../../components/buttons/CopyButton';
+import { StylishText } from '../../components/items/StylishText';
+import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import { shortenString } from '../../functions/tables';
 import { useUserFilters } from '../../hooks/UseFilter';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -15,6 +28,66 @@ import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction } from '../RowActions';
 
 /*
+ * Render detail information for a particular barcode scan result.
+ */
+function BarcodeScanDetail({ scan }: { scan: any }) {
+  return (
+    <>
+      <Stack gap="xs">
+        <Table>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Th>{t`Timestamp`}</Table.Th>
+              <Table.Td>{scan.timestamp}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Th>{t`User`}</Table.Th>
+              <Table.Td>
+                <RenderUser instance={scan.user_detail} />
+              </Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Th>{t`Endpoint`}</Table.Th>
+              <Table.Td>{scan.endpoint}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Th>{t`Status`}</Table.Th>
+              <Table.Td>{scan.status}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td colSpan={2}>
+                <StylishText size="sm">{t`Response`}</StylishText>
+              </Table.Td>
+            </Table.Tr>
+            {scan.response &&
+              Object.keys(scan.response).map((key) => (
+                <Table.Tr key={key}>
+                  <Table.Th>{key}</Table.Th>
+                  <Table.Td>
+                    <Text
+                      size="sm"
+                      style={{
+                        textWrap: 'wrap',
+                        lineBreak: 'auto',
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {scan.response[key]}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <CopyButton value={scan.response[key]} size="xs" />
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+          </Table.Tbody>
+        </Table>
+      </Stack>
+    </>
+  );
+}
+
+/*
  * Display the barcode scan history table
  */
 export default function BarcodeScanHistoryTable() {
@@ -22,6 +95,8 @@ export default function BarcodeScanHistoryTable() {
   const table = useTable('barcode-history');
 
   const userFilters = useUserFilters();
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -46,8 +121,15 @@ export default function BarcodeScanHistoryTable() {
         switchable: true,
         render: (record: any) => {
           return (
-            <Text size="xs" style={{ textWrap: 'wrap', lineBreak: 'auto' }}>
-              {record.data}
+            <Text
+              size="xs"
+              style={{
+                textWrap: 'wrap',
+                lineBreak: 'auto',
+                wordBreak: 'break-word'
+              }}
+            >
+              {shortenString({ str: record.data, len: 100 })}
             </Text>
           );
         }
@@ -78,11 +160,11 @@ export default function BarcodeScanHistoryTable() {
     return user.isStaff() && user.hasDeleteRole(UserRoles.admin);
   }, [user]);
 
-  const [selectedResult, setSelectedResult] = useState<number>(0);
+  const [selectedResult, setSelectedResult] = useState<any>({});
 
   const deleteResult = useDeleteApiFormModal({
     url: ApiEndpoints.barcode_history,
-    pk: selectedResult,
+    pk: selectedResult.pk,
     title: t`Delete Barcode Scan Record`,
     table: table
   });
@@ -93,7 +175,7 @@ export default function BarcodeScanHistoryTable() {
         RowDeleteAction({
           hidden: !canDelete,
           onClick: () => {
-            setSelectedResult(record.pk);
+            setSelectedResult(record);
             deleteResult.open();
           }
         })
@@ -105,6 +187,15 @@ export default function BarcodeScanHistoryTable() {
   return (
     <>
       {deleteResult.modal}
+      <Drawer
+        opened={opened}
+        size="xl"
+        position="right"
+        title={<StylishText>{t`Barcode Scan Details`}</StylishText>}
+        onClose={close}
+      >
+        <BarcodeScanDetail scan={selectedResult} />
+      </Drawer>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.barcode_history)}
         tableState={table}
@@ -112,7 +203,11 @@ export default function BarcodeScanHistoryTable() {
         props={{
           tableFilters: filters,
           enableBulkDelete: canDelete,
-          rowActions: rowActions
+          rowActions: rowActions,
+          onRowClick: (row) => {
+            setSelectedResult(row);
+            open();
+          }
         }}
       />
     </>
