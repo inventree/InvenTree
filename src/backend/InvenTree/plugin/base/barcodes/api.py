@@ -444,6 +444,11 @@ class BarcodePOReceive(BarcodeView):
         if result := internal_barcode_plugin.scan(barcode):
             if 'stockitem' in result:
                 response['error'] = _('Item has already been received')
+
+                common.models.BarcodeScanResult.log_scan_result(
+                    data=barcode, request=request, status=400, response=response
+                )
+
                 raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
@@ -481,11 +486,18 @@ class BarcodePOReceive(BarcodeView):
         # A plugin has not been found!
         if plugin is None:
             response['error'] = _('No match for supplier barcode')
+
+        if 'error' in response:
+            common.models.BarcodeScanResult.log_scan_result(
+                data=barcode, request=request, status=400, response=response
+            )
             raise ValidationError(response)
-        elif 'error' in response:
-            raise ValidationError(response)
-        else:
-            return Response(response)
+
+        common.models.BarcodeScanResult.log_scan_result(
+            data=barcode, request=request, status=200, response=response
+        )
+
+        return Response(response)
 
 
 class BarcodeSOAllocate(BarcodeView):
