@@ -350,7 +350,7 @@ class BarcodePOAllocate(BarcodeView):
         supplier_parts = company.models.SupplierPart.objects.filter(supplier=supplier)
 
         if not part and not supplier_part and not manufacturer_part:
-            raise ValidationError({'error': _('No matching part data found')})
+            raise ValidationError(_('No matching part data found'))
 
         if part and (part_id := part.get('pk', None)):
             supplier_parts = supplier_parts.filter(part__pk=part_id)
@@ -366,12 +366,10 @@ class BarcodePOAllocate(BarcodeView):
                 )
 
         if supplier_parts.count() == 0:
-            raise ValidationError({'error': _('No matching supplier parts found')})
+            raise ValidationError(_('No matching supplier parts found'))
 
         if supplier_parts.count() > 1:
-            raise ValidationError({
-                'error': _('Multiple matching supplier parts found')
-            })
+            raise ValidationError(_('Multiple matching supplier parts found'))
 
         # At this stage, we have a single matching supplier part
         return supplier_parts.first()
@@ -384,20 +382,33 @@ class BarcodePOAllocate(BarcodeView):
         result = self.scan_barcode(barcode, request, **kwargs)
 
         if result['plugin'] is None:
-            result['error'] = _('No match found for barcode data')
-            raise ValidationError(result)
+            result['error'] = _('No matching plugin found for barcode data')
 
-        supplier_part = self.get_supplier_part(
-            purchase_order,
-            part=result.get('part', None),
-            supplier_part=result.get('supplierpart', None),
-            manufacturer_part=result.get('manufacturerpart', None),
-        )
-
-        result['success'] = _('Matched supplier part')
-        result['supplierpart'] = supplier_part.format_matched_response()
+        else:
+            try:
+                supplier_part = self.get_supplier_part(
+                    purchase_order,
+                    part=result.get('part', None),
+                    supplier_part=result.get('supplierpart', None),
+                    manufacturer_part=result.get('manufacturerpart', None),
+                )
+                result['success'] = _('Matched supplier part')
+                result['supplierpart'] = supplier_part.format_matched_response()
+            except ValidationError as e:
+                result['error'] = str(e)
 
         # TODO: Determine the 'quantity to order' for the supplier part
+
+        common.models.BarcodeScanResult.log_scan_result(
+            barcode,
+            request,
+            400 if 'error' in result else 200,
+            response=result,
+            context={**kwargs},
+        )
+
+        if 'error' in result:
+            raise ValidationError
 
         return Response(result)
 
@@ -432,7 +443,7 @@ class BarcodePOReceive(BarcodeView):
 
         plugins = registry.with_mixin('barcode')
 
-        context = {'purchase_order': purchase_order, 'location': location}
+        context = {**kwargs}
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
@@ -489,15 +500,16 @@ class BarcodePOReceive(BarcodeView):
         if plugin is None:
             response['error'] = _('No match for supplier barcode')
 
-        if 'error' in response:
-            common.models.BarcodeScanResult.log_scan_result(
-                barcode, request, 400, context=context, response=response
-            )
-            raise ValidationError(response)
-
         common.models.BarcodeScanResult.log_scan_result(
-            barcode, request, 200, context=context, response=response
+            barcode,
+            request,
+            400 if 'error' in response else 200,
+            context=context,
+            response=response,
         )
+
+        if 'error' in response:
+            raise ValidationError(response)
 
         return Response(response)
 
@@ -670,7 +682,7 @@ class BarcodeSOAllocate(BarcodeView):
         common.models.BarcodeScanResult.log_scan_result(
             barcode,
             request,
-            200 if 'success' in response else 400,
+            400 if 'error' in response else 200,
             context=context,
             response=response,
         )
