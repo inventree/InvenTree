@@ -991,11 +991,30 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         return queryset.filter(delivery_date=None)
 
 
-class SalesOrderShipmentList(ListCreateAPI):
-    """API list endpoint for SalesOrderShipment model."""
+class SalesOrderShipmentMixin:
+    """Mixin class for SalesOrderShipment endpoints."""
 
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'order',
+            'order__customer',
+            'allocations',
+            'allocations__item',
+            'allocations__item__part',
+        )
+
+        return queryset
+
+
+class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
+    """API list endpoint for SalesOrderShipment model."""
+
     filterset_class = SalesOrderShipmentFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
@@ -1003,11 +1022,8 @@ class SalesOrderShipmentList(ListCreateAPI):
     ordering_fields = ['delivery_date', 'shipment_date']
 
 
-class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
+class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
     """API detail endpooint for SalesOrderShipment model."""
-
-    queryset = models.SalesOrderShipment.objects.all()
-    serializer_class = serializers.SalesOrderShipmentSerializer
 
 
 class SalesOrderShipmentComplete(CreateAPI):

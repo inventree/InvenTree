@@ -436,6 +436,13 @@ class SupplierPriceBreakList(ListCreateAPI):
     serializer_class = SupplierPriceBreakSerializer
     filterset_class = SupplierPriceBreakFilter
 
+    def get_queryset(self):
+        """Return annotated queryset for the SupplierPriceBreak list endpoint."""
+        queryset = super().get_queryset()
+        queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
+
+        return queryset
+
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         try:
@@ -467,6 +474,13 @@ class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
+
+    def get_queryset(self):
+        """Return annotated queryset for the SupplierPriceBreak list endpoint."""
+        queryset = super().get_queryset()
+        queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
+
+        return queryset
 
 
 manufacturer_part_api_urls = [

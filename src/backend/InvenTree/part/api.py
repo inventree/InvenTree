@@ -1715,6 +1715,13 @@ class PartStocktakeReportList(ListAPI):
     ordering = '-pk'
 
 
+class PartStocktakeReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single PartStocktakeReport object."""
+
+    queryset = PartStocktakeReport.objects.all()
+    serializer_class = part_serializers.PartStocktakeReportSerializer
+
+
 class PartStocktakeReportGenerate(CreateAPI):
     """API endpoint for manually generating a new PartStocktakeReport."""
 
@@ -2183,6 +2190,11 @@ part_api_urls = [
                         'generate/',
                         PartStocktakeReportGenerate.as_view(),
                         name='api-part-stocktake-report-generate',
+                    ),
+                    path(
+                        '<int:pk>/',
+                        PartStocktakeReportDetail.as_view(),
+                        name='api-part-stocktake-report-detail',
                     ),
                     path(
                         '',
