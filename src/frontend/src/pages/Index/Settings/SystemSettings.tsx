@@ -3,7 +3,6 @@ import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
-  IconClipboardCheck,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
@@ -226,12 +225,6 @@ export default function SystemSettings() {
             ]}
           />
         )
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <PlaceholderPanel />
       },
       {
         name: 'buildorders',

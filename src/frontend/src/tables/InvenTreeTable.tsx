@@ -5,7 +5,6 @@ import {
   Box,
   Group,
   Indicator,
-  LoadingOverlay,
   Space,
   Stack,
   Tooltip
@@ -714,12 +713,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
             </Group>
           </Group>
           <Box pos="relative">
-            <LoadingOverlay
-              visible={
-                tableOptionQuery.isLoading || tableOptionQuery.isFetching
-              }
-            />
-
             <DataTable
               withTableBorder
               withColumnBorders

@@ -18,7 +18,7 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('tab', { name: 'Scheduling' }).click();
-  await page.getByRole('tab', { name: 'Stocktake' }).click();
+  await page.getByRole('tab', { name: 'Stock History' }).click();
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
   await page.getByRole('tab', { name: 'Related Parts' }).click();
