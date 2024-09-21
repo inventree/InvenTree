@@ -512,6 +512,13 @@ class SupplierPriceBreakSerializer(
         if not part_detail:
             self.fields.pop('part_detail', None)
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Prefetch related fields for the queryset."""
+        queryset = queryset.select_related('part', 'part__supplier', 'part__part')
+
+        return queryset
+
     quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(allow_null=True, required=True, label=_('Price'))

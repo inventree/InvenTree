@@ -1193,6 +1193,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
         model = PartStocktakeReport
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
+        read_only_fields = ['date', 'report', 'part_count', 'user']
 
     user_detail = InvenTree.serializers.UserSerializer(
         source='user', read_only=True, many=False
