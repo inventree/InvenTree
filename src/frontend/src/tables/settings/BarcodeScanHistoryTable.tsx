@@ -13,9 +13,9 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { text } from 'stream/consumers';
 
 import { CopyButton } from '../../components/buttons/CopyButton';
+import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { StylishText } from '../../components/items/StylishText';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -85,6 +85,12 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
             <Table.Tr>
               <Table.Th>{t`Endpoint`}</Table.Th>
               <Table.Td>{scan.endpoint}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Th>{t`Result`}</Table.Th>
+              <Table.Td>
+                <PassFailButton value={scan.result} />
+              </Table.Td>
             </Table.Tr>
             {hasContextData && (
               <Table.Tr>
@@ -187,6 +193,13 @@ export default function BarcodeScanHistoryTable() {
       {
         accessor: 'endpoint',
         sortable: true
+      },
+      {
+        accessor: 'result',
+        sortable: true,
+        render: (record: any) => {
+          return <PassFailButton value={record.result} />;
+        }
       }
     ];
   }, []);
@@ -198,6 +211,11 @@ export default function BarcodeScanHistoryTable() {
         label: t`User`,
         choices: userFilters.choices,
         description: t`Filter by user`
+      },
+      {
+        name: 'result',
+        label: t`Result`,
+        description: t`Filter by result`
       }
     ];
   }, [userFilters]);

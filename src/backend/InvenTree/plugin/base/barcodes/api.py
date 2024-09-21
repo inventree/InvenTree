@@ -759,7 +759,7 @@ class BarcodeScanResultList(BarcodeScanResultMixin, BulkDeleteMixin, ListAPI):
     filterset_class = BarcodeScanResultFilter
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ['user', 'plugin', 'timestamp', 'endpoint']
+    ordering_fields = ['user', 'plugin', 'timestamp', 'endpoint', 'result']
 
     ordering = '-timestamp'
 
