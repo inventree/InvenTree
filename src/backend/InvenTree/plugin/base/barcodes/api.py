@@ -38,7 +38,7 @@ class BarcodeView(CreateAPIView):
     # Default serializer class (can be overridden)
     serializer_class = barcode_serializers.BarcodeSerializer
 
-    def log_scan(self, request, response=None):
+    def log_scan(self, request, response=None, result=False):
         """Log a barcode scan to the database.
 
         Arguments:
@@ -82,6 +82,7 @@ class BarcodeView(CreateAPIView):
                 user=request.user,
                 endpoint=request.path,
                 response=response,
+                result=result,
                 context=context,
             )
 
@@ -115,7 +116,7 @@ class BarcodeView(CreateAPIView):
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as exc:
-            self.log_scan(request, {'error': str(exc)})
+            self.log_scan(request, response={'error': str(exc)}, result=False)
             raise exc
 
         data = serializer.validated_data
@@ -196,19 +197,19 @@ class BarcodeScan(BarcodeView):
         kwargs:
             Any custom fields passed by the specific serializer
         """
-        result = self.scan_barcode(barcode, request, **kwargs)
+        response = self.scan_barcode(barcode, request, **kwargs)
 
-        if result['plugin'] is None:
-            result['error'] = _('No match found for barcode data')
-            self.log_scan(request, result)
-            raise ValidationError(result)
+        if response['plugin'] is None:
+            response['error'] = _('No match found for barcode data')
+            self.log_scan(request, response, False)
+            raise ValidationError(response)
 
-        result['success'] = _('Match found for barcode data')
+        response['success'] = _('Match found for barcode data')
 
         # Log the scan result
-        self.log_scan(request, result)
+        self.log_scan(request, response, True)
 
-        return Response(result)
+        return Response(response)
 
 
 @extend_schema_view(
@@ -443,32 +444,32 @@ class BarcodePOAllocate(BarcodeView):
         # The purchase order is provided as part of the request
         purchase_order = kwargs.get('purchase_order')
 
-        result = self.scan_barcode(barcode, request, **kwargs)
+        response = self.scan_barcode(barcode, request, **kwargs)
 
-        if result['plugin'] is None:
-            result['error'] = _('No matching plugin found for barcode data')
+        if response['plugin'] is None:
+            response['error'] = _('No matching plugin found for barcode data')
 
         else:
             try:
                 supplier_part = self.get_supplier_part(
                     purchase_order,
-                    part=result.get('part', None),
-                    supplier_part=result.get('supplierpart', None),
-                    manufacturer_part=result.get('manufacturerpart', None),
+                    part=response.get('part', None),
+                    supplier_part=response.get('supplierpart', None),
+                    manufacturer_part=response.get('manufacturerpart', None),
                 )
-                result['success'] = _('Matched supplier part')
-                result['supplierpart'] = supplier_part.format_matched_response()
+                response['success'] = _('Matched supplier part')
+                response['supplierpart'] = supplier_part.format_matched_response()
             except ValidationError as e:
-                result['error'] = str(e)
+                response['error'] = str(e)
 
         # TODO: Determine the 'quantity to order' for the supplier part
 
-        self.log_scan(request, result)
+        self.log_scan(request, response, 'success' in response)
 
-        if 'error' in result:
+        if 'error' in response:
             raise ValidationError
 
-        return Response(result)
+        return Response(response)
 
 
 class BarcodePOReceive(BarcodeView):
@@ -513,7 +514,7 @@ class BarcodePOReceive(BarcodeView):
         if result := internal_barcode_plugin.scan(barcode):
             if 'stockitem' in result:
                 response['error'] = _('Item has already been received')
-                self.log_scan(request, response)
+                self.log_scan(request, response, False)
                 raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
@@ -552,7 +553,7 @@ class BarcodePOReceive(BarcodeView):
         if plugin is None:
             response['error'] = _('No match for supplier barcode')
 
-        self.log_scan(request, response)
+        self.log_scan(request, response, 'success' in response)
 
         if 'error' in response:
             raise ValidationError(response)
@@ -644,24 +645,24 @@ class BarcodeSOAllocate(BarcodeView):
         """
         logger.debug("BarcodeSOAllocate: scanned barcode - '%s'", barcode)
 
-        result = self.scan_barcode(barcode, request, **kwargs)
+        response = self.scan_barcode(barcode, request, **kwargs)
 
         if 'sales_order' not in kwargs:
             # SalesOrder ID *must* be provided
-            result['error'] = _('No sales order provided')
-        elif result['plugin'] is None:
+            response['error'] = _('No sales order provided')
+        elif response['plugin'] is None:
             # Check that the barcode at least matches a plugin
-            result['error'] = _('No matching plugin found for barcode data')
+            response['error'] = _('No matching plugin found for barcode data')
         else:
             try:
-                stock_item_id = result['stockitem'].get('pk', None)
+                stock_item_id = response['stockitem'].get('pk', None)
                 stock_item = stock.models.StockItem.objects.get(pk=stock_item_id)
             except (ValueError, stock.models.StockItem.DoesNotExist):
-                result['error'] = _('Barcode does not match an existing stock item')
+                response['error'] = _('Barcode does not match an existing stock item')
 
-        if 'error' in result:
-            self.log_scan(request, result)
-            raise ValidationError(result)
+        if 'error' in response:
+            self.log_scan(request, response, False)
+            raise ValidationError(response)
 
         # At this stage, we have a valid StockItem object
 
@@ -673,13 +674,13 @@ class BarcodeSOAllocate(BarcodeView):
             shipment = self.get_shipment(**kwargs)
             if stock_item is not None and line_item is not None:
                 if stock_item.part != line_item.part:
-                    result['error'] = _('Stock item does not match line item')
+                    response['error'] = _('Stock item does not match line item')
         except ValidationError as e:
-            result['error'] = str(e)
+            response['error'] = str(e)
 
-        if 'error' in result:
-            self.log_scan(request, result)
-            raise ValidationError(result)
+        if 'error' in response:
+            self.log_scan(request, response, False)
+            raise ValidationError(response)
 
         quantity = kwargs.get('quantity', None)
 
@@ -692,7 +693,7 @@ class BarcodeSOAllocate(BarcodeView):
             quantity = min(quantity, stock_item.unallocated_quantity())
 
         response = {
-            **result,
+            **response,
             'stock_item': stock_item.pk if stock_item else None,
             'part': stock_item.part.pk if stock_item else None,
             'sales_order': sales_order.pk if sales_order else None,
@@ -717,7 +718,7 @@ class BarcodeSOAllocate(BarcodeView):
             response['error'] = _('Not enough information')
             response['action_required'] = True
 
-        self.log_scan(request, response)
+        self.log_scan(request, response, 'success' in response)
 
         if 'error' in response:
             raise ValidationError(response)
