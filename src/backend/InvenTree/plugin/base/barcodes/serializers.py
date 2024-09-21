@@ -28,6 +28,7 @@ class BarcodeScanResultSerializer(serializers.ModelSerializer):
             'endpoint',
             'context',
             'response',
+            'result',
             'user',
             'user_detail',
         ]

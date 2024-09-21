@@ -749,7 +749,7 @@ class BarcodeScanResultFilter(rest_filters.FilterSet):
         """Meta class for the BarcodeScanResultFilter."""
 
         model = common.models.BarcodeScanResult
-        fields = ['user']
+        fields = ['user', 'result']
 
 
 class BarcodeScanResultList(BarcodeScanResultMixin, BulkDeleteMixin, ListAPI):
