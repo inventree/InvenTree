@@ -107,6 +107,14 @@ export default function StockDetail() {
         model: ModelType.part
       },
       {
+        name: 'part_detail.IPN',
+        label: t`IPN`,
+        type: 'text',
+        copy: true,
+        icon: 'part',
+        hidden: !part.IPN
+      },
+      {
         name: 'status',
         type: 'status',
         label: t`Stock Status`,
