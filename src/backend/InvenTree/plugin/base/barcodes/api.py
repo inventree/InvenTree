@@ -657,7 +657,7 @@ class BarcodeSOAllocate(BarcodeView):
             try:
                 stock_item_id = response['stockitem'].get('pk', None)
                 stock_item = stock.models.StockItem.objects.get(pk=stock_item_id)
-            except (ValueError, stock.models.StockItem.DoesNotExist):
+            except Exception:
                 response['error'] = _('Barcode does not match an existing stock item')
 
         if 'error' in response:
