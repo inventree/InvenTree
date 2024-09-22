@@ -631,7 +631,7 @@ class BarcodeSOAllocate(BarcodeView):
         # If shipment cannot be determined, return None
         return None
 
-    def handle_barcode(self, barcode: str, request, *kwargs):
+    def handle_barcode(self, barcode: str, request, **kwargs):
         """Handle barcode scan for sales order allocation.
 
         Arguments:
