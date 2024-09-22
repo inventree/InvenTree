@@ -309,7 +309,7 @@ class SOAllocateTest(InvenTreeAPITestCase):
             '123456789', sales_order=self.sales_order.pk, expected_code=400
         )
 
-        self.assertIn('No match found for barcode', str(result['error']))
+        self.assertIn('No matching plugin found for barcode data', str(result['error']))
 
         # Test with a barcode that matches a *different* stock item
         item = StockItem.objects.exclude(pk=self.stock_item.pk).first()
