@@ -706,13 +706,18 @@ class BarcodeSOAllocate(BarcodeView):
             if stock_item.unallocated_quantity() < quantity:
                 response['error'] = _('Insufficient stock available')
 
-        # If we have sufficient information, we can allocate the stock item
-        elif all(x is not None for x in [line_item, sales_order, shipment, quantity]):
-            order.models.SalesOrderAllocation.objects.create(
-                line=line_item, shipment=shipment, item=stock_item, quantity=quantity
-            )
+            # If we have sufficient information, we can allocate the stock item
+            elif all(
+                x is not None for x in [line_item, sales_order, shipment, quantity]
+            ):
+                order.models.SalesOrderAllocation.objects.create(
+                    line=line_item,
+                    shipment=shipment,
+                    item=stock_item,
+                    quantity=quantity,
+                )
 
-            response['success'] = _('Stock item allocated to sales order')
+                response['success'] = _('Stock item allocated to sales order')
 
         else:
             response['error'] = _('Not enough information')
