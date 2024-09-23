@@ -56,3 +56,11 @@ If no match is found for the scanned barcode, the following error message is dis
 ## App Integration
 
 Barcode scanning is a key feature of the [companion mobile app](../app/barcode.md).
+
+## Barcode History
+
+If enabled, InvenTree can retain logs of the most recent barcode scans. This can be very useful for debugging or auditing purpopes.
+
+Refer to the [barcode settings](../settings/global.md#barcodes) to enable barcode history logging.
+
+The barcode history can be viewed via the admin panel in the web interface.

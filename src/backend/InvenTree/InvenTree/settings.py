@@ -590,6 +590,9 @@ for key in db_keys:
 # Check that required database configuration options are specified
 required_keys = ['ENGINE', 'NAME']
 
+# Ensure all database keys are upper case
+db_config = {key.upper(): value for key, value in db_config.items()}
+
 for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
