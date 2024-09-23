@@ -61,6 +61,7 @@
         "react-is": "^18.3.1",
         "react-router-dom": "^6.26.2",
         "react-select": "^5.8.0",
+        "react-use-websocket": "^4.8.1",
         "react-simplemde-editor": "^5.2.0",
         "react-window": "^1.8.10",
         "recharts": "^2.12.7",

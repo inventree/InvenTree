@@ -1,5 +1,5 @@
 # Web process: gunicorn
-web: env/bin/gunicorn --chdir $APP_HOME/src/backend/InvenTree -c src/backend/InvenTree/gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:$PORT
+web: env/bin/gunicorn --chdir $APP_HOME/src/backend/InvenTree -c src/backend/InvenTree/gunicorn.conf.py InvenTree.asgi -b 0.0.0.0:$PORT -k uvicorn_worker.UvicornWorker
 # Worker process: qcluster
 worker: env/bin/python src/backend/InvenTree/manage.py qcluster
 # Invoke commands
