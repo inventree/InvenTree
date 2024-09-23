@@ -1688,4 +1688,7 @@ class AdminTest(AdminTestCase):
 
     def test_admin(self):
         """Test the admin URL."""
-        self.helper(model=Attachment, model_kwargs={'link': 'https://aa.example.org'})
+        self.helper(
+            model=Attachment,
+            model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
+        )
