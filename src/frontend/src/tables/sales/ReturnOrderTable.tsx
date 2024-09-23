@@ -7,7 +7,7 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -32,7 +32,7 @@ import {
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function ReturnOrderTable({ params }: { params?: any }) {
+export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
   const table = useTable('return-orders');
   const user = useUserState();
 
@@ -112,7 +112,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
 
   const newReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
@@ -125,6 +125,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-return-order"
         tooltip={t`Add Return Order`}
         onClick={() => newReturnOrder.open()}
         hidden={!user.hasAddRole(UserRoles.return_order)}

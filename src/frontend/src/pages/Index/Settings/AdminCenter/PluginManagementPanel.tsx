@@ -7,6 +7,7 @@ import { StylishText } from '../../../../components/items/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useServerApiState } from '../../../../states/ApiState';
+import { useUserState } from '../../../../states/UserState';
 
 const PluginListTable = Loadable(
   lazy(() => import('../../../../tables/plugin/PluginListTable'))
@@ -20,6 +21,8 @@ export default function PluginManagementPanel() {
   const pluginsEnabled = useServerApiState(
     (state) => state.server.plugins_enabled
   );
+
+  const user = useUserState();
 
   return (
     <Stack>
@@ -45,15 +48,6 @@ export default function PluginManagementPanel() {
           </Accordion.Panel>
         </Accordion.Item>
 
-        <Accordion.Item value="pluginerror">
-          <Accordion.Control>
-            <StylishText size="lg">{t`Plugin Errors`}</StylishText>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <PluginErrorTable />
-          </Accordion.Panel>
-        </Accordion.Item>
-
         <Accordion.Item value="pluginsettings">
           <Accordion.Control>
             <StylishText size="lg">{t`Plugin Settings`}</StylishText>
@@ -63,6 +57,7 @@ export default function PluginManagementPanel() {
               keys={[
                 'ENABLE_PLUGINS_SCHEDULE',
                 'ENABLE_PLUGINS_EVENTS',
+                'ENABLE_PLUGINS_INTERFACE',
                 'ENABLE_PLUGINS_URL',
                 'ENABLE_PLUGINS_NAVIGATION',
                 'ENABLE_PLUGINS_APP',
@@ -72,6 +67,16 @@ export default function PluginManagementPanel() {
             />
           </Accordion.Panel>
         </Accordion.Item>
+        {user.isSuperuser() && (
+          <Accordion.Item value="pluginerror">
+            <Accordion.Control>
+              <StylishText size="lg">{t`Plugin Errors`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <PluginErrorTable />
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
       </Accordion>
     </Stack>
   );

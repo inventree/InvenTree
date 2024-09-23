@@ -30,7 +30,8 @@ import {
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -230,7 +231,7 @@ export default function SalesOrderDetail() {
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
-  const salesOrderFields = useSalesOrderFields();
+  const salesOrderFields = useSalesOrderFields({});
 
   const editSalesOrder = useEditApiFormModal({
     url: ApiEndpoints.sales_order_list,
@@ -242,10 +243,14 @@ export default function SalesOrderDetail() {
     }
   });
 
+  const duplicateOrderFields = useSalesOrderFields({
+    duplicateOrderId: order.pk
+  });
+
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
-    fields: salesOrderFields,
+    fields: duplicateOrderFields,
     initialData: {
       ...order,
       reference: undefined
@@ -509,7 +514,13 @@ export default function SalesOrderDetail() {
             editAction={editSalesOrder.open}
             editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
-          <PanelGroup pageKey="salesorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="salesorder"
+            panels={orderPanels}
+            model={ModelType.salesorder}
+            id={order.pk}
+            instance={order}
+          />
         </Stack>
       </InstanceDetail>
     </>

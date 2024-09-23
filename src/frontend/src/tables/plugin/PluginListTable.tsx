@@ -73,7 +73,7 @@ export interface PluginI {
   >;
 }
 
-export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
+export function PluginDrawer({ pluginKey }: Readonly<{ pluginKey: string }>) {
   const {
     instance: plugin,
     instanceQuery: { isFetching, error }
@@ -151,7 +151,7 @@ export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
               />
             </Stack>
           ) : (
-            <Text color="red">{t`Plugin is not active`}</Text>
+            <Text c="red">{t`Plugin is not active`}</Text>
           )}
         </Stack>
       </Card>
@@ -207,7 +207,7 @@ export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
 /**
  * Construct an indicator icon for a single plugin
  */
-function PluginIcon({ plugin }: { plugin: PluginI }) {
+function PluginIcon({ plugin }: Readonly<{ plugin: PluginI }>) {
   if (plugin?.is_installed) {
     if (plugin?.active) {
       return (
@@ -352,7 +352,10 @@ export default function PluginListTable() {
   // Determine available actions for a given plugin
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      // TODO: Plugin actions should be updated based on on the users's permissions
+      // Only superuser can perform plugin actions
+      if (!user.isSuperuser()) {
+        return [];
+      }
 
       let actions: RowAction[] = [];
 
@@ -505,33 +508,30 @@ export default function PluginListTable() {
 
   // Custom table actions
   const tableActions = useMemo(() => {
-    let actions = [];
-
-    if (user.user?.is_superuser && pluginsEnabled) {
-      actions.push(
-        <ActionButton
-          color="green"
-          icon={<IconRefresh />}
-          tooltip={t`Reload Plugins`}
-          onClick={reloadPlugins}
-        />
-      );
-
-      actions.push(
-        <ActionButton
-          color="green"
-          icon={<IconPlaylistAdd />}
-          tooltip={t`Install Plugin`}
-          onClick={() => {
-            setPluginPackage('');
-            installPluginModal.open();
-          }}
-          disabled={plugins_install_disabled || false}
-        />
-      );
+    if (!user.isSuperuser() || !pluginsEnabled) {
+      return [];
     }
 
-    return actions;
+    return [
+      <ActionButton
+        key="reload"
+        color="green"
+        icon={<IconRefresh />}
+        tooltip={t`Reload Plugins`}
+        onClick={reloadPlugins}
+      />,
+      <ActionButton
+        key="install"
+        color="green"
+        icon={<IconPlaylistAdd />}
+        tooltip={t`Install Plugin`}
+        onClick={() => {
+          setPluginPackage('');
+          installPluginModal.open();
+        }}
+        disabled={plugins_install_disabled || false}
+      />
+    ];
   }, [user, pluginsEnabled]);
 
   return (

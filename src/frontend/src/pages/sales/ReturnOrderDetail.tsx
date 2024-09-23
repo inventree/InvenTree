@@ -27,13 +27,14 @@ import {
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -243,6 +244,7 @@ export default function ReturnOrderDetail() {
               <Accordion.Panel>
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
+                  order={order}
                   customerId={order.customer}
                   currency={orderCurrency}
                 />
@@ -302,7 +304,11 @@ export default function ReturnOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
+
+  const duplicateReturnOrderFields = useReturnOrderFields({
+    duplicateOrderId: order.pk
+  });
 
   const editReturnOrder = useEditApiFormModal({
     url: ApiEndpoints.return_order_list,
@@ -317,7 +323,7 @@ export default function ReturnOrderDetail() {
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
-    fields: returnOrderFields,
+    fields: duplicateReturnOrderFields,
     initialData: {
       ...order,
       reference: undefined
@@ -458,7 +464,13 @@ export default function ReturnOrderDetail() {
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
-          <PanelGroup pageKey="returnorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="returnorder"
+            panels={orderPanels}
+            model={ModelType.returnorder}
+            instance={order}
+            id={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

@@ -43,6 +43,7 @@ from taggit.managers import TaggableManager
 import build.validators
 import common.currency
 import common.validators
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -1398,6 +1399,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_STORE_RESULTS': {
+            'name': _('Store Barcode Results'),
+            'description': _('Store barcode scan results in the database'),
+            'default': False,
+            'validator': bool,
+        },
+        'BARCODE_RESULTS_MAX_NUM': {
+            'name': _('Barcode Scans Maximum Count'),
+            'description': _('Maximum number of barcode scan results to store'),
+            'default': 100,
+            'validator': [int, MinValueValidator(1)],
+        },
         'BARCODE_INPUT_DELAY': {
             'name': _('Barcode Input Delay'),
             'description': _('Barcode input processing delay time'),
@@ -2091,6 +2104,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
             'description': _('Enable plugins to respond to internal events'),
+            'default': False,
+            'validator': bool,
+            'after_save': reload_plugin_registry,
+        },
+        'ENABLE_PLUGINS_INTERFACE': {
+            'name': _('Enable interface integration'),
+            'description': _('Enable plugins to integrate into the user interface'),
             'default': False,
             'validator': bool,
             'after_save': reload_plugin_registry,
@@ -3438,3 +3458,67 @@ class InvenTreeCustomUserStateModel(models.Model):
             })
 
         return super().clean()
+
+
+class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+    """Model for storing barcode scans results."""
+
+    BARCODE_SCAN_MAX_LEN = 250
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Barcode Scan')
+
+    data = models.CharField(
+        max_length=BARCODE_SCAN_MAX_LEN,
+        verbose_name=_('Data'),
+        help_text=_('Barcode data'),
+        blank=False,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User who scanned the barcode'),
+    )
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Timestamp'),
+        help_text=_('Date and time of the barcode scan'),
+    )
+
+    endpoint = models.CharField(
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('URL endpoint which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    context = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Context'),
+        help_text=_('Context data for the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    response = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Response'),
+        help_text=_('Response data from the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    result = models.BooleanField(
+        verbose_name=_('Result'),
+        help_text=_('Was the barcode scan successful?'),
+        default=False,
+    )

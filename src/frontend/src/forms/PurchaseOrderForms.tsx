@@ -138,14 +138,19 @@ export function usePurchaseOrderLineItemFields({
 /**
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
-export function usePurchaseOrderFields(): ApiFormFieldSet {
+export function usePurchaseOrderFields({
+  duplicateOrderId
+}: {
+  duplicateOrderId?: number;
+}): ApiFormFieldSet {
   return useMemo(() => {
-    return {
+    let fields: ApiFormFieldSet = {
       reference: {
         icon: <IconHash />
       },
       description: {},
       supplier: {
+        disabled: duplicateOrderId !== undefined,
         filters: {
           is_supplier: true,
           active: true
@@ -187,7 +192,23 @@ export function usePurchaseOrderFields(): ApiFormFieldSet {
         icon: <IconUsers />
       }
     };
-  }, []);
+
+    // Order duplication fields
+    if (!!duplicateOrderId) {
+      fields.duplicate = {
+        children: {
+          order_id: {
+            hidden: true,
+            value: duplicateOrderId
+          },
+          copy_lines: {},
+          copy_extra_lines: {}
+        }
+      };
+    }
+
+    return fields;
+  }, [duplicateOrderId]);
 }
 
 /**
@@ -197,11 +218,11 @@ function LineItemFormRow({
   props,
   record,
   statuses
-}: {
+}: Readonly<{
   props: TableFieldRowProps;
   record: any;
   statuses: any;
-}) {
+}>) {
   // Barcode Modal state
   const [opened, { open, close }] = useDisclosure(false, {
     onClose: () => props.changeFn(props.idx, 'barcode', undefined)
@@ -263,7 +284,7 @@ function LineItemFormRow({
 
   // Barcode value
   const [barcodeInput, setBarcodeInput] = useState<any>('');
-  const [barcode, setBarcode] = useState<String | undefined>(undefined);
+  const [barcode, setBarcode] = useState<string | undefined>(undefined);
 
   // Change form value when state is altered
   useEffect(() => {

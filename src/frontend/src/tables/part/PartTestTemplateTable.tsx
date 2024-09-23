@@ -28,10 +28,10 @@ import { TableHoverCard } from '../TableHoverCard';
 export default function PartTestTemplateTable({
   partId,
   partLocked
-}: {
+}: Readonly<{
   partId: number;
   partLocked?: boolean;
-}) {
+}>) {
   const table = useTable('part-test-template');
   const user = useUserState();
   const navigate = useNavigate();
@@ -234,6 +234,7 @@ export default function PartTestTemplateTable({
 
     return [
       <AddItemButton
+        key="add-test-template"
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
         hidden={partLocked || !can_add}

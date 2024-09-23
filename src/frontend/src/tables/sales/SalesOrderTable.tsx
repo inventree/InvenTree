@@ -36,10 +36,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function SalesOrderTable({
   partId,
   customerId
-}: {
+}: Readonly<{
   partId?: number;
   customerId?: number;
-}) {
+}>) {
   const table = useTable('sales-order');
   const user = useUserState();
 
@@ -77,7 +77,7 @@ export function SalesOrderTable({
     ];
   }, [projectCodeFilters.choices, responsibleFilters.choices]);
 
-  const salesOrderFields = useSalesOrderFields();
+  const salesOrderFields = useSalesOrderFields({});
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
@@ -93,6 +93,7 @@ export function SalesOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-sales-order"
         tooltip={t`Add Sales Order`}
         onClick={() => newSalesOrder.open()}
         hidden={!user.hasAddRole(UserRoles.sales_order)}

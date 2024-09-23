@@ -5,7 +5,6 @@ from typing import cast
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.db import transaction
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -14,7 +13,6 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 import common.models
@@ -213,54 +211,6 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
     """
 
     filterset_class = PurchaseOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        data = self.clean_data(request.data)
-
-        duplicate_order = data.pop('duplicate_order', None)
-        duplicate_line_items = str2bool(data.pop('duplicate_line_items', False))
-        duplicate_extra_lines = str2bool(data.pop('duplicate_extra_lines', False))
-
-        if duplicate_order is not None:
-            try:
-                duplicate_order = models.PurchaseOrder.objects.get(pk=duplicate_order)
-            except (ValueError, models.PurchaseOrder.DoesNotExist):
-                raise ValidationError({
-                    'duplicate_order': [_('No matching purchase order found')]
-                })
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        with transaction.atomic():
-            order = serializer.save()
-            order.created_by = request.user
-            order.save()
-
-            # Duplicate line items from other order if required
-            if duplicate_order is not None:
-                if duplicate_line_items:
-                    for line in duplicate_order.lines.all():
-                        # Copy the line across to the new order
-                        line.pk = None
-                        line.order = order
-                        line.received = 0
-
-                        line.save()
-
-                if duplicate_extra_lines:
-                    for line in duplicate_order.extra_lines.all():
-                        # Copy the line across to the new order
-                        line.pk = None
-                        line.order = order
-
-                        line.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     def filter_queryset(self, queryset):
         """Custom queryset filtering."""
@@ -1041,11 +991,30 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         return queryset.filter(delivery_date=None)
 
 
-class SalesOrderShipmentList(ListCreateAPI):
-    """API list endpoint for SalesOrderShipment model."""
+class SalesOrderShipmentMixin:
+    """Mixin class for SalesOrderShipment endpoints."""
 
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'order',
+            'order__customer',
+            'allocations',
+            'allocations__item',
+            'allocations__item__part',
+        )
+
+        return queryset
+
+
+class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
+    """API list endpoint for SalesOrderShipment model."""
+
     filterset_class = SalesOrderShipmentFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
@@ -1053,11 +1022,8 @@ class SalesOrderShipmentList(ListCreateAPI):
     ordering_fields = ['delivery_date', 'shipment_date']
 
 
-class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
+class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
     """API detail endpooint for SalesOrderShipment model."""
-
-    queryset = models.SalesOrderShipment.objects.all()
-    serializer_class = serializers.SalesOrderShipmentSerializer
 
 
 class SalesOrderShipmentComplete(CreateAPI):

@@ -5,7 +5,6 @@ import {
   Box,
   Group,
   Indicator,
-  LoadingOverlay,
   Space,
   Stack,
   Tooltip
@@ -138,17 +137,17 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable<T = any>({
+export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
   columns,
   props
-}: {
+}: Readonly<{
   url: string;
   tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-}) {
+}>) {
   const {
     getTableColumnNames,
     setTableColumnNames,
@@ -244,6 +243,10 @@ export function InvenTreeTable<T = any>({
     };
   }, [props]);
 
+  const enableSelection: boolean = useMemo(() => {
+    return tableProps.enableSelection || tableProps.enableBulkDelete || false;
+  }, [tableProps]);
+
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
     if (props.enableColumnSwitching == false) {
@@ -310,7 +313,6 @@ export function InvenTreeTable<T = any>({
     columns,
     fieldNames,
     tableProps.rowActions,
-    tableProps.enableSelection,
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
@@ -398,7 +400,7 @@ export function InvenTreeTable<T = any>({
   }
 
   // Data Sorting
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
     columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
@@ -432,7 +434,7 @@ export function InvenTreeTable<T = any>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus) => {
+  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
     tableState.setPage(1);
     setSortStatus(status);
 
@@ -642,7 +644,7 @@ export function InvenTreeTable<T = any>({
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}
-              {(tableProps.enableBulkDelete ?? false) && (
+              {tableProps.enableBulkDelete && (
                 <ActionButton
                   disabled={!tableState.hasSelectedRecords}
                   icon={<IconTrash />}
@@ -711,12 +713,6 @@ export function InvenTreeTable<T = any>({
             </Group>
           </Group>
           <Box pos="relative">
-            <LoadingOverlay
-              visible={
-                tableOptionQuery.isLoading || tableOptionQuery.isFetching
-              }
-            />
-
             <DataTable
               withTableBorder
               withColumnBorders
@@ -733,12 +729,10 @@ export function InvenTreeTable<T = any>({
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
-                tableProps.enableSelection
-                  ? tableState.selectedRecords
-                  : undefined
+                enableSelection ? tableState.selectedRecords : undefined
               }
               onSelectedRecordsChange={
-                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+                enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={tableProps.rowExpansion}
               rowStyle={tableProps.rowStyle}

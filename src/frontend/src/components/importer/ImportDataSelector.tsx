@@ -38,12 +38,12 @@ function ImporterDataCell({
   column,
   row,
   onEdit
-}: {
+}: Readonly<{
   session: ImportSessionState;
   column: any;
   row: any;
   onEdit?: () => void;
-}) {
+}>) {
   const onRowEdit = useCallback(
     (event: any) => {
       cancelEvent(event);
@@ -128,9 +128,9 @@ function ImporterDataCell({
 
 export default function ImporterDataSelector({
   session
-}: {
+}: Readonly<{
   session: ImportSessionState;
-}) {
+}>) {
   const table = useTable('dataimporter');
 
   const [selectedFieldNames, setSelectedFieldNames] = useState<string[]>([]);
@@ -377,6 +377,7 @@ export default function ImporterDataSelector({
 
     return [
       <ActionButton
+        key="import-selected-rows"
         disabled={!canImport}
         icon={<IconArrowRight />}
         color="green"

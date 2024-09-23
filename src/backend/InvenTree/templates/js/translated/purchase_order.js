@@ -98,7 +98,8 @@ function purchaseOrderFields(options={}) {
 
                     return fields;
                 }
-            }
+            },
+            disabled: !!options.duplicate_order,
         },
         supplier_reference: {},
         project_code: {
@@ -155,35 +156,13 @@ function purchaseOrderFields(options={}) {
 
     // Add fields for order duplication (only if required)
     if (options.duplicate_order) {
-        fields.duplicate_order = {
+        fields.duplicate__order_id = {
             value: options.duplicate_order,
-            group: 'duplicate',
-            required: 'true',
-            type: 'related field',
-            model: 'purchaseorder',
-            filters: {
-                supplier_detail: true,
-            },
-            api_url: '{% url "api-po-list" %}',
-            label: '{% trans "Purchase Order" %}',
-            help_text: '{% trans "Select purchase order to duplicate" %}',
+            hidden: true,
         };
 
-        fields.duplicate_line_items = {
-            value: true,
-            group: 'duplicate',
-            type: 'boolean',
-            label: '{% trans "Duplicate Line Items" %}',
-            help_text: '{% trans "Duplicate all line items from the selected order" %}',
-        };
-
-        fields.duplicate_extra_lines = {
-            value: true,
-            group: 'duplicate',
-            type: 'boolean',
-            label: '{% trans "Duplicate Extra Lines" %}',
-            help_text: '{% trans "Duplicate extra line items from the selected order" %}',
-        };
+        fields.duplicate__copy_lines = {};
+        fields.duplicate__copy_extra_lines = {};
     }
 
     if (!global_settings.PROJECT_CODES_ENABLED) {

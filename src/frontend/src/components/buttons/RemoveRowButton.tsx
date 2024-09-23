@@ -6,10 +6,10 @@ import { ActionButton } from './ActionButton';
 export default function RemoveRowButton({
   onClick,
   tooltip = t`Remove this row`
-}: {
+}: Readonly<{
   onClick: () => void;
   tooltip?: string;
-}) {
+}>) {
   return (
     <ActionButton
       onClick={onClick}

@@ -51,7 +51,12 @@ export default function PurchasingIndex() {
   return (
     <Stack>
       <PageDetail title={t`Sales`} />
-      <PanelGroup pageKey="sales-index" panels={panels} />
+      <PanelGroup
+        pageKey="sales-index"
+        panels={panels}
+        model={'sales'}
+        id={null}
+      />
     </Stack>
   );
 }

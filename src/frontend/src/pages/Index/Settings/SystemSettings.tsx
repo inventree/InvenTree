@@ -3,7 +3,6 @@ import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
-  IconClipboardCheck,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
@@ -11,7 +10,6 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconSitemap,
   IconTag,
   IconTools,
   IconTruckDelivery,
@@ -21,7 +19,8 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { PanelType } from '../../../components/nav/Panel';
+import { PanelGroup } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
@@ -99,7 +98,9 @@ export default function SystemSettings() {
               'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
               'BARCODE_SHOW_TEXT',
-              'BARCODE_GENERATION_PLUGIN'
+              'BARCODE_GENERATION_PLUGIN',
+              'BARCODE_STORE_RESULTS',
+              'BARCODE_RESULTS_MAX_NUM'
             ]}
           />
         )
@@ -224,12 +225,6 @@ export default function SystemSettings() {
             ]}
           />
         )
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <PlaceholderPanel />
       },
       {
         name: 'buildorders',

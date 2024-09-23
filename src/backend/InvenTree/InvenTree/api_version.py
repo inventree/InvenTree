@@ -1,12 +1,24 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 253
+INVENTREE_API_VERSION = 257
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v257 - 2024-09-22 : https://github.com/inventree/InvenTree/pull/8150
+    - Adds API endpoint for reporting barcode scan history
+
+v256 - 2024-09-19 : https://github.com/inventree/InvenTree/pull/7704
+    - Adjustments for "stocktake" (stock history) API endpoints
+
+v255 - 2024-09-19 : https://github.com/inventree/InvenTree/pull/8145
+    - Enables copying line items when duplicating an order
+
+v254 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7470
+    - Implements new API endpoints for enabling custom UI functionality via plugins
 
 v253 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7944
     - Adjustments for user API endpoints

@@ -30,10 +30,10 @@ import { StylishText } from '../items/StylishText';
 export function NotificationDrawer({
   opened,
   onClose
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const { isLoggedIn } = useUserState();
 
   const navigate = useNavigate();

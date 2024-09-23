@@ -133,6 +133,34 @@ STATIC_URL = '/static/'
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
+# Are plugins enabled?
+PLUGINS_ENABLED = get_boolean_setting(
+    'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
+)
+
+PLUGINS_INSTALL_DISABLED = get_boolean_setting(
+    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
+)
+
+PLUGIN_FILE = config.get_plugin_file()
+
+# Plugin test settings
+PLUGIN_TESTING = get_setting(
+    'INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING
+)  # Are plugins being tested?
+
+PLUGIN_TESTING_SETUP = get_setting(
+    'INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False
+)  # Load plugins from setup hooks in testing?
+
+PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
+
+PLUGIN_RETRY = get_setting(
+    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
+)  # How often should plugin loading be tried?
+
+PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
+
 STATICFILES_DIRS = []
 
 # Translated Template settings
@@ -153,6 +181,12 @@ if DEBUG and 'collectstatic' not in sys.argv:
     if web_dir.exists():
         STATICFILES_DIRS.append(web_dir)
 
+    # Append directory for sample plugin static content (if in debug mode)
+    if PLUGINS_ENABLED:
+        print('Adding plugin sample static content')
+        STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
+
+        print('-', STATICFILES_DIRS[-1])
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
 # Color Themes Directory
@@ -169,10 +203,11 @@ DBBACKUP_STORAGE = get_setting(
 
 # Default backup configuration
 DBBACKUP_STORAGE_OPTIONS = get_setting(
-    'INVENTREE_BACKUP_OPTIONS', 'backup_options', None
+    'INVENTREE_BACKUP_OPTIONS',
+    'backup_options',
+    default_value={'location': config.get_backup_dir()},
+    typecast=dict,
 )
-if DBBACKUP_STORAGE_OPTIONS is None:
-    DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
 
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
     'INVENTREE_ADMIN_ENABLED', config_key='admin_enabled', default_value=True
@@ -554,6 +589,9 @@ for key in db_keys:
 
 # Check that required database configuration options are specified
 required_keys = ['ENGINE', 'NAME']
+
+# Ensure all database keys are upper case
+db_config = {key.upper(): value for key, value in db_config.items()}
 
 for key in required_keys:
     if key not in db_config:  # pragma: no cover
@@ -1253,29 +1291,6 @@ IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 10
 MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBackend'
-
-# Are plugins enabled?
-PLUGINS_ENABLED = get_boolean_setting(
-    'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
-)
-PLUGINS_INSTALL_DISABLED = get_boolean_setting(
-    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
-)
-
-PLUGIN_FILE = config.get_plugin_file()
-
-# Plugin test settings
-PLUGIN_TESTING = get_setting(
-    'INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING
-)  # Are plugins being tested?
-PLUGIN_TESTING_SETUP = get_setting(
-    'INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False
-)  # Load plugins from setup hooks in testing?
-PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
-PLUGIN_RETRY = get_setting(
-    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
-)  # How often should plugin loading be tried?
-PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
 # Flag to allow table events during testing
 TESTING_TABLE_EVENTS = False

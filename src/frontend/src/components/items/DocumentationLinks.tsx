@@ -26,9 +26,9 @@ export type DocumentationLinkItem =
 
 export function DocumentationLinks({
   links
-}: {
+}: Readonly<{
   links: DocumentationLinkItem[];
-}) {
+}>) {
   const DocumentationLinkRenderer = ({
     link
   }: {

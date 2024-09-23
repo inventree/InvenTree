@@ -34,7 +34,7 @@ type TestResultOverview = {
   result: boolean;
 };
 
-export default function BuildOutputTable({ build }: { build: any }) {
+export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
   const user = useUserState();
   const table = useTable('build-outputs');
 
@@ -208,11 +208,13 @@ export default function BuildOutputTable({ build }: { build: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-build-output"
         tooltip={t`Add Build Output`}
         hidden={!user.hasAddRole(UserRoles.build)}
         onClick={addBuildOutput.open}
       />,
       <ActionButton
+        key="complete-selected-outputs"
         tooltip={t`Complete selected outputs`}
         icon={<InvenTreeIcon icon="success" />}
         color="green"
@@ -223,6 +225,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
         }}
       />,
       <ActionButton
+        key="scrap-selected-outputs"
         tooltip={t`Scrap selected outputs`}
         icon={<InvenTreeIcon icon="delete" />}
         color="red"
@@ -233,6 +236,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
         }}
       />,
       <ActionButton
+        key="cancel-selected-outputs"
         tooltip={t`Cancel selected outputs`}
         icon={<InvenTreeIcon icon="cancel" />}
         color="red"

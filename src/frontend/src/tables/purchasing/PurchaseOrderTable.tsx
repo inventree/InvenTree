@@ -38,10 +38,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({
   supplierId,
   supplierPartId
-}: {
+}: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
-}) {
+}>) {
   const table = useTable('purchase-order');
   const user = useUserState();
 
@@ -121,7 +121,7 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
-  const purchaseOrderFields = usePurchaseOrderFields();
+  const purchaseOrderFields = usePurchaseOrderFields({});
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
@@ -137,6 +137,7 @@ export function PurchaseOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-purchase-order"
         tooltip={t`Add Purchase Order`}
         onClick={() => newPurchaseOrder.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}

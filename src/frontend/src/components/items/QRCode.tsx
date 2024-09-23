@@ -11,7 +11,6 @@ import {
   Stack,
   Text
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
@@ -76,7 +75,7 @@ export const InvenTreeQRCode = ({
   const { data } = useQuery({
     queryKey: ['qr-code', mdl_prop.model, mdl_prop.pk],
     queryFn: async () => {
-      const res = await api.post(apiUrl(ApiEndpoints.generate_barcode), {
+      const res = await api.post(apiUrl(ApiEndpoints.barcode_generate), {
         model: mdl_prop.model,
         pk: mdl_prop.pk
       });
@@ -143,7 +142,6 @@ export const InvenTreeQRCode = ({
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [barcode, setBarcode] = useState('');
-  const [isScanning, toggleIsScanning] = useDisclosure(false);
 
   function linkBarcode(value?: string) {
     api
