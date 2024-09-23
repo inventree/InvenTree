@@ -243,6 +243,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
     };
   }, [props]);
 
+  const enableSelection: boolean = useMemo(() => {
+    return tableProps.enableSelection || tableProps.enableBulkDelete || false;
+  }, [tableProps]);
+
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
     if (props.enableColumnSwitching == false) {
@@ -309,7 +313,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
     columns,
     fieldNames,
     tableProps.rowActions,
-    tableProps.enableSelection,
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
@@ -641,7 +644,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}
-              {(tableProps.enableBulkDelete ?? false) && (
+              {tableProps.enableBulkDelete && (
                 <ActionButton
                   disabled={!tableState.hasSelectedRecords}
                   icon={<IconTrash />}
@@ -726,12 +729,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
-                tableProps.enableSelection
-                  ? tableState.selectedRecords
-                  : undefined
+                enableSelection ? tableState.selectedRecords : undefined
               }
               onSelectedRecordsChange={
-                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+                enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={tableProps.rowExpansion}
               rowStyle={tableProps.rowStyle}

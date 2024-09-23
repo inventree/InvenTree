@@ -83,7 +83,7 @@ export function BomTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'part',
+        accessor: 'sub_part',
         switchable: false,
         sortable: true,
         render: (record) => {
