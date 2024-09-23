@@ -115,6 +115,8 @@ test('PUI - Admin - Barcode History', async ({ page, request }) => {
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Barcode Scans' }).click();
 
+  await page.waitForTimeout(2000);
+
   // Barcode history is displayed in table
   barcodes.forEach(async (barcode) => {
     await page.getByText(barcode).first().waitFor();
