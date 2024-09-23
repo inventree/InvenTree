@@ -134,7 +134,7 @@ function BasePanelGroup({
               (panel) =>
                 !panel.hidden && (
                   <Tooltip
-                    label={`tooltip-${panel.name}`}
+                    label={panel.label ?? panel.name}
                     key={panel.name}
                     disabled={expanded}
                     position="right"

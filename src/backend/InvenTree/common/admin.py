@@ -35,6 +35,15 @@ class AttachmentAdmin(admin.ModelAdmin):
     search_fields = ('content_type', 'comment')
 
 
+@admin.register(common.models.BarcodeScanResult)
+class BarcodeScanResultAdmin(admin.ModelAdmin):
+    """Admin interface for BarcodeScanResult objects."""
+
+    list_display = ('data', 'timestamp', 'user', 'endpoint', 'result')
+
+    list_filter = ('user', 'endpoint', 'result')
+
+
 @admin.register(common.models.ProjectCode)
 class ProjectCodeAdmin(ImportExportModelAdmin):
     """Admin settings for ProjectCode."""
