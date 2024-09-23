@@ -19,6 +19,7 @@ import build.models
 import company.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -671,6 +672,14 @@ class StockItemListTest(StockAPITestCase):
         for item in response:
             self.assertIsNone(item['serial'])
 
+    def test_filter_top_level(self):
+        """Filter StockItem by top level."""
+        response = self.get_stock(top_level=True)
+        self.assertEqual(len(response), 29)
+
+        response = self.get_stock(top_level=False)
+        self.assertEqual(len(response), 29)
+
     def test_filter_by_has_batch(self):
         """Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code."""
         with_batch = self.get_stock(has_batch=1)
@@ -924,6 +933,40 @@ class StockItemListTest(StockAPITestCase):
         self.get(
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
+
+    def test_batch_apis(self):
+        """Test helper APIs for batch management."""
+        set_global_setting(
+            'STOCK_BATCH_CODE_TEMPLATE', '{% if item %}{{ item.pk }}{% endif %}'
+        )
+        response = self.post(reverse('api-generate-batch-code'))
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('batch_code', response.data)
+        self.assertEqual(len(response.data['batch_code']), 0)
+
+        # With data
+        response = self.post(reverse('api-generate-batch-code'), {'item': 1})
+        self.assertEqual(response.data['batch_code'], '1')
+
+        # With full data
+        response = self.post(
+            reverse('api-generate-batch-code'), {'item': 1, 'quantity': 2}
+        )
+        self.assertEqual(response.data['batch_code'], '1')
+
+        # Generate serial number
+        response = self.post(reverse('api-generate-serial-number'))
+        self.assertIn('serial_number', response.data)
+
+        # With full data
+        response = self.post(
+            reverse('api-generate-serial-number'), {'part': 1, 'quantity': 1}
+        )
+        self.assertEqual(response.data['serial_number'], '1001')
+        response = self.post(
+            reverse('api-generate-serial-number'), {'part': 1, 'quantity': 3}
+        )
+        self.assertEqual(response.data['serial_number'], '1001,1002,1003')
 
 
 class CustomStockItemStatusTest(StockAPITestCase):
