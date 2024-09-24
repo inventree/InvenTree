@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
+  Anchor,
   Center,
   Divider,
   DrawerOverlay,
@@ -10,9 +11,12 @@ import {
   Text
 } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { navigateToLink } from '../../functions/navigation';
+import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../../tables/Column';
@@ -55,6 +59,7 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
 
 export default function PartSchedulingDetail({ part }: { part: any }) {
   const table = useTable('part-scheduling');
+  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -63,7 +68,20 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
         switchable: false,
         title: t`Order`,
         render: (record: any) => {
-          return record.label;
+          const url = getDetailUrl(record.model, record.model_id);
+
+          if (url) {
+            return (
+              <Anchor
+                href="#"
+                onClick={(event: any) => navigateToLink(url, navigate, event)}
+              >
+                {record.label}
+              </Anchor>
+            );
+          } else {
+            return record.label;
+          }
         }
       },
       DescriptionColumn({
