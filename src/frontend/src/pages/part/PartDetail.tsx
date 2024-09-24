@@ -55,7 +55,6 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
@@ -401,7 +400,7 @@ export default function PartDetail() {
           const { data } = useSuspenseQuery({
             queryKey: ['pricing', id],
             queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
+              const url = apiUrl(ApiEndpoints.part_pricing, null, {
                 id: id
               });
 

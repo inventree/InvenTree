@@ -18,7 +18,7 @@ import { NoPricingData } from './PricingPanel';
 export default function SupplierPricingPanel({
   part
 }: Readonly<{ part: any }>) {
-  const table = useTable('pricing-supplier');
+  const table = useTable('pricingsupplier');
 
   const columns: TableColumn[] = useMemo(() => {
     return SupplierPriceBreakColumns();
