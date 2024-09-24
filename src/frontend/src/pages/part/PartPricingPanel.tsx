@@ -37,7 +37,7 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
   const { instance: pricing, instanceQuery } = useInstance({
     pk: part?.pk,
     hasPrimaryKey: true,
-    endpoint: ApiEndpoints.part_pricing_get,
+    endpoint: ApiEndpoints.part_pricing,
     defaultValue: {}
   });
 
@@ -79,6 +79,7 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
               <PricingOverviewPanel
                 part={part}
                 pricing={pricing}
+                pricingQuery={instanceQuery}
                 doNavigation={doNavigation}
               />
             }
