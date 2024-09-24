@@ -34,12 +34,18 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
  * Render a tooltip for the chart, with correct date information
  */
 function ChartTooltip({ label, payload }: ChartTooltipProps) {
+  const formattedLabel: string = useMemo(() => {
+    if (label && typeof label === 'number') {
+      return formatDate(new Date(label).toISOString()) ?? label;
+    } else if (!!label) {
+      return label.toString();
+    } else {
+      return '';
+    }
+  }, [label]);
+
   if (!payload) {
     return null;
-  }
-
-  if (label && typeof label == 'number') {
-    label = formatDate(new Date(label).toISOString());
   }
 
   const quantity = payload.find((item) => item.name == 'quantity');
@@ -48,7 +54,7 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
 
   return (
     <Paper px="md" py="sm" withBorder shadow="md" radius="md">
-      <Text key="title">{label}</Text>
+      <Text key="title">{formattedLabel}</Text>
       <Divider />
       <Text key="quantity" fz="sm">
         {t`Quantity`} : {quantity?.value}
