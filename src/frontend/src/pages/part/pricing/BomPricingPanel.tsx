@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { BarChart, ChartTooltipProps, DonutChart } from '@mantine/charts';
 import {
   Center,
-  Divider,
   Group,
   Paper,
   SegmentedControl,
@@ -40,13 +39,14 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
 
   return (
     <Paper px="md" py="sm" withBorder shadow="md" radius="md">
-      <Text key="title" c={data.payload?.color}>
-        {data.name}
-      </Text>
-      <Divider />
-      <Text key="price" fz="sm">
-        {formatCurrency(data.payload?.value)}
-      </Text>
+      <Group justify="space-between" wrap="nowrap">
+        <Text key="title" c={data.payload?.color}>
+          {data.name}
+        </Text>
+        <Text key="price" fz="sm">
+          {formatCurrency(data.payload?.value)}
+        </Text>
+      </Group>
     </Paper>
   );
 }
