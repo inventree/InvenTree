@@ -275,7 +275,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
             yAxisLabel={t`Expected Quantity`}
             xAxisLabel={t`Date`}
             xAxisProps={{
-              domain: [chartLimits[0], chartLimits[1]],
+              domain: chartLimits,
               scale: 'time',
               type: 'number',
               tickFormatter: (value: number) => {
