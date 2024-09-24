@@ -54,9 +54,7 @@ export type TableState = {
 export function useTable(tableName: string): TableState {
   // Function to generate a new ID (to refresh the table)
   function generateTableName() {
-    // Ensure we strip out any hyphen characters from the original name
-    tableName = tableName.replaceAll('-', '');
-    return `${tableName}-${randomId()}`;
+    return `${tableName.replaceAll('-', '')}-${randomId()}`;
   }
 
   const [tableKey, setTableKey] = useState<string>(generateTableName());
