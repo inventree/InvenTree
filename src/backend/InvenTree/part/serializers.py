@@ -244,6 +244,31 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     )
 
 
+class PartSchedulingSerializer(serializers.Serializer):
+    """Serializer class for a PartScheduling entry."""
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = ['date', 'quantity', 'speculative_quantity', 'title', 'label', 'model']
+
+    date = serializers.DateField(label=_('Date'), required=True)
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, label=_('Quantity'), required=True
+    )
+
+    speculative_quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, label=_('Speculative Quantity'), required=False
+    )
+
+    title = serializers.CharField(label=_('Title'), required=True)
+
+    label = serializers.CharField(label=_('Label'), required=True)
+
+    model = serializers.CharField(label=_('Model'), required=True)
+
+
 class PartThumbSerializer(serializers.Serializer):
     """Serializer for the 'image' field of the Part model.
 

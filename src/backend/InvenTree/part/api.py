@@ -559,7 +559,7 @@ class PartScheduling(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
+    serializer_class = part_serializers.PartSchedulingSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance."""
@@ -568,7 +568,7 @@ class PartScheduling(RetrieveAPI):
         schedule = []
 
         def add_schedule_entry(
-            date, quantity, title, label, url, speculative_quantity=0
+            date, quantity, title, label, model, speculative_quantity=0
         ):
             """Check if a scheduled entry should be added.
 
@@ -583,7 +583,7 @@ class PartScheduling(RetrieveAPI):
                 'speculative_quantity': speculative_quantity,
                 'title': title,
                 'label': label,
-                'url': url,
+                'model': model,
             })
 
         # Add purchase order (incoming stock) information
@@ -604,7 +604,7 @@ class PartScheduling(RetrieveAPI):
                 quantity,
                 _('Incoming Purchase Order'),
                 str(line.order),
-                line.order.get_absolute_url(),
+                'purchaseorder',
             )
 
         # Add sales order (outgoing stock) information
@@ -622,7 +622,7 @@ class PartScheduling(RetrieveAPI):
                 -quantity,
                 _('Outgoing Sales Order'),
                 str(line.order),
-                line.order.get_absolute_url(),
+                'salesorder',
             )
 
         # Add build orders (incoming stock) information
@@ -638,7 +638,7 @@ class PartScheduling(RetrieveAPI):
                 quantity,
                 _('Stock produced by Build Order'),
                 str(build),
-                build.get_absolute_url(),
+                'build',
             )
 
         """
@@ -722,7 +722,7 @@ class PartScheduling(RetrieveAPI):
                     -part_allocated_quantity,
                     _('Stock required for Build Order'),
                     str(build),
-                    build.get_absolute_url(),
+                    'build',
                     speculative_quantity=speculative_quantity,
                 )
 
@@ -742,9 +742,13 @@ class PartScheduling(RetrieveAPI):
             return -1 if date_1 < date_2 else 1
 
         # Sort by incrementing date values
-        schedule = sorted(schedule, key=functools.cmp_to_key(compare))
+        schedules = sorted(schedule, key=functools.cmp_to_key(compare))
 
-        return Response(schedule)
+        serializers = part_serializers.PartSchedulingSerializer(
+            schedules, many=True, context={'request': request}
+        )
+
+        return Response(serializers.data)
 
 
 class PartRequirements(RetrieveAPI):
