@@ -250,7 +250,15 @@ class PartSchedulingSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options for this serializer."""
 
-        fields = ['date', 'quantity', 'speculative_quantity', 'title', 'label', 'model']
+        fields = [
+            'date',
+            'quantity',
+            'speculative_quantity',
+            'title',
+            'label',
+            'model',
+            'model_id',
+        ]
 
     date = serializers.DateField(label=_('Date'), required=True)
 
@@ -267,6 +275,8 @@ class PartSchedulingSerializer(serializers.Serializer):
     label = serializers.CharField(label=_('Label'), required=True)
 
     model = serializers.CharField(label=_('Model'), required=True)
+
+    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
 
 
 class PartThumbSerializer(serializers.Serializer):
