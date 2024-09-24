@@ -353,7 +353,8 @@ class LineItemPricing(PartPricing):
             try:
                 part_id = self.request.POST.get('pk')
                 part = Part.objects.get(id=part_id)
-            except Part.DoesNotExist:
+            except Exception:
+                # Part not found, or invalid ID
                 return None
         else:
             return None
