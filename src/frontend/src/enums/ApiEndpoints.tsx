@@ -95,6 +95,7 @@ export enum ApiEndpoints {
   part_thumbs_list = 'part/thumbs/',
   part_pricing_get = 'part/:id/pricing/',
   part_serial_numbers = 'part/:id/serial-numbers/',
+  part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',

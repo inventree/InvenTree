@@ -1,15 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 258
+INVENTREE_API_VERSION = 259
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v258 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8137
+v259 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8137
     - Implements new API endpoint for enabling custom UI features via plugins
+
+v258 - 2024-09-24 : https://github.com/inventree/InvenTree/pull/8163
+    - Enhances the existing PartScheduling API endpoint
+    - Adds a formal DRF serializer to the endpoint
 
 v257 - 2024-09-22 : https://github.com/inventree/InvenTree/pull/8150
     - Adds API endpoint for reporting barcode scan history

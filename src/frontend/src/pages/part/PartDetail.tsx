@@ -104,6 +104,7 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartPricingPanel from './PartPricingPanel';
+import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
 
 /**
@@ -705,7 +706,7 @@ export default function PartDetail() {
         name: 'scheduling',
         label: t`Scheduling`,
         icon: <IconCalendarStats />,
-        content: <PlaceholderPanel />,
+        content: part ? <PartSchedulingDetail part={part} /> : <Skeleton />,
         hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
       },
       {
