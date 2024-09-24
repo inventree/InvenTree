@@ -260,14 +260,12 @@ class PartSchedulingSerializer(serializers.Serializer):
             'model_id',
         ]
 
-    date = serializers.DateField(label=_('Date'), required=True)
+    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
 
-    quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, label=_('Quantity'), required=True
-    )
+    quantity = serializers.FloatField(label=_('Quantity'), required=True)
 
-    speculative_quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, label=_('Speculative Quantity'), required=False
+    speculative_quantity = serializers.FloatField(
+        label=_('Speculative Quantity'), required=False
     )
 
     title = serializers.CharField(label=_('Title'), required=True)
