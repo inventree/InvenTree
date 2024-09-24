@@ -103,7 +103,10 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
           if (record.speculative_quantity != 0) {
             q = record.speculative_quantity;
             extra.push(
-              <Text key={'speculative'}>{t`Quantity is speculative`}</Text>
+              <Text
+                size="sm"
+                key={'speculative'}
+              >{t`Quantity is speculative`}</Text>
             );
           }
 
@@ -111,12 +114,21 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
             extra.push(
               <Text
                 key={'null-date'}
+                size="sm"
               >{t`No date available for provided quantity`}</Text>
+            );
+          } else if (new Date(record.date) < new Date()) {
+            extra.push(
+              <Text size="sm" key={'past-date'}>{t`Date is in the past`}</Text>
             );
           }
 
           return (
-            <TableHoverCard value={q} title={t`Speculative`} extra={extra} />
+            <TableHoverCard
+              value={<Text key="quantity">{q}</Text>}
+              title={t`Scheduled Quantity`}
+              extra={extra}
+            />
           );
         }
       }
