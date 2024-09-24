@@ -706,11 +706,7 @@ export default function PartDetail() {
         name: 'scheduling',
         label: t`Scheduling`,
         icon: <IconCalendarStats />,
-        content: part ? (
-          <PartSchedulingDetail partId={part.pk} />
-        ) : (
-          <Skeleton />
-        ),
+        content: part ? <PartSchedulingDetail part={part} /> : <Skeleton />,
         hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
       },
       {
