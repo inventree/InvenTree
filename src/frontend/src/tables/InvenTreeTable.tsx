@@ -500,7 +500,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
   };
 
-  const { data, isFetching, refetch } = useQuery({
+  const { data, isFetching, isLoading, refetch } = useQuery({
     queryKey: [
       tableState.page,
       props.params,
@@ -515,8 +515,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
   });
 
   useEffect(() => {
-    tableState.setIsLoading(isFetching);
-  }, [isFetching]);
+    tableState.setIsLoading(
+      isFetching ||
+        isLoading ||
+        tableOptionQuery.isFetching ||
+        tableOptionQuery.isLoading
+    );
+  }, [isFetching, isLoading, tableOptionQuery]);
 
   // Update tableState.records when new data received
   useEffect(() => {

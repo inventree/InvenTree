@@ -559,7 +559,7 @@ class PartScheduling(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
+    serializer_class = part_serializers.PartSchedulingSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance."""
@@ -567,23 +567,24 @@ class PartScheduling(RetrieveAPI):
 
         schedule = []
 
-        def add_schedule_entry(
-            date, quantity, title, label, url, speculative_quantity=0
-        ):
-            """Check if a scheduled entry should be added.
+        def add_schedule_entry(date, quantity, title, instance, speculative_quantity=0):
+            """Add a new entry to the schedule list.
 
-            Rules:
-            - date must be non-null
-            - date cannot be in the "past"
-            - quantity must not be zero
+            Arguments:
+                - date: The date of the scheduled event
+                - quantity: The quantity of stock to be added or removed
+                - title: The title of the scheduled event
+                - instance: The associated model instance (e.g. SalesOrder object)
+                - speculative_quantity: A speculative quantity to be added or removed
             """
             schedule.append({
                 'date': date,
                 'quantity': quantity,
                 'speculative_quantity': speculative_quantity,
                 'title': title,
-                'label': label,
-                'url': url,
+                'label': str(instance.reference),
+                'model': instance.__class__.__name__.lower(),
+                'model_id': instance.pk,
             })
 
         # Add purchase order (incoming stock) information
@@ -600,11 +601,7 @@ class PartScheduling(RetrieveAPI):
             quantity = line.part.base_quantity(line_quantity)
 
             add_schedule_entry(
-                target_date,
-                quantity,
-                _('Incoming Purchase Order'),
-                str(line.order),
-                line.order.get_absolute_url(),
+                target_date, quantity, _('Incoming Purchase Order'), line.order
             )
 
         # Add sales order (outgoing stock) information
@@ -618,11 +615,7 @@ class PartScheduling(RetrieveAPI):
             quantity = max(line.quantity - line.shipped, 0)
 
             add_schedule_entry(
-                target_date,
-                -quantity,
-                _('Outgoing Sales Order'),
-                str(line.order),
-                line.order.get_absolute_url(),
+                target_date, -quantity, _('Outgoing Sales Order'), line.order
             )
 
         # Add build orders (incoming stock) information
@@ -634,11 +627,7 @@ class PartScheduling(RetrieveAPI):
             quantity = max(build.quantity - build.completed, 0)
 
             add_schedule_entry(
-                build.target_date,
-                quantity,
-                _('Stock produced by Build Order'),
-                str(build),
-                build.get_absolute_url(),
+                build.target_date, quantity, _('Stock produced by Build Order'), build
             )
 
         """
@@ -721,8 +710,7 @@ class PartScheduling(RetrieveAPI):
                     build.target_date,
                     -part_allocated_quantity,
                     _('Stock required for Build Order'),
-                    str(build),
-                    build.get_absolute_url(),
+                    build,
                     speculative_quantity=speculative_quantity,
                 )
 
@@ -742,9 +730,13 @@ class PartScheduling(RetrieveAPI):
             return -1 if date_1 < date_2 else 1
 
         # Sort by incrementing date values
-        schedule = sorted(schedule, key=functools.cmp_to_key(compare))
+        schedules = sorted(schedule, key=functools.cmp_to_key(compare))
 
-        return Response(schedule)
+        serializers = part_serializers.PartSchedulingSerializer(
+            schedules, many=True, context={'request': request}
+        )
+
+        return Response(serializers.data)
 
 
 class PartRequirements(RetrieveAPI):
