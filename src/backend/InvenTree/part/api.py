@@ -582,7 +582,7 @@ class PartScheduling(RetrieveAPI):
                 'quantity': quantity,
                 'speculative_quantity': speculative_quantity,
                 'title': title,
-                'label': str(instance),
+                'label': str(instance.reference),
                 'model': instance.__class__.__name__.lower(),
                 'model_id': instance.pk,
             })
