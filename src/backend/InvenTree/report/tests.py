@@ -305,6 +305,12 @@ class ReportTest(InvenTreeAPITestCase):
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
 
+        # Filter by items
+        response = self.get(url, {'model_type': 'part', 'items': 1})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], 1)
+        self.assertEqual(response.data[0]['name'], 'InvenTree Bill of Materials')
+
     def test_create_endpoint(self):
         """Test that creating a new report works for each report."""
         url = reverse('api-report-template-list')
@@ -532,6 +538,19 @@ class PrintTestMixins:
             max_query_time=15,
             max_query_count=500 * len(qs),
         )
+
+        # Test with wrong dimensions
+        org_width = template.width
+        template.width = 0
+        template.save()
+        response = self.post(
+            url,
+            {'template': template.pk, 'plugin': plugin.pk, 'items': [qs[0].pk]},
+            expected_code=400,
+        )
+        self.assertEqual(str(response.data['template'][0]), 'Invalid label dimensions')
+        template.width = org_width
+        template.save()
 
 
 class TestReportTest(PrintTestMixins, ReportTest):
