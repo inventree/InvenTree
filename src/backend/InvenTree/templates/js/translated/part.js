@@ -3081,17 +3081,17 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     let url = '#';
 
                     switch (entry.model) {
-                        case 'salesorder':
-                            url = `/order/sales-order/${entry.model_id}/`;
-                            break;
-                        case 'purchaseorder':
-                            url = `/order/purchase-order/${entry.model_id}/`;
-                            break;
-                        case 'build':
-                            url = `/build/${entry.model_id}/`;
-                            break;
-                        default:
-                            break;
+                    case 'salesorder':
+                        url = `/order/sales-order/${entry.model_id}/`;
+                        break;
+                    case 'purchaseorder':
+                        url = `/order/purchase-order/${entry.model_id}/`;
+                        break;
+                    case 'build':
+                        url = `/build/${entry.model_id}/`;
+                        break;
+                    default:
+                        break;
                     }
 
                     // Add an entry to the scheduling table
