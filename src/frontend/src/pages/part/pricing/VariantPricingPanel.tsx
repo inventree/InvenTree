@@ -21,7 +21,7 @@ export default function VariantPricingPanel({
   part: any;
   pricing: any;
 }>): ReactNode {
-  const table = useTable('pricing-variants');
+  const table = useTable('pricingvariants');
 
   const columns: TableColumn[] = useMemo(() => {
     return [

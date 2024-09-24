@@ -1,8 +1,10 @@
 import { t } from '@lingui/macro';
-import { BarChart, DonutChart } from '@mantine/charts';
+import { BarChart, ChartTooltipProps, DonutChart } from '@mantine/charts';
 import {
   Center,
+  Divider,
   Group,
+  Paper,
   SegmentedControl,
   SimpleGrid,
   Stack,
@@ -12,7 +14,11 @@ import { ReactNode, useMemo, useState } from 'react';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
+import {
+  formatCurrency,
+  formatDecimal,
+  formatPriceRange
+} from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
@@ -21,6 +27,29 @@ import { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { LoadingPricingData, NoPricingData } from './PricingPanel';
+
+/*
+ * Render a tooltip for the chart, with correct date information
+ */
+function ChartTooltip({ label, payload }: ChartTooltipProps) {
+  if (!payload) {
+    return null;
+  }
+
+  const data = payload[0] ?? {};
+
+  return (
+    <Paper px="md" py="sm" withBorder shadow="md" radius="md">
+      <Text key="title" c={data.payload?.color}>
+        {data.name}
+      </Text>
+      <Divider />
+      <Text key="price" fz="sm">
+        {formatCurrency(data.payload?.value)}
+      </Text>
+    </Paper>
+  );
+}
 
 // Display BOM data as a pie chart
 function BomPieChart({
@@ -57,6 +86,11 @@ function BomPieChart({
         tooltipDataSource="segment"
         chartLabel={t`Total Price`}
         valueFormatter={(value) => tooltipFormatter(value, currency)}
+        tooltipProps={{
+          content: ({ label, payload }) => (
+            <ChartTooltip label={label} payload={payload} />
+          )
+        }}
       />
     </Center>
   );
@@ -78,10 +112,15 @@ function BomBarChart({
       xAxisLabel={t`Component`}
       yAxisLabel={t`Price Range`}
       series={[
-        { name: 'total_price_min', label: t`Minimum Price`, color: 'blue.6' },
+        { name: 'total_price_min', label: t`Minimum Price`, color: 'yellow.6' },
         { name: 'total_price_max', label: t`Maximum Price`, color: 'teal.6' }
       ]}
       valueFormatter={(value) => tooltipFormatter(value, currency)}
+      tooltipProps={{
+        content: ({ label, payload }) => (
+          <ChartTooltip label={label} payload={payload} />
+        )
+      }}
     />
   );
 }
@@ -93,7 +132,7 @@ export default function BomPricingPanel({
   readonly part: any;
   readonly pricing: any;
 }): ReactNode {
-  const table = useTable('pricing-bom');
+  const table = useTable('pricingbom');
 
   const columns: TableColumn[] = useMemo(() => {
     return [
