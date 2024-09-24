@@ -141,11 +141,11 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
     let stock_min = stock;
     let stock_max = stock;
 
-    // First, iterate through each entry and find any entries without an associated date
+    // First, iterate through each entry and find any entries without an associated date, or in the past
     table.records.forEach((record) => {
       let q = record.quantity + record.speculative_quantity;
 
-      if (record.date == null) {
+      if (record.date == null || new Date(record.date) < today) {
         if (q < 0) {
           stock_min += q;
         } else {
@@ -170,40 +170,48 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
     table.records.forEach((record) => {
       let q = record.quantity + record.speculative_quantity;
 
-      // Update date limits
-      if (record.date) {
-        let date = new Date(record.date);
-
-        if (date < min_date) {
-          min_date = date;
-        }
-
-        if (date > max_date) {
-          max_date = date;
-        }
-
-        // Update stock levels
-        stock += record.quantity;
-
-        stock_min += record.quantity;
-        stock_max += record.quantity;
-
-        // Speculative quantities expand the expected stock range
-        if (record.speculative_quantity < 0) {
-          stock_min += record.speculative_quantity;
-        } else if (record.speculative_quantity > 0) {
-          stock_max += record.speculative_quantity;
-        }
-
-        entries.push({
-          ...record,
-          date: new Date(record.date).valueOf(),
-          scheduled: stock,
-          minimum: stock_min,
-          maximum: stock_max,
-          low_stock: part.minimum_stock
-        });
+      if (!record.date) {
+        return;
       }
+
+      const date = new Date(record.date);
+
+      // In the past? Ignore this entry
+      if (date < today) {
+        return;
+      }
+
+      // Update date limits
+
+      if (date < min_date) {
+        min_date = date;
+      }
+
+      if (date > max_date) {
+        max_date = date;
+      }
+
+      // Update stock levels
+      stock += record.quantity;
+
+      stock_min += record.quantity;
+      stock_max += record.quantity;
+
+      // Speculative quantities expand the expected stock range
+      if (record.speculative_quantity < 0) {
+        stock_min += record.speculative_quantity;
+      } else if (record.speculative_quantity > 0) {
+        stock_max += record.speculative_quantity;
+      }
+
+      entries.push({
+        ...record,
+        date: new Date(record.date).valueOf(),
+        scheduled: stock,
+        minimum: stock_min,
+        maximum: stock_max,
+        low_stock: part.minimum_stock
+      });
     });
 
     return entries;
