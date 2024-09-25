@@ -38,7 +38,7 @@ The following files required for this setup are provided with the InvenTree sour
 Download these files to a directory on your local machine.
 
 !!! success "Working Directory"
-    This tutorial assumes you are working from a direction where all of these files are located.
+    This tutorial assumes you are working from a directory where all of these files are located.
 
 !!! tip "No Source Required"
     For a production setup you do not need the InvenTree source code. Simply download the three required files from the links above!
