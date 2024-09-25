@@ -55,7 +55,7 @@ export default function ImportSesssionTable() {
         accessor: 'model_type',
         sortable: true
       },
-      StatusColumn({ model: ModelType.importsession }),
+      StatusColumn({ model: ModelType.importsession, accessor: 'status' }),
       {
         accessor: 'data_file',
         render: (record: any) => (
