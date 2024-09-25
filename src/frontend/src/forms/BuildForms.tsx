@@ -214,51 +214,6 @@ export function useBuildOrderOutputFields({
   }, [quantity, serialPlaceholder, trackable]);
 }
 
-/*
- * Construct a table of build outputs, for displaying at the top of a form
- */
-function buildOutputFormTable(outputs: any[], onRemove: (output: any) => void) {
-  return (
-    <DataTable
-      idAccessor="pk"
-      records={outputs}
-      columns={[
-        {
-          accessor: 'part',
-          title: t`Part`,
-          render: (record: any) => PartColumn({ part: record.part_detail })
-        },
-        {
-          accessor: 'quantity',
-          title: t`Quantity`,
-          render: (record: any) => {
-            if (record.serial) {
-              return `# ${record.serial}`;
-            } else {
-              return record.quantity;
-            }
-          }
-        },
-        StatusColumn({ model: ModelType.stockitem, sortable: false }),
-        {
-          accessor: 'actions',
-          title: '',
-          render: (record: any) => (
-            <ActionButton
-              key={`remove-output-${record.pk}`}
-              tooltip={t`Remove output`}
-              icon={<InvenTreeIcon icon="cancel" />}
-              color="red"
-              onClick={() => onRemove(record.pk)}
-              disabled={outputs.length <= 1}
-            />
-          )
-        }
-      ]}
-    />
-  );
-}
-
 function BuildOutputFormRow({
   props,
   record
@@ -371,10 +326,6 @@ export function useScrapBuildOutputsForm({
 }) {
   const [location, setLocation] = useState<number | null>(null);
 
-  const { selectedRows, removeRow } = useSelectedRows({
-    rows: outputs
-  });
-
   useEffect(() => {
     if (location) {
       return;
@@ -385,20 +336,23 @@ export function useScrapBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
-  const preFormContent = useMemo(() => {
-    return buildOutputFormTable(selectedRows, removeRow);
-  }, [selectedRows, removeRow]);
-
   const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
-        hidden: true,
-        value: selectedRows.map((output: any) => {
+        field_type: 'table',
+        value: outputs.map((output: any) => {
           return {
             output: output.pk,
             quantity: output.quantity
           };
-        })
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = outputs.find((output) => output.pk == row.item.output);
+          return (
+            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+          );
+        },
+        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
       },
       location: {
         value: location,
@@ -409,7 +363,7 @@ export function useScrapBuildOutputsForm({
       notes: {},
       discard_allocations: {}
     };
-  }, [location, selectedRows]);
+  }, [location, outputs]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
@@ -417,8 +371,8 @@ export function useScrapBuildOutputsForm({
     title: t`Scrap Build Outputs`,
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    preFormContent: preFormContent,
-    successMessage: t`Build outputs have been scrapped`
+    successMessage: t`Build outputs have been scrapped`,
+    size: '80%'
   });
 }
 
@@ -431,42 +385,34 @@ export function useCancelBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
-  const { selectedRows, removeRow } = useSelectedRows({
-    rows: outputs
-  });
-
-  const preFormContent = useMemo(() => {
-    return (
-      <Stack gap="xs">
-        <Alert color="red" title={t`Cancel Build Outputs`}>
-          <Text>{t`Selected build outputs will be deleted`}</Text>
-        </Alert>
-        {buildOutputFormTable(selectedRows, removeRow)}
-      </Stack>
-    );
-  }, [selectedRows, removeRow]);
-
   const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
-        hidden: true,
-        value: selectedRows.map((output: any) => {
+        field_type: 'table',
+        value: outputs.map((output: any) => {
           return {
             output: output.pk
           };
-        })
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = outputs.find((output) => output.pk == row.item.output);
+          return (
+            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+          );
+        },
+        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
       }
     };
-  }, [selectedRows]);
+  }, [outputs]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
     method: 'POST',
     title: t`Cancel Build Outputs`,
     fields: buildOutputCancelFields,
-    preFormContent: preFormContent,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been cancelled`
+    successMessage: t`Build outputs have been cancelled`,
+    size: '80%'
   });
 }
 
