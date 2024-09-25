@@ -2,6 +2,14 @@ import { t } from '@lingui/macro';
 import { Flex, Group, Skeleton, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
+import {
+  IconCalendarExclamation,
+  IconCoins,
+  IconCurrencyDollar,
+  IconLink,
+  IconPackage,
+  IconUsersGroup
+} from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useMemo, useState } from 'react';
 
@@ -39,10 +47,16 @@ import { useGlobalSettingsState } from '../states/SettingsState';
  * Construct a set of fields for creating / editing a StockItem instance
  */
 export function useStockFields({
+  item_detail,
+  part_detail,
   create = false
 }: {
+  item_detail?: any;
+  part_detail?: any;
   create: boolean;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   const [part, setPart] = useState<number | null>(null);
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
@@ -86,7 +100,7 @@ export function useStockFields({
         }
       },
       supplier_part: {
-        // TODO: icon
+        hidden: part_detail?.purchaseable == false,
         value: supplierPart,
         onValueChange: (value) => {
           setSupplierPart(value);
@@ -109,6 +123,7 @@ export function useStockFields({
         description: t`Add given quantity as packs instead of individual items`
       },
       location: {
+        // Cannot adjust location for existing stock items
         hidden: !create,
         onValueChange: (value) => {
           batchGenerator.update({ location: value });
@@ -135,11 +150,9 @@ export function useStockFields({
         onValueChange: (value) => setSerialNumbers(value)
       },
       serial: {
-        hidden: create
-        // TODO: icon
+        hidden: create || part_detail?.trackable == false
       },
       batch: {
-        // TODO: icon
         value: batchCode,
         onValueChange: (value) => setBatchCode(value)
       },
@@ -147,22 +160,23 @@ export function useStockFields({
         label: t`Stock Status`
       },
       expiry_date: {
-        // TODO: icon
+        icon: <IconCalendarExclamation />,
+        hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY')
       },
       purchase_price: {
-        // TODO: icon
+        icon: <IconCurrencyDollar />
       },
       purchase_price_currency: {
-        // TODO: icon
+        icon: <IconCoins />
       },
       packaging: {
-        // TODO: icon,
+        icon: <IconPackage />
       },
       link: {
-        // TODO: icon
+        icon: <IconLink />
       },
       owner: {
-        // TODO: icon
+        icon: <IconUsersGroup />
       },
       delete_on_deplete: {}
     };
@@ -171,7 +185,17 @@ export function useStockFields({
     // TODO: refer to stock.py in original codebase
 
     return fields;
-  }, [part, supplierPart, batchCode, serialNumbers, trackable, create]);
+  }, [
+    item_detail,
+    part_detail,
+    part,
+    globalSettings,
+    supplierPart,
+    batchCode,
+    serialNumbers,
+    trackable,
+    create
+  ]);
 }
 
 /**
