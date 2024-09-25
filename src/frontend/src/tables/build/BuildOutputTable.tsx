@@ -294,6 +294,13 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
             completeBuildOutputsForm.open();
           }
         },
+        RowEditAction({
+          tooltip: t`Edit build output`,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            editBuildOutput.open();
+          }
+        }),
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
@@ -304,13 +311,6 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
             scrapBuildOutputsForm.open();
           }
         },
-        RowEditAction({
-          tooltip: t`Edit build output`,
-          onClick: () => {
-            setSelectedOutputs([record]);
-            editBuildOutput.open();
-          }
-        }),
         {
           title: t`Cancel`,
           tooltip: t`Cancel build output`,
