@@ -278,3 +278,31 @@ class TestPathstringMigration(MigratorTestCase):
         for loc_name, pathstring in test_data.items():
             loc = StockLocation.objects.get(name=loc_name)
             self.assertEqual(loc.pathstring, pathstring)
+
+
+class TestBarcodeToUidMigration(MigratorTestCase):
+    """Unit tests for barcode to uid data migrations."""
+
+    migrate_from = ('stock', '0084_auto_20220903_0154')
+    migrate_to = ('stock', '0085_auto_20220903_0225')
+
+    def prepare(self):
+        """Create initial data."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
+
+        # Create a test StockItem
+        part = Part.objects.create(name='test', level=0, lft=0, rght=0, tree_id=0)
+        StockItem.objects.create(
+            part_id=part.id, uid='12345', level=0, lft=0, rght=0, tree_id=0
+        )
+        self.assertEqual(StockItem.objects.count(), 1)
+
+    def test_migration(self):
+        """Test that the migrations were applied as expected."""
+        StockItem = self.new_state.apps.get_model('stock', 'StockItem')
+
+        self.assertEqual(StockItem.objects.count(), 1)
+        item = StockItem.objects.first()
+        self.assertEqual(item.barcode_hash, '12345')
+        self.assertEqual(item.uid, '12345')
