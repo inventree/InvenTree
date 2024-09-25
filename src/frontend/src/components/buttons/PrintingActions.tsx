@@ -92,7 +92,7 @@ export function PrintingActions({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
     fields: labelFields,
-    timeout: (items.length + 1) * 1000,
+    timeout: (items.length + 1) * 5000,
     onClose: () => {
       setPluginKey('');
     },
@@ -121,7 +121,7 @@ export function PrintingActions({
   const reportModal = useCreateApiFormModal({
     title: t`Print Report`,
     url: apiUrl(ApiEndpoints.report_print),
-    timeout: (items.length + 1) * 1000,
+    timeout: (items.length + 1) * 5000,
     fields: {
       template: {
         filters: {
