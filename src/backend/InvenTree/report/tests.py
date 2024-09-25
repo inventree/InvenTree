@@ -308,10 +308,11 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Filter by items
         part_pk = Part.objects.first().pk
+        report = ReportTemplate.objects.filter(model_type='part').first()
         response = self.get(url, {'model_type': 'part', 'items': part_pk})
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['pk'], 1)
-        self.assertEqual(response.data[0]['name'], 'InvenTree Bill of Materials')
+        self.assertEqual(response.data[0]['pk'], report.pk)
+        self.assertEqual(response.data[0]['name'], report.name)
 
     def test_create_endpoint(self):
         """Test that creating a new report works for each report."""
