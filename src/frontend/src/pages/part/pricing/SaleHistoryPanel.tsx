@@ -15,7 +15,7 @@ import { NoPricingData } from './PricingPanel';
 export default function SaleHistoryPanel({
   part
 }: Readonly<{ part: any }>): ReactNode {
-  const table = useTable('pricing-sale-history');
+  const table = useTable('pricingsalehistory');
 
   const columns: TableColumn[] = useMemo(() => {
     return [

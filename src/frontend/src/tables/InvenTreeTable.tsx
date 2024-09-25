@@ -179,10 +179,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
+    gcTime: 5000,
     queryFn: async () => {
       if (props.enableColumnCaching == false) {
         return null;
       }
+
+      // If we already have field names, no need to fetch them again
+      if (fieldNames && Object.keys(fieldNames).length > 0) {
+        return null;
+      }
+
       return api
         .options(url, {
           params: tableProps.params
@@ -203,7 +210,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               }
             });
 
-            const cacheKey = tableState.tableKey.split('-')[0];
+            const cacheKey = tableState.tableKey.replaceAll('-', '');
 
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
@@ -220,20 +227,19 @@ export function InvenTreeTable<T extends Record<string, any>>({
       return;
     }
 
-    const cacheKey = tableState.tableKey.split('-')[0];
+    const cacheKey = tableState.tableKey.replaceAll('-', '');
 
     // First check the local cache
     const cachedNames = getTableColumnNames(cacheKey);
 
-    if (Object.keys(cachedNames).length > 0) {
+    if (cachedNames != null) {
       // Cached names are available - use them!
       setFieldNames(cachedNames);
       return;
     }
 
-    // Otherwise, fetch the data from the API
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
+  }, [url, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -500,8 +506,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
   };
 
-  const { data, isFetching, refetch } = useQuery({
+  const { data, isFetching, isLoading, refetch } = useQuery({
     queryKey: [
+      'tabledata',
+      url,
       tableState.page,
       props.params,
       sortStatus.columnAccessor,
@@ -515,8 +523,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
   });
 
   useEffect(() => {
-    tableState.setIsLoading(isFetching);
-  }, [isFetching]);
+    tableState.setIsLoading(
+      isFetching ||
+        isLoading ||
+        tableOptionQuery.isFetching ||
+        tableOptionQuery.isLoading
+    );
+  }, [isFetching, isLoading, tableOptionQuery]);
 
   // Update tableState.records when new data received
   useEffect(() => {

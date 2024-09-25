@@ -60,6 +60,6 @@ export function showLoginNotification({
     color: success ? 'green' : 'red',
     icon: success ? <IconCircleCheck /> : <IconExclamationCircle />,
     id: 'login',
-    autoClose: 5000
+    autoClose: 2500
   });
 }

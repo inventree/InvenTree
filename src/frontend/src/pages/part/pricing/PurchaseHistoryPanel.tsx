@@ -16,7 +16,7 @@ export default function PurchaseHistoryPanel({
 }: Readonly<{
   part: any;
 }>): ReactNode {
-  const table = useTable('pricing-purchase-history');
+  const table = useTable('pricingpurchasehistory');
 
   const calculateUnitPrice = useCallback((record: any) => {
     let pack_quantity = record?.supplier_part_detail?.pack_quantity_native ?? 1;

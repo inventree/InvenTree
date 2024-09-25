@@ -79,7 +79,7 @@ export const useLocalState = create<LocalStateProps>()(
       // tables
       tableColumnNames: {},
       getTableColumnNames: (tableKey) => {
-        return get().tableColumnNames[tableKey] || {};
+        return get().tableColumnNames[tableKey] || null;
       },
       setTableColumnNames: (tableKey) => (names) => {
         // Update the table column names for the given table
