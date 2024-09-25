@@ -416,50 +416,6 @@ export function useCancelBuildOutputsForm({
   });
 }
 
-function buildAllocationFormTable(
-  outputs: any[],
-  onRemove: (output: any) => void
-) {
-  return (
-    <DataTable
-      idAccessor="pk"
-      records={outputs}
-      columns={[
-        {
-          accessor: 'part',
-          title: t`Part`,
-          render: (record: any) => PartColumn({ part: record.part_detail })
-        },
-        {
-          accessor: 'allocated',
-          title: t`Allocated`,
-          render: (record: any) => (
-            <ProgressBar
-              value={record.allocated}
-              maximum={record.quantity}
-              progressLabel
-            />
-          )
-        },
-        {
-          accessor: 'actions',
-          title: '',
-          render: (record: any) => (
-            <ActionButton
-              key={`remove-line-${record.pk}`}
-              tooltip={t`Remove line`}
-              icon={<InvenTreeIcon icon="cancel" />}
-              color="red"
-              onClick={() => onRemove(record.pk)}
-              disabled={outputs.length <= 1}
-            />
-          )
-        }
-      ]}
-    />
-  );
-}
-
 // Construct a single row in the 'allocate stock to build' table
 function BuildAllocateLineRow({
   props,
