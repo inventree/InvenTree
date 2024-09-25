@@ -38,7 +38,10 @@ type TestResultOverview = {
   result: boolean;
 };
 
-export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
+export default function BuildOutputTable({
+  build,
+  refreshBuild
+}: Readonly<{ build: any; refreshBuild: () => void }>) {
   const user = useUserState();
   const table = useTable('build-outputs');
 
@@ -190,6 +193,7 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
     outputs: selectedOutputs,
     onFormSuccess: () => {
       table.refreshTable();
+      refreshBuild();
     }
   });
 
@@ -198,6 +202,7 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
     outputs: selectedOutputs,
     onFormSuccess: () => {
       table.refreshTable();
+      refreshBuild();
     }
   });
 
@@ -206,6 +211,7 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
     outputs: selectedOutputs,
     onFormSuccess: () => {
       table.refreshTable();
+      refreshBuild();
     }
   });
 
