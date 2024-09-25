@@ -17,16 +17,20 @@ import {
   useCompleteBuildOutputsForm,
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
+import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 type TestResultOverview = {
@@ -205,6 +209,20 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
     }
   });
 
+  const editStockItemFields = useStockFields({
+    create: false,
+    item_detail: selectedOutputs[0],
+    part_detail: selectedOutputs[0]?.part_detail
+  });
+
+  const editBuildOutput = useEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: selectedOutputs[0]?.pk,
+    title: t`Edit Build Output`,
+    fields: editStockItemFields,
+    table: table
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -286,6 +304,13 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
             scrapBuildOutputsForm.open();
           }
         },
+        RowEditAction({
+          tooltip: t`Edit build output`,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            editBuildOutput.open();
+          }
+        }),
         {
           title: t`Cancel`,
           tooltip: t`Cancel build output`,
@@ -321,17 +346,12 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
             text = `# ${record.serial}`;
           }
 
-          return (
-            <Group justify="left" wrap="nowrap">
-              <Text>{text}</Text>
-              {record.batch && (
-                <Text style={{ fontStyle: 'italic' }} size="sm">
-                  {t`Batch`}: {record.batch}
-                </Text>
-              )}
-            </Group>
-          );
+          return text;
         }
+      },
+      {
+        accessor: 'batch',
+        sortable: true
       },
       StatusColumn({
         accessor: 'status',
@@ -410,6 +430,7 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
       {addBuildOutput.modal}
       {completeBuildOutputsForm.modal}
       {scrapBuildOutputsForm.modal}
+      {editBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
       <InvenTreeTable
         tableState={table}

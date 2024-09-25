@@ -150,7 +150,10 @@ export function useStockFields({
         onValueChange: (value) => setSerialNumbers(value)
       },
       serial: {
-        hidden: create || part_detail?.trackable == false
+        hidden:
+          create ||
+          part_detail?.trackable == false ||
+          (!item_detail?.quantity != undefined && item_detail?.quantity != 1)
       },
       batch: {
         value: batchCode,
