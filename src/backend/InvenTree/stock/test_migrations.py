@@ -244,18 +244,16 @@ class TestPathstringMigration(MigratorTestCase):
         StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
 
         # Create a test StockLocation
-        self.loc1 = StockLocation.objects.create(
+        loc1 = StockLocation.objects.create(
             name='Loc 1', level=0, lft=0, rght=0, tree_id=0
         )
-        self.loc2 = StockLocation.objects.create(
-            name='Loc 2', parent=self.loc1, level=1, lft=0, rght=0, tree_id=0
+        loc2 = StockLocation.objects.create(
+            name='Loc 2', parent=loc1, level=1, lft=0, rght=0, tree_id=0
         )
-        self.loc3 = StockLocation.objects.create(
-            name='Loc 3', parent=self.loc2, level=2, lft=0, rght=0, tree_id=0
+        StockLocation.objects.create(
+            name='Loc 3', parent=loc2, level=2, lft=0, rght=0, tree_id=0
         )
-        self.loc4 = StockLocation.objects.create(
-            name='Loc 4', level=0, lft=0, rght=0, tree_id=0
-        )
+        StockLocation.objects.create(name='Loc 4', level=0, lft=0, rght=0, tree_id=0)
 
         # Check initial record counts
         self.assertEqual(StockLocation.objects.count(), 4)
@@ -264,17 +262,13 @@ class TestPathstringMigration(MigratorTestCase):
         """Test that the migrations were applied as expected."""
         StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
 
-        # Test that original record counts are correct
         self.assertEqual(StockLocation.objects.count(), 4)
-
-        # Test the new pathstring values
         test_data = {
             'Loc 1': 'Loc 1',
             'Loc 2': 'Loc 1/Loc 2',
             'Loc 3': 'Loc 1/Loc 2/Loc 3',
             'Loc 4': 'Loc 4',
         }
-
         for loc_name, pathstring in test_data.items():
             loc = StockLocation.objects.get(name=loc_name)
             self.assertEqual(loc.pathstring, pathstring)
