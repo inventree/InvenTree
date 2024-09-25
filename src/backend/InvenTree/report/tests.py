@@ -18,6 +18,7 @@ from build.models import Build
 from common.models import Attachment, InvenTreeSetting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
+from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
@@ -306,7 +307,8 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), n)
 
         # Filter by items
-        response = self.get(url, {'model_type': 'part', 'items': 1})
+        part_pk = Part.objects.first().pk
+        response = self.get(url, {'model_type': 'part', 'items': part_pk})
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], 1)
         self.assertEqual(response.data[0]['name'], 'InvenTree Bill of Materials')
