@@ -542,6 +542,9 @@ class PrintTestMixins:
         )
 
         # Test with wrong dimensions
+        if not hasattr(template, 'width'):
+            return
+
         org_width = template.width
         template.width = 0
         template.save()
