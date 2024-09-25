@@ -231,3 +231,50 @@ class TestTestResultMigration(MigratorTestCase):
 
         for result in StockItemTestResult.objects.all():
             self.assertIsNotNone(result.template)
+
+
+class TestPathstringMigration(MigratorTestCase):
+    """Unit tests for StockLocation.Pathstring data migrations."""
+
+    migrate_from = ('stock', '0080_stocklocation_pathstring')
+    migrate_to = ('stock', '0081_auto_20220801_0044')
+
+    def prepare(self):
+        """Create initial data."""
+        StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
+
+        # Create a test StockLocation
+        self.loc1 = StockLocation.objects.create(
+            name='Loc 1', level=0, lft=0, rght=0, tree_id=0
+        )
+        self.loc2 = StockLocation.objects.create(
+            name='Loc 2', parent=self.loc1, level=1, lft=0, rght=0, tree_id=0
+        )
+        self.loc3 = StockLocation.objects.create(
+            name='Loc 3', parent=self.loc2, level=2, lft=0, rght=0, tree_id=0
+        )
+        self.loc4 = StockLocation.objects.create(
+            name='Loc 4', level=0, lft=0, rght=0, tree_id=0
+        )
+
+        # Check initial record counts
+        self.assertEqual(StockLocation.objects.count(), 4)
+
+    def test_migration(self):
+        """Test that the migrations were applied as expected."""
+        StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
+
+        # Test that original record counts are correct
+        self.assertEqual(StockLocation.objects.count(), 4)
+
+        # Test the new pathstring values
+        test_data = {
+            'Loc 1': 'Loc 1',
+            'Loc 2': 'Loc 1/Loc 2',
+            'Loc 3': 'Loc 1/Loc 2/Loc 3',
+            'Loc 4': 'Loc 4',
+        }
+
+        for loc_name, pathstring in test_data.items():
+            loc = StockLocation.objects.get(name=loc_name)
+            self.assertEqual(loc.pathstring, pathstring)
