@@ -22,6 +22,7 @@ import {
 } from '../components/forms/fields/ApiFormField';
 import { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
+import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
@@ -225,7 +226,7 @@ function buildOutputFormTable(outputs: any[], onRemove: (output: any) => void) {
         {
           accessor: 'part',
           title: t`Part`,
-          render: (record: any) => PartColumn(record.part_detail)
+          render: (record: any) => PartColumn({ part: record.part_detail })
         },
         {
           accessor: 'quantity',
@@ -258,6 +259,40 @@ function buildOutputFormTable(outputs: any[], onRemove: (output: any) => void) {
   );
 }
 
+function BuildOutputFormRow({
+  props,
+  record
+}: Readonly<{
+  props: TableFieldRowProps;
+  record: any;
+}>) {
+  const serial = useMemo(() => {
+    if (record.serial) {
+      return `# ${record.serial}`;
+    } else {
+      return t`Quantity` + `: ${record.quantity}`;
+    }
+  }, [record]);
+
+  return (
+    <>
+      <Table.Tr>
+        <Table.Td>
+          <PartColumn part={record.part_detail} />
+        </Table.Td>
+        <Table.Td>{serial}</Table.Td>
+        <Table.Td>{record.batch}</Table.Td>
+        <Table.Td>
+          <StatusRenderer status={record.status} type={ModelType.stockitem} />{' '}
+        </Table.Td>
+        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        </Table.Td>
+      </Table.Tr>
+    </>
+  );
+}
+
 export function useCompleteBuildOutputsForm({
   build,
   outputs,
@@ -269,10 +304,6 @@ export function useCompleteBuildOutputsForm({
 }) {
   const [location, setLocation] = useState<number | null>(null);
 
-  const { selectedRows, removeRow } = useSelectedRows({
-    rows: outputs
-  });
-
   useEffect(() => {
     if (location) {
       return;
@@ -283,19 +314,22 @@ export function useCompleteBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
-  const preFormContent = useMemo(() => {
-    return buildOutputFormTable(selectedRows, removeRow);
-  }, [selectedRows, removeRow]);
-
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
-        hidden: true,
-        value: selectedRows.map((output: any) => {
+        field_type: 'table',
+        value: outputs.map((output: any) => {
           return {
             output: output.pk
           };
-        })
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = outputs.find((output) => output.pk == row.item.output);
+          return (
+            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+          );
+        },
+        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
       },
       status_custom_key: {},
       location: {
@@ -303,14 +337,14 @@ export function useCompleteBuildOutputsForm({
           structural: false
         },
         value: location,
-        onValueChange: (value) => {
+        onValueChange: (value: any) => {
           setLocation(value);
         }
       },
       notes: {},
       accept_incomplete_allocation: {}
     };
-  }, [selectedRows, location]);
+  }, [location, outputs]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_complete, build.pk),
@@ -318,8 +352,8 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    preFormContent: preFormContent,
-    successMessage: t`Build outputs have been completed`
+    successMessage: t`Build outputs have been completed`,
+    size: '80%'
   });
 }
 
@@ -448,7 +482,7 @@ function buildAllocationFormTable(
         {
           accessor: 'part',
           title: t`Part`,
-          render: (record: any) => PartColumn(record.part_detail)
+          render: (record: any) => PartColumn({ part: record.part_detail })
         },
         {
           accessor: 'allocated',
@@ -534,14 +568,11 @@ function BuildAllocateLineRow({
     };
   }, [props]);
 
-  const partDetail = useMemo(
-    () => PartColumn(record.part_detail),
-    [record.part_detail]
-  );
-
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
-      <Table.Td>{partDetail}</Table.Td>
+      <Table.Td>
+        <PartColumn part={record.part_detail} />
+      </Table.Td>
       <Table.Td>
         <ProgressBar
           value={record.allocated}

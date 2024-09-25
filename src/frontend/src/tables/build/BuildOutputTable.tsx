@@ -331,7 +331,7 @@ export default function BuildOutputTable({ build }: Readonly<{ build: any }>) {
       {
         accessor: 'part',
         sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'quantity',
