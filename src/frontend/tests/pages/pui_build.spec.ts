@@ -141,7 +141,7 @@ test('PUI - Pages - Build Order - Build Outputs', async ({ page }) => {
   // Cancel one of the newly created outputs
   const cell = await page.getByRole('cell', { name: `# ${sn}` });
   const row = await cell.locator('xpath=ancestor::tr').first();
-  await row.getByLabel(/row\-action\-menu\-/i).click();
+  await row.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Cancel' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been cancelled').waitFor();
@@ -149,18 +149,11 @@ test('PUI - Pages - Build Order - Build Outputs', async ({ page }) => {
   // Complete the other output
   const cell2 = await page.getByRole('cell', { name: `# ${sn + 1}` });
   const row2 = await cell2.locator('xpath=ancestor::tr').first();
-  await row2.getByLabel(/row\-action\-menu\-/i).click();
+  await row2.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Complete' }).click();
   await page.getByLabel('related-field-location').click();
   await page.getByText('Mechanical Lab').click();
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been completed').waitFor();
-
-  await page.waitForTimeout(2500);
-
-  return;
-
-  // Load a particular build order
-  await page.getByRole('cell', { name: 'BO0017' }).click();
 });
