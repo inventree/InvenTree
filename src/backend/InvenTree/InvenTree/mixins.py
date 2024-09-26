@@ -180,5 +180,9 @@ class RetrieveUpdateDestroyAPI(CleanMixin, generics.RetrieveUpdateDestroyAPIView
     """View for retrieve, update and destroy API."""
 
 
+class RetrieveDestroyAPI(generics.RetrieveDestroyAPIView):
+    """View for retrieve and destroy API."""
+
+
 class UpdateAPI(CleanMixin, generics.UpdateAPIView):
     """View for update API."""

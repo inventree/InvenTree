@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import {
   Anchor,
   Badge,
@@ -178,10 +178,7 @@ export function AboutInvenTreeModal({
       </Table>
       <Divider />
       <Group justify="space-between">
-        <CopyButton
-          value={copyval}
-          label={<Trans>Copy version information</Trans>}
-        />
+        <CopyButton value={copyval} label={t`Copy version information`} />
         <Space />
         <Button
           color="red"

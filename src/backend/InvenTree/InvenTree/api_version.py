@@ -1,15 +1,34 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 255
+INVENTREE_API_VERSION = 261
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v255 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8054
+v261 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8054
     - Adds "SelectionList" and "SelectionListEntry" API endpoints
+
+v260 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
+    - Adds facility for server-side context data to be passed to client-side plugins
+
+v259 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8137
+    - Implements new API endpoint for enabling custom UI features via plugins
+
+v258 - 2024-09-24 : https://github.com/inventree/InvenTree/pull/8163
+    - Enhances the existing PartScheduling API endpoint
+    - Adds a formal DRF serializer to the endpoint
+
+v257 - 2024-09-22 : https://github.com/inventree/InvenTree/pull/8150
+    - Adds API endpoint for reporting barcode scan history
+
+v256 - 2024-09-19 : https://github.com/inventree/InvenTree/pull/7704
+    - Adjustments for "stocktake" (stock history) API endpoints
+
+v255 - 2024-09-19 : https://github.com/inventree/InvenTree/pull/8145
+    - Enables copying line items when duplicating an order
 
 v254 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7470
     - Implements new API endpoints for enabling custom UI functionality via plugins

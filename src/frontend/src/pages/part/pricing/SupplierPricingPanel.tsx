@@ -18,7 +18,7 @@ import { NoPricingData } from './PricingPanel';
 export default function SupplierPricingPanel({
   part
 }: Readonly<{ part: any }>) {
-  const table = useTable('pricing-supplier');
+  const table = useTable('pricingsupplier');
 
   const columns: TableColumn[] = useMemo(() => {
     return SupplierPriceBreakColumns();
@@ -32,14 +32,16 @@ export default function SupplierPricingPanel({
   }, [table.records]);
 
   const supplierPricingData = useMemo(() => {
-    return table.records.map((record: any) => {
-      return {
-        quantity: record.quantity,
-        supplier_price: record.price,
-        unit_price: calculateSupplierPartUnitPrice(record),
-        name: record.part_detail?.SKU
-      };
-    });
+    return (
+      table.records?.map((record: any) => {
+        return {
+          quantity: record.quantity,
+          supplier_price: record.price,
+          unit_price: calculateSupplierPartUnitPrice(record),
+          name: record.part_detail?.SKU
+        };
+      }) ?? []
+    );
   }, [table.records]);
 
   return (

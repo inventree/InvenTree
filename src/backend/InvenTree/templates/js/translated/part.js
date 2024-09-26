@@ -3092,10 +3092,26 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         quantity_string += makeIconBadge('fa-question-circle icon-blue', '{% trans "Speculative" %}');
                     }
 
+                    let url = '#';
+
+                    switch (entry.model) {
+                    case 'salesorder':
+                        url = `/order/sales-order/${entry.model_id}/`;
+                        break;
+                    case 'purchaseorder':
+                        url = `/order/purchase-order/${entry.model_id}/`;
+                        break;
+                    case 'build':
+                        url = `/build/${entry.model_id}/`;
+                        break;
+                    default:
+                        break;
+                    }
+
                     // Add an entry to the scheduling table
                     table_html += `
                         <tr>
-                            <td><a href="${entry.url}">${entry.label}</a></td>
+                            <td><a href="${url}">${entry.label}</a></td>
                             <td>${entry.title}</td>
                             <td>${date_string}</td>
                             <td>${quantity_string}</td>

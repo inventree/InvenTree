@@ -39,10 +39,6 @@ export enum ApiEndpoints {
   api_search = 'search/',
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
-  barcode = 'barcode/',
-  barcode_link = 'barcode/link/',
-  barcode_unlink = 'barcode/unlink/',
-  generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
   custom_state_list = 'generic/status/custom/',
@@ -55,6 +51,13 @@ export enum ApiEndpoints {
   icons = 'icons/',
   selectionlist_list = 'selection/',
   selectionlist_detail = 'selection/:id/',
+
+  // Barcode API endpoints
+  barcode = 'barcode/',
+  barcode_history = 'barcode/history/',
+  barcode_link = 'barcode/link/',
+  barcode_unlink = 'barcode/unlink/',
+  barcode_generate = 'barcode/generate/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',
@@ -92,11 +95,14 @@ export enum ApiEndpoints {
   part_parameter_list = 'part/parameter/',
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
-  part_pricing_get = 'part/:id/pricing/',
+  part_pricing = 'part/:id/pricing/',
   part_serial_numbers = 'part/:id/serial-numbers/',
+  part_scheduling = 'part/:id/scheduling/',
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
+  part_stocktake_report_list = 'part/stocktake/report/',
+  part_stocktake_report_generate = 'part/stocktake/report/generate/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
@@ -162,6 +168,7 @@ export enum ApiEndpoints {
   return_order_hold = 'order/ro/:id/hold/',
   return_order_cancel = 'order/ro/:id/cancel/',
   return_order_complete = 'order/ro/:id/complete/',
+  return_order_receive = 'order/ro/:id/receive/',
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
 
@@ -186,6 +193,7 @@ export enum ApiEndpoints {
 
   // User interface plugin endpoints
   plugin_panel_list = 'plugins/ui/panels/',
+  plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

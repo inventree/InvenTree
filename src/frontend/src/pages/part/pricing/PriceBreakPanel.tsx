@@ -34,7 +34,7 @@ export default function PriceBreakPanel({
   endpoint: ApiEndpoints;
 }>) {
   const user = useUserState();
-  const table = useTable('pricing-internal');
+  const table = useTable('pricinginternal');
 
   const priceBreakFields: ApiFormFieldSet = useMemo(() => {
     return {

@@ -90,6 +90,8 @@ Configuration of barcode functionality:
 {{ globalsetting("BARCODE_WEBCAM_SUPPORT") }}
 {{ globalsetting("BARCODE_SHOW_TEXT") }}
 {{ globalsetting("BARCODE_GENERATION_PLUGIN") }}
+{{ globalsetting("BARCODE_STORE_RESULTS") }}
+{{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
 
 ### Pricing and Currency
 
