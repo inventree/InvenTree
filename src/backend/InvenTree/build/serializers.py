@@ -1280,6 +1280,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item_detail',
             'part_detail',
             'quantity',
+            'consumed',
             'allocations',
 
             # BOM item detail fields
@@ -1337,6 +1338,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     allow_variants = serializers.BooleanField(source='bom_item.allow_variants', label=_('Allow Variants'), read_only=True)
 
     quantity = serializers.FloatField(label=_('Quantity'))
+    consumed = serializers.FloatField(label=_('Consumed'))
 
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
