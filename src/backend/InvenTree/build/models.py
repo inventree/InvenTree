@@ -1470,6 +1470,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         build: Link to a Build object
         bom_item: Link to a BomItem object
         quantity: Number of units required for the Build
+        consumed: Number of units which have been consumed against this line item
     """
 
     class Meta:
@@ -1517,6 +1518,15 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         help_text=_('Required quantity for build order'),
     )
 
+    consumed = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Consumed'),
+        help_text=_('Quantity of consumed stock'),
+    )
+
     @property
     def part(self):
         """Return the sub_part reference from the link bom_item"""
@@ -1547,6 +1557,10 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
     def is_overallocated(self):
         """Return True if this BuildLine is over-allocated"""
         return self.allocated_quantity() > self.quantity
+
+    def is_fully_consumed(self):
+        """Return True if this BuildLine is fully consumed"""
+        return self.consumed >= self.quantity
 
 
 class BuildItem(InvenTree.models.InvenTreeMetadataModel):
