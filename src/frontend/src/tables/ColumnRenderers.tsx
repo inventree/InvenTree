@@ -2,7 +2,7 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
-import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import { Anchor, Center, Group, Skeleton, Text, Tooltip } from '@mantine/core';
 import { IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
@@ -69,7 +69,9 @@ export function BooleanColumn(props: TableColumn): TableColumn {
     sortable: true,
     switchable: true,
     render: (record: any) => (
-      <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
+      <Center>
+        <YesNoButton value={resolveItem(record, props.accessor ?? '')} />
+      </Center>
     ),
     ...props
   };

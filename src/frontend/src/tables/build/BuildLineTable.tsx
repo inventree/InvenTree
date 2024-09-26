@@ -260,13 +260,15 @@ export default function BuildLineTable({
         accessor: 'allocated',
         switchable: false,
         render: (record: any) => {
+          const required = Math.max(0, record.quantity - record.consumed);
+
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
               value={record.allocated}
-              maximum={record.quantity}
+              maximum={required}
             />
           );
         }
