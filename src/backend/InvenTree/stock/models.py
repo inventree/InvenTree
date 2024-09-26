@@ -1577,6 +1577,13 @@ class StockItem(
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
 
+        # Rebuild the stock tree
+        try:
+            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
+        except Exception:
+            logger.warning('Failed to rebuild stock tree during serializeStock')
+            StockItem.objects.rebuild()
+
     @transaction.atomic
     def copyHistoryFrom(self, other):
         """Copy stock history from another StockItem."""
@@ -1811,7 +1818,7 @@ class StockItem(
             for tree_id in tree_ids:
                 StockItem.objects.partial_rebuild(tree_id=tree_id)
         except Exception:
-            logger.warning('Rebuilding entire StockItem tree')
+            logger.warning('Rebuilding entire StockItem tree during merge_stock_items')
             StockItem.objects.rebuild()
 
     @transaction.atomic
