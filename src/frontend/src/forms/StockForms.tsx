@@ -40,6 +40,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -212,6 +213,30 @@ export function useCreateStockItem() {
     fields: fields,
     title: t`Add Stock Item`
   });
+}
+
+export function useStockItemSerializeFields({
+  partId,
+  trackable
+}: {
+  partId: number;
+  trackable: boolean;
+}) {
+  const snPlaceholder = useSerialNumberPlaceholder({
+    partId: partId,
+    key: 'stock-item-serialize',
+    enabled: trackable
+  });
+
+  return useMemo(() => {
+    return {
+      quantity: {},
+      serial_numbers: {
+        placeholder: snPlaceholder
+      },
+      destination: {}
+    };
+  }, [snPlaceholder]);
 }
 
 function StockItemDefaultMove({
