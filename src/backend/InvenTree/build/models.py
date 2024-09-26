@@ -1723,6 +1723,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         """
         item = self.stock_item
 
+        # Ensure we are not allocating more than available
+        if self.quantity > item.quantity:
+            raise ValidationError({
+                'quantity': _('Allocated quantity exceeds available stock quantity')
+            })
+
         # Split the allocated stock if there are more available than allocated
         if item.quantity > self.quantity:
             item = item.splitStock(
@@ -1762,6 +1768,10 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     'quantity': float(item.quantity),
                 }
             )
+
+        # Increase the "consumed" count for the associated BuildLine
+        self.build_line.consumed += self.quantity
+        self.build_line.save()
 
     build_line = models.ForeignKey(
         BuildLine,
