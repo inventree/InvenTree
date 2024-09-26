@@ -9,6 +9,7 @@ import {
   IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -28,6 +29,7 @@ import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
+import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { useSelectedRows } from '../hooks/UseSelectedRows';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
@@ -161,32 +163,11 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
-  const [serialPlaceholder, setSerialPlaceholder] = useState<string>('');
-
-  useEffect(() => {
-    if (trackable) {
-      api
-        .get(apiUrl(ApiEndpoints.part_serial_numbers, build.part_detail.pk))
-        .then((response: any) => {
-          if (response.data?.next) {
-            setSerialPlaceholder(
-              t`Next serial number` + ' - ' + response.data.next
-            );
-          } else if (response.data?.latest) {
-            setSerialPlaceholder(
-              t`Latest serial number` + ' - ' + response.data.latest
-            );
-          } else {
-            setSerialPlaceholder('');
-          }
-        })
-        .catch(() => {
-          setSerialPlaceholder('');
-        });
-    } else {
-      setSerialPlaceholder('');
-    }
-  }, [build, trackable]);
+  const serialPlaceholder = useSerialNumberPlaceholder({
+    partId: build.part_detail?.pk,
+    key: 'build-output',
+    enabled: build.part_detail?.trackable
+  });
 
   return useMemo(() => {
     return {
