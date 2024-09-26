@@ -934,26 +934,28 @@ class StockItemListTest(StockAPITestCase):
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
 
-    def test_batch_apis(self):
-        """Test helper APIs for batch management."""
+    def test_batch_generate_api(self):
+        """Test helper API for batch management."""
         set_global_setting(
             'STOCK_BATCH_CODE_TEMPLATE', '{% if item %}{{ item.pk }}{% endif %}'
         )
-        response = self.post(reverse('api-generate-batch-code'))
+        url = reverse('api-generate-batch-code')
+
+        response = self.post(url)
         self.assertEqual(response.status_code, 201)
         self.assertIn('batch_code', response.data)
         self.assertEqual(len(response.data['batch_code']), 0)
 
         # With data
-        response = self.post(reverse('api-generate-batch-code'), {'item': 1})
+        response = self.post(url, {'item': 1})
         self.assertEqual(response.data['batch_code'], '1')
 
         # With full data
-        response = self.post(
-            reverse('api-generate-batch-code'), {'item': 1, 'quantity': 2}
-        )
+        response = self.post(url, {'item': 1, 'quantity': 2})
         self.assertEqual(response.data['batch_code'], '1')
 
+    def test_serial_generate_api(self):
+        """Test helper API for serial management."""
         # Generate serial number
         response = self.post(reverse('api-generate-serial-number'))
         self.assertIn('serial_number', response.data)
