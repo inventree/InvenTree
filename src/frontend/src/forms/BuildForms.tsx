@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Stack, Table, Text } from '@mantine/core';
+import { Stack, Table } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -9,12 +9,8 @@ import {
   IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { DataTable } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
 
-import { api } from '../App';
-import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import {
@@ -26,14 +22,12 @@ import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
-import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
-import { useSelectedRows } from '../hooks/UseSelectedRows';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
-import { PartColumn, StatusColumn } from '../tables/ColumnRenderers';
+import { PartColumn } from '../tables/ColumnRenderers';
 
 /**
  * Field set for BuildOrder forms
