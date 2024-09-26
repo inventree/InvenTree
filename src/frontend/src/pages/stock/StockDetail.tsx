@@ -491,7 +491,8 @@ export default function StockDetail() {
   const transferStockItem = useTransferStockItem(stockActionProps);
 
   const serializeStockFields = useStockItemSerializeFields({
-    partId: stockitem.part
+    partId: stockitem.part,
+    trackable: stockitem.part_detail?.trackable
   });
 
   const serializeStockItem = useCreateApiFormModal({

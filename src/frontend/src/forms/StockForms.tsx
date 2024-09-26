@@ -32,6 +32,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -187,41 +188,18 @@ export function useCreateStockItem() {
   });
 }
 
-export function useStockItemSerializeFields({ partId }: { partId: number }) {
-  // Fetch serial number information (if available)
-  const snQuery = useQuery({
-    queryKey: ['serial_numbers', partId],
-    queryFn: async () => {
-      if (!partId) {
-        return null;
-      }
-
-      const url = apiUrl(ApiEndpoints.part_serial_numbers, partId);
-
-      return api
-        .get(url)
-        .then((response) => {
-          if (response.status === 200) {
-            return response.data;
-          }
-        })
-        .catch(() => {
-          return null;
-        });
-    }
+export function useStockItemSerializeFields({
+  partId,
+  trackable
+}: {
+  partId: number;
+  trackable: boolean;
+}) {
+  const snPlaceholder = useSerialNumberPlaceholder({
+    partId: partId,
+    key: 'stock-item-serialize',
+    enabled: trackable
   });
-
-  const snPlaceholder = useMemo(() => {
-    const sn = snQuery.data?.next;
-
-    if (!!snQuery.data?.next) {
-      return t`Next serial number` + `: ${sn}`;
-    } else if (!!snQuery.data?.latest) {
-      return t`Latest serial number` + `: ${snQuery.data.latest}`;
-    } else {
-      return undefined;
-    }
-  }, [snQuery.data]);
 
   return useMemo(() => {
     return {
