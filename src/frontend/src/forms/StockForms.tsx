@@ -202,7 +202,6 @@ export function useStockItemSerializeFields({ partId }: { partId: number }) {
         .get(url)
         .then((response) => {
           if (response.status === 200) {
-            console.log('response:', response.data);
             return response.data;
           }
         })
