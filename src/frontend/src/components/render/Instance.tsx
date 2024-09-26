@@ -19,7 +19,8 @@ import {
 import {
   RenderContentType,
   RenderImportSession,
-  RenderProjectCode
+  RenderProjectCode,
+  RenderSelectionList
 } from './Generic';
 import { ModelInformationDict } from './ModelType';
 import {
@@ -92,7 +93,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin,
-  [ModelType.contenttype]: RenderContentType
+  [ModelType.contenttype]: RenderContentType,
+  [ModelType.selectionlist]: RenderSelectionList
 };
 
 export type RenderInstanceProps = {

@@ -26,6 +26,7 @@ Parameter templates are used to define the different types of parameters which a
 | Units | Optional units field (*must be a valid [physical unit](#parameter-units)*) |
 | Choices | A comma-separated list of valid choices for parameter values linked to this template. |
 | Checkbox | If set, parameters linked to this template can only be assigned values *true* or *false* |
+| Selection List | If set, parameters linked to this template can only be assigned values from the linked [selection list](#selection-lists) |
 
 ### Create Template
 
@@ -105,3 +106,12 @@ Parameter sorting takes unit conversion into account, meaning that values provid
 {% with id="sort_by_param_units", url="part/part_sorting_units.png", description="Sort by Parameter Units" %}
 {% include 'img.html' %}
 {% endwith %}
+
+### Selection Lists
+
+Selection Lists can be used to add a large number of predefined values to a parameter template. This can be useful for parameters which must be selected from a large predefined list of values (e.g. a list of standardised colo codes). Choices on templates are limited to 5000 characters, selection lists can be used to overcome this limitation.
+
+It is possible that plugins lock selection lists to ensure a known state.
+
+
+Administration of lists can be done through the Part Parameter section in the Admin Center or via the API.

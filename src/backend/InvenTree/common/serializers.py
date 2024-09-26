@@ -633,3 +633,52 @@ class IconPackageSerializer(serializers.Serializer):
     prefix = serializers.CharField()
     fonts = serializers.DictField(child=serializers.CharField())
     icons = serializers.DictField(child=IconSerializer())
+
+
+class SelectionEntrySerializer(InvenTreeModelSerializer):
+    """Serializer for a selection entry."""
+
+    class Meta:
+        """Meta options for SelectionEntrySerializer."""
+
+        model = common_models.SelectionListEntry
+        fields = '__all__'
+
+    def validate(self, attrs):
+        """Ensure that the selection list is not locked."""
+        ret = super().validate(attrs)
+        if self.instance and self.instance.list.locked:
+            raise serializers.ValidationError({'list': _('Selection list is locked')})
+        return ret
+
+
+class SelectionListSerializer(InvenTreeModelSerializer):
+    """Serializer for a selection list."""
+
+    class Meta:
+        """Meta options for SelectionListSerializer."""
+
+        model = common_models.SelectionList
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'active',
+            'locked',
+            'source_plugin',
+            'source_string',
+            'default',
+            'created',
+            'last_updated',
+            'choices',
+        ]
+
+    default = SelectionEntrySerializer(read_only=True, many=False)
+    choices = SelectionEntrySerializer(source='entries', read_only=True, many=True)
+
+    def validate(self, attrs):
+        """Ensure that the selection list is not locked."""
+        ret = super().validate(attrs)
+        if self.instance and self.instance.locked:
+            raise serializers.ValidationError({'locked': _('Selection list is locked')})
+        return ret
