@@ -354,6 +354,9 @@ class TestStockItemTrackingMigration(MigratorTestCase):
         si2 = StockItem.objects.create(
             part_id=part.id, sales_order=so, level=0, lft=0, rght=0, tree_id=0
         )
+        StockItem.objects.create(
+            part_id=part.id, sales_order=so, level=0, lft=0, rght=0, tree_id=0
+        )
 
         StockItemTracking.objects.create(
             item_id=si.pk,
@@ -365,7 +368,7 @@ class TestStockItemTrackingMigration(MigratorTestCase):
             tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
             deltas={'foo': 'bar'},
         )
-        self.assertEqual(StockItemTracking.objects.count(), 2)
+        self.assertEqual(StockItemTracking.objects.count(), 3)
 
     def test_migration(self):
         """Test that the migrations were applied as expected."""
@@ -373,7 +376,7 @@ class TestStockItemTrackingMigration(MigratorTestCase):
 
         StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
 
-        self.assertEqual(StockItemTracking.objects.count(), 2)
+        self.assertEqual(StockItemTracking.objects.count(), 3)
         item = StockItemTracking.objects.first()
         self.assertEqual(
             item.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
