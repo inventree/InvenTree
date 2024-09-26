@@ -8,7 +8,7 @@
  * as well as dynamically hidden, based on the provided context.
  */
 
-export function renderPanel(target, context) {
+export function renderPanel(target, data) {
 
     if (!target) {
         console.error("No target provided to renderPanel");
@@ -22,13 +22,22 @@ export function renderPanel(target, context) {
     <p>It can be hidden or displayed based on the provided context.</p>
 
     <hr>
-    <h5>Context:</h5>
+    <h5>Client Context:</h5>
 
     <ul>
-    <li>Username: ${context.user.username()}</li>
-    <li>Is Staff: ${context.user.isStaff() ? "YES": "NO"}</li>
-    <li>Model Type: ${context.model}</li>
-    <li>Instance ID: ${context.id}</li>
+    <li>Username: ${data.user.username()}</li>
+    <li>Is Staff: ${data.user.isStaff() ? "YES": "NO"}</li>
+    <li>Model Type: ${data.model}</li>
+    <li>Instance ID: ${data.id}</li>
+    </ul>
+    <hr>
+    <h5>Server Context:</h5>
+    <ul>
+    <li>Server Version: ${data.context.version}</li>
+    <li>Plugin Version: ${data.context.plugin_version}</li>
+    <li>Random Number: ${data.context.random}</li>
+    <li>Time: ${data.context.time}</li>
+    </ul>
     `;
 
 }
