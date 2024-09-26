@@ -3,7 +3,7 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { PluginContext } from './PluginContext';
+import { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 // Definition of the plugin panel properties, provided by the server API
@@ -21,7 +21,7 @@ export async function isPluginPanelHidden({
   pluginContext
 }: {
   pluginProps: PluginPanelProps;
-  pluginContext: PluginContext;
+  pluginContext: InvenTreeContext;
 }): Promise<boolean> {
   if (!pluginProps.source) {
     // No custom source supplied - panel is not hidden
@@ -66,7 +66,7 @@ export default function PluginPanelContent({
   pluginContext
 }: Readonly<{
   pluginProps: PluginPanelProps;
-  pluginContext: PluginContext;
+  pluginContext: InvenTreeContext;
 }>): ReactNode {
   const ref = useRef<HTMLDivElement>();
 
