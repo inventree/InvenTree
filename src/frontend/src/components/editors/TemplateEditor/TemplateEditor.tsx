@@ -52,7 +52,7 @@ export type Editor = {
 };
 
 type PreviewAreaProps = {};
-type PreviewAreaRef = {
+export type PreviewAreaRef = {
   updatePreview: (
     code: string,
     previewItem: string,
@@ -300,6 +300,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
         <Tabs
           value={previewValue}
           onChange={setPreviewValue}
+          keepMounted={false}
           style={{
             minWidth: '200px',
             display: 'flex',

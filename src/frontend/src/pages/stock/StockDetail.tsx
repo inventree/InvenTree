@@ -422,7 +422,10 @@ export default function StockDetail() {
     [stockitem]
   );
 
-  const editStockItemFields = useStockFields({ create: false });
+  const editStockItemFields = useStockFields({
+    create: false,
+    part_detail: stockitem.part_detail
+  });
 
   const editStockItem = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,

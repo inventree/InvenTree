@@ -22,7 +22,7 @@ export default function InstalledItemsTable({
       {
         accessor: 'part',
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'quantity',
