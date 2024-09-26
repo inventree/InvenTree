@@ -968,6 +968,15 @@ class StockItemListTest(StockAPITestCase):
         response = self.post(url, {'part': 1, 'quantity': 3})
         self.assertEqual(response.data['serial_number'], '1001,1002,1003')
 
+        # Wrong quantities
+        response = self.post(url, {'part': 1, 'quantity': 'abc'}, expected_code=400)
+        self.assertEqual(response.data['quantity'], ['A valid integer is required.'])
+
+        response = self.post(url, {'part': 1, 'quantity': -2}, expected_code=400)
+        self.assertEqual(
+            response.data['quantity'], ['Quantity must be greater than zero']
+        )
+
 
 class CustomStockItemStatusTest(StockAPITestCase):
     """Tests for custom stock item statuses."""
