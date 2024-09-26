@@ -47,7 +47,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part',
       sortable: true,
-      render: (record: any) => PartColumn(record?.part_detail)
+      render: (record: any) => PartColumn({ part: record?.part_detail })
     },
     {
       accessor: 'part_detail.IPN',
