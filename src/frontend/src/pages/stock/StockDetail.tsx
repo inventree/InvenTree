@@ -207,6 +207,16 @@ export default function StockDetail() {
       },
       {
         type: 'link',
+        name: 'parent',
+        label: t`Parent Item`,
+        model: ModelType.stockitem,
+        hidden: !stockitem.parent,
+        model_formatter: (model: any) => {
+          return t`Parent stock item`;
+        }
+      },
+      {
+        type: 'link',
         name: 'consumed_by',
         label: t`Consumed By`,
         model: ModelType.build,
