@@ -33,6 +33,8 @@ export const getPluginTemplateEditor = (
     const setCodeRef = useRef<(code: string) => void>();
     const getCodeRef = useRef<() => string>();
 
+    throw new Error('I was definitely being called!');
+
     useImperativeHandle(ref, () => ({
       setCode: (code) => {
         // if the editor is not yet initialized, store the initial code in a ref to set it later
