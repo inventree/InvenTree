@@ -15,6 +15,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
@@ -194,6 +195,8 @@ function TableStringValue(props: Readonly<FieldProps>) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
   }
 
+  const isBlank = value === null || value === undefined || value === '';
+
   return (
     <div
       style={{
@@ -205,7 +208,7 @@ function TableStringValue(props: Readonly<FieldProps>) {
     >
       <Group wrap="nowrap" gap="xs" justify="space-apart">
         <Group wrap="nowrap" gap="xs" justify="left">
-          {value ? value : props.field_data?.unit && '0'}{' '}
+          <Text size="sm">{isBlank ? '-' : value}</Text>
           {props.field_data.unit == true && props.unit}
         </Group>
         {props.field_data.user && (

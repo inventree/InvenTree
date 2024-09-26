@@ -89,7 +89,7 @@ export default function StockDetail() {
   });
 
   const detailsPanel = useMemo(() => {
-    let data = stockitem;
+    let data = { ...stockitem };
     let part = stockitem?.part_detail ?? {};
 
     data.available_stock = Math.max(0, data.quantity - data.allocated);
@@ -159,7 +159,14 @@ export default function StockDetail() {
         type: 'text',
         name: 'available_stock',
         label: t`Available`,
-        icon: 'quantity'
+        icon: 'stock'
+      },
+      {
+        type: 'text',
+        name: 'allocated',
+        label: t`Allocated to Orders`,
+        icon: 'tick_off',
+        hidden: !stockitem.allocated
       },
       {
         type: 'text',
@@ -266,12 +273,12 @@ export default function StockDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={stockitem} />
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={stockitem} />
-        <DetailsTable fields={bl} item={stockitem} />
-        <DetailsTable fields={br} item={stockitem} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
   }, [stockitem, instanceQuery]);
