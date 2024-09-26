@@ -22,7 +22,7 @@ export function renderPanel(target, data) {
     <p>It can be hidden or displayed based on the provided context.</p>
 
     <hr>
-    <h5>Context:</h5>
+    <h5>Client Context:</h5>
 
     <ul>
     <li>Username: ${data.user.username()}</li>
