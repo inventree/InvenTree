@@ -336,7 +336,10 @@ export default function PluginListTable() {
 
       return [
         {
-          hidden: record.is_builtin != false || record.is_installed != false,
+          hidden:
+            record.is_builtin != false ||
+            record.is_installed != true ||
+            record.active != true,
           title: t`Deactivate`,
           color: 'red',
           icon: <IconCircleX />,
@@ -347,7 +350,10 @@ export default function PluginListTable() {
           }
         },
         {
-          hidden: record.is_builtin != false || record.is_installed != true,
+          hidden:
+            record.is_builtin != false ||
+            record.is_installed != true ||
+            record.active != false,
           title: t`Activate`,
           color: 'green',
           icon: <IconCircleCheck />,
