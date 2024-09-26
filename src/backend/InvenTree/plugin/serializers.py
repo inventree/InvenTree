@@ -316,6 +316,7 @@ class PluginPanelSerializer(serializers.Serializer):
             # Following fields are optional
             'icon',
             'content',
+            'context',
             'source',
         ]
 
@@ -339,6 +340,10 @@ class PluginPanelSerializer(serializers.Serializer):
 
     content = serializers.CharField(
         label=_('Panel Content (HTML)'), required=False, allow_blank=True
+    )
+
+    context = serializers.JSONField(
+        label=_('Context Data'), required=False, allow_null=True, default=None
     )
 
     source = serializers.CharField(
