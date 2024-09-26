@@ -299,7 +299,7 @@ export default function ImporterDataSelector({
       ...session.mappedFields.map((column: any) => {
         return {
           accessor: column.field,
-          title: column.column ?? column.title,
+          title: column.label ?? column.column,
           sortable: false,
           switchable: true,
           render: (row: any) => {

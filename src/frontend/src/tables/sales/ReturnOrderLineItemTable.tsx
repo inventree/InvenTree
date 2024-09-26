@@ -99,7 +99,7 @@ export default function ReturnOrderLineItemTable({
         accessor: 'part',
         title: t`Part`,
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'item_detail.serial',

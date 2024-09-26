@@ -28,7 +28,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Part`,
       sortable: true,
       noWrap: true,
-      render: (record: any) => PartColumn(record)
+      render: (record: any) => PartColumn({ part: record })
     },
     {
       accessor: 'IPN',
