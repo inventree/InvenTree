@@ -1,6 +1,7 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, classicUrl } from './defaults.js';
-import { createBasicAuthHeader, doQuickLogin } from './login.js';
+import { baseUrl } from './defaults.js';
+import { doQuickLogin } from './login.js';
+import { setPluginState } from './settings.js';
 
 /*
  * Test for label printing.
@@ -81,17 +82,15 @@ test('PUI - Report Printing', async ({ page }) => {
   await page.context().close();
 });
 
-test('PUI - Report Editing', async ({ page }) => {
+test('PUI - Report Editing', async ({ page, request }) => {
   const [username, password] = ['admin', 'inventree'];
   await doQuickLogin(page, username, password);
 
   // activate the sample plugin for this test
-  await page.request.patch(`${classicUrl}/api/plugins/sampleui/activate/`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...createBasicAuthHeader(username, password)
-    },
-    data: { active: true }
+  await setPluginState({
+    request,
+    plugin: 'sampleui',
+    state: true
   });
 
   // Navigate to the admin center
@@ -143,13 +142,9 @@ test('PUI - Report Editing', async ({ page }) => {
   expect((await msg[1].jsonValue())[0]).toBe(newTextareaValue);
 
   // deactivate the sample plugin again after the test
-  await page.request.patch(`${classicUrl}/api/plugins/sampleui/activate/`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...createBasicAuthHeader(username, password)
-    },
-    data: { active: false }
+  await setPluginState({
+    request,
+    plugin: 'sampleui',
+    state: false
   });
-
-  await page.context().close();
 });
