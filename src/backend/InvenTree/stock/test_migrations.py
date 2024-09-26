@@ -328,3 +328,55 @@ class TestBarcodeToUiReversedMigration(MigratorTestCase):
         item = StockItem.objects.first()
         self.assertEqual(item.barcode_hash, '54321')
         self.assertEqual(item.uid, '54321')
+
+
+class TestStockItemTrackingMigration(MigratorTestCase):
+    """Unit tests for StockItemTracking code migrations."""
+
+    migrate_from = ('stock', '0095_stocklocation_external')
+    migrate_to = ('stock', '0096_auto_20230330_1121')
+
+    def prepare(self):
+        """Create initial data."""
+        from stock.status_codes import StockHistoryCode
+
+        Part = self.old_state.apps.get_model('part', 'part')
+        SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
+        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
+        StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
+
+        # Create a test StockItem
+        part = Part.objects.create(name='test', level=0, lft=0, rght=0, tree_id=0)
+        so = SalesOrder.objects.create(reference='123')
+        si = StockItem.objects.create(
+            part_id=part.id, sales_order=so, level=0, lft=0, rght=0, tree_id=0
+        )
+        si2 = StockItem.objects.create(
+            part_id=part.id, sales_order=so, level=0, lft=0, rght=0, tree_id=0
+        )
+
+        StockItemTracking.objects.create(
+            item_id=si.pk,
+            tracking_type=StockHistoryCode.SENT_TO_CUSTOMER.value,
+            deltas={'foo': 'bar'},
+        )
+        StockItemTracking.objects.create(
+            item_id=si2.pk,
+            tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
+            deltas={'foo': 'bar'},
+        )
+        self.assertEqual(StockItemTracking.objects.count(), 2)
+
+    def test_migration(self):
+        """Test that the migrations were applied as expected."""
+        from stock.status_codes import StockHistoryCode
+
+        StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
+
+        self.assertEqual(StockItemTracking.objects.count(), 2)
+        item = StockItemTracking.objects.first()
+        self.assertEqual(
+            item.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+        )
+        self.assertIn('salesorder', item.deltas)
+        self.assertEqual(item.deltas['salesorder'], 1)
