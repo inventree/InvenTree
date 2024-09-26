@@ -1349,7 +1349,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     # Annotated (calculated) fields
     allocated = serializers.FloatField(
-        label=_('Allocated Stock'),
+        label=_('Allocated'),
         read_only=True
     )
 

@@ -51,7 +51,12 @@ export default function BuildLineTable({
       {
         name: 'allocated',
         label: t`Allocated`,
-        description: t`Show allocated lines`
+        description: t`Show fully allocated lines`
+      },
+      {
+        name: 'consumed',
+        label: t`Consumed`,
+        description: t`Show fully consumed lines`
       },
       {
         name: 'available',
@@ -261,6 +266,20 @@ export default function BuildLineTable({
             <ProgressBar
               progressLabel={true}
               value={record.allocated}
+              maximum={record.quantity}
+            />
+          );
+        }
+      },
+      {
+        accessor: 'consumed',
+        render: (record: any) => {
+          return record?.bom_item_detail?.consumable ? (
+            <Text style={{ fontStyle: 'italic' }}>{t`Consumable Item`}</Text>
+          ) : (
+            <ProgressBar
+              progressLabel={true}
+              value={record.consumed}
               maximum={record.quantity}
             />
           );

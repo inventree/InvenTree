@@ -330,6 +330,14 @@ class BuildLineFilter(rest_filters.FilterSet):
             return queryset.filter(allocated__gte=F('quantity'))
         return queryset.filter(allocated__lt=F('quantity'))
 
+    consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
+
+    def filter_consumed(self, queryset, name, value):
+        """Filter by whether each BuildLine is fully consumed"""
+        if str2bool(value):
+            return queryset.filter(consumed__gte=F('quantity'))
+        return queryset.filter(consumed__lt=F('quantity'))
+
     available = rest_filters.BooleanFilter(label=_('Available'), method='filter_available')
 
     def filter_available(self, queryset, name, value):
