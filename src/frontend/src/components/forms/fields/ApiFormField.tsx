@@ -48,6 +48,7 @@ export type ApiFormAdjustFilterType = {
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
+ * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -104,7 +105,8 @@ export function ApiFormField({
   control,
   hideLabels,
   url,
-  setFields
+  setFields,
+  onKeyDown
 }: Readonly<{
   fieldName: string;
   definition: ApiFormFieldType;
@@ -112,6 +114,7 @@ export function ApiFormField({
   hideLabels?: boolean;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
+  onKeyDown?: (value: any) => void;
 }>) {
   const fieldId = useId();
   const controller = useController({
@@ -223,6 +226,9 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
+            onKeyDown={(value) => {
+              onKeyDown?.(value);
+            }}
           />
         );
       case 'icon':
@@ -332,6 +338,7 @@ export function ApiFormField({
     fieldDefinition,
     numericalValue,
     onChange,
+    onKeyDown,
     reducedDefinition,
     ref,
     setFields,

@@ -13,12 +13,14 @@ export default function TextField({
   controller,
   fieldName,
   definition,
-  onChange
+  onChange,
+  onKeyDown
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
   onChange: (value: any) => void;
+  onKeyDown: (value: any) => void;
 }>) {
   const fieldId = useId();
   const {
@@ -60,6 +62,7 @@ export default function TextField({
       onBlur={(event) => {
         onChange(event.currentTarget.value);
       }}
+      onKeyDown={(event) => onKeyDown(event.code)}
       rightSection={
         value && !definition.required ? (
           <IconX size="1rem" color="red" onClick={() => onTextChange('')} />
