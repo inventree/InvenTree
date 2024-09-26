@@ -956,18 +956,16 @@ class StockItemListTest(StockAPITestCase):
 
     def test_serial_generate_api(self):
         """Test helper API for serial management."""
+        url = reverse('api-generate-serial-number')
+
         # Generate serial number
-        response = self.post(reverse('api-generate-serial-number'))
+        response = self.post(url)
         self.assertIn('serial_number', response.data)
 
         # With full data
-        response = self.post(
-            reverse('api-generate-serial-number'), {'part': 1, 'quantity': 1}
-        )
+        response = self.post(url, {'part': 1, 'quantity': 1})
         self.assertEqual(response.data['serial_number'], '1001')
-        response = self.post(
-            reverse('api-generate-serial-number'), {'part': 1, 'quantity': 3}
-        )
+        response = self.post(url, {'part': 1, 'quantity': 3})
         self.assertEqual(response.data['serial_number'], '1001,1002,1003')
 
 
