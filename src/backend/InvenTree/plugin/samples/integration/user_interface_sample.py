@@ -133,3 +133,36 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             })
 
         return panels
+
+    def get_ui_features(self, feature_type, context, request):
+        """Return a list of custom features to be injected into the UI."""
+        if (
+            feature_type == 'template_editor'
+            and context.get('template_type') == 'labeltemplate'
+        ):
+            return [
+                {
+                    'feature_type': 'template_editor',
+                    'options': {
+                        'key': 'sample-template-editor',
+                        'title': 'Sample Template Editor',
+                        'icon': 'keywords',
+                    },
+                    'source': '/static/plugin/sample_template.js:getTemplateEditor',
+                }
+            ]
+
+        if feature_type == 'template_preview':
+            return [
+                {
+                    'feature_type': 'template_preview',
+                    'options': {
+                        'key': 'sample-template-preview',
+                        'title': 'Sample Template Preview',
+                        'icon': 'category',
+                    },
+                    'source': '/static/plugin/sample_template.js:getTemplatePreview',
+                }
+            ]
+
+        return []

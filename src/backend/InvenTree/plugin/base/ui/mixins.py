@@ -4,7 +4,7 @@ Allows integration of custom UI elements into the React user interface.
 """
 
 import logging
-from typing import TypedDict
+from typing import Literal, TypedDict
 
 from rest_framework.request import Request
 
@@ -31,6 +31,23 @@ class CustomPanel(TypedDict):
     source: str
 
 
+FeatureType = Literal['template_editor', 'template_preview']
+
+
+class UIFeature(TypedDict):
+    """Base type definition for a ui feature.
+
+    Attributes:
+        feature_type: The feature type (required, see documentation for all available types)
+        options: Feature options (required, see documentation for all available options for each type)
+        source: The source of the feature (required, path to a JavaScript file).
+    """
+
+    feature_type: FeatureType
+    options: dict
+    source: str
+
+
 class UserInterfaceMixin:
     """Plugin mixin class which handles injection of custom elements into the front-end interface.
 
@@ -50,7 +67,7 @@ class UserInterfaceMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('ui', True, __class__)
+        self.add_mixin('ui', True, __class__)  # type: ignore
 
     def get_ui_panels(
         self, instance_type: str, instance_id: int, request: Request, **kwargs
@@ -78,6 +95,22 @@ class UserInterfaceMixin:
 
         - Either 'source' or 'content' must be provided
 
+        """
+        # Default implementation returns an empty list
+        return []
+
+    def get_ui_features(
+        self, feature_type: FeatureType, context: dict, request: Request
+    ) -> list[UIFeature]:
+        """Return a list of custom features to be injected into the UI.
+
+        Arguments:
+            feature_type: The type of feature being requested
+            context: Additional context data provided by the UI
+            request: HTTPRequest object (including user information)
+
+        Returns:
+            list: A list of custom UIFeature dicts to be injected into the UI
         """
         # Default implementation returns an empty list
         return []

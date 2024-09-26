@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 259
+INVENTREE_API_VERSION = 260
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v259 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
+v260 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
     - Adds facility for server-side context data to be passed to client-side plugins
+
+v259 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8137
+    - Implements new API endpoint for enabling custom UI features via plugins
 
 v258 - 2024-09-24 : https://github.com/inventree/InvenTree/pull/8163
     - Enhances the existing PartScheduling API endpoint

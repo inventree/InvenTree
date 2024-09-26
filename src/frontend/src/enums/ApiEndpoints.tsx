@@ -191,6 +191,7 @@ export enum ApiEndpoints {
 
   // User interface plugin endpoints
   plugin_panel_list = 'plugins/ui/panels/',
+  plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

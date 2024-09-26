@@ -25,6 +25,7 @@ import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
@@ -234,7 +235,8 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     DateColumn({
       title: t`Expiry Date`,
-      accessor: 'expiry_date'
+      accessor: 'expiry_date',
+      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY')
     }),
     DateColumn({
       title: t`Last Updated`,
