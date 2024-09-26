@@ -1719,6 +1719,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
 
         TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
+        TODO: Revisit, and refactor!
 
         """
         item = self.stock_item
