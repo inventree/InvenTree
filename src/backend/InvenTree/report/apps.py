@@ -172,6 +172,13 @@ class ReportConfig(AppConfig):
                 'filename_pattern': 'SalesOrder-{{ reference }}.pdf',
             },
             {
+                'file': 'inventree_sales_order_shipment_report.html',
+                'name': 'InvenTree Sales Order Shipment',
+                'description': 'Sample sales order shipment report',
+                'model_type': 'salesordershipment',
+                'filename_pattern': 'SalesOrderShipment-{{ reference }}.pdf',
+            },
+            {
                 'file': 'inventree_return_order_report.html',
                 'name': 'InvenTree Return Order',
                 'description': 'Sample return order report',

@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
 import { notYetImplemented } from '../../functions/notifications';
@@ -167,6 +168,9 @@ export default function SalesOrderShipmentTable({
         props={{
           tableActions: tableActions,
           tableFilters: tableFilters,
+          modelType: ModelType.salesordershipment,
+          enableSelection: true,
+          enableReports: true,
           rowActions: rowActions,
           params: {
             order: orderId
