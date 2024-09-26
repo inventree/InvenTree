@@ -39,12 +39,14 @@ import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { partCategoryFields } from '../../forms/PartForms';
 import {
   StockOperationProps,
   useAddStockItem,
   useCountStockItem,
   useRemoveStockItem,
   useStockFields,
+  useStockItemSerializeFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -478,8 +480,38 @@ export default function StockDetail() {
   const removeStockItem = useRemoveStockItem(stockActionProps);
   const transferStockItem = useTransferStockItem(stockActionProps);
 
-  const stockActions = useMemo(
-    () => [
+  const serializeStockFields = useStockItemSerializeFields({
+    partId: stockitem.part
+  });
+
+  const serializeStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_serialize,
+    pk: stockitem.pk,
+    title: t`Serialize Stock Item`,
+    fields: serializeStockFields,
+    initialData: {
+      quantity: stockitem.quantity,
+      destination: stockitem.location ?? stockitem.part_detail?.default_location
+    },
+    onFormSuccess: () => {
+      const partId = stockitem.part;
+      refreshInstance().catch(() => {
+        // Part may have been deleted - redirect to the part detail page
+        navigate(getDetailUrl(ModelType.part, partId));
+      });
+    },
+    successMessage: t`Stock item serialized`
+  });
+
+  const stockActions = useMemo(() => {
+    const serial = stockitem.serial;
+    const serialized =
+      serial != null &&
+      serial != undefined &&
+      serial != '' &&
+      stockitem.quantity == 1;
+
+    return [
       <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
         model={ModelType.stockitem}
@@ -500,6 +532,7 @@ export default function StockDetail() {
           {
             name: t`Count`,
             tooltip: t`Count stock`,
+            hidden: serialized,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
@@ -510,6 +543,7 @@ export default function StockDetail() {
           {
             name: t`Add`,
             tooltip: t`Add stock`,
+            hidden: serialized,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
@@ -518,9 +552,19 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove stock`,
+            hidden: serialized,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
+            }
+          },
+          {
+            name: t`Serialize`,
+            tooltip: t`Serialize stock`,
+            hidden: serialized || stockitem?.part_detail?.trackable != true,
+            icon: <InvenTreeIcon icon="serial" iconProps={{ color: 'blue' }} />,
+            onClick: () => {
+              serializeStockItem.open();
             }
           },
           {
@@ -552,9 +596,8 @@ export default function StockDetail() {
           })
         ]}
       />
-    ],
-    [id, stockitem, user]
-  );
+    ];
+  }, [id, stockitem, user]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
@@ -639,6 +682,7 @@ export default function StockDetail() {
         {addStockItem.modal}
         {removeStockItem.modal}
         {transferStockItem.modal}
+        {serializeStockItem.modal}
       </Stack>
     </InstanceDetail>
   );

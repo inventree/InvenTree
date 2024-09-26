@@ -187,6 +187,54 @@ export function useCreateStockItem() {
   });
 }
 
+export function useStockItemSerializeFields({ partId }: { partId: number }) {
+  // Fetch serial number information (if available)
+  const snQuery = useQuery({
+    queryKey: ['serial_numbers', partId],
+    queryFn: async () => {
+      if (!partId) {
+        return null;
+      }
+
+      const url = apiUrl(ApiEndpoints.part_serial_numbers, partId);
+
+      return api
+        .get(url)
+        .then((response) => {
+          if (response.status === 200) {
+            console.log('response:', response.data);
+            return response.data;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+    }
+  });
+
+  const snPlaceholder = useMemo(() => {
+    const sn = snQuery.data?.next;
+
+    if (!!snQuery.data?.next) {
+      return t`Next serial number` + `: ${sn}`;
+    } else if (!!snQuery.data?.latest) {
+      return t`Latest serial number` + `: ${snQuery.data.latest}`;
+    } else {
+      return undefined;
+    }
+  }, [snQuery.data]);
+
+  return useMemo(() => {
+    return {
+      quantity: {},
+      serial_numbers: {
+        placeholder: snPlaceholder
+      },
+      destination: {}
+    };
+  }, [snPlaceholder]);
+}
+
 function StockItemDefaultMove({
   stockItem,
   value
