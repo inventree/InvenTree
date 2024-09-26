@@ -20,16 +20,16 @@ export function TableField({
   definition,
   fieldName,
   control
-}: {
+}: Readonly<{
   definition: ApiFormFieldType;
   fieldName: string;
   control: UseControllerReturn<FieldValues, any>;
-}) {
+}>) {
   const {
     field,
     fieldState: { error }
   } = control;
-  const { value, ref } = field;
+  const { value } = field;
 
   const onRowFieldChange = (idx: number, key: string, value: any) => {
     const val = field.value;

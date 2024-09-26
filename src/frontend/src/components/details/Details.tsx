@@ -96,7 +96,10 @@ type FieldProps = {
  * Badge shows username, full name, or group name depending on server settings.
  * Badge appends icon to describe type of Owner
  */
-function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
+function NameBadge({
+  pk,
+  type
+}: Readonly<{ pk: string | number; type: BadgeType }>) {
   const { data } = useQuery({
     queryKey: ['badge', type, pk],
     queryFn: async () => {
@@ -331,17 +334,17 @@ function StatusValue(props: Readonly<FieldProps>) {
   );
 }
 
-function CopyField({ value }: { value: string }) {
+function CopyField({ value }: Readonly<{ value: string }>) {
   return <CopyButton value={value} />;
 }
 
 export function DetailsTableField({
   item,
   field
-}: {
+}: Readonly<{
   item: any;
   field: DetailsField;
-}) {
+}>) {
   function getFieldType(type: string) {
     switch (type) {
       case 'text':
@@ -394,11 +397,11 @@ export function DetailsTable({
   item,
   fields,
   title
-}: {
+}: Readonly<{
   item: any;
   fields: DetailsField[];
   title?: string;
-}) {
+}>) {
   return (
     <Paper p="xs" withBorder radius="xs">
       <Stack gap="xs">

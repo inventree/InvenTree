@@ -28,12 +28,12 @@ export function RelatedModelField({
   fieldName,
   definition,
   limit = 10
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   limit?: number;
-}) {
+}>) {
   const fieldId = useId();
   const {
     field,

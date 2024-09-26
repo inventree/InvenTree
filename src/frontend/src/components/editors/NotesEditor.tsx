@@ -1,6 +1,4 @@
-// import SimpleMDE from "react-simplemde-editor";
 import { t } from '@lingui/macro';
-import { useMantineColorScheme } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import EasyMDE, { default as SimpleMde } from 'easymde';
@@ -60,13 +58,11 @@ export default function NotesEditor({
   modelType,
   modelId,
   editable
-}: {
+}: Readonly<{
   modelType: ModelType;
   modelId: number;
   editable?: boolean;
-}) {
-  const { colorScheme } = useMantineColorScheme();
-
+}>) {
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
 

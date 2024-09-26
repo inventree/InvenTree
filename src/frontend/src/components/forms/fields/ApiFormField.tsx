@@ -107,7 +107,7 @@ export function ApiFormField({
   url,
   setFields,
   onKeyDown
-}: {
+}: Readonly<{
   fieldName: string;
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
@@ -115,7 +115,7 @@ export function ApiFormField({
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
   onKeyDown?: (value: any) => void;
-}) {
+}>) {
   const fieldId = useId();
   const controller = useController({
     name: fieldName,

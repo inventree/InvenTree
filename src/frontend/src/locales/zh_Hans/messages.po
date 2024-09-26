@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-09-10 00:20\n"
+"PO-Revision-Date: 2024-09-18 03:15\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -60,17 +60,17 @@ msgstr "标签打印成功"
 
 #: src/components/buttons/PrintingActions.tsx:106
 #: src/components/buttons/PrintingActions.tsx:144
-#: src/components/editors/NotesEditor.tsx:40
-#: src/components/editors/NotesEditor.tsx:109
-#: src/components/editors/NotesEditor.tsx:163
+#: src/components/editors/NotesEditor.tsx:38
+#: src/components/editors/NotesEditor.tsx:105
+#: src/components/editors/NotesEditor.tsx:159
 #: src/components/forms/fields/ApiFormField.tsx:319
 #: src/components/importer/ImportDataSelector.tsx:187
-#: src/components/importer/ImporterColumnSelector.tsx:207
+#: src/components/importer/ImporterColumnSelector.tsx:210
 #: src/components/modals/LicenseModal.tsx:75
 #: src/components/nav/SearchDrawer.tsx:448
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/part/PartPricingPanel.tsx:67
-#: src/tables/InvenTreeTable.tsx:494
+#: src/tables/InvenTreeTable.tsx:496
 #: src/tables/bom/BomTable.tsx:450
 #: src/tables/stock/StockItemTestResultTable.tsx:317
 msgid "Error"
@@ -142,7 +142,7 @@ msgstr "是"
 msgid "No"
 msgstr "否"
 
-#: src/components/details/Details.tsx:301
+#: src/components/details/Details.tsx:304
 msgid "No name defined"
 msgstr "未定义名称"
 
@@ -158,7 +158,7 @@ msgstr "删除与此项关联的图片？"
 #: src/forms/StockForms.tsx:523
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:199
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:306
-#: src/pages/stock/StockDetail.tsx:510
+#: src/pages/stock/StockDetail.tsx:511
 msgid "Remove"
 msgstr "移除"
 
@@ -166,10 +166,10 @@ msgstr "移除"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 #: src/components/items/ActionDropdown.tsx:270
 #: src/components/items/ActionDropdown.tsx:271
-#: src/contexts/ThemeContext.tsx:43
+#: src/contexts/ThemeContext.tsx:45
 #: src/hooks/UseForm.tsx:40
 #: src/tables/FilterSelectDrawer.tsx:210
-#: src/tables/build/BuildOutputTable.tsx:286
+#: src/tables/build/BuildOutputTable.tsx:290
 msgid "Cancel"
 msgstr "取消"
 
@@ -187,8 +187,7 @@ msgstr "清除"
 
 #: src/components/details/DetailsImage.tsx:232
 #: src/components/forms/ApiForm.tsx:640
-#: src/contexts/ThemeContext.tsx:43
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:60
+#: src/contexts/ThemeContext.tsx:45
 msgid "Submit"
 msgstr "提交"
 
@@ -240,37 +239,37 @@ msgstr "删除图片"
 #~ msgid "Part is virtual (not a physical part)"
 #~ msgstr "Part is virtual (not a physical part)"
 
-#: src/components/editors/NotesEditor.tsx:41
-#: src/components/editors/NotesEditor.tsx:110
+#: src/components/editors/NotesEditor.tsx:39
+#: src/components/editors/NotesEditor.tsx:106
 msgid "Image upload failed"
 msgstr "图片上传失败"
 
-#: src/components/editors/NotesEditor.tsx:119
-#: src/components/editors/NotesEditor.tsx:154
+#: src/components/editors/NotesEditor.tsx:115
+#: src/components/editors/NotesEditor.tsx:150
 #: src/components/forms/ApiForm.tsx:467
 #: src/tables/bom/BomTable.tsx:441
 msgid "Success"
 msgstr "操作成功"
 
-#: src/components/editors/NotesEditor.tsx:120
+#: src/components/editors/NotesEditor.tsx:116
 msgid "Image uploaded successfully"
 msgstr ""
 
-#: src/components/editors/NotesEditor.tsx:155
+#: src/components/editors/NotesEditor.tsx:151
 msgid "Notes saved successfully"
 msgstr "备注保存成功"
 
-#: src/components/editors/NotesEditor.tsx:164
+#: src/components/editors/NotesEditor.tsx:160
 msgid "Failed to save notes"
 msgstr "保存记事失败"
 
-#: src/components/editors/NotesEditor.tsx:182
+#: src/components/editors/NotesEditor.tsx:178
 msgid "Disable Editing"
-msgstr ""
+msgstr "关闭编辑"
 
-#: src/components/editors/NotesEditor.tsx:191
+#: src/components/editors/NotesEditor.tsx:187
 msgid "Enable Editing"
-msgstr ""
+msgstr "启用编辑"
 
 #: src/components/editors/NotesEditor.tsx:198
 #~ msgid "Preview Notes"
@@ -280,7 +279,7 @@ msgstr ""
 #~ msgid "Edit Notes"
 #~ msgstr "Edit Notes"
 
-#: src/components/editors/NotesEditor.tsx:212
+#: src/components/editors/NotesEditor.tsx:208
 msgid "Save Notes"
 msgstr "保存备注"
 
@@ -427,7 +426,7 @@ msgid "Errors exist for one or more form fields"
 msgstr "一个或多个表单字段存在错误"
 
 #: src/components/forms/ApiForm.tsx:678
-#: src/tables/plugin/PluginListTable.tsx:388
+#: src/tables/plugin/PluginListTable.tsx:391
 msgid "Update"
 msgstr "更新"
 
@@ -437,7 +436,7 @@ msgstr "更新"
 #: src/pages/Index/Scan.tsx:357
 #: src/pages/Notifications.tsx:123
 #: src/tables/RowActions.tsx:43
-#: src/tables/plugin/PluginListTable.tsx:420
+#: src/tables/plugin/PluginListTable.tsx:423
 msgid "Delete"
 msgstr "删除"
 
@@ -498,6 +497,7 @@ msgstr "或继续使用其他方法"
 
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/components/forms/AuthenticationForm.tsx:227
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:67
 msgid "Username"
 msgstr "用户名"
 
@@ -608,13 +608,14 @@ msgstr "主机"
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:70
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:410
-#: src/pages/part/CategoryDetail.tsx:80
-#: src/pages/part/PartDetail.tsx:143
-#: src/pages/stock/LocationDetail.tsx:82
-#: src/tables/machine/MachineTypeTable.tsx:65
-#: src/tables/machine/MachineTypeTable.tsx:109
-#: src/tables/machine/MachineTypeTable.tsx:216
-#: src/tables/machine/MachineTypeTable.tsx:319
+#: src/pages/Index/Settings/AdminCenter/UnitManagmentPanel.tsx:19
+#: src/pages/part/CategoryDetail.tsx:81
+#: src/pages/part/PartDetail.tsx:144
+#: src/pages/stock/LocationDetail.tsx:83
+#: src/tables/machine/MachineTypeTable.tsx:67
+#: src/tables/machine/MachineTypeTable.tsx:111
+#: src/tables/machine/MachineTypeTable.tsx:218
+#: src/tables/machine/MachineTypeTable.tsx:321
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/plugin/PluginListTable.tsx:126
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:32
@@ -687,7 +688,7 @@ msgid "{0} icons"
 msgstr "{0} 个图标"
 
 #: src/components/forms/fields/RelatedModelField.tsx:318
-#: src/pages/Index/Settings/UserSettings.tsx:96
+#: src/pages/Index/Settings/UserSettings.tsx:97
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr "搜索"
@@ -760,7 +761,7 @@ msgid "Filter by row validation status"
 msgstr "按行验证状态筛选"
 
 #: src/components/importer/ImportDataSelector.tsx:365
-#: src/tables/build/BuildOutputTable.tsx:266
+#: src/tables/build/BuildOutputTable.tsx:270
 msgid "Complete"
 msgstr "完成"
 
@@ -768,20 +769,20 @@ msgstr "完成"
 msgid "Filter by row completion status"
 msgstr "按行完成状态筛选"
 
-#: src/components/importer/ImportDataSelector.tsx:383
+#: src/components/importer/ImportDataSelector.tsx:384
 msgid "Import selected rows"
 msgstr "导入选定的行"
 
-#: src/components/importer/ImportDataSelector.tsx:398
+#: src/components/importer/ImportDataSelector.tsx:399
 msgid "Processing Data"
 msgstr "处理数据中"
 
-#: src/components/importer/ImporterColumnSelector.tsx:50
-#: src/components/importer/ImporterColumnSelector.tsx:176
+#: src/components/importer/ImporterColumnSelector.tsx:53
+#: src/components/importer/ImporterColumnSelector.tsx:179
 msgid "An error occurred"
 msgstr "发生错误"
 
-#: src/components/importer/ImporterColumnSelector.tsx:62
+#: src/components/importer/ImporterColumnSelector.tsx:65
 msgid "Select column, or leave blank to ignore this field."
 msgstr "选择列，或留空忽略此字段。"
 
@@ -797,51 +798,51 @@ msgstr "选择列，或留空忽略此字段。"
 #~ msgid "Imported Column Name"
 #~ msgstr "Imported Column Name"
 
-#: src/components/importer/ImporterColumnSelector.tsx:182
+#: src/components/importer/ImporterColumnSelector.tsx:185
 msgid "Ignore this field"
 msgstr "忽略该字段"
 
-#: src/components/importer/ImporterColumnSelector.tsx:196
+#: src/components/importer/ImporterColumnSelector.tsx:199
 msgid "Mapping data columns to database fields"
 msgstr "将数据列映射到数据库字段"
 
-#: src/components/importer/ImporterColumnSelector.tsx:201
+#: src/components/importer/ImporterColumnSelector.tsx:204
 msgid "Accept Column Mapping"
 msgstr "接受列映射"
 
-#: src/components/importer/ImporterColumnSelector.tsx:214
+#: src/components/importer/ImporterColumnSelector.tsx:217
 msgid "Database Field"
 msgstr "数据库字段"
 
-#: src/components/importer/ImporterColumnSelector.tsx:215
+#: src/components/importer/ImporterColumnSelector.tsx:218
 msgid "Field Description"
 msgstr "字段描述"
 
-#: src/components/importer/ImporterColumnSelector.tsx:216
+#: src/components/importer/ImporterColumnSelector.tsx:219
 msgid "Imported Column"
 msgstr "导入列"
 
-#: src/components/importer/ImporterColumnSelector.tsx:217
+#: src/components/importer/ImporterColumnSelector.tsx:220
 msgid "Default Value"
 msgstr "默认值"
 
-#: src/components/importer/ImporterDrawer.tsx:44
+#: src/components/importer/ImporterDrawer.tsx:46
 msgid "Upload File"
 msgstr "上传文件"
 
-#: src/components/importer/ImporterDrawer.tsx:45
+#: src/components/importer/ImporterDrawer.tsx:47
 msgid "Map Columns"
 msgstr "映射列"
 
-#: src/components/importer/ImporterDrawer.tsx:46
+#: src/components/importer/ImporterDrawer.tsx:48
 msgid "Import Data"
 msgstr "导入数据"
 
-#: src/components/importer/ImporterDrawer.tsx:47
+#: src/components/importer/ImporterDrawer.tsx:49
 msgid "Process Data"
 msgstr "处理数据"
 
-#: src/components/importer/ImporterDrawer.tsx:48
+#: src/components/importer/ImporterDrawer.tsx:50
 msgid "Complete Import"
 msgstr "完成导入"
 
@@ -849,28 +850,28 @@ msgstr "完成导入"
 #~ msgid "Cancel import session"
 #~ msgstr "Cancel import session"
 
-#: src/components/importer/ImporterDrawer.tsx:104
+#: src/components/importer/ImporterDrawer.tsx:106
 msgid "Import Complete"
 msgstr "导入完毕"
 
-#: src/components/importer/ImporterDrawer.tsx:107
+#: src/components/importer/ImporterDrawer.tsx:109
 msgid "Data has been imported successfully"
 msgstr "数据已成功导入"
 
-#: src/components/importer/ImporterDrawer.tsx:109
-#: src/components/importer/ImporterDrawer.tsx:118
+#: src/components/importer/ImporterDrawer.tsx:111
+#: src/components/importer/ImporterDrawer.tsx:120
 msgid "Close"
 msgstr "关闭"
 
-#: src/components/importer/ImporterDrawer.tsx:115
+#: src/components/importer/ImporterDrawer.tsx:117
 msgid "Unknown Status"
 msgstr "未知状态"
 
-#: src/components/importer/ImporterDrawer.tsx:116
+#: src/components/importer/ImporterDrawer.tsx:118
 msgid "Import session has unknown status"
 msgstr "导入会话状态未知"
 
-#: src/components/importer/ImporterDrawer.tsx:135
+#: src/components/importer/ImporterDrawer.tsx:137
 msgid "Importing Data"
 msgstr "正在导入数据"
 
@@ -884,7 +885,7 @@ msgstr "导入的行"
 
 #: src/components/items/ActionDropdown.tsx:128
 msgid "Options"
-msgstr ""
+msgstr "选项"
 
 #: src/components/items/ActionDropdown.tsx:140
 #~ msgid "View Barcode"
@@ -915,7 +916,7 @@ msgid "Link a custom barcode to this item"
 msgstr "将自定义条形码链接到此项目"
 
 #: src/components/items/ActionDropdown.tsx:185
-#: src/components/items/QRCode.tsx:195
+#: src/components/items/QRCode.tsx:193
 #: src/forms/PurchaseOrderForms.tsx:419
 msgid "Unlink Barcode"
 msgstr "解绑条形码"
@@ -961,18 +962,18 @@ msgstr ""
 
 #: src/components/items/BarcodeInput.tsx:25
 msgid "Scan"
-msgstr ""
+msgstr "扫描"
 
 #: src/components/items/DocTooltip.tsx:92
 msgid "Read More"
 msgstr "了解更多"
 
-#: src/components/items/ErrorItem.tsx:5
-#: src/tables/InvenTreeTable.tsx:486
+#: src/components/items/ErrorItem.tsx:8
+#: src/tables/InvenTreeTable.tsx:488
 msgid "Unknown error"
 msgstr "未知错误"
 
-#: src/components/items/ErrorItem.tsx:10
+#: src/components/items/ErrorItem.tsx:13
 msgid "An error occurred:"
 msgstr "出现了一个错误"
 
@@ -1005,47 +1006,47 @@ msgstr "PLH"
 msgid "This panel is a placeholder."
 msgstr "此面板是一个占位符。"
 
-#: src/components/items/QRCode.tsx:90
+#: src/components/items/QRCode.tsx:89
 msgid "Low (7%)"
 msgstr "低 (7%)"
 
-#: src/components/items/QRCode.tsx:91
+#: src/components/items/QRCode.tsx:90
 msgid "Medium (15%)"
 msgstr "中 (15%)"
 
-#: src/components/items/QRCode.tsx:92
+#: src/components/items/QRCode.tsx:91
 msgid "Quartile (25%)"
 msgstr "四分之一(25%)"
 
-#: src/components/items/QRCode.tsx:93
+#: src/components/items/QRCode.tsx:92
 msgid "High (30%)"
 msgstr "高 (30%)"
 
-#: src/components/items/QRCode.tsx:101
+#: src/components/items/QRCode.tsx:100
 msgid "Custom barcode"
-msgstr ""
+msgstr "自定义条形码"
 
-#: src/components/items/QRCode.tsx:102
+#: src/components/items/QRCode.tsx:101
 msgid "A custom barcode is registered for this item. The shown code is not that custom barcode."
 msgstr ""
 
-#: src/components/items/QRCode.tsx:119
+#: src/components/items/QRCode.tsx:118
 msgid "Barcode Data:"
 msgstr "条形码数据:"
 
-#: src/components/items/QRCode.tsx:130
+#: src/components/items/QRCode.tsx:129
 msgid "Select Error Correction Level"
 msgstr "选择错误纠正级别"
 
-#: src/components/items/QRCode.tsx:173
-#: src/pages/part/PartDetail.tsx:218
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:181
-#: src/pages/sales/ReturnOrderDetail.tsx:160
-#: src/pages/sales/SalesOrderDetail.tsx:169
+#: src/components/items/QRCode.tsx:171
+#: src/pages/part/PartDetail.tsx:219
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:182
+#: src/pages/sales/ReturnOrderDetail.tsx:161
+#: src/pages/sales/SalesOrderDetail.tsx:170
 msgid "Link"
 msgstr "链接"
 
-#: src/components/items/QRCode.tsx:192
+#: src/components/items/QRCode.tsx:190
 msgid "This will remove the link to the associated barcode"
 msgstr "这将删除关联条形码的链接"
 
@@ -1286,7 +1287,7 @@ msgstr ""
 #: src/components/nav/MainMenu.tsx:86
 #: src/defaults/actions.tsx:71
 #: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:231
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:230
 msgid "Admin Center"
 msgstr "管理中心"
 
@@ -1321,8 +1322,8 @@ msgid "Pages"
 msgstr "页面"
 
 #: src/components/nav/NavigationDrawer.tsx:65
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:186
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:185
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:44
 msgid "Plugins"
 msgstr "插件"
 
@@ -1337,7 +1338,7 @@ msgstr "关于"
 
 #: src/components/nav/NotificationDrawer.tsx:93
 #: src/pages/Index/Settings/SystemSettings.tsx:109
-#: src/pages/Index/Settings/UserSettings.tsx:126
+#: src/pages/Index/Settings/UserSettings.tsx:127
 #: src/pages/Notifications.tsx:65
 #: src/pages/Notifications.tsx:151
 msgid "Notifications"
@@ -1398,27 +1399,32 @@ msgstr "无结果"
 msgid "No results available for search query"
 msgstr "没有可供搜索查询的结果"
 
+#: src/components/plugins/PluginPanel.tsx:85
+msgid "Error occurred while rendering plugin content"
+msgstr ""
+
+#: src/components/plugins/PluginPanel.tsx:88
+msgid "Plugin did not provide panel rendering function"
+msgstr ""
+
+#: src/components/plugins/PluginPanel.tsx:100
+msgid "No content provided for this plugin"
+msgstr ""
+
+#: src/components/plugins/PluginPanel.tsx:113
+msgid "Error Loading Plugin"
+msgstr ""
+
 #: src/components/render/Instance.tsx:222
 msgid "Unknown model: {model}"
 msgstr "未知模型: {model}"
 
-#: src/components/render/ModelType.tsx:101
-#~ msgid "Builds"
-#~ msgstr "Builds"
-
-#: src/components/render/ModelType.tsx:147
-#~ msgid "Purchase Order Line"
-#~ msgstr "Purchase Order Line"
-
-#: src/components/render/ModelType.tsx:148
-#~ msgid "Purchase Order Lines"
-#~ msgstr "Purchase Order Lines"
-
-#: src/components/render/ModelType.tsx:202
-#: src/forms/BuildForms.tsx:229
-#: src/forms/BuildForms.tsx:452
-#: src/forms/BuildForms.tsx:602
+#: src/components/render/ModelType.tsx:28
+#: src/forms/BuildForms.tsx:227
+#: src/forms/BuildForms.tsx:450
+#: src/forms/BuildForms.tsx:598
 #: src/forms/PurchaseOrderForms.tsx:641
+#: src/forms/ReturnOrderForms.tsx:118
 #: src/forms/StockForms.tsx:486
 #: src/forms/StockForms.tsx:523
 #: src/forms/StockForms.tsx:549
@@ -1427,87 +1433,158 @@ msgstr "未知模型: {model}"
 #: src/forms/StockForms.tsx:643
 #: src/forms/StockForms.tsx:685
 #: src/forms/StockForms.tsx:723
-#: src/pages/build/BuildDetail.tsx:90
-#: src/pages/part/PartDetail.tsx:1079
+#: src/pages/build/BuildDetail.tsx:91
+#: src/pages/part/PartDetail.tsx:1080
 #: src/tables/build/BuildAllocatedStockTable.tsx:82
 #: src/tables/part/PartTable.tsx:28
-#: src/tables/part/RelatedPartTable.tsx:45
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:88
+#: src/tables/part/RelatedPartTable.tsx:47
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:100
 #: src/tables/sales/SalesOrderAllocationTable.tsx:68
 #: src/tables/stock/StockTrackingTable.tsx:74
 msgid "Part"
 msgstr "零件"
 
-#: src/components/render/ModelType.tsx:204
+#: src/components/render/ModelType.tsx:29
+#: src/defaults/links.tsx:29
+#: src/defaults/menuItems.tsx:33
+#: src/pages/Index/Settings/SystemSettings.tsx:171
+#: src/pages/part/CategoryDetail.tsx:119
+#: src/pages/part/CategoryDetail.tsx:243
+#: src/pages/part/CategoryDetail.tsx:273
+#: src/pages/part/PartDetail.tsx:836
+msgid "Parts"
+msgstr "零件"
+
+#: src/components/render/ModelType.tsx:37
 msgid "Part Parameter Template"
 msgstr "零件参数模板"
 
-#: src/components/render/ModelType.tsx:206
+#: src/components/render/ModelType.tsx:38
+msgid "Part Parameter Templates"
+msgstr "零件参数模板"
+
+#: src/components/render/ModelType.tsx:44
 msgid "Part Test Template"
 msgstr "零件测试模板"
 
-#: src/components/render/ModelType.tsx:208
-#: src/pages/company/SupplierPartDetail.tsx:198
-#: src/pages/company/SupplierPartDetail.tsx:355
-#: src/pages/stock/StockDetail.tsx:169
+#: src/components/render/ModelType.tsx:45
+msgid "Part Test Templates"
+msgstr "零件测试模板"
+
+#: src/components/render/ModelType.tsx:51
+#: src/pages/company/SupplierPartDetail.tsx:199
+#: src/pages/company/SupplierPartDetail.tsx:356
+#: src/pages/stock/StockDetail.tsx:170
 #: src/tables/build/BuildAllocatedStockTable.tsx:131
-#: src/tables/part/PartPurchaseOrdersTable.tsx:49
-#: src/tables/purchasing/SupplierPartTable.tsx:68
+#: src/tables/part/PartPurchaseOrdersTable.tsx:47
+#: src/tables/purchasing/SupplierPartTable.tsx:70
 msgid "Supplier Part"
 msgstr "供应商零件"
 
-#: src/components/render/ModelType.tsx:210
-#: src/pages/company/ManufacturerPartDetail.tsx:131
-#: src/tables/part/PartPurchaseOrdersTable.tsx:55
+#: src/components/render/ModelType.tsx:52
+msgid "Supplier Parts"
+msgstr "供应商零件"
+
+#: src/components/render/ModelType.tsx:60
+#: src/pages/company/ManufacturerPartDetail.tsx:132
+#: src/tables/part/PartPurchaseOrdersTable.tsx:53
 msgid "Manufacturer Part"
 msgstr "制造商零件"
 
-#: src/components/render/ModelType.tsx:212
-#: src/pages/part/CategoryDetail.tsx:303
+#: src/components/render/ModelType.tsx:61
+msgid "Manufacturer Parts"
+msgstr "制造商零件"
+
+#: src/components/render/ModelType.tsx:69
+#: src/pages/part/CategoryDetail.tsx:304
 msgid "Part Category"
 msgstr "零件类别"
 
-#: src/components/render/ModelType.tsx:214
-#: src/forms/BuildForms.tsx:602
-#: src/pages/stock/StockDetail.tsx:607
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:94
+#: src/components/render/ModelType.tsx:70
+#: src/pages/part/CategoryDetail.tsx:257
+#: src/pages/part/CategoryDetail.tsx:295
+#: src/pages/part/PartDetail.tsx:1070
+msgid "Part Categories"
+msgstr "零件类别"
+
+#: src/components/render/ModelType.tsx:78
+#: src/forms/BuildForms.tsx:598
+#: src/pages/stock/StockDetail.tsx:608
 #: src/tables/stock/StockTrackingTable.tsx:45
 msgid "Stock Item"
 msgstr "库存项"
 
-#: src/components/render/ModelType.tsx:216
+#: src/components/render/ModelType.tsx:79
+#: src/pages/company/CompanyDetail.tsx:204
+#: src/pages/stock/LocationDetail.tsx:122
+#: src/pages/stock/LocationDetail.tsx:175
+#: src/pages/stock/LocationDetail.tsx:380
+msgid "Stock Items"
+msgstr "库存项"
+
+#: src/components/render/ModelType.tsx:87
 msgid "Stock Location"
 msgstr "库存地点"
 
-#: src/components/render/ModelType.tsx:218
+#: src/components/render/ModelType.tsx:88
+#: src/pages/stock/LocationDetail.tsx:189
+#: src/pages/stock/LocationDetail.tsx:372
+#: src/pages/stock/StockDetail.tsx:600
+msgid "Stock Locations"
+msgstr "库存地点"
+
+#: src/components/render/ModelType.tsx:96
 msgid "Stock Location Type"
 msgstr "库存地点类型"
 
-#: src/components/render/ModelType.tsx:220
+#: src/components/render/ModelType.tsx:97
+msgid "Stock Location Types"
+msgstr "库存地点类型"
+
+#: src/components/render/ModelType.tsx:101
 msgid "Stock History"
 msgstr "库存历史记录"
 
-#: src/components/render/ModelType.tsx:222
-#: src/pages/stock/StockDetail.tsx:209
-#: src/tables/build/BuildAllocatedStockTable.tsx:64
-#: src/tables/stock/StockTrackingTable.tsx:96
-msgid "Build Order"
-msgstr "生产订单"
+#: src/components/render/ModelType.tsx:102
+msgid "Stock Histories"
+msgstr "库存历史记录"
 
-#: src/components/render/ModelType.tsx:224
+#: src/components/render/ModelType.tsx:106
+#: src/defaults/links.tsx:31
+#: src/defaults/menuItems.tsx:43
+msgid "Build"
+msgstr "生产..."
+
+#: src/components/render/ModelType.tsx:107
+msgid "Builds"
+msgstr "编译"
+
+#: src/components/render/ModelType.tsx:115
 msgid "Build Line"
 msgstr "生产行"
 
-#: src/components/render/ModelType.tsx:226
+#: src/components/render/ModelType.tsx:116
+msgid "Build Lines"
+msgstr "生产行"
+
+#: src/components/render/ModelType.tsx:123
 msgid "Build Item"
 msgstr "构建项目："
 
-#: src/components/render/ModelType.tsx:228
-#: src/pages/company/CompanyDetail.tsx:337
+#: src/components/render/ModelType.tsx:124
+msgid "Build Items"
+msgstr "构建多个项目"
+
+#: src/components/render/ModelType.tsx:128
+#: src/pages/company/CompanyDetail.tsx:339
 msgid "Company"
 msgstr "公司"
 
-#: src/components/render/ModelType.tsx:230
+#: src/components/render/ModelType.tsx:129
+msgid "Companies"
+msgstr "公司"
+
+#: src/components/render/ModelType.tsx:137
 #: src/tables/TableHoverCard.tsx:81
 #: src/tables/build/BuildOrderTable.tsx:132
 #: src/tables/purchasing/PurchaseOrderTable.tsx:64
@@ -1516,263 +1593,193 @@ msgstr "公司"
 msgid "Project Code"
 msgstr "项目编码"
 
-#: src/components/render/ModelType.tsx:232
+#: src/components/render/ModelType.tsx:138
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:131
+msgid "Project Codes"
+msgstr "项目编码"
+
+#: src/components/render/ModelType.tsx:144
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:32
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:463
-#: src/tables/part/PartPurchaseOrdersTable.tsx:32
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:464
+#: src/tables/part/PartPurchaseOrdersTable.tsx:30
 #: src/tables/stock/StockTrackingTable.tsx:107
 msgid "Purchase Order"
 msgstr "采购订单"
 
-#: src/components/render/ModelType.tsx:234
-msgid "Purchase Order Line Item"
-msgstr ""
+#: src/components/render/ModelType.tsx:145
+#: src/pages/Index/Settings/SystemSettings.tsx:254
+#: src/pages/company/CompanyDetail.tsx:197
+#: src/pages/company/SupplierPartDetail.tsx:233
+#: src/pages/part/PartDetail.tsx:671
+#: src/pages/purchasing/PurchasingIndex.tsx:25
+msgid "Purchase Orders"
+msgstr "采购订单"
 
-#: src/components/render/ModelType.tsx:236
-#: src/pages/build/BuildDetail.tsx:148
-#: src/pages/sales/SalesOrderDetail.tsx:503
-#: src/pages/stock/StockDetail.tsx:217
+#: src/components/render/ModelType.tsx:153
+msgid "Purchase Order Line"
+msgstr "采购订单行"
+
+#: src/components/render/ModelType.tsx:154
+msgid "Purchase Order Lines"
+msgstr "采购订单行"
+
+#: src/components/render/ModelType.tsx:158
+#: src/pages/build/BuildDetail.tsx:149
+#: src/pages/sales/SalesOrderDetail.tsx:504
+#: src/pages/stock/StockDetail.tsx:218
 #: src/tables/sales/SalesOrderAllocationTable.tsx:50
 #: src/tables/stock/StockTrackingTable.tsx:118
 msgid "Sales Order"
 msgstr "销售订单"
 
-#: src/components/render/ModelType.tsx:238
+#: src/components/render/ModelType.tsx:159
+#: src/pages/Index/Settings/SystemSettings.tsx:269
+#: src/pages/company/CompanyDetail.tsx:217
+#: src/pages/part/PartDetail.tsx:678
+#: src/pages/sales/SalesIndex.tsx:26
+msgid "Sales Orders"
+msgstr "销售订单"
+
+#: src/components/render/ModelType.tsx:167
 msgid "Sales Order Shipment"
 msgstr "销售订单配送"
 
-#: src/components/render/ModelType.tsx:240
-#: src/pages/sales/ReturnOrderDetail.tsx:452
+#: src/components/render/ModelType.tsx:168
+msgid "Sales Order Shipments"
+msgstr "销售订单配送"
+
+#: src/components/render/ModelType.tsx:174
+#: src/pages/sales/ReturnOrderDetail.tsx:454
 #: src/tables/stock/StockTrackingTable.tsx:129
 msgid "Return Order"
 msgstr "退货订单"
 
-#: src/components/render/ModelType.tsx:242
+#: src/components/render/ModelType.tsx:175
+#: src/pages/Index/Settings/SystemSettings.tsx:285
+#: src/pages/company/CompanyDetail.tsx:224
+#: src/pages/sales/SalesIndex.tsx:32
+msgid "Return Orders"
+msgstr "退货订单"
+
+#: src/components/render/ModelType.tsx:183
 msgid "Return Order Line Item"
 msgstr "退货订单行项目"
 
-#: src/components/render/ModelType.tsx:244
+#: src/components/render/ModelType.tsx:184
+msgid "Return Order Line Items"
+msgstr "退货订单行项目"
+
+#: src/components/render/ModelType.tsx:188
 #: src/tables/company/AddressTable.tsx:48
 msgid "Address"
 msgstr "地址"
 
-#: src/components/render/ModelType.tsx:246
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:190
-#: src/pages/sales/ReturnOrderDetail.tsx:169
-#: src/pages/sales/SalesOrderDetail.tsx:178
+#: src/components/render/ModelType.tsx:189
+#: src/pages/company/CompanyDetail.tsx:254
+msgid "Addresses"
+msgstr "地址"
+
+#: src/components/render/ModelType.tsx:195
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:191
+#: src/pages/sales/ReturnOrderDetail.tsx:170
+#: src/pages/sales/SalesOrderDetail.tsx:179
 msgid "Contact"
 msgstr "联系人"
 
-#: src/components/render/ModelType.tsx:248
+#: src/components/render/ModelType.tsx:196
+#: src/pages/company/CompanyDetail.tsx:248
+msgid "Contacts"
+msgstr "联系人"
+
+#: src/components/render/ModelType.tsx:202
 msgid "Owner"
 msgstr "所有者"
 
-#: src/components/render/ModelType.tsx:250
-#: src/tables/settings/ImportSessionTable.tsx:121
+#: src/components/render/ModelType.tsx:203
+msgid "Owners"
+msgstr "所有者"
+
+#: src/components/render/ModelType.tsx:209
+#: src/tables/settings/ImportSessionTable.tsx:120
 #: src/tables/stock/StockItemTestResultTable.tsx:204
 #: src/tables/stock/StockTrackingTable.tsx:195
 msgid "User"
 msgstr "用户"
 
-#: src/components/render/ModelType.tsx:252
-msgid "Group"
-msgstr "群组"
-
-#: src/components/render/ModelType.tsx:254
-msgid "Import Session"
-msgstr "导入会话"
-
-#: src/components/render/ModelType.tsx:256
-msgid "Label Template"
-msgstr "标签模板"
-
-#: src/components/render/ModelType.tsx:258
-msgid "Report Template"
-msgstr "报告模板"
-
-#: src/components/render/ModelType.tsx:260
-msgid "Plugin Configuration"
-msgstr "插件配置"
-
-#: src/components/render/ModelType.tsx:262
-msgid "Content Type"
-msgstr ""
-
-#: src/components/render/ModelType.tsx:264
-msgid "Unknown Model"
-msgstr ""
-
-#: src/components/render/ModelType.tsx:275
-#: src/defaults/links.tsx:29
-#: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:171
-#: src/pages/part/CategoryDetail.tsx:118
-#: src/pages/part/CategoryDetail.tsx:242
-#: src/pages/part/CategoryDetail.tsx:272
-#: src/pages/part/PartDetail.tsx:835
-msgid "Parts"
-msgstr "零件"
-
-#: src/components/render/ModelType.tsx:277
-msgid "Part Parameter Templates"
-msgstr "零件参数模板"
-
-#: src/components/render/ModelType.tsx:279
-msgid "Part Test Templates"
-msgstr "零件测试模板"
-
-#: src/components/render/ModelType.tsx:281
-msgid "Supplier Parts"
-msgstr "供应商零件"
-
-#: src/components/render/ModelType.tsx:283
-msgid "Manufacturer Parts"
-msgstr "制造商零件"
-
-#: src/components/render/ModelType.tsx:285
-#: src/pages/part/CategoryDetail.tsx:256
-#: src/pages/part/CategoryDetail.tsx:294
-#: src/pages/part/PartDetail.tsx:1069
-msgid "Part Categories"
-msgstr "零件类别"
-
-#: src/components/render/ModelType.tsx:287
-#: src/pages/company/CompanyDetail.tsx:202
-#: src/pages/stock/LocationDetail.tsx:121
-#: src/pages/stock/LocationDetail.tsx:174
-#: src/pages/stock/LocationDetail.tsx:379
-msgid "Stock Items"
-msgstr "库存项"
-
-#: src/components/render/ModelType.tsx:289
-#: src/pages/stock/LocationDetail.tsx:188
-#: src/pages/stock/LocationDetail.tsx:371
-#: src/pages/stock/StockDetail.tsx:599
-msgid "Stock Locations"
-msgstr "库存地点"
-
-#: src/components/render/ModelType.tsx:291
-msgid "Stock Location Types"
-msgstr "库存地点类型"
-
-#: src/components/render/ModelType.tsx:293
-msgid "Stock Histories"
-msgstr "库存历史记录"
-
-#: src/components/render/ModelType.tsx:295
-#: src/pages/Index/Settings/SystemSettings.tsx:236
-#: src/pages/build/BuildDetail.tsx:534
-#: src/pages/build/BuildIndex.tsx:22
-#: src/pages/part/PartDetail.tsx:624
-#: src/pages/sales/SalesOrderDetail.tsx:328
-msgid "Build Orders"
-msgstr "生产订单"
-
-#: src/components/render/ModelType.tsx:297
-msgid "Build Lines"
-msgstr "生产行"
-
-#: src/components/render/ModelType.tsx:299
-msgid "Build Items"
-msgstr "构建多个项目"
-
-#: src/components/render/ModelType.tsx:301
-msgid "Companies"
-msgstr "公司"
-
-#: src/components/render/ModelType.tsx:303
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:132
-msgid "Project Codes"
-msgstr "项目编码"
-
-#: src/components/render/ModelType.tsx:305
-#: src/pages/Index/Settings/SystemSettings.tsx:254
-#: src/pages/company/CompanyDetail.tsx:195
-#: src/pages/company/SupplierPartDetail.tsx:232
-#: src/pages/part/PartDetail.tsx:670
-#: src/pages/purchasing/PurchasingIndex.tsx:25
-msgid "Purchase Orders"
-msgstr "采购订单"
-
-#: src/components/render/ModelType.tsx:307
-msgid "Purchase Order Line Items"
-msgstr ""
-
-#: src/components/render/ModelType.tsx:309
-#: src/pages/Index/Settings/SystemSettings.tsx:269
-#: src/pages/company/CompanyDetail.tsx:215
-#: src/pages/part/PartDetail.tsx:677
-#: src/pages/sales/SalesIndex.tsx:26
-msgid "Sales Orders"
-msgstr "销售订单"
-
-#: src/components/render/ModelType.tsx:311
-msgid "Sales Order Shipments"
-msgstr "销售订单配送"
-
-#: src/components/render/ModelType.tsx:313
-#: src/pages/Index/Settings/SystemSettings.tsx:285
-#: src/pages/company/CompanyDetail.tsx:222
-#: src/pages/sales/SalesIndex.tsx:32
-msgid "Return Orders"
-msgstr "退货订单"
-
-#: src/components/render/ModelType.tsx:315
-msgid "Return Order Line Items"
-msgstr "退货订单行项目"
-
-#: src/components/render/ModelType.tsx:317
-#: src/pages/company/CompanyDetail.tsx:252
-msgid "Addresses"
-msgstr "地址"
-
-#: src/components/render/ModelType.tsx:319
-#: src/pages/company/CompanyDetail.tsx:246
-msgid "Contacts"
-msgstr "联系人"
-
-#: src/components/render/ModelType.tsx:321
-msgid "Owners"
-msgstr "所有者"
-
-#: src/components/render/ModelType.tsx:323
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:102
+#: src/components/render/ModelType.tsx:210
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:101
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr "用户"
 
-#: src/components/render/ModelType.tsx:325
+#: src/components/render/ModelType.tsx:216
+msgid "Group"
+msgstr "群组"
+
+#: src/components/render/ModelType.tsx:217
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:20
-#: src/tables/settings/UserTable.tsx:138
-#: src/tables/settings/UserTable.tsx:201
+#: src/tables/settings/UserTable.tsx:137
+#: src/tables/settings/UserTable.tsx:200
 msgid "Groups"
 msgstr "群组"
 
-#: src/components/render/ModelType.tsx:327
+#: src/components/render/ModelType.tsx:224
+msgid "Import Session"
+msgstr "导入会话"
+
+#: src/components/render/ModelType.tsx:225
 msgid "Import Sessions"
 msgstr "导入会话"
 
-#: src/components/render/ModelType.tsx:329
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:168
+#: src/components/render/ModelType.tsx:231
+msgid "Label Template"
+msgstr "标签模板"
+
+#: src/components/render/ModelType.tsx:232
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:167
 msgid "Label Templates"
 msgstr "标签模板"
 
-#: src/components/render/ModelType.tsx:331
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:174
+#: src/components/render/ModelType.tsx:234
+#~ msgid "Purchase Order Line Item"
+#~ msgstr "Purchase Order Line Item"
+
+#: src/components/render/ModelType.tsx:238
+msgid "Report Template"
+msgstr "报告模板"
+
+#: src/components/render/ModelType.tsx:239
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:173
 msgid "Report Templates"
 msgstr "报告模板"
 
-#: src/components/render/ModelType.tsx:333
+#: src/components/render/ModelType.tsx:245
+msgid "Plugin Configuration"
+msgstr "插件配置"
+
+#: src/components/render/ModelType.tsx:246
 msgid "Plugin Configurations"
 msgstr "插件配置"
 
-#: src/components/render/ModelType.tsx:335
+#: src/components/render/ModelType.tsx:252
+msgid "Content Type"
+msgstr ""
+
+#: src/components/render/ModelType.tsx:253
 msgid "Content Types"
 msgstr ""
 
+#: src/components/render/ModelType.tsx:264
+#~ msgid "Unknown Model"
+#~ msgstr "Unknown Model"
+
+#: src/components/render/ModelType.tsx:307
+#~ msgid "Purchase Order Line Items"
+#~ msgstr "Purchase Order Line Items"
+
 #: src/components/render/ModelType.tsx:337
-msgid "Unknown Models"
-msgstr ""
+#~ msgid "Unknown Models"
+#~ msgstr "Unknown Models"
 
 #: src/components/render/Order.tsx:121
 msgid "Shipment"
@@ -1780,9 +1787,9 @@ msgstr "配送"
 
 #: src/components/render/Part.tsx:25
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:323
-#: src/pages/company/SupplierPartDetail.tsx:340
-#: src/pages/part/PartDetail.tsx:896
+#: src/pages/company/CompanyDetail.tsx:325
+#: src/pages/company/SupplierPartDetail.tsx:341
+#: src/pages/part/PartDetail.tsx:897
 msgid "Inactive"
 msgstr "未激活"
 
@@ -1796,32 +1803,34 @@ msgstr "无库存"
 #: src/defaults/links.tsx:30
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:204
-#: src/pages/part/PartDetail.tsx:550
-#: src/pages/stock/LocationDetail.tsx:351
-#: src/pages/stock/StockDetail.tsx:407
+#: src/pages/part/PartDetail.tsx:551
+#: src/pages/stock/LocationDetail.tsx:352
+#: src/pages/stock/StockDetail.tsx:408
 #: src/tables/stock/StockItemTable.tsx:68
 msgid "Stock"
 msgstr "库存"
 
 #: src/components/render/Stock.tsx:61
-#: src/pages/stock/StockDetail.tsx:146
-#: src/pages/stock/StockDetail.tsx:564
+#: src/forms/ReturnOrderForms.tsx:118
+#: src/pages/stock/StockDetail.tsx:147
+#: src/pages/stock/StockDetail.tsx:565
 #: src/tables/build/BuildAllocatedStockTable.tsx:102
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:106
 #: src/tables/sales/SalesOrderAllocationTable.tsx:80
 msgid "Serial Number"
 msgstr "序列号"
 
 #: src/components/render/Stock.tsx:63
-#: src/forms/BuildForms.tsx:234
-#: src/forms/BuildForms.tsx:602
+#: src/forms/BuildForms.tsx:232
+#: src/forms/BuildForms.tsx:598
 #: src/forms/PurchaseOrderForms.tsx:641
 #: src/pages/part/pricing/BomPricingPanel.tsx:109
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
-#: src/pages/part/pricing/PriceBreakPanel.tsx:171
-#: src/pages/stock/StockDetail.tsx:141
-#: src/pages/stock/StockDetail.tsx:570
+#: src/pages/part/pricing/PriceBreakPanel.tsx:172
+#: src/pages/stock/StockDetail.tsx:142
+#: src/pages/stock/StockDetail.tsx:571
 #: src/tables/build/BuildOrderTestTable.tsx:198
-#: src/tables/part/PartPurchaseOrdersTable.tsx:92
+#: src/tables/part/PartPurchaseOrdersTable.tsx:90
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:143
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:171
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:77
@@ -2183,14 +2192,6 @@ msgstr "未指定设置"
 #~ msgid "user deleted"
 #~ msgstr "user deleted"
 
-#: src/components/tables/settings/UserTable.tsx:168
-#~ msgid "First Name"
-#~ msgstr "First Name"
-
-#: src/components/tables/settings/UserTable.tsx:173
-#~ msgid "Last Name"
-#~ msgstr "Last Name"
-
 #: src/components/tables/stock/StockItemTable.tsx:247
 #~ msgid "Test Filter"
 #~ msgstr "Test Filter"
@@ -2204,17 +2205,17 @@ msgstr "未指定设置"
 #~ msgstr "Stock location updated"
 
 #: src/components/widgets/DisplayWidget.tsx:11
-#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:17
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:101
 msgid "Display Settings"
 msgstr "显示设置"
 
 #: src/components/widgets/DisplayWidget.tsx:15
-#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:23
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:122
 msgid "Color Mode"
 msgstr "色彩模式"
 
 #: src/components/widgets/DisplayWidget.tsx:21
-#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:33
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:107
 msgid "Language"
 msgstr "语言"
 
@@ -2343,70 +2344,74 @@ msgid "Korean"
 msgstr "韩语"
 
 #: src/contexts/LanguageContext.tsx:39
+msgid "Lithuanian"
+msgstr ""
+
+#: src/contexts/LanguageContext.tsx:40
 msgid "Latvian"
 msgstr "Latvian"
 
-#: src/contexts/LanguageContext.tsx:40
+#: src/contexts/LanguageContext.tsx:41
 msgid "Dutch"
 msgstr "荷兰语"
 
-#: src/contexts/LanguageContext.tsx:41
+#: src/contexts/LanguageContext.tsx:42
 msgid "Norwegian"
 msgstr "挪威语"
 
-#: src/contexts/LanguageContext.tsx:42
+#: src/contexts/LanguageContext.tsx:43
 msgid "Polish"
 msgstr "波兰语"
 
-#: src/contexts/LanguageContext.tsx:43
+#: src/contexts/LanguageContext.tsx:44
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: src/contexts/LanguageContext.tsx:44
+#: src/contexts/LanguageContext.tsx:45
 msgid "Portuguese (Brazilian)"
 msgstr "葡萄牙语(巴西)"
 
-#: src/contexts/LanguageContext.tsx:45
+#: src/contexts/LanguageContext.tsx:46
 msgid "Romanian"
 msgstr "罗马尼亚语"
 
-#: src/contexts/LanguageContext.tsx:46
+#: src/contexts/LanguageContext.tsx:47
 msgid "Russian"
 msgstr "俄语"
 
-#: src/contexts/LanguageContext.tsx:47
+#: src/contexts/LanguageContext.tsx:48
 msgid "Slovak"
 msgstr "Slovak"
 
-#: src/contexts/LanguageContext.tsx:48
+#: src/contexts/LanguageContext.tsx:49
 msgid "Slovenian"
 msgstr "斯洛语尼亚语"
 
-#: src/contexts/LanguageContext.tsx:49
+#: src/contexts/LanguageContext.tsx:50
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: src/contexts/LanguageContext.tsx:50
+#: src/contexts/LanguageContext.tsx:51
 msgid "Thai"
 msgstr "泰语"
 
-#: src/contexts/LanguageContext.tsx:51
+#: src/contexts/LanguageContext.tsx:52
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: src/contexts/LanguageContext.tsx:52
+#: src/contexts/LanguageContext.tsx:53
 msgid "Ukrainian"
 msgstr "乌克兰语"
 
-#: src/contexts/LanguageContext.tsx:53
+#: src/contexts/LanguageContext.tsx:54
 msgid "Vietnamese"
 msgstr "越南语"
 
-#: src/contexts/LanguageContext.tsx:54
+#: src/contexts/LanguageContext.tsx:55
 msgid "Chinese (Simplified)"
 msgstr "中文 (简体)"
 
-#: src/contexts/LanguageContext.tsx:55
+#: src/contexts/LanguageContext.tsx:56
 msgid "Chinese (Traditional)"
 msgstr "中文 (繁体)"
 
@@ -2420,7 +2425,7 @@ msgstr "主页"
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:28
 #: src/pages/Index/Dashboard.tsx:19
-#: src/pages/Index/Settings/UserSettings.tsx:46
+#: src/pages/Index/Settings/UserSettings.tsx:47
 msgid "Dashboard"
 msgstr "仪表盘"
 
@@ -2548,7 +2553,7 @@ msgstr "当前新闻"
 #~ msgstr "Local Server"
 
 #: src/defaults/links.tsx:12
-#: src/pages/company/CompanyDetail.tsx:95
+#: src/pages/company/CompanyDetail.tsx:97
 msgid "Website"
 msgstr "网站"
 
@@ -2560,18 +2565,13 @@ msgstr "GitHub"
 msgid "Demo"
 msgstr "演示"
 
-#: src/defaults/links.tsx:31
-#: src/defaults/menuItems.tsx:43
-msgid "Build"
-msgstr "生产..."
-
 #: src/defaults/links.tsx:33
 #: src/defaults/menuItems.tsx:48
 #: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:261
+#: src/pages/company/ManufacturerPartDetail.tsx:262
 #: src/pages/company/SupplierDetail.tsx:9
-#: src/pages/company/SupplierPartDetail.tsx:327
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:466
+#: src/pages/company/SupplierPartDetail.tsx:328
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:467
 #: src/pages/purchasing/PurchasingIndex.tsx:60
 msgid "Purchasing"
 msgstr "采购中"
@@ -2579,9 +2579,9 @@ msgstr "采购中"
 #: src/defaults/links.tsx:37
 #: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:457
+#: src/pages/sales/ReturnOrderDetail.tsx:459
 #: src/pages/sales/SalesIndex.tsx:53
-#: src/pages/sales/SalesOrderDetail.tsx:508
+#: src/pages/sales/SalesOrderDetail.tsx:509
 msgid "Sales"
 msgstr "销售"
 
@@ -2765,77 +2765,77 @@ msgstr "查看互动扫描和多种操作。"
 #~ msgid "Are you sure you want to delete this attachment?"
 #~ msgstr "Are you sure you want to delete this attachment?"
 
-#: src/forms/BuildForms.tsx:174
+#: src/forms/BuildForms.tsx:172
 msgid "Next serial number"
 msgstr "下一个序列号"
 
-#: src/forms/BuildForms.tsx:178
+#: src/forms/BuildForms.tsx:176
 msgid "Latest serial number"
 msgstr "最新序列号"
 
-#: src/forms/BuildForms.tsx:250
+#: src/forms/BuildForms.tsx:248
 msgid "Remove output"
 msgstr "移除产出"
 
-#: src/forms/BuildForms.tsx:320
+#: src/forms/BuildForms.tsx:318
 msgid "Complete Build Outputs"
 msgstr "完成生产输出"
 
-#: src/forms/BuildForms.tsx:324
+#: src/forms/BuildForms.tsx:322
 msgid "Build outputs have been completed"
 msgstr "生产已完成"
 
-#: src/forms/BuildForms.tsx:385
+#: src/forms/BuildForms.tsx:383
 msgid "Scrap Build Outputs"
 msgstr "报废生产输出"
 
-#: src/forms/BuildForms.tsx:389
+#: src/forms/BuildForms.tsx:387
 msgid "Build outputs have been scrapped"
 msgstr "生产已完成"
 
-#: src/forms/BuildForms.tsx:409
-#: src/forms/BuildForms.tsx:433
+#: src/forms/BuildForms.tsx:407
+#: src/forms/BuildForms.tsx:431
 msgid "Cancel Build Outputs"
 msgstr "取消生产输出"
 
-#: src/forms/BuildForms.tsx:410
+#: src/forms/BuildForms.tsx:408
 msgid "Selected build outputs will be deleted"
 msgstr "所选的生产输出将被删除"
 
-#: src/forms/BuildForms.tsx:437
+#: src/forms/BuildForms.tsx:435
 msgid "Build outputs have been cancelled"
 msgstr "生产已完成"
 
-#: src/forms/BuildForms.tsx:457
-#: src/forms/BuildForms.tsx:602
-#: src/tables/build/BuildLineTable.tsx:54
+#: src/forms/BuildForms.tsx:455
+#: src/forms/BuildForms.tsx:598
+#: src/tables/build/BuildLineTable.tsx:53
 #: src/tables/stock/StockItemTable.tsx:305
 msgid "Allocated"
 msgstr "已分配"
 
-#: src/forms/BuildForms.tsx:472
+#: src/forms/BuildForms.tsx:470
 msgid "Remove line"
-msgstr ""
+msgstr "移除行"
 
-#: src/forms/BuildForms.tsx:631
-#: src/pages/build/BuildDetail.tsx:200
+#: src/forms/BuildForms.tsx:627
+#: src/pages/build/BuildDetail.tsx:201
 msgid "Source Location"
 msgstr "来源地点"
 
-#: src/forms/BuildForms.tsx:632
+#: src/forms/BuildForms.tsx:628
 msgid "Select the source location for the stock allocation"
-msgstr ""
+msgstr "选择分配库存的源位置"
 
-#: src/forms/BuildForms.tsx:652
-#: src/tables/build/BuildLineTable.tsx:293
-#: src/tables/build/BuildLineTable.tsx:394
-#: src/tables/build/BuildLineTable.tsx:454
+#: src/forms/BuildForms.tsx:648
+#: src/tables/build/BuildLineTable.tsx:292
+#: src/tables/build/BuildLineTable.tsx:393
+#: src/tables/build/BuildLineTable.tsx:455
 msgid "Allocate Stock"
 msgstr "分配库存"
 
-#: src/forms/BuildForms.tsx:655
+#: src/forms/BuildForms.tsx:651
 msgid "Stock items allocated"
-msgstr ""
+msgstr "分配的库存项目"
 
 #: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
@@ -2917,7 +2917,7 @@ msgstr "添加备注"
 #: src/forms/StockForms.tsx:643
 #: src/forms/StockForms.tsx:685
 #: src/forms/StockForms.tsx:723
-#: src/pages/stock/StockDetail.tsx:177
+#: src/pages/stock/StockDetail.tsx:178
 #: src/tables/ColumnRenderers.tsx:49
 #: src/tables/stock/StockTrackingTable.tsx:85
 msgid "Location"
@@ -2936,9 +2936,9 @@ msgid "Store with already received stock"
 msgstr "存储已收到的库存"
 
 #: src/forms/PurchaseOrderForms.tsx:521
-#: src/pages/build/BuildDetail.tsx:214
-#: src/pages/stock/StockDetail.tsx:158
-#: src/pages/stock/StockDetail.tsx:582
+#: src/pages/build/BuildDetail.tsx:215
+#: src/pages/stock/StockDetail.tsx:159
+#: src/pages/stock/StockDetail.tsx:583
 #: src/tables/build/BuildAllocatedStockTable.tsx:109
 #: src/tables/build/BuildOrderTestTable.tsx:189
 #: src/tables/sales/SalesOrderAllocationTable.tsx:87
@@ -2951,48 +2951,48 @@ msgstr "序列号"
 
 #: src/forms/PurchaseOrderForms.tsx:543
 #: src/forms/StockForms.tsx:428
-#: src/pages/company/SupplierPartDetail.tsx:151
-#: src/pages/company/SupplierPartDetail.tsx:202
-#: src/pages/stock/StockDetail.tsx:240
+#: src/pages/company/SupplierPartDetail.tsx:152
+#: src/pages/company/SupplierPartDetail.tsx:203
+#: src/pages/stock/StockDetail.tsx:241
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:192
 msgid "Packaging"
 msgstr "包装"
 
 #: src/forms/PurchaseOrderForms.tsx:556
-#: src/pages/build/BuildDetail.tsx:104
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:143
-#: src/pages/sales/ReturnOrderDetail.tsx:116
-#: src/pages/sales/SalesOrderDetail.tsx:122
+#: src/pages/build/BuildDetail.tsx:105
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:144
+#: src/pages/sales/ReturnOrderDetail.tsx:117
+#: src/pages/sales/SalesOrderDetail.tsx:123
 #: src/tables/build/BuildOrderTable.tsx:114
 #: src/tables/machine/MachineListTable.tsx:334
-#: src/tables/part/PartPurchaseOrdersTable.tsx:37
+#: src/tables/part/PartPurchaseOrdersTable.tsx:35
 #: src/tables/purchasing/PurchaseOrderTable.tsx:55
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:132
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:149
 #: src/tables/sales/ReturnOrderTable.tsx:46
 #: src/tables/sales/SalesOrderTable.tsx:53
 #: src/tables/settings/CustomStateTable.tsx:57
-#: src/tables/settings/ImportSessionTable.tsx:115
+#: src/tables/settings/ImportSessionTable.tsx:114
 #: src/tables/stock/StockItemTable.tsx:294
 #: src/tables/stock/StockTrackingTable.tsx:52
 msgid "Status"
 msgstr "状态"
 
 #: src/forms/PurchaseOrderForms.tsx:565
-#: src/pages/company/SupplierPartDetail.tsx:105
+#: src/pages/company/SupplierPartDetail.tsx:106
 #: src/tables/ColumnRenderers.tsx:132
 msgid "Note"
 msgstr "备注"
 
 #: src/forms/PurchaseOrderForms.tsx:641
-#: src/pages/company/SupplierPartDetail.tsx:123
+#: src/pages/company/SupplierPartDetail.tsx:124
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
 msgstr "库存单位  (SKU)"
 
 #: src/forms/PurchaseOrderForms.tsx:641
-#: src/tables/part/PartPurchaseOrdersTable.tsx:120
+#: src/tables/part/PartPurchaseOrdersTable.tsx:118
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:178
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:127
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:144
 msgid "Received"
 msgstr "已接收"
 
@@ -3018,6 +3018,14 @@ msgstr "接收行项目"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
+#: src/forms/ReturnOrderForms.tsx:129
+msgid "Receive Items"
+msgstr ""
+
+#: src/forms/ReturnOrderForms.tsx:136
+msgid "Item received into stock"
+msgstr ""
+
 #: src/forms/StockForms.tsx:109
 msgid "Add given quantity as packs instead of individual items"
 msgstr "将给定的数量添加为包，而不是单个项目"
@@ -3039,7 +3047,7 @@ msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "输入新库存的序列号(或留空)"
 
 #: src/forms/StockForms.tsx:147
-#: src/pages/stock/StockDetail.tsx:111
+#: src/pages/stock/StockDetail.tsx:112
 msgid "Stock Status"
 msgstr "库存状态"
 
@@ -3048,9 +3056,9 @@ msgstr "库存状态"
 #~ msgstr "Stock item updated"
 
 #: src/forms/StockForms.tsx:186
-#: src/pages/stock/StockDetail.tsx:430
+#: src/pages/stock/StockDetail.tsx:431
 #: src/tables/stock/StockItemTable.tsx:417
-#: src/tables/stock/StockItemTable.tsx:535
+#: src/tables/stock/StockItemTable.tsx:537
 msgid "Add Stock Item"
 msgstr "编辑库存项"
 
@@ -3070,8 +3078,8 @@ msgstr "移动到默认位置"
 #: src/forms/StockForms.tsx:643
 #: src/forms/StockForms.tsx:685
 #: src/forms/StockForms.tsx:723
-#: src/pages/part/PartDetail.tsx:230
-#: src/pages/part/PartDetail.tsx:854
+#: src/pages/part/PartDetail.tsx:231
+#: src/pages/part/PartDetail.tsx:855
 #: src/tables/stock/StockItemTable.tsx:325
 msgid "In Stock"
 msgstr "入库"
@@ -3081,14 +3089,14 @@ msgid "Move"
 msgstr "移动"
 
 #: src/forms/StockForms.tsx:549
-#: src/pages/stock/StockDetail.tsx:502
+#: src/pages/stock/StockDetail.tsx:503
 #: src/tables/stock/StockItemTestResultTable.tsx:346
 msgid "Add"
 msgstr "添加"
 
 #: src/forms/StockForms.tsx:577
 #: src/pages/Index/Scan.tsx:280
-#: src/pages/stock/StockDetail.tsx:492
+#: src/pages/stock/StockDetail.tsx:493
 msgid "Count"
 msgstr "总计"
 
@@ -3101,12 +3109,16 @@ msgid "Remove Stock"
 msgstr "移除库存"
 
 #: src/forms/StockForms.tsx:843
-#: src/pages/part/PartDetail.tsx:1024
+#: src/pages/part/PartDetail.tsx:1025
 msgid "Transfer Stock"
 msgstr "转移库存"
 
 #: src/forms/StockForms.tsx:852
-#: src/pages/part/PartDetail.tsx:1013
+#: src/pages/part/PartDetail.tsx:1014
+#: src/pages/stock/LocationDetail.tsx:314
+#: src/pages/stock/LocationDetail.tsx:318
+#: src/tables/stock/StockItemTable.tsx:468
+#: src/tables/stock/StockItemTable.tsx:472
 msgid "Count Stock"
 msgstr "库存数量"
 
@@ -3580,7 +3592,7 @@ msgstr "添加虚拟项目"
 
 #: src/pages/Index/Scan.tsx:569
 msgid "Start scanning by selecting a camera and pressing the play button."
-msgstr ""
+msgstr "选择相机并按播放按钮开始扫描。"
 
 #: src/pages/Index/Scan.tsx:650
 msgid "Error while getting camera"
@@ -3610,17 +3622,46 @@ msgstr "未扫描"
 msgid "Select Camera"
 msgstr "选择相机"
 
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:28
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
+msgid "Edit User Information"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:32
+msgid "User details updated"
+msgstr ""
+
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
-msgid "Account Details"
-msgstr "账户详情"
+msgid "User Details"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
+#~ msgid "Account Details"
+#~ msgstr "Account Details"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:44
+msgid "User Actions"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:48
+msgid "Edit User"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
-msgid "First name"
-msgstr "名"
+#~ msgid "First name"
+#~ msgstr "First name"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:54
+msgid "Set Password"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
-msgid "Last name"
-msgstr "姓"
+#~ msgid "Last name"
+#~ msgstr "Last name"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
+msgid "Set User Password"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -3631,16 +3672,29 @@ msgstr "姓"
 #~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:67
-msgid "First name:"
-msgstr "名:"
+#~ msgid "First name:"
+#~ msgstr "First name:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:71
-msgid "Last name:"
-msgstr "姓:"
+#~ msgid "Last name:"
+#~ msgstr "Last name:"
 
-#: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:41
-msgid "Use pseudo language"
-msgstr "使用 pseudo 语言"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:73
+msgid "First Name"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:79
+msgid "Last Name"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:85
+msgid "Staff Access"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:93
+#: src/tables/settings/UserTable.tsx:293
+msgid "Superuser"
+msgstr "超级用户"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 msgid "Single Sign On Accounts"
@@ -3737,22 +3791,22 @@ msgid "No tokens configured"
 msgstr "未配置令牌"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:398
-#: src/pages/part/PartDetail.tsx:304
+#: src/pages/part/PartDetail.tsx:305
 #: src/tables/bom/UsedInTable.tsx:84
 #: src/tables/build/BuildOrderTable.tsx:109
 #: src/tables/company/CompanyTable.tsx:61
 #: src/tables/company/CompanyTable.tsx:95
 #: src/tables/machine/MachineListTable.tsx:331
-#: src/tables/machine/MachineListTable.tsx:593
+#: src/tables/machine/MachineListTable.tsx:594
 #: src/tables/part/ParametricPartTable.tsx:223
 #: src/tables/part/PartTable.tsx:178
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:149
 #: src/tables/plugin/PluginListTable.tsx:271
 #: src/tables/plugin/PluginListTable.tsx:563
-#: src/tables/purchasing/SupplierPartTable.tsx:98
-#: src/tables/purchasing/SupplierPartTable.tsx:187
-#: src/tables/settings/UserTable.tsx:284
+#: src/tables/purchasing/SupplierPartTable.tsx:100
+#: src/tables/purchasing/SupplierPartTable.tsx:190
+#: src/tables/settings/UserTable.tsx:283
 #: src/tables/stock/StockItemTable.tsx:289
 msgid "Active"
 msgstr "激活"
@@ -3766,38 +3820,62 @@ msgid "Last Seen"
 msgstr "上一次查看时间"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:65
-msgid "bars"
-msgstr "栏"
+#~ msgid "bars"
+#~ msgstr "bars"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:66
-msgid "oval"
-msgstr "椭圆"
+#~ msgid "oval"
+#~ msgstr "oval"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:67
-msgid "dots"
-msgstr "点"
+#~ msgid "dots"
+#~ msgstr "dots"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
-msgid "Theme"
-msgstr "主题"
+#~ msgid "Theme"
+#~ msgstr "Theme"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
-msgid "Primary color"
-msgstr "主要颜色"
+#~ msgid "Primary color"
+#~ msgstr "Primary color"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:100
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:88
+msgid "Bars"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:89
+msgid "Oval"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:90
+msgid "Dots"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:115
+msgid "Use pseudo language"
+msgstr "使用 pseudo 语言"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:133
+msgid "Highlight color"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:145
+msgid "Example"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:151
 msgid "White color"
 msgstr "白色"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:108
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:167
 msgid "Black color"
 msgstr "黑色"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:183
 msgid "Border Radius"
 msgstr "边框半径"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:132
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:199
 msgid "Loader"
 msgstr "加载器"
 
@@ -3832,25 +3910,25 @@ msgstr "刷新货币汇率"
 
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:99
 msgid "Last fetched"
-msgstr ""
+msgstr "上次获取时间"
 
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:100
 msgid "Base currency"
-msgstr ""
+msgstr "基准货币"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:108
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 msgid "Data Import"
 msgstr "数据导入"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:114
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:113
 msgid "Background Tasks"
 msgstr "后台任务"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:119
 msgid "Error Reports"
 msgstr "错误报告"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:126
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:125
 msgid "Currencies"
 msgstr "币种"
 
@@ -3858,20 +3936,21 @@ msgstr "币种"
 #~ msgid "Templates"
 #~ msgstr "Templates"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:144
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:143
 msgid "Custom States"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:150
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:149
+#: src/pages/Index/Settings/AdminCenter/UnitManagmentPanel.tsx:58
 msgid "Custom Units"
 msgstr "自定义单位"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:156
-#: src/pages/part/CategoryDetail.tsx:262
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:155
+#: src/pages/part/CategoryDetail.tsx:263
 msgid "Part Parameters"
 msgstr "零件参数"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:162
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:161
 msgid "Category Parameters"
 msgstr "类别参数"
 
@@ -3879,24 +3958,24 @@ msgstr "类别参数"
 #~ msgid "Location types"
 #~ msgstr "Location types"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:180
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:179
 msgid "Location Types"
 msgstr "位置类型"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:192
-#: src/tables/machine/MachineTypeTable.tsx:287
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:191
+#: src/tables/machine/MachineTypeTable.tsx:289
 msgid "Machines"
 msgstr "设备"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:202
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:201
 msgid "Quick Actions"
 msgstr "快捷操作"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:207
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:206
 msgid "Add a new user"
 msgstr "添加新用户"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:232
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:231
 msgid "Advanced Options"
 msgstr "高级选项"
 
@@ -3912,18 +3991,18 @@ msgstr "设备错误堆栈"
 msgid "There are no machine registry errors."
 msgstr "没有设备注册表错误。"
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
-#: src/tables/settings/UserTable.tsx:119
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:31
+#: src/tables/settings/UserTable.tsx:118
 msgid "Info"
 msgstr "信息"
-
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
-msgid "External plugins are not enabled for this InvenTree installation."
-msgstr "此 InvenTree 未启用外部插件。"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
 #~ msgstr "Plugin Error Stack"
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:35
+msgid "External plugins are not enabled for this InvenTree installation."
+msgstr "此 InvenTree 未启用外部插件。"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -3933,25 +4012,25 @@ msgstr "此 InvenTree 未启用外部插件。"
 #~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 #~ msgstr "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:50
-msgid "Plugin Errors"
-msgstr "插件错误"
-
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:59
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:53
 msgid "Plugin Settings"
 msgstr "插件设置"
 
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:73
+msgid "Plugin Errors"
+msgstr "插件错误"
+
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:17
 msgid "Page Size"
-msgstr ""
+msgstr "页面尺寸"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:20
 msgid "Landscape"
-msgstr ""
+msgstr "横屏模式"
 
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:26
 msgid "Attach to Model"
-msgstr ""
+msgstr "附加到模型"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 msgid "Background Worker Not Running"
@@ -4017,6 +4096,18 @@ msgstr "失败任务"
 #~ msgid "Stock location"
 #~ msgstr "Stock location"
 
+#: src/pages/Index/Settings/AdminCenter/UnitManagmentPanel.tsx:21
+msgid "Alias"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/UnitManagmentPanel.tsx:22
+msgid "Dimensionless"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/UnitManagmentPanel.tsx:66
+msgid "All units"
+msgstr ""
+
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:32
 msgid "Select settings relevant for user lifecycle. More available in"
 msgstr "选择与用户生命周期相关的设置。更多详情见 "
@@ -4050,36 +4141,44 @@ msgid "Labels"
 msgstr "标签"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:156
-#: src/pages/Index/Settings/UserSettings.tsx:132
+#: src/pages/Index/Settings/UserSettings.tsx:133
 msgid "Reporting"
 msgstr "报告"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:230
-#: src/pages/part/PartDetail.tsx:690
+#: src/pages/part/PartDetail.tsx:691
 msgid "Stocktake"
 msgstr "库存盘点"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:236
+#: src/pages/build/BuildDetail.tsx:535
+#: src/pages/build/BuildIndex.tsx:22
+#: src/pages/part/PartDetail.tsx:625
+#: src/pages/sales/SalesOrderDetail.tsx:329
+msgid "Build Orders"
+msgstr "生产订单"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 msgid "Switch to User Setting"
 msgstr "切换到用户设置"
 
-#: src/pages/Index/Settings/UserSettings.tsx:34
+#: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Account"
 msgstr "账户"
 
-#: src/pages/Index/Settings/UserSettings.tsx:40
+#: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Security"
 msgstr "安全"
 
-#: src/pages/Index/Settings/UserSettings.tsx:78
+#: src/pages/Index/Settings/UserSettings.tsx:79
 msgid "Display Options"
 msgstr "显示选项"
 
-#: src/pages/Index/Settings/UserSettings.tsx:150
+#: src/pages/Index/Settings/UserSettings.tsx:151
 msgid "Account Settings"
 msgstr "账户设置"
 
-#: src/pages/Index/Settings/UserSettings.tsx:158
+#: src/pages/Index/Settings/UserSettings.tsx:159
 msgid "Switch to System Setting"
 msgstr "切换到系统设置"
 
@@ -4115,46 +4214,46 @@ msgstr "标记为未读"
 #~ msgid "Build Status"
 #~ msgstr "Build Status"
 
-#: src/pages/build/BuildDetail.tsx:97
-#: src/pages/part/PartDetail.tsx:150
+#: src/pages/build/BuildDetail.tsx:98
+#: src/pages/part/PartDetail.tsx:151
 #: src/tables/bom/BomTable.tsx:118
 #: src/tables/bom/UsedInTable.tsx:39
-#: src/tables/build/BuildLineTable.tsx:184
+#: src/tables/build/BuildLineTable.tsx:183
 #: src/tables/build/BuildOrderTable.tsx:54
 #: src/tables/sales/SalesOrderLineItemTable.tsx:66
 #: src/tables/stock/StockItemTable.tsx:53
 msgid "IPN"
 msgstr "内部零件编码 IPN"
 
-#: src/pages/build/BuildDetail.tsx:110
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:116
-#: src/pages/sales/ReturnOrderDetail.tsx:90
-#: src/pages/sales/SalesOrderDetail.tsx:96
+#: src/pages/build/BuildDetail.tsx:111
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:117
+#: src/pages/sales/ReturnOrderDetail.tsx:91
+#: src/pages/sales/SalesOrderDetail.tsx:97
 #: src/tables/ColumnRenderers.tsx:121
 #: src/tables/build/BuildAllocatedStockTable.tsx:90
-#: src/tables/build/BuildLineTable.tsx:195
+#: src/tables/build/BuildLineTable.tsx:194
 msgid "Reference"
 msgstr "参考"
 
-#: src/pages/build/BuildDetail.tsx:116
-#: src/pages/company/CompanyDetail.tsx:89
-#: src/pages/company/ManufacturerPartDetail.tsx:82
-#: src/pages/company/SupplierPartDetail.tsx:91
-#: src/pages/part/CategoryDetail.tsx:100
-#: src/pages/part/PartDetail.tsx:157
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:137
-#: src/pages/sales/ReturnOrderDetail.tsx:110
-#: src/pages/sales/SalesOrderDetail.tsx:116
-#: src/pages/stock/LocationDetail.tsx:102
+#: src/pages/build/BuildDetail.tsx:117
+#: src/pages/company/CompanyDetail.tsx:91
+#: src/pages/company/ManufacturerPartDetail.tsx:83
+#: src/pages/company/SupplierPartDetail.tsx:92
+#: src/pages/part/CategoryDetail.tsx:101
+#: src/pages/part/PartDetail.tsx:158
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:138
+#: src/pages/sales/ReturnOrderDetail.tsx:111
+#: src/pages/sales/SalesOrderDetail.tsx:117
+#: src/pages/stock/LocationDetail.tsx:103
 #: src/tables/ColumnRenderers.tsx:81
 #: src/tables/bom/UsedInTable.tsx:44
 #: src/tables/build/BuildAllocatedStockTable.tsx:70
-#: src/tables/build/BuildLineTable.tsx:189
-#: src/tables/machine/MachineTypeTable.tsx:69
-#: src/tables/machine/MachineTypeTable.tsx:112
-#: src/tables/machine/MachineTypeTable.tsx:219
-#: src/tables/machine/MachineTypeTable.tsx:323
-#: src/tables/part/RelatedPartTable.tsx:64
+#: src/tables/build/BuildLineTable.tsx:188
+#: src/tables/machine/MachineTypeTable.tsx:71
+#: src/tables/machine/MachineTypeTable.tsx:114
+#: src/tables/machine/MachineTypeTable.tsx:221
+#: src/tables/machine/MachineTypeTable.tsx:325
+#: src/tables/part/RelatedPartTable.tsx:66
 #: src/tables/plugin/PluginListTable.tsx:129
 #: src/tables/plugin/PluginListTable.tsx:276
 #: src/tables/sales/SalesOrderAllocationTable.tsx:56
@@ -4163,29 +4262,29 @@ msgstr "参考"
 msgid "Description"
 msgstr "描述"
 
-#: src/pages/build/BuildDetail.tsx:124
+#: src/pages/build/BuildDetail.tsx:125
 msgid "Parent Build"
 msgstr "上级生产"
 
-#: src/pages/build/BuildDetail.tsx:135
+#: src/pages/build/BuildDetail.tsx:136
 msgid "Build Quantity"
 msgstr "生产数量"
 
-#: src/pages/build/BuildDetail.tsx:143
-#: src/pages/build/BuildDetail.tsx:269
+#: src/pages/build/BuildDetail.tsx:144
+#: src/pages/build/BuildDetail.tsx:270
 msgid "Completed Outputs"
 msgstr "已出产"
 
-#: src/pages/build/BuildDetail.tsx:160
+#: src/pages/build/BuildDetail.tsx:161
 #: src/tables/build/BuildOrderTable.tsx:143
 msgid "Issued By"
 msgstr "发布人"
 
-#: src/pages/build/BuildDetail.tsx:167
-#: src/pages/part/PartDetail.tsx:372
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:215
-#: src/pages/sales/ReturnOrderDetail.tsx:194
-#: src/pages/sales/SalesOrderDetail.tsx:203
+#: src/pages/build/BuildDetail.tsx:168
+#: src/pages/part/PartDetail.tsx:373
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:216
+#: src/pages/sales/ReturnOrderDetail.tsx:195
+#: src/pages/sales/SalesOrderDetail.tsx:204
 #: src/tables/build/BuildOrderTable.tsx:149
 #: src/tables/purchasing/PurchaseOrderTable.tsx:75
 #: src/tables/sales/ReturnOrderTable.tsx:66
@@ -4193,18 +4292,18 @@ msgstr "发布人"
 msgid "Responsible"
 msgstr "责任人"
 
-#: src/pages/build/BuildDetail.tsx:174
+#: src/pages/build/BuildDetail.tsx:175
 #: src/tables/settings/PendingTasksTable.tsx:32
 msgid "Created"
 msgstr "已创建"
 
-#: src/pages/build/BuildDetail.tsx:181
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:208
-#: src/pages/sales/ReturnOrderDetail.tsx:187
-#: src/pages/sales/SalesOrderDetail.tsx:196
+#: src/pages/build/BuildDetail.tsx:182
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:209
+#: src/pages/sales/ReturnOrderDetail.tsx:188
+#: src/pages/sales/SalesOrderDetail.tsx:197
 #: src/tables/ColumnRenderers.tsx:212
-#: src/tables/part/PartPurchaseOrdersTable.tsx:99
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:110
+#: src/tables/part/PartPurchaseOrdersTable.tsx:97
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:127
 #: src/tables/sales/SalesOrderLineItemTable.tsx:103
 msgid "Target Date"
 msgstr "预计日期"
@@ -4215,7 +4314,7 @@ msgstr "预计日期"
 #~ msgid "View part barcode"
 #~ msgstr "View part barcode"
 
-#: src/pages/build/BuildDetail.tsx:188
+#: src/pages/build/BuildDetail.tsx:189
 msgid "Completed"
 msgstr "已完成"
 
@@ -4229,7 +4328,7 @@ msgstr "已完成"
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
 
-#: src/pages/build/BuildDetail.tsx:201
+#: src/pages/build/BuildDetail.tsx:202
 msgid "Any location"
 msgstr "任意地点"
 
@@ -4237,7 +4336,7 @@ msgstr "任意地点"
 #~ msgid "Build Order updated"
 #~ msgstr "Build Order updated"
 
-#: src/pages/build/BuildDetail.tsx:208
+#: src/pages/build/BuildDetail.tsx:209
 msgid "Destination Location"
 msgstr "目标地点"
 
@@ -4253,69 +4352,69 @@ msgstr "目标地点"
 #~ msgid "Delete build order"
 #~ msgstr "Delete build order"
 
-#: src/pages/build/BuildDetail.tsx:246
+#: src/pages/build/BuildDetail.tsx:247
 msgid "Build Details"
 msgstr "生产详情"
 
-#: src/pages/build/BuildDetail.tsx:252
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:253
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
-#: src/pages/sales/ReturnOrderDetail.tsx:125
-#: src/pages/sales/ReturnOrderDetail.tsx:232
-#: src/pages/sales/ReturnOrderDetail.tsx:241
-#: src/pages/sales/SalesOrderDetail.tsx:267
-#: src/pages/sales/SalesOrderDetail.tsx:276
+#: src/pages/build/BuildDetail.tsx:253
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:254
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:263
+#: src/pages/sales/ReturnOrderDetail.tsx:126
+#: src/pages/sales/ReturnOrderDetail.tsx:233
+#: src/pages/sales/ReturnOrderDetail.tsx:242
+#: src/pages/sales/SalesOrderDetail.tsx:268
+#: src/pages/sales/SalesOrderDetail.tsx:277
 msgid "Line Items"
 msgstr "行项目"
 
-#: src/pages/build/BuildDetail.tsx:262
+#: src/pages/build/BuildDetail.tsx:263
 msgid "Incomplete Outputs"
 msgstr "未出产"
 
-#: src/pages/build/BuildDetail.tsx:284
-#: src/pages/sales/SalesOrderDetail.tsx:314
+#: src/pages/build/BuildDetail.tsx:285
+#: src/pages/sales/SalesOrderDetail.tsx:315
 msgid "Allocated Stock"
 msgstr "已分配的库存"
 
-#: src/pages/build/BuildDetail.tsx:294
+#: src/pages/build/BuildDetail.tsx:295
 msgid "Consumed Stock"
 msgstr "已消耗库存"
 
-#: src/pages/build/BuildDetail.tsx:308
+#: src/pages/build/BuildDetail.tsx:309
 msgid "Child Build Orders"
 msgstr "子生产订单"
 
-#: src/pages/build/BuildDetail.tsx:318
-#: src/tables/build/BuildOutputTable.tsx:384
+#: src/pages/build/BuildDetail.tsx:319
+#: src/tables/build/BuildOutputTable.tsx:388
 #: src/tables/stock/StockItemTestResultTable.tsx:156
 msgid "Test Results"
 msgstr "测试结果"
 
-#: src/pages/build/BuildDetail.tsx:329
-#: src/pages/part/PartDetail.tsx:707
+#: src/pages/build/BuildDetail.tsx:330
+#: src/pages/part/PartDetail.tsx:708
 msgid "Test Statistics"
 msgstr "测试统计数据"
 
-#: src/pages/build/BuildDetail.tsx:343
-#: src/pages/company/CompanyDetail.tsx:258
-#: src/pages/company/ManufacturerPartDetail.tsx:178
-#: src/pages/part/PartDetail.tsx:729
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:304
-#: src/pages/sales/ReturnOrderDetail.tsx:269
-#: src/pages/sales/SalesOrderDetail.tsx:338
-#: src/pages/stock/StockDetail.tsx:381
+#: src/pages/build/BuildDetail.tsx:344
+#: src/pages/company/CompanyDetail.tsx:260
+#: src/pages/company/ManufacturerPartDetail.tsx:179
+#: src/pages/part/PartDetail.tsx:730
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:305
+#: src/pages/sales/ReturnOrderDetail.tsx:271
+#: src/pages/sales/SalesOrderDetail.tsx:339
+#: src/pages/stock/StockDetail.tsx:382
 msgid "Attachments"
 msgstr "附件"
 
-#: src/pages/build/BuildDetail.tsx:351
-#: src/pages/company/CompanyDetail.tsx:269
-#: src/pages/company/ManufacturerPartDetail.tsx:189
-#: src/pages/company/SupplierPartDetail.tsx:252
-#: src/pages/part/PartDetail.tsx:737
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:315
-#: src/pages/sales/ReturnOrderDetail.tsx:280
-#: src/pages/sales/SalesOrderDetail.tsx:349
-#: src/pages/stock/StockDetail.tsx:392
+#: src/pages/build/BuildDetail.tsx:352
+#: src/pages/company/CompanyDetail.tsx:271
+#: src/pages/company/ManufacturerPartDetail.tsx:190
+#: src/pages/company/SupplierPartDetail.tsx:253
+#: src/pages/part/PartDetail.tsx:738
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:316
+#: src/pages/sales/ReturnOrderDetail.tsx:282
+#: src/pages/sales/SalesOrderDetail.tsx:350
+#: src/pages/stock/StockDetail.tsx:393
 #: src/tables/build/BuildOrderTestTable.tsx:143
 #: src/tables/stock/StockTrackingTable.tsx:189
 msgid "Notes"
@@ -4325,7 +4424,7 @@ msgstr "备注"
 #~ msgid "Reporting Actions"
 #~ msgstr "Reporting Actions"
 
-#: src/pages/build/BuildDetail.tsx:369
+#: src/pages/build/BuildDetail.tsx:370
 msgid "Edit Build Order"
 msgstr "编辑生产订单"
 
@@ -4333,126 +4432,126 @@ msgstr "编辑生产订单"
 #~ msgid "Print build report"
 #~ msgstr "Print build report"
 
-#: src/pages/build/BuildDetail.tsx:376
+#: src/pages/build/BuildDetail.tsx:377
 #: src/tables/build/BuildOrderTable.tsx:164
 #: src/tables/build/BuildOrderTable.tsx:179
 msgid "Add Build Order"
 msgstr "添加生产订单"
 
-#: src/pages/build/BuildDetail.tsx:390
+#: src/pages/build/BuildDetail.tsx:391
 msgid "Cancel Build Order"
 msgstr "取消生产订单"
 
-#: src/pages/build/BuildDetail.tsx:392
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:343
-#: src/pages/sales/SalesOrderDetail.tsx:375
+#: src/pages/build/BuildDetail.tsx:393
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:344
+#: src/pages/sales/SalesOrderDetail.tsx:376
 msgid "Order cancelled"
 msgstr "订单已取消"
 
-#: src/pages/build/BuildDetail.tsx:393
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:342
-#: src/pages/sales/ReturnOrderDetail.tsx:341
-#: src/pages/sales/SalesOrderDetail.tsx:374
+#: src/pages/build/BuildDetail.tsx:394
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:343
+#: src/pages/sales/ReturnOrderDetail.tsx:343
+#: src/pages/sales/SalesOrderDetail.tsx:375
 msgid "Cancel this order"
 msgstr "取消此订单"
 
-#: src/pages/build/BuildDetail.tsx:402
+#: src/pages/build/BuildDetail.tsx:403
 msgid "Hold Build Order"
 msgstr "挂起生产订单"
 
-#: src/pages/build/BuildDetail.tsx:404
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:350
-#: src/pages/sales/ReturnOrderDetail.tsx:349
-#: src/pages/sales/SalesOrderDetail.tsx:382
+#: src/pages/build/BuildDetail.tsx:405
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:351
+#: src/pages/sales/ReturnOrderDetail.tsx:351
+#: src/pages/sales/SalesOrderDetail.tsx:383
 msgid "Place this order on hold"
 msgstr "将此订单挂起"
 
-#: src/pages/build/BuildDetail.tsx:405
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:351
-#: src/pages/sales/ReturnOrderDetail.tsx:350
-#: src/pages/sales/SalesOrderDetail.tsx:383
+#: src/pages/build/BuildDetail.tsx:406
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:352
+#: src/pages/sales/ReturnOrderDetail.tsx:352
+#: src/pages/sales/SalesOrderDetail.tsx:384
 msgid "Order placed on hold"
 msgstr "挂起订单"
 
-#: src/pages/build/BuildDetail.tsx:410
+#: src/pages/build/BuildDetail.tsx:411
 msgid "Issue Build Order"
 msgstr "发出生产订单"
 
-#: src/pages/build/BuildDetail.tsx:412
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:334
-#: src/pages/sales/ReturnOrderDetail.tsx:333
-#: src/pages/sales/SalesOrderDetail.tsx:366
+#: src/pages/build/BuildDetail.tsx:413
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:335
+#: src/pages/sales/ReturnOrderDetail.tsx:335
+#: src/pages/sales/SalesOrderDetail.tsx:367
 msgid "Issue this order"
 msgstr "发出这个订单"
 
-#: src/pages/build/BuildDetail.tsx:413
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:335
-#: src/pages/sales/ReturnOrderDetail.tsx:334
-#: src/pages/sales/SalesOrderDetail.tsx:367
+#: src/pages/build/BuildDetail.tsx:414
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:336
+#: src/pages/sales/ReturnOrderDetail.tsx:336
+#: src/pages/sales/SalesOrderDetail.tsx:368
 msgid "Order issued"
 msgstr "订单发起"
 
-#: src/pages/build/BuildDetail.tsx:418
+#: src/pages/build/BuildDetail.tsx:419
 msgid "Complete Build Order"
 msgstr "完成生产订单"
 
-#: src/pages/build/BuildDetail.tsx:420
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:363
-#: src/pages/sales/ReturnOrderDetail.tsx:357
-#: src/pages/sales/SalesOrderDetail.tsx:390
+#: src/pages/build/BuildDetail.tsx:421
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:364
+#: src/pages/sales/ReturnOrderDetail.tsx:359
+#: src/pages/sales/SalesOrderDetail.tsx:391
 msgid "Mark this order as complete"
 msgstr "标记该订单为已完成"
 
-#: src/pages/build/BuildDetail.tsx:421
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:357
-#: src/pages/sales/ReturnOrderDetail.tsx:358
-#: src/pages/sales/SalesOrderDetail.tsx:391
+#: src/pages/build/BuildDetail.tsx:422
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:358
+#: src/pages/sales/ReturnOrderDetail.tsx:360
+#: src/pages/sales/SalesOrderDetail.tsx:392
 msgid "Order completed"
 msgstr "订单已完成"
 
-#: src/pages/build/BuildDetail.tsx:452
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:386
-#: src/pages/sales/ReturnOrderDetail.tsx:387
-#: src/pages/sales/SalesOrderDetail.tsx:420
+#: src/pages/build/BuildDetail.tsx:453
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:387
+#: src/pages/sales/ReturnOrderDetail.tsx:389
+#: src/pages/sales/SalesOrderDetail.tsx:421
 msgid "Issue Order"
 msgstr "发布订单"
 
-#: src/pages/build/BuildDetail.tsx:459
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:393
-#: src/pages/sales/ReturnOrderDetail.tsx:394
-#: src/pages/sales/SalesOrderDetail.tsx:434
+#: src/pages/build/BuildDetail.tsx:460
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:394
+#: src/pages/sales/ReturnOrderDetail.tsx:396
+#: src/pages/sales/SalesOrderDetail.tsx:435
 msgid "Complete Order"
 msgstr "完成订单"
 
-#: src/pages/build/BuildDetail.tsx:477
+#: src/pages/build/BuildDetail.tsx:478
 msgid "Build Order Actions"
 msgstr "生产订单操作"
 
-#: src/pages/build/BuildDetail.tsx:482
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:415
-#: src/pages/sales/ReturnOrderDetail.tsx:416
-#: src/pages/sales/SalesOrderDetail.tsx:457
+#: src/pages/build/BuildDetail.tsx:483
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:416
+#: src/pages/sales/ReturnOrderDetail.tsx:418
+#: src/pages/sales/SalesOrderDetail.tsx:458
 msgid "Edit order"
 msgstr "编辑订单"
 
-#: src/pages/build/BuildDetail.tsx:486
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:423
-#: src/pages/sales/ReturnOrderDetail.tsx:422
-#: src/pages/sales/SalesOrderDetail.tsx:462
+#: src/pages/build/BuildDetail.tsx:487
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:424
+#: src/pages/sales/ReturnOrderDetail.tsx:424
+#: src/pages/sales/SalesOrderDetail.tsx:463
 msgid "Duplicate order"
 msgstr "复制订单"
 
-#: src/pages/build/BuildDetail.tsx:490
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:426
-#: src/pages/sales/ReturnOrderDetail.tsx:427
-#: src/pages/sales/SalesOrderDetail.tsx:465
+#: src/pages/build/BuildDetail.tsx:491
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:427
+#: src/pages/sales/ReturnOrderDetail.tsx:429
+#: src/pages/sales/SalesOrderDetail.tsx:466
 msgid "Hold order"
 msgstr "挂起订单"
 
-#: src/pages/build/BuildDetail.tsx:495
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:431
-#: src/pages/sales/ReturnOrderDetail.tsx:432
-#: src/pages/sales/SalesOrderDetail.tsx:470
+#: src/pages/build/BuildDetail.tsx:496
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:432
+#: src/pages/sales/ReturnOrderDetail.tsx:434
+#: src/pages/sales/SalesOrderDetail.tsx:471
 msgid "Cancel order"
 msgstr "取消订单"
 
@@ -4464,54 +4563,54 @@ msgstr "取消订单"
 #~ msgid "New Build Order"
 #~ msgstr "New Build Order"
 
-#: src/pages/company/CompanyDetail.tsx:103
+#: src/pages/company/CompanyDetail.tsx:105
 msgid "Phone Number"
 msgstr "电话号码"
 
-#: src/pages/company/CompanyDetail.tsx:110
+#: src/pages/company/CompanyDetail.tsx:112
 msgid "Email Address"
 msgstr "电子邮件地址"
 
-#: src/pages/company/CompanyDetail.tsx:120
+#: src/pages/company/CompanyDetail.tsx:122
 msgid "Default Currency"
 msgstr "默认货币单位"
 
-#: src/pages/company/CompanyDetail.tsx:125
+#: src/pages/company/CompanyDetail.tsx:127
 #: src/pages/company/SupplierDetail.tsx:8
-#: src/pages/company/SupplierPartDetail.tsx:115
-#: src/pages/company/SupplierPartDetail.tsx:201
-#: src/pages/company/SupplierPartDetail.tsx:331
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:131
+#: src/pages/company/SupplierPartDetail.tsx:116
+#: src/pages/company/SupplierPartDetail.tsx:202
+#: src/pages/company/SupplierPartDetail.tsx:332
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:132
 #: src/tables/company/CompanyTable.tsx:100
-#: src/tables/part/PartPurchaseOrdersTable.tsx:42
+#: src/tables/part/PartPurchaseOrdersTable.tsx:40
 #: src/tables/purchasing/PurchaseOrderTable.tsx:88
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:36
 msgid "Supplier"
 msgstr "供应商"
 
-#: src/pages/company/CompanyDetail.tsx:131
+#: src/pages/company/CompanyDetail.tsx:133
 #: src/pages/company/ManufacturerDetail.tsx:8
-#: src/pages/company/ManufacturerPartDetail.tsx:100
-#: src/pages/company/ManufacturerPartDetail.tsx:265
-#: src/pages/company/SupplierPartDetail.tsx:130
+#: src/pages/company/ManufacturerPartDetail.tsx:101
+#: src/pages/company/ManufacturerPartDetail.tsx:266
+#: src/pages/company/SupplierPartDetail.tsx:131
 #: src/tables/company/CompanyTable.tsx:105
 msgid "Manufacturer"
 msgstr "制造商"
 
-#: src/pages/company/CompanyDetail.tsx:137
+#: src/pages/company/CompanyDetail.tsx:139
 #: src/pages/company/CustomerDetail.tsx:8
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:29
-#: src/pages/sales/ReturnOrderDetail.tsx:104
-#: src/pages/sales/SalesOrderDetail.tsx:110
-#: src/pages/stock/StockDetail.tsx:226
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:31
+#: src/pages/sales/ReturnOrderDetail.tsx:105
+#: src/pages/sales/SalesOrderDetail.tsx:111
+#: src/pages/stock/StockDetail.tsx:227
 #: src/tables/company/CompanyTable.tsx:110
 #: src/tables/sales/ReturnOrderTable.tsx:78
-#: src/tables/sales/SalesOrderTable.tsx:108
+#: src/tables/sales/SalesOrderTable.tsx:109
 #: src/tables/stock/StockTrackingTable.tsx:140
 msgid "Customer"
 msgstr "客户"
 
-#: src/pages/company/CompanyDetail.tsx:171
+#: src/pages/company/CompanyDetail.tsx:173
 #: src/tables/stock/StockTrackingTable.tsx:183
 msgid "Details"
 msgstr "详情"
@@ -4520,11 +4619,11 @@ msgstr "详情"
 #~ msgid "Edit company"
 #~ msgstr "Edit company"
 
-#: src/pages/company/CompanyDetail.tsx:177
+#: src/pages/company/CompanyDetail.tsx:179
 msgid "Manufactured Parts"
 msgstr "制成零件"
 
-#: src/pages/company/CompanyDetail.tsx:186
+#: src/pages/company/CompanyDetail.tsx:188
 msgid "Supplied Parts"
 msgstr "已提供的零件"
 
@@ -4532,298 +4631,298 @@ msgstr "已提供的零件"
 #~ msgid "Delete company"
 #~ msgstr "Delete company"
 
-#: src/pages/company/CompanyDetail.tsx:231
+#: src/pages/company/CompanyDetail.tsx:233
 msgid "Assigned Stock"
 msgstr "已分配的库存"
 
-#: src/pages/company/CompanyDetail.tsx:289
+#: src/pages/company/CompanyDetail.tsx:291
 #: src/tables/company/CompanyTable.tsx:86
 msgid "Edit Company"
 msgstr "编辑公司"
 
-#: src/pages/company/CompanyDetail.tsx:297
+#: src/pages/company/CompanyDetail.tsx:299
 msgid "Delete Company"
 msgstr ""
 
-#: src/pages/company/CompanyDetail.tsx:305
+#: src/pages/company/CompanyDetail.tsx:307
 msgid "Company Actions"
 msgstr "公司操作"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:75
-#: src/pages/company/SupplierPartDetail.tsx:84
+#: src/pages/company/ManufacturerPartDetail.tsx:76
+#: src/pages/company/SupplierPartDetail.tsx:85
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:128
 msgid "Internal Part"
 msgstr "内部零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:90
-#: src/pages/company/SupplierPartDetail.tsx:98
+#: src/pages/company/ManufacturerPartDetail.tsx:91
+#: src/pages/company/SupplierPartDetail.tsx:99
 msgid "External Link"
 msgstr "外部链接"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:108
-#: src/pages/company/SupplierPartDetail.tsx:139
-#: src/tables/purchasing/ManufacturerPartTable.tsx:56
+#: src/pages/company/ManufacturerPartDetail.tsx:109
+#: src/pages/company/SupplierPartDetail.tsx:140
+#: src/tables/purchasing/ManufacturerPartTable.tsx:58
 msgid "Manufacturer Part Number"
 msgstr "制造商零件编号"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:137
+#: src/pages/company/ManufacturerPartDetail.tsx:138
 msgid "Manufacturer Details"
 msgstr "制造商详情"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:146
+#: src/pages/company/ManufacturerPartDetail.tsx:147
 msgid "Manufacturer Part Details"
 msgstr "制造商零件详情"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:152
-#: src/pages/part/PartDetail.tsx:539
+#: src/pages/company/ManufacturerPartDetail.tsx:153
+#: src/pages/part/PartDetail.tsx:540
 msgid "Parameters"
 msgstr "参数"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:164
-#: src/pages/part/PartDetail.tsx:657
+#: src/pages/company/ManufacturerPartDetail.tsx:165
+#: src/pages/part/PartDetail.tsx:658
 #: src/pages/purchasing/PurchasingIndex.tsx:31
 msgid "Suppliers"
 msgstr "供应商"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:207
-#: src/tables/purchasing/ManufacturerPartTable.tsx:84
+#: src/pages/company/ManufacturerPartDetail.tsx:208
+#: src/tables/purchasing/ManufacturerPartTable.tsx:86
 msgid "Edit Manufacturer Part"
 msgstr "编辑制造商零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:214
-#: src/tables/purchasing/ManufacturerPartTable.tsx:72
-#: src/tables/purchasing/ManufacturerPartTable.tsx:103
+#: src/pages/company/ManufacturerPartDetail.tsx:215
+#: src/tables/purchasing/ManufacturerPartTable.tsx:74
+#: src/tables/purchasing/ManufacturerPartTable.tsx:106
 msgid "Add Manufacturer Part"
 msgstr "添加制造商零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:226
-#: src/tables/purchasing/ManufacturerPartTable.tsx:92
+#: src/pages/company/ManufacturerPartDetail.tsx:227
+#: src/tables/purchasing/ManufacturerPartTable.tsx:94
 msgid "Delete Manufacturer Part"
 msgstr "删除制造商零件"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:239
+#: src/pages/company/ManufacturerPartDetail.tsx:240
 msgid "Manufacturer Part Actions"
 msgstr "制造商零件操作"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:279
+#: src/pages/company/ManufacturerPartDetail.tsx:280
 msgid "ManufacturerPart"
 msgstr "制造商零件"
 
-#: src/pages/company/SupplierPartDetail.tsx:158
-#: src/tables/part/PartPurchaseOrdersTable.tsx:71
+#: src/pages/company/SupplierPartDetail.tsx:159
+#: src/tables/part/PartPurchaseOrdersTable.tsx:69
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:156
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:197
-#: src/tables/purchasing/SupplierPartTable.tsx:131
+#: src/tables/purchasing/SupplierPartTable.tsx:133
 msgid "Pack Quantity"
 msgstr "包装数量"
 
-#: src/pages/company/SupplierPartDetail.tsx:169
+#: src/pages/company/SupplierPartDetail.tsx:170
 msgid "Supplier Availability"
 msgstr "供应商可用性"
 
-#: src/pages/company/SupplierPartDetail.tsx:176
+#: src/pages/company/SupplierPartDetail.tsx:177
 msgid "Availability Updated"
 msgstr "可用性已更新"
 
-#: src/pages/company/SupplierPartDetail.tsx:203
+#: src/pages/company/SupplierPartDetail.tsx:204
 msgid "Availability"
 msgstr "可用性"
 
-#: src/pages/company/SupplierPartDetail.tsx:212
+#: src/pages/company/SupplierPartDetail.tsx:213
 msgid "Supplier Part Details"
 msgstr "供应商零件详情"
 
-#: src/pages/company/SupplierPartDetail.tsx:218
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:291
+#: src/pages/company/SupplierPartDetail.tsx:219
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:292
 msgid "Received Stock"
 msgstr "接收库存"
 
-#: src/pages/company/SupplierPartDetail.tsx:242
+#: src/pages/company/SupplierPartDetail.tsx:243
 #: src/pages/part/PartPricingPanel.tsx:111
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:121
 msgid "Supplier Pricing"
 msgstr "供应商价格"
 
-#: src/pages/company/SupplierPartDetail.tsx:275
+#: src/pages/company/SupplierPartDetail.tsx:276
 msgid "Supplier Part Actions"
 msgstr "供应商零件操作"
 
-#: src/pages/company/SupplierPartDetail.tsx:299
-#: src/tables/purchasing/SupplierPartTable.tsx:210
+#: src/pages/company/SupplierPartDetail.tsx:300
+#: src/tables/purchasing/SupplierPartTable.tsx:213
 msgid "Edit Supplier Part"
 msgstr "编辑供应商零件"
 
-#: src/pages/company/SupplierPartDetail.tsx:307
-#: src/tables/purchasing/SupplierPartTable.tsx:218
+#: src/pages/company/SupplierPartDetail.tsx:308
+#: src/tables/purchasing/SupplierPartTable.tsx:221
 msgid "Delete Supplier Part"
 msgstr "删除供应商零件"
 
-#: src/pages/company/SupplierPartDetail.tsx:315
-#: src/tables/purchasing/SupplierPartTable.tsx:163
+#: src/pages/company/SupplierPartDetail.tsx:316
+#: src/tables/purchasing/SupplierPartTable.tsx:165
 msgid "Add Supplier Part"
 msgstr "添加供应商零件"
 
-#: src/pages/part/CategoryDetail.tsx:92
-#: src/pages/stock/LocationDetail.tsx:94
+#: src/pages/part/CategoryDetail.tsx:93
+#: src/pages/stock/LocationDetail.tsx:95
 #: src/tables/settings/ErrorTable.tsx:36
 msgid "Path"
 msgstr "路径"
 
-#: src/pages/part/CategoryDetail.tsx:108
+#: src/pages/part/CategoryDetail.tsx:109
 msgid "Parent Category"
 msgstr "上级类别"
 
-#: src/pages/part/CategoryDetail.tsx:125
+#: src/pages/part/CategoryDetail.tsx:126
 msgid "Subcategories"
 msgstr "子类别"
 
-#: src/pages/part/CategoryDetail.tsx:132
-#: src/pages/stock/LocationDetail.tsx:134
+#: src/pages/part/CategoryDetail.tsx:133
+#: src/pages/stock/LocationDetail.tsx:135
 #: src/tables/part/PartCategoryTable.tsx:73
 #: src/tables/stock/StockLocationTable.tsx:49
 msgid "Structural"
 msgstr "结构性"
 
-#: src/pages/part/CategoryDetail.tsx:138
+#: src/pages/part/CategoryDetail.tsx:139
 msgid "Parent default location"
 msgstr "上级默认位置"
 
-#: src/pages/part/CategoryDetail.tsx:145
+#: src/pages/part/CategoryDetail.tsx:146
 msgid "Default location"
 msgstr "默认位置"
 
-#: src/pages/part/CategoryDetail.tsx:156
+#: src/pages/part/CategoryDetail.tsx:157
 msgid "Top level part category"
 msgstr "最高级零件类别"
 
-#: src/pages/part/CategoryDetail.tsx:166
-#: src/pages/part/CategoryDetail.tsx:219
+#: src/pages/part/CategoryDetail.tsx:167
+#: src/pages/part/CategoryDetail.tsx:220
 #: src/tables/part/PartCategoryTable.tsx:102
 msgid "Edit Part Category"
 msgstr "编辑零件类别"
 
-#: src/pages/part/CategoryDetail.tsx:179
-#: src/pages/stock/LocationDetail.tsx:226
+#: src/pages/part/CategoryDetail.tsx:180
+#: src/pages/stock/LocationDetail.tsx:227
 msgid "Delete items"
 msgstr "删除项"
 
-#: src/pages/part/CategoryDetail.tsx:187
-#: src/pages/part/CategoryDetail.tsx:224
+#: src/pages/part/CategoryDetail.tsx:188
+#: src/pages/part/CategoryDetail.tsx:225
 msgid "Delete Part Category"
 msgstr "删除零件类别"
 
-#: src/pages/part/CategoryDetail.tsx:190
+#: src/pages/part/CategoryDetail.tsx:191
 msgid "Parts Action"
 msgstr "零件操作"
 
-#: src/pages/part/CategoryDetail.tsx:191
+#: src/pages/part/CategoryDetail.tsx:192
 msgid "Action for parts in this category"
 msgstr "对此类别中零件的操作"
 
-#: src/pages/part/CategoryDetail.tsx:196
+#: src/pages/part/CategoryDetail.tsx:197
 msgid "Child Categories Action"
 msgstr "子类别操作"
 
-#: src/pages/part/CategoryDetail.tsx:197
+#: src/pages/part/CategoryDetail.tsx:198
 msgid "Action for child categories in this category"
 msgstr "对此类别中零件的操作"
 
-#: src/pages/part/CategoryDetail.tsx:215
+#: src/pages/part/CategoryDetail.tsx:216
 msgid "Category Actions"
 msgstr "类别操作"
 
-#: src/pages/part/CategoryDetail.tsx:236
+#: src/pages/part/CategoryDetail.tsx:237
 msgid "Category Details"
 msgstr "类别详情"
 
-#: src/pages/part/PartDetail.tsx:163
+#: src/pages/part/PartDetail.tsx:164
 msgid "Variant of"
 msgstr "变体于"
 
-#: src/pages/part/PartDetail.tsx:170
+#: src/pages/part/PartDetail.tsx:171
 msgid "Revision of"
 msgstr "修订"
 
-#: src/pages/part/PartDetail.tsx:177
+#: src/pages/part/PartDetail.tsx:178
 #: src/tables/stock/StockItemTable.tsx:58
 msgid "Revision"
 msgstr "版本"
 
-#: src/pages/part/PartDetail.tsx:184
+#: src/pages/part/PartDetail.tsx:185
 #: src/tables/notifications/NotificationsTable.tsx:31
 #: src/tables/part/PartCategoryTemplateTable.tsx:67
 msgid "Category"
 msgstr "类别"
 
-#: src/pages/part/PartDetail.tsx:190
+#: src/pages/part/PartDetail.tsx:191
 msgid "Default Location"
 msgstr "默认位置"
 
-#: src/pages/part/PartDetail.tsx:197
+#: src/pages/part/PartDetail.tsx:198
 msgid "Category Default Location"
 msgstr "类别默认位置"
 
-#: src/pages/part/PartDetail.tsx:204
+#: src/pages/part/PartDetail.tsx:205
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
 msgstr "单位"
 
-#: src/pages/part/PartDetail.tsx:211
+#: src/pages/part/PartDetail.tsx:212
 #: src/tables/settings/PendingTasksTable.tsx:42
 msgid "Keywords"
 msgstr "关键词"
 
-#: src/pages/part/PartDetail.tsx:236
+#: src/pages/part/PartDetail.tsx:237
 #: src/tables/bom/BomTable.tsx:320
-#: src/tables/build/BuildLineTable.tsx:166
+#: src/tables/build/BuildLineTable.tsx:165
 #: src/tables/part/PartTable.tsx:288
 #: src/tables/sales/SalesOrderLineItemTable.tsx:107
 msgid "Available Stock"
 msgstr "可用库存"
 
-#: src/pages/part/PartDetail.tsx:243
+#: src/pages/part/PartDetail.tsx:244
 msgid "Variant Stock"
 msgstr "变体库存"
 
-#: src/pages/part/PartDetail.tsx:251
+#: src/pages/part/PartDetail.tsx:252
 msgid "Minimum Stock"
 msgstr "最低库存"
 
-#: src/pages/part/PartDetail.tsx:257
+#: src/pages/part/PartDetail.tsx:258
 #: src/tables/bom/BomTable.tsx:237
-#: src/tables/build/BuildLineTable.tsx:128
+#: src/tables/build/BuildLineTable.tsx:127
 #: src/tables/sales/SalesOrderLineItemTable.tsx:145
 msgid "On order"
 msgstr "订购中"
 
-#: src/pages/part/PartDetail.tsx:264
+#: src/pages/part/PartDetail.tsx:265
 msgid "Required for Orders"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:273
+#: src/pages/part/PartDetail.tsx:274
 msgid "Allocated to Build Orders"
 msgstr "分配生产订单"
 
-#: src/pages/part/PartDetail.tsx:281
+#: src/pages/part/PartDetail.tsx:282
 msgid "Allocated to Sales Orders"
 msgstr "分配销售订单"
 
-#: src/pages/part/PartDetail.tsx:288
+#: src/pages/part/PartDetail.tsx:289
 #: src/tables/bom/BomTable.tsx:261
 #: src/tables/bom/BomTable.tsx:293
 msgid "Can Build"
 msgstr "可以创建"
 
-#: src/pages/part/PartDetail.tsx:295
-#: src/pages/part/PartDetail.tsx:884
-#: src/pages/stock/StockDetail.tsx:559
+#: src/pages/part/PartDetail.tsx:296
+#: src/pages/part/PartDetail.tsx:885
+#: src/pages/stock/StockDetail.tsx:560
 #: src/tables/build/BuildOrderTestTable.tsx:220
 #: src/tables/stock/StockItemTable.tsx:330
 msgid "In Production"
 msgstr "生产中"
 
-#: src/pages/part/PartDetail.tsx:309
-#: src/pages/part/PartDetail.tsx:890
+#: src/pages/part/PartDetail.tsx:310
+#: src/pages/part/PartDetail.tsx:891
 #: src/tables/part/ParametricPartTable.tsx:228
 #: src/tables/part/PartTable.tsx:184
 msgid "Locked"
@@ -4833,11 +4932,11 @@ msgstr "已锁定"
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
 
-#: src/pages/part/PartDetail.tsx:315
+#: src/pages/part/PartDetail.tsx:316
 msgid "Template Part"
 msgstr "模板零件"
 
-#: src/pages/part/PartDetail.tsx:320
+#: src/pages/part/PartDetail.tsx:321
 #: src/tables/bom/BomTable.tsx:315
 msgid "Assembled Part"
 msgstr "组装零件"
@@ -4846,7 +4945,7 @@ msgstr "组装零件"
 #~ msgid "Duplicate part"
 #~ msgstr "Duplicate part"
 
-#: src/pages/part/PartDetail.tsx:325
+#: src/pages/part/PartDetail.tsx:326
 msgid "Component Part"
 msgstr "组件零件"
 
@@ -4854,174 +4953,174 @@ msgstr "组件零件"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:330
+#: src/pages/part/PartDetail.tsx:331
 #: src/tables/bom/BomTable.tsx:305
 msgid "Testable Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:336
+#: src/pages/part/PartDetail.tsx:337
 #: src/tables/bom/BomTable.tsx:310
 msgid "Trackable Part"
 msgstr "可追溯零件"
 
-#: src/pages/part/PartDetail.tsx:341
+#: src/pages/part/PartDetail.tsx:342
 msgid "Purchaseable Part"
 msgstr "可购买零件"
 
-#: src/pages/part/PartDetail.tsx:346
+#: src/pages/part/PartDetail.tsx:347
 msgid "Saleable Part"
 msgstr "可销售零件"
 
-#: src/pages/part/PartDetail.tsx:351
+#: src/pages/part/PartDetail.tsx:352
 msgid "Virtual Part"
 msgstr "虚拟零件"
 
-#: src/pages/part/PartDetail.tsx:359
+#: src/pages/part/PartDetail.tsx:360
 #: src/tables/ColumnRenderers.tsx:220
 msgid "Creation Date"
 msgstr "创建日期"
 
-#: src/pages/part/PartDetail.tsx:364
+#: src/pages/part/PartDetail.tsx:365
 msgid "Created By"
 msgstr "创建人"
 
-#: src/pages/part/PartDetail.tsx:379
+#: src/pages/part/PartDetail.tsx:380
 msgid "Default Supplier"
 msgstr "默认供应商"
 
-#: src/pages/part/PartDetail.tsx:390
+#: src/pages/part/PartDetail.tsx:391
 #: src/pages/part/pricing/BomPricingPanel.tsx:79
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:161
 msgid "Price Range"
 msgstr "价格范围"
 
-#: src/pages/part/PartDetail.tsx:430
-#: src/pages/stock/StockDetail.tsx:131
+#: src/pages/part/PartDetail.tsx:431
+#: src/pages/stock/StockDetail.tsx:132
 msgid "Last Stocktake"
 msgstr "最近库存盘点"
 
-#: src/pages/part/PartDetail.tsx:469
+#: src/pages/part/PartDetail.tsx:470
 msgid "Stocktake By"
 msgstr "库存盘点由"
 
-#: src/pages/part/PartDetail.tsx:533
+#: src/pages/part/PartDetail.tsx:534
 msgid "Part Details"
 msgstr "零件详情"
 
-#: src/pages/part/PartDetail.tsx:564
+#: src/pages/part/PartDetail.tsx:565
 msgid "Variants"
 msgstr "变体"
 
-#: src/pages/part/PartDetail.tsx:571
-#: src/pages/stock/StockDetail.tsx:303
+#: src/pages/part/PartDetail.tsx:572
+#: src/pages/stock/StockDetail.tsx:304
 msgid "Allocations"
 msgstr "分配"
 
-#: src/pages/part/PartDetail.tsx:582
-#: src/pages/stock/StockDetail.tsx:314
+#: src/pages/part/PartDetail.tsx:583
+#: src/pages/stock/StockDetail.tsx:315
 #: src/tables/part/PartTable.tsx:99
 msgid "Build Order Allocations"
 msgstr "分配生产订单"
 
-#: src/pages/part/PartDetail.tsx:598
-#: src/pages/stock/StockDetail.tsx:329
+#: src/pages/part/PartDetail.tsx:599
+#: src/pages/stock/StockDetail.tsx:330
 #: src/tables/part/PartTable.tsx:108
 msgid "Sales Order Allocations"
 msgstr "分配销售订单"
 
-#: src/pages/part/PartDetail.tsx:615
+#: src/pages/part/PartDetail.tsx:616
 msgid "Bill of Materials"
 msgstr "物料清单"
 
-#: src/pages/part/PartDetail.tsx:631
+#: src/pages/part/PartDetail.tsx:632
 msgid "Used In"
 msgstr "用于"
 
-#: src/pages/part/PartDetail.tsx:638
+#: src/pages/part/PartDetail.tsx:639
 msgid "Part Pricing"
 msgstr "零件价格"
 
-#: src/pages/part/PartDetail.tsx:644
+#: src/pages/part/PartDetail.tsx:645
 #: src/pages/purchasing/PurchasingIndex.tsx:42
 msgid "Manufacturers"
 msgstr "制造商"
 
-#: src/pages/part/PartDetail.tsx:684
+#: src/pages/part/PartDetail.tsx:685
 msgid "Scheduling"
 msgstr "计划任务"
 
-#: src/pages/part/PartDetail.tsx:696
+#: src/pages/part/PartDetail.tsx:697
 msgid "Test Templates"
 msgstr "测试模板"
 
-#: src/pages/part/PartDetail.tsx:723
+#: src/pages/part/PartDetail.tsx:724
 msgid "Related Parts"
 msgstr "关联零件"
 
-#: src/pages/part/PartDetail.tsx:860
-#: src/pages/stock/StockDetail.tsx:152
-#: src/pages/stock/StockDetail.tsx:576
-#: src/tables/build/BuildLineTable.tsx:59
+#: src/pages/part/PartDetail.tsx:861
+#: src/pages/stock/StockDetail.tsx:153
+#: src/pages/stock/StockDetail.tsx:577
+#: src/tables/build/BuildLineTable.tsx:58
 #: src/tables/part/PartTable.tsx:117
 #: src/tables/stock/StockItemTable.tsx:177
 #: src/tables/stock/StockItemTable.tsx:310
 msgid "Available"
 msgstr "可用的"
 
-#: src/pages/part/PartDetail.tsx:866
+#: src/pages/part/PartDetail.tsx:867
 msgid "No Stock"
 msgstr "无库存"
 
-#: src/pages/part/PartDetail.tsx:872
+#: src/pages/part/PartDetail.tsx:873
 #: src/tables/part/PartTestTemplateTable.tsx:106
 #: src/tables/stock/StockItemTestResultTable.tsx:383
 msgid "Required"
 msgstr "必填"
 
-#: src/pages/part/PartDetail.tsx:878
+#: src/pages/part/PartDetail.tsx:879
 #: src/tables/bom/BomTable.tsx:325
 #: src/tables/part/PartTable.tsx:86
 msgid "On Order"
 msgstr "订购中"
 
-#: src/pages/part/PartDetail.tsx:909
+#: src/pages/part/PartDetail.tsx:910
 msgid "Edit Part"
 msgstr "编辑零件"
 
-#: src/pages/part/PartDetail.tsx:944
+#: src/pages/part/PartDetail.tsx:945
 #: src/tables/part/PartTable.tsx:331
-#: src/tables/part/PartTable.tsx:342
+#: src/tables/part/PartTable.tsx:343
 msgid "Add Part"
 msgstr "添加零件"
 
-#: src/pages/part/PartDetail.tsx:958
+#: src/pages/part/PartDetail.tsx:959
 msgid "Delete Part"
 msgstr "删除零件"
 
-#: src/pages/part/PartDetail.tsx:967
+#: src/pages/part/PartDetail.tsx:968
 msgid "Deleting this part cannot be reversed"
 msgstr "删除此零件无法撤销"
 
-#: src/pages/part/PartDetail.tsx:1006
-#: src/pages/stock/LocationDetail.tsx:309
-#: src/tables/stock/StockItemTable.tsx:444
+#: src/pages/part/PartDetail.tsx:1007
+#: src/pages/stock/LocationDetail.tsx:310
+#: src/tables/stock/StockItemTable.tsx:445
 msgid "Stock Actions"
 msgstr "库存操作"
 
-#: src/pages/part/PartDetail.tsx:1014
+#: src/pages/part/PartDetail.tsx:1015
 msgid "Count part stock"
 msgstr "清点零件库存"
 
-#: src/pages/part/PartDetail.tsx:1025
+#: src/pages/part/PartDetail.tsx:1026
 msgid "Transfer part stock"
 msgstr "转移零件库存"
 
-#: src/pages/part/PartDetail.tsx:1034
+#: src/pages/part/PartDetail.tsx:1035
 msgid "Part Actions"
 msgstr "零件选项"
 
-#: src/pages/part/PartDetail.tsx:1093
+#: src/pages/part/PartDetail.tsx:1094
 msgid "Select Part Revision"
 msgstr "选择零件版本"
 
@@ -5075,7 +5174,7 @@ msgstr "销售记录"
 #: src/tables/purchasing/PurchaseOrderTable.tsx:112
 #: src/tables/sales/ReturnOrderTable.tsx:104
 #: src/tables/sales/SalesOrderLineItemTable.tsx:93
-#: src/tables/sales/SalesOrderTable.tsx:136
+#: src/tables/sales/SalesOrderTable.tsx:137
 msgid "Total Price"
 msgstr "总价"
 
@@ -5107,10 +5206,10 @@ msgstr "最高价格"
 #~ msgstr "Maximum Total Price"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:129
-#: src/pages/part/pricing/PriceBreakPanel.tsx:172
+#: src/pages/part/pricing/PriceBreakPanel.tsx:173
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:67
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:128
-#: src/pages/part/pricing/SupplierPricingPanel.tsx:62
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:121
+#: src/pages/part/pricing/SupplierPricingPanel.tsx:64
 #: src/tables/bom/BomTable.tsx:176
 #: src/tables/general/ExtraLineItemTable.tsx:56
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
@@ -5120,7 +5219,7 @@ msgstr "单价"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:154
 #: src/pages/part/pricing/VariantPricingPanel.tsx:53
-#: src/tables/purchasing/SupplierPartTable.tsx:148
+#: src/tables/purchasing/SupplierPartTable.tsx:150
 msgid "Updated"
 msgstr "已更新"
 
@@ -5133,9 +5232,9 @@ msgid "Bar Chart"
 msgstr "柱状图"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:58
-#: src/pages/part/pricing/PriceBreakPanel.tsx:110
+#: src/pages/part/pricing/PriceBreakPanel.tsx:111
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:142
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:168
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:169
 msgid "Add Price Break"
 msgstr "新增批发价"
 
@@ -5153,7 +5252,7 @@ msgstr "删除批发价"
 msgid "Price Break"
 msgstr "批发价"
 
-#: src/pages/part/pricing/PriceBreakPanel.tsx:170
+#: src/pages/part/pricing/PriceBreakPanel.tsx:171
 msgid "Price"
 msgstr "价格"
 
@@ -5182,7 +5281,7 @@ msgid "Overall Pricing"
 msgstr "总价"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:175
-#: src/pages/stock/StockDetail.tsx:125
+#: src/pages/stock/StockDetail.tsx:126
 #: src/tables/stock/StockItemTable.tsx:240
 msgid "Last Updated"
 msgstr "最近更新"
@@ -5212,7 +5311,7 @@ msgid "Loading pricing data"
 msgstr "正在加载定价数据"
 
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:40
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:36
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:38
 #: src/tables/ColumnRenderers.tsx:201
 #: src/tables/build/BuildOrderTestTable.tsx:151
 #: src/tables/plugin/PluginListTable.tsx:139
@@ -5223,16 +5322,16 @@ msgstr "日期"
 msgid "Purchase Price"
 msgstr "采购价格"
 
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:22
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:24
 msgid "Sale Order"
 msgstr "销售订单"
 
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:42
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:92
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:44
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:87
 msgid "Sale Price"
 msgstr "销售价格"
 
-#: src/pages/part/pricing/SupplierPricingPanel.tsx:65
+#: src/pages/part/pricing/SupplierPricingPanel.tsx:67
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:83
 msgid "Supplier Price"
 msgstr "供应商价格"
@@ -5242,23 +5341,23 @@ msgstr "供应商价格"
 msgid "Variant Part"
 msgstr "变体零件"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:88
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:89
 msgid "Edit Purchase Order"
 msgstr "编辑采购订单"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:97
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:98
 #: src/tables/purchasing/PurchaseOrderTable.tsx:128
-#: src/tables/purchasing/PurchaseOrderTable.tsx:140
+#: src/tables/purchasing/PurchaseOrderTable.tsx:141
 msgid "Add Purchase Order"
 msgstr "添加采购订单"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:122
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:123
 msgid "Supplier Reference"
 msgstr "供应商参考"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:153
-#: src/pages/sales/ReturnOrderDetail.tsx:132
-#: src/pages/sales/SalesOrderDetail.tsx:132
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:154
+#: src/pages/sales/ReturnOrderDetail.tsx:133
+#: src/pages/sales/SalesOrderDetail.tsx:133
 msgid "Completed Line Items"
 msgstr "已完成行项目"
 
@@ -5268,91 +5367,91 @@ msgstr "已完成行项目"
 #~ msgid "Order Currency,"
 #~ msgstr "Order Currency,"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:160
-#: src/pages/sales/ReturnOrderDetail.tsx:139
-#: src/pages/sales/SalesOrderDetail.tsx:148
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:161
+#: src/pages/sales/ReturnOrderDetail.tsx:140
+#: src/pages/sales/SalesOrderDetail.tsx:149
 msgid "Order Currency"
 msgstr "订单货币"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:167
-#: src/pages/sales/ReturnOrderDetail.tsx:146
-#: src/pages/sales/SalesOrderDetail.tsx:155
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:168
+#: src/pages/sales/ReturnOrderDetail.tsx:147
+#: src/pages/sales/SalesOrderDetail.tsx:156
 msgid "Total Cost"
 msgstr "总成本"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:202
-#: src/pages/sales/ReturnOrderDetail.tsx:181
-#: src/pages/sales/SalesOrderDetail.tsx:190
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:203
+#: src/pages/sales/ReturnOrderDetail.tsx:182
+#: src/pages/sales/SalesOrderDetail.tsx:191
 msgid "Created On"
 msgstr "创建于"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:247
-#: src/pages/sales/ReturnOrderDetail.tsx:226
-#: src/pages/sales/SalesOrderDetail.tsx:261
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:248
+#: src/pages/sales/ReturnOrderDetail.tsx:227
+#: src/pages/sales/SalesOrderDetail.tsx:262
 msgid "Order Details"
 msgstr "订单细节"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:275
-#: src/pages/sales/ReturnOrderDetail.tsx:253
-#: src/pages/sales/SalesOrderDetail.tsx:292
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:276
+#: src/pages/sales/ReturnOrderDetail.tsx:255
+#: src/pages/sales/SalesOrderDetail.tsx:293
 msgid "Extra Line Items"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:332
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:333
 msgid "Issue Purchase Order"
 msgstr "发布采购订单"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:340
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:341
 msgid "Cancel Purchase Order"
 msgstr "取消采购订单"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:348
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:349
 msgid "Hold Purchase Order"
 msgstr "挂起采购订单"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:356
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:357
 msgid "Complete Purchase Order"
 msgstr "完成采购订单"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:411
-#: src/pages/sales/ReturnOrderDetail.tsx:412
-#: src/pages/sales/SalesOrderDetail.tsx:452
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:412
+#: src/pages/sales/ReturnOrderDetail.tsx:414
+#: src/pages/sales/SalesOrderDetail.tsx:453
 msgid "Order Actions"
 msgstr "订单操作"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:96
-#: src/pages/sales/SalesOrderDetail.tsx:102
-#: src/tables/sales/SalesOrderTable.tsx:124
+#: src/pages/sales/ReturnOrderDetail.tsx:97
+#: src/pages/sales/SalesOrderDetail.tsx:103
+#: src/tables/sales/SalesOrderTable.tsx:125
 msgid "Customer Reference"
 msgstr "客户参考"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:310
+#: src/pages/sales/ReturnOrderDetail.tsx:312
 msgid "Edit Return Order"
 msgstr "编辑退货订单"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:319
+#: src/pages/sales/ReturnOrderDetail.tsx:321
 #: src/tables/sales/ReturnOrderTable.tsx:119
-#: src/tables/sales/ReturnOrderTable.tsx:128
+#: src/tables/sales/ReturnOrderTable.tsx:129
 msgid "Add Return Order"
 msgstr "添加退货订单"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:331
+#: src/pages/sales/ReturnOrderDetail.tsx:333
 msgid "Issue Return Order"
 msgstr "发布退货订单"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:339
+#: src/pages/sales/ReturnOrderDetail.tsx:341
 msgid "Cancel Return Order"
 msgstr "取消退货订单"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:342
+#: src/pages/sales/ReturnOrderDetail.tsx:344
 msgid "Order canceled"
 msgstr "订单已取消"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:347
+#: src/pages/sales/ReturnOrderDetail.tsx:349
 msgid "Hold Return Order"
 msgstr "挂起退货订单"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:355
+#: src/pages/sales/ReturnOrderDetail.tsx:357
 msgid "Complete Return Order"
 msgstr "完成退货订单"
 
@@ -5360,17 +5459,17 @@ msgstr "完成退货订单"
 msgid "Customers"
 msgstr "客户"
 
-#: src/pages/sales/SalesOrderDetail.tsx:140
+#: src/pages/sales/SalesOrderDetail.tsx:141
 msgid "Completed Shipments"
 msgstr "完成配送"
 
-#: src/pages/sales/SalesOrderDetail.tsx:238
+#: src/pages/sales/SalesOrderDetail.tsx:239
 msgid "Edit Sales Order"
 msgstr "编辑销售订单"
 
-#: src/pages/sales/SalesOrderDetail.tsx:247
+#: src/pages/sales/SalesOrderDetail.tsx:248
 #: src/tables/sales/SalesOrderTable.tsx:84
-#: src/tables/sales/SalesOrderTable.tsx:96
+#: src/tables/sales/SalesOrderTable.tsx:97
 msgid "Add Sales Order"
 msgstr "添加销售订单"
 
@@ -5378,92 +5477,92 @@ msgstr "添加销售订单"
 #~ msgid "Pending Shipments"
 #~ msgstr "Pending Shipments"
 
-#: src/pages/sales/SalesOrderDetail.tsx:308
+#: src/pages/sales/SalesOrderDetail.tsx:309
 msgid "Shipments"
 msgstr "配送"
 
-#: src/pages/sales/SalesOrderDetail.tsx:364
+#: src/pages/sales/SalesOrderDetail.tsx:365
 msgid "Issue Sales Order"
 msgstr "发布销售订单"
 
-#: src/pages/sales/SalesOrderDetail.tsx:372
+#: src/pages/sales/SalesOrderDetail.tsx:373
 msgid "Cancel Sales Order"
 msgstr "取消销售订单"
 
-#: src/pages/sales/SalesOrderDetail.tsx:380
+#: src/pages/sales/SalesOrderDetail.tsx:381
 msgid "Hold Sales Order"
 msgstr "挂起销售订单"
 
-#: src/pages/sales/SalesOrderDetail.tsx:388
+#: src/pages/sales/SalesOrderDetail.tsx:389
 msgid "Complete Sales Order"
 msgstr "完成销售订单"
 
-#: src/pages/sales/SalesOrderDetail.tsx:427
+#: src/pages/sales/SalesOrderDetail.tsx:428
 msgid "Ship Order"
 msgstr "装货单"
 
-#: src/pages/stock/LocationDetail.tsx:110
+#: src/pages/stock/LocationDetail.tsx:111
 msgid "Parent Location"
 msgstr "上级地点"
 
-#: src/pages/stock/LocationDetail.tsx:128
+#: src/pages/stock/LocationDetail.tsx:129
 msgid "Sublocations"
 msgstr "次级地点"
 
-#: src/pages/stock/LocationDetail.tsx:140
+#: src/pages/stock/LocationDetail.tsx:141
 #: src/tables/stock/StockLocationTable.tsx:54
 msgid "External"
 msgstr "外部"
 
-#: src/pages/stock/LocationDetail.tsx:146
+#: src/pages/stock/LocationDetail.tsx:147
 #: src/tables/stock/StockLocationTable.tsx:63
 msgid "Location Type"
 msgstr "位置类型"
 
-#: src/pages/stock/LocationDetail.tsx:157
+#: src/pages/stock/LocationDetail.tsx:158
 msgid "Top level stock location"
 msgstr "最高级库存位置"
 
-#: src/pages/stock/LocationDetail.tsx:168
+#: src/pages/stock/LocationDetail.tsx:169
 msgid "Location Details"
 msgstr "位置详细信息"
 
-#: src/pages/stock/LocationDetail.tsx:194
+#: src/pages/stock/LocationDetail.tsx:195
 msgid "Default Parts"
 msgstr "默认零件"
 
-#: src/pages/stock/LocationDetail.tsx:213
-#: src/pages/stock/LocationDetail.tsx:335
+#: src/pages/stock/LocationDetail.tsx:214
+#: src/pages/stock/LocationDetail.tsx:336
 #: src/tables/stock/StockLocationTable.tsx:123
 msgid "Edit Stock Location"
 msgstr "编辑库存地点"
 
-#: src/pages/stock/LocationDetail.tsx:234
-#: src/pages/stock/LocationDetail.tsx:340
+#: src/pages/stock/LocationDetail.tsx:235
+#: src/pages/stock/LocationDetail.tsx:341
 msgid "Delete Stock Location"
 msgstr "删除库存地点"
 
-#: src/pages/stock/LocationDetail.tsx:237
+#: src/pages/stock/LocationDetail.tsx:238
 msgid "Items Action"
 msgstr "项目操作"
 
-#: src/pages/stock/LocationDetail.tsx:238
+#: src/pages/stock/LocationDetail.tsx:239
 msgid "Action for stock items in this location"
 msgstr "对此位置中的库存物品执行的操作"
 
-#: src/pages/stock/LocationDetail.tsx:243
+#: src/pages/stock/LocationDetail.tsx:244
 msgid "Child Locations Action"
 msgstr "子仓库操作"
 
-#: src/pages/stock/LocationDetail.tsx:244
+#: src/pages/stock/LocationDetail.tsx:245
 msgid "Action for child locations in this location"
 msgstr "对此位置中的子位置执行的操作"
 
-#: src/pages/stock/LocationDetail.tsx:331
+#: src/pages/stock/LocationDetail.tsx:332
 msgid "Location Actions"
 msgstr "位置操作"
 
-#: src/pages/stock/StockDetail.tsx:104
+#: src/pages/stock/StockDetail.tsx:105
 msgid "Base Part"
 msgstr "基础零件"
 
@@ -5475,11 +5574,11 @@ msgstr "基础零件"
 #~ msgid "Unlink custom barcode from stock item"
 #~ msgstr "Unlink custom barcode from stock item"
 
-#: src/pages/stock/StockDetail.tsx:184
+#: src/pages/stock/StockDetail.tsx:185
 msgid "Installed In"
 msgstr "安装于"
 
-#: src/pages/stock/StockDetail.tsx:200
+#: src/pages/stock/StockDetail.tsx:201
 msgid "Consumed By"
 msgstr "消耗者"
 
@@ -5487,31 +5586,37 @@ msgstr "消耗者"
 #~ msgid "Edit stock item"
 #~ msgstr "Edit stock item"
 
+#: src/pages/stock/StockDetail.tsx:210
+#: src/tables/build/BuildAllocatedStockTable.tsx:64
+#: src/tables/stock/StockTrackingTable.tsx:96
+msgid "Build Order"
+msgstr "生产订单"
+
 #: src/pages/stock/StockDetail.tsx:217
 #~ msgid "Delete stock item"
 #~ msgstr "Delete stock item"
 
-#: src/pages/stock/StockDetail.tsx:287
+#: src/pages/stock/StockDetail.tsx:288
 msgid "Stock Details"
 msgstr "库存详情"
 
-#: src/pages/stock/StockDetail.tsx:293
+#: src/pages/stock/StockDetail.tsx:294
 msgid "Stock Tracking"
 msgstr "库存跟踪"
 
-#: src/pages/stock/StockDetail.tsx:346
+#: src/pages/stock/StockDetail.tsx:347
 msgid "Test Data"
 msgstr "测试数据"
 
-#: src/pages/stock/StockDetail.tsx:360
+#: src/pages/stock/StockDetail.tsx:361
 msgid "Installed Items"
 msgstr "已安装的项目"
 
-#: src/pages/stock/StockDetail.tsx:367
+#: src/pages/stock/StockDetail.tsx:368
 msgid "Child Items"
 msgstr "子项目"
 
-#: src/pages/stock/StockDetail.tsx:421
+#: src/pages/stock/StockDetail.tsx:422
 msgid "Edit Stock Item"
 msgstr "编辑库存项"
 
@@ -5519,38 +5624,38 @@ msgstr "编辑库存项"
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:448
+#: src/pages/stock/StockDetail.tsx:449
 msgid "Delete Stock Item"
 msgstr "删除库存项"
 
-#: src/pages/stock/StockDetail.tsx:488
+#: src/pages/stock/StockDetail.tsx:489
 msgid "Stock Operations"
 msgstr "库存操作"
 
-#: src/pages/stock/StockDetail.tsx:493
+#: src/pages/stock/StockDetail.tsx:494
 msgid "Count stock"
 msgstr "库存计数"
 
-#: src/pages/stock/StockDetail.tsx:503
-#: src/tables/stock/StockItemTable.tsx:449
+#: src/pages/stock/StockDetail.tsx:504
+#: src/tables/stock/StockItemTable.tsx:450
 msgid "Add stock"
 msgstr "添加库存"
 
-#: src/pages/stock/StockDetail.tsx:511
-#: src/tables/stock/StockItemTable.tsx:458
+#: src/pages/stock/StockDetail.tsx:512
+#: src/tables/stock/StockItemTable.tsx:459
 msgid "Remove stock"
 msgstr "移除库存"
 
-#: src/pages/stock/StockDetail.tsx:518
+#: src/pages/stock/StockDetail.tsx:519
 msgid "Transfer"
 msgstr "转移"
 
-#: src/pages/stock/StockDetail.tsx:519
-#: src/tables/stock/StockItemTable.tsx:478
+#: src/pages/stock/StockDetail.tsx:520
+#: src/tables/stock/StockItemTable.tsx:479
 msgid "Transfer stock"
 msgstr "转移库存"
 
-#: src/pages/stock/StockDetail.tsx:530
+#: src/pages/stock/StockDetail.tsx:531
 msgid "Stock Item Actions"
 msgstr "库存项操作"
 
@@ -5667,28 +5772,28 @@ msgid "Clear Filters"
 msgstr "清除筛选"
 
 #: src/tables/InvenTreeTable.tsx:122
-#: src/tables/InvenTreeTable.tsx:430
-#: src/tables/InvenTreeTable.tsx:454
+#: src/tables/InvenTreeTable.tsx:432
+#: src/tables/InvenTreeTable.tsx:456
 msgid "No records found"
 msgstr "没有找到记录"
 
-#: src/tables/InvenTreeTable.tsx:465
+#: src/tables/InvenTreeTable.tsx:467
 msgid "Server returned incorrect data type"
 msgstr "服务器返回了错误的数据类型"
 
-#: src/tables/InvenTreeTable.tsx:473
+#: src/tables/InvenTreeTable.tsx:475
 msgid "Bad request"
 msgstr "错误的请求"
 
-#: src/tables/InvenTreeTable.tsx:476
+#: src/tables/InvenTreeTable.tsx:478
 msgid "Unauthorized"
 msgstr "未授权"
 
-#: src/tables/InvenTreeTable.tsx:479
+#: src/tables/InvenTreeTable.tsx:481
 msgid "Forbidden"
 msgstr "禁止访问"
 
-#: src/tables/InvenTreeTable.tsx:482
+#: src/tables/InvenTreeTable.tsx:484
 msgid "Not found"
 msgstr "未找到"
 
@@ -5696,17 +5801,13 @@ msgstr "未找到"
 #~ msgid "Are you sure you want to delete the selected records?"
 #~ msgstr "Are you sure you want to delete the selected records?"
 
-#: src/tables/InvenTreeTable.tsx:524
+#: src/tables/InvenTreeTable.tsx:531
 msgid "Delete Selected Items"
 msgstr "删除所选项目"
 
-#: src/tables/InvenTreeTable.tsx:528
+#: src/tables/InvenTreeTable.tsx:535
 msgid "Are you sure you want to delete the selected items?"
 msgstr "确定要删除所选的项目吗?"
-
-#: src/tables/InvenTreeTable.tsx:530
-msgid "This action cannot be undone!"
-msgstr "此操作无法撤消！"
 
 #: src/tables/InvenTreeTable.tsx:535
 #~ msgid "Deleted records"
@@ -5715,6 +5816,10 @@ msgstr "此操作无法撤消！"
 #: src/tables/InvenTreeTable.tsx:536
 #~ msgid "Records were deleted successfully"
 #~ msgstr "Records were deleted successfully"
+
+#: src/tables/InvenTreeTable.tsx:537
+msgid "This action cannot be undone!"
+msgstr "此操作无法撤消！"
 
 #: src/tables/InvenTreeTable.tsx:545
 #~ msgid "Failed to delete records"
@@ -5725,20 +5830,20 @@ msgstr "此操作无法撤消！"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
-#: src/tables/InvenTreeTable.tsx:624
-#: src/tables/InvenTreeTable.tsx:625
+#: src/tables/InvenTreeTable.tsx:640
+#: src/tables/InvenTreeTable.tsx:641
 msgid "Barcode actions"
 msgstr "条形码操作"
 
-#: src/tables/InvenTreeTable.tsx:634
+#: src/tables/InvenTreeTable.tsx:650
 msgid "Delete selected records"
 msgstr "删除选中的记录"
 
-#: src/tables/InvenTreeTable.tsx:655
+#: src/tables/InvenTreeTable.tsx:671
 msgid "Refresh data"
 msgstr "刷新数据"
 
-#: src/tables/InvenTreeTable.tsx:681
+#: src/tables/InvenTreeTable.tsx:697
 msgid "Table filters"
 msgstr "表格过滤器"
 
@@ -5759,18 +5864,18 @@ msgid "Part Information"
 msgstr "零件信息"
 
 #: src/tables/bom/BomTable.tsx:212
-#: src/tables/build/BuildLineTable.tsx:137
+#: src/tables/build/BuildLineTable.tsx:136
 #: src/tables/part/PartTable.tsx:125
 msgid "External stock"
 msgstr "外部库存"
 
 #: src/tables/bom/BomTable.tsx:220
-#: src/tables/build/BuildLineTable.tsx:100
+#: src/tables/build/BuildLineTable.tsx:99
 msgid "Includes substitute stock"
 msgstr "包括替代库存"
 
 #: src/tables/bom/BomTable.tsx:229
-#: src/tables/build/BuildLineTable.tsx:110
+#: src/tables/build/BuildLineTable.tsx:109
 #: src/tables/sales/SalesOrderLineItemTable.tsx:131
 msgid "Includes variant stock"
 msgstr "包括变体库存"
@@ -5788,7 +5893,7 @@ msgid "Stock Information"
 msgstr "库存信息"
 
 #: src/tables/bom/BomTable.tsx:285
-#: src/tables/build/BuildLineTable.tsx:260
+#: src/tables/build/BuildLineTable.tsx:259
 msgid "Consumable item"
 msgstr "可耗物品"
 
@@ -5801,7 +5906,7 @@ msgstr "无可用库存"
 #~ msgstr "Create BOM Item"
 
 #: src/tables/bom/BomTable.tsx:306
-#: src/tables/build/BuildLineTable.tsx:80
+#: src/tables/build/BuildLineTable.tsx:79
 msgid "Show testable items"
 msgstr ""
 
@@ -5814,7 +5919,7 @@ msgid "Show trackable items"
 msgstr "显示可跟踪项目"
 
 #: src/tables/bom/BomTable.tsx:316
-#: src/tables/build/BuildLineTable.tsx:75
+#: src/tables/build/BuildLineTable.tsx:74
 msgid "Show assembled items"
 msgstr ""
 
@@ -5862,7 +5967,7 @@ msgstr "显示允许变体替换的项目"
 
 #: src/tables/bom/BomTable.tsx:345
 #: src/tables/bom/UsedInTable.tsx:79
-#: src/tables/build/BuildLineTable.tsx:69
+#: src/tables/build/BuildLineTable.tsx:68
 msgid "Optional"
 msgstr "可选项"
 
@@ -5880,7 +5985,7 @@ msgstr "显示可选项目"
 #~ msgstr "Bom item deleted"
 
 #: src/tables/bom/BomTable.tsx:350
-#: src/tables/build/BuildLineTable.tsx:64
+#: src/tables/build/BuildLineTable.tsx:63
 msgid "Consumable"
 msgstr "消耗品"
 
@@ -5906,12 +6011,12 @@ msgid "Show items with pricing"
 msgstr "显示带定价的项目"
 
 #: src/tables/bom/BomTable.tsx:378
-#: src/tables/bom/BomTable.tsx:511
+#: src/tables/bom/BomTable.tsx:512
 msgid "Import BOM Data"
 msgstr "导入物料清单数据"
 
 #: src/tables/bom/BomTable.tsx:388
-#: src/tables/bom/BomTable.tsx:523
+#: src/tables/bom/BomTable.tsx:526
 msgid "Add BOM Item"
 msgstr "添加物料清单项"
 
@@ -5937,7 +6042,7 @@ msgstr "物料清单项目已删除"
 
 #: src/tables/bom/BomTable.tsx:423
 #: src/tables/bom/BomTable.tsx:426
-#: src/tables/bom/BomTable.tsx:517
+#: src/tables/bom/BomTable.tsx:519
 msgid "Validate BOM"
 msgstr "验证物料清单"
 
@@ -5969,18 +6074,18 @@ msgstr "验证物料清单行"
 msgid "Edit Substitutes"
 msgstr "编辑替代零件"
 
-#: src/tables/bom/BomTable.tsx:539
+#: src/tables/bom/BomTable.tsx:542
 #: src/tables/part/PartParameterTable.tsx:193
-#: src/tables/part/PartTestTemplateTable.tsx:252
+#: src/tables/part/PartTestTemplateTable.tsx:253
 msgid "Part is Locked"
 msgstr "零件已锁定"
 
-#: src/tables/bom/BomTable.tsx:544
+#: src/tables/bom/BomTable.tsx:547
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "无法编辑材料清单，因为零件已锁定"
 
 #: src/tables/bom/UsedInTable.tsx:33
-#: src/tables/build/BuildLineTable.tsx:74
+#: src/tables/build/BuildLineTable.tsx:73
 #: src/tables/part/ParametricPartTable.tsx:233
 #: src/tables/part/PartTable.tsx:190
 #: src/tables/stock/StockItemTable.tsx:300
@@ -6010,7 +6115,7 @@ msgid "Show items allocated to a build output"
 msgstr "显示分配给构建输出的项目"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:76
-#: src/tables/part/PartPurchaseOrdersTable.tsx:125
+#: src/tables/part/PartPurchaseOrdersTable.tsx:123
 #: src/tables/sales/SalesOrderAllocationTable.tsx:62
 msgid "Order Status"
 msgstr "订单状态"
@@ -6028,7 +6133,7 @@ msgstr "可用数量"
 #: src/tables/build/BuildAllocatedStockTable.tsx:126
 #: src/tables/build/BuildOrderTestTable.tsx:177
 #: src/tables/build/BuildOrderTestTable.tsx:201
-#: src/tables/build/BuildOutputTable.tsx:312
+#: src/tables/build/BuildOutputTable.tsx:316
 msgid "Build Output"
 msgstr "生产产出"
 
@@ -6040,101 +6145,101 @@ msgstr "编辑构建项"
 msgid "Delete Build Item"
 msgstr "删除构建项"
 
-#: src/tables/build/BuildLineTable.tsx:55
+#: src/tables/build/BuildLineTable.tsx:54
 msgid "Show allocated lines"
 msgstr "显示分配的行"
 
-#: src/tables/build/BuildLineTable.tsx:60
+#: src/tables/build/BuildLineTable.tsx:59
 msgid "Show lines with available stock"
 msgstr "显示有可用库存的项目"
 
-#: src/tables/build/BuildLineTable.tsx:65
+#: src/tables/build/BuildLineTable.tsx:64
 msgid "Show consumable lines"
 msgstr "显示可消耗项目"
 
-#: src/tables/build/BuildLineTable.tsx:70
+#: src/tables/build/BuildLineTable.tsx:69
 msgid "Show optional lines"
 msgstr "显示可选项目"
 
-#: src/tables/build/BuildLineTable.tsx:79
+#: src/tables/build/BuildLineTable.tsx:78
 #: src/tables/part/PartTable.tsx:208
 msgid "Testable"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:84
+#: src/tables/build/BuildLineTable.tsx:83
 #: src/tables/stock/StockItemTable.tsx:364
 msgid "Tracked"
 msgstr "已跟踪"
 
-#: src/tables/build/BuildLineTable.tsx:85
+#: src/tables/build/BuildLineTable.tsx:84
 msgid "Show tracked lines"
 msgstr "显示已跟踪项目"
 
-#: src/tables/build/BuildLineTable.tsx:119
+#: src/tables/build/BuildLineTable.tsx:118
 #: src/tables/sales/SalesOrderLineItemTable.tsx:137
 msgid "In production"
 msgstr "生产中"
 
-#: src/tables/build/BuildLineTable.tsx:147
+#: src/tables/build/BuildLineTable.tsx:146
 msgid "Insufficient stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:163
+#: src/tables/build/BuildLineTable.tsx:162
 #: src/tables/sales/SalesOrderLineItemTable.tsx:125
 #: src/tables/stock/StockItemTable.tsx:186
 msgid "No stock available"
 msgstr "无可用库存"
 
-#: src/tables/build/BuildLineTable.tsx:212
+#: src/tables/build/BuildLineTable.tsx:211
 msgid "Gets Inherited"
 msgstr "获取已继承的"
 
-#: src/tables/build/BuildLineTable.tsx:221
+#: src/tables/build/BuildLineTable.tsx:220
 msgid "Unit Quantity"
 msgstr "单位数量"
 
-#: src/tables/build/BuildLineTable.tsx:283
+#: src/tables/build/BuildLineTable.tsx:282
 #: src/tables/sales/SalesOrderLineItemTable.tsx:247
 msgid "Create Build Order"
 msgstr "创建生产订单"
 
-#: src/tables/build/BuildLineTable.tsx:311
+#: src/tables/build/BuildLineTable.tsx:310
 msgid "Auto allocation in progress"
-msgstr ""
+msgstr "自动分配进行中"
 
-#: src/tables/build/BuildLineTable.tsx:314
+#: src/tables/build/BuildLineTable.tsx:313
 #: src/tables/build/BuildLineTable.tsx:445
 msgid "Auto Allocate Stock"
-msgstr ""
+msgstr "自动分配库存量"
 
-#: src/tables/build/BuildLineTable.tsx:315
+#: src/tables/build/BuildLineTable.tsx:314
 msgid "Automatically allocate stock to this build according to the selected options"
-msgstr ""
+msgstr "根据选定的选项自动分配库存到此版本"
 
-#: src/tables/build/BuildLineTable.tsx:333
-#: src/tables/build/BuildLineTable.tsx:347
-#: src/tables/build/BuildLineTable.tsx:404
-#: src/tables/build/BuildLineTable.tsx:472
+#: src/tables/build/BuildLineTable.tsx:332
+#: src/tables/build/BuildLineTable.tsx:346
+#: src/tables/build/BuildLineTable.tsx:403
+#: src/tables/build/BuildLineTable.tsx:474
 msgid "Deallocate Stock"
-msgstr ""
+msgstr "取消库存分配"
 
-#: src/tables/build/BuildLineTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:348
 msgid "Deallocate all untracked stock for this build order"
-msgstr ""
+msgstr "为这个构建订单取消分配所有未跟踪库存"
 
-#: src/tables/build/BuildLineTable.tsx:351
+#: src/tables/build/BuildLineTable.tsx:350
 msgid "Deallocate stock from the selected line item"
-msgstr ""
+msgstr "从选中的行项中取消分配库存"
 
-#: src/tables/build/BuildLineTable.tsx:355
+#: src/tables/build/BuildLineTable.tsx:354
 msgid "Stock has been deallocated"
-msgstr ""
+msgstr "库存已经取消分配"
 
-#: src/tables/build/BuildLineTable.tsx:414
+#: src/tables/build/BuildLineTable.tsx:413
 msgid "Order Stock"
 msgstr "订单库存"
 
-#: src/tables/build/BuildLineTable.tsx:421
+#: src/tables/build/BuildLineTable.tsx:420
 msgid "Build Stock"
 msgstr "生产库存"
 
@@ -6143,7 +6248,7 @@ msgid "Show active orders"
 msgstr "显示活动订单"
 
 #: src/tables/build/BuildOrderTable.tsx:115
-#: src/tables/part/PartPurchaseOrdersTable.tsx:126
+#: src/tables/part/PartPurchaseOrdersTable.tsx:124
 #: src/tables/purchasing/PurchaseOrderTable.tsx:56
 #: src/tables/sales/ReturnOrderTable.tsx:47
 #: src/tables/sales/SalesOrderTable.tsx:54
@@ -6198,7 +6303,7 @@ msgstr "根据负责人进行筛选"
 #: src/tables/build/BuildOrderTestTable.tsx:112
 #: src/tables/stock/StockItemTestResultTable.tsx:275
 #: src/tables/stock/StockItemTestResultTable.tsx:347
-#: src/tables/stock/StockItemTestResultTable.tsx:402
+#: src/tables/stock/StockItemTestResultTable.tsx:403
 msgid "Add Test Result"
 msgstr "添加测试结果"
 
@@ -6221,72 +6326,72 @@ msgstr "显示当前生产中的构建输出"
 #~ msgstr "Delete build output"
 
 #: src/tables/build/BuildOutputTable.tsx:173
-#: src/tables/build/BuildOutputTable.tsx:211
+#: src/tables/build/BuildOutputTable.tsx:212
 msgid "Add Build Output"
 msgstr "添加生成输出"
 
-#: src/tables/build/BuildOutputTable.tsx:216
+#: src/tables/build/BuildOutputTable.tsx:218
 msgid "Complete selected outputs"
 msgstr "完成选定的输出"
 
-#: src/tables/build/BuildOutputTable.tsx:226
+#: src/tables/build/BuildOutputTable.tsx:229
 msgid "Scrap selected outputs"
 msgstr "报废选定的输出"
 
-#: src/tables/build/BuildOutputTable.tsx:236
+#: src/tables/build/BuildOutputTable.tsx:240
 msgid "Cancel selected outputs"
 msgstr "取消选定的输出"
 
-#: src/tables/build/BuildOutputTable.tsx:252
+#: src/tables/build/BuildOutputTable.tsx:256
 msgid "Allocate"
 msgstr "分配"
 
-#: src/tables/build/BuildOutputTable.tsx:253
+#: src/tables/build/BuildOutputTable.tsx:257
 msgid "Allocate stock to build output"
 msgstr "为生产产出分配库存"
 
-#: src/tables/build/BuildOutputTable.tsx:259
+#: src/tables/build/BuildOutputTable.tsx:263
 msgid "Deallocate"
 msgstr "取消分配"
 
-#: src/tables/build/BuildOutputTable.tsx:260
+#: src/tables/build/BuildOutputTable.tsx:264
 msgid "Deallocate stock from build output"
 msgstr "从生产输出中取消分配库存"
 
-#: src/tables/build/BuildOutputTable.tsx:267
+#: src/tables/build/BuildOutputTable.tsx:271
 msgid "Complete build output"
 msgstr "完成生产输出"
 
-#: src/tables/build/BuildOutputTable.tsx:276
+#: src/tables/build/BuildOutputTable.tsx:280
 msgid "Scrap"
 msgstr "报废件"
-
-#: src/tables/build/BuildOutputTable.tsx:277
-msgid "Scrap build output"
-msgstr "报废生产输出"
 
 #: src/tables/build/BuildOutputTable.tsx:280
 #~ msgid "Allocated Items"
 #~ msgstr "Allocated Items"
 
-#: src/tables/build/BuildOutputTable.tsx:287
+#: src/tables/build/BuildOutputTable.tsx:281
+msgid "Scrap build output"
+msgstr "报废生产输出"
+
+#: src/tables/build/BuildOutputTable.tsx:291
 msgid "Cancel build output"
 msgstr "取消生产输出"
 
-#: src/tables/build/BuildOutputTable.tsx:325
+#: src/tables/build/BuildOutputTable.tsx:329
 msgid "Batch"
 msgstr "批次"
 
-#: src/tables/build/BuildOutputTable.tsx:340
+#: src/tables/build/BuildOutputTable.tsx:344
 msgid "Allocated Lines"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:355
+#: src/tables/build/BuildOutputTable.tsx:359
 msgid "Required Tests"
 msgstr "需要测试"
 
 #: src/tables/company/AddressTable.tsx:118
-#: src/tables/company/AddressTable.tsx:182
+#: src/tables/company/AddressTable.tsx:183
 msgid "Add Address"
 msgstr "新增地址"
 
@@ -6311,7 +6416,7 @@ msgstr "您确定要删除该地址？"
 #~ msgstr "New Company"
 
 #: src/tables/company/CompanyTable.tsx:74
-#: src/tables/company/CompanyTable.tsx:123
+#: src/tables/company/CompanyTable.tsx:124
 msgid "Add Company"
 msgstr "添加公司"
 
@@ -6343,7 +6448,7 @@ msgstr "添加联系人"
 msgid "Delete Contact"
 msgstr "删除联系人"
 
-#: src/tables/company/ContactTable.tsx:129
+#: src/tables/company/ContactTable.tsx:130
 msgid "Add contact"
 msgstr "添加联系人"
 
@@ -6413,26 +6518,26 @@ msgstr "拖拽附件文件到此处上传"
 
 #: src/tables/general/ExtraLineItemTable.tsx:86
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:249
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:60
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:72
 #: src/tables/sales/SalesOrderLineItemTable.tsx:200
 msgid "Add Line Item"
 msgstr "添加行项目"
 
 #: src/tables/general/ExtraLineItemTable.tsx:98
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:269
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:72
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:84
 #: src/tables/sales/SalesOrderLineItemTable.tsx:218
 msgid "Edit Line Item"
 msgstr "编辑行项目"
 
 #: src/tables/general/ExtraLineItemTable.tsx:106
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:277
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:80
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:92
 #: src/tables/sales/SalesOrderLineItemTable.tsx:226
 msgid "Delete Line Item"
 msgstr "删除行项目"
 
-#: src/tables/general/ExtraLineItemTable.tsx:142
+#: src/tables/general/ExtraLineItemTable.tsx:143
 msgid "Add Extra Line Item"
 msgstr ""
 
@@ -6484,7 +6589,7 @@ msgid "Machine information"
 msgstr "设备信息"
 
 #: src/tables/machine/MachineListTable.tsx:302
-#: src/tables/machine/MachineListTable.tsx:598
+#: src/tables/machine/MachineListTable.tsx:599
 msgid "Machine Type"
 msgstr "设备类型"
 
@@ -6497,12 +6602,12 @@ msgid "Initialized"
 msgstr "已初始化"
 
 #: src/tables/machine/MachineListTable.tsx:349
-#: src/tables/machine/MachineTypeTable.tsx:261
+#: src/tables/machine/MachineTypeTable.tsx:263
 msgid "Errors"
 msgstr "错误"
 
 #: src/tables/machine/MachineListTable.tsx:357
-#: src/tables/machine/MachineTypeTable.tsx:269
+#: src/tables/machine/MachineTypeTable.tsx:271
 msgid "No errors reported"
 msgstr "未报告错误"
 
@@ -6522,73 +6627,73 @@ msgstr "驱动设置"
 msgid "Add machine"
 msgstr "添加设备"
 
-#: src/tables/machine/MachineListTable.tsx:560
+#: src/tables/machine/MachineListTable.tsx:561
 msgid "Machine detail"
 msgstr "设备详情"
 
-#: src/tables/machine/MachineListTable.tsx:607
+#: src/tables/machine/MachineListTable.tsx:608
 msgid "Driver"
 msgstr "驱动"
 
-#: src/tables/machine/MachineTypeTable.tsx:73
+#: src/tables/machine/MachineTypeTable.tsx:75
 msgid "Builtin driver"
 msgstr "内置驱动"
 
-#: src/tables/machine/MachineTypeTable.tsx:89
+#: src/tables/machine/MachineTypeTable.tsx:91
 msgid "Machine type not found."
 msgstr "找不到设备类型。"
 
-#: src/tables/machine/MachineTypeTable.tsx:97
+#: src/tables/machine/MachineTypeTable.tsx:99
 msgid "Machine type information"
 msgstr "设备类型信息"
 
-#: src/tables/machine/MachineTypeTable.tsx:110
-#: src/tables/machine/MachineTypeTable.tsx:217
+#: src/tables/machine/MachineTypeTable.tsx:112
+#: src/tables/machine/MachineTypeTable.tsx:219
 msgid "Slug"
 msgstr "别名"
 
-#: src/tables/machine/MachineTypeTable.tsx:118
-#: src/tables/machine/MachineTypeTable.tsx:238
+#: src/tables/machine/MachineTypeTable.tsx:120
+#: src/tables/machine/MachineTypeTable.tsx:240
 msgid "Provider plugin"
 msgstr "供应商插件"
 
-#: src/tables/machine/MachineTypeTable.tsx:130
-#: src/tables/machine/MachineTypeTable.tsx:250
+#: src/tables/machine/MachineTypeTable.tsx:132
+#: src/tables/machine/MachineTypeTable.tsx:252
 msgid "Provider file"
 msgstr "供应商文件"
 
-#: src/tables/machine/MachineTypeTable.tsx:135
-#: src/tables/machine/MachineTypeTable.tsx:255
+#: src/tables/machine/MachineTypeTable.tsx:137
+#: src/tables/machine/MachineTypeTable.tsx:257
 #: src/tables/plugin/PluginListTable.tsx:180
 #: src/tables/plugin/PluginListTable.tsx:568
 msgid "Builtin"
 msgstr "内置"
 
-#: src/tables/machine/MachineTypeTable.tsx:146
+#: src/tables/machine/MachineTypeTable.tsx:148
 msgid "Available drivers"
 msgstr "可用驱动程序"
 
-#: src/tables/machine/MachineTypeTable.tsx:196
+#: src/tables/machine/MachineTypeTable.tsx:198
 msgid "Machine driver not found."
 msgstr "未找到设备驱动程序。"
 
-#: src/tables/machine/MachineTypeTable.tsx:204
+#: src/tables/machine/MachineTypeTable.tsx:206
 msgid "Machine driver information"
 msgstr "设备驱动信息"
 
-#: src/tables/machine/MachineTypeTable.tsx:224
+#: src/tables/machine/MachineTypeTable.tsx:226
 msgid "Machine type"
 msgstr "设备类型"
 
-#: src/tables/machine/MachineTypeTable.tsx:327
+#: src/tables/machine/MachineTypeTable.tsx:329
 msgid "Builtin type"
 msgstr "内置类型"
 
-#: src/tables/machine/MachineTypeTable.tsx:336
+#: src/tables/machine/MachineTypeTable.tsx:338
 msgid "Machine type detail"
 msgstr "设备类型详情"
 
-#: src/tables/machine/MachineTypeTable.tsx:346
+#: src/tables/machine/MachineTypeTable.tsx:348
 msgid "Machine driver detail"
 msgstr "设备驱动详情"
 
@@ -6657,7 +6762,7 @@ msgstr "显示用户订阅的类别"
 msgid "New Part Category"
 msgstr "新建零件类别"
 
-#: src/tables/part/PartCategoryTable.tsx:112
+#: src/tables/part/PartCategoryTable.tsx:113
 msgid "Add Part Category"
 msgstr "增加零件类别"
 
@@ -6749,20 +6854,20 @@ msgstr "删除零件参数模板"
 msgid "Add parameter template"
 msgstr "添加参数模板"
 
-#: src/tables/part/PartPurchaseOrdersTable.tsx:77
+#: src/tables/part/PartPurchaseOrdersTable.tsx:75
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:162
 msgid "Total Quantity"
 msgstr "总数量"
 
-#: src/tables/part/PartPurchaseOrdersTable.tsx:115
+#: src/tables/part/PartPurchaseOrdersTable.tsx:113
 msgid "Pending"
 msgstr "待定"
 
-#: src/tables/part/PartPurchaseOrdersTable.tsx:116
+#: src/tables/part/PartPurchaseOrdersTable.tsx:114
 msgid "Show pending orders"
 msgstr "显示待定的订单"
 
-#: src/tables/part/PartPurchaseOrdersTable.tsx:121
+#: src/tables/part/PartPurchaseOrdersTable.tsx:119
 msgid "Show received items"
 msgstr "显示已收到的条目"
 
@@ -6959,7 +7064,7 @@ msgid "Show tests which have recorded results"
 msgstr "显示已记录结果的测试"
 
 #: src/tables/part/PartTestTemplateTable.tsx:154
-#: src/tables/part/PartTestTemplateTable.tsx:237
+#: src/tables/part/PartTestTemplateTable.tsx:238
 msgid "Add Test Template"
 msgstr "添加测试模板"
 
@@ -6983,7 +7088,7 @@ msgstr "任何与此模板相关的测试结果将被删除"
 msgid "View Parent Part"
 msgstr "查看父部分"
 
-#: src/tables/part/PartTestTemplateTable.tsx:257
+#: src/tables/part/PartTestTemplateTable.tsx:258
 msgid "Part templates cannot be edited, as the part is locked"
 msgstr "模板参数无法编辑，因为组件已锁定"
 
@@ -7011,15 +7116,15 @@ msgstr "显示虚拟变体"
 msgid "Show trackable variants"
 msgstr "显示可跟踪变体"
 
-#: src/tables/part/RelatedPartTable.tsx:84
+#: src/tables/part/RelatedPartTable.tsx:86
 msgid "Add Related Part"
 msgstr "添加关联零件"
 
-#: src/tables/part/RelatedPartTable.tsx:99
+#: src/tables/part/RelatedPartTable.tsx:101
 msgid "Delete Related Part"
 msgstr "删除关联零件"
 
-#: src/tables/part/RelatedPartTable.tsx:106
+#: src/tables/part/RelatedPartTable.tsx:109
 msgid "Add related part"
 msgstr "添加关联零件"
 
@@ -7137,7 +7242,7 @@ msgstr "激活插件"
 #~ msgid "The following plugin will be deactivated"
 #~ msgstr "The following plugin will be deactivated"
 
-#: src/tables/plugin/PluginListTable.tsx:362
+#: src/tables/plugin/PluginListTable.tsx:365
 msgid "Deactivate"
 msgstr "停用"
 
@@ -7145,7 +7250,7 @@ msgstr "停用"
 #~ msgid "Confirm"
 #~ msgstr "Confirm"
 
-#: src/tables/plugin/PluginListTable.tsx:373
+#: src/tables/plugin/PluginListTable.tsx:376
 msgid "Activate"
 msgstr "激活"
 
@@ -7173,63 +7278,63 @@ msgstr "激活"
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:406
+#: src/tables/plugin/PluginListTable.tsx:409
 msgid "Uninstall"
 msgstr "卸载"
 
-#: src/tables/plugin/PluginListTable.tsx:438
+#: src/tables/plugin/PluginListTable.tsx:441
 msgid "Install plugin"
 msgstr "安装插件"
 
-#: src/tables/plugin/PluginListTable.tsx:451
+#: src/tables/plugin/PluginListTable.tsx:454
 msgid "Install"
 msgstr "安装"
 
-#: src/tables/plugin/PluginListTable.tsx:452
+#: src/tables/plugin/PluginListTable.tsx:455
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
 
-#: src/tables/plugin/PluginListTable.tsx:457
+#: src/tables/plugin/PluginListTable.tsx:460
 msgid "Uninstall Plugin"
 msgstr "卸载插件"
 
-#: src/tables/plugin/PluginListTable.tsx:469
+#: src/tables/plugin/PluginListTable.tsx:472
 msgid "Confirm plugin uninstall"
 msgstr "确认插件卸载"
 
-#: src/tables/plugin/PluginListTable.tsx:472
+#: src/tables/plugin/PluginListTable.tsx:475
 msgid "The selected plugin will be uninstalled."
 msgstr "所选插件将被卸载。"
 
-#: src/tables/plugin/PluginListTable.tsx:473
+#: src/tables/plugin/PluginListTable.tsx:476
 msgid "This action cannot be undone."
 msgstr "此操作无法撤销。"
 
-#: src/tables/plugin/PluginListTable.tsx:477
+#: src/tables/plugin/PluginListTable.tsx:480
 msgid "Plugin uninstalled successfully"
 msgstr "插件卸载成功"
 
-#: src/tables/plugin/PluginListTable.tsx:484
+#: src/tables/plugin/PluginListTable.tsx:487
 msgid "Delete Plugin"
 msgstr "刪除插件"
 
-#: src/tables/plugin/PluginListTable.tsx:485
+#: src/tables/plugin/PluginListTable.tsx:488
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr "删除此插件配置将删除所有相关的设置和数据。您确定要删除此插件吗？"
 
-#: src/tables/plugin/PluginListTable.tsx:498
+#: src/tables/plugin/PluginListTable.tsx:501
 msgid "Plugins reloaded"
 msgstr "插件已重载"
 
-#: src/tables/plugin/PluginListTable.tsx:499
+#: src/tables/plugin/PluginListTable.tsx:502
 msgid "Plugins were reloaded successfully"
 msgstr "插件重载成功"
 
-#: src/tables/plugin/PluginListTable.tsx:515
+#: src/tables/plugin/PluginListTable.tsx:520
 msgid "Reload Plugins"
 msgstr "重载插件"
 
-#: src/tables/plugin/PluginListTable.tsx:524
+#: src/tables/plugin/PluginListTable.tsx:527
 msgid "Install Plugin"
 msgstr "安装插件"
 
@@ -7292,7 +7397,7 @@ msgstr "删除参数"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:102
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:337
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:338
 msgid "Import Line Items"
 msgstr "导入行项目"
 
@@ -7320,53 +7425,53 @@ msgstr "目的地"
 msgid "Receive line item"
 msgstr "接收这行项目"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:342
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:142
-#: src/tables/sales/SalesOrderLineItemTable.tsx:257
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:344
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:160
+#: src/tables/sales/SalesOrderLineItemTable.tsx:258
 msgid "Add line item"
 msgstr "添加行项目"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:352
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:355
 msgid "Receive items"
 msgstr "收到项目"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:93
+#: src/tables/purchasing/SupplierPartTable.tsx:95
 msgid "MPN"
 msgstr "制造商零件编号 (MPN)"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:122
+#: src/tables/purchasing/SupplierPartTable.tsx:124
 msgid "Base units"
 msgstr "基础单位"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:170
+#: src/tables/purchasing/SupplierPartTable.tsx:172
 msgid "Supplier part created"
 msgstr "供应商零件已更新"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:176
+#: src/tables/purchasing/SupplierPartTable.tsx:179
 msgid "Add supplier part"
 msgstr "添加供应商零件"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:188
+#: src/tables/purchasing/SupplierPartTable.tsx:191
 msgid "Show active supplier parts"
 msgstr "显示活动供应商零件"
-
-#: src/tables/purchasing/SupplierPartTable.tsx:192
-msgid "Active Part"
-msgstr "激活的零件"
-
-#: src/tables/purchasing/SupplierPartTable.tsx:193
-msgid "Show active internal parts"
-msgstr "显示活动内部零件"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 #~ msgid "Supplier part updated"
 #~ msgstr "Supplier part updated"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:197
+#: src/tables/purchasing/SupplierPartTable.tsx:195
+msgid "Active Part"
+msgstr "激活的零件"
+
+#: src/tables/purchasing/SupplierPartTable.tsx:196
+msgid "Show active internal parts"
+msgstr "显示活动内部零件"
+
+#: src/tables/purchasing/SupplierPartTable.tsx:200
 msgid "Active Supplier"
 msgstr "活跃的供应商"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:198
+#: src/tables/purchasing/SupplierPartTable.tsx:201
 msgid "Show active suppliers"
 msgstr "显示活跃供应商"
 
@@ -7378,40 +7483,44 @@ msgstr "显示活跃供应商"
 #~ msgid "Are you sure you want to remove this supplier part?"
 #~ msgstr "Are you sure you want to remove this supplier part?"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:114
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:131
 msgid "Received Date"
 msgstr "接收日期"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:128
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:145
 msgid "Show items which have been received"
 msgstr "显示已收到的项目"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:133
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:150
 msgid "Filter by line item status"
 msgstr "按行项目状态筛选"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:158
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:168
+msgid "Receive selected items"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:197
 msgid "Receive Item"
 msgstr "接收物品"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:238
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "分配序列号"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:279
+#: src/tables/sales/SalesOrderLineItemTable.tsx:280
 msgid "Allocate stock"
 msgstr "分配库存"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:290
+#: src/tables/sales/SalesOrderLineItemTable.tsx:291
 msgid "Allocate Serials"
-msgstr ""
+msgstr "分配序列号"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:303
+#: src/tables/sales/SalesOrderLineItemTable.tsx:304
 msgid "Build stock"
 msgstr "生产库存"
 
-#: src/tables/sales/SalesOrderLineItemTable.tsx:320
-#: src/tables/stock/StockItemTable.tsx:507
+#: src/tables/sales/SalesOrderLineItemTable.tsx:321
+#: src/tables/stock/StockItemTable.tsx:508
 msgid "Order stock"
 msgstr "订单库存"
 
@@ -7443,23 +7552,23 @@ msgstr "送达日期"
 msgid "Complete Shipment"
 msgstr "完成配送"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:133
+#: src/tables/sales/SalesOrderShipmentTable.tsx:134
 msgid "Add shipment"
 msgstr "添加配送"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:146
+#: src/tables/sales/SalesOrderShipmentTable.tsx:147
 msgid "Shipped"
 msgstr "已配送"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:147
+#: src/tables/sales/SalesOrderShipmentTable.tsx:148
 msgid "Show shipments which have been shipped"
 msgstr "显示已发货的货物"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:151
+#: src/tables/sales/SalesOrderShipmentTable.tsx:152
 msgid "Delivered"
 msgstr "已送达"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:152
+#: src/tables/sales/SalesOrderShipmentTable.tsx:153
 msgid "Show shipments which have been delivered"
 msgstr "显示已送达的货物"
 
@@ -7589,38 +7698,38 @@ msgstr "添加群组"
 msgid "Edit group"
 msgstr "编辑群组"
 
-#: src/tables/settings/ImportSessionTable.tsx:38
+#: src/tables/settings/ImportSessionTable.tsx:37
 msgid "Delete Import Session"
 msgstr "删除导入的会话"
 
-#: src/tables/settings/ImportSessionTable.tsx:44
+#: src/tables/settings/ImportSessionTable.tsx:43
 #: src/tables/settings/ImportSessionTable.tsx:131
 msgid "Create Import Session"
 msgstr "创建导入会话"
 
-#: src/tables/settings/ImportSessionTable.tsx:69
+#: src/tables/settings/ImportSessionTable.tsx:68
 msgid "Uploaded"
 msgstr "已上传"
 
-#: src/tables/settings/ImportSessionTable.tsx:79
+#: src/tables/settings/ImportSessionTable.tsx:78
 msgid "Imported Rows"
 msgstr "导入的行"
 
-#: src/tables/settings/ImportSessionTable.tsx:109
+#: src/tables/settings/ImportSessionTable.tsx:108
 #: src/tables/settings/TemplateTable.tsx:292
 msgid "Model Type"
 msgstr "型号类型"
 
-#: src/tables/settings/ImportSessionTable.tsx:110
+#: src/tables/settings/ImportSessionTable.tsx:109
 #: src/tables/settings/TemplateTable.tsx:293
 msgid "Filter by target model type"
 msgstr "按目标型号筛选"
 
-#: src/tables/settings/ImportSessionTable.tsx:116
+#: src/tables/settings/ImportSessionTable.tsx:115
 msgid "Filter by import session status"
 msgstr "按导入会话状态筛选"
 
-#: src/tables/settings/ImportSessionTable.tsx:122
+#: src/tables/settings/ImportSessionTable.tsx:121
 msgid "Filter by user"
 msgstr "按用户筛选"
 
@@ -7709,88 +7818,84 @@ msgstr "添加模板"
 msgid "Filter by enabled status"
 msgstr "按启用状态筛选"
 
-#: src/tables/settings/UserTable.tsx:82
+#: src/tables/settings/UserTable.tsx:81
 msgid "User with id {id} not found"
 msgstr "未找到 ID 为 {id} 的用户"
 
-#: src/tables/settings/UserTable.tsx:84
+#: src/tables/settings/UserTable.tsx:83
 msgid "An error occurred while fetching user details"
 msgstr "获取用户详细信息时出错"
 
-#: src/tables/settings/UserTable.tsx:102
+#: src/tables/settings/UserTable.tsx:101
 msgid "Is Active"
 msgstr "激活"
 
-#: src/tables/settings/UserTable.tsx:103
+#: src/tables/settings/UserTable.tsx:102
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "指定是否将此用户视为激活用户。取消选择此选项将不会删除账户。"
 
-#: src/tables/settings/UserTable.tsx:107
+#: src/tables/settings/UserTable.tsx:106
 msgid "Is Staff"
 msgstr "员工"
 
-#: src/tables/settings/UserTable.tsx:108
+#: src/tables/settings/UserTable.tsx:107
 msgid "Designates whether the user can log into the django admin site."
 msgstr "指定用户是否可以登录 django 管理页面。"
 
-#: src/tables/settings/UserTable.tsx:112
+#: src/tables/settings/UserTable.tsx:111
 msgid "Is Superuser"
 msgstr "超级用户"
 
-#: src/tables/settings/UserTable.tsx:113
+#: src/tables/settings/UserTable.tsx:112
 msgid "Designates that this user has all permissions without explicitly assigning them."
 msgstr "指定该用户拥有所有权限，而无需明确分配。"
 
-#: src/tables/settings/UserTable.tsx:123
+#: src/tables/settings/UserTable.tsx:122
 msgid "You cannot edit the rights for the currently logged-in user."
 msgstr "您不能编辑当前登录用户的权限。"
 
-#: src/tables/settings/UserTable.tsx:154
+#: src/tables/settings/UserTable.tsx:153
 msgid "No groups"
 msgstr "没有群组"
 
-#: src/tables/settings/UserTable.tsx:245
+#: src/tables/settings/UserTable.tsx:244
 msgid "Delete user"
 msgstr "删除用户"
 
-#: src/tables/settings/UserTable.tsx:246
+#: src/tables/settings/UserTable.tsx:245
 msgid "User deleted"
 msgstr "用户已删除"
 
-#: src/tables/settings/UserTable.tsx:248
+#: src/tables/settings/UserTable.tsx:247
 msgid "Are you sure you want to delete this user?"
 msgstr "您确定要删除该用户吗？"
 
-#: src/tables/settings/UserTable.tsx:254
-#: src/tables/settings/UserTable.tsx:272
+#: src/tables/settings/UserTable.tsx:253
+#: src/tables/settings/UserTable.tsx:271
 msgid "Add user"
 msgstr "添加用户"
 
-#: src/tables/settings/UserTable.tsx:262
+#: src/tables/settings/UserTable.tsx:261
 msgid "Added user"
 msgstr "已添加用户"
 
-#: src/tables/settings/UserTable.tsx:285
+#: src/tables/settings/UserTable.tsx:284
 msgid "Show active users"
 msgstr "显示活跃用户"
 
-#: src/tables/settings/UserTable.tsx:289
+#: src/tables/settings/UserTable.tsx:288
 msgid "Staff"
 msgstr "工作人员"
 
-#: src/tables/settings/UserTable.tsx:290
+#: src/tables/settings/UserTable.tsx:289
 msgid "Show staff users"
 msgstr "显示工作人员用户"
 
 #: src/tables/settings/UserTable.tsx:294
-msgid "Superuser"
-msgstr "超级用户"
-
-#: src/tables/settings/UserTable.tsx:295
 msgid "Show superusers"
 msgstr "显示超级用户"
 
-#: src/tables/settings/UserTable.tsx:305
+#: src/tables/settings/UserTable.tsx:304
 msgid "Edit user"
 msgstr "编辑用户"
 
@@ -7872,8 +7977,12 @@ msgid "Filter by stock status"
 msgstr "按库存状态筛选"
 
 #: src/tables/stock/StockItemTable.tsx:301
-msgid "Show stock for assmebled parts"
-msgstr "显示装配零件的库存"
+msgid "Show stock for assembled parts"
+msgstr ""
+
+#: src/tables/stock/StockItemTable.tsx:301
+#~ msgid "Show stock for assmebled parts"
+#~ msgstr "Show stock for assmebled parts"
 
 #: src/tables/stock/StockItemTable.tsx:306
 msgid "Show items which have been allocated"
@@ -7960,48 +8069,48 @@ msgstr "外部地点"
 msgid "Show items in an external location"
 msgstr "显示外部库存地点的项目"
 
-#: src/tables/stock/StockItemTable.tsx:451
+#: src/tables/stock/StockItemTable.tsx:452
 msgid "Add a new stock item"
 msgstr "添加一个新的库存项"
 
-#: src/tables/stock/StockItemTable.tsx:460
+#: src/tables/stock/StockItemTable.tsx:461
 msgid "Remove some quantity from a stock item"
 msgstr "从库存项中删除一些数量"
 
-#: src/tables/stock/StockItemTable.tsx:482
+#: src/tables/stock/StockItemTable.tsx:483
 msgid "Move Stock items to new locations"
 msgstr "将库存项目移动到新位置"
 
-#: src/tables/stock/StockItemTable.tsx:489
+#: src/tables/stock/StockItemTable.tsx:490
 msgid "Change stock status"
 msgstr "更改库存状态"
 
-#: src/tables/stock/StockItemTable.tsx:491
+#: src/tables/stock/StockItemTable.tsx:492
 msgid "Change the status of stock items"
 msgstr "更改库存项的状态"
 
-#: src/tables/stock/StockItemTable.tsx:498
+#: src/tables/stock/StockItemTable.tsx:499
 msgid "Merge stock"
 msgstr "合并库存"
 
-#: src/tables/stock/StockItemTable.tsx:500
+#: src/tables/stock/StockItemTable.tsx:501
 msgid "Merge stock items"
 msgstr "合并库存项"
 
-#: src/tables/stock/StockItemTable.tsx:509
-#: src/tables/stock/StockItemTable.tsx:516
+#: src/tables/stock/StockItemTable.tsx:510
+#: src/tables/stock/StockItemTable.tsx:517
 msgid "Order new stock"
 msgstr "订单新库存"
 
-#: src/tables/stock/StockItemTable.tsx:514
+#: src/tables/stock/StockItemTable.tsx:515
 msgid "Assign to customer"
 msgstr "分配给客户"
 
-#: src/tables/stock/StockItemTable.tsx:523
+#: src/tables/stock/StockItemTable.tsx:524
 msgid "Delete stock"
 msgstr "删除库存"
 
-#: src/tables/stock/StockItemTable.tsx:525
+#: src/tables/stock/StockItemTable.tsx:526
 msgid "Delete stock items"
 msgstr "删除库存项"
 
@@ -8076,7 +8185,7 @@ msgid "Show results for installed stock items"
 msgstr "显示已安装库存项目的结果"
 
 #: src/tables/stock/StockItemTestResultTable.tsx:393
-#: src/tables/stock/TestStatisticsTable.tsx:74
+#: src/tables/stock/TestStatisticsTable.tsx:62
 msgid "Passed"
 msgstr "通过"
 
@@ -8113,7 +8222,7 @@ msgid "Filter by location type"
 msgstr "按位置类型筛选"
 
 #: src/tables/stock/StockLocationTable.tsx:107
-#: src/tables/stock/StockLocationTable.tsx:133
+#: src/tables/stock/StockLocationTable.tsx:134
 msgid "Add Stock Location"
 msgstr "添加库存地点"
 
@@ -8129,12 +8238,12 @@ msgstr "已删除"
 msgid "No user information"
 msgstr "没有用户信息"
 
-#: src/tables/stock/TestStatisticsTable.tsx:46
-#: src/tables/stock/TestStatisticsTable.tsx:76
+#: src/tables/stock/TestStatisticsTable.tsx:34
+#: src/tables/stock/TestStatisticsTable.tsx:64
 msgid "Total"
 msgstr "总计"
 
-#: src/tables/stock/TestStatisticsTable.tsx:75
+#: src/tables/stock/TestStatisticsTable.tsx:63
 msgid "Failed"
 msgstr "失败"
 

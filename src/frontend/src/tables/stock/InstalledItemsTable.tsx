@@ -11,9 +11,9 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function InstalledItemsTable({
   parentId
-}: {
+}: Readonly<{
   parentId?: number | string;
-}) {
+}>) {
   const table = useTable('stock_item_install');
   const user = useUserState();
 
@@ -22,7 +22,7 @@ export default function InstalledItemsTable({
       {
         accessor: 'part',
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'quantity',

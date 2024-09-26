@@ -53,13 +53,13 @@ export function PurchaseOrderLineItemTable({
   currency,
   supplierId,
   params
-}: {
+}: Readonly<{
   order: any;
   orderId: number;
   currency: string;
   supplierId?: number;
   params?: any;
-}) {
+}>) {
   const table = useTable('purchase-order-line-item');
 
   const user = useUserState();
@@ -128,7 +128,7 @@ export function PurchaseOrderLineItemTable({
         title: t`Internal Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'description',
@@ -333,12 +333,14 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
+        key="import-line-items"
         hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
         tooltip={t`Import Line Items`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
       />,
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={() => {
           setInitialData({
@@ -349,6 +351,7 @@ export function PurchaseOrderLineItemTable({
         hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
+        key="receive-items"
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}

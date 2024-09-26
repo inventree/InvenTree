@@ -1,7 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import { Accordion, Alert, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { userInfo } from 'os';
 import { lazy } from 'react';
 
 import { StylishText } from '../../../../components/items/StylishText';

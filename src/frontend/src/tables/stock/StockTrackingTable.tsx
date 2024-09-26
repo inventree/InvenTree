@@ -31,7 +31,7 @@ type StockTrackingEntry = {
   details: ReactNode;
 };
 
-export function StockTrackingTable({ itemId }: { itemId: number }) {
+export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
   const navigate = useNavigate();
   const table = useTable('stock_tracking');
 

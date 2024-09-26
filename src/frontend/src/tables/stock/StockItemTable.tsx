@@ -25,6 +25,7 @@ import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
@@ -46,7 +47,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part',
       sortable: true,
-      render: (record: any) => PartColumn(record?.part_detail)
+      render: (record: any) => PartColumn({ part: record?.part_detail })
     },
     {
       accessor: 'part_detail.IPN',
@@ -173,7 +174,7 @@ function stockItemTableColumns(): TableColumn[] {
         if (available != quantity) {
           if (available > 0) {
             extra.push(
-              <Text key="available" size="sm" color="orange">
+              <Text key="available" size="sm" c="orange">
                 {t`Available` + `: ${available}`}
               </Text>
             );
@@ -182,7 +183,7 @@ function stockItemTableColumns(): TableColumn[] {
               <Text
                 key="no-stock"
                 size="sm"
-                color="red"
+                c="red"
               >{t`No stock available`}</Text>
             );
           }
@@ -207,7 +208,7 @@ function stockItemTableColumns(): TableColumn[] {
               <Group gap="xs" justify="left" wrap="nowrap">
                 <Text c={color}>{text}</Text>
                 {part.units && (
-                  <Text size="xs" color={color}>
+                  <Text size="xs" c={color}>
                     [{part.units}]
                   </Text>
                 )}
@@ -234,7 +235,8 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     DateColumn({
       title: t`Expiry Date`,
-      accessor: 'expiry_date'
+      accessor: 'expiry_date',
+      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY')
     }),
     DateColumn({
       title: t`Last Updated`,
@@ -388,11 +390,11 @@ export function StockItemTable({
   params = {},
   allowAdd = false,
   tableName = 'stockitems'
-}: {
+}: Readonly<{
   params?: any;
   allowAdd?: boolean;
   tableName: string;
-}) {
+}>) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
@@ -441,6 +443,7 @@ export function StockItemTable({
     let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
       <ActionDropdown
+        key="stock-actions"
         tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon="stock" />}
         disabled={table.selectedRecords.length === 0}
@@ -531,6 +534,7 @@ export function StockItemTable({
         ]}
       />,
       <AddItemButton
+        key="add-stock-item"
         hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
         tooltip={t`Add Stock Item`}
         onClick={() => newStockItem.open()}

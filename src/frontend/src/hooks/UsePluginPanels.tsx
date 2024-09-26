@@ -1,27 +1,33 @@
-import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
-import { PluginContext } from '../components/plugins/PluginContext';
 import {
+  InvenTreeContext,
+  useInvenTreeContext
+} from '../components/plugins/PluginContext';
+import PluginPanelContent, {
   PluginPanelProps,
   isPluginPanelHidden
 } from '../components/plugins/PluginPanel';
-import PluginPanelContent from '../components/plugins/PluginPanel';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
 import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
-import { useLocalState } from '../states/LocalState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../states/SettingsState';
-import { useUserState } from '../states/UserState';
+import { useGlobalSettingsState } from '../states/SettingsState';
+
+/**
+ * @param model - The model type for the plugin (e.g. 'part' / 'purchaseorder')
+ * @param id - The ID (primary key) of the model instance for the plugin
+ * @param instance - The model instance data (if available)
+ */
+export type PluginPanelContext = InvenTreeContext & {
+  model?: ModelType | string;
+  id?: string | number | null;
+  instance?: any;
+};
 
 export function usePluginPanels({
   instance,
@@ -32,13 +38,7 @@ export function usePluginPanels({
   model?: ModelType | string;
   id?: string | number | null;
 }): PanelType[] {
-  const host = useLocalState.getState().host;
-  const navigate = useNavigate();
-  const user = useUserState();
-  const { colorScheme } = useMantineColorScheme();
-  const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
-  const userSettings = useUserSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
     () => globalSettings.isSet('ENABLE_PLUGINS_INTERFACE'),
@@ -70,33 +70,15 @@ export function usePluginPanels({
   });
 
   // Cache the context data which is delivered to the plugins
-  const contextData: PluginContext = useMemo(() => {
+  const inventreeContext = useInvenTreeContext();
+  const contextData = useMemo<PluginPanelContext>(() => {
     return {
       model: model,
       id: id,
       instance: instance,
-      user: user,
-      host: host,
-      api: api,
-      navigate: navigate,
-      globalSettings: globalSettings,
-      userSettings: userSettings,
-      theme: theme,
-      colorScheme: colorScheme
+      ...inventreeContext
     };
-  }, [
-    model,
-    id,
-    instance,
-    user,
-    host,
-    api,
-    navigate,
-    globalSettings,
-    userSettings,
-    theme,
-    colorScheme
-  ]);
+  }, [model, id, instance]);
 
   // Track which panels are hidden: { panelName: true/false }
   // We need to memoize this as the plugins can determine this dynamically
@@ -129,6 +111,11 @@ export function usePluginPanels({
         );
         const isHidden: boolean = panelState[identifier] ?? true;
 
+        const pluginContext: any = {
+          ...contextData,
+          context: props.context
+        };
+
         return {
           name: identifier,
           label: props.label,
@@ -136,7 +123,7 @@ export function usePluginPanels({
           content: (
             <PluginPanelContent
               pluginProps={props}
-              pluginContext={contextData}
+              pluginContext={pluginContext}
             />
           ),
           hidden: isHidden

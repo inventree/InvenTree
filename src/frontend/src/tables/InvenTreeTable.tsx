@@ -5,7 +5,6 @@ import {
   Box,
   Group,
   Indicator,
-  LoadingOverlay,
   Space,
   Stack,
   Tooltip
@@ -138,17 +137,17 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable<T = any>({
+export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
   columns,
   props
-}: {
+}: Readonly<{
   url: string;
   tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-}) {
+}>) {
   const {
     getTableColumnNames,
     setTableColumnNames,
@@ -180,10 +179,17 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
+    gcTime: 5000,
     queryFn: async () => {
       if (props.enableColumnCaching == false) {
         return null;
       }
+
+      // If we already have field names, no need to fetch them again
+      if (fieldNames && Object.keys(fieldNames).length > 0) {
+        return null;
+      }
+
       return api
         .options(url, {
           params: tableProps.params
@@ -204,7 +210,7 @@ export function InvenTreeTable<T = any>({
               }
             });
 
-            const cacheKey = tableState.tableKey.split('-')[0];
+            const cacheKey = tableState.tableKey.replaceAll('-', '');
 
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
@@ -221,20 +227,19 @@ export function InvenTreeTable<T = any>({
       return;
     }
 
-    const cacheKey = tableState.tableKey.split('-')[0];
+    const cacheKey = tableState.tableKey.replaceAll('-', '');
 
     // First check the local cache
     const cachedNames = getTableColumnNames(cacheKey);
 
-    if (Object.keys(cachedNames).length > 0) {
+    if (cachedNames != null) {
       // Cached names are available - use them!
       setFieldNames(cachedNames);
       return;
     }
 
-    // Otherwise, fetch the data from the API
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
+  }, [url, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -243,6 +248,10 @@ export function InvenTreeTable<T = any>({
       ...props
     };
   }, [props]);
+
+  const enableSelection: boolean = useMemo(() => {
+    return tableProps.enableSelection || tableProps.enableBulkDelete || false;
+  }, [tableProps]);
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
@@ -310,7 +319,6 @@ export function InvenTreeTable<T = any>({
     columns,
     fieldNames,
     tableProps.rowActions,
-    tableProps.enableSelection,
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
@@ -398,7 +406,7 @@ export function InvenTreeTable<T = any>({
   }
 
   // Data Sorting
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
     columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
@@ -432,7 +440,7 @@ export function InvenTreeTable<T = any>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus) => {
+  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
     tableState.setPage(1);
     setSortStatus(status);
 
@@ -498,8 +506,10 @@ export function InvenTreeTable<T = any>({
       });
   };
 
-  const { data, isFetching, refetch } = useQuery({
+  const { data, isFetching, isLoading, refetch } = useQuery({
     queryKey: [
+      'tabledata',
+      url,
       tableState.page,
       props.params,
       sortStatus.columnAccessor,
@@ -513,8 +523,13 @@ export function InvenTreeTable<T = any>({
   });
 
   useEffect(() => {
-    tableState.setIsLoading(isFetching);
-  }, [isFetching]);
+    tableState.setIsLoading(
+      isFetching ||
+        isLoading ||
+        tableOptionQuery.isFetching ||
+        tableOptionQuery.isLoading
+    );
+  }, [isFetching, isLoading, tableOptionQuery]);
 
   // Update tableState.records when new data received
   useEffect(() => {
@@ -642,7 +657,7 @@ export function InvenTreeTable<T = any>({
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}
-              {(tableProps.enableBulkDelete ?? false) && (
+              {tableProps.enableBulkDelete && (
                 <ActionButton
                   disabled={!tableState.hasSelectedRecords}
                   icon={<IconTrash />}
@@ -711,12 +726,6 @@ export function InvenTreeTable<T = any>({
             </Group>
           </Group>
           <Box pos="relative">
-            <LoadingOverlay
-              visible={
-                tableOptionQuery.isLoading || tableOptionQuery.isFetching
-              }
-            />
-
             <DataTable
               withTableBorder
               withColumnBorders
@@ -733,12 +742,10 @@ export function InvenTreeTable<T = any>({
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
-                tableProps.enableSelection
-                  ? tableState.selectedRecords
-                  : undefined
+                enableSelection ? tableState.selectedRecords : undefined
               }
               onSelectedRecordsChange={
-                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+                enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={tableProps.rowExpansion}
               rowStyle={tableProps.rowStyle}

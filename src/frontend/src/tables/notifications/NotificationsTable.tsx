@@ -13,12 +13,12 @@ export function NotificationTable({
   tableState,
   tableActions,
   actions
-}: {
+}: Readonly<{
   params: any;
   tableState: TableState;
   tableActions: any[];
   actions: (record: any) => RowAction[];
-}) {
+}>) {
   const columns: TableColumn[] = useMemo(() => {
     return [
       {

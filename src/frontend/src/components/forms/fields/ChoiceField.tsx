@@ -1,6 +1,6 @@
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { ApiFormFieldType } from './ApiFormField';
@@ -12,11 +12,11 @@ export function ChoiceField({
   controller,
   definition,
   fieldName
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
-}) {
+}>) {
   const fieldId = useId();
 
   const {

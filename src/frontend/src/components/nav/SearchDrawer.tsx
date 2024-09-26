@@ -56,11 +56,11 @@ function QueryResultGroup({
   query,
   onRemove,
   onResultClick
-}: {
+}: Readonly<{
   query: SearchQuery;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
-}) {
+}>) {
   if (query.results.count == 0) {
     return null;
   }
@@ -115,10 +115,10 @@ function QueryResultGroup({
 export function SearchDrawer({
   opened,
   onClose
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 500);
 

@@ -15,13 +15,13 @@ export default function TextField({
   definition,
   onChange,
   onKeyDown
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
   onChange: (value: any) => void;
   onKeyDown: (value: any) => void;
-}) {
+}>) {
   const fieldId = useId();
   const {
     field,
@@ -32,7 +32,7 @@ export default function TextField({
 
   const [rawText, setRawText] = useState<string>(value || '');
 
-  const [debouncedText] = useDebouncedValue(rawText, 250);
+  const [debouncedText] = useDebouncedValue(rawText, 100);
 
   useEffect(() => {
     setRawText(value || '');

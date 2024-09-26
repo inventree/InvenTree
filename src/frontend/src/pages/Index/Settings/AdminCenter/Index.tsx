@@ -9,6 +9,7 @@ import {
   Title
 } from '@mantine/core';
 import {
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -18,6 +19,7 @@ import {
   IconListDetails,
   IconPackages,
   IconPlugConnected,
+  IconQrcode,
   IconReport,
   IconScale,
   IconSitemap,
@@ -67,6 +69,10 @@ const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
+const BarcodeScanHistoryTable = Loadable(
+  lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
+);
+
 const ImportSesssionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
@@ -91,6 +97,8 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
+const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
+
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -107,6 +115,12 @@ export default function AdminCenter() {
         label: t`Data Import`,
         icon: <IconFileUpload />,
         content: <ImportSesssionTable />
+      },
+      {
+        name: 'barcode-history',
+        label: t`Barcode Scans`,
+        icon: <IconQrcode />,
+        content: <BarcodeScanHistoryTable />
       },
       {
         name: 'background',
@@ -161,6 +175,12 @@ export default function AdminCenter() {
         label: t`Category Parameters`,
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardCheck />,
+        content: <StocktakePanel />
       },
       {
         name: 'labels',

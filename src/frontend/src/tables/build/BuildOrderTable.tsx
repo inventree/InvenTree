@@ -33,11 +33,11 @@ export function BuildOrderTable({
   partId,
   parentBuildId,
   salesOrderId
-}: {
+}: Readonly<{
   partId?: number;
   parentBuildId?: number;
   salesOrderId?: number;
-}) {
+}>) {
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
@@ -45,7 +45,7 @@ export function BuildOrderTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'part_detail.IPN',

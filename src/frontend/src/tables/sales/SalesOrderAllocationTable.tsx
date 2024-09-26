@@ -26,7 +26,7 @@ export default function SalesOrderAllocationTable({
   allowEdit,
   modelTarget,
   modelField
-}: {
+}: Readonly<{
   partId?: number;
   stockId?: number;
   orderId?: number;
@@ -35,7 +35,7 @@ export default function SalesOrderAllocationTable({
   allowEdit?: boolean;
   modelTarget?: ModelType;
   modelField?: string;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('salesorderallocations');
 
@@ -68,7 +68,7 @@ export default function SalesOrderAllocationTable({
         title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'quantity',
@@ -110,27 +110,25 @@ export default function SalesOrderAllocationTable({
   );
 
   return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            part_detail: showPartInfo ?? false,
-            order_detail: showOrderInfo ?? false,
-            item_detail: true,
-            location_detail: true,
-            part: partId,
-            order: orderId,
-            stock_item: stockId
-          },
-          rowActions: rowActions,
-          tableFilters: tableFilters,
-          modelField: modelField ?? 'order',
-          modelType: modelTarget ?? ModelType.salesorder
-        }}
-      />
-    </>
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        params: {
+          part_detail: showPartInfo ?? false,
+          order_detail: showOrderInfo ?? false,
+          item_detail: true,
+          location_detail: true,
+          part: partId,
+          order: orderId,
+          stock_item: stockId
+        },
+        rowActions: rowActions,
+        tableFilters: tableFilters,
+        modelField: modelField ?? 'order',
+        modelType: modelTarget ?? ModelType.salesorder
+      }}
+    />
   );
 }

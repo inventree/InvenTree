@@ -74,10 +74,39 @@ class TotalPriceMixin(serializers.Serializer):
     )
 
 
+class DuplicateOrderSerializer(serializers.Serializer):
+    """Serializer for specifying options when duplicating an order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['order_id', 'copy_lines', 'copy_extra_lines']
+
+    order_id = serializers.IntegerField(
+        required=True, label=_('Order ID'), help_text=_('ID of the order to duplicate')
+    )
+
+    copy_lines = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Copy Lines'),
+        help_text=_('Copy line items from the original order'),
+    )
+
+    copy_extra_lines = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Copy Extra Lines'),
+        help_text=_('Copy extra line items from the original order'),
+    )
+
+
 class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types."""
 
-    export_exclude_fields = ['notes']
+    export_exclude_fields = ['notes', 'duplicate']
+
+    import_exclude_fields = ['notes', 'duplicate']
 
     # Number of line items in this order
     line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
@@ -127,6 +156,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         required=False, allow_null=True, label=_('Creation Date')
     )
 
+    duplicate = DuplicateOrderSerializer(
+        label=_('Duplicate Order'),
+        help_text=_('Specify options for duplicating this order'),
+        required=False,
+        write_only=True,
+    )
+
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
         self.Meta.model.validate_reference_field(reference)
@@ -166,8 +202,48 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'notes',
             'barcode_hash',
             'overdue',
+            'duplicate',
             *extra_fields,
         ]
+
+    def clean_line_item(self, line):
+        """Clean a line item object (when duplicating)."""
+        line.pk = None
+        line.order = self
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new order object.
+
+        Optionally, copy line items from an existing order.
+        """
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            order_id = duplicate.get('order_id', None)
+            copy_lines = duplicate.get('copy_lines', True)
+            copy_extra_lines = duplicate.get('copy_extra_lines', True)
+
+            try:
+                copy_from = instance.__class__.objects.get(pk=order_id)
+            except Exception:
+                # If the order ID is invalid, raise a validation error
+                raise ValidationError(_('Invalid order ID'))
+
+            if copy_lines:
+                for line in copy_from.lines.all():
+                    instance.clean_line_item(line)
+                    line.save()
+
+            if copy_extra_lines:
+                for line in copy_from.extra_lines.all():
+                    line.pk = None
+                    line.order = instance
+                    line.save()
+
+        return instance
 
 
 class AbstractLineItemSerializer:
@@ -258,6 +334,12 @@ class PurchaseOrderSerializer(
 
         if supplier_detail is not True:
             self.fields.pop('supplier_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -899,6 +981,12 @@ class SalesOrderSerializer(
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1691,6 +1779,12 @@ class ReturnOrderSerializer(
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):

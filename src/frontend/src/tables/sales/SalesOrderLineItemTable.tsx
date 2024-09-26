@@ -44,12 +44,12 @@ export default function SalesOrderLineItemTable({
   currency,
   customerId,
   editable
-}: {
+}: Readonly<{
   orderId: number;
   currency: string;
   customerId: number;
   editable: boolean;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('sales-order-line-item');
 
@@ -59,7 +59,7 @@ export default function SalesOrderLineItemTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'part_detail.IPN',
@@ -149,7 +149,7 @@ export default function SalesOrderLineItemTable({
 
           return (
             <TableHoverCard
-              value={<Text color={color}>{text}</Text>}
+              value={<Text c={color}>{text}</Text>}
               extra={extra}
               title={t`Stock Information`}
             />
@@ -254,6 +254,7 @@ export default function SalesOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={() => {
           setInitialData({

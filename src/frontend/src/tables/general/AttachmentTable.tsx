@@ -94,10 +94,10 @@ function attachmentTableColumns(): TableColumn[] {
 export function AttachmentTable({
   model_type,
   model_id
-}: {
+}: Readonly<{
   model_type: ModelType;
   model_id: number;
-}): ReactNode {
+}>): ReactNode {
   const user = useUserState();
   const table = useTable(`${model_type}-attachments`);
 

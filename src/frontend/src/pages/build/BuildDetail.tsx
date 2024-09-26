@@ -262,7 +262,11 @@ export default function BuildDetail() {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        )
         // TODO: Hide if build is complete
       },
       {

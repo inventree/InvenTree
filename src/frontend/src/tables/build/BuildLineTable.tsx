@@ -5,7 +5,6 @@ import {
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
-  IconTransferIn,
   IconWand
 } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -37,12 +36,12 @@ export default function BuildLineTable({
   build,
   outputId,
   params = {}
-}: {
+}: Readonly<{
   buildId: number;
   build: any;
   outputId?: number;
   params?: any;
-}) {
+}>) {
   const table = useTable('buildline');
   const user = useUserState();
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
@@ -176,7 +175,7 @@ export default function BuildLineTable({
         ordering: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'part_detail.IPN',
@@ -441,6 +440,7 @@ export default function BuildLineTable({
     const visible = production && canEdit;
     return [
       <ActionButton
+        key="auto-allocate"
         icon={<IconWand />}
         tooltip={t`Auto Allocate Stock`}
         hidden={!visible}
@@ -450,6 +450,7 @@ export default function BuildLineTable({
         }}
       />,
       <ActionButton
+        key="allocate-stock"
         icon={<IconArrowRight />}
         tooltip={t`Allocate Stock`}
         hidden={!visible}
@@ -468,6 +469,7 @@ export default function BuildLineTable({
         }}
       />,
       <ActionButton
+        key="deallocate-stock"
         icon={<IconCircleMinus />}
         tooltip={t`Deallocate Stock`}
         hidden={!visible}

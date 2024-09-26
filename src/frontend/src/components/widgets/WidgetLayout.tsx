@@ -43,12 +43,12 @@ export function WidgetLayout({
   className = 'layout',
   localstorageName = 'argl',
   rowHeight = 30
-}: {
+}: Readonly<{
   items: LayoutItemType[];
   className?: string;
   localstorageName?: string;
   rowHeight?: number;
-}) {
+}>) {
   const [layouts, setLayouts] = useState({});
   const [editable, setEditable] = useDisclosure(false);
   const [boxShown, setBoxShown] = useDisclosure(true);
@@ -130,13 +130,13 @@ function WidgetControlBar({
   resetLayout,
   boxShown,
   boxFnc
-}: {
+}: Readonly<{
   editable: boolean;
   editFnc: () => void;
   resetLayout: () => void;
   boxShown: boolean;
   boxFnc: () => void;
-}) {
+}>) {
   useHotkeys([['mod+E', () => editFnc()]]);
 
   return (
@@ -177,7 +177,7 @@ function WidgetControlBar({
             }
             onClick={editFnc}
             rightSection={
-              <Text size="xs" color="dimmed">
+              <Text size="xs" c="dimmed">
                 ⌘E
               </Text>
             }

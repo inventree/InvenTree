@@ -247,6 +247,16 @@ class Order(
                     'contact': _('Contact does not match selected company')
                 })
 
+    def clean_line_item(self, line):
+        """Clean a line item for this order.
+
+        Used when duplicating an existing line item,
+        to ensure it is 'fresh'.
+        """
+        line.pk = None
+        line.target_date = None
+        line.order = self
+
     def report_context(self):
         """Generate context data for the reporting interface."""
         return {
@@ -378,6 +388,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Purchase Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this PurchaseOrder."""
+        super().clean_line_item(line)
+        line.received = 0
 
     def report_context(self):
         """Return report context data for this PurchaseOrder."""
@@ -891,6 +906,11 @@ class SalesOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Sales Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this SalesOrder."""
+        super().clean_line_item(line)
+        line.shipped = 0
 
     def report_context(self):
         """Generate report context data for this SalesOrder."""
@@ -2082,6 +2102,12 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Return Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this ReturnOrder."""
+        super().clean_line_item(line)
+        line.received_date = None
+        line.outcome = ReturnOrderLineStatus.PENDING.value
 
     def report_context(self):
         """Generate report context data for this ReturnOrder."""

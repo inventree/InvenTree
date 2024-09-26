@@ -8,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
@@ -17,11 +16,10 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartPurchaseOrdersTable({
   partId
-}: {
+}: Readonly<{
   partId: number;
-}) {
+}>) {
   const table = useTable('partpurchaseorders');
-  const user = useUserState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -130,23 +128,21 @@ export default function PartPurchaseOrdersTable({
   }, []);
 
   return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.purchase_order_line_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            base_part: partId,
-            part_detail: true,
-            order_detail: true,
-            supplier_detail: true
-          },
-          modelField: 'order',
-          modelType: ModelType.purchaseorder,
-          tableFilters: tableFilters
-        }}
-      />
-    </>
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.purchase_order_line_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        params: {
+          base_part: partId,
+          part_detail: true,
+          order_detail: true,
+          supplier_detail: true
+        },
+        modelField: 'order',
+        modelType: ModelType.purchaseorder,
+        tableFilters: tableFilters
+      }}
+    />
   );
 }

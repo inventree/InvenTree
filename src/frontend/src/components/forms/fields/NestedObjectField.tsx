@@ -13,13 +13,13 @@ export function NestedObjectField({
   definition,
   url,
   setFields
-}: {
+}: Readonly<{
   control: Control<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
-}) {
+}>) {
   return (
     <Accordion defaultValue={'OpenByDefault'} variant="contained">
       <Accordion.Item value={'OpenByDefault'}>

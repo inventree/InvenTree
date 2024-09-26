@@ -7,14 +7,14 @@ export function PassFailButton({
   value,
   passText,
   failText
-}: {
+}: Readonly<{
   value: any;
   passText?: string;
   failText?: string;
-}) {
+}>) {
   const v = isTrue(value);
-  const pass = passText || t`Pass`;
-  const fail = failText || t`Fail`;
+  const pass = passText ?? t`Pass`;
+  const fail = failText ?? t`Fail`;
 
   return (
     <Badge
@@ -29,11 +29,11 @@ export function PassFailButton({
   );
 }
 
-export function YesNoButton({ value }: { value: any }) {
+export function YesNoButton({ value }: Readonly<{ value: any }>) {
   return <PassFailButton value={value} passText={t`Yes`} failText={t`No`} />;
 }
 
-export function YesNoUndefinedButton({ value }: { value?: boolean }) {
+export function YesNoUndefinedButton({ value }: Readonly<{ value?: boolean }>) {
   if (value === undefined) {
     return <Skeleton height={15} width={32} />;
   } else {

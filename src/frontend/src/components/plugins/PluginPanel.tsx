@@ -3,7 +3,7 @@ import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { PluginContext } from './PluginContext';
+import { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 // Definition of the plugin panel properties, provided by the server API
@@ -13,6 +13,7 @@ export type PluginPanelProps = {
   label: string;
   icon?: string;
   content?: string;
+  context?: any;
   source?: string;
 };
 
@@ -21,7 +22,7 @@ export async function isPluginPanelHidden({
   pluginContext
 }: {
   pluginProps: PluginPanelProps;
-  pluginContext: PluginContext;
+  pluginContext: InvenTreeContext;
 }): Promise<boolean> {
   if (!pluginProps.source) {
     // No custom source supplied - panel is not hidden
@@ -64,10 +65,10 @@ export async function isPluginPanelHidden({
 export default function PluginPanelContent({
   pluginProps,
   pluginContext
-}: {
+}: Readonly<{
   pluginProps: PluginPanelProps;
-  pluginContext: PluginContext;
-}): ReactNode {
+  pluginContext: InvenTreeContext;
+}>): ReactNode {
   const ref = useRef<HTMLDivElement>();
 
   const [error, setError] = useState<string | undefined>(undefined);
@@ -82,7 +83,9 @@ export default function PluginPanelContent({
               func(ref.current, pluginContext);
               setError('');
             } catch (error) {
-              setError(t`Error occurred while rendering plugin content`);
+              setError(
+                t`Error occurred while rendering plugin content: ${error}`
+              );
             }
           } else {
             setError(t`Plugin did not provide panel rendering function`);

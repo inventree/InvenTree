@@ -74,7 +74,7 @@ export interface ApiFormAction {
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
-  pk?: number | string | undefined;
+  pk?: number | string;
   pk_field?: string;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -103,10 +103,10 @@ export interface ApiFormProps {
 export function OptionsApiForm({
   props: _props,
   id: pId
-}: {
+}: Readonly<{
   props: ApiFormProps;
   id?: string;
-}) {
+}>) {
   const props = useMemo(
     () => ({
       ..._props,
@@ -197,11 +197,11 @@ export function ApiForm({
   id,
   props,
   optionsLoading
-}: {
+}: Readonly<{
   id: string;
   props: ApiFormProps;
   optionsLoading: boolean;
-}) {
+}>) {
   const navigate = useNavigate();
 
   const [fields, setFields] = useState<ApiFormFieldSet>(
@@ -658,10 +658,10 @@ export function ApiForm({
 export function CreateApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const createProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
@@ -676,10 +676,10 @@ export function CreateApiForm({
 export function EditApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const editProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
@@ -696,10 +696,10 @@ export function EditApiForm({
 export function DeleteApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const deleteProps = useMemo<ApiFormProps>(
     () => ({
       ...props,

@@ -203,10 +203,11 @@ DBBACKUP_STORAGE = get_setting(
 
 # Default backup configuration
 DBBACKUP_STORAGE_OPTIONS = get_setting(
-    'INVENTREE_BACKUP_OPTIONS', 'backup_options', None
+    'INVENTREE_BACKUP_OPTIONS',
+    'backup_options',
+    default_value={'location': config.get_backup_dir()},
+    typecast=dict,
 )
-if DBBACKUP_STORAGE_OPTIONS is None:
-    DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
 
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
     'INVENTREE_ADMIN_ENABLED', config_key='admin_enabled', default_value=True
@@ -588,6 +589,9 @@ for key in db_keys:
 
 # Check that required database configuration options are specified
 required_keys = ['ENGINE', 'NAME']
+
+# Ensure all database keys are upper case
+db_config = {key.upper(): value for key, value in db_config.items()}
 
 for key in required_keys:
     if key not in db_config:  # pragma: no cover

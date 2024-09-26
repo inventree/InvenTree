@@ -25,7 +25,7 @@ import { RowAction, RowEditAction } from '../RowActions';
 /**
  * PartCategoryTable - Displays a table of part categories
  */
-export function PartCategoryTable({ parentId }: { parentId?: any }) {
+export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('partcategory');
   const user = useUserState();
 
@@ -109,6 +109,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
 
     return [
       <AddItemButton
+        key="add-part-category"
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
         hidden={!can_add}

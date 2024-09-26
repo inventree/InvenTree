@@ -195,10 +195,10 @@ function SpotlighPlayground() {
 function PlaygroundArea({
   title,
   content
-}: {
+}: Readonly<{
   title: string;
   content: ReactNode;
-}) {
+}>) {
   return (
     <Accordion.Item value={`accordion-playground-${title}`}>
       <Accordion.Control>

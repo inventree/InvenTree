@@ -6,12 +6,12 @@ export function EditButton({
   editing,
   disabled,
   saveIcon
-}: {
+}: Readonly<{
   setEditing: (value?: React.SetStateAction<boolean> | undefined) => void;
   editing: boolean;
   disabled?: boolean;
   saveIcon?: JSX.Element;
-}) {
+}>) {
   saveIcon = saveIcon || <IconDeviceFloppy />;
   return (
     <ActionIcon

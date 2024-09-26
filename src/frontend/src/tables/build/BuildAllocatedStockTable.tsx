@@ -34,7 +34,7 @@ export default function BuildAllocatedStockTable({
   allowEdit,
   modelTarget,
   modelField
-}: {
+}: Readonly<{
   buildId?: number;
   stockId?: number;
   partId?: number;
@@ -43,7 +43,7 @@ export default function BuildAllocatedStockTable({
   allowEdit?: boolean;
   modelTarget?: ModelType;
   modelField?: string;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('buildallocatedstock');
 
@@ -82,7 +82,7 @@ export default function BuildAllocatedStockTable({
         title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         hidden: !showPartInfo,
