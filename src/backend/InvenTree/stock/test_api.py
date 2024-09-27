@@ -587,6 +587,11 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(len(response), 29)
 
+    def test_filter_manufacturer(self):
+        """Filter StockItem by manufacturer."""
+        response = self.get_stock(manufacturer='6')
+        self.assertEqual(len(response), 0)
+
     def test_filter_by_part(self):
         """Filter StockItem by Part reference."""
         response = self.get_stock(part=25)
@@ -753,6 +758,14 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(expired=0)
         self.assertEqual(len(response), 25)
+
+    def test_filter_external(self):
+        """Filter StockItem by external."""
+        response = self.get_stock(external=True)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(external=False)
+        self.assertEqual(len(response), 28)
 
     def test_paginate(self):
         """Test that we can paginate results correctly."""
