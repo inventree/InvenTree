@@ -767,6 +767,71 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(external=False)
         self.assertEqual(len(response), 28)
 
+    def test_filter_available(self):
+        """Filter StockItem by available."""
+        response = self.get_stock(available=True)
+        self.assertEqual(len(response), 26)
+
+        response = self.get_stock(available=False)
+        self.assertEqual(len(response), 1)
+
+    def test_filter_installed(self):
+        """Filter StockItem by installed."""
+        response = self.get_stock(installed=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(installed=False)
+        self.assertEqual(len(response), 29)
+
+    def test_filter_has_installed(self):
+        """Filter StockItem by has_installed."""
+        response = self.get_stock(has_installed_items=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(has_installed_items=False)
+        self.assertEqual(len(response), 29)
+
+    def test_filter_has_child_items(self):
+        """Filter StockItem by has_child_items."""
+        response = self.get_stock(has_child_items=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(has_child_items=False)
+        self.assertEqual(len(response), 29)
+
+    def test_filter_sent_to_customer(self):
+        """Filter StockItem by sent_to_customer."""
+        response = self.get_stock(sent_to_customer=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(sent_to_customer=False)
+        self.assertEqual(len(response), 29)
+
+    def test_filter_has_purchase_price(self):
+        """Filter StockItem by has_purchase_price."""
+        response = self.get_stock(has_purchase_price=True)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(has_purchase_price=False)
+        self.assertEqual(len(response), 28)
+
+    def test_filter_stale(self):
+        """Filter StockItem by stale."""
+        response = self.get_stock(stale=True)
+        self.assertEqual(len(response), 29)
+
+        response = self.get_stock(stale=False)
+        self.assertEqual(len(response), 29)
+
+        # Enable the 'stale' feature
+        set_global_setting('STOCK_STALE_DAYS', '10')
+        response = self.get_stock(stale=True)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(stale=False)
+        self.assertEqual(len(response), 28)
+        set_global_setting('STOCK_STALE_DAYS', '0')
+
     def test_paginate(self):
         """Test that we can paginate results correctly."""
         for n in [1, 5, 10]:
