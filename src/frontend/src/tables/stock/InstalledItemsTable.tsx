@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Skeleton } from '@mantine/core';
-import { useMemo } from 'react';
+import { IconUnlink } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -80,6 +81,25 @@ export default function InstalledItemsTable({
     ];
   }, [stockItem, user]);
 
+  const [selectedRecord, setSelectedRecord] = useState<any>({});
+
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        {
+          title: t`Uninstall`,
+          tooltip: t`Uninstall stock item`,
+          onClick: () => {
+            setSelectedRecord(record);
+          },
+          icon: <IconUnlink />,
+          hidden: !user.hasChangeRole(UserRoles.stock)
+        }
+      ];
+    },
+    [user]
+  );
+
   return (
     <>
       {installItem.modal}
@@ -90,6 +110,7 @@ export default function InstalledItemsTable({
           columns={tableColumns}
           props={{
             tableActions: tableActions,
+            rowActions: rowActions,
             modelType: ModelType.stockitem,
             params: {
               belongs_to: stockItem.pk,
