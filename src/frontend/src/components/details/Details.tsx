@@ -181,13 +181,11 @@ function NameBadge({
  */
 function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
-  const isBlank = value === null || value === undefined || value === '';
-  let renderedValue: ReactNode = null;
 
   if (props?.field_data?.value_formatter) {
-    renderedValue = props.field_data.value_formatter();
+    value = props.field_data.value_formatter();
   } else {
-    renderedValue = <Text size="sm">{isBlank ? value : '---'}</Text>;
+    value = value.toString();
   }
 
   if (props.field_data?.badge) {
@@ -197,7 +195,7 @@ function TableStringValue(props: Readonly<FieldProps>) {
   return (
     <Group wrap="nowrap" gap="xs" justify="space-apart">
       <Group wrap="nowrap" gap="xs" justify="left">
-        {renderedValue}
+        {value}
         {props.field_data.unit == true && <Text size="xs">{props.unit}</Text>}
       </Group>
       {props.field_data.user && (
