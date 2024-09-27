@@ -11,7 +11,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -215,6 +215,61 @@ export function useCreateStockItem() {
   });
 }
 
+/**
+ * Form set for manually installing a StockItem into an existing StockItem
+ */
+export function useStockItemInstallFields({
+  stockItem
+}: {
+  stockItem: any;
+}): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
+  const [selectedPart, setSelectedPart] = useState<number | null>(null);
+
+  useEffect(() => {
+    setSelectedPart(null);
+  }, [stockItem]);
+
+  return useMemo(() => {
+    // Note: The 'part' field is not a part of the API endpoint, so we construct it manually
+    return {
+      part: {
+        field_type: 'related field',
+        required: true,
+        exclude: true,
+        label: t`Part`,
+        description: t`Select the part to install`,
+        model: ModelType.part,
+        api_url: apiUrl(ApiEndpoints.part_list),
+        onValueChange: (value) => {
+          setSelectedPart(value);
+        },
+        filters: {
+          trackable: true,
+          in_bom_for: globalSettings.isSet('STOCK_ENFORCE_BOM_INSTALLATION')
+            ? stockItem.part
+            : undefined
+        }
+      },
+      stock_item: {
+        disabled: !selectedPart,
+        filters: {
+          part_detail: true,
+          in_stock: true,
+          available: true,
+          tracked: true,
+          part: selectedPart ? selectedPart : undefined
+        }
+      },
+      quantity: {}
+    };
+  }, [globalSettings, selectedPart, stockItem]);
+}
+
+/**
+ * Form set for serializing an existing StockItem
+ */
 export function useStockItemSerializeFields({
   partId,
   trackable
