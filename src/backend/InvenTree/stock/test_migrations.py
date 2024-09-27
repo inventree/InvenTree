@@ -330,6 +330,40 @@ class TestBarcodeToUiReversedMigration(MigratorTestCase):
         self.assertEqual(item.uid, '54321')
 
 
+class TestPartTestTemplateTreeFixMigration(MigratorTestCase):
+    """Unit tests for fixing issues with PartTestTemplate tree branch confusion migrations."""
+
+    migrate_from = ('stock', '0107_remove_stockitemtestresult_test_and_more')
+    migrate_to = ('stock', '0108_auto_20240219_0252')
+
+    def prepare(self):
+        """Create initial data."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartTestTemplate = self.old_state.apps.get_model('part', 'PartTestTemplate')
+        StockItem = self.old_state.apps.get_model('stock', 'StockItem')
+        StockItemTestResult = self.old_state.apps.get_model(
+            'stock', 'StockItemTestResult'
+        )
+
+        p = Part.objects.create(name='test', level=0, lft=0, rght=0, tree_id=0)
+        p2 = Part.objects.create(name='test 2', level=0, lft=0, rght=0, tree_id=4)
+        tmpl = PartTestTemplate.objects.create(part=p2, key='test_key')
+        stock = StockItem.objects.create(part=p, level=0, lft=3, rght=0, tree_id=0)
+        StockItemTestResult.objects.create(template=tmpl, stock_item=stock)
+        self.assertEqual(StockItemTestResult.objects.count(), 1)
+        self.assertEqual(PartTestTemplate.objects.count(), 1)
+
+    def test_migration(self):
+        """Test that the migrations were applied as expected."""
+        PartTestTemplate = self.old_state.apps.get_model('part', 'PartTestTemplate')
+        StockItemTestResult = self.old_state.apps.get_model(
+            'stock', 'StockItemTestResult'
+        )
+
+        self.assertEqual(StockItemTestResult.objects.count(), 1)
+        self.assertEqual(PartTestTemplate.objects.count(), 2)
+
+
 class TestStockItemTrackingMigration(MigratorTestCase):
     """Unit tests for StockItemTracking code migrations."""
 
