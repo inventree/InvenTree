@@ -820,9 +820,9 @@ class InstallStockItemSerializer(serializers.Serializer):
         quantity = data.get('quantity', stock_item.quantity)
 
         if quantity > stock_item.quantity:
-            raise ValidationError(
-                _('Quantity to install must not exceed available quantity')
-            )
+            raise ValidationError({
+                'quantity': _('Quantity to install must not exceed available quantity')
+            })
 
         return data
 

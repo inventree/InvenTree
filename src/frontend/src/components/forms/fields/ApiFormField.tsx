@@ -41,6 +41,7 @@ export type ApiFormAdjustFilterType = {
  * @param required : Whether the field is required
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
+ * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
@@ -84,6 +85,7 @@ export type ApiFormFieldType = {
   choices?: any[];
   hidden?: boolean;
   disabled?: boolean;
+  exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;
   description?: string;
