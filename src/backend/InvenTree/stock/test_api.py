@@ -779,7 +779,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 0)
 
         response = self.get_stock(installed=False)
-        self.assertEqual(len(response), 29)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
 
     def test_filter_has_installed(self):
         """Filter StockItem by has_installed."""
@@ -787,7 +787,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 0)
 
         response = self.get_stock(has_installed_items=False)
-        self.assertEqual(len(response), 29)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
 
     def test_filter_has_child_items(self):
         """Filter StockItem by has_child_items."""
@@ -795,7 +795,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 0)
 
         response = self.get_stock(has_child_items=False)
-        self.assertEqual(len(response), 29)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
 
     def test_filter_sent_to_customer(self):
         """Filter StockItem by sent_to_customer."""
@@ -803,7 +803,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 0)
 
         response = self.get_stock(sent_to_customer=False)
-        self.assertEqual(len(response), 29)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset
 
     def test_filter_has_purchase_price(self):
         """Filter StockItem by has_purchase_price."""
