@@ -11,9 +11,11 @@ import {
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -39,12 +41,14 @@ import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { partCategoryFields } from '../../forms/PartForms';
 import {
   StockOperationProps,
   useAddStockItem,
   useCountStockItem,
   useRemoveStockItem,
   useStockFields,
+  useStockItemSerializeFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -55,6 +59,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -212,6 +217,16 @@ export default function StockDetail() {
       },
       {
         type: 'link',
+        name: 'parent',
+        label: t`Parent Item`,
+        model: ModelType.stockitem,
+        hidden: !stockitem.parent,
+        model_formatter: (model: any) => {
+          return t`Parent stock item`;
+        }
+      },
+      {
+        type: 'link',
         name: 'consumed_by',
         label: t`Consumed By`,
         model: ModelType.build,
@@ -283,7 +298,7 @@ export default function StockDetail() {
     );
   }, [stockitem, instanceQuery]);
 
-  const showBuildAllocations = useMemo(() => {
+  const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
     return (
       stockitem?.part_detail?.component && // Must be a "component"
@@ -292,9 +307,56 @@ export default function StockDetail() {
     ); // Must not be installed into another item
   }, [stockitem]);
 
-  const showSalesAlloctions = useMemo(() => {
+  const showSalesAlloctions: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
+
+  // API query to determine if this stock item has trackable BOM items
+  const trackedBomItemQuery = useQuery({
+    queryKey: ['tracked-bom-item', stockitem.pk, stockitem.part],
+    queryFn: () => {
+      if (
+        !stockitem.pk ||
+        !stockitem.part ||
+        !stockitem.part_detail?.assembly
+      ) {
+        return false;
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.bom_list), {
+          params: {
+            part: stockitem.part,
+            sub_part_trackable: true,
+            limit: 1
+          }
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.data.count > 0;
+          } else {
+            return null;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+    }
+  });
+
+  const showInstalledItems: boolean = useMemo(() => {
+    if (stockitem?.installed_items) {
+      // There are installed items in this stock item
+      return true;
+    }
+
+    if (trackedBomItemQuery.data != null) {
+      return trackedBomItemQuery.data;
+    }
+
+    // Fall back to whether this is an assembly or not
+    return stockitem?.part_detail?.assembly;
+  }, [trackedBomItemQuery, stockitem]);
 
   const stockPanels: PanelType[] = useMemo(() => {
     return [
@@ -375,8 +437,8 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        hidden: !stockitem?.part_detail?.assembly,
-        content: <InstalledItemsTable parentId={stockitem.pk} />
+        hidden: !showInstalledItems,
+        content: <InstalledItemsTable stockItem={stockitem} />
       },
       {
         name: 'child_items',
@@ -416,7 +478,14 @@ export default function StockDetail() {
         )
       }
     ];
-  }, [stockitem, id, user]);
+  }, [
+    showSalesAlloctions,
+    showBuildAllocations,
+    showInstalledItems,
+    stockitem,
+    id,
+    user
+  ]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -429,7 +498,10 @@ export default function StockDetail() {
     [stockitem]
   );
 
-  const editStockItemFields = useStockFields({ create: false });
+  const editStockItemFields = useStockFields({
+    create: false,
+    part_detail: stockitem.part_detail
+  });
 
   const editStockItem = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
@@ -485,8 +557,39 @@ export default function StockDetail() {
   const removeStockItem = useRemoveStockItem(stockActionProps);
   const transferStockItem = useTransferStockItem(stockActionProps);
 
-  const stockActions = useMemo(
-    () => [
+  const serializeStockFields = useStockItemSerializeFields({
+    partId: stockitem.part,
+    trackable: stockitem.part_detail?.trackable
+  });
+
+  const serializeStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_serialize,
+    pk: stockitem.pk,
+    title: t`Serialize Stock Item`,
+    fields: serializeStockFields,
+    initialData: {
+      quantity: stockitem.quantity,
+      destination: stockitem.location ?? stockitem.part_detail?.default_location
+    },
+    onFormSuccess: () => {
+      const partId = stockitem.part;
+      refreshInstance().catch(() => {
+        // Part may have been deleted - redirect to the part detail page
+        navigate(getDetailUrl(ModelType.part, partId));
+      });
+    },
+    successMessage: t`Stock item serialized`
+  });
+
+  const stockActions = useMemo(() => {
+    const serial = stockitem.serial;
+    const serialized =
+      serial != null &&
+      serial != undefined &&
+      serial != '' &&
+      stockitem.quantity == 1;
+
+    return [
       <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
         model={ModelType.stockitem}
@@ -507,6 +610,7 @@ export default function StockDetail() {
           {
             name: t`Count`,
             tooltip: t`Count stock`,
+            hidden: serialized,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
@@ -517,6 +621,7 @@ export default function StockDetail() {
           {
             name: t`Add`,
             tooltip: t`Add stock`,
+            hidden: serialized,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
@@ -525,9 +630,19 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove stock`,
+            hidden: serialized,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
+            }
+          },
+          {
+            name: t`Serialize`,
+            tooltip: t`Serialize stock`,
+            hidden: serialized || stockitem?.part_detail?.trackable != true,
+            icon: <InvenTreeIcon icon="serial" iconProps={{ color: 'blue' }} />,
+            onClick: () => {
+              serializeStockItem.open();
             }
           },
           {
@@ -559,9 +674,8 @@ export default function StockDetail() {
           })
         ]}
       />
-    ],
-    [id, stockitem, user]
-  );
+    ];
+  }, [id, stockitem, user]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
@@ -646,6 +760,7 @@ export default function StockDetail() {
         {addStockItem.modal}
         {removeStockItem.modal}
         {transferStockItem.modal}
+        {serializeStockItem.modal}
       </Stack>
     </InstanceDetail>
   );

@@ -41,6 +41,7 @@ export type ApiFormAdjustFilterType = {
  * @param required : Whether the field is required
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
+ * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
@@ -48,6 +49,7 @@ export type ApiFormAdjustFilterType = {
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
+ * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -83,6 +85,7 @@ export type ApiFormFieldType = {
   choices?: any[];
   hidden?: boolean;
   disabled?: boolean;
+  exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;
   description?: string;
@@ -104,7 +107,8 @@ export function ApiFormField({
   control,
   hideLabels,
   url,
-  setFields
+  setFields,
+  onKeyDown
 }: Readonly<{
   fieldName: string;
   definition: ApiFormFieldType;
@@ -112,6 +116,7 @@ export function ApiFormField({
   hideLabels?: boolean;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
+  onKeyDown?: (value: any) => void;
 }>) {
   const fieldId = useId();
   const controller = useController({
@@ -223,6 +228,9 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
+            onKeyDown={(value) => {
+              onKeyDown?.(value);
+            }}
           />
         );
       case 'icon':
@@ -332,6 +340,7 @@ export function ApiFormField({
     fieldDefinition,
     numericalValue,
     onChange,
+    onKeyDown,
     reducedDefinition,
     ref,
     setFields,

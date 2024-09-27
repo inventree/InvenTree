@@ -243,7 +243,7 @@ export default function ParametricPartTable({
         sortable: true,
         switchable: false,
         noWrap: true,
-        render: (record: any) => PartColumn(record)
+        render: (record: any) => PartColumn({ part: record })
       },
       DescriptionColumn({}),
       {

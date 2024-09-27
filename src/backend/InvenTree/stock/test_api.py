@@ -925,6 +925,46 @@ class StockItemListTest(StockAPITestCase):
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
 
+    def test_child_items(self):
+        """Test that the 'child_items' annotation works as expected."""
+        # Create a trackable part
+        my_part = Part.objects.create(
+            name='Test Part', description='Test Part Description', trackable=True
+        )
+
+        # Create an initial stock item
+        parent_item = StockItem.objects.create(
+            part=my_part, quantity=10, location=StockLocation.objects.first()
+        )
+
+        # Serialize this stock item
+        parent_item.serializeStock(
+            5, [1, 2, 3, 4, 5], user=self.user, notes='Some notes'
+        )
+
+        parent_item.refresh_from_db()
+
+        # Check that the parent item has 5 child items
+        self.assertEqual(parent_item.get_descendants(include_self=False).count(), 5)
+        self.assertEqual(my_part.stock_items.count(), 6)
+
+        # Fetch stock list via API
+        response = self.get(reverse('api-stock-list'), {'part': my_part.pk})
+
+        self.assertEqual(len(response.data), 6)
+
+        # Fetch stock detail
+        response = self.get(reverse('api-stock-detail', kwargs={'pk': parent_item.pk}))
+
+        self.assertEqual(response.data['child_items'], 5)
+
+        for child in parent_item.get_children():
+            response = self.get(reverse('api-stock-detail', kwargs={'pk': child.pk}))
+
+            self.assertEqual(response.data['parent'], parent_item.pk)
+            self.assertEqual(response.data['quantity'], 1)
+            self.assertEqual(response.data['child_items'], 0)
+
 
 class CustomStockItemStatusTest(StockAPITestCase):
     """Tests for custom stock item statuses."""

@@ -68,7 +68,7 @@ export default function SalesOrderAllocationTable({
         title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'quantity',
