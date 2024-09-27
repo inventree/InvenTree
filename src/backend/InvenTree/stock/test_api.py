@@ -438,6 +438,12 @@ class StockLocationTest(StockAPITestCase):
 
         self.assertEqual(len(res), 1)
 
+        # top_level
+        res = self.get(
+            self.list_url, {'top_level': True, 'cascade': False}, expected_code=200
+        ).json()
+        self.assertEqual(len(res), 4)
+
     def test_stock_location_tree(self):
         """Test the StockLocationTree API endpoint."""
         # Create a number of new locations
@@ -676,14 +682,6 @@ class StockItemListTest(StockAPITestCase):
 
         for item in response:
             self.assertIsNone(item['serial'])
-
-    def test_filter_top_level(self):
-        """Filter StockItem by top level."""
-        response = self.get_stock(top_level=True)
-        self.assertEqual(len(response), 29)
-
-        response = self.get_stock(top_level=False)
-        self.assertEqual(len(response), 29)
 
     def test_filter_by_has_batch(self):
         """Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code."""
