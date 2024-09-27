@@ -521,6 +521,8 @@ export function ApiForm({
                       // Standard error handling for other fields
                       form.setError(path, { message: v.join(', ') });
                     }
+                  } else if (typeof v === 'string') {
+                    form.setError(path, { message: v });
                   } else {
                     processErrors(v, path);
                   }
@@ -529,6 +531,7 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
+
               break;
             default:
               // Unexpected state on form error
