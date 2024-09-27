@@ -1426,6 +1426,18 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(trackable_part.stock_entries().count(), 10)
         self.assertEqual(trackable_part.get_stock_count(), 10)
 
+        # This should fail - wrong serial
+        response = self.post(
+            self.list_url,
+            data={'part': trackable_part.pk, 'quantity': 1, 'serial_numbers': '1'},
+            expected_code=400,
+        )
+        self.assertIn(
+            'The following serial numbers already exist or are invalid : 1',
+            str(response.data),
+        )
+        self.assertEqual(trackable_part.get_stock_count(), 10)
+
     def test_default_expiry(self):
         """Test that the "default_expiry" functionality works via the API.
 
