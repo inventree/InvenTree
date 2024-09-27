@@ -262,7 +262,8 @@ export function useStockItemInstallFields({
           part: selectedPart ? selectedPart : undefined
         }
       },
-      quantity: {}
+      quantity: {},
+      note: {}
     };
   }, [globalSettings, selectedPart, stockItem]);
 }
