@@ -216,6 +216,22 @@ export function useCreateStockItem() {
 }
 
 /**
+ * Form set for manually removing (uninstalling) a StockItem from an existing StockItem
+ */
+export function useStockItemUninstallFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {
+        filters: {
+          structural: false
+        }
+      },
+      note: {}
+    };
+  }, []);
+}
+
+/**
  * Form set for manually installing a StockItem into an existing StockItem
  */
 export function useStockItemInstallFields({

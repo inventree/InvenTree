@@ -134,6 +134,7 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install/',
+  stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
   build_test_statistics = 'test-statistics/by-build/:id/',
   part_test_statistics = 'test-statistics/by-part/:id/',

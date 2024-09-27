@@ -7,7 +7,10 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useStockItemInstallFields } from '../../forms/StockForms';
+import {
+  useStockItemInstallFields,
+  useStockItemUninstallFields
+} from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -35,6 +38,22 @@ export default function InstalledItemsTable({
     table: table,
     successMessage: t`Item installed`,
     fields: installItemFields
+  });
+
+  const [selectedRecord, setSelectedRecord] = useState<any>({});
+
+  const uninstallItemFields = useStockItemUninstallFields();
+
+  const uninstallItem = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_uninstall),
+    pk: selectedRecord.pk,
+    title: t`Uninstall Item`,
+    table: table,
+    successMessage: t`Item uninstalled`,
+    fields: uninstallItemFields,
+    initialData: {
+      location: stockItem.location ?? stockItem.part_detail?.default_location
+    }
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -81,8 +100,6 @@ export default function InstalledItemsTable({
     ];
   }, [stockItem, user]);
 
-  const [selectedRecord, setSelectedRecord] = useState<any>({});
-
   const rowActions = useCallback(
     (record: any) => {
       return [
@@ -91,6 +108,7 @@ export default function InstalledItemsTable({
           tooltip: t`Uninstall stock item`,
           onClick: () => {
             setSelectedRecord(record);
+            uninstallItem.open();
           },
           icon: <IconUnlink />,
           hidden: !user.hasChangeRole(UserRoles.stock)
@@ -103,6 +121,7 @@ export default function InstalledItemsTable({
   return (
     <>
       {installItem.modal}
+      {uninstallItem.modal}
       {stockItem.pk ? (
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.stock_item_list)}
