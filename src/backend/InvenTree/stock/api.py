@@ -526,7 +526,8 @@ class StockFilter(rest_filters.FilterSet):
     def filter_manufacturer(self, queryset, name, company):
         """Filter by manufacturer."""
         return queryset.filter(
-            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+            Q(supplier_part__manufacturer_part__manufacturer__is_manufacturer=True)
+            & Q(supplier_part__manufacturer_part__manufacturer=company)
         )
 
     supplier = rest_filters.ModelChoiceFilter(
