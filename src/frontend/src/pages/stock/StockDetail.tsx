@@ -11,9 +11,11 @@ import {
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -57,6 +59,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -288,7 +291,7 @@ export default function StockDetail() {
     );
   }, [stockitem, instanceQuery]);
 
-  const showBuildAllocations = useMemo(() => {
+  const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
     return (
       stockitem?.part_detail?.component && // Must be a "component"
@@ -297,9 +300,56 @@ export default function StockDetail() {
     ); // Must not be installed into another item
   }, [stockitem]);
 
-  const showSalesAlloctions = useMemo(() => {
+  const showSalesAlloctions: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
+
+  // API query to determine if this stock item has trackable BOM items
+  const trackedBomItemQuery = useQuery({
+    queryKey: ['tracked-bom-item', stockitem.pk, stockitem.part],
+    queryFn: () => {
+      if (
+        !stockitem.pk ||
+        !stockitem.part ||
+        !stockitem.part_detail?.assembly
+      ) {
+        return false;
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.bom_list), {
+          params: {
+            part: stockitem.part,
+            sub_part_trackable: true,
+            limit: 1
+          }
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.data.count > 0;
+          } else {
+            return null;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+    }
+  });
+
+  const showInstalledItems: boolean = useMemo(() => {
+    if (stockitem?.installed_items) {
+      // There are installed items in this stock item
+      return true;
+    }
+
+    if (trackedBomItemQuery.data != null) {
+      return trackedBomItemQuery.data;
+    }
+
+    // Fall back to whether this is an assembly or not
+    return stockitem?.part_detail?.assembly;
+  }, [trackedBomItemQuery, stockitem]);
 
   const stockPanels: PanelType[] = useMemo(() => {
     return [
@@ -380,8 +430,8 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        hidden: !stockitem?.part_detail?.assembly,
-        content: <InstalledItemsTable parentId={stockitem.pk} />
+        hidden: !showInstalledItems,
+        content: <InstalledItemsTable stockItem={stockitem} />
       },
       {
         name: 'child_items',
@@ -421,7 +471,14 @@ export default function StockDetail() {
         )
       }
     ];
-  }, [stockitem, id, user]);
+  }, [
+    showSalesAlloctions,
+    showBuildAllocations,
+    showInstalledItems,
+    stockitem,
+    id,
+    user
+  ]);
 
   const breadcrumbs = useMemo(
     () => [
