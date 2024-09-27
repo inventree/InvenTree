@@ -182,14 +182,14 @@ function NameBadge({
 function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
 
-  if (props?.field_data?.value_formatter) {
-    value = props.field_data.value_formatter();
-  } else {
-    value = value.toString();
-  }
-
   if (props.field_data?.badge) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
+  } else if (props?.field_data?.value_formatter) {
+    value = props.field_data.value_formatter();
+  } else if (value === null || value === undefined) {
+    value = '---';
+  } else {
+    value = value.toString();
   }
 
   return (
