@@ -60,7 +60,9 @@ export default function TextField({
       radius="sm"
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
-        onChange(event.currentTarget.value);
+        if (event.currentTarget.value != value) {
+          onChange(event.currentTarget.value);
+        }
       }}
       onKeyDown={(event) => onKeyDown(event.code)}
       rightSection={
