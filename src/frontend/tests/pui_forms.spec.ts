@@ -74,3 +74,54 @@ test('Forms - Stock Item Validation', async ({ page }) => {
   await page.getByText('a box').waitFor();
   await page.getByRole('cell', { name: 'Electronics Lab' }).waitFor();
 });
+
+test('Forms - Supplier Validation', async ({ page, request }) => {
+  await doQuickLogin(page, 'steven', 'wizardstaff');
+  await page.goto(`${baseUrl}/purchasing/index/suppliers`);
+  await page.waitForURL('**/purchasing/index/**');
+
+  await page.getByLabel('action-button-add-company').click();
+  await page.getByLabel('text-field-website').fill('not-a-website');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check for validation errors
+  await page.getByText('Form Error').waitFor();
+  await page.getByText('Errors exist for one or more').waitFor();
+  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Fill out another field, expect that the errors persist
+  await page.getByLabel('text-field-description').fill('A description');
+  await page.waitForTimeout(250);
+  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('Enter a valid URL.').waitFor();
+
+  // Generate a unique supplier name
+  const supplierName = `Supplier ${new Date().getTime()}`;
+
+  // Fill with good data
+  await page
+    .getByLabel('text-field-website')
+    .fill('https://www.test-website.co.uk');
+  await page.getByLabel('text-field-name').fill(supplierName);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText(supplierName).waitFor();
+  await page
+    .getByRole('link', { name: 'https://www.test-website.co.uk' })
+    .waitFor();
+
+  // Now, try to create another new supplier with the same name
+  await page.goto(`${baseUrl}/purchasing/index/suppliers`);
+  await page.waitForURL('**/purchasing/index/**');
+  await page.getByLabel('action-button-add-company').click();
+  await page.getByLabel('text-field-name').fill(supplierName);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Is prevented, due to uniqueness requirements
+  await page
+    .getByText('Company with this Company name and Email already exists')
+    .waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
