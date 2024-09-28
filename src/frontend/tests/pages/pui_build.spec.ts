@@ -2,7 +2,7 @@ import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('PUI - Pages - Build Order', async ({ page }) => {
+test('Pages - Build Order', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/`);
@@ -82,7 +82,7 @@ test('PUI - Pages - Build Order', async ({ page }) => {
     .waitFor();
 });
 
-test('PUI - Pages - Build Order - Build Outputs', async ({ page }) => {
+test('Pages - Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/`);

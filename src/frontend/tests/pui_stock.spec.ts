@@ -2,7 +2,7 @@ import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
-test('PUI - Stock', async ({ page }) => {
+test('Stock', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/stock/location/index/`);
@@ -32,7 +32,7 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByRole('tab', { name: 'Installed Items' }).click();
 });
 
-test('PUI - Purchasing', async ({ page }) => {
+test('Purchasing', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
@@ -82,7 +82,7 @@ test('PUI - Purchasing', async ({ page }) => {
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
 
-test('PUI - Stock Location Tree', async ({ page }) => {
+test('Stock Location Tree', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/stock/location/index/`);

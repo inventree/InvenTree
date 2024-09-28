@@ -2,7 +2,7 @@ import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('PUI - Sales Orders', async ({ page }) => {
+test('Sales Orders', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -41,7 +41,7 @@ test('PUI - Sales Orders', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('PUI - Purchase Orders', async ({ page }) => {
+test('Purchase Orders', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -61,7 +61,7 @@ test('PUI - Purchase Orders', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
+test('Purchase Orders - Barcodes', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);

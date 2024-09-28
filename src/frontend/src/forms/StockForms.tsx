@@ -83,6 +83,9 @@ export function useStockFields({
       part: {
         value: part,
         disabled: !create,
+        filters: {
+          active: create ? true : undefined
+        },
         onValueChange: (value, record) => {
           setPart(value);
           // TODO: implement remaining functionality from old stock.py
