@@ -38,6 +38,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelType } from '../../components/nav/Panel';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -179,8 +180,6 @@ export default function StockDetail() {
         label: t`Batch Code`,
         hidden: !stockitem.batch
       }
-      // TODO: allocated_to_sales_orders
-      // TODO: allocated_to_build_orders
     ];
 
     // Bottom left: location information
@@ -264,6 +263,34 @@ export default function StockDetail() {
     let br: DetailsField[] = [
       // TODO: Expiry date
       // TODO: Ownership
+      {
+        type: 'text',
+        name: 'purchase_price',
+        label: t`Unit Price`,
+        icon: 'currency',
+        hidden: !stockitem.purchase_price,
+        value_formatter: () => {
+          return formatCurrency(stockitem.purchase_price, {
+            currency: stockitem.purchase_price_currency
+          });
+        }
+      },
+      {
+        type: 'text',
+        name: 'stock_value',
+        label: t`Stock Value`,
+        icon: 'currency',
+        hidden:
+          !stockitem.purchase_price ||
+          stockitem.quantity == 1 ||
+          stockitem.quantity == 0,
+        value_formatter: () => {
+          return formatCurrency(stockitem.purchase_price, {
+            currency: stockitem.purchase_price_currency,
+            multiplier: stockitem.quantity
+          });
+        }
+      },
       {
         type: 'text',
         name: 'packaging',

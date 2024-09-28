@@ -37,6 +37,10 @@ test('Forms - Stock Item Validation', async ({ page }) => {
     .first()
     .waitFor();
 
+  // Set location
+  await page.getByLabel('related-field-location').click();
+  await page.getByRole('option', { name: /Electronics Lab/ }).click();
+
   // Create the stock item
   await page.getByLabel('number-field-quantity').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -64,5 +68,9 @@ test('Forms - Stock Item Validation', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
 
-  await page.waitForTimeout(1000);
+  // Ensure the stock item has been updated correctly
+  await page.getByText('$151.8435').waitFor();
+  await page.getByText('$151.8435').waitFor();
+  await page.getByText('a box').waitFor();
+  await page.getByRole('cell', { name: 'Electronics Lab' }).waitFor();
 });
