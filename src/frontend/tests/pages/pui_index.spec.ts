@@ -3,7 +3,7 @@ import { doQuickLogin } from '../login.js';
 
 const newPartName = 'UITESTIN123';
 
-test('PUI - Pages - Index - Playground', async ({ page }) => {
+test('Pages - Index - Playground', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto('./');
@@ -72,7 +72,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
   await page.getByText('Attention needed').waitFor();
 });
 
-test('PUI - Pages - Index - Dashboard', async ({ page }) => {
+test('Pages - Index - Dashboard', async ({ page }) => {
   await doQuickLogin(page);
 
   // Dashboard auto update

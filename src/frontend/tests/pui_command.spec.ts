@@ -2,7 +2,7 @@ import { systemKey, test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
-test('PUI - Quick Command', async ({ page }) => {
+test('Quick Command', async ({ page }) => {
   await doQuickLogin(page);
 
   // Open Spotlight with Keyboard Shortcut
@@ -31,7 +31,7 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.waitForURL('**/platform/dashboard');
 });
 
-test('PUI - Quick Command - No Keys', async ({ page }) => {
+test('Quick Command - No Keys', async ({ page }) => {
   await doQuickLogin(page);
 
   // Open Spotlight with Button
