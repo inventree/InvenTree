@@ -383,11 +383,26 @@ class BulkDeleteMixin:
 
             # Filter by provided item ID values
             if items:
-                queryset = queryset.filter(id__in=items)
+                try:
+                    queryset = queryset.filter(id__in=items)
+                except Exception:
+                    raise ValidationError({
+                        'non_field_errors': _('Invalid items list provided')
+                    })
 
             # Filter by provided filters
             if filters:
-                queryset = queryset.filter(**filters)
+                try:
+                    queryset = queryset.filter(**filters)
+                except Exception:
+                    raise ValidationError({
+                        'non_field_errors': _('Invalid filters provided')
+                    })
+
+            if queryset.count() == 0:
+                raise ValidationError({
+                    'non_field_errors': _('No items found to delete')
+                })
 
             # Run a final validation step (should raise an error if the deletion should not proceed)
             self.validate_delete(queryset, request)
