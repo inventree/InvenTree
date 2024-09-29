@@ -125,12 +125,14 @@ class ReportConfig(AppConfig):
             # Read the existing template file
             data = template_file.open('r').read()
 
-            logger.info("Creating new label template: '%s'", template['name'])
-
-            # Create a new entry
-            report.models.LabelTemplate.objects.create(
-                **template, template=ContentFile(data, os.path.basename(filename))
-            )
+            try:
+                # Create a new entry
+                report.models.LabelTemplate.objects.create(
+                    **template, template=ContentFile(data, os.path.basename(filename))
+                )
+                logger.info("Creating new label template: '%s'", template['name'])
+            except Exception:
+                pass
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -212,9 +214,11 @@ class ReportConfig(AppConfig):
             # Read the existing template file
             data = template_file.open('r').read()
 
-            logger.info("Creating new report template: '%s'", template['name'])
-
             # Create a new entry
-            report.models.ReportTemplate.objects.create(
-                **template, template=ContentFile(data, os.path.basename(filename))
-            )
+            try:
+                report.models.ReportTemplate.objects.create(
+                    **template, template=ContentFile(data, os.path.basename(filename))
+                )
+                logger.info("Created new report template: '%s'", template['name'])
+            except Exception:
+                pass
