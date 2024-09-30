@@ -791,13 +791,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         batch_code = kwargs.get('batch_code', '')
 
         # Extract optional list of serial numbers
-        serials = kwargs.get('serials', None)
+        serials = kwargs.get('serials')
 
         # Extract optional notes field
         notes = kwargs.get('notes', '')
 
         # Extract optional packaging field
-        packaging = kwargs.get('packaging', None)
+        packaging = kwargs.get('packaging')
 
         if not packaging:
             # Default to the packaging field for the linked supplier part
@@ -805,7 +805,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 packaging = line.part.packaging
 
         # Extract optional barcode field
-        barcode = kwargs.get('barcode', None)
+        barcode = kwargs.get('barcode')
 
         # Prevent null values for barcode
         if barcode is None:
@@ -1882,25 +1882,25 @@ class SalesOrderShipment(
         self.shipped_by = user
 
         # Was a tracking number provided?
-        tracking_number = kwargs.get('tracking_number', None)
+        tracking_number = kwargs.get('tracking_number')
 
         if tracking_number is not None:
             self.tracking_number = tracking_number
 
         # Was an invoice number provided?
-        invoice_number = kwargs.get('invoice_number', None)
+        invoice_number = kwargs.get('invoice_number')
 
         if invoice_number is not None:
             self.invoice_number = invoice_number
 
         # Was a link provided?
-        link = kwargs.get('link', None)
+        link = kwargs.get('link')
 
         if link is not None:
             self.link = link
 
         # Was a delivery date provided?
-        delivery_date = kwargs.get('delivery_date', None)
+        delivery_date = kwargs.get('delivery_date')
 
         if delivery_date is not None:
             self.delivery_date = delivery_date

@@ -151,11 +151,11 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         batch = f'SAMPLE-BATCH-{now.year}:{now.month}:{now.day}'
 
         # If a Part instance is provided, prepend the part name to the batch code
-        if part := kwargs.get('part', None):
+        if part := kwargs.get('part'):
             batch = f'{part.name}-{batch}'
 
         # If a Build instance is provided, prepend the build number to the batch code
-        if build := kwargs.get('build_order', None):
+        if build := kwargs.get('build_order'):
             batch = f'{build.reference}-{batch}'
 
         return batch

@@ -133,9 +133,9 @@ class DatePickerFormField(forms.DateField):
     def __init__(self, **kwargs):
         """Set up custom values."""
         help_text = kwargs.get('help_text', _('Enter date'))
-        label = kwargs.get('label', None)
+        label = kwargs.get('label')
         required = kwargs.get('required', False)
-        initial = kwargs.get('initial', None)
+        initial = kwargs.get('initial')
 
         widget = forms.DateInput(attrs={'type': 'date'})
 

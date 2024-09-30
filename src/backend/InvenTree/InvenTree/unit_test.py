@@ -402,7 +402,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
-        kwargs['data'] = kwargs.get('data', None)
+        kwargs['data'] = kwargs.get('data')
 
         return self.query(
             url, self.client.options, expected_code=expected_code, **kwargs
