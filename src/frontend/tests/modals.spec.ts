@@ -1,7 +1,7 @@
 import { test } from './baseFixtures.js';
 import { doQuickLogin } from './login.js';
 
-test('PUI - Modals as admin', async ({ page }) => {
+test('Modals as admin', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
   // use server info

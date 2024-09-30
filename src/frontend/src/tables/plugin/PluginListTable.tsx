@@ -17,7 +17,8 @@ import {
   IconHelpCircle,
   IconInfoCircle,
   IconPlaylistAdd,
-  IconRefresh
+  IconRefresh,
+  IconTrash
 } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -239,15 +240,10 @@ export default function PluginListTable() {
   const navigate = useNavigate();
   const user = useUserState();
 
-  const [pluginsEnabled, plugins_install_disabled] = useServerApiState(
-    (state) => [
-      state.server.plugins_enabled,
-      state.server.plugins_install_disabled
-    ]
-  );
+  const { server } = useServerApiState();
 
-  const pluginTableColumns: TableColumn[] = useMemo(
-    () => [
+  const pluginTableColumns: TableColumn[] = useMemo(() => {
+    return [
       {
         accessor: 'name',
         title: t`Plugin`,
@@ -275,7 +271,6 @@ export default function PluginListTable() {
         accessor: 'meta.description',
         title: t`Description`,
         sortable: false,
-
         render: function (record: any) {
           if (record.active) {
             return record?.meta.description;
@@ -292,7 +287,10 @@ export default function PluginListTable() {
       {
         accessor: 'meta.version',
         title: t`Version`,
-        sortable: false
+        sortable: false,
+        render: (record: any) => {
+          return record?.meta.version;
+        }
 
         // TODO: Display date information if available
       },
@@ -301,9 +299,8 @@ export default function PluginListTable() {
         title: 'Author',
         sortable: false
       }
-    ],
-    []
-  );
+    ];
+  }, []);
 
   const [selectedPlugin, setSelectedPlugin] = useState<string>('');
   const [activate, setActivate] = useState<boolean>(false);
@@ -330,6 +327,99 @@ export default function PluginListTable() {
     );
   }, [activate]);
 
+  // Determine available actions for a given plugin
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      // Only superuser can perform plugin actions
+      if (!user.isSuperuser() || !server.plugins_enabled) {
+        return [];
+      }
+
+      return [
+        {
+          hidden:
+            record.is_builtin != false ||
+            record.is_installed != true ||
+            record.active != true,
+          title: t`Deactivate`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedPlugin(record.key);
+            setActivate(false);
+            activatePluginModal.open();
+          }
+        },
+        {
+          hidden:
+            record.is_builtin != false ||
+            !record.is_installed ||
+            record.active != false,
+          title: t`Activate`,
+          tooltip: t`Activate selected plugin`,
+          color: 'green',
+          icon: <IconCircleCheck />,
+          onClick: () => {
+            setSelectedPlugin(record.key);
+            setActivate(true);
+            activatePluginModal.open();
+          }
+        },
+        {
+          hidden: !record.active || !record.is_package || !record.package_name,
+          title: t`Update`,
+          tooltip: t`Update selected plugin`,
+          color: 'blue',
+          icon: <IconRefresh />,
+          onClick: () => {
+            setPluginPackage(record.package_name);
+            installPluginModal.open();
+          }
+        },
+        {
+          // Uninstall an installed plugin
+          // Must be inactive, not a builtin, not a sample, and installed as a package
+          hidden:
+            !user.isSuperuser() ||
+            record.active ||
+            record.is_builtin ||
+            record.is_sample ||
+            !record.is_installed ||
+            !record.is_package,
+          title: t`Uninstall`,
+          tooltip: t`Uninstall selected plugin`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedPlugin(record.key);
+            uninstallPluginModal.open();
+          }
+        },
+        {
+          // Delete a plugin configuration
+          // Must be inactive, not a builtin, not a sample, and not installed (i.e. no matching plugin)
+          hidden:
+            record.active ||
+            record.is_builtin ||
+            record.is_sample ||
+            record.is_installed ||
+            !user.isSuperuser(),
+          title: t`Delete`,
+          tooltip: t`Delete selected plugin configuration`,
+          color: 'red',
+          icon: <IconTrash />,
+          onClick: () => {
+            setSelectedPlugin(record.key);
+            deletePluginModal.open();
+          }
+        }
+      ];
+    },
+    [user, server]
+  );
+
+  const [pluginPackage, setPluginPackage] = useState<string>('');
+
   const activatePluginModal = useEditApiFormModal({
     title: t`Activate Plugin`,
     url: ApiEndpoints.plugin_activate,
@@ -342,100 +432,14 @@ export default function PluginListTable() {
       : `The plugin was deactivated`,
     fields: {
       active: {
-        value: activate,
         hidden: true
       }
     },
+    initialData: {
+      active: activate
+    },
     table: table
   });
-
-  // Determine available actions for a given plugin
-  const rowActions = useCallback(
-    (record: any): RowAction[] => {
-      // Only superuser can perform plugin actions
-      if (!user.isSuperuser()) {
-        return [];
-      }
-
-      let actions: RowAction[] = [];
-
-      if (!record.is_builtin && record.is_installed) {
-        if (record.active) {
-          actions.push({
-            title: t`Deactivate`,
-            color: 'red',
-            icon: <IconCircleX />,
-            onClick: () => {
-              setSelectedPlugin(record.key);
-              setActivate(false);
-              activatePluginModal.open();
-            }
-          });
-        } else {
-          actions.push({
-            title: t`Activate`,
-            color: 'green',
-            icon: <IconCircleCheck />,
-            onClick: () => {
-              setSelectedPlugin(record.key);
-              setActivate(true);
-              activatePluginModal.open();
-            }
-          });
-        }
-      }
-
-      // Active 'package' plugins can be updated
-      if (record.active && record.is_package && record.package_name) {
-        actions.push({
-          title: t`Update`,
-          color: 'blue',
-          icon: <IconRefresh />,
-          onClick: () => {
-            setPluginPackage(record.package_name);
-            installPluginModal.open();
-          }
-        });
-      }
-
-      // Inactive 'package' plugins can be uninstalled
-      if (
-        !record.active &&
-        record.is_installed &&
-        record.is_package &&
-        record.package_name
-      ) {
-        actions.push({
-          title: t`Uninstall`,
-          color: 'red',
-          icon: <IconCircleX />,
-          onClick: () => {
-            setSelectedPlugin(record.key);
-            uninstallPluginModal.open();
-          },
-          disabled: plugins_install_disabled || false
-        });
-      }
-
-      // Uninstalled 'package' plugins can be deleted
-      if (!record.is_installed) {
-        actions.push({
-          title: t`Delete`,
-          color: 'red',
-          icon: <IconCircleX />,
-          onClick: () => {
-            setSelectedPlugin(record.key);
-            deletePluginModal.open();
-          }
-        });
-      }
-
-      return actions;
-    },
-    [user, pluginsEnabled]
-  );
-
-  const [pluginPackage, setPluginPackage] = useState<string>('');
 
   const installPluginModal = useCreateApiFormModal({
     title: t`Install plugin`,
@@ -483,7 +487,8 @@ export default function PluginListTable() {
 
   const deletePluginModal = useDeleteApiFormModal({
     url: ApiEndpoints.plugin_list,
-    pathParams: { key: selectedPlugin },
+    pk: selectedPlugin,
+    fetchInitialData: false,
     title: t`Delete Plugin`,
     preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`,
     table: table
@@ -508,7 +513,7 @@ export default function PluginListTable() {
 
   // Custom table actions
   const tableActions = useMemo(() => {
-    if (!user.isSuperuser() || !pluginsEnabled) {
+    if (!user.isSuperuser() || !server.plugins_enabled) {
       return [];
     }
 
@@ -529,17 +534,17 @@ export default function PluginListTable() {
           setPluginPackage('');
           installPluginModal.open();
         }}
-        disabled={plugins_install_disabled || false}
+        disabled={server.plugins_install_disabled || false}
       />
     ];
-  }, [user, pluginsEnabled]);
+  }, [user, server]);
 
   return (
     <>
-      {activatePluginModal.modal}
       {installPluginModal.modal}
       {uninstallPluginModal.modal}
       {deletePluginModal.modal}
+      {activatePluginModal.modal}
       <DetailDrawer
         title={t`Plugin Detail`}
         size={'50%'}

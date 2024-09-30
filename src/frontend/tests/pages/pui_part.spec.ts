@@ -2,7 +2,7 @@ import { test } from '../baseFixtures';
 import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
-test('PUI - Pages - Part - Locking', async ({ page }) => {
+test('Pages - Part - Locking', async ({ page }) => {
   await doQuickLogin(page);
 
   // Navigate to a known assembly which is *not* locked
@@ -23,7 +23,7 @@ test('PUI - Pages - Part - Locking', async ({ page }) => {
   await page.getByText('Part parameters cannot be').waitFor();
 });
 
-test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
+test('Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part with no history
@@ -72,7 +72,7 @@ test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.waitForURL('**/part/98/**');
 });
 
-test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
+test('Pages - Part - Pricing (Supplier)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -98,7 +98,7 @@ test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
   // await page.waitForURL('**/purchasing/supplier-part/697/');
 });
 
-test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
+test('Pages - Part - Pricing (Variant)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -124,7 +124,7 @@ test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
   await page.waitForURL('**/part/109/**');
 });
 
-test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
+test('Pages - Part - Pricing (Internal)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -149,7 +149,7 @@ test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
   await page.getByText('Part *M2x4 SHCSSocket head').click();
 });
 
-test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
+test('Pages - Part - Pricing (Purchase)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -171,7 +171,7 @@ test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
   await page.getByText('2022-04-29').waitFor();
 });
 
-test('PUI - Pages - Part - Attachments', async ({ page }) => {
+test('Pages - Part - Attachments', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/69/attachments`);
@@ -193,7 +193,7 @@ test('PUI - Pages - Part - Attachments', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('PUI - Pages - Part - Parameters', async ({ page }) => {
+test('Pages - Part - Parameters', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/69/parameters`);
@@ -220,7 +220,7 @@ test('PUI - Pages - Part - Parameters', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('PUI - Pages - Part - Notes', async ({ page }) => {
+test('Pages - Part - Notes', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/69/notes`);
@@ -241,7 +241,7 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
   await page.getByLabel('Save Notes').waitFor();
 });
 
-test('PUI - Pages - Part - 404', async ({ page }) => {
+test('Pages - Part - 404', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/99999/`);
@@ -251,7 +251,7 @@ test('PUI - Pages - Part - 404', async ({ page }) => {
   await page.evaluate(() => console.clear());
 });
 
-test('PUI - Pages - Part - Revision', async ({ page }) => {
+test('Pages - Part - Revision', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/906/details`);

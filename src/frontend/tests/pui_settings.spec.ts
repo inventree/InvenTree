@@ -3,7 +3,7 @@ import { apiUrl, baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
-test('PUI - Admin', async ({ page }) => {
+test('Admin', async ({ page }) => {
   // Note here we login with admin access
   await doQuickLogin(page, 'admin', 'inventree');
 
@@ -86,7 +86,7 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
-test('PUI - Admin - Barcode History', async ({ page, request }) => {
+test('Admin - Barcode History', async ({ page, request }) => {
   // Login with admin credentials
   await doQuickLogin(page, 'admin', 'inventree');
 
@@ -123,7 +123,7 @@ test('PUI - Admin - Barcode History', async ({ page, request }) => {
   });
 });
 
-test('PUI - Admin - Unauthorized', async ({ page }) => {
+test('Admin - Unauthorized', async ({ page }) => {
   // Try to access "admin" page with a non-staff user
   await doQuickLogin(page, 'allaccess', 'nolimits');
 

@@ -1,7 +1,11 @@
 """Sample plugin which demonstrates user interface integrations."""
 
+import random
+import time
+
 from django.utils.translation import gettext_lazy as _
 
+from InvenTree.version import INVENTREE_SW_VERSION
 from part.models import Part
 from plugin import InvenTreePlugin
 from plugin.helpers import render_template, render_text
@@ -15,7 +19,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
     SLUG = 'sampleui'
     TITLE = 'Sample User Interface Plugin'
     DESCRIPTION = 'A sample plugin which demonstrates user interface integrations'
-    VERSION = '1.0'
+    VERSION = '1.1'
 
     SETTINGS = {
         'ENABLE_PART_PANELS': {
@@ -81,11 +85,18 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             })
 
         # A dynamic panel which will be injected into the UI (loaded from external file)
+        # Note that we additionally provide some "context" data to the front-end render function
         if self.get_setting('ENABLE_DYNAMIC_PANEL'):
             panels.append({
                 'name': 'dynamic_panel',
                 'label': 'Dynamic Part Panel',
                 'source': '/static/plugin/sample_panel.js',
+                'context': {
+                    'version': INVENTREE_SW_VERSION,
+                    'plugin_version': self.VERSION,
+                    'random': random.randint(1, 100),
+                    'time': time.time(),
+                },
                 'icon': 'part',
             })
 
@@ -122,3 +133,36 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             })
 
         return panels
+
+    def get_ui_features(self, feature_type, context, request):
+        """Return a list of custom features to be injected into the UI."""
+        if (
+            feature_type == 'template_editor'
+            and context.get('template_type') == 'labeltemplate'
+        ):
+            return [
+                {
+                    'feature_type': 'template_editor',
+                    'options': {
+                        'key': 'sample-template-editor',
+                        'title': 'Sample Template Editor',
+                        'icon': 'keywords',
+                    },
+                    'source': '/static/plugin/sample_template.js:getTemplateEditor',
+                }
+            ]
+
+        if feature_type == 'template_preview':
+            return [
+                {
+                    'feature_type': 'template_preview',
+                    'options': {
+                        'key': 'sample-template-preview',
+                        'title': 'Sample Template Preview',
+                        'icon': 'category',
+                    },
+                    'source': '/static/plugin/sample_template.js:getTemplatePreview',
+                }
+            ]
+
+        return []

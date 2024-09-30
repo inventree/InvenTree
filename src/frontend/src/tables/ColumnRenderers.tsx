@@ -18,7 +18,13 @@ import { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
-export function PartColumn(part: any, full_name?: boolean) {
+export function PartColumn({
+  part,
+  full_name
+}: {
+  part: any;
+  full_name?: boolean;
+}) {
   return part ? (
     <Group justify="space-between" wrap="nowrap">
       <Thumbnail

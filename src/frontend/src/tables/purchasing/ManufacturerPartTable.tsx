@@ -37,7 +37,7 @@ export function ManufacturerPartTable({
         accessor: 'part',
         switchable: 'part' in params,
         sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'manufacturer',

@@ -116,12 +116,14 @@ export enum ApiEndpoints {
   manufacturer_part_list = 'company/part/manufacturer/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
-  // Stock API endpoints
-  stock_item_list = 'stock/',
-  stock_tracking_list = 'stock/track/',
+  // Stock location endpoints
   stock_location_list = 'stock/location/',
   stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
+
+  // Stock item API endpoints
+  stock_item_list = 'stock/',
+  stock_tracking_list = 'stock/track/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
@@ -131,9 +133,11 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
-  stock_install = 'stock/:id/install',
-  build_test_statistics = 'test-statistics/by-build/:id',
-  part_test_statistics = 'test-statistics/by-part/:id',
+  stock_install = 'stock/:id/install/',
+  stock_uninstall = 'stock/:id/uninstall/',
+  stock_serialize = 'stock/:id/serialize/',
+  build_test_statistics = 'test-statistics/by-build/:id/',
+  part_test_statistics = 'test-statistics/by-part/:id/',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
@@ -191,6 +195,7 @@ export enum ApiEndpoints {
 
   // User interface plugin endpoints
   plugin_panel_list = 'plugins/ui/panels/',
+  plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

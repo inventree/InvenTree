@@ -13,39 +13,6 @@ import { apiUrl } from '../../states/ApiState';
 import { ModelInformationDict } from '../render/ModelType';
 
 /*
- * Upload an drag-n-dropped image to the server against a model type and instance.
- */
-async function uploadNotesImage(
-  image: File,
-  modelType: ModelType,
-  modelId: number
-): Promise<string> {
-  const formData = new FormData();
-  formData.append('image', image);
-
-  formData.append('model_type', modelType);
-  formData.append('model_id', modelId.toString());
-
-  const response = await api
-    .post(apiUrl(ApiEndpoints.notes_image_upload), formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .catch(() => {
-      notifications.hide('notes');
-      notifications.show({
-        title: t`Error`,
-        message: t`Image upload failed`,
-        color: 'red',
-        id: 'notes'
-      });
-    });
-
-  return response?.data?.image ?? '';
-}
-
-/*
  * A text editor component for editing notes against a model type and instance.
  * Uses the react-simple-mde editor: https://github.com/RIP21/react-simplemde-editor
  *
