@@ -112,7 +112,7 @@ def plugin_static(context, file: str, **kwargs):
     """
     plugin = context.get('plugin', None)
 
-    plugin = plugin.slug if plugin else kwargs.get('plugin', None)
+    plugin = plugin.slug if plugin else kwargs.get('plugin')
 
     if not plugin:
         return file

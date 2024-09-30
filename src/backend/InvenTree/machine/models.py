@@ -188,7 +188,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         if 'settings' not in kwargs:
             machine_config: MachineConfig = kwargs.pop('machine_config', None)
             if machine_config and machine_config.machine:
-                config_type = kwargs.get('config_type', None)
+                config_type = kwargs.get('config_type')
                 if config_type == cls.ConfigType.DRIVER:
                     kwargs['settings'] = machine_config.machine.driver_settings
                 elif config_type == cls.ConfigType.MACHINE:

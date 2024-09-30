@@ -290,7 +290,7 @@ class BarcodeAssign(BarcodeView):
             label = model.barcode_model_type()
             valid_labels.append(label)
 
-            if instance := kwargs.get(label, None):
+            if instance := kwargs.get(label):
                 # Check that the user has the required permission
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
@@ -497,8 +497,8 @@ class BarcodePOReceive(BarcodeView):
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
-        purchase_order = kwargs.get('purchase_order', None)
-        location = kwargs.get('location', None)
+        purchase_order = kwargs.get('purchase_order')
+        location = kwargs.get('location')
 
         plugins = registry.with_mixin('barcode')
 
@@ -588,7 +588,7 @@ class BarcodeSOAllocate(BarcodeView):
         sales_order = kwargs['sales_order']
 
         # Next, check if a line-item is provided (optional field)
-        if line_item := kwargs.get('line', None):
+        if line_item := kwargs.get('line'):
             return line_item
 
         # If not provided, we need to find the correct line item
@@ -615,7 +615,7 @@ class BarcodeSOAllocate(BarcodeView):
         """
         sales_order = kwargs['sales_order']
 
-        if shipment := kwargs.get('shipment', None):
+        if shipment := kwargs.get('shipment'):
             if shipment.order != sales_order:
                 raise ValidationError(_('Shipment does not match sales order'))
 
@@ -682,7 +682,7 @@ class BarcodeSOAllocate(BarcodeView):
             self.log_scan(request, response, False)
             raise ValidationError(response)
 
-        quantity = kwargs.get('quantity', None)
+        quantity = kwargs.get('quantity')
 
         # Override quantity for serialized items
         if stock_item.serialized:
