@@ -114,3 +114,11 @@ class UserInterfaceMixin:
         """
         # Default implementation returns an empty list
         return []
+
+    def plugin_static_file(self, *args):
+        """Construct a path to a static file within the plugin directory."""
+        import os
+
+        from django.conf import settings
+
+        return '/' + os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
