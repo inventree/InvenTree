@@ -39,7 +39,6 @@ __all__ = [
     'SingleNotificationMethod',
     'SupplierBarcodeMixin',
     'UrlsMixin',
-    'UrlsMixin',
     'UserInterfaceMixin',
     'ValidationMixin',
 ]
