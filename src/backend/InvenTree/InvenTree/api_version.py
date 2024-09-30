@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 261
+INVENTREE_API_VERSION = 262
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-261 - 2024-09;26 : https://github.com/inventree/InvenTree/pull/8184
+262 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8220
+    - Tweak permission requirements for uninstalling plugins via API
+
+261 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8184
     - Fixes for BuildOrder API serializers
 
 v260 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
