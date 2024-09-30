@@ -21,11 +21,11 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
-    RetrieveUpdateDestroyAPI,
     UpdateAPI,
 )
-from InvenTree.permissions import IsSuperuser
+from InvenTree.permissions import IsSuperuser, IsSuperuserOrReadOnly
 from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
@@ -143,7 +143,7 @@ class PluginList(ListAPI):
     search_fields = ['key', 'name']
 
 
-class PluginDetail(RetrieveUpdateDestroyAPI):
+class PluginDetail(RetrieveDestroyAPI):
     """API detail endpoint for PluginConfig object.
 
     get:
@@ -158,6 +158,7 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
+    permission_classes = [IsSuperuserOrReadOnly]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
