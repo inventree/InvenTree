@@ -411,6 +411,11 @@ def backup(c, clean=False, path=None):
     cmd = '--noinput --compress -v 2'
 
     if path:
+        # Resolve the provided path
+        path = Path(path)
+        if not os.path.isabs(path):
+            path = localDir().joinpath(path).resolve()
+
         cmd += f' -O {path}'
 
     if clean:
@@ -442,6 +447,11 @@ def restore(
     base_cmd = '--noinput --uncompress -v 2'
 
     if path:
+        # Resolve the provided path
+        path = Path(path)
+        if not os.path.isabs(path):
+            path = localDir().joinpath(path).resolve()
+
         base_cmd += f' -I {path}'
 
     if ignore_database:
