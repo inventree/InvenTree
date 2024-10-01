@@ -1921,6 +1921,8 @@ class StockItem(
         except Exception:
             pass
 
+        trigger_event('stockitem.split', id=new_stock.id, parent=self.id)
+
         # Return a copy of the "new" stock item
         return new_stock
 
@@ -1949,6 +1951,8 @@ class StockItem(
             status: If provided, override the status (default = existing status)
             packaging: If provided, override the packaging (default = existing packaging)
         """
+        current_location = self.location
+
         try:
             quantity = Decimal(kwargs.pop('quantity', self.quantity))
         except InvalidOperation:
@@ -2003,6 +2007,15 @@ class StockItem(
 
         self.save()
 
+        # Trigger event for the plugin system
+        trigger_event(
+            'stockitem.moved',
+            id=self.id,
+            old_location=current_location.id if current_location else None,
+            new_location=location.id if location else None,
+            quantity=quantity,
+        )
+
         return True
 
     @transaction.atomic
@@ -2032,6 +2045,7 @@ class StockItem(
             self.delete()
 
             return False
+
         self.save()
         return True
 
