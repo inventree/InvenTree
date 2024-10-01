@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Alert, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -42,7 +42,6 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { partCategoryFields } from '../../forms/PartForms';
 import {
   StockOperationProps,
   useAddStockItem,
@@ -608,6 +607,28 @@ export default function StockDetail() {
     successMessage: t`Stock item serialized`
   });
 
+  const returnStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_return,
+    pk: stockitem.pk,
+    title: t`Return Stock Item`,
+    preFormContent: (
+      <Alert color="blue">
+        {t`Return this item into stock. This will remove the customer assignment.`}
+      </Alert>
+    ),
+    fields: {
+      location: {},
+      notes: {}
+    },
+    initialData: {
+      location: stockitem.location ?? stockitem.part_detail?.default_location
+    },
+    successMessage: t`Item returned to stock`,
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
   const stockActions = useMemo(() => {
     const serial = stockitem.serial;
     const serialized =
@@ -680,6 +701,20 @@ export default function StockDetail() {
             ),
             onClick: () => {
               stockitem.pk && transferStockItem.open();
+            }
+          },
+          {
+            name: t`Return`,
+            tooltip: t`Return from customer`,
+            hidden: !stockitem.customer,
+            icon: (
+              <InvenTreeIcon
+                icon="return_orders"
+                iconProps={{ color: 'blue' }}
+              />
+            ),
+            onClick: () => {
+              stockitem.pk && returnStockItem.open();
             }
           }
         ]}
@@ -788,6 +823,7 @@ export default function StockDetail() {
         {removeStockItem.modal}
         {transferStockItem.modal}
         {serializeStockItem.modal}
+        {returnStockItem.modal}
       </Stack>
     </InstanceDetail>
   );
