@@ -14,10 +14,8 @@ import { findExternalPluginFunction } from './PluginSource';
  * which exports a function `renderPluginSettings`
  */
 export default function PluginSettingsPanel({
-  pluginKey,
   pluginInstance
 }: {
-  pluginKey: string;
   pluginInstance: any;
 }) {
   const ref = useRef<HTMLDivElement>();

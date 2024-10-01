@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Alert, Card, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import plugin from 'dayjs/plugin/customParseFormat';
 
 import { InfoItem } from '../items/InfoItem';
 import { StylishText } from '../items/StylishText';
@@ -124,10 +123,7 @@ export default function PluginDrawer({
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <PluginSettingsPanel
-                  pluginKey={pluginKey}
-                  pluginInstance={pluginInstance}
-                />
+                <PluginSettingsPanel pluginInstance={pluginInstance} />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>
