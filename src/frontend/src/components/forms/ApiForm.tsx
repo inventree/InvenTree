@@ -397,11 +397,13 @@ export function ApiForm({
       data = props.processFormData(data);
     }
 
-    let dataForm = new FormData();
+    let jsonData = { ...data };
+    let formData = new FormData();
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
       let field_type = fields[key]?.field_type;
+      let exclude = fields[key]?.exclude;
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
@@ -418,15 +420,18 @@ export function ApiForm({
         }
       }
 
-      if (value != undefined) {
-        dataForm.append(key, value);
+      if (exclude) {
+        // Remove the field from the data
+        delete jsonData[key];
+      } else if (value != undefined) {
+        formData.append(key, value);
       }
     });
 
     return api({
       method: method,
       url: url,
-      data: hasFiles ? dataForm : data,
+      data: hasFiles ? formData : jsonData,
       timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
@@ -516,6 +521,8 @@ export function ApiForm({
                       // Standard error handling for other fields
                       form.setError(path, { message: v.join(', ') });
                     }
+                  } else if (typeof v === 'string') {
+                    form.setError(path, { message: v });
                   } else {
                     processErrors(v, path);
                   }
@@ -524,6 +531,7 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
+
               break;
             default:
               // Unexpected state on form error
@@ -602,6 +610,15 @@ export function ApiForm({
                           control={form.control}
                           url={url}
                           setFields={setFields}
+                          onKeyDown={(value) => {
+                            if (
+                              value == 'Enter' &&
+                              !isLoading &&
+                              (!props.fetchInitialData || isDirty)
+                            ) {
+                              form.handleSubmit(submitForm, onFormError)();
+                            }
+                          }}
                         />
                       );
                     })}

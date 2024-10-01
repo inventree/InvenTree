@@ -169,8 +169,8 @@ def uploaded_image(
         # A placeholder image showing that the image is missing
         img = Image.new('RGB', (64, 64), color='red')
 
-    width = kwargs.get('width', None)
-    height = kwargs.get('height', None)
+    width = kwargs.get('width')
+    height = kwargs.get('height')
 
     if width is not None:
         try:
@@ -199,7 +199,7 @@ def uploaded_image(
         img = img.resize((wsize, height))
 
     # Optionally rotate the image
-    if rotate := kwargs.get('rotate', None):
+    if rotate := kwargs.get('rotate'):
         try:
             rotate = int(rotate)
             img = img.rotate(rotate)
@@ -417,7 +417,7 @@ def format_number(number, **kwargs):
     # Normalize the number (remove trailing zeroes)
     number = number.normalize()
 
-    decimals = kwargs.get('decimal_places', None)
+    decimals = kwargs.get('decimal_places')
 
     if decimals is not None:
         try:
@@ -431,7 +431,7 @@ def format_number(number, **kwargs):
     value = format(value, 'f')
     value = str(value)
 
-    leading = kwargs.get('leading', None)
+    leading = kwargs.get('leading')
 
     if leading is not None:
         try:

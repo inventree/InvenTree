@@ -1209,10 +1209,10 @@ class StockItem(
         """
         query = self.sales_order_allocations.all()
 
-        if filter_allocations := kwargs.get('filter_allocations', None):
+        if filter_allocations := kwargs.get('filter_allocations'):
             query = query.filter(**filter_allocations)
 
-        if exclude_allocations := kwargs.get('exclude_allocations', None):
+        if exclude_allocations := kwargs.get('exclude_allocations'):
             query = query.exclude(**exclude_allocations)
 
         if active is True:
@@ -1461,13 +1461,13 @@ class StockItem(
             return
 
         # Has a location been specified?
-        location = kwargs.get('location', None)
+        location = kwargs.get('location')
 
         if location:
             deltas['location'] = location.id
 
         # Quantity specified?
-        quantity = kwargs.get('quantity', None)
+        quantity = kwargs.get('quantity')
 
         if quantity:
             deltas['quantity'] = float(quantity)
@@ -1572,6 +1572,13 @@ class StockItem(
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
 
+        # Rebuild the stock tree
+        try:
+            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
+        except Exception:
+            logger.warning('Failed to rebuild stock tree during serializeStock')
+            StockItem.objects.rebuild()
+
     @transaction.atomic
     def copyHistoryFrom(self, other):
         """Copy stock history from another StockItem."""
@@ -1612,7 +1619,7 @@ class StockItem(
             user: The user who performed the test
             notes: Any notes associated with the test
         """
-        template = kwargs.get('template', None)
+        template = kwargs.get('template')
         test_name = kwargs.pop('test_name', None)
 
         test_key = InvenTree.helpers.generateTestKey(test_name)
@@ -1720,9 +1727,9 @@ class StockItem(
         # Keep track of the tree IDs that are being merged
         tree_ids = {self.tree_id}
 
-        user = kwargs.get('user', None)
+        user = kwargs.get('user')
         location = kwargs.get('location', self.location)
-        notes = kwargs.get('notes', None)
+        notes = kwargs.get('notes')
 
         parent_id = self.parent.pk if self.parent else None
 
@@ -1806,7 +1813,7 @@ class StockItem(
             for tree_id in tree_ids:
                 StockItem.objects.partial_rebuild(tree_id=tree_id)
         except Exception:
-            logger.warning('Rebuilding entire StockItem tree')
+            logger.warning('Rebuilding entire StockItem tree during merge_stock_items')
             StockItem.objects.rebuild()
 
     @transaction.atomic
@@ -2106,10 +2113,10 @@ class StockItem(
         if self.updateQuantity(self.quantity - quantity):
             deltas = {'removed': float(quantity), 'quantity': float(self.quantity)}
 
-            if location := kwargs.get('location', None):
+            if location := kwargs.get('location'):
                 deltas['location'] = location.pk
 
-            if stockitem := kwargs.get('stockitem', None):
+            if stockitem := kwargs.get('stockitem'):
                 deltas['stockitem'] = stockitem.pk
 
             self.add_tracking_entry(code, user, notes=notes, deltas=deltas)

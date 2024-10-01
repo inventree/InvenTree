@@ -1,12 +1,24 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 259
+INVENTREE_API_VERSION = 263
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+263 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8194
+    - Adds Sales Order Shipment report
+
+262 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8220
+    - Tweak permission requirements for uninstalling plugins via API
+
+261 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8184
+    - Fixes for BuildOrder API serializers
+
+v260 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
+    - Adds facility for server-side context data to be passed to client-side plugins
 
 v259 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8137
     - Implements new API endpoint for enabling custom UI features via plugins

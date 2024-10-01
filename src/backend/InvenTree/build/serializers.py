@@ -555,7 +555,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         fields = [
             'outputs',
             'location',
-            'status',
+            'status_custom_key',
             'accept_incomplete_allocation',
             'notes',
         ]
@@ -573,7 +573,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_("Location for completed build outputs"),
     )
 
-    status = serializers.ChoiceField(
+    status_custom_key = serializers.ChoiceField(
         choices=StockStatus.items(),
         default=StockStatus.OK.value,
         label=_("Status"),
@@ -621,8 +621,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         data = self.validated_data
 
-        location = data['location']
-        status = data['status']
+        location = data.get('location', None)
+        status = data.get('status_custom_key', StockStatus.OK.value)
         notes = data.get('notes', '')
 
         outputs = data.get('outputs', [])

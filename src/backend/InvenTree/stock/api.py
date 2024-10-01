@@ -144,7 +144,7 @@ class StockDetail(RetrieveUpdateDestroyAPI):
                 params.get('supplier_part_detail', True)
             )
             kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         return self.serializer_class(*args, **kwargs)
@@ -164,7 +164,7 @@ class StockItemContextMixin:
 
         try:
             context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         return context
@@ -526,7 +526,8 @@ class StockFilter(rest_filters.FilterSet):
     def filter_manufacturer(self, queryset, name, company):
         """Filter by manufacturer."""
         return queryset.filter(
-            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+            Q(supplier_part__manufacturer_part__manufacturer__is_manufacturer=True)
+            & Q(supplier_part__manufacturer_part__manufacturer=company)
         )
 
     supplier = rest_filters.ModelChoiceFilter(
@@ -891,7 +892,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 'tests',
             ]:
                 kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -982,7 +983,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                             data['purchase_price'] = float(
                                 data['purchase_price']
                             ) / float(supplier_part.pack_quantity_native)
-                        except ValueError:
+                        except ValueError:  # pragma: no cover
                             pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
@@ -1096,7 +1097,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     pk__in=[it.pk for it in item.get_descendants(include_self=True)]
                 )
 
-            except (ValueError, StockItem.DoesNotExist):
+            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                 pass
 
         # Exclude StockItems which are already allocated to a particular SalesOrder
@@ -1114,7 +1115,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 # Exclude any stock item which is already allocated to the sales order
                 queryset = queryset.exclude(pk__in=[a.item.pk for a in allocations])
 
-            except (ValueError, SalesOrder.DoesNotExist):
+            except (ValueError, SalesOrder.DoesNotExist):  # pragma: no cover
                 pass
 
         # Does the client wish to filter by the Part ID?
@@ -1160,7 +1161,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     else:
                         queryset = queryset.filter(location=loc_id)
 
-                except (ValueError, StockLocation.DoesNotExist):
+                except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
                     pass
 
         return queryset
@@ -1223,7 +1224,7 @@ class StockItemTestResultMixin:
             kwargs['template_detail'] = str2bool(
                 self.request.query_params.get('template_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1363,7 +1364,7 @@ class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView
 
                 queryset = queryset.filter(stock_item__in=items)
 
-            except (ValueError, StockItem.DoesNotExist):
+            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                 pass
 
         return queryset
@@ -1405,14 +1406,14 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
             kwargs['item_detail'] = str2bool(
                 self.request.query_params.get('item_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         try:
             kwargs['user_detail'] = str2bool(
                 self.request.query_params.get('user_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()

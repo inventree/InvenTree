@@ -919,7 +919,11 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
     var filters = loadTableFilters('salesordershipment', options.params);
 
-    setupFilterList('salesordershipment', $(table), options.filter_target);
+    setupFilterList('salesordershipment', $(table), options.filter_target, {
+        report: {
+            key: 'salesordershipment',
+        }
+    });
 
     // Add callbacks for expand / collapse buttons
     var prefix = options.shipped ? 'completed' : 'pending';
@@ -1018,8 +1022,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
         },
         columns: [
             {
-                visible: false,
+                title: '',
                 checkbox: true,
+                visible: true,
                 switchable: false,
             },
             {

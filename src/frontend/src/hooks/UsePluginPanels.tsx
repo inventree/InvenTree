@@ -111,6 +111,11 @@ export function usePluginPanels({
         );
         const isHidden: boolean = panelState[identifier] ?? true;
 
+        const pluginContext: any = {
+          ...contextData,
+          context: props.context
+        };
+
         return {
           name: identifier,
           label: props.label,
@@ -118,7 +123,7 @@ export function usePluginPanels({
           content: (
             <PluginPanelContent
               pluginProps={props}
-              pluginContext={contextData}
+              pluginContext={pluginContext}
             />
           ),
           hidden: isHidden

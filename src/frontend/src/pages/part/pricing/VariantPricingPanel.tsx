@@ -30,7 +30,7 @@ export default function VariantPricingPanel({
         title: t`Variant Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record, true)
+        render: (record: any) => PartColumn({ part: record, full_name: true })
       },
       {
         accessor: 'pricing_min',
