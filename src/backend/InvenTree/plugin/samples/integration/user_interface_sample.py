@@ -21,6 +21,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
     DESCRIPTION = 'A sample plugin which demonstrates user interface integrations'
     VERSION = '1.1'
 
+    ADMIN_PANEL_JS_FILE = 'ui_settings.js'
+
     SETTINGS = {
         'ENABLE_PART_PANELS': {
             'name': _('Enable Part Panels'),
@@ -90,7 +92,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             panels.append({
                 'name': 'dynamic_panel',
                 'label': 'Dynamic Part Panel',
-                'source': '/static/plugin/sample_panel.js',
+                'source': self.plugin_static_file('sample_panel.js'),
                 'context': {
                     'version': INVENTREE_SW_VERSION,
                     'plugin_version': self.VERSION,
