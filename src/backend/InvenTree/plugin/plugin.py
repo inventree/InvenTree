@@ -445,4 +445,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
         from django.conf import settings
 
-        return '/' + os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
+        url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
+
+        if not url.startswith('/'):
+            url = '/' + url
+
+        return url

@@ -59,12 +59,17 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'is_sample',
             'is_installed',
             'is_package',
+            'admin_js_file',
         ]
 
         read_only_fields = ['key', 'is_builtin', 'is_sample', 'is_installed']
 
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
+
+    admin_js_file = serializers.CharField(
+        read_only=True, allow_null=True, label=_('Admin JS File')
+    )
 
 
 class PluginConfigInstallSerializer(serializers.Serializer):

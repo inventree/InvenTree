@@ -187,6 +187,21 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         return getattr(self.plugin, 'is_package', False)
 
+    @property
+    def admin_js_file(self) -> str:
+        """Return the path to the javascript file which renders custom admin content for this plugin.
+
+        - The plugin must inherit the UserInterfaceMixin class to use this!
+        - It is required that the file provides a 'renderPluginSettings' function!
+        """
+        if not self.plugin:
+            return None
+
+        if hasattr(self.plugin, 'get_ui_settings_file'):
+            return self.plugin.get_ui_settings_file()
+        else:
+            return None
+
     def activate(self, active: bool) -> None:
         """Set the 'active' status of this plugin instance."""
         from InvenTree.tasks import check_for_migrations, offload_task
