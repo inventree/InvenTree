@@ -1739,6 +1739,7 @@ class SalesOrderLineItem(OrderLineItem):
 
 class SalesOrderShipment(
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -1767,6 +1768,17 @@ class SalesOrderShipment(
     def get_api_url():
         """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
+
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'allocations': self.allocations,
+            'order': self.order,
+            'reference': self.reference,
+            'shipment': self,
+            'tracking_number': self.tracking_number,
+            'title': str(self),
+        }
 
     order = models.ForeignKey(
         SalesOrder,
