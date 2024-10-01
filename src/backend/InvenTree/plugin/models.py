@@ -197,10 +197,16 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         if not self.plugin:
             return None
 
-        if hasattr(self.plugin, 'get_ui_settings_file'):
-            return self.plugin.get_ui_settings_file()
-        else:
+        if not self.is_installed() or not self.active:
             return None
+
+        if hasattr(self.plugin, 'get_ui_settings_file'):
+            try:
+                return self.plugin.get_ui_settings_file()
+            except Exception:
+                pass
+
+        return None
 
     def activate(self, active: bool) -> None:
         """Set the 'active' status of this plugin instance."""
