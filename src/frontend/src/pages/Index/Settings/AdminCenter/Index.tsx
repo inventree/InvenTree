@@ -247,10 +247,9 @@ export default function AdminCenter() {
       {user.isStaff() ? (
         <Stack gap="xs">
           <SettingsHeader
+            label="admin"
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
-            switch_link="/settings/system"
-            switch_text="System Settings"
           />
           <QuickAction />
           <PanelGroup

@@ -148,6 +148,7 @@ export default function UserSettings() {
   return (
     <Stack gap="xs">
       <SettingsHeader
+        label="user"
         title={t`Account Settings`}
         subtitle={
           user?.first_name && user?.last_name
@@ -155,9 +156,6 @@ export default function UserSettings() {
             : null
         }
         shorthand={user?.username || ''}
-        switch_link="/settings/system"
-        switch_text={<Trans>Switch to System Setting</Trans>}
-        switch_condition={user?.is_staff || false}
       />
       <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
     </Stack>
