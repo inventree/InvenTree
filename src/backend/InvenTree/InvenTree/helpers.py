@@ -824,9 +824,17 @@ def clean_markdown(value: str):
         markdownify_settings = {}
     extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
     extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
+
+    # Generate raw HTML from provided markdown (without sanitizing)
+    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
     html = markdown.markdown(
-        value or '', extensions=extensions, extension_configs=extension_configs
+        value or '',
+        extensions=extensions,
+        extension_configs=extension_configs,
+        output_format='html',
     )
+
+    # Clean the HTML content (for comparison). Ideally, this should be the same as the original content
     clean_html = markdownify(value)
 
     if html != clean_html:
