@@ -220,6 +220,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     WEBSITE = None
     LICENSE = None
 
+    # Optional path to a JavaScript file which will be loaded in the admin panel
+    # This file must provide a function called renderPluginSettings
+    ADMIN_SOURCE = None
+
     def __init__(self):
         """Init a plugin.
 
@@ -451,3 +455,20 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             url = '/' + url
 
         return url
+
+    def get_admin_source(self) -> str:
+        """Return a path to a JavaScript file which contains custom UI settings.
+
+        The frontend code expects that this file provides a function named 'renderPluginSettings'.
+        """
+        if not self.ADMIN_SOURCE:
+            return None
+
+        return self.plugin_static_file(self.ADMIN_SOURCE)
+
+    def get_admin_context(self) -> dict:
+        """Return a context dictionary for the admin panel settings.
+
+        This is an optional method which can be overridden by the plugin.
+        """
+        return None

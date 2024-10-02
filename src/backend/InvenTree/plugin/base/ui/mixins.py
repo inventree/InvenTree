@@ -55,11 +55,6 @@ class UserInterfaceMixin:
     - This means that content can be dynamically generated, based on the current state of the system.
     """
 
-    # Optionally, specify the name of a javascript file which renders custom plugin admin panel
-    # This file should be provided in the 'static' directory of the plugin,
-    # and must provide a function named 'render_admin_panel'
-    ADMIN_PANEL_JS_FILE = None
-
     class MixinMeta:
         """Metaclass for this plugin mixin."""
 
@@ -115,13 +110,3 @@ class UserInterfaceMixin:
         """
         # Default implementation returns an empty list
         return []
-
-    def get_ui_settings_file(self) -> str:
-        """Return a path to a JavaScript file which contains custom UI settings.
-
-        The frontend code expects that this file provides a function named 'renderPluginSettings'.
-        """
-        if not self.ADMIN_PANEL_JS_FILE:
-            return None
-
-        return self.plugin_static_file(self.ADMIN_PANEL_JS_FILE)

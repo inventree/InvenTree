@@ -59,7 +59,6 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'is_sample',
             'is_installed',
             'is_package',
-            'admin_js_file',
         ]
 
         read_only_fields = ['key', 'is_builtin', 'is_sample', 'is_installed']
@@ -67,8 +66,29 @@ class PluginConfigSerializer(serializers.ModelSerializer):
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
 
-    admin_js_file = serializers.CharField(
-        read_only=True, allow_null=True, label=_('Admin JS File')
+
+class PluginAdminDetailSerializer(serializers.ModelSerializer):
+    """Serializer for a PluginConfig with admin details."""
+
+    class Meta:
+        """Metaclass options for serializer."""
+
+        model = PluginConfig
+
+        fields = ['source', 'context']
+
+    source = serializers.CharField(
+        allow_null=True,
+        label=_('Source File'),
+        help_text=_('Path to the source file for admin integration'),
+        source='admin_source',
+    )
+
+    context = serializers.JSONField(
+        allow_null=True,
+        label=_('Context'),
+        help_text=_('Optional context data for the admin integration'),
+        source='admin_context',
     )
 
 

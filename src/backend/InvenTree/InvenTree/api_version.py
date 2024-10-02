@@ -9,7 +9,7 @@ INVENTREE_API_VERSION = 264
 INVENTREE_API_TEXT = """
 
 264 - 2024-10-02 : https://github.com/inventree/InvenTree/pull/8228
-    - Extend fields available in the PluginConfig API endpoints
+    - Adds API endpoint for providing custom admin integration details for plugins
 
 263 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8194
     - Adds Sales Order Shipment report

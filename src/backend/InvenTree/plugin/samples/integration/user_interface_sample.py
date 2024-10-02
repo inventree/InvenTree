@@ -21,7 +21,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
     DESCRIPTION = 'A sample plugin which demonstrates user interface integrations'
     VERSION = '1.1'
 
-    ADMIN_PANEL_JS_FILE = 'ui_settings.js'
+    ADMIN_SOURCE = 'ui_settings.js'
 
     SETTINGS = {
         'ENABLE_PART_PANELS': {
@@ -168,3 +168,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             ]
 
         return []
+
+    def get_admin_context(self) -> dict:
+        """Return custom context data which can be rendered in the admin panel."""
+        return {'apple': 'banana', 'foo': 'bar', 'hello': 'world'}
