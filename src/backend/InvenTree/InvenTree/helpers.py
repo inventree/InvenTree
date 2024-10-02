@@ -822,6 +822,7 @@ def clean_markdown(value: str):
         markdownify_settings = settings.MARKDOWNIFY['default']
     except (AttributeError, KeyError):
         markdownify_settings = {}
+
     extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
     extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
 
