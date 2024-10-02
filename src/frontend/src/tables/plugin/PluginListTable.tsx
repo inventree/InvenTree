@@ -375,7 +375,7 @@ export default function PluginListTable() {
       {activatePluginModal.modal}
       <DetailDrawer
         title={t`Plugin Detail`}
-        size={'50%'}
+        size={'65%'}
         renderContent={(pluginKey) => {
           if (!pluginKey) return;
           return (

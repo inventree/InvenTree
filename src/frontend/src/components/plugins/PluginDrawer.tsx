@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Accordion, Alert, Card, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
@@ -27,6 +28,10 @@ export default function PluginDrawer({
     hasPrimaryKey: false,
     refetchOnMount: true
   });
+
+  const hasSettings: boolean = useMemo(() => {
+    return !!pluginInstance?.mixins?.settings;
+  }, [pluginInstance]);
 
   if (!pluginInstance.active) {
     return (
@@ -116,16 +121,18 @@ export default function PluginDrawer({
             </Stack>
           </Accordion.Panel>
         </Accordion.Item>
-        <Accordion.Item value="plugin-settings">
-          <Accordion.Control>
-            <StylishText size="lg">{t`Plugin Settings`}</StylishText>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <Card withBorder>
-              <PluginSettingList pluginKey={pluginKey} />
-            </Card>
-          </Accordion.Panel>
-        </Accordion.Item>
+        {hasSettings && (
+          <Accordion.Item value="plugin-settings">
+            <Accordion.Control>
+              <StylishText size="lg">{t`Plugin Settings`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Card withBorder>
+                <PluginSettingList pluginKey={pluginKey} />
+              </Card>
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
         {pluginAdmin?.source && (
           <Accordion.Item value="plugin-custom">
             <Accordion.Control>
