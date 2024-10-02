@@ -256,6 +256,8 @@ export default function AdminCenter() {
             pageKey="admin-center"
             panels={adminCenterPanels}
             collapsible={true}
+            model="admincenter"
+            id={null}
           />
         </Stack>
       ) : (

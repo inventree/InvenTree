@@ -79,7 +79,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         })
 
         # A broken panel which tries to load a non-existent JS file
-        if self.get_setting('ENABLE_BROKEN_PANElS'):
+        if instance_id is not None and self.get_setting('ENABLE_BROKEN_PANElS'):
             panels.append({
                 'name': 'broken_panel',
                 'label': 'Broken Panel',

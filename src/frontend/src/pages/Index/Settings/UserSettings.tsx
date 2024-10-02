@@ -157,7 +157,12 @@ export default function UserSettings() {
         }
         shorthand={user?.username || ''}
       />
-      <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
+      <PanelGroup
+        pageKey="user-settings"
+        panels={userSettingsPanels}
+        model="usersettings"
+        id={null}
+      />
     </Stack>
   );
 }

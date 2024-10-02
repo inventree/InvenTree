@@ -310,7 +310,12 @@ export default function SystemSettings() {
             title={t`System Settings`}
             subtitle={server.instance || ''}
           />
-          <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
+          <PanelGroup
+            pageKey="system-settings"
+            panels={systemSettingsPanels}
+            model="systemsettings"
+            id={null}
+          />
         </Stack>
       ) : (
         <PermissionDenied />
