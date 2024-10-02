@@ -882,8 +882,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
         try:
             self.remote_image_file = download_image_from_url(url)
-        except Exception as exc:
+        except Exception:
             self.remote_image_file = None
-            raise ValidationError(str(exc))
+            raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
