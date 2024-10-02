@@ -126,7 +126,7 @@ export default function PluginDrawer({
             </Card>
           </Accordion.Panel>
         </Accordion.Item>
-        {pluginAdmin.source && (
+        {pluginAdmin?.source && (
           <Accordion.Item value="plugin-custom">
             <Accordion.Control>
               <StylishText size="lg">{t`Plugin Configuration`}</StylishText>
