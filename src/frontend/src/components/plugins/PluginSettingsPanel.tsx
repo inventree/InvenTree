@@ -7,6 +7,14 @@ import { useInvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 /**
+ * Interface for the plugin admin data
+ */
+export interface PluginAdminInterface {
+  source: string;
+  context: any;
+}
+
+/**
  * A panel which is used to display custom settings UI for a plugin.
  *
  * This settings panel is loaded dynamically,
@@ -14,19 +22,18 @@ import { findExternalPluginFunction } from './PluginSource';
  * which exports a function `renderPluginSettings`
  */
 export default function PluginSettingsPanel({
-  pluginInstance
+  pluginInstance,
+  pluginAdmin
 }: {
   pluginInstance: any;
+  pluginAdmin: PluginAdminInterface;
 }) {
   const ref = useRef<HTMLDivElement>();
   const [error, setError] = useState<string | undefined>(undefined);
 
   const pluginContext = useInvenTreeContext();
 
-  const pluginSourceFile = useMemo(
-    () => pluginInstance?.admin_js_file,
-    [pluginInstance]
-  );
+  const pluginSourceFile = useMemo(() => pluginAdmin?.source, [pluginInstance]);
 
   const loadPluginSettingsContent = async () => {
     if (pluginSourceFile) {
@@ -34,7 +41,10 @@ export default function PluginSettingsPanel({
         (func) => {
           if (func) {
             try {
-              func(ref.current, pluginContext);
+              func(ref.current, {
+                ...pluginContext,
+                context: pluginAdmin.context
+              });
               setError('');
             } catch (error) {
               setError(

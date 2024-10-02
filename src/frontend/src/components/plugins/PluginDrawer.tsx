@@ -2,6 +2,8 @@ import { t } from '@lingui/macro';
 import { Accordion, Alert, Card, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { useInstance } from '../../hooks/UseInstance';
 import { InfoItem } from '../items/InfoItem';
 import { StylishText } from '../items/StylishText';
 import { PluginSettingList } from '../settings/SettingList';
@@ -18,6 +20,14 @@ export default function PluginDrawer({
   pluginKey: string;
   pluginInstance: PluginInterface;
 }) {
+  const { instance: pluginAdmin } = useInstance({
+    endpoint: ApiEndpoints.plugin_admin,
+    pathParams: { key: pluginKey },
+    defaultValue: {},
+    hasPrimaryKey: false,
+    refetchOnMount: true
+  });
+
   if (!pluginInstance.active) {
     return (
       <Alert
@@ -116,14 +126,17 @@ export default function PluginDrawer({
             </Card>
           </Accordion.Panel>
         </Accordion.Item>
-        {pluginInstance.admin_js_file && (
+        {pluginAdmin.source && (
           <Accordion.Item value="plugin-custom">
             <Accordion.Control>
               <StylishText size="lg">{t`Plugin Configuration`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <PluginSettingsPanel pluginInstance={pluginInstance} />
+                <PluginSettingsPanel
+                  pluginInstance={pluginInstance}
+                  pluginAdmin={pluginAdmin}
+                />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>
