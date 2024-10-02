@@ -374,6 +374,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
     fields: {
       remote_image: {}
     },
+    timeout: 10000,
     successMessage: t`Image downloaded successfully`,
     onFormSuccess: (response: any) => {
       if (response.image) {
