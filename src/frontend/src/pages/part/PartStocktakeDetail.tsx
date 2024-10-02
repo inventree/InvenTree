@@ -226,6 +226,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
         ) : (
           <LineChart
             data={chartData}
+            mah={'500px'}
             dataKey="date"
             withLegend
             withYAxis
