@@ -511,6 +511,7 @@ export default function PartDetail() {
               appRole={UserRoles.part}
               imageActions={{
                 selectExisting: true,
+                downloadImage: true,
                 uploadFile: true,
                 deleteFile: true
               }}
@@ -531,7 +532,7 @@ export default function PartDetail() {
     ) : (
       <Skeleton />
     );
-  }, [part, instanceQuery]);
+  }, [globalSettings, part, instanceQuery]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {

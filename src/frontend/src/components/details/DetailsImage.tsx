@@ -19,6 +19,7 @@ import { api } from '../../App';
 import { UserRoles } from '../../enums/Roles';
 import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { vars } from '../../theme';
@@ -42,11 +43,13 @@ export type DetailImageProps = {
  * Actions for Detail Images.
  * If true, the button type will be visible
  * @param {boolean} selectExisting - PART ONLY. Allows selecting existing images as part image
+ * @param {boolean} downloadImage - Allows downloading image from a remote URL
  * @param {boolean} uploadFile - Allows uploading a new image
  * @param {boolean} deleteFile - Allows deleting the current image
  */
 export type DetailImageButtonProps = {
   selectExisting?: boolean;
+  downloadImage?: boolean;
   uploadFile?: boolean;
   deleteFile?: boolean;
 };
@@ -254,6 +257,8 @@ function ImageActionButtons({
   pk: string;
   setImage: (image: string) => void;
 }>) {
+  const globalSettings = useGlobalSettingsState();
+
   return (
     <>
       {visible && (
@@ -284,6 +289,24 @@ function ImageActionButtons({
               }}
             />
           )}
+          {actions.downloadImage &&
+            globalSettings.isSet('INVENTREE_DOWNLOAD_FROM_URL') && (
+              <ActionButton
+                icon={
+                  <InvenTreeIcon
+                    icon="download"
+                    iconProps={{ color: 'white' }}
+                  />
+                }
+                tooltip={t`Download remote image`}
+                variant="outline"
+                size="lg"
+                tooltipAlignment="top"
+                onClick={(event: any) => {
+                  // TODO: Implement download image
+                }}
+              />
+            )}
           {actions.uploadFile && (
             <ActionButton
               icon={
