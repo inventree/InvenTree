@@ -1738,6 +1738,7 @@ class SalesOrderLineItem(OrderLineItem):
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
@@ -1920,6 +1921,13 @@ class SalesOrderShipment(
         self.save()
 
         trigger_event('salesordershipment.completed', id=self.pk)
+
+    def create_attachment(self, *args, **kwargs):
+        """Create an attachment / link on parent order.
+
+        This will only be called when a generated report should be attached to this instance.
+        """
+        return self.order.create_attachment(*args, **kwargs)
 
 
 class SalesOrderExtraLine(OrderExtraLine):
