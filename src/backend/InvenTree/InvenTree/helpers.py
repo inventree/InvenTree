@@ -830,7 +830,7 @@ def clean_markdown(value: str):
     clean_html = markdownify(value)
 
     if html != clean_html:
-        raise ValidationError(_('Invalid markdown content'))
+        raise ValidationError(_('Data contains prohibited markdown content'))
 
     return value
 
