@@ -815,21 +815,25 @@ def clean_markdown(value: str):
 
     This function will remove javascript and other potentially harmful content from the markdown string.
     """
-    from markdownify.templatetags.markdownify import markdownify
     import markdown
+    from markdownify.templatetags.markdownify import markdownify
+
     try:
-        markdownify_settings = settings.MARKDOWNIFY["default"]
+        markdownify_settings = settings.MARKDOWNIFY['default']
     except (AttributeError, KeyError):
         markdownify_settings = {}
     extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
     extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
-    html = markdown.markdown(value or "", extensions=extensions, extension_configs=extension_configs)
+    html = markdown.markdown(
+        value or '', extensions=extensions, extension_configs=extension_configs
+    )
     clean_html = markdownify(value)
 
     if html != clean_html:
         raise ValidationError(_('Invalid markdown content'))
 
     return value
+
 
 def hash_barcode(barcode_data):
     """Calculate a 'unique' hash for a barcode string.
