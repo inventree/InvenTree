@@ -39,6 +39,17 @@ export function invalidResponse(returnCode: number) {
   });
 }
 
+/**
+ * Display a notification on timeout
+ */
+export function showTimeoutNotification() {
+  notifications.show({
+    title: t`Timeout`,
+    message: t`The request timed out`,
+    color: 'red'
+  });
+}
+
 /*
  * Display a login / logout notification message.
  * Any existing login notification(s) will be hidden.
