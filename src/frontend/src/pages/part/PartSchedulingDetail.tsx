@@ -4,7 +4,6 @@ import {
   Anchor,
   Center,
   Divider,
-  DrawerOverlay,
   Loader,
   Paper,
   SimpleGrid,
@@ -264,6 +263,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
         ) : (
           <LineChart
             data={chartData}
+            mah={'500px'}
             dataKey="date"
             withLegend
             withYAxis
