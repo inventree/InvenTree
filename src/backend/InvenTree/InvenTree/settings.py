@@ -1248,6 +1248,7 @@ MARKDOWNIFY = {
             'th',
             'tr',
             'td',
+            'hr',
         ],
     }
 }
