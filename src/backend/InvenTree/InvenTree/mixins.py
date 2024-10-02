@@ -6,8 +6,11 @@ from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 from InvenTree.fields import InvenTreeNotesField
-from InvenTree.helpers import (clean_markdown, remove_non_printable_characters,
-                               strip_html_tags)
+from InvenTree.helpers import (
+    clean_markdown,
+    remove_non_printable_characters,
+    strip_html_tags,
+)
 
 
 class CleanMixin:
