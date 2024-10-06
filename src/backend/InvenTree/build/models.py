@@ -1502,12 +1502,19 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
                 })
 
-            # Allocated quantity cannot cause the stock item to be over-allocated
+            # Ensure that we do not 'over allocate' a stock item
             available = decimal.Decimal(self.stock_item.quantity)
-            allocated = decimal.Decimal(self.stock_item.allocation_count())
             quantity = decimal.Decimal(self.quantity)
+            build_allocation_count = decimal.Decimal(self.stock_item.build_allocation_count(
+                exclude_allocations={'pk': self.pk}
+            ))
+            sales_allocation_count = decimal.Decimal(self.stock_item.sales_order_allocation_count())
 
-            if available - allocated + quantity < quantity:
+            total_allocation = (
+                build_allocation_count + sales_allocation_count + quantity
+            )
+
+            if total_allocation > available:
                 raise ValidationError({
                     'quantity': _('Stock item is over-allocated')
                 })
