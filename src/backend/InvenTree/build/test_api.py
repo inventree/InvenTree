@@ -993,6 +993,65 @@ class BuildAllocationTest(BuildAPITest):
             expected_code=201,
         )
 
+class BuildItemTest(BuildAPITest):
+    """Unit tests for build items.
+
+    For this test, we will be using Build ID=1;
+
+    - This points to Part 100 (see fixture data in part.yaml)
+    - This Part already has a BOM with 4 items (see fixture data in bom.yaml)
+    - There are no BomItem objects yet created for this build
+    """
+
+    def setUp(self):
+        """Basic operation as part of test suite setup"""
+        super().setUp()
+
+        self.assignRole('build.add')
+        self.assignRole('build.change')
+
+        self.build = Build.objects.get(pk=1)
+
+        # Regenerate BuildLine objects
+        self.build.create_build_line_items()
+
+        # Record number of build items which exist at the start of each test
+        self.n = BuildItem.objects.count()
+
+    def test_update_overallocated(self):
+        """Test update of overallocated stock items."""
+
+        si = StockItem.objects.get(pk=2)
+
+        # Find line item
+        line = self.build.build_lines.all().filter(bom_item__sub_part=si.part).first()
+
+        # Set initial stock item quantity
+        si.quantity = 100
+        si.save()
+
+        # Create build item
+        bi = BuildItem(
+            build_line=line,
+            stock_item=si,
+            quantity=100
+        )
+        bi.save()
+
+        # Reduce stock item quantity
+        si.quantity = 50
+        si.save()
+
+        # Reduce build item quantity
+        url = reverse('api-build-item-detail', kwargs={'pk': bi.pk})
+
+        self.patch(
+            url,
+            {
+                "quantity": 50,
+            },
+            expected_code=200,
+        )
 
 class BuildOverallocationTest(BuildAPITest):
     """Unit tests for over allocation of stock items against a build order.
