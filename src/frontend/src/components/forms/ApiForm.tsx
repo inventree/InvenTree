@@ -33,7 +33,10 @@ import {
   extractAvailableFields,
   mapFields
 } from '../../functions/forms';
-import { invalidResponse } from '../../functions/notifications';
+import {
+  invalidResponse,
+  showTimeoutNotification
+} from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import { TableState } from '../../hooks/UseTable';
 import { PathParams } from '../../states/ApiState';
@@ -540,7 +543,7 @@ export function ApiForm({
               break;
           }
         } else {
-          invalidResponse(0);
+          showTimeoutNotification();
           props.onFormError?.();
         }
 

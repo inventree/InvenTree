@@ -95,6 +95,7 @@ export default function ReturnOrderDetail() {
         type: 'text',
         name: 'customer_reference',
         label: t`Customer Reference`,
+        icon: 'customer',
         copy: true,
         hidden: !order.customer_reference
       },
