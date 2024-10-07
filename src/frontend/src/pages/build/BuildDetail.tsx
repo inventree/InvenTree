@@ -345,7 +345,7 @@ export default function BuildDetail() {
       },
       AttachmentPanel({
         model_type: ModelType.build,
-        model_id: build
+        model_id: build.pk
       }),
       {
         name: 'notes',

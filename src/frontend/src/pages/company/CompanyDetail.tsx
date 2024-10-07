@@ -258,7 +258,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       AttachmentPanel({
         model_type: ModelType.company,
-        model_id: company
+        model_id: company.pk
       }),
       {
         name: 'notes',

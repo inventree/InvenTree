@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
-import { IconTruckDelivery } from '@tabler/icons-react';
+import { IconArrowRight, IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
+import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -28,6 +31,7 @@ export default function SalesOrderShipmentTable({
   orderId: number;
 }>) {
   const user = useUserState();
+  const navigate = useNavigate();
   const table = useTable('sales-order-shipment');
 
   const [selectedShipment, setSelectedShipment] = useState<number>(0);
@@ -103,6 +107,17 @@ export default function SalesOrderShipmentTable({
       const shipped: boolean = !!record.shipment_date;
 
       return [
+        {
+          title: t`View Shipment`,
+          icon: <IconArrowRight />,
+          onClick: (event: any) => {
+            navigateToLink(
+              getDetailUrl(ModelType.salesordershipment, record.pk),
+              navigate,
+              event
+            );
+          }
+        },
         {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,

@@ -11,7 +11,7 @@ export type RowAction = {
   tooltip?: string;
   color?: string;
   icon?: ReactNode;
-  onClick: () => void;
+  onClick: (event: any) => void;
   hidden?: boolean;
   disabled?: boolean;
 };
@@ -89,7 +89,7 @@ export function RowActions({
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);
-            action.onClick();
+            action.onClick(event);
             setOpened(false);
           }}
           disabled={action.disabled || false}
