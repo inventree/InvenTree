@@ -3,8 +3,6 @@
 import logging
 import socket
 
-from django.conf import settings
-
 import InvenTree.config
 import InvenTree.ready
 
@@ -34,10 +32,6 @@ def is_global_cache_enabled():
     - Test if the user has enabled and configured global cache
     - Test if it is appropriate to enable global cache based on the current operation.
     """
-    # In 'testing' mode, the default cache is sufficient, as there is only a single process
-    if settings.TESTING:
-        return True
-
     host = cache_host()
 
     # Test if cache is enabled
@@ -71,7 +65,7 @@ def get_cache_config(global_cache: bool) -> dict:
     Returns:
         A dictionary containing the cache configuration options.
     """
-    if global_cache and not settings.TESTING:
+    if global_cache:
         return {
             'BACKEND': 'django_redis.cache.RedisCache',
             'LOCATION': f'redis://{cache_host()}:{cache_port()}/0',
