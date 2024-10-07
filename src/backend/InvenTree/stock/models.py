@@ -458,6 +458,30 @@ class StockItem(
         & Q(expiry_date__lt=InvenTree.helpers.current_date())
     )
 
+    @staticmethod
+    def convert_serial_to_int(serial: str) -> int:
+        """Convert the provided serial number to an integer value.
+
+        This function hooks into the plugin system to allow for custom serial number conversion.
+        """
+        from plugin.registry import registry
+
+        # First, let any plugins convert this serial number to an integer value
+        # If a non-null value is returned (by any plugin) we will use that
+
+        for plugin in registry.with_mixin('validation'):
+            serial_int = plugin.convert_serial_to_int(serial)
+
+            if serial_int is not None:
+                # Return the first non-null value
+                return serial_int
+
+        # None of the plugins provided a valid integer value
+        if serial not in [None, '']:
+            return InvenTree.helpers.extract_int(serial)
+        else:
+            return None
+
     def update_serial_number(self):
         """Update the 'serial_int' field, to be an integer representation of the serial number.
 
@@ -465,37 +489,7 @@ class StockItem(
         """
         serial = str(getattr(self, 'serial', '')).strip()
 
-        from plugin.registry import registry
-
-        # First, let any plugins convert this serial number to an integer value
-        # If a non-null value is returned (by any plugin) we will use that
-
-        serial_int = None
-
-        for plugin in registry.with_mixin('validation'):
-            serial_int = plugin.convert_serial_to_int(serial)
-
-            if serial_int is not None:
-                # Save the first returned result
-                # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7FFFFFFF
-
-                serial_int = abs(serial_int)
-
-                serial_int = min(serial_int, clip)
-
-                self.serial_int = serial_int
-                return
-
-        # If we get to this point, none of the available plugins provided an integer value
-
-        # Default value if we cannot convert to an integer
-        serial_int = 0
-
-        if serial not in [None, '']:
-            serial_int = InvenTree.helpers.extract_int(serial)
-
-        self.serial_int = serial_int
+        self.serial_int = self.convert_serial_to_int(serial)
 
     def get_next_serialized_item(self, include_variants=True, reverse=False):
         """Get the "next" serial number for the part this stock item references.
