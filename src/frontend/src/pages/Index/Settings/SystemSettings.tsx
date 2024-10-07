@@ -306,12 +306,16 @@ export default function SystemSettings() {
       {user.isStaff() ? (
         <Stack gap="xs">
           <SettingsHeader
+            label="system"
             title={t`System Settings`}
             subtitle={server.instance || ''}
-            switch_link="/settings/user"
-            switch_text={<Trans>Switch to User Setting</Trans>}
           />
-          <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
+          <PanelGroup
+            pageKey="system-settings"
+            panels={systemSettingsPanels}
+            model="systemsettings"
+            id={null}
+          />
         </Stack>
       ) : (
         <PermissionDenied />

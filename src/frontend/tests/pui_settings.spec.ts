@@ -21,7 +21,7 @@ test('Admin', async ({ page }) => {
   await page.getByText('Inline report display').waitFor();
 
   // System Settings
-  await page.getByRole('link', { name: 'Switch to System Setting' }).click();
+  await page.locator('label').filter({ hasText: 'System Settings' }).click();
   await page.getByText('Base URL', { exact: true }).waitFor();
   await page.getByRole('tab', { name: 'Login' }).click();
   await page.getByRole('tab', { name: 'Barcodes' }).click();
