@@ -38,7 +38,7 @@ jobs:
       force: ${{ steps.force.outputs.force }}
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -70,7 +70,7 @@ jobs:
     needs: ["pre-commit"]
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -92,7 +92,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
         with:
@@ -113,7 +113,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
         with:
@@ -149,7 +149,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -159,7 +159,7 @@ jobs:
       - name: Export API Documentation
         run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4.4.0
+        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9 # pin@v4.4.1
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -211,7 +211,7 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         name: Checkout Code
         with:
           repository: inventree/schema
@@ -250,7 +250,7 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -292,7 +292,7 @@ jobs:
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -308,7 +308,7 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # pin@v4.6.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -346,7 +346,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -390,7 +390,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -429,7 +429,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -440,7 +440,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # pin@v4.6.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -460,7 +460,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -517,7 +517,7 @@ jobs:
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -535,7 +535,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4
+      - uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9 # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -545,7 +545,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # pin@v4.6.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -565,7 +565,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -580,7 +580,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4.4.0
+      - uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9 # pin@v4.4.1
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
