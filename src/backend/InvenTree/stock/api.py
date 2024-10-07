@@ -922,6 +922,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         data.update(self.clean_data(request.data))
 
         quantity = data.get('quantity', None)
+        location = data.get('location', None)
 
         if quantity is None:
             raise ValidationError({'quantity': _('Quantity is required')})
@@ -1055,7 +1056,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                         StockHistoryCode.CREATED,
                         user,
                         deltas={'status': item.status},
-                        location=item.location,
+                        location=location,
                         quantity=float(item.quantity),
                         commit=False,
                     ):
