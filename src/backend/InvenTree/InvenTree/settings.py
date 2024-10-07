@@ -1244,6 +1244,7 @@ MARKDOWNIFY = {
             'li',
             'ol',
             'p',
+            'pre',
             's',
             'strong',
             'table',
