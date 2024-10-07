@@ -928,7 +928,6 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             raise ValidationError({'quantity': _('Quantity is required')})
 
         try:
-            Part.objects.prefetch_related(None)
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({'part': _('Valid part must be supplied')})
@@ -955,11 +954,9 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serial_numbers = data.pop('serial_numbers', '')
 
         # Check if the supplier_part has a package size defined, which is not 1
-        if 'supplier_part' in data and data['supplier_part'] is not None:
+        if supplier_part_id := data.get('supplier_part', None):
             try:
-                supplier_part = SupplierPart.objects.get(
-                    pk=data.get('supplier_part', None)
-                )
+                supplier_part = SupplierPart.objects.get(supplier_part_id)
             except (ValueError, SupplierPart.DoesNotExist):
                 raise ValidationError({
                     'supplier_part': _('The given supplier part does not exist')
@@ -989,8 +986,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
-        if 'use_pack_size' in data:
-            data.pop('use_pack_size')
+        data.pop('use_pack_size', None)
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
