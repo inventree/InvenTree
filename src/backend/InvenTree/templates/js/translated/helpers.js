@@ -1,6 +1,7 @@
 {% load i18n %}
 
 /* globals
+    DOMPurify,
     EasyMDE,
     inventreeFormDataUpload,
     inventreeGet,
