@@ -535,6 +535,12 @@ class StockItem(
         for plugin in registry.with_mixin('validation'):
             serial_int = plugin.convert_serial_to_int(serial)
 
+            # Save the first returned result
+            # Ensure that it is clipped within a range allowed in the database schema
+            clip = 0x7FFFFFFF
+            serial_int = abs(serial_int)
+            serial_int = min(serial_int, clip)
+
             if serial_int is not None:
                 # Return the first non-null value
                 return serial_int
