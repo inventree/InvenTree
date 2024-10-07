@@ -45,7 +45,6 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 
