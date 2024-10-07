@@ -861,7 +861,7 @@ class Build(
             tracking = []
             allocations = []
 
-            outputs = stock.models.StockItem.create_serial_numbers(
+            outputs = stock.models.StockItem._create_serial_numbers(
                 serials,
                 part=self.part,
                 build=self,

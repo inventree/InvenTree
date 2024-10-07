@@ -3,6 +3,8 @@
 import logging
 import socket
 
+from django.conf import settings
+
 import InvenTree.config
 import InvenTree.ready
 
@@ -32,6 +34,10 @@ def is_global_cache_enabled():
     - Test if the user has enabled and configured global cache
     - Test if it is appropriate to enable global cache based on the current operation.
     """
+    # In 'testing' mode, the default cache is sufficient, as there is only a single process
+    if settings.TESTING:
+        return True
+
     host = cache_host()
 
     # Test if cache is enabled

@@ -460,7 +460,7 @@ class StockItem(
     )
 
     @classmethod
-    def create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
+    def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
         """Create multiple stock items with the provided serial numbers.
 
         Arguments:
@@ -478,6 +478,8 @@ class StockItem(
 
         However, it does not perform any validation checks on the provided serial numbers,
         and also does not generate any "stock tracking entries".
+
+        Note: This is an 'internal' function and should not be used by external code / plugins.
         """
         # Ensure the primary-key field is not provided
         kwargs.pop('id', None)
@@ -1620,7 +1622,7 @@ class StockItem(
         data['tree_id'] = self.tree_id
 
         # Generate a new serial number for each item
-        items = StockItem.create_serial_numbers(serials, **data)
+        items = StockItem._create_serial_numbers(serials, **data)
 
         # Create a new tracking entry for each item
         history_items = []

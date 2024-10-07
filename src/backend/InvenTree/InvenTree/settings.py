@@ -842,7 +842,7 @@ if TRACING_ENABLED:  # pragma: no cover
 # endregion
 
 # Cache configuration
-GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
+GLOBAL_CACHE_ENABLED = TESTING or is_global_cache_enabled()
 
 CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 

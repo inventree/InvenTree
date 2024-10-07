@@ -1040,7 +1040,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         with transaction.atomic():
             if serials:
                 # Create multiple serialized StockItem objects
-                items = StockItem.create_serial_numbers(
+                items = StockItem._create_serial_numbers(
                     serials, **serializer.validated_data
                 )
 
