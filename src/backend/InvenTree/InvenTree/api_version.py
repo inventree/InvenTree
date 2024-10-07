@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 265
+INVENTREE_API_VERSION = 266
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-265 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8249
+266 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8249
     - Tweak SalesOrderShipment API for more efficient data retrieval
+
+265 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8228
+    - Adds API endpoint for providing custom admin integration details for plugins
 
 264 - 2024-10-03 : https://github.com/inventree/InvenTree/pull/8231
     - Adds Sales Order Shipment attachment model type

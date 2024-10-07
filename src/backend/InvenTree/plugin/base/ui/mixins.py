@@ -53,10 +53,6 @@ class UserInterfaceMixin:
 
     - All content is accessed via the API, as requested by the user interface.
     - This means that content can be dynamically generated, based on the current state of the system.
-
-    The following custom UI methods are available:
-    - get_ui_panels: Return a list of custom panels to be injected into the UI
-
     """
 
     class MixinMeta:
