@@ -21,6 +21,7 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
+    RetrieveAPI,
     RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     UpdateAPI,
@@ -175,6 +176,18 @@ class PluginDetail(RetrieveDestroyAPI):
             })
 
         return super().delete(request, *args, **kwargs)
+
+
+class PluginAdminDetail(RetrieveAPI):
+    """Endpoint for viewing admin integration plugin details.
+
+    This endpoint is used to view the available admin integration options for a plugin.
+    """
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginAdminDetailSerializer
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
 
 class PluginInstall(CreateAPI):
@@ -483,6 +496,9 @@ plugin_api_urls = [
                         'uninstall/',
                         PluginUninstall.as_view(),
                         name='api-plugin-uninstall',
+                    ),
+                    path(
+                        'admin/', PluginAdminDetail.as_view(), name='api-plugin-admin'
                     ),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
