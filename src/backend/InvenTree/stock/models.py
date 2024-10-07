@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, Sum
+from django.db.models import Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save, pre_delete
 from django.db.utils import IntegrityError, OperationalError
@@ -457,6 +457,49 @@ class StockItem(
         & ~Q(expiry_date=None)
         & Q(expiry_date__lt=InvenTree.helpers.current_date())
     )
+
+    @classmethod
+    def create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
+        """Create multiple stock items with the provided serial numbers.
+
+        Arguments:
+            serials: List of serial numbers to create
+            **kwargs: Additional keyword arguments to pass to the StockItem creation function
+
+        Returns:
+            QuerySet: The created StockItem objects
+
+        raises:
+            ValidationError: If any of the provided serial numbers are invalid
+
+        This method uses bulk_create to create multiple StockItem objects in a single query,
+        which is much more efficient than creating them one-by-one.
+
+        However, it does not perform any validation checks on the provided serial numbers,
+        and also does not generate any "stock tracking entries".
+        """
+        part = kwargs.get('part')
+
+        if not part:
+            raise ValidationError({'part': _('Part must be specified')})
+
+        # Create a list of StockItem objects
+        items = []
+
+        for serial in serials:
+            items.append(
+                StockItem(
+                    **kwargs,
+                    serial=serial,
+                    serial_int=StockItem.convert_serial_to_int(serial),
+                )
+            )
+
+        # Create the StockItem objects in bulk
+        StockItem.objects.bulk_create(items)
+
+        # Return the newly created StockItem objects
+        return StockItem.objects.filter(part=part, serial__in=serials)
 
     @staticmethod
     def convert_serial_to_int(serial: str) -> int:

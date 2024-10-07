@@ -951,7 +951,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serials = None
 
         # Check if a set of serial numbers was provided
-        serial_numbers = data.get('serial_numbers', '')
+        serial_numbers = data.pop('serial_numbers', '')
 
         # Check if the supplier_part has a package size defined, which is not 1
         if 'supplier_part' in data and data['supplier_part'] is not None:
@@ -1011,22 +1011,20 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 invalid = []
                 errors = []
 
-                for serial in serials:
-                    try:
-                        part.validate_serial_number(serial, raise_error=True)
-                    except DjangoValidationError as exc:
-                        # Catch raised error to extract specific error information
-                        invalid.append(serial)
+                try:
+                    invalid = part.find_conflicting_serial_numbers(serials)
+                except DjangoValidationError as exc:
+                    errors.append(exc.message)
 
-                        if exc.message not in errors:
-                            errors.append(exc.message)
-
-                if len(errors) > 0:
+                if len(invalid) > 0:
                     msg = _('The following serial numbers already exist or are invalid')
                     msg += ' : '
                     msg += ','.join([str(e) for e in invalid])
 
-                    raise ValidationError({'serial_numbers': [*errors, msg]})
+                    errors.append(msg)
+
+                if len(errors) > 0:
+                    raise ValidationError({'serial_numbers': errors})
 
             except DjangoValidationError as e:
                 raise ValidationError({
