@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
+import DOMPurify from 'dompurify';
 import EasyMDE, { default as SimpleMde } from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -120,11 +121,16 @@ export default function NotesEditor({
             id: 'notes'
           });
         })
-        .catch(() => {
+        .catch((error) => {
           notifications.hide('notes');
+
+          let msg =
+            error?.response?.data?.non_field_errors[0] ??
+            t`Failed to save notes`;
+
           notifications.show({
-            title: t`Error`,
-            message: t`Failed to save notes`,
+            title: t`Error Saving Notes`,
+            message: msg,
             color: 'red',
             id: 'notes'
           });
@@ -181,6 +187,11 @@ export default function NotesEditor({
       uploadImage: true,
       imagePathAbsolute: true,
       imageUploadFunction: imageUploadHandler,
+      renderingConfig: {
+        sanitizerFunction: (html: string) => {
+          return DOMPurify.sanitize(html);
+        }
+      },
       sideBySideFullscreen: false,
       shortcuts: {},
       spellChecker: false

@@ -1190,9 +1190,17 @@ class StockItem(
 
         return self.sales_order_allocations.count() > 0
 
-    def build_allocation_count(self):
-        """Return the total quantity allocated to builds."""
-        query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+    def build_allocation_count(self, **kwargs):
+        """Return the total quantity allocated to builds, with optional filters."""
+        query = self.allocations.all()
+
+        if filter_allocations := kwargs.get('filter_allocations'):
+            query = query.filter(**filter_allocations)
+
+        if exclude_allocations := kwargs.get('exclude_allocations'):
+            query = query.exclude(**exclude_allocations)
+
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
         total = query['q']
 

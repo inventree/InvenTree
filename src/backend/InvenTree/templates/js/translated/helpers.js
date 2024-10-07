@@ -498,6 +498,11 @@ function setupNotesField(element, url, options={}) {
                 }
             });
         },
+        renderingConfig: {
+            sanitizerFunction: function (html) {
+                return DOMPurify.sanitize(html);
+            }
+        },
         shortcuts: [],
     });
 
