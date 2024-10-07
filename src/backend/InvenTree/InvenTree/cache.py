@@ -71,7 +71,7 @@ def get_cache_config(global_cache: bool) -> dict:
     Returns:
         A dictionary containing the cache configuration options.
     """
-    if global_cache:
+    if global_cache and not settings.TESTING:
         return {
             'BACKEND': 'django_redis.cache.RedisCache',
             'LOCATION': f'redis://{cache_host()}:{cache_port()}/0',
