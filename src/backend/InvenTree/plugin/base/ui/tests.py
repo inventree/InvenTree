@@ -87,7 +87,9 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         self.assertNotIn('content', response.data[1])
 
         self.assertEqual(response.data[2]['name'], 'dynamic_panel')
-        self.assertEqual(response.data[2]['source'], '/static/plugin/sample_panel.js')
+        self.assertEqual(
+            response.data[2]['source'], '/static/plugins/sampleui/sample_panel.js'
+        )
         self.assertNotIn('content', response.data[2])
 
         # Next, disable the global setting for UI integration

@@ -22,6 +22,11 @@ function ErrorDetail({ error }: { error: any }) {
           <Table.Tr>
             <Table.Th>{t`Message`}</Table.Th>
             <Table.Td>{error.info}</Table.Td>
+            <Table.Td>
+              <Group justify="right">
+                <CopyButton value={error.info} size="sm" />
+              </Group>
+            </Table.Td>
           </Table.Tr>
           <Table.Tr>
             <Table.Th>{t`Timestamp`}</Table.Th>
@@ -33,7 +38,7 @@ function ErrorDetail({ error }: { error: any }) {
           </Table.Tr>
           <Table.Tr>
             <Table.Th>{t`Traceback`}</Table.Th>
-            <Table.Td>
+            <Table.Td colSpan={2}>
               <Group justify="right">
                 <CopyButton value={error.data} size="sm" />
               </Group>

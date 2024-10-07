@@ -194,6 +194,7 @@ export enum ApiEndpoints {
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:key/activate/',
   plugin_uninstall = 'plugins/:key/uninstall/',
+  plugin_admin = 'plugins/:key/admin/',
 
   // User interface plugin endpoints
   plugin_panel_list = 'plugins/ui/panels/',
