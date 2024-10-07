@@ -1659,12 +1659,18 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         stock_items = data['stock_items']
         shipment = data['shipment']
 
-        with transaction.atomic():
-            for stock_item in stock_items:
-                # Create a new SalesOrderAllocation
-                order.models.SalesOrderAllocation.objects.create(
+        allocations = []
+
+        for stock_item in stock_items:
+            # Create a new SalesOrderAllocation
+            allocations.append(
+                order.models.SalesOrderAllocation(
                     line=line_item, item=stock_item, quantity=1, shipment=shipment
                 )
+            )
+
+        with transaction.atomic():
+            order.models.SalesOrderAllocation.objects.bulk_create(allocations)
 
 
 class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
