@@ -1068,7 +1068,8 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
-                item = serializer.save(user=user)
+                item = serializer.save()
+                item.save(user=user)
 
                 response_data = serializer.data
 
