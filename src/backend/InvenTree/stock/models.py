@@ -33,6 +33,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+import stock.tasks
 from build import models as BuildModels
 from common.icons import validate_icon
 from common.settings import get_global_setting
@@ -478,6 +479,10 @@ class StockItem(
         However, it does not perform any validation checks on the provided serial numbers,
         and also does not generate any "stock tracking entries".
         """
+        # Ensure the primary-key field is not provided
+        kwargs.pop('id', None)
+        kwargs.pop('pk', None)
+
         part = kwargs.get('part')
 
         if not part:
@@ -488,6 +493,10 @@ class StockItem(
 
         # Provide some default field values
         data = {**kwargs}
+
+        # Remove some extraneous keys which cause issues
+        for key in ['parent_id', 'part_id', 'build_id']:
+            data.pop(key, None)
 
         data['parent'] = kwargs.pop('parent', None)
         data['tree_id'] = kwargs.pop('tree_id', 0)
@@ -1584,7 +1593,7 @@ class StockItem(
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({
-                'serial_numbers': _('Serial numbers must be a list of integers')
+                'serial_numbers': _('Serial numbers must be provided as a list')
             })
 
         if quantity != len(serials):
@@ -1600,45 +1609,54 @@ class StockItem(
             msg = _('Serial numbers already exist') + f': {exists}'
             raise ValidationError({'serial_numbers': msg})
 
-        # Create a new stock item for each unique serial number
-        for serial in serials:
-            # Create a copy of this StockItem
-            new_item = StockItem.objects.get(pk=self.pk)
-            new_item.quantity = 1
-            new_item.serial = serial
-            new_item.pk = None
-            new_item.parent = self
+        # Serialize this StockItem
+        data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
-            if location:
-                new_item.location = location
+        if location:
+            data['location'] = location
 
-            # The item already has a transaction history, don't create a new note
-            new_item.save(user=user, notes=notes)
+        data['part'] = self.part
+        data['parent'] = self
+        data['tree_id'] = self.tree_id
 
-            # Copy entire transaction history
-            new_item.copyHistoryFrom(self)
+        # Generate a new serial number for each item
+        items = StockItem.create_serial_numbers(serials, **data)
 
-            # Copy test result history
-            new_item.copyTestResultsFrom(self)
+        # Create a new tracking entry for each item
+        history_items = []
 
-            # Create a new stock tracking item
-            new_item.add_tracking_entry(
+        for item in items:
+            if entry := item.add_tracking_entry(
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
                 notes=notes,
-                deltas={'serial': serial},
+                deltas={'serial': item.serial},
                 location=location,
-            )
+                commit=False,
+            ):
+                history_items.append(entry)
+
+        StockItemTracking.objects.bulk_create(history_items)
+
+        # Duplicate test results
+        test_results = []
+
+        for test_result in self.test_results.all():
+            for item in items:
+                test_result.pk = None
+                test_result.stock_item = item
+
+                test_results.append(test_result)
+
+        StockItemTestResult.objects.bulk_create(test_results)
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
 
         # Rebuild the stock tree
-        try:
-            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
-        except Exception:
-            logger.warning('Failed to rebuild stock tree during serializeStock')
-            StockItem.objects.rebuild()
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id
+        )
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -1870,12 +1888,10 @@ class StockItem(
         self.save()
 
         # Rebuild stock trees as required
-        try:
-            for tree_id in tree_ids:
-                StockItem.objects.partial_rebuild(tree_id=tree_id)
-        except Exception:
-            logger.warning('Rebuilding entire StockItem tree during merge_stock_items')
-            StockItem.objects.rebuild()
+        for tree_id in tree_ids:
+            InvenTree.tasks.offload_task(
+                stock.tasks.rebuild_stock_item_tree, tree_id=tree_id
+            )
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -1970,11 +1986,9 @@ class StockItem(
         )
 
         # Rebuild the tree for this parent item
-        try:
-            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
-        except Exception:
-            logger.warning('Rebuilding entire StockItem tree')
-            StockItem.objects.rebuild()
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id
+        )
 
         # Attempt to reload the new item from the database
         try:
