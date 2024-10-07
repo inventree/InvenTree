@@ -486,14 +486,23 @@ class StockItem(
         # Create a list of StockItem objects
         items = []
 
+        # Provide some default field values
+        data = {**kwargs}
+
+        data['parent'] = kwargs.pop('parent', None)
+        data['tree_id'] = kwargs.pop('tree_id', 0)
+        data['level'] = kwargs.pop('level', 0)
+        data['rght'] = kwargs.pop('rght', 0)
+        data['lft'] = kwargs.pop('lft', 0)
+
+        # Force single quantity for each item
+        data['quantity'] = 1
+
         for serial in serials:
-            items.append(
-                StockItem(
-                    **kwargs,
-                    serial=serial,
-                    serial_int=StockItem.convert_serial_to_int(serial),
-                )
-            )
+            data['serial'] = serial
+            data['serial_int'] = StockItem.convert_serial_to_int(serial)
+
+            items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
         StockItem.objects.bulk_create(items)
@@ -1484,6 +1493,7 @@ class StockItem(
         user: User,
         deltas: dict | None = None,
         notes: str = '',
+        commit: bool = True,
         **kwargs,
     ):
         """Add a history tracking entry for this StockItem.
@@ -1493,6 +1503,9 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+
+        Returns:
+            StockItemTracking: The created tracking entry
         """
         if deltas is None:
             deltas = {}
@@ -1503,7 +1516,7 @@ class StockItem(
             and len(deltas) == 0
             and not notes
         ):
-            return
+            return None
 
         # Has a location been specified?
         location = kwargs.get('location')
@@ -1517,7 +1530,7 @@ class StockItem(
         if quantity:
             deltas['quantity'] = float(quantity)
 
-        entry = StockItemTracking.objects.create(
+        entry = StockItemTracking(
             item=self,
             tracking_type=entry_type.value,
             user=user,
@@ -1526,7 +1539,10 @@ class StockItem(
             deltas=deltas,
         )
 
-        entry.save()
+        if commit:
+            entry.save()
+
+        return entry
 
     @transaction.atomic
     def serializeStock(self, quantity, serials, user, notes='', location=None):

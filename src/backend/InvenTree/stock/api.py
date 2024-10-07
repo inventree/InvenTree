@@ -1041,34 +1041,42 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
 
         with transaction.atomic():
-            # Create an initial StockItem object
-            item = serializer.save()
-
             if serials:
-                # Assign the first serial number to the "master" item
-                item.serial = serials[0]
+                # Create multiple serialized StockItem objects
+                items = StockItem.create_serial_numbers(
+                    serials, **serializer.validated_data
+                )
 
-            # Save the item (with user information)
-            item.save(user=user)
+                # Next, bulk-create stock tracking entries for the newly created items
+                tracking = []
 
-            if serials:
-                for serial in serials[1:]:
-                    # Create a duplicate stock item with the next serial number
-                    item.pk = None
-                    item.serial = serial
+                for item in items:
+                    if entry := item.add_tracking_entry(
+                        StockHistoryCode.CREATED,
+                        user,
+                        deltas={'status': item.status},
+                        location=item.location,
+                        quantity=float(item.quantity),
+                        commit=False,
+                    ):
+                        tracking.append(entry)
 
-                    item.save(user=user)
+                StockItemTracking.objects.bulk_create(tracking)
 
                 response_data = {'quantity': quantity, 'serial_numbers': serials}
 
             else:
+                # Create a single StockItem object
+                # Note: This automatically creates a tracking entry
+                item = serializer.save(user=user)
+
                 response_data = serializer.data
 
-            return Response(
-                response_data,
-                status=status.HTTP_201_CREATED,
-                headers=self.get_success_headers(serializer.data),
-            )
+        return Response(
+            response_data,
+            status=status.HTTP_201_CREATED,
+            headers=self.get_success_headers(serializer.data),
+        )
 
     def get_queryset(self, *args, **kwargs):
         """Annotate queryset before returning."""
