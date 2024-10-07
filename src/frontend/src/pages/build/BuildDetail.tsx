@@ -31,6 +31,7 @@ import {
   HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
+import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelType } from '../../components/nav/Panel';
@@ -343,14 +344,10 @@ export default function BuildDetail() {
         ),
         hidden: !build?.part_detail?.testable
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.build} model_id={Number(id)} />
-        )
-      },
+      AttachmentPanel({
+        model_type: ModelType.build,
+        model_id: build
+      }),
       {
         name: 'notes',
         label: t`Notes`,

@@ -28,6 +28,7 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
+import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelType } from '../../components/nav/Panel';
@@ -338,17 +339,10 @@ export default function SalesOrderDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.salesorder}
-            model_id={order.pk}
-          />
-        )
-      },
+      AttachmentPanel({
+        model_type: ModelType.salesorder,
+        model_id: order.pk
+      }),
       {
         name: 'notes',
         label: t`Notes`,

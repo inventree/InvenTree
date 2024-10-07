@@ -21,6 +21,7 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
+import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelType } from '../../components/nav/Panel';
@@ -174,17 +175,10 @@ export default function ManufacturerPartDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.manufacturerpart}
-            model_id={manufacturerPart?.pk}
-          />
-        )
-      },
+      AttachmentPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      }),
       {
         name: 'notes',
         label: t`Notes`,

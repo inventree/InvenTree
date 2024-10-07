@@ -28,6 +28,7 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
+import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -256,17 +257,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.company}
-            model_id={company.pk}
-          />
-        )
-      },
+      AttachmentPanel({
+        model_type: ModelType.company,
+        model_id: company
+      }),
       {
         name: 'notes',
         label: t`Notes`,

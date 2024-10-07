@@ -32,6 +32,7 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
+import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -480,17 +481,10 @@ export default function StockDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.stockitem}
-            model_id={stockitem.pk}
-          />
-        )
-      },
+      AttachmentPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk
+      }),
       {
         name: 'notes',
         label: t`Notes`,
