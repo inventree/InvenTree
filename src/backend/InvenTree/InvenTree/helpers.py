@@ -810,6 +810,40 @@ def remove_non_printable_characters(
     return cleaned
 
 
+def clean_markdown(value: str):
+    """Clean a markdown string.
+
+    This function will remove javascript and other potentially harmful content from the markdown string.
+    """
+    import markdown
+    from markdownify.templatetags.markdownify import markdownify
+
+    try:
+        markdownify_settings = settings.MARKDOWNIFY['default']
+    except (AttributeError, KeyError):
+        markdownify_settings = {}
+
+    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
+    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
+
+    # Generate raw HTML from provided markdown (without sanitizing)
+    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
+    html = markdown.markdown(
+        value or '',
+        extensions=extensions,
+        extension_configs=extension_configs,
+        output_format='html',
+    )
+
+    # Clean the HTML content (for comparison). Ideally, this should be the same as the original content
+    clean_html = markdownify(value)
+
+    if html != clean_html:
+        raise ValidationError(_('Data contains prohibited markdown content'))
+
+    return value
+
+
 def hash_barcode(barcode_data):
     """Calculate a 'unique' hash for a barcode string.
 
