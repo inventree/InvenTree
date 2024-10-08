@@ -8,8 +8,6 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
-  IconNotes,
-  IconPaperclip,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -22,7 +20,6 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -31,11 +28,12 @@ import {
   HoldItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -347,18 +345,10 @@ export default function BuildDetail() {
         model_type: ModelType.build,
         model_id: build.pk
       }),
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.build}
-            modelId={build.pk}
-            editable={user.hasChangeRole(UserRoles.build)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      })
     ];
   }, [build, id, user]);
 

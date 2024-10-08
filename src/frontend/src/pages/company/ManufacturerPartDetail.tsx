@@ -3,9 +3,7 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList,
-  IconNotes,
-  IconPaperclip
+  IconList
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,18 +12,18 @@ import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -178,18 +176,10 @@ export default function ManufacturerPartDetail() {
         model_type: ModelType.manufacturerpart,
         model_id: manufacturerPart?.pk
       }),
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.manufacturerpart}
-            modelId={manufacturerPart.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      })
     ];
   }, [manufacturerPart]);
 

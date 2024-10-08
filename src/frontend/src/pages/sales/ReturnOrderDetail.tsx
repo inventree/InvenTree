@@ -1,11 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
-import {
-  IconInfoCircle,
-  IconList,
-  IconNotes,
-  IconPaperclip
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -15,7 +10,6 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -25,11 +19,12 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
-import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -271,18 +266,10 @@ export default function ReturnOrderDetail() {
         model_type: ModelType.returnorder,
         model_id: order.pk
       }),
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.returnorder}
-            modelId={order.pk}
-            editable={user.hasChangeRole(UserRoles.return_order)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      })
     ];
   }, [order, id, user]);
 

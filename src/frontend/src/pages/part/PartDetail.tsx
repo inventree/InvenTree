@@ -56,12 +56,13 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
-import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -746,18 +747,10 @@ export default function PartDetail() {
         model_type: ModelType.part,
         model_id: part?.pk
       }),
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.part}
-            modelId={part.pk}
-            editable={user.hasChangeRole(UserRoles.part)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      })
     ];
   }, [id, part, user, globalSettings, userSettings]);
 

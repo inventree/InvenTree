@@ -11,9 +11,9 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PanelType } from '../../../components/nav/Panel';
 import { PanelGroup } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import { PanelType } from '../../../components/panels/Panel';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';

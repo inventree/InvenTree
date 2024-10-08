@@ -121,6 +121,7 @@ export default function SalesOrderShipmentTable({
         {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,
+          color: 'green',
           icon: <IconTruckDelivery />,
           onClick: notYetImplemented
         },

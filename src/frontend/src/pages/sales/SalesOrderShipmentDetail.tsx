@@ -1,18 +1,15 @@
 import { t } from '@lingui/macro';
 import { Skeleton, Stack } from '@mantine/core';
-import {
-  IconInfoCircle,
-  IconPackages,
-  IconPaperclip
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconPackages } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import AttachmentPanel from '../../components/nav/AttachmentPanel';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
@@ -46,11 +43,15 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         name: 'items',
-        label: t`Items`,
+        label: t`Assigned Items`,
         icon: <IconPackages />,
         content: <Skeleton />
       },
       AttachmentPanel({
+        model_type: ModelType.salesordershipment,
+        model_id: shipment.pk
+      }),
+      NotesPanel({
         model_type: ModelType.salesordershipment,
         model_id: shipment.pk
       })

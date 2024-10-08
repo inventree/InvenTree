@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
-import { PanelType } from '../components/nav/Panel';
+import { PanelType } from '../components/panels/Panel';
 import {
   InvenTreeContext,
   useInvenTreeContext

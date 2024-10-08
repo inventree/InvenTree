@@ -160,6 +160,8 @@ export default function NotesEditor({
           title: t`Enable Editing`
         });
       }
+    } else {
+      icons.push('|');
     }
 
     if (editing) {
