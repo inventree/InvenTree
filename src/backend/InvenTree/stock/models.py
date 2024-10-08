@@ -536,12 +536,11 @@ class StockItem(
             serial_int = plugin.convert_serial_to_int(serial)
 
             # Save the first returned result
-            # Ensure that it is clipped within a range allowed in the database schema
-            clip = 0x7FFFFFFF
-            serial_int = abs(serial_int)
-            serial_int = min(serial_int, clip)
-
             if serial_int is not None:
+                # Ensure that it is clipped within a range allowed in the database schema
+                clip = 0x7FFFFFFF
+                serial_int = abs(serial_int)
+                serial_int = min(serial_int, clip)
                 # Return the first non-null value
                 return serial_int
 
@@ -558,7 +557,17 @@ class StockItem(
         """
         serial = str(getattr(self, 'serial', '')).strip()
 
-        self.serial_int = self.convert_serial_to_int(serial)
+        serial_int = self.convert_serial_to_int(serial)
+
+        try:
+            serial_int = int(serial_int)
+
+            if serial_int <= 0:
+                serial_int = 0
+        except (ValueError, TypeError):
+            serial_int = 0
+
+        self.serial_int = serial_int
 
     def get_next_serialized_item(self, include_variants=True, reverse=False):
         """Get the "next" serial number for the part this stock item references.
