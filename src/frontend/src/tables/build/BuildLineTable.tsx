@@ -316,7 +316,7 @@ export default function BuildLineTable({
     )
   });
 
-  const allowcateStock = useAllocateStockToBuildForm({
+  const allocateStock = useAllocateStockToBuildForm({
     build: build,
     outputId: null,
     buildId: build.pk,
@@ -395,7 +395,7 @@ export default function BuildLineTable({
           color: 'green',
           onClick: () => {
             setSelectedRows([record]);
-            allowcateStock.open();
+            allocateStock.open();
           }
         },
         {
@@ -465,7 +465,7 @@ export default function BuildLineTable({
                 !r.bom_item_detail.consumable
             )
           );
-          allowcateStock.open();
+          allocateStock.open();
         }}
       />,
       <ActionButton
@@ -493,7 +493,7 @@ export default function BuildLineTable({
     <>
       {autoAllocateStock.modal}
       {newBuildOrder.modal}
-      {allowcateStock.modal}
+      {allocateStock.modal}
       {deallocateStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}

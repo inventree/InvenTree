@@ -129,7 +129,7 @@ export default function SalesOrderAllocationTable({
         switchable: true,
         sortable: false,
         render: (record: any) => (
-          <YesNoButton value={!!record.shipmennt_detail?.shipment_date} />
+          <YesNoButton value={!!record.shipment_detail?.shipment_date} />
         )
       }
     ];
@@ -159,7 +159,7 @@ export default function SalesOrderAllocationTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       // Do not allow "shipped" items to be manipulated
-      const isShipped = !!record.shipment_date;
+      const isShipped = !!record.shipment_detail?.shipment_date;
 
       if (isShipped || !allowEdit) {
         return [];
@@ -190,15 +190,7 @@ export default function SalesOrderAllocationTable({
       return [];
     }
 
-    return [
-      <AddItemButton
-        tooltip={t`Allocate Stock`}
-        onClick={() => {
-          // Open the stock allocation modal
-        }}
-        hidden={!user.hasAddRole(UserRoles.sales_order)}
-      />
-    ];
+    return [];
   }, [allowEdit, user]);
 
   return (

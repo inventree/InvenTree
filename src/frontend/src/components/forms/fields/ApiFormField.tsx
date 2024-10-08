@@ -159,7 +159,8 @@ export function ApiFormField({
       adjustFilters: undefined,
       adjustValue: undefined,
       read_only: undefined,
-      children: undefined
+      children: undefined,
+      exclude: undefined
     };
   }, [fieldDefinition]);
 

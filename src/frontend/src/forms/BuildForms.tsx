@@ -423,15 +423,17 @@ function BuildAllocateLineRow({
         if (instance) {
           let available = instance.quantity - instance.allocated;
 
-          props.changeFn(
-            props.idx,
-            'quantity',
-            Math.min(props.item.quantity, available)
-          );
+          if (available < props.item.quantity) {
+            props.changeFn(
+              props.idx,
+              'quantity',
+              Math.min(props.item.quantity, available)
+            );
+          }
         }
       }
     };
-  }, [props]);
+  }, [record, props]);
 
   const quantityField: ApiFormFieldType = useMemo(() => {
     return {
