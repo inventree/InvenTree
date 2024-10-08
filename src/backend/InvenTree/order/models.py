@@ -1922,13 +1922,6 @@ class SalesOrderShipment(
 
         trigger_event('salesordershipment.completed', id=self.pk)
 
-    def create_attachment(self, *args, **kwargs):
-        """Create an attachment / link on parent order.
-
-        This will only be called when a generated report should be attached to this instance.
-        """
-        return self.order.create_attachment(*args, **kwargs)
-
 
 class SalesOrderExtraLine(OrderExtraLine):
     """Model for a single ExtraLine in a SalesOrder.
