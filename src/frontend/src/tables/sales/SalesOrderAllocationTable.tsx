@@ -21,6 +21,7 @@ export default function SalesOrderAllocationTable({
   partId,
   stockId,
   orderId,
+  shipmentId,
   showPartInfo,
   showOrderInfo,
   allowEdit,
@@ -30,6 +31,7 @@ export default function SalesOrderAllocationTable({
   partId?: number;
   stockId?: number;
   orderId?: number;
+  shipmentId?: number;
   showPartInfo?: boolean;
   showOrderInfo?: boolean;
   allowEdit?: boolean;
@@ -49,6 +51,7 @@ export default function SalesOrderAllocationTable({
         accessor: 'order_detail.reference',
         title: t`Sales Order`,
         switchable: false,
+        sortable: true,
         hidden: showOrderInfo != true
       }),
       {
@@ -78,20 +81,21 @@ export default function SalesOrderAllocationTable({
       {
         accessor: 'serial',
         title: t`Serial Number`,
-        sortable: false,
+        sortable: true,
         switchable: true,
         render: (record: any) => record?.item_detail?.serial
       },
       {
         accessor: 'batch',
         title: t`Batch Code`,
-        sortable: false,
+        sortable: true,
         switchable: true,
         render: (record: any) => record?.item_detail?.batch
       },
       {
         accessor: 'available',
         title: t`Available Quantity`,
+        sortable: false,
         render: (record: any) => record?.item_detail?.quantity
       },
       LocationColumn({
@@ -122,6 +126,7 @@ export default function SalesOrderAllocationTable({
           location_detail: true,
           part: partId,
           order: orderId,
+          shipment: shipmentId,
           stock_item: stockId
         },
         rowActions: rowActions,

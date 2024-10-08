@@ -34,6 +34,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 
 export default function SalesOrderShipmentDetail() {
   const { id } = useParams();
@@ -204,7 +205,15 @@ export default function SalesOrderShipmentDetail() {
         name: 'items',
         label: t`Assigned Items`,
         icon: <IconPackages />,
-        content: <Skeleton />
+        content: (
+          <SalesOrderAllocationTable
+            shipmentId={shipment.pk}
+            showPartInfo
+            allowEdit
+            modelField="item"
+            modelTarget={ModelType.stockitem}
+          />
+        )
       },
       AttachmentPanel({
         model_type: ModelType.salesordershipment,
