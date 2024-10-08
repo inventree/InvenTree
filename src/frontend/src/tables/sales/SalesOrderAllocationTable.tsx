@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -10,6 +11,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  BooleanColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -17,7 +19,7 @@ import {
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderAllocationTable({
   partId,
@@ -44,7 +46,13 @@ export default function SalesOrderAllocationTable({
   const table = useTable('salesorderallocations');
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'outstanding',
+        label: t`Outstanding`,
+        description: t`Show outstanding allocations`
+      }
+    ];
   }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -76,11 +84,6 @@ export default function SalesOrderAllocationTable({
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
-        accessor: 'quantity',
-        title: t`Allocated Quantity`,
-        sortable: true
-      },
-      {
         accessor: 'serial',
         title: t`Serial Number`,
         sortable: true,
@@ -100,19 +103,57 @@ export default function SalesOrderAllocationTable({
         sortable: false,
         render: (record: any) => record?.item_detail?.quantity
       },
+      {
+        accessor: 'quantity',
+        title: t`Allocated Quantity`,
+        sortable: true
+      },
       LocationColumn({
         accessor: 'location_detail',
         switchable: true,
         sortable: true
-      })
+      }),
+      {
+        accessor: 'shipment',
+        title: t`Shipment`,
+        switchable: true,
+        sortable: false
+      },
+      {
+        accessor: 'shipment_date',
+        title: t`Shipped`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => <YesNoButton value={!!record.shipment_date} />
+      }
     ];
   }, []);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      return [];
+      // Do not allow "shipped" items to be manipulated
+      const isShipped = !!record.shipment_date;
+
+      if (isShipped || !allowEdit) {
+        return [];
+      }
+
+      return [
+        RowEditAction({
+          tooltip: t`Edit Allocation`,
+          onClick: () => {
+            // Open the stock allocation modal
+          }
+        }),
+        RowDeleteAction({
+          tooltip: t`Delete Allocation`,
+          onClick: () => {
+            // TODO: Delete the allocation
+          }
+        })
+      ];
     },
-    [user]
+    [allowEdit, user]
   );
 
   const tableActions = useMemo(() => {
@@ -145,7 +186,7 @@ export default function SalesOrderAllocationTable({
           part: partId,
           order: orderId,
           shipment: shipmentId,
-          stock_item: stockId
+          item: stockId
         },
         rowActions: rowActions,
         tableActions: tableActions,
