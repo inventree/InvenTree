@@ -885,13 +885,6 @@ class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
 
 
-class SalesOrderAllocationDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detali view of a SalesOrderAllocation object."""
-
-    queryset = models.SalesOrderAllocation.objects.all()
-    serializer_class = serializers.SalesOrderAllocationSerializer
-
-
 class SalesOrderAllocationFilter(rest_filters.FilterSet):
     """Custom filterset for the SalesOrderAllocationList endpoint."""
 
@@ -928,11 +921,33 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         )
 
 
-class SalesOrderAllocationList(ListAPI):
-    """API endpoint for listing SalesOrderAllocation objects."""
+class SalesOrderAllocationMixin:
+    """Mixin class for SalesOrderAllocation endpoints."""
 
     queryset = models.SalesOrderAllocation.objects.all()
     serializer_class = serializers.SalesOrderAllocationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Annotate the queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'item',
+            'item__sales_order',
+            'item__part',
+            'item__location',
+            'line__order',
+            'line__part',
+            'shipment',
+            'shipment__order',
+        )
+
+        return queryset
+
+
+class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
+    """API endpoint for listing SalesOrderAllocation objects."""
+
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -965,6 +980,10 @@ class SalesOrderAllocationList(ListAPI):
             pass
 
         return self.serializer_class(*args, **kwargs)
+
+
+class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detali view of a SalesOrderAllocation object."""
 
 
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
