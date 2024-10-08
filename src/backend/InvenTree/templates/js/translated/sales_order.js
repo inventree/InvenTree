@@ -1653,6 +1653,9 @@ function showAllocationSubTable(index, row, element, options) {
             {
                 field: 'shipment',
                 title: '{% trans "Shipment" %}',
+                formatter: function(value, row) {
+                    return row.shipment_detail.reference;
+                }
             },
             {
                 field: 'allocated',

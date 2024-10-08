@@ -236,6 +236,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_allocate_serials,
     pk: orderId,
     title: t`Allocate Serial Numbers`,
+    initialData: initialData,
     fields: allocateSerialFields,
     table: table
   });
@@ -293,6 +294,9 @@ export default function SalesOrderLineItemTable({
           color: 'green',
           onClick: () => {
             setSelectedLine(record.pk);
+            setInitialData({
+              quantity: record.quantity - record.allocated
+            });
             allocateBySerials.open();
           }
         },

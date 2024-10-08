@@ -118,7 +118,7 @@ export default function SalesOrderAllocationTable({
         sortable: true
       }),
       {
-        accessor: 'shipment',
+        accessor: 'shipment_detail.reference',
         title: t`Shipment`,
         switchable: true,
         sortable: false
@@ -128,7 +128,9 @@ export default function SalesOrderAllocationTable({
         title: t`Shipped`,
         switchable: true,
         sortable: false,
-        render: (record: any) => <YesNoButton value={!!record.shipment_date} />
+        render: (record: any) => (
+          <YesNoButton value={!!record.shipmennt_detail?.shipment_date} />
+        )
       }
     ];
   }, []);

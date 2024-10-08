@@ -1027,88 +1027,6 @@ class SalesOrderIssueSerializer(OrderAdjustSerializer):
         self.order.issue_order()
 
 
-class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
-    """Serializer for the SalesOrderAllocation model.
-
-    This includes some fields from the related model objects.
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderAllocation
-
-        fields = [
-            'pk',
-            'line',
-            'customer_detail',
-            'serial',
-            'quantity',
-            'location',
-            'location_detail',
-            'item',
-            'item_detail',
-            'order',
-            'order_detail',
-            'part',
-            'part_detail',
-            'shipment',
-            'shipment_date',
-        ]
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer."""
-        order_detail = kwargs.pop('order_detail', False)
-        part_detail = kwargs.pop('part_detail', True)
-        item_detail = kwargs.pop('item_detail', True)
-        location_detail = kwargs.pop('location_detail', False)
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if not order_detail:
-            self.fields.pop('order_detail', None)
-
-        if not part_detail:
-            self.fields.pop('part_detail', None)
-
-        if not item_detail:
-            self.fields.pop('item_detail', None)
-
-        if not location_detail:
-            self.fields.pop('location_detail', None)
-
-        if not customer_detail:
-            self.fields.pop('customer_detail', None)
-
-    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
-    order = serializers.PrimaryKeyRelatedField(
-        source='line.order', many=False, read_only=True
-    )
-    serial = serializers.CharField(source='get_serial', read_only=True)
-    quantity = serializers.FloatField(read_only=False)
-    location = serializers.PrimaryKeyRelatedField(
-        source='item.location', many=False, read_only=True
-    )
-
-    # Extra detail fields
-    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
-    item_detail = stock.serializers.StockItemSerializerBrief(
-        source='item', many=False, read_only=True
-    )
-    location_detail = stock.serializers.LocationBriefSerializer(
-        source='item.location', many=False, read_only=True
-    )
-    customer_detail = CompanyBriefSerializer(
-        source='line.order.customer', many=False, read_only=True
-    )
-
-    shipment_date = serializers.DateField(
-        source='shipment.shipment_date', read_only=True
-    )
-
-
 @register_importer()
 class SalesOrderLineItemSerializer(
     DataImportExportSerializerMixin,
@@ -1311,6 +1229,88 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     )
 
     order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
+
+
+class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
+    """Serializer for the SalesOrderAllocation model.
+
+    This includes some fields from the related model objects.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.SalesOrderAllocation
+
+        fields = [
+            'pk',
+            'line',
+            'customer_detail',
+            'serial',
+            'quantity',
+            'location',
+            'location_detail',
+            'item',
+            'item_detail',
+            'order',
+            'order_detail',
+            'part',
+            'part_detail',
+            'shipment',
+            'shipment_detail',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer."""
+        order_detail = kwargs.pop('order_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
+        item_detail = kwargs.pop('item_detail', True)
+        location_detail = kwargs.pop('location_detail', False)
+        customer_detail = kwargs.pop('customer_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail', None)
+
+        if not part_detail:
+            self.fields.pop('part_detail', None)
+
+        if not item_detail:
+            self.fields.pop('item_detail', None)
+
+        if not location_detail:
+            self.fields.pop('location_detail', None)
+
+        if not customer_detail:
+            self.fields.pop('customer_detail', None)
+
+    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
+    order = serializers.PrimaryKeyRelatedField(
+        source='line.order', many=False, read_only=True
+    )
+    serial = serializers.CharField(source='get_serial', read_only=True)
+    quantity = serializers.FloatField(read_only=False)
+    location = serializers.PrimaryKeyRelatedField(
+        source='item.location', many=False, read_only=True
+    )
+
+    # Extra detail fields
+    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    item_detail = stock.serializers.StockItemSerializerBrief(
+        source='item', many=False, read_only=True
+    )
+    location_detail = stock.serializers.LocationBriefSerializer(
+        source='item.location', many=False, read_only=True
+    )
+    customer_detail = CompanyBriefSerializer(
+        source='line.order.customer', many=False, read_only=True
+    )
+
+    shipment_detail = SalesOrderShipmentSerializer(
+        source='shipment', many=False, read_only=True
+    )
 
 
 class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):

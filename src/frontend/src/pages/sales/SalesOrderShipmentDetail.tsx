@@ -255,7 +255,12 @@ export default function SalesOrderShipmentDetail() {
 
     return [
       <DetailsBadge label={t`Pending`} color="gray" visible={isPending} />,
-      <DetailsBadge label={t`Shipped`} color="green" visible={!isPending} />
+      <DetailsBadge label={t`Shipped`} color="green" visible={!isPending} />,
+      <DetailsBadge
+        label={t`Delivered`}
+        color="blue"
+        visible={!!shipment.delivery_date}
+      />
     ];
   }, [shipment, shipmentQuery]);
 

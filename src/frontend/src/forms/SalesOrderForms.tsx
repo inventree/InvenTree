@@ -122,6 +122,7 @@ export function useSalesOrderAllocateSerialsFields({
       serial_numbers: {},
       shipment: {
         filters: {
+          order_detail: true,
           order: orderId,
           shipped: false
         }
