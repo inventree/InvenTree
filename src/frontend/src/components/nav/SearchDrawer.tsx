@@ -68,7 +68,13 @@ function QueryResultGroup({
   const model = getModelInfo(query.model);
 
   return (
-    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
+    <Paper
+      shadow="sm"
+      radius="xs"
+      p="md"
+      key={`paper-${query.model}`}
+      aria-label={`search-group-${query.model}`}
+    >
       <Stack key={`stack-${query.model}`}>
         <Group justify="space-between" wrap="nowrap">
           <Group justify="left" gap={5} wrap="nowrap">
@@ -84,13 +90,14 @@ function QueryResultGroup({
             color="red"
             variant="transparent"
             radius="xs"
+            aria-label={`remove-search-group-${query.model}`}
             onClick={() => onRemove(query.model)}
           >
             <IconX />
           </ActionIcon>
         </Group>
         <Divider />
-        <Stack>
+        <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
               onClick={(event: any) =>
@@ -367,6 +374,7 @@ export function SearchDrawer({
       title={
         <Group justify="space-between" gap={1} wrap="nowrap">
           <TextInput
+            aria-label="global-search-input"
             placeholder={t`Enter search text`}
             radius="xs"
             value={value}

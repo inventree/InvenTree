@@ -50,8 +50,10 @@ import { useGlobalSettingsState } from '../states/SettingsState';
 export function useStockFields({
   item_detail,
   part_detail,
+  partId,
   create = false
 }: {
+  partId?: number;
   item_detail?: any;
   part_detail?: any;
   create: boolean;
@@ -81,7 +83,7 @@ export function useStockFields({
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: part,
+        value: partId,
         disabled: !create,
         filters: {
           active: create ? true : undefined
@@ -201,7 +203,8 @@ export function useStockFields({
     batchCode,
     serialNumbers,
     trackable,
-    create
+    create,
+    partId
   ]);
 }
 
