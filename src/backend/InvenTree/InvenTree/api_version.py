@@ -1,18 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 266
+INVENTREE_API_VERSION = 267
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-266 - 2024-10-8 : https://github.com/inventree/InvenTree/pull/8250
+267 - 2024-10-8 : https://github.com/inventree/InvenTree/pull/8250
     - Remove "allocations" field from the SalesOrderShipment API endpoint(s)
     - Add "allocated_items" field to the SalesOrderShipment API endpoint(s)
 
-265 - 2024-10-06 : https://github.com/inventree/InvenTree/pull/8228
+266 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8249
+    - Tweak SalesOrderShipment API for more efficient data retrieval
+
+265 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8228
     - Adds API endpoint for providing custom admin integration details for plugins
 
 264 - 2024-10-03 : https://github.com/inventree/InvenTree/pull/8231

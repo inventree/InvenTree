@@ -1878,15 +1878,10 @@ class SalesOrderShipment(
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
         """
+        import order.tasks
+
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
-
-        allocations = self.allocations.all()
-
-        # Iterate through each stock item assigned to this shipment
-        for allocation in allocations:
-            # Mark the allocation as "complete"
-            allocation.complete_allocation(user)
 
         # Update the "shipment" date
         self.shipment_date = kwargs.get(
@@ -1919,6 +1914,14 @@ class SalesOrderShipment(
             self.delivery_date = delivery_date
 
         self.save()
+
+        # Offload the "completion" of each line item to the background worker
+        # This may take some time, and we don't want to block the main thread
+        InvenTree.tasks.offload_task(
+            order.tasks.complete_sales_order_shipment,
+            shipment_id=self.pk,
+            user_id=user.pk if user else None,
+        )
 
         trigger_event('salesordershipment.completed', id=self.pk)
 
