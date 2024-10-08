@@ -892,11 +892,61 @@ class SalesOrderAllocationDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.SalesOrderAllocationSerializer
 
 
+class SalesOrderAllocationFilter(rest_filters.FilterSet):
+    """Custom filterset for the SalesOrderAllocationList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.SalesOrderAllocation
+        fields = ['shipment', 'item']
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.SalesOrder.objects.all(),
+        field_name='line__order',
+        label=_('Order'),
+    )
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='item__part', label=_('Part')
+    )
+
+    outstanding = rest_filters.BooleanFilter(
+        label=_('Outstanding'), method='filter_outstanding'
+    )
+
+    def filter_outstanding(self, queryset, name, value):
+        """Filter by "outstanding" status (boolean)."""
+        if str2bool(value):
+            return queryset.filter(
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
+                shipment__shipment_date=None,
+            )
+        return queryset.exclude(
+            shipment__shipment_date=None,
+            line__order__status__in=SalesOrderStatusGroups.OPEN,
+        )
+
+
 class SalesOrderAllocationList(ListAPI):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     queryset = models.SalesOrderAllocation.objects.all()
     serializer_class = serializers.SalesOrderAllocationSerializer
+    filterset_class = SalesOrderAllocationFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = ['quantity', 'part', 'serial', 'batch', 'location', 'order']
+
+    ordering_field_aliases = {
+        'part': 'item__part__name',
+        'serial': ['item__serial_int', 'item__serial'],
+        'batch': 'item__batch',
+        'location': 'item__location__name',
+        'order': 'line__order__reference',
+    }
+
+    search_fields = {'item__part__name', 'item__serial', 'item__batch'}
 
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for this endpoint.
@@ -915,54 +965,6 @@ class SalesOrderAllocationList(ListAPI):
             pass
 
         return self.serializer_class(*args, **kwargs)
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        queryset = super().filter_queryset(queryset)
-
-        # Filter by order
-        params = self.request.query_params
-
-        # Filter by "part" reference
-        part = params.get('part', None)
-
-        if part is not None:
-            queryset = queryset.filter(item__part=part)
-
-        # Filter by "order" reference
-        order = params.get('order', None)
-
-        if order is not None:
-            queryset = queryset.filter(line__order=order)
-
-        # Filter by "stock item"
-        item = params.get('item', params.get('stock_item', None))
-
-        if item is not None:
-            queryset = queryset.filter(item=item)
-
-        # Filter by "outstanding" order status
-        outstanding = params.get('outstanding', None)
-
-        if outstanding is not None:
-            outstanding = str2bool(outstanding)
-
-            if outstanding:
-                # Filter only "open" orders
-                # Filter only allocations which have *not* shipped
-                queryset = queryset.filter(
-                    line__order__status__in=SalesOrderStatusGroups.OPEN,
-                    shipment__shipment_date=None,
-                )
-            else:
-                queryset = queryset.exclude(
-                    line__order__status__in=SalesOrderStatusGroups.OPEN,
-                    shipment__shipment_date=None,
-                )
-
-        return queryset
-
-    filter_backends = [rest_filters.DjangoFilterBackend]
 
 
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
