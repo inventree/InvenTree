@@ -22,15 +22,26 @@ export default function SalesOrderShipmentDetail() {
 
   const {
     instance: shipment,
-    instanceQuery,
-    refreshInstance,
-    requestStatus
+    instanceQuery: shipmentQuery,
+    refreshInstance: refreshShipment,
+    requestStatus: shipmentStatus
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_shipment_list,
     pk: id,
     params: {
       order_detail: true
     }
+  });
+
+  const {
+    instance: customer,
+    instanceQuery: customerQuery,
+    refreshInstance: refreshCustomer,
+    requestStatus: customerStatus
+  } = useInstance({
+    endpoint: ApiEndpoints.company_list,
+    pk: shipment.order_detail?.customer,
+    hasPrimaryKey: true
   });
 
   const shipmentPanels: PanelType[] = useMemo(() => {
@@ -60,7 +71,10 @@ export default function SalesOrderShipmentDetail() {
 
   return (
     <>
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={shipmentStatus}
+        loading={shipmentQuery.isFetching || customerQuery.isFetching}
+      >
         <Stack gap="xs">
           <PageDetail
             title={t`Sales Order Shipment` + `: ${shipment.reference}`}
