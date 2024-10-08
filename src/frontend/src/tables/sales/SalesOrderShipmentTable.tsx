@@ -7,7 +7,10 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
+import {
+  useSalesOrderShipmentCompleteFields,
+  useSalesOrderShipmentFields
+} from '../../forms/SalesOrderForms';
 import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
@@ -34,11 +37,13 @@ export default function SalesOrderShipmentTable({
   const navigate = useNavigate();
   const table = useTable('sales-order-shipment');
 
-  const [selectedShipment, setSelectedShipment] = useState<number>(0);
+  const [selectedShipment, setSelectedShipment] = useState<any>({});
 
   const newShipmentFields = useSalesOrderShipmentFields({});
 
   const editShipmentFields = useSalesOrderShipmentFields({});
+
+  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
@@ -52,17 +57,30 @@ export default function SalesOrderShipmentTable({
 
   const deleteShipment = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
-    pk: selectedShipment,
+    pk: selectedShipment.pk,
     title: t`Cancel Shipment`,
     table: table
   });
 
   const editShipment = useEditApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
-    pk: selectedShipment,
+    pk: selectedShipment.pk,
     fields: editShipmentFields,
     title: t`Edit Shipment`,
     table: table
+  });
+
+  const completeShipment = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_complete,
+    pk: selectedShipment.pk,
+    fields: completeShipmentFields,
+    title: t`Complete Shipment`,
+    table: table,
+    focus: 'tracking_number',
+    initialData: {
+      ...selectedShipment,
+      shipment_date: new Date().toISOString().split('T')[0]
+    }
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -120,13 +138,16 @@ export default function SalesOrderShipmentTable({
           title: t`Complete Shipment`,
           color: 'green',
           icon: <IconTruckDelivery />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedShipment(record);
+            completeShipment.open();
+          }
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.sales_order),
           tooltip: t`Edit shipment`,
           onClick: () => {
-            setSelectedShipment(record.pk);
+            setSelectedShipment(record);
             editShipment.open();
           }
         }),
@@ -134,7 +155,7 @@ export default function SalesOrderShipmentTable({
           hidden: shipped || !user.hasDeleteRole(UserRoles.sales_order),
           tooltip: t`Cancel shipment`,
           onClick: () => {
-            setSelectedShipment(record.pk);
+            setSelectedShipment(record);
             deleteShipment.open();
           }
         })
@@ -176,6 +197,7 @@ export default function SalesOrderShipmentTable({
       {newShipment.modal}
       {editShipment.modal}
       {deleteShipment.modal}
+      {completeShipment.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_shipment_list)}
         tableState={table}

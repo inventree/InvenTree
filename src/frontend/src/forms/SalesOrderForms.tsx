@@ -155,6 +155,21 @@ export function useSalesOrderShipmentFields({
   }, [pending]);
 }
 
+export function useSalesOrderShipmentCompleteFields({
+  shipmentId
+}: {
+  shipmentId?: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      shipment_date: {},
+      tracking_number: {},
+      invoice_number: {},
+      link: {}
+    };
+  }, [shipmentId]);
+}
+
 export function useSalesOrderAllocationFields({
   shipmentId
 }: {

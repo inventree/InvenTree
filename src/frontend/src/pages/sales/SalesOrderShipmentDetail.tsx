@@ -26,9 +26,13 @@ import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
+import {
+  useSalesOrderShipmentCompleteFields,
+  useSalesOrderShipmentFields
+} from '../../forms/SalesOrderForms';
 import { getDetailUrl } from '../../functions/urls';
 import {
+  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -248,6 +252,21 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
+  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
+
+  const completeShipment = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_complete,
+    pk: shipment.pk,
+    fields: completeShipmentFields,
+    title: t`Complete Shipment`,
+    focus: 'tracking_number',
+    initialData: {
+      ...shipment,
+      shipment_date: new Date().toISOString().split('T')[0]
+    },
+    onFormSuccess: refreshShipment
+  });
+
   const shipmentBadges = useMemo(() => {
     if (shipmentQuery.isFetching) {
       return [];
@@ -276,7 +295,7 @@ export default function SalesOrderShipmentDetail() {
         hidden={!isPending}
         color="green"
         onClick={() => {
-          // TODO: Ship the order
+          completeShipment.open();
         }}
       />,
       <BarcodeActionDropdown
@@ -309,6 +328,7 @@ export default function SalesOrderShipmentDetail() {
 
   return (
     <>
+      {completeShipment.modal}
       {editShipment.modal}
       {deleteShipment.modal}
       <InstanceDetail

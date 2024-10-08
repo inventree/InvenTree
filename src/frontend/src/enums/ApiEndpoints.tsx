@@ -166,6 +166,7 @@ export enum ApiEndpoints {
   sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
 
   sales_order_shipment_list = 'order/so/shipment/',
+  sales_order_shipment_complete = 'order/so/shipment/:id/ship/',
 
   return_order_list = 'order/ro/',
   return_order_issue = 'order/ro/:id/issue/',
