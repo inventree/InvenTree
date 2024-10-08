@@ -153,3 +153,15 @@ export function useSalesOrderShipmentFields({
     };
   }, [pending]);
 }
+
+export function useSalesOrderAllocationFields({
+  shipmentId
+}: {
+  shipmentId?: number;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      quantity: {}
+    };
+  }, [shipmentId]);
+}

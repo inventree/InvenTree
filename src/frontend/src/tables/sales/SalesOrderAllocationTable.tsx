@@ -1,17 +1,21 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
-  BooleanColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -129,6 +133,27 @@ export default function SalesOrderAllocationTable({
     ];
   }, []);
 
+  const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
+
+  const editAllocationFields = useSalesOrderAllocationFields({
+    shipmentId: shipmentId
+  });
+
+  const editAllocation = useEditApiFormModal({
+    url: ApiEndpoints.sales_order_allocation_list,
+    pk: selectedAllocation,
+    fields: editAllocationFields,
+    title: t`Edit Allocation`,
+    table: table
+  });
+
+  const deleteAllocation = useDeleteApiFormModal({
+    url: ApiEndpoints.sales_order_allocation_list,
+    pk: selectedAllocation,
+    title: t`Delete Allocation`,
+    table: table
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       // Do not allow "shipped" items to be manipulated
@@ -142,13 +167,15 @@ export default function SalesOrderAllocationTable({
         RowEditAction({
           tooltip: t`Edit Allocation`,
           onClick: () => {
-            // Open the stock allocation modal
+            setSelectedAllocation(record.pk);
+            editAllocation.open();
           }
         }),
         RowDeleteAction({
           tooltip: t`Delete Allocation`,
           onClick: () => {
-            // TODO: Delete the allocation
+            setSelectedAllocation(record.pk);
+            deleteAllocation.open();
           }
         })
       ];
@@ -173,27 +200,31 @@ export default function SalesOrderAllocationTable({
   }, [allowEdit, user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          part_detail: showPartInfo ?? false,
-          order_detail: showOrderInfo ?? false,
-          item_detail: true,
-          location_detail: true,
-          part: partId,
-          order: orderId,
-          shipment: shipmentId,
-          item: stockId
-        },
-        rowActions: rowActions,
-        tableActions: tableActions,
-        tableFilters: tableFilters,
-        modelField: modelField ?? 'order',
-        modelType: modelTarget ?? ModelType.salesorder
-      }}
-    />
+    <>
+      {editAllocation.modal}
+      {deleteAllocation.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            part_detail: showPartInfo ?? false,
+            order_detail: showOrderInfo ?? false,
+            item_detail: true,
+            location_detail: true,
+            part: partId,
+            order: orderId,
+            shipment: shipmentId,
+            item: stockId
+          },
+          rowActions: rowActions,
+          tableActions: tableActions,
+          tableFilters: tableFilters,
+          modelField: modelField ?? 'order',
+          modelType: modelTarget ?? ModelType.salesorder
+        }}
+      />
+    </>
   );
 }
