@@ -749,7 +749,6 @@ class SalesOrderLineItemMixin:
 
             kwargs['part_detail'] = str2bool(params.get('part_detail', False))
             kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-            kwargs['allocations'] = str2bool(params.get('allocations', False))
             kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
 
         except AttributeError:

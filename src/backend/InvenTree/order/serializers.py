@@ -1125,7 +1125,6 @@ class SalesOrderLineItemSerializer(
         fields = [
             'pk',
             'allocated',
-            'allocations',
             'customer_detail',
             'quantity',
             'reference',
@@ -1154,7 +1153,6 @@ class SalesOrderLineItemSerializer(
         """
         part_detail = kwargs.pop('part_detail', False)
         order_detail = kwargs.pop('order_detail', False)
-        allocations = kwargs.pop('allocations', False)
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -1164,9 +1162,6 @@ class SalesOrderLineItemSerializer(
 
         if order_detail is not True:
             self.fields.pop('order_detail', None)
-
-        if allocations is not True:
-            self.fields.pop('allocations', None)
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
@@ -1251,13 +1246,10 @@ class SalesOrderLineItemSerializer(
 
         return queryset
 
-    customer_detail = CompanyBriefSerializer(
-        source='order.customer', many=False, read_only=True
-    )
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-    allocations = SalesOrderAllocationSerializer(
-        many=True, read_only=True, location_detail=True
+    customer_detail = CompanyBriefSerializer(
+        source='order.customer', many=False, read_only=True
     )
 
     # Annotated fields
