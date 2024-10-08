@@ -130,19 +130,26 @@ export function useSalesOrderAllocateSerialsFields({
   }, [itemId, orderId]);
 }
 
-export function useSalesOrderShipmentFields(): ApiFormFieldSet {
+export function useSalesOrderShipmentFields({
+  pending
+}: {
+  pending?: boolean;
+}): ApiFormFieldSet {
   return useMemo(() => {
     return {
       order: {
         disabled: true
       },
       reference: {},
-      shipment_date: {},
-      delivery_date: {},
+      shipment_date: {
+        hidden: pending ?? true
+      },
+      delivery_date: {
+        hidden: pending ?? true
+      },
       tracking_number: {},
       invoice_number: {},
-      link: {},
-      notes: {}
+      link: {}
     };
-  }, []);
+  }, [pending]);
 }

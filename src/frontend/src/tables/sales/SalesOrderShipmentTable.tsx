@@ -23,7 +23,7 @@ import { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowCancelAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId
@@ -36,8 +36,9 @@ export default function SalesOrderShipmentTable({
 
   const [selectedShipment, setSelectedShipment] = useState<number>(0);
 
-  const newShipmentFields = useSalesOrderShipmentFields();
-  const editShipmentFields = useSalesOrderShipmentFields();
+  const newShipmentFields = useSalesOrderShipmentFields({});
+
+  const editShipmentFields = useSalesOrderShipmentFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
@@ -52,7 +53,7 @@ export default function SalesOrderShipmentTable({
   const deleteShipment = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
     pk: selectedShipment,
-    title: t`Delete Shipment`,
+    title: t`Cancel Shipment`,
     table: table
   });
 
@@ -127,13 +128,15 @@ export default function SalesOrderShipmentTable({
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.sales_order),
+          tooltip: t`Edit shipment`,
           onClick: () => {
             setSelectedShipment(record.pk);
             editShipment.open();
           }
         }),
-        RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.sales_order),
+        RowCancelAction({
+          hidden: shipped || !user.hasDeleteRole(UserRoles.sales_order),
+          tooltip: t`Cancel shipment`,
           onClick: () => {
             setSelectedShipment(record.pk);
             deleteShipment.open();

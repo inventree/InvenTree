@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconPackages } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
@@ -12,7 +12,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
-  DeleteItemAction,
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
@@ -22,17 +21,23 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
 import { getDetailUrl } from '../../functions/urls';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 
 export default function SalesOrderShipmentDetail() {
   const { id } = useParams();
   const user = useUserState();
+  const navigate = useNavigate();
 
   const {
     instance: shipment,
@@ -57,6 +62,8 @@ export default function SalesOrderShipmentDetail() {
     pk: shipment.order_detail?.customer,
     hasPrimaryKey: true
   });
+
+  const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
 
   const detailsPanel = useMemo(() => {
     if (shipmentQuery.isFetching || customerQuery.isFetching) {
@@ -96,6 +103,13 @@ export default function SalesOrderShipmentDetail() {
         label: t`Customer Reference`,
         hidden: !data.customer_reference,
         copy: true
+      },
+      {
+        type: 'text',
+        name: 'reference',
+        icon: 'serial',
+        label: t`Shipment Reference`,
+        copy: true
       }
     ];
 
@@ -106,14 +120,40 @@ export default function SalesOrderShipmentDetail() {
         name: 'tracking_number',
         label: t`Tracking Number`,
         icon: 'trackable',
-        copy: true
+        value_formatter: () => shipment.tracking_number ?? '---',
+        copy: !!shipment.tracking_number
       },
       {
         type: 'text',
         name: 'invoice_number',
         label: t`Invoice Number`,
         icon: 'serial',
-        copy: true
+        value_formatter: () => shipment.invoice_number ?? '---',
+        copy: !!shipment.invoice_number
+      },
+      {
+        type: 'text',
+        name: 'shipment_date',
+        label: t`Shipment Date`,
+        icon: 'calendar',
+        value_formatter: () => formatDate(shipment.shipment_date),
+        hidden: !shipment.shipment_date
+      },
+      {
+        type: 'text',
+        name: 'delivery_date',
+        label: t`Delivery Date`,
+        icon: 'calendar',
+        value_formatter: () => formatDate(shipment.delivery_date),
+        hidden: !shipment.delivery_date
+      },
+      {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`Link`,
+        copy: true,
+        hidden: !shipment.link
       }
     ];
 
@@ -170,12 +210,26 @@ export default function SalesOrderShipmentDetail() {
     ];
   }, [shipment, detailsPanel]);
 
+  const editShipmentFields = useSalesOrderShipmentFields({
+    pending: isPending
+  });
+
   const editShipment = useEditApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
     pk: shipment.pk,
-    fields: {},
+    fields: editShipmentFields,
     title: t`Edit Shipment`,
     onFormSuccess: refreshShipment
+  });
+
+  const deleteShipment = useDeleteApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_list,
+    pk: shipment.pk,
+    title: t`Cancel Shipment`,
+    onFormSuccess: () => {
+      // Shipment has been deleted - navigate back to the sales order
+      navigate(getDetailUrl(ModelType.salesorder, shipment.order));
+    }
   });
 
   const shipmentActions = useMemo(() => {
@@ -183,13 +237,11 @@ export default function SalesOrderShipmentDetail() {
       ModelType.salesordershipment
     );
 
-    const isOpen = true; // TODO: Fix this
-
     return [
       <PrimaryActionButton
         title={t`Send Shipment`}
         icon="sales_orders"
-        hidden={!isOpen}
+        hidden={!isPending}
         color="green"
         onClick={() => {
           // TODO: Ship the order
@@ -214,20 +266,19 @@ export default function SalesOrderShipmentDetail() {
             tooltip: t`Edit Shipment`
           }),
           CancelItemAction({
-            hidden: !isOpen,
-            onClick: () => {
-              // TODO: Delete the shipment
-            },
+            hidden: !isPending,
+            onClick: deleteShipment.open,
             tooltip: t`Cancel Shipment`
           })
         ]}
       />
     ];
-  }, [user, shipment]);
+  }, [isPending, user, shipment]);
 
   return (
     <>
       {editShipment.modal}
+      {deleteShipment.modal}
       <InstanceDetail
         status={shipmentStatus}
         loading={shipmentQuery.isFetching || customerQuery.isFetching}
@@ -235,6 +286,7 @@ export default function SalesOrderShipmentDetail() {
         <Stack gap="xs">
           <PageDetail
             title={t`Sales Order Shipment` + `: ${shipment.reference}`}
+            subtitle={t`Sales Order` + `: ${shipment.order_detail?.reference}`}
             breadcrumbs={[
               { name: t`Sales`, url: '/sales/' },
               {
