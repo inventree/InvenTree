@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Table } from '@mantine/core';
 import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
@@ -221,6 +221,11 @@ export function useAllocateToSalesOrderForm({
   onFormSuccess: (response: any) => void;
 }) {
   const [sourceLocation, setSourceLocation] = useState<number | null>(null);
+
+  // Reset source location to known state
+  useEffect(() => {
+    setSourceLocation(null);
+  }, [orderId, shipmentId, lineItems]);
 
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
