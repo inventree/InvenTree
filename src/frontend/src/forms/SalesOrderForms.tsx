@@ -247,6 +247,7 @@ export function useAllocateToSalesOrderForm({
 
           return (
             <SalesOrderAllocateLineRow
+              key={`table-row-${row.idx}-${record.pk}`}
               props={row}
               record={record}
               sourceLocation={sourceLocation}

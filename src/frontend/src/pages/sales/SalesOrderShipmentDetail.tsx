@@ -207,7 +207,7 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         name: 'items',
-        label: isPending ? t`Assigned Items` : t`Shipped Items`,
+        label: t`Assigned Items`,
         icon: <IconPackages />,
         content: (
           <SalesOrderAllocationTable
