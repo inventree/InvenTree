@@ -70,15 +70,14 @@ export default function SalesOrderShipmentTable({
       {
         accessor: 'reference',
         title: t`Shipment Reference`,
-        switchable: false
+        switchable: false,
+        sortable: true
       },
       {
-        accessor: 'allocations',
-        title: t`Items`,
-        render: (record: any) => {
-          let allocations = record?.allocations ?? [];
-          return allocations.length;
-        }
+        accessor: 'allocated_items',
+        sortable: true,
+        switchable: false,
+        title: t`Items`
       },
       DateColumn({
         accessor: 'shipment_date',
@@ -96,9 +95,6 @@ export default function SalesOrderShipmentTable({
       },
       LinkColumn({
         accessor: 'link'
-      }),
-      NoteColumn({
-        accessor: 'notes'
       })
     ];
   }, []);

@@ -1001,13 +1001,7 @@ class SalesOrderShipmentMixin:
         """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'order',
-            'order__customer',
-            'allocations',
-            'allocations__item',
-            'allocations__item__part',
-        )
+        queryset = serializers.SalesOrderShipmentSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -1016,10 +1010,8 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
 
     filterset_class = SalesOrderShipmentFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
-
-    ordering_fields = ['delivery_date', 'shipment_date']
+    ordering_fields = ['reference', 'delivery_date', 'shipment_date', 'allocated_items']
 
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):

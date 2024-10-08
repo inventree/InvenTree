@@ -1293,7 +1293,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'pk',
             'order',
             'order_detail',
-            'allocations',
+            'allocated_items',
             'shipment_date',
             'delivery_date',
             'checked_by',
@@ -1304,8 +1304,18 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'notes',
         ]
 
-    allocations = SalesOrderAllocationSerializer(
-        many=True, read_only=True, location_detail=True
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with extra information."""
+        # Prefetch related objects
+        queryset = queryset.prefetch_related('order', 'order__customer', 'allocations')
+
+        queryset = queryset.annotate(allocated_items=SubqueryCount('allocations'))
+
+        return queryset
+
+    allocated_items = serializers.IntegerField(
+        read_only=True, label=_('Allocated Items')
     )
 
     order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
