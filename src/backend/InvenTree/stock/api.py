@@ -956,8 +956,8 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         # Check if the supplier_part has a package size defined, which is not 1
         if supplier_part_id := data.get('supplier_part', None):
             try:
-                supplier_part = SupplierPart.objects.get(supplier_part_id)
-            except (ValueError, SupplierPart.DoesNotExist):
+                supplier_part = SupplierPart.objects.get(pk=supplier_part_id)
+            except Exception:
                 raise ValidationError({
                     'supplier_part': _('The given supplier part does not exist')
                 })
