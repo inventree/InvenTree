@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -110,6 +111,12 @@ export default function SalesOrderShipmentDetail() {
         icon: 'serial',
         label: t`Shipment Reference`,
         copy: true
+      },
+      {
+        type: 'text',
+        name: 'allocated_items',
+        icon: 'packages',
+        label: t`Allocated Items`
       }
     ];
 
@@ -120,7 +127,7 @@ export default function SalesOrderShipmentDetail() {
         name: 'tracking_number',
         label: t`Tracking Number`,
         icon: 'trackable',
-        value_formatter: () => shipment.tracking_number ?? '---',
+        value_formatter: () => shipment.tracking_number || '---',
         copy: !!shipment.tracking_number
       },
       {
@@ -128,7 +135,7 @@ export default function SalesOrderShipmentDetail() {
         name: 'invoice_number',
         label: t`Invoice Number`,
         icon: 'serial',
-        value_formatter: () => shipment.invoice_number ?? '---',
+        value_formatter: () => shipment.invoice_number || '---',
         copy: !!shipment.invoice_number
       },
       {
@@ -232,6 +239,17 @@ export default function SalesOrderShipmentDetail() {
     }
   });
 
+  const shipmentBadges = useMemo(() => {
+    if (shipmentQuery.isFetching) {
+      return [];
+    }
+
+    return [
+      <DetailsBadge label={t`Pending`} color="gray" visible={isPending} />,
+      <DetailsBadge label={t`Shipped`} color="green" visible={!isPending} />
+    ];
+  }, [shipment, shipmentQuery]);
+
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
       ModelType.salesordershipment
@@ -294,6 +312,7 @@ export default function SalesOrderShipmentDetail() {
                 url: getDetailUrl(ModelType.salesorder, shipment.order)
               }
             ]}
+            badges={shipmentBadges}
             imageUrl={customer?.image}
             editAction={editShipment.open}
             editEnabled={user.hasChangePermission(ModelType.salesordershipment)}
