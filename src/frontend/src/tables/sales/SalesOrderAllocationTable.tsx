@@ -1,8 +1,10 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -113,6 +115,22 @@ export default function SalesOrderAllocationTable({
     [user]
   );
 
+  const tableActions = useMemo(() => {
+    if (!allowEdit) {
+      return [];
+    }
+
+    return [
+      <AddItemButton
+        tooltip={t`Allocate Stock`}
+        onClick={() => {
+          // Open the stock allocation modal
+        }}
+        hidden={!user.hasAddRole(UserRoles.sales_order)}
+      />
+    ];
+  }, [allowEdit, user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiEndpoints.sales_order_allocation_list)}
@@ -130,6 +148,7 @@ export default function SalesOrderAllocationTable({
           stock_item: stockId
         },
         rowActions: rowActions,
+        tableActions: tableActions,
         tableFilters: tableFilters,
         modelField: modelField ?? 'order',
         modelType: modelTarget ?? ModelType.salesorder

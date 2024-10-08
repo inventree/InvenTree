@@ -203,13 +203,13 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         name: 'items',
-        label: t`Assigned Items`,
+        label: isPending ? t`Assigned Items` : t`Shipped Items`,
         icon: <IconPackages />,
         content: (
           <SalesOrderAllocationTable
             shipmentId={shipment.pk}
             showPartInfo
-            allowEdit
+            allowEdit={isPending}
             modelField="item"
             modelTarget={ModelType.stockitem}
           />
@@ -224,7 +224,7 @@ export default function SalesOrderShipmentDetail() {
         model_id: shipment.pk
       })
     ];
-  }, [shipment, detailsPanel]);
+  }, [isPending, shipment, detailsPanel]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
     pending: isPending
