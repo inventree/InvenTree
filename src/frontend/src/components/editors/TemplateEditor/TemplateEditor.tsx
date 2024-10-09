@@ -9,7 +9,11 @@ import {
   Tabs
 } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
-import { notifications, showNotification } from '@mantine/notifications';
+import {
+  hideNotification,
+  notifications,
+  showNotification
+} from '@mantine/notifications';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,
@@ -125,11 +129,33 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
     if (!templateUrl) return;
 
     api.get(templateUrl).then((response: any) => {
+      // Fetch the template file from the server.
+      // Request that the server does not cache the response.
+
       if (response.data?.template) {
-        api.get(response.data.template).then((res) => {
-          codeRef.current = res.data;
-          loadCodeToEditor(res.data);
-        });
+        api
+          .get(response.data.template, {
+            headers: {
+              'Cache-Control': 'no-cache, max-age=0'
+            }
+          })
+          .then((res) => {
+            codeRef.current = res.data;
+            loadCodeToEditor(res.data);
+          })
+          .catch(() => {
+            console.error(
+              `ERR: Could not load template from ${response.data.template}`
+            );
+            codeRef.current = undefined;
+            hideNotification('template-load-error');
+            showNotification({
+              id: 'template-load-error',
+              title: t`Error`,
+              message: t`Could not load the template from the server.`,
+              color: 'red'
+            });
+          });
       }
     });
   }, [templateUrl]);
