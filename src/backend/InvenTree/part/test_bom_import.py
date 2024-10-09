@@ -82,7 +82,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         """POST with an unsupported file type."""
         response = self.post_bom('sample.txt', b'hello world', expected_code=400)
 
-        self.assertIn('Unsupported file type', str(response.data['data_file']))
+        self.assertIn('Unsupported file format', str(response.data['data_file']))
 
     def test_broken_file(self):
         """Test upload with broken (corrupted) files."""

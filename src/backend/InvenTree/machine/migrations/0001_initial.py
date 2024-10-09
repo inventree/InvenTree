@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             name='MachineSetting',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(help_text='Settings key (must be unique - case insensitive)', max_length=50)),
+                ('key', models.CharField(help_text='Settings key', max_length=50)),
                 ('value', models.CharField(blank=True, help_text='Settings value', max_length=2000)),
                 ('config_type', models.CharField(choices=[('M', 'Machine'), ('D', 'Driver')], max_length=1, verbose_name='Config type')),
                 ('machine_config', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='settings', to='machine.machineconfig', verbose_name='Machine Config')),

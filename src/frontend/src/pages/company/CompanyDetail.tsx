@@ -171,7 +171,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Company Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },

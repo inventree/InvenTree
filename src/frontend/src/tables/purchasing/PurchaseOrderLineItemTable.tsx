@@ -125,17 +125,18 @@ export function PurchaseOrderLineItemTable({
     return [
       {
         accessor: 'part',
-        title: t`Internal Part`,
+        title: t`Part`,
         sortable: true,
         switchable: false,
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
-        accessor: 'description',
-        title: t`Part Description`,
-
-        sortable: false,
-        render: (record: any) => record?.part_detail?.description
+        accessor: 'part_detail.IPN',
+        sortable: false
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false
       },
       ReferenceColumn({}),
       {
@@ -341,7 +342,7 @@ export function PurchaseOrderLineItemTable({
       />,
       <AddItemButton
         key="add-line-item"
-        tooltip={t`Add line item`}
+        tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
             order: orderId
