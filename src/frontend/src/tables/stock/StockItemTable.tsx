@@ -449,7 +449,7 @@ export function StockItemTable({
         disabled={table.selectedRecords.length === 0}
         actions={[
           {
-            name: t`Add stock`,
+            name: t`Add Stock`,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             tooltip: t`Add a new stock item`,
             disabled: !can_add_stock,
@@ -458,7 +458,7 @@ export function StockItemTable({
             }
           },
           {
-            name: t`Remove stock`,
+            name: t`Remove Stock`,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             tooltip: t`Remove some quantity from a stock item`,
             disabled: !can_add_stock,
@@ -478,7 +478,7 @@ export function StockItemTable({
             }
           },
           {
-            name: t`Transfer stock`,
+            name: t`Transfer Stock`,
             icon: (
               <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
             ),

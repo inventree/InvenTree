@@ -539,7 +539,7 @@ export function BomTable({
       <Stack gap="xs">
         {partLocked && (
           <Alert
-            title={t`Part is Locked`}
+            title={t`Part is locked`}
             color="orange"
             icon={<IconLock />}
             p="xs"

@@ -277,7 +277,7 @@ export default function SalesOrderLineItemTable({
             allocated ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
-          title: t`Allocate stock`,
+          title: t`Allocate Stock`,
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: notYetImplemented
