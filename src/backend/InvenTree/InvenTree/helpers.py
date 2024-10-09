@@ -551,7 +551,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_('Invalid group') + f': {group}')
+                    add_error(_(f'Invalid group: {group}'))
                     continue
 
                 group_items = []
@@ -594,7 +594,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_('Invalid group') + f': {group}')
+                    add_error(_(f'Invalid group: {group}'))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -612,14 +612,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_('Invalid group') + f': {group}')
+                add_error(_(f'Invalid group: {group}'))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_('Invalid group') + f': {group}')
+                    add_error(_(f'Invalid group: {group}'))
                     continue
 
             value = items[0]
@@ -638,7 +638,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_('Invalid group') + f': {group}')
+                add_error(_(f'Invalid group: {group}'))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value

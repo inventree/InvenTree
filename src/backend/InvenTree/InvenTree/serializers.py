@@ -835,7 +835,7 @@ class DataFileExtractSerializer(serializers.Serializer):
             # Check for missing required columns
             if required and name not in self.columns:
                 raise serializers.ValidationError(
-                    _('Missing required column') + f": '{name}'"
+                    _(f"Missing required column: '{name}'")
                 )
 
         for col in self.columns:
@@ -844,7 +844,7 @@ class DataFileExtractSerializer(serializers.Serializer):
 
             # Check for duplicated columns
             if col in cols_seen:
-                raise serializers.ValidationError(_('Duplicate column') + f': {col}')
+                raise serializers.ValidationError(_(f"Duplicate column: '{col}'"))
 
             cols_seen.add(col)
 
