@@ -652,8 +652,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 <ButtonMenu
                   key="barcode-actions"
                   icon={<IconBarcode />}
-                  label={t`Barcode actions`}
-                  tooltip={t`Barcode actions`}
+                  label={t`Barcode Actions`}
+                  tooltip={t`Barcode Actions`}
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}

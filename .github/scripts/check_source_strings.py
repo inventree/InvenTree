@@ -56,14 +56,14 @@ def compare_source_strings(sources, threshold):
 
     for i, source in enumerate(sources):
         for other in sources[i + 1 :]:
-            ratio = rapidfuzz.fuzz.ratio(source, other)
-
             if other.lower() == source.lower():
                 print(f'- Duplicate: {source} ~ {other}')
                 issues += 1
+                continue
 
-            elif ratio > threshold:
-                print(f'- Close match: {source} ~ {other} ({ratio}%)')
+            ratio = rapidfuzz.fuzz.ratio(source, other)
+            if ratio > threshold:
+                print(f'- Close match: {source} ~ {other} ({ratio:.1f}%)')
                 issues += 1
 
     if issues:

@@ -38,7 +38,7 @@ export default function Reset() {
               type="submit"
               onClick={() => handleReset(navigate, simpleForm.values)}
             >
-              <Trans>Send mail</Trans>
+              <Trans>Send Email</Trans>
             </Button>
           </Stack>
         </Container>

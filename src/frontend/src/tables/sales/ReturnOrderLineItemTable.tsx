@@ -157,7 +157,7 @@ export default function ReturnOrderLineItemTable({
     return [
       <AddItemButton
         key="add-line-item"
-        tooltip={t`Add line item`}
+        tooltip={t`Add Line Item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
           newLine.open();

@@ -525,7 +525,7 @@ export function StockItemTable({
           {
             name: t`Delete stock`,
             icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
-            tooltip: t`Delete stock items`,
+            tooltip: t`Delete Stock Items`,
             disabled: !can_delete_stock,
             onClick: () => {
               deleteStock.open();
