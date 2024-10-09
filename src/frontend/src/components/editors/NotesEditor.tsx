@@ -31,8 +31,6 @@ export default function NotesEditor({
   modelId: number;
   editable?: boolean;
 }>) {
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -41,7 +39,6 @@ export default function NotesEditor({
   useEffect(() => {
     // Initially disable editing mode on load
     setEditing(false);
-    setIsDirty(false);
   }, [editable, modelId, modelType]);
 
   const noteUrl: string = useMemo(() => {
@@ -80,7 +77,6 @@ export default function NotesEditor({
         })
         .then((response: any) => {
           onSuccess(response.data.image);
-          setIsDirty(true);
           notifications.hide('notes');
           notifications.show({
             id: 'notes',
@@ -106,7 +102,6 @@ export default function NotesEditor({
   // Update internal markdown data when the query data changes
   useEffect(() => {
     setMarkdown(dataQuery.data ?? '');
-    setIsDirty(false);
   }, [dataQuery.data]);
 
   // Callback to save notes to the server
@@ -119,13 +114,13 @@ export default function NotesEditor({
       api
         .patch(noteUrl, { notes: markdown })
         .then(() => {
-          setIsDirty(false);
           notifications.hide('notes');
           notifications.show({
             title: t`Success`,
             message: t`Notes saved successfully`,
             color: 'green',
-            id: 'notes'
+            id: 'notes',
+            autoClose: 2000
           });
         })
         .catch((error) => {
@@ -155,12 +150,8 @@ export default function NotesEditor({
         action: (editor: SimpleMde) => {
           saveNotes(editor.value());
         },
-        // text: isDirty ? t`Save` : undefined,
-        className: isDirty ? 'fa fa-save' : 'fa fa-check',
-        title: isDirty ? t`Save Notes` : t`Notes Saved`,
-        attributes: {
-          color: isDirty ? 'green' : 'blue'
-        }
+        className: 'fa fa-save',
+        title: t`Save Notes`
       });
 
       icons.push('|');
@@ -204,7 +195,7 @@ export default function NotesEditor({
       shortcuts: {},
       spellChecker: false
     };
-  }, [editable, editing, isDirty]);
+  }, [editable, editing]);
 
   const [mdeInstance, setMdeInstance] = useState<SimpleMde | null>(null);
 
@@ -231,11 +222,6 @@ export default function NotesEditor({
       getMdeInstance={(instance: SimpleMde) => setMdeInstance(instance)}
       onChange={(value: string) => {
         setMarkdown(value);
-        setIsDirty(true);
-        // Set focus on the editor when the user starts typing
-        if (mdeInstance) {
-          mdeInstance.codemirror.focus();
-        }
       }}
       options={editorOptions}
       value={markdown}
