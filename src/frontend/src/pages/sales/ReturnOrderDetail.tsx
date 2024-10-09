@@ -326,7 +326,7 @@ export default function ReturnOrderDetail() {
     title: t`Cancel Return Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Cancel this order`,
-    successMessage: t`Order canceled`
+    successMessage: t`Order cancelled`
   });
 
   const holdOrder = useCreateApiFormModal({

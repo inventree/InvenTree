@@ -302,7 +302,7 @@ export default function BuildOutputTable({
           }
         },
         RowEditAction({
-          tooltip: t`Edit build output`,
+          tooltip: t`Edit Build Output`,
           onClick: () => {
             setSelectedOutputs([record]);
             editBuildOutput.open();

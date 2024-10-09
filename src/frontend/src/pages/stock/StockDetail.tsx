@@ -651,7 +651,7 @@ export default function StockDetail() {
           },
           {
             name: t`Add`,
-            tooltip: t`Add stock`,
+            tooltip: t`Add Stock`,
             hidden: serialized,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             onClick: () => {
@@ -660,7 +660,7 @@ export default function StockDetail() {
           },
           {
             name: t`Remove`,
-            tooltip: t`Remove stock`,
+            tooltip: t`Remove Stock`,
             hidden: serialized,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             onClick: () => {
@@ -678,7 +678,7 @@ export default function StockDetail() {
           },
           {
             name: t`Transfer`,
-            tooltip: t`Transfer stock`,
+            tooltip: t`Transfer Stock`,
             icon: (
               <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
             ),

@@ -40,7 +40,7 @@ msgstr "למשתמש אין הרשאה לצפות במוזל הזה"
 #: InvenTree/conversion.py:161
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr "סופקה יחידה שלא קיימת"
+msgstr "סופקה יחידה שלא קיימת ({unit})"
 
 #: InvenTree/conversion.py:178
 msgid "No value provided"
@@ -49,7 +49,7 @@ msgstr "לא צוין ערך"
 #: InvenTree/conversion.py:205
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "לא ניתן להמיר מקור ליחידה"
+msgstr ""
 
 #: InvenTree/conversion.py:207
 msgid "Invalid quantity supplied"
