@@ -52,15 +52,22 @@ def extract_source_strings(file_path):
 
 def compare_source_strings(sources, threshold):
     """Compare source strings to find duplicates (or close matches)."""
+    issues = 0
+
     for i, source in enumerate(sources):
         for other in sources[i + 1 :]:
             ratio = rapidfuzz.fuzz.ratio(source, other)
 
             if other.lower() == source.lower():
                 print(f'- Duplicate: {source} ~ {other}')
+                issues += 1
 
             elif ratio > threshold:
                 print(f'- Close match: {source} ~ {other} ({ratio}%)')
+                issues += 1
+
+    if issues:
+        print(f' - Found {issues} issues.')
 
 
 if __name__ == '__main__':

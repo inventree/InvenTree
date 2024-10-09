@@ -34,7 +34,7 @@ export default function UserManagementPanel() {
             </Trans>
           </Text>
           <Anchor component={Link} to={'/settings/system'}>
-            <Trans>System settings</Trans>
+            <Trans>System Settings</Trans>
           </Anchor>
         </Group>
       </Stack>
