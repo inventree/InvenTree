@@ -158,7 +158,7 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
             valid = False
 
         if not valid:
-            raise ValidationError(_('Invalid unit provided ({unit})'))
+            raise ValidationError(_(f'Invalid unit provided ({unit})'))
 
     original = str(value).strip()
 
