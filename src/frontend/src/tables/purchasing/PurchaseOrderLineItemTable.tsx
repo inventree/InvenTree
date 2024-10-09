@@ -342,7 +342,7 @@ export function PurchaseOrderLineItemTable({
       />,
       <AddItemButton
         key="add-line-item"
-        tooltip={t`Add line item`}
+        tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
             order: orderId

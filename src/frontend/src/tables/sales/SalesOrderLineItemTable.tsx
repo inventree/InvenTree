@@ -255,7 +255,7 @@ export default function SalesOrderLineItemTable({
     return [
       <AddItemButton
         key="add-line-item"
-        tooltip={t`Add line item`}
+        tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
             order: orderId
@@ -277,7 +277,7 @@ export default function SalesOrderLineItemTable({
             allocated ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
-          title: t`Allocate stock`,
+          title: t`Allocate Stock`,
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: notYetImplemented

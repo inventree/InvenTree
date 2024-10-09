@@ -459,7 +459,7 @@ export function SearchDrawer({
               color="blue"
               radius="sm"
               variant="light"
-              title={t`No results`}
+              title={t`No Results`}
               icon={<IconSearch size="1rem" />}
             >
               <Trans>No results available for search query</Trans>
