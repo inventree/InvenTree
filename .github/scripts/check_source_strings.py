@@ -1,5 +1,6 @@
 """Script to check source strings for translations."""
 
+import argparse
 import os
 
 import rapidfuzz
@@ -49,24 +50,41 @@ def extract_source_strings(file_path):
     return sources
 
 
-def compare_source_strings(sources):
+def compare_source_strings(sources, threshold=95):
     """Compare source strings to find duplicates (or close matches)."""
-    THRESHOLD = 98
-
     for i, source in enumerate(sources):
         for other in sources[i + 1 :]:
             ratio = rapidfuzz.fuzz.ratio(source, other)
 
-            if ratio > THRESHOLD:
+            if ratio > threshold:
                 print(f'- Close match: {source} ~ {other} ({ratio}%)')
 
 
 if __name__ == '__main__':
-    backend_sources = extract_source_strings(BACKEND_SOURCE_FILE)
-    frontend_sources = extract_source_strings(FRONTEND_SOURCE_FILE)
+    parser = argparse.ArgumentParser(
+        description='Check source strings for translations.'
+    )
+    parser.add_argument(
+        '--backend', action='store_true', help='Check backend source strings'
+    )
+    parser.add_argument(
+        '--frontend', action='store_true', help='Check frontend source strings'
+    )
+    parser.add_argument(
+        '--threshold',
+        type=int,
+        help='Set the threshold for string comparison',
+        default=95,
+    )
 
-    print('Backend source strings:', len(backend_sources))
-    compare_source_strings(backend_sources)
+    args = parser.parse_args()
 
-    print('Frontend source strings:', len(frontend_sources))
-    compare_source_strings(frontend_sources)
+    if args.backend:
+        backend_sources = extract_source_strings(BACKEND_SOURCE_FILE)
+        print('Backend source strings:', len(backend_sources))
+        compare_source_strings(backend_sources, args.threshold)
+
+    if args.frontend:
+        frontend_sources = extract_source_strings(FRONTEND_SOURCE_FILE)
+        print('Frontend source strings:', len(frontend_sources))
+        compare_source_strings(frontend_sources, args.threshold)
