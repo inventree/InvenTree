@@ -49,7 +49,7 @@ msgstr "לא צוין ערך"
 #: InvenTree/conversion.py:205
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "לא ניתן להמיר מקור ליחידה"
+msgstr ""
 
 #: InvenTree/conversion.py:207
 msgid "Invalid quantity supplied"
