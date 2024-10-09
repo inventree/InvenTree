@@ -12,7 +12,7 @@ export const menuItems: menuItemsCollection = {
   },
   profile: {
     id: 'profile',
-    text: <Trans>Account settings</Trans>,
+    text: <Trans>Account Settings</Trans>,
     link: '/settings/user',
     doctext: <Trans>User attributes and design settings.</Trans>
   },

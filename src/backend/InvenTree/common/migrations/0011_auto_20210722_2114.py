@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('value', models.CharField(blank=True, help_text='Settings value', max_length=200)),
-                ('key', models.CharField(help_text='Settings key (must be unique - case insensitive', max_length=50)),
+                ('key', models.CharField(help_text='Settings key', max_length=50)),
                 ('user', models.ForeignKey(blank=True, help_text='User', null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             options={

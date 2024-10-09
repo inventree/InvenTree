@@ -60,7 +60,7 @@ class FileManager:
                 file.seek(0)
             else:
                 fmt = ext.upper()
-                raise ValidationError(_(f'Unsupported file format: {fmt}'))
+                raise ValidationError(_('Unsupported file format') + f': {fmt}')
         except UnicodeEncodeError:
             raise ValidationError(_('Error reading file (invalid encoding)'))
 
