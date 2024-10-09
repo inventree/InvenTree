@@ -231,12 +231,6 @@ export default function BuildOutputTable({
 
   const tableActions = useMemo(() => {
     return [
-      <AddItemButton
-        key="add-build-output"
-        tooltip={t`Add Build Output`}
-        hidden={!user.hasAddRole(UserRoles.build)}
-        onClick={addBuildOutput.open}
-      />,
       <ActionButton
         key="complete-selected-outputs"
         tooltip={t`Complete selected outputs`}
@@ -269,6 +263,12 @@ export default function BuildOutputTable({
           setSelectedOutputs(table.selectedRecords);
           cancelBuildOutputsForm.open();
         }}
+      />,
+      <AddItemButton
+        key="add-build-output"
+        tooltip={t`Add Build Output`}
+        hidden={!user.hasAddRole(UserRoles.build)}
+        onClick={addBuildOutput.open}
       />
     ];
   }, [user, table.selectedRecords, table.hasSelectedRecords]);
