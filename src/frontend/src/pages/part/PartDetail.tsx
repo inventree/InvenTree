@@ -1099,6 +1099,12 @@ export default function PartDetail() {
             imageUrl={part.image}
             badges={badges}
             breadcrumbs={breadcrumbs}
+            last_crumb={[
+              {
+                name: part.name,
+                url: `/part/${part.pk}/`
+              }
+            ]}
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}
