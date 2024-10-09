@@ -31,6 +31,8 @@ export default function NotesEditor({
   modelId: number;
   editable?: boolean;
 }>) {
+  const [isDirty, setIsDirty] = useState<boolean>(false);
+
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -39,6 +41,7 @@ export default function NotesEditor({
   useEffect(() => {
     // Initially disable editing mode on load
     setEditing(false);
+    setIsDirty(false);
   }, [editable, modelId, modelType]);
 
   const noteUrl: string = useMemo(() => {
@@ -77,6 +80,7 @@ export default function NotesEditor({
         })
         .then((response: any) => {
           onSuccess(response.data.image);
+          setIsDirty(true);
           notifications.hide('notes');
           notifications.show({
             id: 'notes',
@@ -99,8 +103,10 @@ export default function NotesEditor({
     enabled: true
   });
 
+  // Update internal markdown data when the query data changes
   useEffect(() => {
     setMarkdown(dataQuery.data ?? '');
+    setIsDirty(false);
   }, [dataQuery.data]);
 
   // Callback to save notes to the server
@@ -113,6 +119,7 @@ export default function NotesEditor({
       api
         .patch(noteUrl, { notes: markdown })
         .then(() => {
+          setIsDirty(false);
           notifications.hide('notes');
           notifications.show({
             title: t`Success`,
@@ -142,27 +149,22 @@ export default function NotesEditor({
   const editorOptions: SimpleMde.Options = useMemo(() => {
     let icons: any[] = [];
 
-    if (editable) {
-      if (editing) {
-        icons.push({
-          name: 'edit-disabled',
-          action: () => setEditing(false),
-          className: 'fa fa-eye',
-          title: t`Disable Editing`
-        });
-
-        icons.push('|', 'side-by-side', '|');
-      } else {
-        icons.push({
-          name: 'edit-enabled',
-          action: () => setEditing(true),
-          className: 'fa fa-edit',
-          title: t`Enable Editing`
-        });
-      }
-    }
-
     if (editing) {
+      icons.push({
+        name: 'save-notes',
+        action: (editor: SimpleMde) => {
+          saveNotes(editor.value());
+        },
+        // text: isDirty ? t`Save` : undefined,
+        className: isDirty ? 'fa fa-save' : 'fa fa-check',
+        title: isDirty ? t`Save Notes` : t`Notes Saved`,
+        attributes: {
+          color: isDirty ? 'green' : 'blue'
+        }
+      });
+
+      icons.push('|');
+
       icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
       icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
       icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
@@ -170,15 +172,21 @@ export default function NotesEditor({
       icons.push('horizontal-rule', '|', 'guide'); // Misc
 
       icons.push('|', 'undo', 'redo'); // Undo/Redo
+
       icons.push('|');
 
       icons.push({
-        name: 'save-notes',
-        action: (editor: SimpleMde) => {
-          saveNotes(editor.value());
-        },
-        className: 'fa fa-save',
-        title: t`Save Notes`
+        name: 'edit-disabled',
+        action: () => setEditing(false),
+        className: 'fa fa-times',
+        title: t`Close Editor`
+      });
+    } else if (editable) {
+      icons.push({
+        name: 'edit-enabled',
+        action: () => setEditing(true),
+        className: 'fa fa-edit',
+        title: t`Enable Editing`
       });
     }
 
@@ -196,7 +204,7 @@ export default function NotesEditor({
       shortcuts: {},
       spellChecker: false
     };
-  }, [editable, editing]);
+  }, [editable, editing, isDirty]);
 
   const [mdeInstance, setMdeInstance] = useState<SimpleMde | null>(null);
 
@@ -219,10 +227,18 @@ export default function NotesEditor({
 
   return (
     <SimpleMDE
-      value={markdown}
-      onChange={setMarkdown}
-      options={editorOptions}
+      autoFocus
       getMdeInstance={(instance: SimpleMde) => setMdeInstance(instance)}
+      onChange={(value: string) => {
+        setMarkdown(value);
+        setIsDirty(true);
+        // Set focus on the editor when the user starts typing
+        if (mdeInstance) {
+          mdeInstance.codemirror.focus();
+        }
+      }}
+      options={editorOptions}
+      value={markdown}
     />
   );
 }
