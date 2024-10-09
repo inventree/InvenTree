@@ -835,7 +835,7 @@ class DataFileExtractSerializer(serializers.Serializer):
             # Check for missing required columns
             if required and name not in self.columns:
                 raise serializers.ValidationError(
-                    _('Missing required column') + f': {name}'
+                    _('Missing required column') + f": '{name}'"
                 )
 
         for col in self.columns:

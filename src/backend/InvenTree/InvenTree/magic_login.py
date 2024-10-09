@@ -25,7 +25,7 @@ def send_simple_login_email(user, link):
     )
 
     send_mail(
-        f'[{site_name}]' + _('Log in to the app'),
+        f'[{site_name}] ' + _('Log in to the app'),
         email_plaintext_message,
         settings.DEFAULT_FROM_EMAIL,
         [user.email],
