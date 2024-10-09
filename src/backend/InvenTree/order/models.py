@@ -780,7 +780,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_complete(self):
         """Return True if all line items have been received."""
-        return self.lines.count() > 0 and self.pending_line_items().count() == 0
+        return self.pending_line_items().count() == 0
 
     @transaction.atomic
     def receive_line_item(
@@ -1076,9 +1076,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
-        return self.lines.count() > 0 and all(
-            line.is_completed() for line in self.lines.all()
-        )
+        return all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.

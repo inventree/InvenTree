@@ -522,6 +522,11 @@ class PurchaseOrderTest(OrderTest):
 
         self.assignRole('purchase_order.add')
 
+        # Add a line item
+        sp = SupplierPart.objects.filter(supplier=po.supplier).first()
+
+        models.PurchaseOrderLineItem.objects.create(part=sp, order=po, quantity=100)
+
         # Should fail due to incomplete lines
         response = self.post(url, {}, expected_code=400)
 
