@@ -36,7 +36,7 @@ export default function ImporterImportProgress({
           <StylishText size="lg">{t`Importing Records`}</StylishText>
           <Loader />
           <Text size="lg">
-            {t`Imported rows`}: {session.sessionData.row_count}
+            {t`Imported Rows`}: {session.sessionData.row_count}
           </Text>
         </Stack>
       </Container>

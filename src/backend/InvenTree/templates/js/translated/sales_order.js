@@ -2046,7 +2046,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 if (options.allow_edit && (row.shipped < row.quantity)) {
                     if (part.trackable) {
-                        buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
+                        buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate Serial Numbers" %}');
                     }
                     buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
                     if (part.purchaseable) {
