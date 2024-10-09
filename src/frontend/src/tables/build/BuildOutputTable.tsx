@@ -449,6 +449,8 @@ export default function BuildOutputTable({
             is_building: true,
             build: buildId
           },
+          enableLabels: true,
+          enableReports: true,
           modelType: ModelType.stockitem,
           dataFormatter: formatRecords,
           tableActions: tableActions,
