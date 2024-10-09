@@ -624,7 +624,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
 
         if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file type'))
+            raise serializers.ValidationError(_('Unsupported file format'))
 
         # Impose a 50MB limit on uploaded BOM files
         max_upload_file_size = 50 * 1024 * 1024
@@ -835,7 +835,7 @@ class DataFileExtractSerializer(serializers.Serializer):
             # Check for missing required columns
             if required and name not in self.columns:
                 raise serializers.ValidationError(
-                    _(f"Missing required column: '{name}'")
+                    _('Missing required column') + f': {name}'
                 )
 
         for col in self.columns:
@@ -844,7 +844,7 @@ class DataFileExtractSerializer(serializers.Serializer):
 
             # Check for duplicated columns
             if col in cols_seen:
-                raise serializers.ValidationError(_(f"Duplicate column: '{col}'"))
+                raise serializers.ValidationError(_('Duplicate column') + f': {col}')
 
             cols_seen.add(col)
 

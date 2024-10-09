@@ -687,7 +687,9 @@ class Part(
             match = re.search(pattern, self.IPN)
 
             if match is None:
-                raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
+                raise ValidationError(
+                    _('IPN must match regex pattern') + f': {pattern}'
+                )
 
     def validate_revision(self):
         """Check the 'revision' and 'revision_of' fields."""

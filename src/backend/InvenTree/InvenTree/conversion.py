@@ -158,7 +158,7 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
             valid = False
 
         if not valid:
-            raise ValidationError(_(f'Invalid unit provided ({unit})'))
+            raise ValidationError(_('Invalid unit provided') + f': ({unit})')
 
     original = str(value).strip()
 
@@ -204,7 +204,7 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
         if unit:
             raise ValidationError(_(f'Could not convert {original} to {unit}'))
         else:
-            raise ValidationError(_('Invalid quantity supplied'))
+            raise ValidationError(_('Invalid quantity provided'))
 
     # Calculate the "magnitude" of the value, as a float
     # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause issues
@@ -218,7 +218,7 @@ def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=T
 
         magnitude = float(ureg.Quantity(magnitude).to_base_units().magnitude)
     except Exception as exc:
-        raise ValidationError(_(f'Invalid quantity supplied ({exc})'))
+        raise ValidationError(_('Invalid quantity provided') + f': ({exc})')
 
     if strip_units:
         return magnitude
