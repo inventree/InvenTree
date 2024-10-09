@@ -79,18 +79,19 @@ export default function ManufacturerPartDetail() {
       },
       {
         type: 'string',
-        name: 'description',
-        label: t`Description`,
+        name: 'part_detail.IPN',
+        label: t`IPN`,
         copy: true,
-        hidden: !manufacturerPart.description
+        icon: 'serial',
+        hidden: !data.part_detail?.IPN
       },
       {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`External Link`,
+        type: 'string',
+        name: 'part_detail.description',
+        label: t`Description`,
         copy: true,
-        hidden: !manufacturerPart.link
+        icon: 'info',
+        hidden: !manufacturerPart.description
       }
     ];
 
@@ -110,6 +111,22 @@ export default function ManufacturerPartDetail() {
         copy: true,
         hidden: !manufacturerPart.MPN,
         icon: 'reference'
+      },
+      {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !manufacturerPart.description,
+        icon: 'info'
+      },
+      {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`External Link`,
+        copy: true,
+        hidden: !manufacturerPart.link
       }
     ];
 
@@ -128,11 +145,7 @@ export default function ManufacturerPartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable
-              title={t`Manufacturer Part`}
-              fields={tl}
-              item={data}
-            />
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
         <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
