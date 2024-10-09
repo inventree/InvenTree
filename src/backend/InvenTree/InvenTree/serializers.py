@@ -624,7 +624,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
 
         if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file type'))
+            raise serializers.ValidationError(_('Unsupported file format'))
 
         # Impose a 50MB limit on uploaded BOM files
         max_upload_file_size = 50 * 1024 * 1024

@@ -617,7 +617,7 @@ function findStockItemBySerialNumber(part_id) {
                 handleFormErrors(
                     {
                         'serial': [
-                            '{% trans "Enter a serial number" %}',
+                            '{% trans "Enter serial number" %}',
                         ]
                     }, fields, opts
                 );
@@ -1445,14 +1445,14 @@ function removeStockRow(e) {
 function passFailBadge(result) {
 
     if (result) {
-        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "PASS" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "Pass" %}</span>`;
     } else {
-        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Fail" %}</span>`;
     }
 }
 
 function noResultBadge() {
-    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
+    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "No result" %}</span>`;
 }
 
 function formatDate(row, date, options={}) {
