@@ -87,9 +87,18 @@ export default function SupplierPartDetail() {
       },
       {
         type: 'string',
-        name: 'description',
+        name: 'part_detail.IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !data.part_detail?.IPN,
+        icon: 'serial'
+      },
+      {
+        type: 'string',
+        name: 'part_detail.description',
         label: t`Description`,
-        copy: true
+        copy: true,
+        icon: 'info'
       },
       {
         type: 'link',
@@ -195,7 +204,7 @@ export default function SupplierPartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable title={t`Supplier Part`} fields={tl} item={data} />
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
         <DetailsTable title={t`Supplier`} fields={tr} item={data} />

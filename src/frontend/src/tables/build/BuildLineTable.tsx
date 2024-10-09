@@ -56,7 +56,7 @@ export default function BuildLineTable({
       {
         name: 'available',
         label: t`Available`,
-        description: t`Show lines with available stock`
+        description: t`Show items with available stock`
       },
       {
         name: 'consumable',

@@ -38,7 +38,7 @@ export function PartColumn({
           </Tooltip>
         )}
         {part?.locked && (
-          <Tooltip label={t`Part is locked`}>
+          <Tooltip label={t`Part is Locked`}>
             <IconLock size={16} />
           </Tooltip>
         )}

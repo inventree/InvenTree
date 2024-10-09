@@ -32,7 +32,7 @@ export default function TaskManagementPanel() {
   return (
     <>
       {taskInfo?.is_running == false && (
-        <Alert title={t`Background Worker Not Running`} color="red">
+        <Alert title={t`Background worker not running`} color="red">
           <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
         </Alert>
       )}

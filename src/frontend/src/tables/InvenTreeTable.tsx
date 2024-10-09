@@ -549,7 +549,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         color="red"
         title={t`Are you sure you want to delete the selected items?`}
       >
-        {t`This action cannot be undone!`}
+        {t`This action cannot be undone`}
       </Alert>
     ),
     initialData: {
@@ -652,8 +652,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 <ButtonMenu
                   key="barcode-actions"
                   icon={<IconBarcode />}
-                  label={t`Barcode actions`}
-                  tooltip={t`Barcode actions`}
+                  label={t`Barcode Actions`}
+                  tooltip={t`Barcode Actions`}
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}
@@ -709,7 +709,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                     variant="transparent"
                     aria-label="table-select-filters"
                   >
-                    <Tooltip label={t`Table filters`}>
+                    <Tooltip label={t`Table Filters`}>
                       <IconFilter
                         onClick={() => setFiltersVisible(!filtersVisible)}
                       />

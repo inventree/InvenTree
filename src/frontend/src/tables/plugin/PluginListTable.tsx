@@ -305,7 +305,7 @@ export default function PluginListTable() {
       >
         <Stack gap="xs">
           <Text>{t`The selected plugin will be uninstalled.`}</Text>
-          <Text>{t`This action cannot be undone.`}</Text>
+          <Text>{t`This action cannot be undone`}</Text>
         </Stack>
       </Alert>
     ),

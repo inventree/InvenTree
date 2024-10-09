@@ -21,7 +21,7 @@ export function notYetImplemented() {
  */
 export function permissionDenied() {
   notifications.show({
-    title: t`Permission denied`,
+    title: t`Permission Denied`,
     message: t`You do not have permission to perform this action`,
     color: 'red'
   });
