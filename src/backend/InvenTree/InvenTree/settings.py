@@ -1098,13 +1098,9 @@ COOKIE_MODE = (
     .strip()
 )
 
-valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': 'None', 'null': 'None'}
 
-if COOKIE_MODE not in valid_cookie_modes:
-    logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
-    sys.exit(-1)
-
-COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
+COOKIE_MODE = valid_cookie_modes.get(COOKIE_MODE.lower(), 'None')
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
