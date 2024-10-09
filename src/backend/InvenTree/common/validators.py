@@ -104,7 +104,7 @@ def validate_email_domains(setting):
         if not domain:
             raise ValidationError(_('An empty domain is not allowed.'))
         if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
-            raise ValidationError(_('Invalid domain name') + f': {domain}')
+            raise ValidationError(_(f'Invalid domain name: {domain}'))
 
 
 def validate_icon(name: Union[str, None]):
