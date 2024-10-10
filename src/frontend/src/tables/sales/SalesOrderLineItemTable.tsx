@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import {
+  IconArrowRight,
   IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
@@ -8,6 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
@@ -16,6 +18,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
+  useAllocateToSalesOrderForm,
   useSalesOrderAllocateSerialsFields,
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
@@ -236,6 +239,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_allocate_serials,
     pk: orderId,
     title: t`Allocate Serial Numbers`,
+    initialData: initialData,
     fields: allocateSerialFields,
     table: table
   });
@@ -251,6 +255,17 @@ export default function SalesOrderLineItemTable({
     modelType: ModelType.build
   });
 
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const allocateStock = useAllocateToSalesOrderForm({
+    orderId: orderId,
+    lineItems: selectedItems,
+    onFormSuccess: () => {
+      table.refreshTable();
+      table.clearSelectedRecords();
+    }
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -263,9 +278,22 @@ export default function SalesOrderLineItemTable({
           newLine.open();
         }}
         hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
+      />,
+      <ActionButton
+        key="allocate-stock"
+        tooltip={t`Allocate Stock`}
+        icon={<IconArrowRight />}
+        disabled={!table.hasSelectedRecords}
+        color="green"
+        onClick={() => {
+          setSelectedItems(
+            table.selectedRecords.filter((r) => r.allocated < r.quantity)
+          );
+          allocateStock.open();
+        }}
       />
     ];
-  }, [user, orderId]);
+  }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -280,7 +308,10 @@ export default function SalesOrderLineItemTable({
           title: t`Allocate Stock`,
           icon: <IconSquareArrowRight />,
           color: 'green',
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedItems([record]);
+            allocateStock.open();
+          }
         },
         {
           hidden:
@@ -288,11 +319,14 @@ export default function SalesOrderLineItemTable({
             allocated ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
-          title: t`Allocate Serials`,
+          title: t`Allocate serials`,
           icon: <IconHash />,
           color: 'green',
           onClick: () => {
             setSelectedLine(record.pk);
+            setInitialData({
+              quantity: record.quantity - record.allocated
+            });
             allocateBySerials.open();
           }
         },
@@ -356,6 +390,7 @@ export default function SalesOrderLineItemTable({
       {newLine.modal}
       {newBuildOrder.modal}
       {allocateBySerials.modal}
+      {allocateStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}

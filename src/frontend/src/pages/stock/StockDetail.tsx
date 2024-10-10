@@ -6,9 +6,7 @@ import {
   IconChecklist,
   IconHistory,
   IconInfoCircle,
-  IconNotes,
   IconPackages,
-  IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +20,6 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -35,8 +32,10 @@ import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -62,7 +61,6 @@ import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -480,29 +478,14 @@ export default function StockDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.stockitem}
-            model_id={stockitem.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.stockitem}
-            modelId={stockitem.pk}
-            editable={user.hasChangeRole(UserRoles.stock)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk
+      })
     ];
   }, [
     showSalesAlloctions,

@@ -166,8 +166,8 @@ export const ModelInformationDict: ModelDict = {
   salesordershipment: {
     label: () => t`Sales Order Shipment`,
     label_multiple: () => t`Sales Order Shipments`,
-    url_overview: '/salesordershipment',
-    url_detail: '/salesordershipment/:pk/',
+    url_overview: '/sales/shipment/',
+    url_detail: '/sales/shipment/:pk/',
     api_endpoint: ApiEndpoints.sales_order_shipment_list
   },
   returnorder: {

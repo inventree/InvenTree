@@ -113,12 +113,12 @@ export function RenderSalesOrderShipment({
 }: Readonly<{
   instance: any;
 }>): ReactNode {
-  let order = instance.sales_order_detail || {};
+  let order = instance.order_detail || {};
 
   return (
     <RenderInlineModel
       primary={order.reference}
-      secondary={t`Shipment` + ` ${instance.description}`}
+      secondary={t`Shipment` + ` ${instance.reference}`}
     />
   );
 }
