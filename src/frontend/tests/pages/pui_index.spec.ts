@@ -13,7 +13,8 @@ test('Pages - Index - Playground', async ({ page }) => {
 
   // New Part
   await page.getByRole('button', { name: 'Create New Part' }).click();
-  await page.locator('#react-select-3-input').fill('category 0');
+  await page.getByLabel('related-field-category').fill('category 0');
+
   await page
     .getByRole('option', { name: 'Category 0' })
     .locator('div')
@@ -22,7 +23,7 @@ test('Pages - Index - Playground', async ({ page }) => {
 
   // Set the "name"
   await page.getByLabel('text-field-name').fill(newPartName);
-  await page.getByLabel('number-field-initial_stock.').fill('1');
+  await page.getByLabel('number-field-initial_stock').fill('1');
 
   await page
     .getByLabel('Create Part')

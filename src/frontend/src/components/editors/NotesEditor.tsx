@@ -99,6 +99,7 @@ export default function NotesEditor({
     enabled: true
   });
 
+  // Update internal markdown data when the query data changes
   useEffect(() => {
     setMarkdown(dataQuery.data ?? '');
   }, [dataQuery.data]);
@@ -118,7 +119,8 @@ export default function NotesEditor({
             title: t`Success`,
             message: t`Notes saved successfully`,
             color: 'green',
-            id: 'notes'
+            id: 'notes',
+            autoClose: 2000
           });
         })
         .catch((error) => {
@@ -142,36 +144,7 @@ export default function NotesEditor({
   const editorOptions: SimpleMde.Options = useMemo(() => {
     let icons: any[] = [];
 
-    if (editable) {
-      if (editing) {
-        icons.push({
-          name: 'edit-disabled',
-          action: () => setEditing(false),
-          className: 'fa fa-eye',
-          title: t`Disable Editing`
-        });
-
-        icons.push('|', 'side-by-side', '|');
-      } else {
-        icons.push({
-          name: 'edit-enabled',
-          action: () => setEditing(true),
-          className: 'fa fa-edit',
-          title: t`Enable Editing`
-        });
-      }
-    }
-
     if (editing) {
-      icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
-      icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
-      icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
-      icons.push('table', 'link', 'image', '|');
-      icons.push('horizontal-rule', '|', 'guide'); // Misc
-
-      icons.push('|', 'undo', 'redo'); // Undo/Redo
-      icons.push('|');
-
       icons.push({
         name: 'save-notes',
         action: (editor: SimpleMde) => {
@@ -179,6 +152,32 @@ export default function NotesEditor({
         },
         className: 'fa fa-save',
         title: t`Save Notes`
+      });
+
+      icons.push('|');
+
+      icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
+      icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
+      icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
+      icons.push('table', 'link', 'image', '|');
+      icons.push('horizontal-rule', '|', 'guide'); // Misc
+
+      icons.push('|', 'undo', 'redo'); // Undo/Redo
+
+      icons.push('|');
+
+      icons.push({
+        name: 'edit-disabled',
+        action: () => setEditing(false),
+        className: 'fa fa-times',
+        title: t`Close Editor`
+      });
+    } else if (editable) {
+      icons.push({
+        name: 'edit-enabled',
+        action: () => setEditing(true),
+        className: 'fa fa-edit',
+        title: t`Enable Editing`
       });
     }
 
@@ -219,10 +218,13 @@ export default function NotesEditor({
 
   return (
     <SimpleMDE
-      value={markdown}
-      onChange={setMarkdown}
-      options={editorOptions}
+      autoFocus
       getMdeInstance={(instance: SimpleMde) => setMdeInstance(instance)}
+      onChange={(value: string) => {
+        setMarkdown(value);
+      }}
+      options={editorOptions}
+      value={markdown}
     />
   );
 }
