@@ -1115,10 +1115,18 @@ CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
 
+"""Set the SESSION_COOKIE_SECURE value based on the following rules:
+- False if the server is running in DEBUG mode
+- True if samesite cookie setting is set to 'None'
+- Otherwise, use the value specified in the configuration file (or env var)
+"""
 SESSION_COOKIE_SECURE = (
     False
     if DEBUG
-    else get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+    else (
+        SESSION_COOKIE_SAMESITE == 'None'
+        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+    )
 )
 
 USE_X_FORWARDED_HOST = get_boolean_setting(

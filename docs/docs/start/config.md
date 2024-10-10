@@ -120,6 +120,10 @@ Note that in [debug mode](./intro.md#debug-mode), some of the above settings are
 | `INVENTREE_COOKIE_SAMESITE` | `False` | Disable all same-site cookie checks in debug mode |
 | `INVENTREE_SESSION_COOKIE_SECURE` | `False` | Disable secure session cookies in debug mode (allow non-https cookies) |
 
+### INVENTREE_COOKIE_SAMESITE vs INVENTREE_SESSION_COOKIE_SECURE
+
+Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_SESSION_COOKIE_SECURE` is automatically set to `True` to ensure that the session cookie is secure! This means that the session cookie will only be sent over secure (https) connections.
+
 ### Proxy Settings
 
 If you are running InvenTree behind another proxy, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
