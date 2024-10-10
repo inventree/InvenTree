@@ -404,11 +404,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
                 })
 
             # Check for conflicting serial numbesr
-            existing = []
-
-            for serial in self.serials:
-                if not part.validate_serial_number(serial):
-                    existing.append(serial)
+            existing = part.find_conflicting_serial_numbers(self.serials)
 
             if len(existing) > 0:
 

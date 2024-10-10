@@ -146,6 +146,9 @@ function BasePanelGroup({
                       leftSection={panel.icon}
                       hidden={panel.hidden}
                       disabled={panel.disabled}
+                      aria-label={`panel-tab-${identifierString(
+                        `${pageKey}-${panel.name}`
+                      )}`}
                       style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
                       onClick={(event: any) =>
                         handlePanelChange(panel.name, event)

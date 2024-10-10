@@ -487,6 +487,11 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     except ValueError:
         raise ValidationError([_('Invalid quantity provided')])
 
+    if expected_quantity > 1000:
+        raise ValidationError({
+            'quantity': [_('Cannot serialize more than 1000 items at once')]
+        })
+
     input_string = str(input_string).strip() if input_string else ''
 
     if len(input_string) == 0:

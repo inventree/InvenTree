@@ -834,6 +834,16 @@ class Build(
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
         """
+
+        trackable_parts = self.part.get_trackable_parts()
+
+        # Create (and cache) a map of valid parts for allocation
+        valid_parts = {}
+
+        for bom_item in trackable_parts:
+            parts = bom_item.get_valid_parts_for_allocation()
+            valid_parts[bom_item.pk] = list([part.pk for part in parts])
+
         user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
         location = kwargs.get('location', None)
@@ -843,81 +853,51 @@ class Build(
         if location is None:
             location = self.destination or self.part.get_default_location()
 
-        """
-        Determine if we can create a single output (with quantity > 0),
-        or multiple outputs (with quantity = 1)
-        """
-
-        def _add_tracking_entry(output, user):
-            """Helper function to add a tracking entry to the newly created output"""
-            deltas = {
-                'quantity': float(output.quantity),
-                'buildorder': self.pk,
-            }
-
-            if output.batch:
-                deltas['batch'] = output.batch
-
-            if output.serial:
-                deltas['serial'] = output.serial
-
-            if output.location:
-                deltas['location'] = output.location.pk
-
-            output.add_tracking_entry(StockHistoryCode.BUILD_OUTPUT_CREATED, user, deltas)
-
-        multiple = False
-
-        # Serial numbers are provided? We need to split!
-        if serials:
-            multiple = True
-
-        # BOM has trackable parts, so we must split!
-        if self.part.has_trackable_parts:
-            multiple = True
-
-        if multiple:
+        # We are generating multiple serialized outputs
+        if serials or self.part.has_trackable_parts:
             """Create multiple build outputs with a single quantity of 1."""
 
-            # Quantity *must* be an integer at this point!
-            quantity = int(quantity)
+            # Create tracking entries for each item
+            tracking = []
+            allocations = []
 
-            for ii in range(quantity):
+            outputs = stock.models.StockItem._create_serial_numbers(
+                serials,
+                part=self.part,
+                build=self,
+                batch=batch,
+                is_building=True
+            )
 
-                if serials:
-                    serial = serials[ii]
-                else:
-                    serial = None
+            for output in outputs:
+                # Generate a new historical tracking entry
+                if entry := output.add_tracking_entry(
+                    StockHistoryCode.BUILD_OUTPUT_CREATED,
+                    user,
+                    deltas={
+                        'quantity': 1,
+                        'buildorder': self.pk,
+                        'batch': output.batch,
+                        'serial': output.serial,
+                        'location': location.pk if location else None
+                    },
+                    commit=False
+                ):
+                    tracking.append(entry)
 
-                output = stock.models.StockItem.objects.create(
-                    quantity=1,
-                    location=location,
-                    part=self.part,
-                    build=self,
-                    batch=batch,
-                    serial=serial,
-                    is_building=True,
-                )
+                # Auto-allocate stock based on serial number
+                if auto_allocate:
+                    allocations = []
 
-                _add_tracking_entry(output, user)
-
-                if auto_allocate and serial is not None:
-
-                    # Get a list of BomItem objects which point to "trackable" parts
-
-                    for bom_item in self.part.get_trackable_parts():
-
-                        parts = bom_item.get_valid_parts_for_allocation()
+                    for bom_item in trackable_parts:
+                        valid_part_ids = valid_parts.get(bom_item.pk, [])
 
                         items = stock.models.StockItem.objects.filter(
-                            part__in=parts,
-                            serial=str(serial),
+                            part__pk__in=valid_part_ids,
+                            serial=output.serial,
                             quantity=1,
                         ).filter(stock.models.StockItem.IN_STOCK_FILTER)
 
-                        """
-                        Test if there is a matching serial number!
-                        """
                         if items.exists() and items.count() == 1:
                             stock_item = items[0]
 
@@ -929,14 +909,22 @@ class Build(
                                 )
 
                                 # Allocate the stock items against the BuildLine
-                                BuildItem.objects.create(
-                                    build_line=build_line,
-                                    stock_item=stock_item,
-                                    quantity=1,
-                                    install_into=output,
+                                allocations.append(
+                                    BuildItem(
+                                        build_line=build_line,
+                                        stock_item=stock_item,
+                                        quantity=1,
+                                        install_into=output,
+                                    )
                                 )
                             except BuildLine.DoesNotExist:
                                 pass
+
+            # Bulk create tracking entries
+            stock.models.StockItemTracking.objects.bulk_create(tracking)
+
+            # Generate stock allocations
+            BuildItem.objects.bulk_create(allocations)
 
         else:
             """Create a single build output of the given quantity."""
@@ -950,7 +938,16 @@ class Build(
                 is_building=True
             )
 
-            _add_tracking_entry(output, user)
+            output.add_tracking_entry(
+                StockHistoryCode.BUILD_OUTPUT_CREATED,
+                user,
+                deltas={
+                    'quantity': quantity,
+                    'buildorder': self.pk,
+                    'batch': batch,
+                    'location': location.pk if location else None
+                }
+            )
 
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION.value

@@ -833,12 +833,38 @@ class Part(
             # This serial number is perfectly valid
             return True
 
-    def find_conflicting_serial_numbers(self, serials: list):
+    def find_conflicting_serial_numbers(self, serials: list) -> list:
         """For a provided list of serials, return a list of those which are conflicting."""
+        from part.models import Part
+        from stock.models import StockItem
+
         conflicts = []
 
+        # First, check for raw conflicts based on efficient database queries
+        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial number must be unique across *all* parts
+            parts = Part.objects.all()
+        else:
+            # Serial number must only be unique across this part "tree"
+            parts = Part.objects.filter(tree_id=self.tree_id)
+
+        items = StockItem.objects.filter(part__in=parts, serial__in=serials)
+        items = items.order_by('serial_int', 'serial')
+
+        for item in items:
+            conflicts.append(item.serial)
+
         for serial in serials:
-            if not self.validate_serial_number(serial, part=self):
+            if serial in conflicts:
+                # Already found a conflict, no need to check further
+                continue
+
+            try:
+                self.validate_serial_number(
+                    serial, raise_error=True, check_duplicates=False
+                )
+            except ValidationError:
+                # Serial number is invalid (as determined by plugin)
                 conflicts.append(serial)
 
         return conflicts
