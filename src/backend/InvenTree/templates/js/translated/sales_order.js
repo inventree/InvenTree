@@ -951,7 +951,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
         }
 
-        var enable_delete = row.allocations && row.allocations.length == 0;
+        var enable_delete = row.allocated_items == 0;
 
         html += makeDeleteButton('button-shipment-delete', pk, '{% trans "Delete shipment" %}', {disabled: !enable_delete});
 
@@ -1004,10 +1004,19 @@ function loadSalesOrderShipmentTable(table, options={}) {
         detailViewByClick: false,
         buttons: constructExpandCollapseButtons(table),
         detailFilter: function(index, row) {
-            return row.allocations.length > 0;
+            return row.allocated_items > 0;
         },
         detailFormatter: function(index, row, element) {
-            return showAllocationSubTable(index, row, element, options);
+            return showAllocationSubTable(
+                index, row, element,
+                {
+                    ...options,
+                    queryParams: {
+                        shipment: row.pk,
+                        order: row.order,
+                    }
+                }
+            );
         },
         onPostBody: function() {
             setupShipmentCallbacks();
@@ -1048,17 +1057,10 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 switchable: false,
             },
             {
-                field: 'allocations',
+                field: 'allocated_items',
                 title: '{% trans "Items" %}',
                 switchable: false,
                 sortable: true,
-                formatter: function(value, row) {
-                    if (row && row.allocations) {
-                        return row.allocations.length;
-                    } else {
-                        return '-';
-                    }
-                }
             },
             {
                 field: 'shipment_date',
@@ -1630,7 +1632,14 @@ function showAllocationSubTable(index, row, element, options) {
     }
 
     table.bootstrapTable({
+        url: '{% url "api-so-allocation-list" %}',
         onPostBody: setupCallbacks,
+        queryParams: {
+            ...options.queryParams,
+            part_detail: true,
+            location_detail: true,
+            order_detail: true,
+        },
         data: row.allocations,
         showHeader: true,
         columns: [
@@ -1639,6 +1648,13 @@ function showAllocationSubTable(index, row, element, options) {
                 title: '{% trans "Part" %}',
                 formatter: function(part, row) {
                     return imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
+                }
+            },
+            {
+                field: 'shipment',
+                title: '{% trans "Shipment" %}',
+                formatter: function(value, row) {
+                    return row.shipment_detail.reference;
                 }
             },
             {
@@ -2289,7 +2305,16 @@ function loadSalesOrderLineItemTable(table, options={}) {
         },
         detailFormatter: function(index, row, element) {
             if (options.open) {
-                return showAllocationSubTable(index, row, element, options);
+                return showAllocationSubTable(
+                    index, row, element,
+                    {
+                        ...options,
+                        queryParams: {
+                            part: row.part,
+                            order: row.order,
+                        }
+                    }
+                );
             } else {
                 return showFulfilledSubTable(index, row, element, options);
             }

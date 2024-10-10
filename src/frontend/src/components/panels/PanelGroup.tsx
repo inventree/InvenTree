@@ -28,7 +28,7 @@ import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-import { PanelType } from './Panel';
+import { PanelType } from '../panels/Panel';
 
 /**
  * Set of properties which define a panel group:

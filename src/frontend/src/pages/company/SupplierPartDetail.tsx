@@ -3,7 +3,6 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
   IconInfoCircle,
-  IconNotes,
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
@@ -15,7 +14,6 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   BarcodeActionDropdown,
   DeleteItemAction,
@@ -25,8 +23,9 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -257,18 +256,10 @@ export default function SupplierPartDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.supplierpart}
-            modelId={supplierPart.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      })
     ];
   }, [supplierPart]);
 

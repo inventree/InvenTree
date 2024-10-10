@@ -8,8 +8,6 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
-  IconNotes,
-  IconPaperclip,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -22,7 +20,6 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -33,8 +30,10 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -53,7 +52,6 @@ import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
@@ -343,26 +341,14 @@ export default function BuildDetail() {
         ),
         hidden: !build?.part_detail?.testable
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.build} model_id={Number(id)} />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.build}
-            modelId={build.pk}
-            editable={user.hasChangeRole(UserRoles.build)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      })
     ];
   }, [build, id, user]);
 
