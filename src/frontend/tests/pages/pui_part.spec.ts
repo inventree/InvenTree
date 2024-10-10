@@ -237,8 +237,9 @@ test('Pages - Part - Notes', async ({ page }) => {
 
   // Enable notes editing
   await page.getByLabel('Enable Editing').click();
-  await page.getByLabel('Disable Editing').waitFor();
+
   await page.getByLabel('Save Notes').waitFor();
+  await page.getByLabel('Close Editor').waitFor();
 });
 
 test('Pages - Part - 404', async ({ page }) => {
