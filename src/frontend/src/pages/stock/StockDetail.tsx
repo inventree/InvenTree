@@ -749,7 +749,11 @@ export default function StockDetail() {
           <DetailsBadge
             color="yellow"
             label={t`Available` + `: ${available}`}
-            visible={!stockitem.serial && available != stockitem.quantity}
+            visible={
+              stockitem.in_stock &&
+              !stockitem.serial &&
+              available != stockitem.quantity
+            }
             key="available"
           />,
           <DetailsBadge
@@ -763,6 +767,12 @@ export default function StockDetail() {
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
             key="status"
+          />,
+          <DetailsBadge
+            color="red"
+            label={t`Unavailable`}
+            visible={stockitem.in_stock == false}
+            key="unavailable"
           />
         ];
   }, [stockitem, instanceQuery]);
