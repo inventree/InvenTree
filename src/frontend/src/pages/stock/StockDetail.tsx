@@ -636,6 +636,7 @@ export default function StockDetail() {
       />,
       <ActionDropdown
         tooltip={t`Stock Operations`}
+        hidden={!stockitem.in_stock}
         icon={<IconPackages />}
         actions={[
           {
