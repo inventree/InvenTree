@@ -1424,13 +1424,13 @@ class Part(
         """Return True if the specified user subscribes to this part."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status, **kwargs):
         """Set the "subscription" status of this Part against the specified user."""
         if not user:
             return
 
         # Already subscribed?
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:

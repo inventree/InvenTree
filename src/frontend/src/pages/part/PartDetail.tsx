@@ -358,6 +358,12 @@ export default function PartDetail() {
         type: 'boolean',
         name: 'virtual',
         label: t`Virtual Part`
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        label: t`Subscribed`,
+        icon: 'bell'
       }
     ];
 

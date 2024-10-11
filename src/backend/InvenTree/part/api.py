@@ -1423,7 +1423,9 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
-            self.get_object().set_starred(request.user, starred)
+            self.get_object().set_starred(
+                request.user, starred, include_variants=False, include_categories=False
+            )
 
         response = super().update(request, *args, **kwargs)
 

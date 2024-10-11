@@ -3,7 +3,7 @@
  */
 import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
-import { IconExclamationCircle, IconLock } from '@tabler/icons-react';
+import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -40,6 +40,11 @@ export function PartColumn({
         {part?.locked && (
           <Tooltip label={t`Part is Locked`}>
             <IconLock size={16} />
+          </Tooltip>
+        )}
+        {part?.starred && (
+          <Tooltip label={t`You are subscribed to notifications for this part`}>
+            <IconBell size={16} color="green" />
           </Tooltip>
         )}
       </Group>

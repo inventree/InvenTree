@@ -61,7 +61,14 @@ export function usePartFields({
       salable: {},
       virtual: {},
       locked: {},
-      active: {}
+      active: {},
+      starred: {
+        field_type: 'boolean',
+        label: t`Subscribed`,
+        description: t`Subscribe to notifications for this part`,
+        disabled: false,
+        required: false
+      }
     };
 
     // Additional fields for creation
@@ -109,6 +116,10 @@ export function usePartFields({
     // Pop 'expiry' field if expiry not enabled
     if (!settings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields['default_expiry'];
+    }
+
+    if (create) {
+      delete fields['starred'];
     }
 
     return fields;

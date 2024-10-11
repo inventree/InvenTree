@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
+import { Group, Tooltip } from '@mantine/core';
 import { IconBell } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -44,11 +44,11 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
             </Group>
             <Group gap="xs" justify="flex-end" wrap="nowrap">
               {record.starred && (
-                <IconBell
-                  color="green"
-                  size={16}
-                  title={t`You are subscribed to notifications for this category`}
-                />
+                <Tooltip
+                  label={t`You are subscribed to notifications for this category`}
+                >
+                  <IconBell color="green" size={16} />
+                </Tooltip>
               )}
             </Group>
           </Group>
