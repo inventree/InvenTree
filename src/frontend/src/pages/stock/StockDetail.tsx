@@ -222,6 +222,7 @@ export default function StockDetail() {
       {
         type: 'link',
         name: 'parent',
+        icon: 'sitemap',
         label: t`Parent Item`,
         model: ModelType.stockitem,
         hidden: !stockitem.parent,
