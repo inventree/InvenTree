@@ -97,24 +97,5 @@ test('Quick Command - No Keys', async ({ page }) => {
     .click();
   await page.waitForURL('https://docs.inventree.org/**');
 
-  // Test addition of new actions
-  await page.goto(`${baseUrl}/playground`);
-  await page.locator('p').filter({ hasText: 'Playground' }).waitFor();
-  await page.getByRole('button', { name: 'Spotlight actions' }).click();
-  await page.getByRole('button', { name: 'Register extra actions' }).click();
-  /*
-  await page.getByPlaceholder('Search...').fill('secret');
-  await page.getByRole('button', { name: 'Secret action It was' }).click();
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByPlaceholder('Search...').fill('Another secret action');
-  await page
-    .getByRole('button', {
-      name: 'Another secret action You can register multiple actions with just one command'
-    })
-    .click();
-  await page.getByRole('tab', { name: 'Home' }).click();
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
-  */
-  await page.getByPlaceholder('Search...').fill('secret');
-  await page.getByText('Nothing found...').click();
+  // TODO: Test addition of new actions
 });

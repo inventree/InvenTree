@@ -64,12 +64,3 @@ export const menuItems: menuItemsCollection = {
     link: '/settings/admin'
   }
 };
-
-if (IS_DEV_OR_DEMO) {
-  menuItems['playground'] = {
-    id: 'playground',
-    text: <Trans>Playground</Trans>,
-    link: '/playground',
-    highlight: true
-  };
-}
