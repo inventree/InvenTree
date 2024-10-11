@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 267
+INVENTREE_API_VERSION = 268
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+268 - 2024-10-11 : https://github.com/inventree/InvenTree/pull/8274
+    - Adds "in_stock" attribute to the StockItem serializer
 
 267 - 2024-10-8 : https://github.com/inventree/InvenTree/pull/8250
     - Remove "allocations" field from the SalesOrderShipment API endpoint(s)

@@ -15,6 +15,7 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
@@ -50,7 +51,7 @@ type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
-  type: 'string' | 'text';
+  type: 'string' | 'text' | 'date';
   unit?: boolean;
 };
 
@@ -172,6 +173,10 @@ function NameBadge({
       <InvenTreeIcon icon={type === 'user' ? type : data.label} />
     </Group>
   );
+}
+
+function DateValue(props: Readonly<FieldProps>) {
+  return <Text size="sm">{formatDate(props.field_value?.toString())}</Text>;
 }
 
 /**
@@ -346,6 +351,8 @@ export function DetailsTableField({
         return ProgressBarValue;
       case 'status':
         return StatusValue;
+      case 'date':
+        return DateValue;
       case 'text':
       case 'string':
       default:
