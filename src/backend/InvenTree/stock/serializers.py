@@ -358,6 +358,7 @@ class StockItemSerializer(
             'customer',
             'delete_on_deplete',
             'expiry_date',
+            'in_stock',
             'is_building',
             'link',
             'location',
@@ -468,6 +469,8 @@ class StockItemSerializer(
         child=serializers.DictField(), source='location.get_path', read_only=True
     )
 
+    in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
+
     """
     Field used when creating a stock item
     """
@@ -519,6 +522,10 @@ class StockItemSerializer(
             'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
+            'customer',
+            'belongs_to',
+            'sales_order',
+            'consumed_by',
             'tags',
         )
 
