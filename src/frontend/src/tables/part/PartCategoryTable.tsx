@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group } from '@mantine/core';
+import { IconBell } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -36,9 +37,20 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         sortable: true,
         switchable: false,
         render: (record: any) => (
-          <Group gap="xs">
-            {record.icon && <ApiIcon name={record.icon} />}
-            {record.name}
+          <Group gap="xs" wrap="nowrap" justify="space-between">
+            <Group gap="xs" wrap="nowrap">
+              {record.icon && <ApiIcon name={record.icon} />}
+              {record.name}
+            </Group>
+            <Group gap="xs" justify="flex-end" wrap="nowrap">
+              {record.starred && (
+                <IconBell
+                  color="green"
+                  size={16}
+                  title={t`You are subscribed to notifications for this category`}
+                />
+              )}
+            </Group>
           </Group>
         )
       },
