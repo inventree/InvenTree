@@ -15,7 +15,7 @@ test('Quick Command', async ({ page }) => {
   await page.waitForURL('**/platform/dashboard');
 
   // Open Spotlight with Button
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page.getByRole('button', { name: 'Home Go to the home page' }).click();
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
@@ -35,7 +35,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await doQuickLogin(page);
 
   // Open Spotlight with Button
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page.getByRole('button', { name: 'Home Go to the home page' }).click();
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
@@ -43,7 +43,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.waitForURL('**/platform');
 
   // Use navigation menu
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', { name: 'Open Navigation Open the main' })
     .click();
@@ -56,7 +56,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.keyboard.press('Escape');
 
   // use server info
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
       name: 'Server Information About this Inventree instance'
@@ -68,7 +68,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.waitForURL('**/platform');
 
   // use license info
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
       name: 'License Information Licenses for dependencies of the service'
@@ -80,7 +80,9 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.getByLabel('License Information').getByRole('button').click();
 
   // use about
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+
+  await page.getByLabel('open-spotlight').click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
     .click();
@@ -89,7 +91,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.getByLabel('About InvenTree').getByRole('button').click();
 
   // use documentation
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
       name: 'Documentation Visit the documentation to learn more about InvenTree'
@@ -105,7 +107,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   /*
   await page.getByPlaceholder('Search...').fill('secret');
   await page.getByRole('button', { name: 'Secret action It was' }).click();
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page.getByPlaceholder('Search...').fill('Another secret action');
   await page
     .getByRole('button', {
@@ -113,7 +115,7 @@ test('Quick Command - No Keys', async ({ page }) => {
     })
     .click();
   await page.getByRole('tab', { name: 'Home' }).click();
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   */
   await page.getByPlaceholder('Search...').fill('secret');
   await page.getByText('Nothing found...').click();
