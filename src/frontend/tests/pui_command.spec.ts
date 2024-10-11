@@ -80,8 +80,6 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.getByLabel('License Information').getByRole('button').click();
 
   // use about
-
-  await page.getByLabel('open-spotlight').click();
   await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
