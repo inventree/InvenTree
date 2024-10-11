@@ -154,7 +154,6 @@ function NavTabs() {
         <Tabs.Tab
           value={tab.name}
           key={tab.name}
-          aria-label={`nav-tab-${tab.name}`}
           onClick={(event: any) =>
             navigateToLink(`/${tab.name}`, navigate, event)
           }

@@ -67,7 +67,10 @@ test('Stock - Serial Numbers', async ({ page }) => {
     .first()
     .click();
 
-  await page.getByRole('tab', { name: 'Stock', exact: true }).click();
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
   await page.getByLabel('action-button-add-stock-item').click();
 
   // Initially fill with invalid serial/quantity combinations
