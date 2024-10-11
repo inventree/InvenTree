@@ -1101,7 +1101,7 @@ COOKIE_MODE = (
 # Valid modes (as per the django settings documentation)
 valid_cookie_modes = ['lax', 'strict', 'none']
 
-if not DEBUG and COOKIE_MODE in valid_cookie_modes:
+if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
     # Set the cookie mode (in production mode only)
     COOKIE_MODE = COOKIE_MODE.capitalize()
 else:

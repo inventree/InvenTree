@@ -103,7 +103,11 @@ export function Header() {
             <NavTabs />
           </Group>
           <Group>
-            <ActionIcon onClick={openSearchDrawer} variant="transparent">
+            <ActionIcon
+              onClick={openSearchDrawer}
+              variant="transparent"
+              aria-label="open-search"
+            >
               <IconSearch />
             </ActionIcon>
             <SpotlightButton />
@@ -119,6 +123,7 @@ export function Header() {
               <ActionIcon
                 onClick={openNotificationDrawer}
                 variant="transparent"
+                aria-label="open-notifications"
               >
                 <IconBell />
               </ActionIcon>
