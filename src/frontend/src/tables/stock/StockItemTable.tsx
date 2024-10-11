@@ -77,18 +77,6 @@ function stockItemTableColumns(): TableColumn[] {
         let extra: ReactNode[] = [];
         let color = undefined;
 
-        // Determine if a stock item is "in stock"
-        // TODO: Refactor this out into a function
-        let in_stock =
-          !record?.belongs_to &&
-          !record?.consumed_by &&
-          !record?.customer &&
-          !record?.is_building &&
-          !record?.sales_order &&
-          !record?.expired &&
-          record?.quantity &&
-          record?.quantity > 0;
-
         if (record.serial && quantity == 1) {
           text = `# ${record.serial}`;
         }
@@ -150,6 +138,13 @@ function stockItemTableColumns(): TableColumn[] {
           extra.push(
             <Text key="stale" size="sm">{t`This stock item is stale`}</Text>
           );
+        } else if (!record.in_stock) {
+          extra.push(
+            <Text
+              key="unavailable"
+              size="sm"
+            >{t`This stock item is unavailable`}</Text>
+          );
         }
 
         if (allocated > 0) {
@@ -198,7 +193,7 @@ function stockItemTableColumns(): TableColumn[] {
           );
         }
 
-        if (!in_stock) {
+        if (!record.in_stock) {
           color = 'red';
         }
 
