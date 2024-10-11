@@ -46,6 +46,14 @@ export default function BuildLineTable({
   const user = useUserState();
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
+  const isActive: boolean = useMemo(() => {
+    return (
+      build?.status == buildStatus.PRODUCTION ||
+      build?.status == buildStatus.PENDING ||
+      build?.status == buildStatus.ON_HOLD
+    );
+  }, [build, buildStatus]);
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -254,6 +262,7 @@ export default function BuildLineTable({
       {
         accessor: 'allocated',
         switchable: false,
+        hidden: !isActive,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
@@ -267,7 +276,7 @@ export default function BuildLineTable({
         }
       }
     ];
-  }, []);
+  }, [isActive]);
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
