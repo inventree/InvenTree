@@ -1,8 +1,6 @@
 import { test } from '../baseFixtures.js';
 import { doQuickLogin } from '../login.js';
 
-const newPartName = 'UITESTIN123';
-
 test('Pages - Index - Dashboard', async ({ page }) => {
   await doQuickLogin(page);
 
