@@ -59,6 +59,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
@@ -71,6 +72,13 @@ export default function StockDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
+
+  const enableExpiry = useMemo(
+    () => globalSettings.isSet('STOCK_ENABLE_EXPIRY'),
+    [globalSettings]
+  );
 
   const navigate = useNavigate();
 
@@ -258,7 +266,14 @@ export default function StockDetail() {
 
     // Bottom right - any other information
     let br: DetailsField[] = [
-      // TODO: Expiry date
+      // Expiry date
+      {
+        type: 'date',
+        name: 'expiry_date',
+        label: t`Expiry Date`,
+        hidden: !enableExpiry || !stockitem.expiry_date,
+        icon: 'calendar'
+      },
       // TODO: Ownership
       {
         type: 'text',
@@ -320,7 +335,7 @@ export default function StockDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [stockitem, instanceQuery]);
+  }, [stockitem, instanceQuery, enableExpiry]);
 
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
@@ -766,8 +781,23 @@ export default function StockDetail() {
           <StatusRenderer
             status={stockitem.status_custom_key}
             type={ModelType.stockitem}
-            options={{ size: 'lg' }}
+            options={{
+              size: 'lg',
+              hidden: !!stockitem.status_custom_key
+            }}
             key="status"
+          />,
+          <DetailsBadge
+            color="yellow"
+            label={t`Stale`}
+            visible={enableExpiry && stockitem.stale && !stockitem.expired}
+            key="stale"
+          />,
+          <DetailsBadge
+            color="orange"
+            label={t`Expired`}
+            visible={enableExpiry && stockitem.expired}
+            key="expired"
           />,
           <DetailsBadge
             color="red"
@@ -776,7 +806,7 @@ export default function StockDetail() {
             key="unavailable"
           />
         ];
-  }, [stockitem, instanceQuery]);
+  }, [stockitem, instanceQuery, enableExpiry]);
 
   return (
     <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
