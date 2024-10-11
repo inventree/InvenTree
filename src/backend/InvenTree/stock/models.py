@@ -441,6 +441,7 @@ class StockItem(
     tags = TaggableManager(blank=True)
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
         sales_order=None,
@@ -1404,16 +1405,20 @@ class StockItem(
         return self.children.count()
 
     @property
-    def in_stock(self):
+    def in_stock(self) -> bool:
         """Returns True if this item is in stock.
 
-        See also: IN_STOCK_FILTER
+        See also: StockItem.IN_STOCK_FILTER for the db optimized version of this check.
         """
-        query = StockItem.objects.filter(pk=self.pk)
-
-        query = query.filter(StockItem.IN_STOCK_FILTER)
-
-        return query.exists()
+        return all([
+            self.quantity > 0,  # Quantity must be greater than zero
+            self.sales_order is None,  # Not assigned to a SalesOrder
+            self.belongs_to is None,  # Not installed inside another StockItem
+            self.customer is None,  # Not assigned to a customer
+            self.consumed_by is None,  # Not consumed by a build
+            not self.is_building,  # Not part of an active build
+            self.status in StockStatusGroups.AVAILABLE_CODES,  # Status is "available"
+        ])
 
     @property
     def can_adjust_location(self):
