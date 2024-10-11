@@ -93,10 +93,12 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     ];
   }, []);
 
+  const newCategoryFields = partCategoryFields({ create: true });
+
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
-    fields: partCategoryFields(),
+    fields: newCategoryFields,
     focus: 'name',
     initialData: {
       parent: parentId
@@ -108,11 +110,13 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
 
+  const editCategoryFields = partCategoryFields({ create: false });
+
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: editCategoryFields,
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
