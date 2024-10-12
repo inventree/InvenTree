@@ -5,6 +5,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
+import RemoteComponent from './RemoteComponent';
 
 // Definition of the plugin panel properties, provided by the server API
 export type PluginPanelProps = {
@@ -69,57 +70,25 @@ export default function PluginPanelContent({
   pluginProps: PluginPanelProps;
   pluginContext: InvenTreeContext;
 }>): ReactNode {
-  const ref = useRef<HTMLDivElement>();
-
-  const [error, setError] = useState<string | undefined>(undefined);
-
-  const reloadPluginContent = async () => {
-    // If a "source" URL is provided, load the content from that URL
-    if (pluginProps.source) {
-      findExternalPluginFunction(pluginProps.source, 'renderPanel').then(
-        (func) => {
-          if (func) {
-            try {
-              func(ref.current, pluginContext);
-              setError('');
-            } catch (error) {
-              setError(
-                t`Error occurred while rendering plugin content` + `: ${error}`
-              );
-            }
-          } else {
-            setError(t`Plugin did not provide panel rendering function`);
-          }
-        }
-      );
-    } else if (pluginProps.content) {
-      // If content is provided directly, render it into the panel
-      if (ref.current) {
-        ref.current?.setHTMLUnsafe(pluginProps.content.toString());
-        setError('');
-      }
-    } else {
-      // If no content is provided, display a placeholder
-      setError(t`No content provided for this plugin`);
-    }
-  };
+  // Div for rendering raw content for the panel (if provided)
+  const pluginContentRef = useRef<HTMLDivElement>();
 
   useEffect(() => {
-    reloadPluginContent();
-  }, [pluginProps, pluginContext]);
+    if (pluginProps.content && pluginContentRef.current) {
+      pluginContentRef.current?.setHTMLUnsafe(pluginProps.content.toString());
+    }
+  }, [pluginProps.content, pluginContentRef]);
 
   return (
     <Stack gap="xs">
-      {error && (
-        <Alert
-          color="red"
-          title={t`Error Loading Plugin`}
-          icon={<IconExclamationCircle />}
-        >
-          <Text>{error}</Text>
-        </Alert>
+      {pluginProps.content && <div ref={pluginContentRef as any}></div>}
+      {pluginProps.source && (
+        <RemoteComponent
+          source={pluginProps.source}
+          funcName="renderPanel"
+          context={pluginContext}
+        />
       )}
-      <div ref={ref as any}></div>
     </Stack>
   );
 }
