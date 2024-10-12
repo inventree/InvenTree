@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 268
+INVENTREE_API_VERSION = 269
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+269 - 2024-10-13 : https://github.com/inventree/InvenTree/pull/8278
+    - Allow build order list to be filtered by "outstanding" (alias for "active")
 
 268 - 2024-10-11 : https://github.com/inventree/InvenTree/pull/8274
     - Adds "in_stock" attribute to the StockItem serializer
