@@ -232,7 +232,12 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'updated'
     }),
     // TODO: purchase order
-    // TODO: Supplier part
+    {
+      accessor: 'supplier_part_detail.SKU',
+      title: t`Supplier SKU`,
+      ordering: 'SKU',
+      sortable: true
+    },
     {
       accessor: 'purchase_price',
       sortable: true,
