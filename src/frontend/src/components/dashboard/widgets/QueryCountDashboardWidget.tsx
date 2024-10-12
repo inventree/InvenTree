@@ -1,6 +1,15 @@
-import { Card, Group, Skeleton, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Card,
+  Group,
+  Loader,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
+import { IconExternalLink } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { ReactNode, useCallback } from 'react';
 
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
@@ -14,7 +23,7 @@ import { DashboardWidgetProps } from '../DashboardWidget';
 /**
  * A simple dashboard widget for displaying the number of results for a particular query
  */
-export default function QueryCountWidget({
+function QueryCountWidget({
   modelType,
   title,
   params
@@ -22,7 +31,7 @@ export default function QueryCountWidget({
   modelType: ModelType;
   title: string;
   params: any;
-}): DashboardWidgetProps {
+}): ReactNode {
   const user = useUserState();
 
   const modelProperties = ModelInformationDict[modelType];
@@ -43,29 +52,42 @@ export default function QueryCountWidget({
     }
   });
 
-  const renderFunc = useCallback(() => {
-    return (
-      <Card withBorder p="sm">
-        <Group gap="xs" wrap="nowrap">
-          <StylishText size="md">
-            {modelProperties.label_multiple()}
-          </StylishText>
-          {query.isFetching ? (
-            <Skeleton width={50} height={50} />
-          ) : (
-            <Text>{query.data?.count ?? '-'}</Text>
-          )}
-        </Group>
-      </Card>
-    );
-  }, [query.isFetching, query.data, title]);
+  return (
+    <Stack justify="middle" align="stretch">
+      <Group gap="xs" wrap="nowrap">
+        <StylishText size="md">{title}</StylishText>
+        {query.isFetching ? (
+          <Loader size="sm" />
+        ) : (
+          <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
+        )}
+        <ActionIcon variant="transparent">
+          <IconExternalLink />
+        </ActionIcon>
+      </Group>
+    </Stack>
+  );
+}
 
+/**
+ * Construct a dashboard widget descriptor, which displays the number of results for a particular query
+ */
+export default function QueryCountDashboardWidget({
+  title,
+  modelType,
+  params
+}: {
+  title: string;
+  modelType: ModelType;
+  params: any;
+}): DashboardWidgetProps {
   return {
     title: title,
-    label: `count-${identifierString(title)}`,
-    width: 3,
-    height: 1,
-    visible: () => user.hasViewPermission(modelType),
-    render: renderFunc
+    label: identifierString(title),
+    minWidth: 2,
+    minHeight: 1,
+    render: () => (
+      <QueryCountWidget modelType={modelType} title={title} params={params} />
+    )
   };
 }

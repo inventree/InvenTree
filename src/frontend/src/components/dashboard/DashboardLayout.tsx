@@ -1,52 +1,19 @@
+import { t } from '@lingui/macro';
 import { Center, Divider, Loader, Paper, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
+import { ModelType } from '../../enums/ModelType';
 import { Boundary } from '../Boundary';
+import DisplayWidget from '../widgets/DisplayWidget';
+import GetStartedWidget from '../widgets/GetStartedWidget';
 import DashboardMenu from './DashboardMenu';
+import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
+import QueryCountWidget from './widgets/QueryCountDashboardWidget';
+import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 
 const ReactGridLayout = WidthProvider(Responsive);
-
-/**
- * Dashboard item properties. Describes a current item in the dashboard.
- */
-
-export interface DashboardItemProps {
-  label: string;
-  widget: ReactNode; // DashboardWidgetProps;
-  width?: number;
-  height?: number;
-}
-
-// Default items for the dashboard
-function getDefaultItems(): DashboardItemProps[] {
-  return [
-    {
-      label: 'widget-1',
-      width: 2,
-      height: 1,
-      widget: <Text>Widget 1</Text>
-    },
-    {
-      label: 'widget-2',
-      width: 5,
-      height: 2,
-      widget: <Text>Widget 2</Text>
-    },
-    {
-      label: 'widget-3',
-      width: 4,
-      height: 3,
-      widget: <Text>Widget 3</Text>
-    },
-    {
-      label: 'widget-4',
-      width: 4,
-      widget: <Text>Widget 4</Text>
-    }
-  ];
-}
 
 /**
  * Save the dashboard layout to local storage
@@ -73,7 +40,53 @@ export default function DashboardLayout({}: {}) {
   const [editable, setEditable] = useDisclosure(false);
   const [loaded, setLoaded] = useState(false);
 
-  const widgets = useMemo(() => getDefaultItems(), []);
+  const widgets = useMemo(() => {
+    return [
+      {
+        label: 'widget-1',
+        minWidth: 2,
+        minHeight: 1,
+        render: () => <Text>Widget 1</Text>
+      },
+      {
+        label: 'widget-2',
+        minWidth: 2,
+        minHeight: 1,
+        render: () => <Text>Widget 2</Text>
+      },
+      {
+        label: 'widget-3',
+        minWidth: 3,
+        minHeight: 2,
+        render: () => <Text>Widget 3</Text>
+      },
+      QueryCountDashboardWidget({
+        title: t`Outstanding Purchase Orders`,
+        modelType: ModelType.purchaseorder,
+        params: {
+          outstanding: true
+        }
+      }),
+      QueryCountDashboardWidget({
+        title: t`Outstanding Sales Orders`,
+        modelType: ModelType.salesorder,
+        params: {
+          outstanding: true
+        }
+      }),
+      QueryCountDashboardWidget({
+        title: t`Stock Items`,
+        modelType: ModelType.stockitem,
+        params: {}
+      }),
+      {
+        label: 'get-started',
+        render: () => <GetStartedWidget />,
+        minWidth: 5,
+        minHeight: 4
+      }
+    ];
+  }, []);
 
   // When the layout is rendered, ensure that the widget attributes are observed
   const updateLayoutForWidget = useCallback(
@@ -82,8 +95,8 @@ export default function DashboardLayout({}: {}) {
         // Find the matching widget
         let widget = widgets.find((widget) => widget.label === item.i);
 
-        const minH = widget?.height ?? 2;
-        const minW = widget?.width ?? 1;
+        const minH = widget?.minHeight ?? 2;
+        const minW = widget?.minWidth ?? 1;
 
         const w = Math.max(item.w ?? 1, minW);
         const h = Math.max(item.h ?? 1, minH);
@@ -149,8 +162,8 @@ export default function DashboardLayout({}: {}) {
           margin={[10, 10]}
           containerPadding={[0, 0]}
         >
-          {widgets.map((item) => {
-            return DashboardLayoutItem(item);
+          {widgets.map((item: DashboardWidgetProps) => {
+            return DashboardWidget(item);
           })}
         </ReactGridLayout>
       ) : (
@@ -159,16 +172,5 @@ export default function DashboardLayout({}: {}) {
         </Center>
       )}
     </>
-  );
-}
-
-/**
- * Wrapper for a dashboard item
- */
-function DashboardLayoutItem(item: DashboardItemProps) {
-  return (
-    <Paper withBorder key={item.label} p="xs" shadow="sm">
-      <Boundary label={`dashboard-item-${item.label}`}>{item.widget}</Boundary>
-    </Paper>
   );
 }

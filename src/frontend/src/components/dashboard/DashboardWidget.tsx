@@ -1,7 +1,6 @@
-import { Card } from '@mantine/core';
+import { Paper } from '@mantine/core';
 
 import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Dashboard widget properties.
@@ -11,31 +10,27 @@ import { StylishText } from '../items/StylishText';
  * @param render A function that renders the widget
  */
 export interface DashboardWidgetProps {
-  title: string;
   label: string;
-  minWidth: number;
-  minHeight: number;
-  visible: () => boolean;
+  minWidth?: number;
+  minHeight?: number;
   render: () => JSX.Element;
-  onClick?: (event: any) => void;
+  visible?: () => boolean;
 }
 
 /**
- * Wrapper for a
+ * Wrapper for a dashboard widget.
  */
 export default function DashboardWidget(props: DashboardWidgetProps) {
-  if (!props.visible()) {
-    return null;
-  }
+  // TODO: Implement visibility check
+  //     if (!props?.visible?.() == false) {
+  //     return null;
+  //   }
 
   return (
-    <Boundary label={`dashboard-widget-${props.label}`}>
-      <Card shadow="xs" p="sm">
-        <Card.Section>
-          <StylishText size="xl">{props.title}</StylishText>
-        </Card.Section>
+    <Paper withBorder key={props.label} shadow="sm" p="xs">
+      <Boundary label={`dashboard-widget-${props.label}`}>
         {props.render()}
-      </Card>
-    </Boundary>
+      </Boundary>
+    </Paper>
   );
 }

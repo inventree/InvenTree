@@ -55,10 +55,6 @@ export default function Home() {
   return (
     <>
       <DashboardLayout />
-
-      <Divider />
-      <WidgetLayout items={vals} />
-      <Divider />
     </>
   );
 }

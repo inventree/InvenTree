@@ -18,7 +18,7 @@ import { Boundary } from '../../Boundary';
 import { StylishText } from '../../items/StylishText';
 import { ModelInformationDict } from '../../render/ModelType';
 import DashboardWidget, { DashboardWidgetProps } from '../DashboardWidget';
-import QueryCountWidget from './QueryCountWidget';
+import QueryCountWidget from './QueryCountDashboardWidget';
 
 function OrderSlide({ modelType }: { modelType: ModelType }) {
   const modelProperties = ModelInformationDict[modelType];
