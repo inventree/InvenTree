@@ -1,23 +1,10 @@
-import {
-  Card,
-  Center,
-  Container,
-  Divider,
-  Group,
-  Loader,
-  LoadingOverlay,
-  Paper,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Center, Divider, Loader, Paper, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
-import { json } from 'stream/consumers';
 
 import { Boundary } from '../Boundary';
 import DashboardMenu from './DashboardMenu';
-import { DashboardWidgetProps } from './DashboardWidget';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
