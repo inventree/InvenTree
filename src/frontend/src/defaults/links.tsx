@@ -8,7 +8,6 @@ import { IS_DEV_OR_DEMO } from '../main';
 
 export const navTabs = [
   { text: <Trans>Home</Trans>, name: 'home' },
-  { text: <Trans>Dashboard</Trans>, name: 'dashboard' },
   { text: <Trans>Parts</Trans>, name: 'part', role: UserRoles.part },
   { text: <Trans>Stock</Trans>, name: 'stock', role: UserRoles.stock },
   { text: <Trans>Build</Trans>, name: 'build', role: UserRoles.build },
