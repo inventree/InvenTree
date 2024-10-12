@@ -54,6 +54,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: { overdue: true }
     }),
     QueryCountDashboardWidget({
+      title: t`Build Orders Assigned to Me`,
+      modelType: ModelType.build,
+      params: { assigned_to_me: true }
+    }),
+    QueryCountDashboardWidget({
       title: t`Active Sales Orders`,
       modelType: ModelType.salesorder,
       params: { outstanding: true }
@@ -62,6 +67,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Overdue Sales Orders`,
       modelType: ModelType.salesorder,
       params: { overdue: true }
+    }),
+    QueryCountDashboardWidget({
+      title: t`Sales Orders Assigned to Me`,
+      modelType: ModelType.salesorder,
+      params: { assigned_to_me: true }
     }),
     QueryCountDashboardWidget({
       title: t`Active Purchase Orders`,
@@ -74,6 +84,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       params: { overdue: true }
     }),
     QueryCountDashboardWidget({
+      title: t`Purchase Orders Assigned to Me`,
+      modelType: ModelType.purchaseorder,
+      params: { assigned_to_me: true }
+    }),
+    QueryCountDashboardWidget({
       title: t`Active Return Orders`,
       modelType: ModelType.returnorder,
       params: { outstanding: true }
@@ -82,6 +97,11 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Overdue Return Orders`,
       modelType: ModelType.returnorder,
       params: { overdue: true }
+    }),
+    QueryCountDashboardWidget({
+      title: t`Return Orders Assigned to Me`,
+      modelType: ModelType.returnorder,
+      params: { assigned_to_me: true }
     })
   ];
 }

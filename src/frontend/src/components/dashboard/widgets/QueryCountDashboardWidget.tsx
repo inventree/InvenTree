@@ -71,21 +71,21 @@ function QueryCountWidget({
     [modelProperties, params]
   );
 
+  // TODO: Improve visual styling
+
   return (
     <Stack justify="middle" align="stretch">
       <Group gap="xs" wrap="nowrap">
         <InvenTreeIcon icon={modelProperties.icon} />
-        <StylishText size="md">{title}</StylishText>
+
         <Group gap="xs" wrap="nowrap" justify="space-apart">
+          <StylishText size="md">{title}</StylishText>
+          <Space />
           {query.isFetching ? (
             <Loader size="sm" />
           ) : (
             <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
           )}
-          <Space />
-          <ActionIcon variant="transparent" onClick={onFollowLink}>
-            <IconExternalLink />
-          </ActionIcon>
         </Group>
       </Group>
     </Stack>
@@ -106,7 +106,7 @@ export default function QueryCountDashboardWidget({
 }): DashboardWidgetProps {
   return {
     label: identifierString(title),
-    minWidth: 2,
+    minWidth: 3,
     minHeight: 1,
     render: () => (
       <QueryCountWidget modelType={modelType} title={title} params={params} />
