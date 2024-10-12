@@ -103,8 +103,8 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.stock_tracking_list
   },
   build: {
-    label: () => t`Build`,
-    label_multiple: () => t`Builds`,
+    label: () => t`Build Order`,
+    label_multiple: () => t`Build Orders`,
     url_overview: '/build',
     url_detail: '/build/:pk/',
     cui_detail: '/build/:pk/',
