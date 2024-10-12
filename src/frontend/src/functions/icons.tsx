@@ -31,6 +31,7 @@ import {
   IconEdit,
   IconExclamationCircle,
   IconExternalLink,
+  IconFileArrowLeft,
   IconFileDownload,
   IconFileUpload,
   IconFlag,
@@ -40,13 +41,16 @@ import {
   IconHandStop,
   IconHash,
   IconHierarchy,
+  IconHistory,
   IconInfoCircle,
   IconLayersLinked,
   IconLink,
   IconList,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconMail,
+  IconMap2,
   IconMapPin,
   IconMapPinHeart,
   IconMinusVertical,
@@ -120,6 +124,7 @@ const icons = {
   details: IconInfoCircle,
   parameters: IconList,
   list: IconList,
+  list_details: IconListDetails,
   stock: IconPackages,
   variants: IconVersions,
   allocations: IconBookmarks,
@@ -159,6 +164,8 @@ const icons = {
   issue: IconBrandTelegram,
   complete: IconCircleCheck,
   deliver: IconTruckDelivery,
+  address: IconMap2,
+  import: IconFileArrowLeft,
 
   // Part Icons
   active: IconCheck,
@@ -197,6 +204,7 @@ const icons = {
   arrow_down: IconArrowBigDownLineFilled,
   transfer: IconTransfer,
   actions: IconDots,
+  labels: IconTag,
   reports: IconPrinter,
   buy: IconShoppingCartPlus,
   add: IconCirclePlus,
@@ -223,7 +231,8 @@ const icons = {
   repeat_destination: IconFlagShare,
   unlink: IconUnlink,
   success: IconCircleCheck,
-  plugin: IconPlug
+  plugin: IconPlug,
+  history: IconHistory
 };
 
 export type InvenTreeIconType = keyof typeof icons;
