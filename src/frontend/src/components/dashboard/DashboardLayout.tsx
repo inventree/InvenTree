@@ -1,18 +1,11 @@
-import { t } from '@lingui/macro';
-import { Center, Divider, Loader, Paper, Text } from '@mantine/core';
+import { Center, Divider, Loader } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
-import { ModelType } from '../../enums/ModelType';
-import { Boundary } from '../Boundary';
-import DisplayWidget from '../widgets/DisplayWidget';
-import GetStartedWidget from '../widgets/GetStartedWidget';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
 import BuiltinDashboardWidgets from './DashboardWidgetLibrary';
-import QueryCountWidget from './widgets/QueryCountDashboardWidget';
-import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
