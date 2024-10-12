@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
 import { identifierString } from '../../../functions/conversion';
-import { InvenTreeIcon } from '../../../functions/icons';
+import { InvenTreeIcon, InvenTreeIconType } from '../../../functions/icons';
 import { navigateToLink } from '../../../functions/navigation';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -31,10 +31,12 @@ import { DashboardWidgetProps } from '../DashboardWidget';
 function QueryCountWidget({
   modelType,
   title,
+  icon,
   params
 }: {
   modelType: ModelType;
   title: string;
+  icon?: InvenTreeIconType;
   params: any;
 }): ReactNode {
   const user = useUserState();
@@ -76,7 +78,7 @@ function QueryCountWidget({
   return (
     <Stack justify="middle" align="stretch">
       <Group gap="xs" wrap="nowrap">
-        <InvenTreeIcon icon={modelProperties.icon} />
+        <InvenTreeIcon icon={icon ?? modelProperties.icon} />
 
         <Group gap="xs" wrap="nowrap" justify="space-apart">
           <StylishText size="md">{title}</StylishText>

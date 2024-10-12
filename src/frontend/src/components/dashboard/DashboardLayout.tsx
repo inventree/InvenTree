@@ -120,7 +120,10 @@ export default function DashboardLayout({}: {}) {
           containerPadding={[0, 0]}
         >
           {widgets.map((item: DashboardWidgetProps) => {
-            return DashboardWidget(item);
+            return DashboardWidget({
+              item: item,
+              editing: editable
+            });
           })}
         </ReactGridLayout>
       ) : (

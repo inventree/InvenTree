@@ -1,4 +1,5 @@
-import { Paper } from '@mantine/core';
+import { Box, Indicator, Overlay, Paper } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
 
 import { Boundary } from '../Boundary';
 
@@ -20,16 +21,33 @@ export interface DashboardWidgetProps {
 /**
  * Wrapper for a dashboard widget.
  */
-export default function DashboardWidget(props: DashboardWidgetProps) {
+export default function DashboardWidget({
+  item,
+  editing
+}: {
+  item: DashboardWidgetProps;
+  editing: boolean;
+}) {
   // TODO: Implement visibility check
   //     if (!props?.visible?.() == false) {
   //     return null;
   //   }
 
+  // TODO: Add button to remove widget (if "editing")
+
   return (
-    <Paper withBorder key={props.label} shadow="sm" p="xs">
-      <Boundary label={`dashboard-widget-${props.label}`}>
-        {props.render()}
+    <Paper withBorder key={item.label} shadow="sm" p="xs">
+      <Boundary label={`dashboard-widget-${item.label}`}>
+        <Box
+          key={`dashboard-widget-${item.label}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: editing ? '#f0f0ff' : undefined
+          }}
+        >
+          {item.render()}
+        </Box>
       </Boundary>
     </Paper>
   );
