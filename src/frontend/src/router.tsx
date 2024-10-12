@@ -84,9 +84,6 @@ export const ReturnOrderDetail = Loadable(
 
 export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
 
-export const Dashboard = Loadable(
-  lazy(() => import('./pages/Index/Dashboard'))
-);
 export const ErrorPage = Loadable(lazy(() => import('./pages/ErrorPage')));
 
 export const Notifications = Loadable(
@@ -123,7 +120,6 @@ export const routes = (
     <Route path="/" element={<LayoutComponent />} errorElement={<ErrorPage />}>
       <Route index element={<Home />} />,
       <Route path="home/" element={<Home />} />,
-      <Route path="dashboard/" element={<Dashboard />} />,
       <Route path="notifications/*" element={<Notifications />} />,
       <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,

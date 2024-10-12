@@ -10,6 +10,7 @@ import DisplayWidget from '../widgets/DisplayWidget';
 import GetStartedWidget from '../widgets/GetStartedWidget';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
+import BuiltinDashboardWidgets from './DashboardWidgetLibrary';
 import QueryCountWidget from './widgets/QueryCountDashboardWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 
@@ -41,51 +42,7 @@ export default function DashboardLayout({}: {}) {
   const [loaded, setLoaded] = useState(false);
 
   const widgets = useMemo(() => {
-    return [
-      {
-        label: 'widget-1',
-        minWidth: 2,
-        minHeight: 1,
-        render: () => <Text>Widget 1</Text>
-      },
-      {
-        label: 'widget-2',
-        minWidth: 2,
-        minHeight: 1,
-        render: () => <Text>Widget 2</Text>
-      },
-      {
-        label: 'widget-3',
-        minWidth: 3,
-        minHeight: 2,
-        render: () => <Text>Widget 3</Text>
-      },
-      QueryCountDashboardWidget({
-        title: t`Outstanding Purchase Orders`,
-        modelType: ModelType.purchaseorder,
-        params: {
-          outstanding: true
-        }
-      }),
-      QueryCountDashboardWidget({
-        title: t`Outstanding Sales Orders`,
-        modelType: ModelType.salesorder,
-        params: {
-          outstanding: true
-        }
-      }),
-      QueryCountDashboardWidget({
-        title: t`Stock Items`,
-        modelType: ModelType.stockitem,
-        params: {}
-      }),
-      {
-        label: 'get-started',
-        render: () => <GetStartedWidget />,
-        minWidth: 5,
-        minHeight: 4
-      }
-    ];
+    return BuiltinDashboardWidgets();
   }, []);
 
   // When the layout is rendered, ensure that the widget attributes are observed

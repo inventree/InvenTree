@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Divider } from '@mantine/core';
 
 import { navDocLinks } from '../../defaults/links';
 import { GettingStartedCarousel } from '../items/GettingStartedCarousel';
