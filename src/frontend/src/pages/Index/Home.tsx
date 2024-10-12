@@ -1,7 +1,8 @@
 import { Trans } from '@lingui/macro';
-import { Title } from '@mantine/core';
+import { Divider, Title } from '@mantine/core';
 import { lazy } from 'react';
 
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
 import {
   LayoutItemType,
   WidgetLayout
@@ -51,13 +52,13 @@ const vals: LayoutItemType[] = [
 ];
 
 export default function Home() {
-  const [username] = useUserState((state) => [state.username()]);
   return (
     <>
-      <Title order={1}>
-        <Trans>Welcome to your Dashboard{username && `, ${username}`}</Trans>
-      </Title>
+      <DashboardLayout />
+
+      <Divider />
       <WidgetLayout items={vals} />
+      <Divider />
     </>
   );
 }
