@@ -4,6 +4,7 @@ import {
   Group,
   Loader,
   Skeleton,
+  Space,
   Stack,
   Text
 } from '@mantine/core';
@@ -14,6 +15,7 @@ import { ReactNode, useCallback } from 'react';
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
 import { identifierString } from '../../../functions/conversion';
+import { InvenTreeIcon } from '../../../functions/icons';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
@@ -55,15 +57,19 @@ function QueryCountWidget({
   return (
     <Stack justify="middle" align="stretch">
       <Group gap="xs" wrap="nowrap">
+        <InvenTreeIcon icon={modelProperties.icon} />
         <StylishText size="md">{title}</StylishText>
-        {query.isFetching ? (
-          <Loader size="sm" />
-        ) : (
-          <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
-        )}
-        <ActionIcon variant="transparent">
-          <IconExternalLink />
-        </ActionIcon>
+        <Group gap="xs" wrap="nowrap" justify="space-apart">
+          {query.isFetching ? (
+            <Loader size="sm" />
+          ) : (
+            <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
+          )}
+          <Space />
+          <ActionIcon variant="transparent">
+            <IconExternalLink />
+          </ActionIcon>
+        </Group>
       </Group>
     </Stack>
   );
@@ -82,7 +88,6 @@ export default function QueryCountDashboardWidget({
   params: any;
 }): DashboardWidgetProps {
   return {
-    title: title,
     label: identifierString(title),
     minWidth: 2,
     minHeight: 1,
