@@ -3,6 +3,7 @@ import {
   Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
+  IconBell,
   IconBinaryTree2,
   IconBookmarks,
   IconBox,
@@ -166,6 +167,8 @@ const icons = {
   deliver: IconTruckDelivery,
   address: IconMap2,
   import: IconFileArrowLeft,
+  bell: IconBell,
+  notification: IconBell,
 
   // Part Icons
   active: IconCheck,

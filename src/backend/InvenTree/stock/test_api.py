@@ -2406,7 +2406,7 @@ class StockStatisticsTest(StockAPITestCase):
 
     fixtures = [*StockAPITestCase.fixtures, 'build']
 
-    def test_test_statics(self):
+    def test_test_statistics(self):
         """Test the test statistics API endpoints."""
         part = Part.objects.first()
         response = self.get(

@@ -127,9 +127,14 @@ function BasePanelGroup({
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
-      <Paper p="sm" radius="xs" shadow="xs">
-        <Tabs value={currentPanel} orientation="vertical" keepMounted={false}>
-          <Tabs.List justify="left">
+      <Paper p="sm" radius="xs" shadow="xs" aria-label={`${pageKey}`}>
+        <Tabs
+          value={currentPanel}
+          orientation="vertical"
+          keepMounted={false}
+          aria-label={`panel-group-${pageKey}`}
+        >
+          <Tabs.List justify="left" aria-label={`panel-tabs-${pageKey}`}>
             {allPanels.map(
               (panel) =>
                 !panel.hidden && (
