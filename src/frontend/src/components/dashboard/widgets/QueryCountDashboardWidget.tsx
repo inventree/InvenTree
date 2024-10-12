@@ -10,12 +10,15 @@ import {
 } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { on } from 'events';
 import { ReactNode, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
 import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
+import { navigateToLink } from '../../../functions/navigation';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
@@ -35,6 +38,7 @@ function QueryCountWidget({
   params: any;
 }): ReactNode {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const modelProperties = ModelInformationDict[modelType];
 
@@ -54,6 +58,19 @@ function QueryCountWidget({
     }
   });
 
+  const onFollowLink = useCallback(
+    (event: any) => {
+      // TODO: Pass the query parameters to the target page, so that the user can see the results
+
+      // TODO: Note that the url_overview properties are out of date and need to be updated!!
+
+      if (modelProperties.url_overview) {
+        navigateToLink(modelProperties.url_overview, navigate, event);
+      }
+    },
+    [modelProperties, params]
+  );
+
   return (
     <Stack justify="middle" align="stretch">
       <Group gap="xs" wrap="nowrap">
@@ -66,7 +83,7 @@ function QueryCountWidget({
             <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
           )}
           <Space />
-          <ActionIcon variant="transparent">
+          <ActionIcon variant="transparent" onClick={onFollowLink}>
             <IconExternalLink />
           </ActionIcon>
         </Group>

@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import { InvenTreeIconType } from '../../functions/icons';
 
 export interface ModelInformationInterface {
   label: string;
@@ -29,7 +29,7 @@ export const ModelInformationDict: ModelDict = {
   part: {
     label: () => t`Part`,
     label_multiple: () => t`Parts`,
-    url_overview: '/part',
+    url_overview: '/part/category/index/parts',
     url_detail: '/part/:pk/',
     cui_detail: '/part/:pk/',
     api_endpoint: ApiEndpoints.part_list,
@@ -75,7 +75,7 @@ export const ModelInformationDict: ModelDict = {
   partcategory: {
     label: () => t`Part Category`,
     label_multiple: () => t`Part Categories`,
-    url_overview: '/part/category',
+    url_overview: '/part/category/parts/subcategories',
     url_detail: '/part/category/:pk/',
     cui_detail: '/part/category/:pk/',
     api_endpoint: ApiEndpoints.category_list,
@@ -85,7 +85,7 @@ export const ModelInformationDict: ModelDict = {
   stockitem: {
     label: () => t`Stock Item`,
     label_multiple: () => t`Stock Items`,
-    url_overview: '/stock/item',
+    url_overview: '/stock/location/index/stock-items',
     url_detail: '/stock/item/:pk/',
     cui_detail: '/stock/item/:pk/',
     api_endpoint: ApiEndpoints.stock_item_list,
