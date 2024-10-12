@@ -106,24 +106,6 @@ export const layoutContent = style({
   width: '100%'
 });
 
-export const layoutFooterLinks = style({
-  [vars.smallerThan('xs')]: {
-    marginTop: vars.spacing.md
-  }
-});
-
-export const layoutFooterInner = style({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingTop: vars.spacing.xl,
-  paddingBottom: vars.spacing.xl,
-
-  [vars.smallerThan('xs')]: {
-    flexDirection: 'column'
-  }
-});
-
 export const tabs = style({
   [vars.smallerThan('sm')]: {
     display: 'none'
