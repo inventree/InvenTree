@@ -109,6 +109,12 @@ export default function CategoryDetail() {
         label: t`Parent Category`,
         model: ModelType.partcategory,
         hidden: !category?.parent
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        icon: 'notification',
+        label: t`Subscribed`
       }
     ];
 
@@ -165,7 +171,7 @@ export default function CategoryDetail() {
     url: ApiEndpoints.category_list,
     pk: id,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: partCategoryFields({}),
     onFormSuccess: refreshInstance
   });
 

@@ -3,6 +3,7 @@ import {
   Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
+  IconBell,
   IconBinaryTree2,
   IconBookmarks,
   IconBox,
@@ -159,6 +160,8 @@ const icons = {
   issue: IconBrandTelegram,
   complete: IconCircleCheck,
   deliver: IconTruckDelivery,
+  bell: IconBell,
+  notification: IconBell,
 
   // Part Icons
   active: IconCheck,

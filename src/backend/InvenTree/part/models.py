@@ -288,11 +288,10 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_subscribers(self, include_parents=True):
         """Return a list of users who subscribe to this PartCategory."""
-        cats = self.get_ancestors(include_self=True)
-
         subscribers = set()
 
         if include_parents:
+            cats = self.get_ancestors(include_self=True)
             queryset = PartCategoryStar.objects.filter(category__in=cats)
         else:
             queryset = PartCategoryStar.objects.filter(category=self)
@@ -306,12 +305,12 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status: bool) -> None:
+    def set_starred(self, user, status: bool, **kwargs) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
 
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:
@@ -1451,13 +1450,13 @@ class Part(
         """Return True if the specified user subscribes to this part."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status, **kwargs):
         """Set the "subscription" status of this Part against the specified user."""
         if not user:
             return
 
         # Already subscribed?
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:
