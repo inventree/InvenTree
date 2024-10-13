@@ -14,10 +14,15 @@ import {
   IconLayoutGridAdd,
   IconLayoutGridRemove
 } from '@tabler/icons-react';
+import { link } from 'fs';
 import { useMemo } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
+import { UserPermissions, UserRoles } from '../../enums/Roles';
+import useInstanceName from '../../hooks/UseInstanceName';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
+import { MenuLinkItem } from '../items/MenuLinks';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -36,18 +41,16 @@ export default function DashboardMenu({
   onToggleEdit: () => void;
   onToggleRemove: () => void;
 }) {
-  const globalSettings = useGlobalSettingsState();
   const user = useUserState();
+  const instanceName = useInstanceName();
 
   const title = useMemo(() => {
-    const instance = globalSettings.getSetting(
-      'INVENTREE_INSTANCE',
-      'InvenTree'
-    );
     const username = user.username();
 
-    return <StylishText size="lg">{`${instance} - ${username}`}</StylishText>;
-  }, [user, globalSettings]);
+    return (
+      <StylishText size="lg">{`${instanceName} - ${username}`}</StylishText>
+    );
+  }, [user, instanceName]);
 
   return (
     <Paper p="sm" shadow="xs">

@@ -265,9 +265,7 @@ export default function DashboardLayout({}: {}) {
                   title={t`No Widgets Selected`}
                   icon={<IconInfoCircle />}
                 >
-                  <Text>
-                    {t`Use the menu to add widgets to the dashboard`}{' '}
-                  </Text>
+                  <Text>{t`Use the menu to add widgets to the dashboard`}</Text>
                 </Alert>
               </Card>
             </Center>

@@ -1,7 +1,7 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { openContextModal } from '@mantine/modals';
 
-import { DocumentationLinkItem } from '../components/items/DocumentationLinks';
+import { MenuLinkItem } from '../components/items/MenuLinks';
 import { StylishText } from '../components/items/StylishText';
 import { UserRoles } from '../enums/Roles';
 import { IS_DEV_OR_DEMO } from '../main';
@@ -25,39 +25,44 @@ if (IS_DEV_OR_DEMO) {
 
 export const docLinks = {
   app: 'https://docs.inventree.org/app/',
-  getting_started: 'https://docs.inventree.org/en/latest/getting_started/',
+  getting_started: 'https://docs.inventree.org/en/latest/start/intro/',
   api: 'https://docs.inventree.org/en/latest/api/api/',
-  developer: 'https://docs.inventree.org/en/latest/develop/starting/',
+  developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
   faq: 'https://docs.inventree.org/en/latest/faq/'
 };
 
-export const navDocLinks: DocumentationLinkItem[] = [
-  {
-    id: 'getting_started',
-    title: <Trans>Getting Started</Trans>,
-    description: <Trans>Getting started with InvenTree</Trans>,
-    link: docLinks.getting_started,
-    placeholder: true
-  },
-  {
-    id: 'api',
-    title: <Trans>API</Trans>,
-    description: <Trans>InvenTree API documentation</Trans>,
-    link: docLinks.api
-  },
-  {
-    id: 'developer',
-    title: <Trans>Developer Manual</Trans>,
-    description: <Trans>InvenTree developer manual</Trans>,
-    link: docLinks.developer
-  },
-  {
-    id: 'faq',
-    title: <Trans>FAQ</Trans>,
-    description: <Trans>Frequently asked questions</Trans>,
-    link: docLinks.faq
-  }
-];
+export function DocumentationLinks(): MenuLinkItem[] {
+  return [
+    {
+      id: 'gettin-started',
+      title: t`Getting Started`,
+      link: docLinks.getting_started,
+      external: true,
+      description: t`Getting started with InvenTree`
+    },
+    {
+      id: 'api',
+      title: t`API`,
+      link: docLinks.api,
+      external: true,
+      description: t`InvenTree API documentation`
+    },
+    {
+      id: 'developer',
+      title: t`Developer Manual`,
+      link: docLinks.developer,
+      external: true,
+      description: t`InvenTree developer manual`
+    },
+    {
+      id: 'faq',
+      title: t`FAQ`,
+      link: docLinks.faq,
+      external: true,
+      description: t`Frequently asked questions`
+    }
+  ];
+}
 
 export function serverInfo() {
   return openContextModal({
@@ -98,23 +103,28 @@ export function licenseInfo() {
   });
 }
 
-export const aboutLinks: DocumentationLinkItem[] = [
-  {
-    id: 'instance',
-    title: <Trans>System Information</Trans>,
-    description: <Trans>About this Inventree instance</Trans>,
-    action: serverInfo
-  },
-  {
-    id: 'about',
-    title: <Trans>About InvenTree</Trans>,
-    description: <Trans>About the InvenTree org</Trans>,
-    action: aboutInvenTree
-  },
-  {
-    id: 'licenses',
-    title: <Trans>Licenses</Trans>,
-    description: <Trans>Licenses for dependencies of the service</Trans>,
-    action: licenseInfo
-  }
-];
+export function AboutLinks(): MenuLinkItem[] {
+  return [
+    {
+      id: 'instance',
+      title: t`System Information`,
+      description: t`About this Inventree instance`,
+      icon: 'info',
+      action: serverInfo
+    },
+    {
+      id: 'about',
+      title: t`About InvenTree`,
+      description: t`About the InvenTree Project`,
+      icon: 'info',
+      action: aboutInvenTree
+    },
+    {
+      id: 'licenses',
+      title: t`License Information`,
+      description: t`Licenses for dependencies of the InvenTree software`,
+      icon: 'license',
+      action: licenseInfo
+    }
+  ];
+}

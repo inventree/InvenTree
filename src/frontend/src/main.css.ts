@@ -82,21 +82,6 @@ export const link = style({
   }
 });
 
-export const subLink = style({
-  width: '100%',
-  padding: `${vars.spacing.xs} ${vars.spacing.md}`,
-  borderRadius: vars.radiusDefault,
-
-  ':hover': {
-    [vars.lightSelector]: { backgroundColor: vars.colors.gray[0] },
-    [vars.darkSelector]: { backgroundColor: vars.colors.dark[7] }
-  },
-
-  ':active': {
-    color: vars.colors.defaultHover
-  }
-});
-
 export const docHover = style({
   border: `1px dashed `
 });

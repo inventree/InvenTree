@@ -55,7 +55,7 @@ export function useDashboardItems(): DashboardLibraryProps {
       }
 
       return api
-        .get(apiUrl(ApiEndpoints.plugin_dashboard_list))
+        .get(apiUrl(ApiEndpoints.plugin_dashboard_list), {})
         .then((response: any) => response.data)
         .catch((error: any) => {
           console.error('Failed to fetch plugin dashboard items:', error);

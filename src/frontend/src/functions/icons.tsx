@@ -45,6 +45,8 @@ import {
   IconHistory,
   IconInfoCircle,
   IconLayersLinked,
+  IconLayoutDashboard,
+  IconLicense,
   IconLink,
   IconList,
   IconListDetails,
@@ -72,6 +74,7 @@ import {
   IconQuestionMark,
   IconRefresh,
   IconRulerMeasure,
+  IconSettings,
   IconShoppingCart,
   IconShoppingCartHeart,
   IconShoppingCartPlus,
@@ -91,6 +94,7 @@ import {
   IconTruckReturn,
   IconUnlink,
   IconUser,
+  IconUserBolt,
   IconUserStar,
   IconUsersGroup,
   IconVersions,
@@ -169,6 +173,9 @@ const icons = {
   import: IconFileArrowLeft,
   bell: IconBell,
   notification: IconBell,
+  admin: IconUserBolt,
+  system: IconSettings,
+  license: IconLicense,
 
   // Part Icons
   active: IconCheck,
@@ -235,7 +242,8 @@ const icons = {
   unlink: IconUnlink,
   success: IconCircleCheck,
   plugin: IconPlug,
-  history: IconHistory
+  history: IconHistory,
+  dashboard: IconLayoutDashboard
 };
 
 export type InvenTreeIconType = keyof typeof icons;
