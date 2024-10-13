@@ -10,6 +10,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { identifierString } from '../functions/conversion';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
+import { useUserState } from '../states/UserState';
 
 // Define the interface for a plugin-defined dashboard item
 interface PluginDashboardItem {
@@ -34,6 +35,7 @@ interface DashboardLibraryProps {
  * - Loads plugin-defined dashboard items (via the API)
  */
 export function useDashboardItems(): DashboardLibraryProps {
+  const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 
   const pluginsEnabled: boolean = useMemo(
@@ -45,7 +47,8 @@ export function useDashboardItems(): DashboardLibraryProps {
 
   const pluginQuery = useQuery({
     enabled: pluginsEnabled,
-    queryKey: ['plugin-dashboard-items'],
+    queryKey: ['plugin-dashboard-items', user],
+    refetchOnMount: false,
     queryFn: async () => {
       if (!pluginsEnabled) {
         return Promise.resolve([]);
@@ -93,7 +96,12 @@ export function useDashboardItems(): DashboardLibraryProps {
 
   const loaded: boolean = useMemo(() => {
     if (pluginsEnabled) {
-      return pluginQuery.isSuccess;
+      return (
+        !pluginQuery.isFetching &&
+        !pluginQuery.isLoading &&
+        pluginQuery.isFetched &&
+        pluginQuery.isSuccess
+      );
     } else {
       return true;
     }
