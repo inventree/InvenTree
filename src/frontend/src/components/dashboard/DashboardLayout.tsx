@@ -1,5 +1,7 @@
-import { Center, Divider, Loader } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Alert, Card, Center, Divider, Loader, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -253,33 +255,50 @@ export default function DashboardLayout({}: {}) {
         removing={removing}
       />
       <Divider p="xs" />
-
       {layouts && loaded && availableWidgets.loaded ? (
-        <ReactGridLayout
-          className="dashboard-layout"
-          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-          rowHeight={64}
-          layouts={layouts}
-          onLayoutChange={onLayoutChange}
-          compactType={'vertical'}
-          isDraggable={editing}
-          isResizable={editing}
-          margin={[10, 10]}
-          containerPadding={[0, 0]}
-          resizeHandles={['ne', 'se', 'sw', 'nw']}
-        >
-          {widgets.map((item: DashboardWidgetProps) => {
-            return DashboardWidget({
-              item: item,
-              editing: editing,
-              removing: removing,
-              onRemove: () => {
-                removeWidget(item.label);
-              }
-            });
-          })}
-        </ReactGridLayout>
+        <>
+          {widgetLabels.length == 0 ? (
+            <Center>
+              <Card shadow="xs" padding="xl" style={{ width: '100%' }}>
+                <Alert
+                  color="blue"
+                  title={t`No Widgets Selected`}
+                  icon={<IconInfoCircle />}
+                >
+                  <Text>
+                    {t`Use the menu to add widgets to the dashboard`}{' '}
+                  </Text>
+                </Alert>
+              </Card>
+            </Center>
+          ) : (
+            <ReactGridLayout
+              className="dashboard-layout"
+              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+              cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+              rowHeight={64}
+              layouts={layouts}
+              onLayoutChange={onLayoutChange}
+              compactType={'vertical'}
+              isDraggable={editing}
+              isResizable={editing}
+              margin={[10, 10]}
+              containerPadding={[0, 0]}
+              resizeHandles={['ne', 'se', 'sw', 'nw']}
+            >
+              {widgets.map((item: DashboardWidgetProps) => {
+                return DashboardWidget({
+                  item: item,
+                  editing: editing,
+                  removing: removing,
+                  onRemove: () => {
+                    removeWidget(item.label);
+                  }
+                });
+              })}
+            </ReactGridLayout>
+          )}
+        </>
       ) : (
         <Center>
           <Loader size="xl" />
