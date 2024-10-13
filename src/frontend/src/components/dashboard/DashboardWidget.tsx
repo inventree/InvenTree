@@ -1,4 +1,13 @@
-import { Box, Indicator, Overlay, Paper } from '@mantine/core';
+import { t } from '@lingui/macro';
+import {
+  ActionIcon,
+  Box,
+  Group,
+  Indicator,
+  Overlay,
+  Paper,
+  Tooltip
+} from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 
 import { Boundary } from '../Boundary';
@@ -25,10 +34,14 @@ export interface DashboardWidgetProps {
  */
 export default function DashboardWidget({
   item,
-  editing
+  editing,
+  removing,
+  onRemove
 }: {
   item: DashboardWidgetProps;
   editing: boolean;
+  removing: boolean;
+  onRemove: () => void;
 }) {
   // TODO: Implement visibility check
   //     if (!props?.visible?.() == false) {
@@ -51,6 +64,22 @@ export default function DashboardWidget({
         >
           {item.render()}
         </Box>
+        {removing && (
+          <Overlay color="black" opacity={0.7} zIndex={1000}>
+            {removing && (
+              <Group justify="right">
+                <Tooltip
+                  label={t`Remove this widget from the dashboard`}
+                  position="bottom"
+                >
+                  <ActionIcon variant="filled" color="red" onClick={onRemove}>
+                    <IconX />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+            )}
+          </Overlay>
+        )}
       </Boundary>
     </Paper>
   );

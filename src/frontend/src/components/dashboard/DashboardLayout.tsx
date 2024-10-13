@@ -87,7 +87,8 @@ export default function DashboardLayout({}: {}) {
   // Dashboard widget selection
   const [widgets, setWidgets] = useState<DashboardWidgetProps[]>([]);
 
-  const [editable, setEditable] = useDisclosure(false);
+  const [editing, setEditing] = useDisclosure(false);
+  const [removing, setRemoving] = useDisclosure(false);
 
   const [
     widgetDrawerOpened,
@@ -118,6 +119,9 @@ export default function DashboardLayout({}: {}) {
     }
   }, [widgetLabels]);
 
+  /**
+   * Callback function to add a new widget to the dashboard
+   */
   const addWidget = useCallback(
     (widget: string) => {
       let newWidget = allWidgets.find((wid) => wid.label === widget);
@@ -131,6 +135,28 @@ export default function DashboardLayout({}: {}) {
 
       Object.keys(_layouts).forEach((key) => {
         _layouts[key] = updateLayoutForWidget(_layouts[key], true);
+      });
+
+      setLayouts(_layouts);
+    },
+    [allWidgets, widgets, layouts]
+  );
+
+  /**
+   * Callback function to remove a widget from the dashboard
+   */
+  const removeWidget = useCallback(
+    (widget: string) => {
+      // Remove the widget from the list
+      setWidgets(widgets.filter((item) => item.label !== widget));
+
+      // Remove the widget from the layout
+      let _layouts: any = { ...layouts };
+
+      Object.keys(_layouts).forEach((key) => {
+        _layouts[key] = _layouts[key].filter(
+          (item: Layout) => item.i !== widget
+        );
       });
 
       setLayouts(_layouts);
@@ -213,8 +239,10 @@ export default function DashboardLayout({}: {}) {
       />
       <DashboardMenu
         onAddWidget={openWidgetDrawer}
-        onToggleEdit={setEditable.toggle}
-        editing={editable}
+        onToggleEdit={setEditing.toggle}
+        onToggleRemove={setRemoving.toggle}
+        editing={editing}
+        removing={removing}
       />
       <Divider p="xs" />
 
@@ -227,8 +255,8 @@ export default function DashboardLayout({}: {}) {
           layouts={layouts}
           onLayoutChange={onLayoutChange}
           compactType={'vertical'}
-          isDraggable={editable}
-          isResizable={editable}
+          isDraggable={editing}
+          isResizable={editing}
           margin={[10, 10]}
           containerPadding={[0, 0]}
           resizeHandles={['ne', 'se', 'sw', 'nw']}
@@ -236,7 +264,11 @@ export default function DashboardLayout({}: {}) {
           {widgets.map((item: DashboardWidgetProps) => {
             return DashboardWidget({
               item: item,
-              editing: editable
+              editing: editing,
+              removing: removing,
+              onRemove: () => {
+                removeWidget(item.label);
+              }
             });
           })}
         </ReactGridLayout>

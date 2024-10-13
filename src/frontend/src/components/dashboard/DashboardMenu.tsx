@@ -2,9 +2,12 @@ import { Trans } from '@lingui/macro';
 import { ActionIcon, Group, Indicator, Menu, Paper } from '@mantine/core';
 import {
   IconArrowBackUpDouble,
+  IconCircleCheck,
   IconCirclePlus,
   IconDotsVertical,
-  IconLayout2
+  IconLayout2,
+  IconLayoutGridAdd,
+  IconLayoutGridRemove
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -17,12 +20,16 @@ import { StylishText } from '../items/StylishText';
  */
 export default function DashboardMenu({
   editing,
+  removing,
   onAddWidget,
-  onToggleEdit
+  onToggleEdit,
+  onToggleRemove
 }: {
   editing: boolean;
+  removing: boolean;
   onAddWidget: () => void;
   onToggleEdit: () => void;
+  onToggleRemove: () => void;
 }) {
   const globalSettings = useGlobalSettingsState();
   const user = useUserState();
@@ -68,28 +75,47 @@ export default function DashboardMenu({
                 <Trans>Dashboard</Trans>
               </Menu.Label>
 
-              <Menu.Item
-                leftSection={<IconCirclePlus size={14} />}
-                onClick={onAddWidget}
-              >
-                <Trans>Add Widget</Trans>
-              </Menu.Item>
-              <Menu.Item
-                hidden={!editing}
-                leftSection={
-                  <IconLayout2
-                    size={14}
-                    color={editing ? 'green' : undefined}
-                  />
-                }
-                onClick={onToggleEdit}
-              >
-                {editing ? (
-                  <Trans>Accept Layout</Trans>
-                ) : (
+              {!editing && !removing && (
+                <Menu.Item
+                  leftSection={<IconLayout2 color="blue" size={14} />}
+                  onClick={onToggleEdit}
+                >
                   <Trans>Edit Layout</Trans>
-                )}
-              </Menu.Item>
+                </Menu.Item>
+              )}
+
+              {!editing && !removing && (
+                <Menu.Item
+                  leftSection={<IconLayoutGridAdd color="green" size={14} />}
+                  onClick={onAddWidget}
+                >
+                  <Trans>Add Widget</Trans>
+                </Menu.Item>
+              )}
+
+              {!editing && !removing && (
+                <Menu.Item
+                  leftSection={<IconLayoutGridRemove color="red" size={14} />}
+                  onClick={onToggleRemove}
+                >
+                  <Trans>Remove Widgets</Trans>
+                </Menu.Item>
+              )}
+
+              {(editing || removing) && (
+                <Menu.Item
+                  leftSection={<IconCircleCheck color="green" size={14} />}
+                  onClick={() => {
+                    if (editing) {
+                      onToggleEdit();
+                    } else if (removing) {
+                      onToggleRemove();
+                    }
+                  }}
+                >
+                  <Trans>Accept Layout</Trans>
+                </Menu.Item>
+              )}
             </Menu.Dropdown>
           </Menu>
         </Group>
