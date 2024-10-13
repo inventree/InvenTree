@@ -4,7 +4,6 @@ import { openContextModal } from '@mantine/modals';
 import { MenuLinkItem } from '../components/items/MenuLinks';
 import { StylishText } from '../components/items/StylishText';
 import { UserRoles } from '../enums/Roles';
-import { IS_DEV_OR_DEMO } from '../main';
 
 export const navTabs = [
   { text: <Trans>Dashboard</Trans>, name: 'home' },
@@ -18,10 +17,6 @@ export const navTabs = [
   },
   { text: <Trans>Sales</Trans>, name: 'sales', role: UserRoles.sales_order }
 ];
-
-if (IS_DEV_OR_DEMO) {
-  navTabs.push({ text: <Trans>Playground</Trans>, name: 'playground' });
-}
 
 export const docLinks = {
   app: 'https://docs.inventree.org/app/',
