@@ -1,9 +1,14 @@
-import { Trans } from '@lingui/macro';
-import { ActionIcon, Group, Indicator, Menu, Paper } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
 import {
-  IconArrowBackUpDouble,
+  ActionIcon,
+  Group,
+  Indicator,
+  Menu,
+  Paper,
+  Tooltip
+} from '@mantine/core';
+import {
   IconCircleCheck,
-  IconCirclePlus,
   IconDotsVertical,
   IconLayout2,
   IconLayoutGridAdd,
@@ -50,6 +55,22 @@ export default function DashboardMenu({
         {title}
 
         <Group justify="right" wrap="nowrap">
+          {(editing || removing) && (
+            <Tooltip
+              label={t`Accept Layout`}
+              onClick={() => {
+                if (editing) {
+                  onToggleEdit();
+                } else if (removing) {
+                  onToggleRemove();
+                }
+              }}
+            >
+              <ActionIcon color="green" variant="transparent">
+                <IconCircleCheck />
+              </ActionIcon>
+            </Tooltip>
+          )}
           <Menu
             shadow="md"
             width={200}
