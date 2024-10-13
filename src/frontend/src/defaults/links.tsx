@@ -37,10 +37,6 @@ export const navTabs = [
   { text: <Trans>Sales</Trans>, name: 'sales', role: UserRoles.sales_order }
 ];
 
-if (IS_DEV_OR_DEMO) {
-  navTabs.push({ text: <Trans>Playground</Trans>, name: 'playground' });
-}
-
 export const docLinks = {
   app: 'https://docs.inventree.org/app/',
   getting_started: 'https://docs.inventree.org/en/latest/getting_started/',

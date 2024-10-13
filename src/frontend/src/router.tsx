@@ -8,9 +8,6 @@ export const LayoutComponent = Loadable(
   lazy(() => import('./components/nav/Layout'))
 );
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
-export const Playground = Loadable(
-  lazy(() => import('./pages/Index/Playground'))
-);
 
 export const CompanyDetail = Loadable(
   lazy(() => import('./pages/company/CompanyDetail'))
@@ -125,7 +122,6 @@ export const routes = (
       <Route path="home/" element={<Home />} />,
       <Route path="dashboard/" element={<Dashboard />} />,
       <Route path="notifications/*" element={<Notifications />} />,
-      <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
       <Route path="settings/">
         <Route index element={<Navigate to="admin/" />} />
