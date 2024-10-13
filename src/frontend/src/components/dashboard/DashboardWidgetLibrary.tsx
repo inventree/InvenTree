@@ -145,17 +145,10 @@ export function BuiltingSettinsWidgets(): DashboardWidgetProps[] {
  *
  * @returns A list of built-in dashboard widgets
  */
-export function BuiltinDashboardWidgets(): DashboardWidgetProps[] {
+export default function DashboardWidgetLibrary(): DashboardWidgetProps[] {
   return [
     ...BuiltinQueryCountWidgets(),
     ...BuiltinGettingStartedWidgets(),
     ...BuiltingSettinsWidgets()
-  ];
-}
-
-export default function AvailableDashboardWidgets(): DashboardWidgetProps[] {
-  return [
-    ...BuiltinDashboardWidgets()
-    // TODO: Add plugin widgets here
   ];
 }

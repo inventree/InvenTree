@@ -13,8 +13,8 @@ import {
 import { IconLayoutGridAdd } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { StylishText } from '../items/StylishText';
-import AvailableDashboardWidgets from './DashboardWidgetLibrary';
 
 /**
  * Drawer allowing the user to add new widgets to the dashboard.
@@ -30,16 +30,17 @@ export default function DashboardWidgetDrawer({
   onAddWidget: (widget: string) => void;
   currentWidgets: string[];
 }) {
-  // Memoize all available widgets
-  const allWidgets = useMemo(() => AvailableDashboardWidgets(), []);
+  // Load available widgets
+  const availableWidgets = useDashboardItems();
 
   // Memoize available (not currently used) widgets
-  const availableWidgets = useMemo(() => {
+  const unusedWidgets = useMemo(() => {
     return (
-      allWidgets.filter((widget) => !currentWidgets.includes(widget.label)) ??
-      []
+      availableWidgets.items.filter(
+        (widget) => !currentWidgets.includes(widget.label)
+      ) ?? []
     );
-  }, [allWidgets, currentWidgets]);
+  }, [availableWidgets.items, currentWidgets]);
 
   return (
     <Drawer
@@ -57,7 +58,7 @@ export default function DashboardWidgetDrawer({
         <Divider />
         <Table>
           <Table.Tbody>
-            {availableWidgets.map((widget) => (
+            {unusedWidgets.map((widget) => (
               <Table.Tr key={widget.label}>
                 <Table.Td>
                   <Tooltip
@@ -86,7 +87,7 @@ export default function DashboardWidgetDrawer({
             ))}
           </Table.Tbody>
         </Table>
-        {availableWidgets.length === 0 && (
+        {unusedWidgets.length === 0 && (
           <Alert color="blue" title={t`No Widgets Available`}>
             <Text>{t`There are no more widgets available for the dashboard`}</Text>
           </Alert>

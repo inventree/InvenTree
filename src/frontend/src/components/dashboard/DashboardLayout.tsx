@@ -3,11 +3,11 @@ import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
+import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useUserState } from '../../states/UserState';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
-import AvailableDashboardWidgets from './DashboardWidgetLibrary';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
@@ -107,16 +107,8 @@ export default function DashboardLayout({}: {}) {
     ]
   ]);
 
-  // Memoize all available widgets
-  const allWidgets: DashboardWidgetProps[] = useMemo(
-    () => AvailableDashboardWidgets(),
-    []
-  );
-
-  // Initial widget selection
-  useEffect(() => {
-    setWidgets(allWidgets.filter((widget, index) => index < 5));
-  }, []);
+  // Load available widgets
+  const availableWidgets = useDashboardItems();
 
   const widgetLabels = useMemo(() => {
     return widgets.map((widget: DashboardWidgetProps) => widget.label);
@@ -134,7 +126,9 @@ export default function DashboardLayout({}: {}) {
    */
   const addWidget = useCallback(
     (widget: string) => {
-      let newWidget = allWidgets.find((wid) => wid.label === widget);
+      let newWidget = availableWidgets.items.find(
+        (wid) => wid.label === widget
+      );
 
       if (newWidget) {
         setWidgets([...widgets, newWidget]);
@@ -149,7 +143,7 @@ export default function DashboardLayout({}: {}) {
 
       setLayouts(_layouts);
     },
-    [allWidgets, widgets, layouts]
+    [availableWidgets.items, widgets, layouts]
   );
 
   /**
@@ -171,7 +165,7 @@ export default function DashboardLayout({}: {}) {
 
       setLayouts(_layouts);
     },
-    [allWidgets, widgets, layouts]
+    [widgets, layouts]
   );
 
   // When the layout is rendered, ensure that the widget attributes are observed
@@ -218,26 +212,30 @@ export default function DashboardLayout({}: {}) {
         newLayouts[key] = updateLayoutForWidget(newLayouts[key], false);
       });
 
-      if (layouts && loaded) {
+      if (layouts && loaded && availableWidgets.loaded) {
         saveDashboardLayout(newLayouts, user.userId());
         setLayouts(newLayouts);
       }
     },
-    [loaded]
+    [loaded, availableWidgets.loaded]
   );
 
   // Load the dashboard layout from local storage
   useEffect(() => {
-    const initialLayouts = loadDashboardLayout(user.userId());
-    const initialWidgetLabels = loadDashboardWidgets(user.userId());
+    if (availableWidgets.loaded) {
+      const initialLayouts = loadDashboardLayout(user.userId());
+      const initialWidgetLabels = loadDashboardWidgets(user.userId());
 
-    setLayouts(initialLayouts);
-    setWidgets(
-      allWidgets.filter((widget) => initialWidgetLabels.includes(widget.label))
-    );
+      setLayouts(initialLayouts);
+      setWidgets(
+        availableWidgets.items.filter((widget) =>
+          initialWidgetLabels.includes(widget.label)
+        )
+      );
 
-    setLoaded(true);
-  }, []);
+      setLoaded(true);
+    }
+  }, [availableWidgets.loaded]);
 
   return (
     <>
@@ -256,7 +254,7 @@ export default function DashboardLayout({}: {}) {
       />
       <Divider p="xs" />
 
-      {layouts && loaded ? (
+      {layouts && loaded && availableWidgets.loaded ? (
         <ReactGridLayout
           className="dashboard-layout"
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
