@@ -17,9 +17,11 @@ import { StylishText } from '../items/StylishText';
  */
 export default function DashboardMenu({
   editing,
+  onAddWidget,
   onToggleEdit
 }: {
   editing: boolean;
+  onAddWidget: () => void;
   onToggleEdit: () => void;
 }) {
   const globalSettings = useGlobalSettingsState();
@@ -66,16 +68,12 @@ export default function DashboardMenu({
                 <Trans>Dashboard</Trans>
               </Menu.Label>
 
-              {editing && (
-                <Menu.Item
-                  leftSection={<IconCirclePlus size={14} />}
-                  onClick={() => {
-                    // TODO: Add item
-                  }}
-                >
-                  <Trans>Add Widget</Trans>
-                </Menu.Item>
-              )}
+              <Menu.Item
+                leftSection={<IconCirclePlus size={14} />}
+                onClick={onAddWidget}
+              >
+                <Trans>Add Widget</Trans>
+              </Menu.Item>
 
               {editing && (
                 <Menu.Item

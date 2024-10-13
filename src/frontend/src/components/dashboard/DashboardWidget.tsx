@@ -12,6 +12,8 @@ import { Boundary } from '../Boundary';
  */
 export interface DashboardWidgetProps {
   label: string;
+  title: string;
+  description: string;
   minWidth?: number;
   minHeight?: number;
   render: () => JSX.Element;

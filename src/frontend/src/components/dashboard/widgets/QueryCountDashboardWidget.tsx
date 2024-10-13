@@ -99,16 +99,20 @@ function QueryCountWidget({
  */
 export default function QueryCountDashboardWidget({
   title,
+  description,
   modelType,
   params
 }: {
   title: string;
+  description: string;
   modelType: ModelType;
   params: any;
 }): DashboardWidgetProps {
   return {
     label: identifierString(title),
-    minWidth: 3,
+    title: title,
+    description: description,
+    minWidth: 2,
     minHeight: 1,
     render: () => (
       <QueryCountWidget modelType={modelType} title={title} params={params} />

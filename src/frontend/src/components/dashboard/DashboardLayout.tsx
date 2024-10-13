@@ -5,7 +5,8 @@ import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
-import BuiltinDashboardWidgets from './DashboardWidgetLibrary';
+import DashboardWidgetDrawer from './DashboardWidgetDrawer';
+import AvailableDashboardWidgets from './DashboardWidgetLibrary';
 
 const ReactGridLayout = WidthProvider(Responsive);
 
@@ -32,18 +33,44 @@ function loadDashboardLayout(): Record<string, Layout[]> {
 export default function DashboardLayout({}: {}) {
   const [layouts, setLayouts] = useState({});
   const [editable, setEditable] = useDisclosure(false);
+  const [
+    widgetDrawerOpened,
+    { open: openWidgetDrawer, close: closeWidgetDrawer }
+  ] = useDisclosure(false);
   const [loaded, setLoaded] = useState(false);
 
-  const widgets = useMemo(() => {
-    return BuiltinDashboardWidgets();
+  // Memoize all available widgets
+  const allWidgets: DashboardWidgetProps[] = useMemo(
+    () => AvailableDashboardWidgets(),
+    []
+  );
+
+  // Initial widget selection
+
+  // TODO: Save this to local storage!
+  const widgets: DashboardWidgetProps[] = useMemo(() => {
+    return allWidgets.filter((widget, index) => index < 5);
   }, []);
+
+  const widgetLabels = useMemo(() => {
+    return widgets.map((widget: DashboardWidgetProps) => widget.label);
+  }, [widgets]);
+
+  const addWidget = useCallback(
+    (widget: string) => {
+      console.log('adding widget:', widget);
+    },
+    [allWidgets, widgets]
+  );
 
   // When the layout is rendered, ensure that the widget attributes are observed
   const updateLayoutForWidget = useCallback(
     (layout: any[]) => {
       return layout.map((item: Layout): Layout => {
         // Find the matching widget
-        let widget = widgets.find((widget) => widget.label === item.i);
+        let widget = widgets.find(
+          (widget: DashboardWidgetProps) => widget.label === item.i
+        );
 
         const minH = widget?.minHeight ?? 2;
         const minW = widget?.minWidth ?? 1;
@@ -95,7 +122,17 @@ export default function DashboardLayout({}: {}) {
 
   return (
     <>
-      <DashboardMenu onToggleEdit={setEditable.toggle} editing={editable} />
+      <DashboardWidgetDrawer
+        opened={widgetDrawerOpened}
+        onClose={closeWidgetDrawer}
+        onAddWidget={addWidget}
+        currentWidgets={widgetLabels}
+      />
+      <DashboardMenu
+        onAddWidget={openWidgetDrawer}
+        onToggleEdit={setEditable.toggle}
+        editing={editable}
+      />
       <Divider p="xs" />
 
       {layouts && loaded ? (
@@ -111,6 +148,7 @@ export default function DashboardLayout({}: {}) {
           isResizable={editable}
           margin={[10, 10]}
           containerPadding={[0, 0]}
+          resizeHandles={['ne', 'se', 'sw', 'nw']}
         >
           {widgets.map((item: DashboardWidgetProps) => {
             return DashboardWidget({
