@@ -58,7 +58,7 @@ export default function DashboardWidgetDrawer({
         <Table>
           <Table.Tbody>
             {availableWidgets.map((widget) => (
-              <Table.Tr>
+              <Table.Tr key={widget.label}>
                 <Table.Td>
                   <Tooltip
                     position="left"
