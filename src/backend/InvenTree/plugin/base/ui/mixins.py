@@ -15,6 +15,7 @@ class CustomPanel(TypedDict):
     """Type definition for a custom panel.
 
     Attributes:
+        plugin: The plugin key (required, must be unique).
         name: The name of the panel (required, used as a DOM identifier).
         label: The label of the panel (required, human readable).
         icon: The icon of the panel (optional, must be a valid icon identifier).
@@ -23,11 +24,34 @@ class CustomPanel(TypedDict):
         source: The source of the panel (optional, path to a JavaScript file).
     """
 
+    plugin: str
     name: str
     label: str
     icon: str
     content: str
     context: dict
+    source: str
+
+
+class CustomDashboardItem(TypedDict):
+    """Type definition for a custom dashboard item.
+
+    Attributes:
+        plugin: The plugin key (required, must be unique
+        label: The label of the dashboard item (required, used as a DOM identifier).
+        title: The title of the dashboard item (required, human readable).
+        description: The description of the dashboard item (required, human readable).
+        width: The width of the dashboard item (integer, defaults to 2)
+        height: The height of the dashboard item (integer, defaults to 2)
+        source: The source of the dashboard item (required, path to a JavaScript file).
+    """
+
+    plugin: str
+    label: str
+    title: str
+    description: str
+    width: int
+    height: int
     source: str
 
 
@@ -91,6 +115,18 @@ class UserInterfaceMixin:
 
         - Either 'source' or 'content' must be provided
 
+        """
+        # Default implementation returns an empty list
+        return []
+
+    def get_ui_dashboard_items(self, request: Request, **kwargs) -> list[CustomPanel]:
+        """Return a list of custom dashboard items to be injected into the UI.
+
+        Args:
+            request: HTTPRequest object (including user information)
+
+        Returns:
+            list: A list of custom dashboard items to be injected into the UI
         """
         # Default implementation returns an empty list
         return []

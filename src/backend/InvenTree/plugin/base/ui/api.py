@@ -54,6 +54,44 @@ class PluginPanelList(APIView):
         )
 
 
+class PluginDashboardList(APIView):
+    """API endpoint for listing all available plugin dashboard items."""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = UIPluginSerializers.PluginDashboardItemSerializer
+
+    @extend_schema(
+        responses={200: UIPluginSerializers.PluginDashboardItemSerializer(many=True)}
+    )
+    def get(self, request):
+        """Show available plugin dashboard items."""
+        dashboard_items = []
+
+        if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
+            # Extract all plugins from the registry which provide custom dashboard items
+            for _plugin in registry.with_mixin('ui', active=True):
+                # Allow plugins to fill this data out
+                try:
+                    plugin_dashboard_items = _plugin.get_ui_dashboard_items(request)
+
+                    if plugin_dashboard_items and type(plugin_dashboard_items) is list:
+                        for item in plugin_dashboard_items:
+                            item['plugin'] = _plugin.slug
+
+                            dashboard_items.append(item)
+
+                except Exception:
+                    # Custom dashboard items could not load
+                    # Log the error and continue
+                    log_error(f'{_plugin.slug}.get_ui_dashboard_items')
+
+        return Response(
+            UIPluginSerializers.PluginDashboardItemSerializer(
+                dashboard_items, many=True
+            ).data
+        )
+
+
 class PluginUIFeatureList(APIView):
     """API endpoint for listing all available plugin ui features."""
 
@@ -86,6 +124,7 @@ class PluginUIFeatureList(APIView):
 
 ui_plugins_api_urls = [
     path('panels/', PluginPanelList.as_view(), name='api-plugin-panel-list'),
+    path('dashboard/', PluginDashboardList.as_view(), name='api-plugin-dashboard-list'),
     path(
         'features/<str:feature>/',
         PluginUIFeatureList.as_view(),

@@ -136,6 +136,38 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         return panels
 
+    def get_ui_dashboard_items(self, request, **kwargs):
+        """Return a list of custom dashboard items."""
+        items = [
+            {
+                'label': 'broken-dashboard-item',
+                'title': _('Broken Dashboard Item'),
+                'description': _(
+                    'This is a broken dashboard item - it will not render!'
+                ),
+                'source': '/this/does/not/exist.js',
+            },
+            {
+                'label': 'sample-dashboard-item',
+                'title': _('Sample Dashboard Item'),
+                'description': _(
+                    'This is a sample dashboard item. It renders a simple string of HTML content.'
+                ),
+                'source': self.plugin_static_file('sample_dashboard_item.js'),
+            },
+        ]
+
+        # Admin item - only visible to admin users
+        if request.user.is_superuser:
+            items.append({
+                'label': 'admin-dashboard-item',
+                'title': _('Admin Dashboard Item'),
+                'description': _('This is an admin-only dashboard item.'),
+                'source': self.plugin_static_file('admin_dashboard_item.js'),
+            })
+
+        return items
+
     def get_ui_features(self, feature_type, context, request):
         """Return a list of custom features to be injected into the UI."""
         if (

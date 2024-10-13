@@ -53,6 +53,47 @@ class PluginPanelSerializer(serializers.Serializer):
     )
 
 
+class PluginDashboardItemSerializer(serializers.Serializer):
+    """Serializer class for a plugin dashboard item."""
+
+    class Meta:
+        """Meta for serializer."""
+
+        fields = [
+            'plugin',
+            'label',
+            'title',
+            'description',
+            'width',
+            'height',
+            'source',
+        ]
+
+    plugin = serializers.CharField(
+        label=_('Plugin Key'), required=True, allow_blank=False
+    )
+
+    label = serializers.CharField(
+        label=_('Item Label'), required=True, allow_blank=False
+    )
+
+    title = serializers.CharField(
+        label=_('Item Title'), required=True, allow_blank=False
+    )
+
+    description = serializers.CharField(
+        label=_('Item Description'), required=True, allow_blank=False
+    )
+
+    width = serializers.IntegerField(label=_('Item Width'), default=2, min_value=1)
+
+    height = serializers.IntegerField(label=_('Item Height'), default=2, min_value=1)
+
+    source = serializers.CharField(
+        label=_('Item Source (javascript)'), required=True, allow_blank=False
+    )
+
+
 class PluginUIFeatureSerializer(serializers.Serializer):
     """Serializer for a plugin ui feature."""
 
