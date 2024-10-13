@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
 
-import { navDocLinks } from '../../defaults/links';
-import { GettingStartedCarousel } from '../items/GettingStartedCarousel';
-import { StylishText } from '../items/StylishText';
+import { navDocLinks } from '../../../defaults/links';
+import { GettingStartedCarousel } from '../../items/GettingStartedCarousel';
+import { StylishText } from '../../items/StylishText';
 
 export default function GetStartedWidget() {
   return (

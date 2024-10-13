@@ -1,9 +1,10 @@
 import { t } from '@lingui/macro';
 
 import { ModelType } from '../../enums/ModelType';
-import DisplayWidget from '../widgets/DisplayWidget';
-import GetStartedWidget from '../widgets/GetStartedWidget';
 import { DashboardWidgetProps } from './DashboardWidget';
+import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
+import GetStartedWidget from './widgets/GetStartedWidget';
+import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 
 /**
@@ -137,16 +138,7 @@ export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
 }
 
 export function BuiltingSettinsWidgets(): DashboardWidgetProps[] {
-  return [
-    {
-      label: 'color-settings',
-      title: t`Color Settings`,
-      description: t`Toggle user interface color mode`,
-      minWidth: 3,
-      minHeight: 2,
-      render: () => <DisplayWidget />
-    }
-  ];
+  return [ColorToggleDashboardWidget(), LanguageSelectDashboardWidget()];
 }
 
 /**
