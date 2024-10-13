@@ -263,7 +263,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     MAX_QUERY_TIME = 7.5
 
     @contextmanager
-    def assertNumQueriesLessThan(self, value, using='default', verbose=False, url=None):
+    def assertNumQueriesLessThan(
+        self, value, using='default', verbose=False, url=None, log_to_file=False
+    ):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -280,6 +282,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             print(
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
+
+            # Useful for debugging, disabled by default
+            if log_to_file:
+                with open('queries.txt', 'w', encoding='utf-8') as f:
+                    for q in context.captured_queries:
+                        f.write(str(q['sql']) + '\n')
 
         if verbose and n >= value:
             msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover

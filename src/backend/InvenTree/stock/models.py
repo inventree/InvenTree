@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, Sum
+from django.db.models import Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save, pre_delete
 from django.db.utils import IntegrityError, OperationalError
@@ -33,6 +33,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+import stock.tasks
 from build import models as BuildModels
 from common.icons import validate_icon
 from common.settings import get_global_setting
@@ -459,6 +460,97 @@ class StockItem(
         & Q(expiry_date__lt=InvenTree.helpers.current_date())
     )
 
+    @classmethod
+    def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
+        """Create multiple stock items with the provided serial numbers.
+
+        Arguments:
+            serials: List of serial numbers to create
+            **kwargs: Additional keyword arguments to pass to the StockItem creation function
+
+        Returns:
+            QuerySet: The created StockItem objects
+
+        raises:
+            ValidationError: If any of the provided serial numbers are invalid
+
+        This method uses bulk_create to create multiple StockItem objects in a single query,
+        which is much more efficient than creating them one-by-one.
+
+        However, it does not perform any validation checks on the provided serial numbers,
+        and also does not generate any "stock tracking entries".
+
+        Note: This is an 'internal' function and should not be used by external code / plugins.
+        """
+        # Ensure the primary-key field is not provided
+        kwargs.pop('id', None)
+        kwargs.pop('pk', None)
+
+        part = kwargs.get('part')
+
+        if not part:
+            raise ValidationError({'part': _('Part must be specified')})
+
+        # Create a list of StockItem objects
+        items = []
+
+        # Provide some default field values
+        data = {**kwargs}
+
+        # Remove some extraneous keys which cause issues
+        for key in ['parent_id', 'part_id', 'build_id']:
+            data.pop(key, None)
+
+        data['parent'] = kwargs.pop('parent', None)
+        data['tree_id'] = kwargs.pop('tree_id', 0)
+        data['level'] = kwargs.pop('level', 0)
+        data['rght'] = kwargs.pop('rght', 0)
+        data['lft'] = kwargs.pop('lft', 0)
+
+        # Force single quantity for each item
+        data['quantity'] = 1
+
+        for serial in serials:
+            data['serial'] = serial
+            data['serial_int'] = StockItem.convert_serial_to_int(serial)
+
+            items.append(StockItem(**data))
+
+        # Create the StockItem objects in bulk
+        StockItem.objects.bulk_create(items)
+
+        # Return the newly created StockItem objects
+        return StockItem.objects.filter(part=part, serial__in=serials)
+
+    @staticmethod
+    def convert_serial_to_int(serial: str) -> int:
+        """Convert the provided serial number to an integer value.
+
+        This function hooks into the plugin system to allow for custom serial number conversion.
+        """
+        from plugin.registry import registry
+
+        # First, let any plugins convert this serial number to an integer value
+        # If a non-null value is returned (by any plugin) we will use that
+
+        for plugin in registry.with_mixin('validation'):
+            serial_int = plugin.convert_serial_to_int(serial)
+
+            # Save the first returned result
+            if serial_int is not None:
+                # Ensure that it is clipped within a range allowed in the database schema
+                clip = 0x7FFFFFFF
+                serial_int = abs(serial_int)
+                serial_int = min(serial_int, clip)
+                # Return the first non-null value
+                return serial_int
+
+        # None of the plugins provided a valid integer value
+        if serial not in [None, '']:
+            return InvenTree.helpers.extract_int(serial)
+        else:
+            return None
+
     def update_serial_number(self):
         """Update the 'serial_int' field, to be an integer representation of the serial number.
 
@@ -466,35 +558,15 @@ class StockItem(
         """
         serial = str(getattr(self, 'serial', '')).strip()
 
-        from plugin.registry import registry
+        serial_int = self.convert_serial_to_int(serial)
 
-        # First, let any plugins convert this serial number to an integer value
-        # If a non-null value is returned (by any plugin) we will use that
+        try:
+            serial_int = int(serial_int)
 
-        serial_int = None
-
-        for plugin in registry.with_mixin('validation'):
-            serial_int = plugin.convert_serial_to_int(serial)
-
-            if serial_int is not None:
-                # Save the first returned result
-                # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7FFFFFFF
-
-                serial_int = abs(serial_int)
-
-                serial_int = min(serial_int, clip)
-
-                self.serial_int = serial_int
-                return
-
-        # If we get to this point, none of the available plugins provided an integer value
-
-        # Default value if we cannot convert to an integer
-        serial_int = 0
-
-        if serial not in [None, '']:
-            serial_int = InvenTree.helpers.extract_int(serial)
+            if serial_int <= 0:
+                serial_int = 0
+        except (ValueError, TypeError):
+            serial_int = 0
 
         self.serial_int = serial_int
 
@@ -1452,6 +1524,7 @@ class StockItem(
         user: User,
         deltas: dict | None = None,
         notes: str = '',
+        commit: bool = True,
         **kwargs,
     ):
         """Add a history tracking entry for this StockItem.
@@ -1461,6 +1534,9 @@ class StockItem(
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
+
+        Returns:
+            StockItemTracking: The created tracking entry
         """
         if deltas is None:
             deltas = {}
@@ -1471,7 +1547,7 @@ class StockItem(
             and len(deltas) == 0
             and not notes
         ):
-            return
+            return None
 
         # Has a location been specified?
         location = kwargs.get('location')
@@ -1485,7 +1561,7 @@ class StockItem(
         if quantity:
             deltas['quantity'] = float(quantity)
 
-        entry = StockItemTracking.objects.create(
+        entry = StockItemTracking(
             item=self,
             tracking_type=entry_type.value,
             user=user,
@@ -1494,7 +1570,10 @@ class StockItem(
             deltas=deltas,
         )
 
-        entry.save()
+        if commit:
+            entry.save()
+
+        return entry
 
     @transaction.atomic
     def serializeStock(self, quantity, serials, user, notes='', location=None):
@@ -1536,7 +1615,7 @@ class StockItem(
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({
-                'serial_numbers': _('Serial numbers must be a list of integers')
+                'serial_numbers': _('Serial numbers must be provided as a list')
             })
 
         if quantity != len(serials):
@@ -1552,45 +1631,54 @@ class StockItem(
             msg = _('Serial numbers already exist') + f': {exists}'
             raise ValidationError({'serial_numbers': msg})
 
-        # Create a new stock item for each unique serial number
-        for serial in serials:
-            # Create a copy of this StockItem
-            new_item = StockItem.objects.get(pk=self.pk)
-            new_item.quantity = 1
-            new_item.serial = serial
-            new_item.pk = None
-            new_item.parent = self
+        # Serialize this StockItem
+        data = dict(StockItem.objects.filter(pk=self.pk).values()[0])
 
-            if location:
-                new_item.location = location
+        if location:
+            data['location'] = location
 
-            # The item already has a transaction history, don't create a new note
-            new_item.save(user=user, notes=notes)
+        data['part'] = self.part
+        data['parent'] = self
+        data['tree_id'] = self.tree_id
 
-            # Copy entire transaction history
-            new_item.copyHistoryFrom(self)
+        # Generate a new serial number for each item
+        items = StockItem._create_serial_numbers(serials, **data)
 
-            # Copy test result history
-            new_item.copyTestResultsFrom(self)
+        # Create a new tracking entry for each item
+        history_items = []
 
-            # Create a new stock tracking item
-            new_item.add_tracking_entry(
+        for item in items:
+            if entry := item.add_tracking_entry(
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
                 notes=notes,
-                deltas={'serial': serial},
+                deltas={'serial': item.serial},
                 location=location,
-            )
+                commit=False,
+            ):
+                history_items.append(entry)
+
+        StockItemTracking.objects.bulk_create(history_items)
+
+        # Duplicate test results
+        test_results = []
+
+        for test_result in self.test_results.all():
+            for item in items:
+                test_result.pk = None
+                test_result.stock_item = item
+
+                test_results.append(test_result)
+
+        StockItemTestResult.objects.bulk_create(test_results)
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=notes)
 
         # Rebuild the stock tree
-        try:
-            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
-        except Exception:
-            logger.warning('Failed to rebuild stock tree during serializeStock')
-            StockItem.objects.rebuild()
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id
+        )
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -1822,12 +1910,10 @@ class StockItem(
         self.save()
 
         # Rebuild stock trees as required
-        try:
-            for tree_id in tree_ids:
-                StockItem.objects.partial_rebuild(tree_id=tree_id)
-        except Exception:
-            logger.warning('Rebuilding entire StockItem tree during merge_stock_items')
-            StockItem.objects.rebuild()
+        for tree_id in tree_ids:
+            InvenTree.tasks.offload_task(
+                stock.tasks.rebuild_stock_item_tree, tree_id=tree_id
+            )
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -1922,11 +2008,9 @@ class StockItem(
         )
 
         # Rebuild the tree for this parent item
-        try:
-            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
-        except Exception:
-            logger.warning('Rebuilding entire StockItem tree')
-            StockItem.objects.rebuild()
+        InvenTree.tasks.offload_task(
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id
+        )
 
         # Attempt to reload the new item from the database
         try:
