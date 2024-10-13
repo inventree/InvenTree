@@ -3,6 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
+import { useUserState } from '../../states/UserState';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
@@ -13,15 +14,28 @@ const ReactGridLayout = WidthProvider(Responsive);
 /**
  * Save the dashboard layout to local storage
  */
-function saveDashboardLayout(layouts: any): void {
-  localStorage?.setItem('dashboard-layout', JSON.stringify(layouts));
+function saveDashboardLayout(layouts: any, userId: number | undefined): void {
+  const data = JSON.stringify(layouts);
+
+  if (userId) {
+    localStorage?.setItem(`dashboard-layout-${userId}`, data);
+  }
+
+  localStorage?.setItem('dashboard-layout', data);
 }
 
 /**
  * Load the dashboard layout from local storage
  */
-function loadDashboardLayout(): Record<string, Layout[]> {
-  const layout = localStorage?.getItem('dashboard-layout');
+function loadDashboardLayout(
+  userId: number | undefined
+): Record<string, Layout[]> {
+  let layout = userId && localStorage?.getItem(`dashboard-layout-${userId}`);
+
+  if (!layout) {
+    // Fallback to global layout
+    layout = localStorage?.getItem('dashboard-layout');
+  }
 
   if (layout) {
     return JSON.parse(layout);
@@ -30,13 +44,56 @@ function loadDashboardLayout(): Record<string, Layout[]> {
   }
 }
 
+/**
+ * Save the list of selected widgets to local storage
+ */
+function saveDashboardWidgets(
+  widgets: string[],
+  userId: number | undefined
+): void {
+  const data = JSON.stringify(widgets);
+
+  if (userId) {
+    localStorage?.setItem(`dashboard-widgets-${userId}`, data);
+  }
+
+  localStorage?.setItem('dashboard-widgets', data);
+}
+
+/**
+ * Load the list of selected widgets from local storage
+ */
+function loadDashboardWidgets(userId: number | undefined): string[] {
+  let widgets = userId && localStorage?.getItem(`dashboard-widgets-${userId}`);
+
+  if (!widgets) {
+    // Fallback to global widget list
+    widgets = localStorage?.getItem('dashboard-widgets');
+  }
+
+  if (widgets) {
+    return JSON.parse(widgets);
+  } else {
+    return [];
+  }
+}
+
 export default function DashboardLayout({}: {}) {
+  const user = useUserState();
+
+  // Dashboard layout definition
   const [layouts, setLayouts] = useState({});
+
+  // Dashboard widget selection
+  const [widgets, setWidgets] = useState<DashboardWidgetProps[]>([]);
+
   const [editable, setEditable] = useDisclosure(false);
+
   const [
     widgetDrawerOpened,
     { open: openWidgetDrawer, close: closeWidgetDrawer }
   ] = useDisclosure(false);
+
   const [loaded, setLoaded] = useState(false);
 
   // Memoize all available widgets
@@ -46,26 +103,44 @@ export default function DashboardLayout({}: {}) {
   );
 
   // Initial widget selection
-
-  // TODO: Save this to local storage!
-  const widgets: DashboardWidgetProps[] = useMemo(() => {
-    return allWidgets.filter((widget, index) => index < 5);
+  useEffect(() => {
+    setWidgets(allWidgets.filter((widget, index) => index < 5));
   }, []);
 
   const widgetLabels = useMemo(() => {
     return widgets.map((widget: DashboardWidgetProps) => widget.label);
   }, [widgets]);
 
+  // Save the selected widgets to local storage when the selection changes
+  useEffect(() => {
+    if (loaded) {
+      saveDashboardWidgets(widgetLabels, user.userId());
+    }
+  }, [widgetLabels]);
+
   const addWidget = useCallback(
     (widget: string) => {
-      console.log('adding widget:', widget);
+      let newWidget = allWidgets.find((wid) => wid.label === widget);
+
+      if (newWidget) {
+        setWidgets([...widgets, newWidget]);
+      }
+
+      // Update the layouts to include the new widget (and enforce initial size)
+      let _layouts: any = { ...layouts };
+
+      Object.keys(_layouts).forEach((key) => {
+        _layouts[key] = updateLayoutForWidget(_layouts[key], true);
+      });
+
+      setLayouts(_layouts);
     },
-    [allWidgets, widgets]
+    [allWidgets, widgets, layouts]
   );
 
   // When the layout is rendered, ensure that the widget attributes are observed
   const updateLayoutForWidget = useCallback(
-    (layout: any[]) => {
+    (layout: any[], overrideSize: boolean) => {
       return layout.map((item: Layout): Layout => {
         // Find the matching widget
         let widget = widgets.find(
@@ -75,8 +150,13 @@ export default function DashboardLayout({}: {}) {
         const minH = widget?.minHeight ?? 2;
         const minW = widget?.minWidth ?? 1;
 
-        const w = Math.max(item.w ?? 1, minW);
-        const h = Math.max(item.h ?? 1, minH);
+        let w = Math.max(item.w ?? 1, minW);
+        let h = Math.max(item.h ?? 1, minH);
+
+        if (overrideSize) {
+          w = minW;
+          h = minH;
+        }
 
         return {
           ...item,
@@ -99,11 +179,11 @@ export default function DashboardLayout({}: {}) {
     (layout: any, newLayouts: any) => {
       // Reconstruct layouts based on the widget requirements
       Object.keys(newLayouts).forEach((key) => {
-        newLayouts[key] = updateLayoutForWidget(newLayouts[key]);
+        newLayouts[key] = updateLayoutForWidget(newLayouts[key], false);
       });
 
       if (layouts && loaded) {
-        saveDashboardLayout(newLayouts);
+        saveDashboardLayout(newLayouts, user.userId());
         setLayouts(newLayouts);
       }
     },
@@ -112,10 +192,13 @@ export default function DashboardLayout({}: {}) {
 
   // Load the dashboard layout from local storage
   useEffect(() => {
-    const initialLayouts = loadDashboardLayout();
+    const initialLayouts = loadDashboardLayout(user.userId());
+    const initialWidgetLabels = loadDashboardWidgets(user.userId());
 
-    // onLayoutChange({}, initialLayouts);
     setLayouts(initialLayouts);
+    setWidgets(
+      allWidgets.filter((widget) => initialWidgetLabels.includes(widget.label))
+    );
 
     setLoaded(true);
   }, []);

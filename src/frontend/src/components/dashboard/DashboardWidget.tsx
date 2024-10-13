@@ -45,7 +45,8 @@ export default function DashboardWidget({
           style={{
             width: '100%',
             height: '100%',
-            backgroundColor: editing ? '#f0f0ff' : undefined
+            padding: '0px',
+            margin: '0px'
           }}
         >
           {item.render()}

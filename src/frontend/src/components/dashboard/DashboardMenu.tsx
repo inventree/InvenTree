@@ -74,22 +74,13 @@ export default function DashboardMenu({
               >
                 <Trans>Add Widget</Trans>
               </Menu.Item>
-
-              {editing && (
-                <Menu.Item
-                  hidden={!editing}
-                  leftSection={<IconArrowBackUpDouble size={14} />}
-                  onClick={() => {
-                    // TODO: Reset layout function
-                  }}
-                >
-                  <Trans>Reset Layout</Trans>
-                </Menu.Item>
-              )}
               <Menu.Item
                 hidden={!editing}
                 leftSection={
-                  <IconLayout2 size={14} color={editing ? 'red' : undefined} />
+                  <IconLayout2
+                    size={14}
+                    color={editing ? 'green' : undefined}
+                  />
                 }
                 onClick={onToggleEdit}
               >
