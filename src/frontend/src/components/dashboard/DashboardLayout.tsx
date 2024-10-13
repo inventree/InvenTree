@@ -1,5 +1,5 @@
 import { Center, Divider, Loader } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -96,6 +96,16 @@ export default function DashboardLayout({}: {}) {
   ] = useDisclosure(false);
 
   const [loaded, setLoaded] = useState(false);
+
+  // Keyboard shortcut for editing the dashboard layout
+  useHotkeys([
+    [
+      'mod+E',
+      () => {
+        setEditing.toggle();
+      }
+    ]
+  ]);
 
   // Memoize all available widgets
   const allWidgets: DashboardWidgetProps[] = useMemo(
