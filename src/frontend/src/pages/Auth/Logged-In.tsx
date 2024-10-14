@@ -10,7 +10,7 @@ export default function Logged_In() {
   const location = useLocation();
 
   useEffect(() => {
-    checkLoginState(navigate, location?.state?.redirectFrom);
+    checkLoginState(navigate, location?.state);
   }, [navigate]);
 
   return (

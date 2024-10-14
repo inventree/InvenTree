@@ -12,6 +12,7 @@ import {
 import {
   IconBarcode,
   IconFilter,
+  IconFilterCancel,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
@@ -28,7 +29,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../App';
 import { Boundary } from '../components/Boundary';
@@ -155,9 +156,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableSorting,
     loader
   } = useLocalState();
+
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
+
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  const [urlQueryParams, setUrlQueryParams] = useSearchParams();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -361,6 +366,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
       );
     }
 
+    // Allow override of filters based on URL query parameters
+    if (urlQueryParams) {
+      for (let [key, value] of urlQueryParams) {
+        queryParams[key] = value;
+      }
+    }
+
     // Add custom search term
     if (tableState.searchTerm) {
       queryParams.search = tableState.searchTerm;
@@ -521,6 +533,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
     queryFn: fetchTableData,
     refetchOnMount: true
   });
+
+  // Refetch data when the query parameters change
+  useEffect(() => {
+    refetch();
+  }, [urlQueryParams]);
 
   useEffect(() => {
     tableState.setIsLoading(
@@ -698,6 +715,21 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   columns={dataColumns}
                   onToggleColumn={toggleColumn}
                 />
+              )}
+              {urlQueryParams.size > 0 && (
+                <ActionIcon
+                  variant="transparent"
+                  color="red"
+                  aria-label="table-clear-query-filters"
+                >
+                  <Tooltip label={t`Clear custom query filters`}>
+                    <IconFilterCancel
+                      onClick={() => {
+                        setUrlQueryParams({});
+                      }}
+                    />
+                  </Tooltip>
+                </ActionIcon>
               )}
               {tableProps.enableFilters && filters.length > 0 && (
                 <Indicator
