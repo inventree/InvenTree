@@ -12,6 +12,7 @@ import {
 import {
   IconBarcode,
   IconFilter,
+  IconFilterCancel,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
@@ -161,7 +162,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const navigate = useNavigate();
 
   // Extract URL query parameters (e.g. ?active=true&overdue=false)
-  const [urlQueryParams] = useSearchParams();
+  const [urlQueryParams, setUrlQueryParams] = useSearchParams();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -533,6 +534,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
     refetchOnMount: true
   });
 
+  // Refetch data when the query parameters change
+  useEffect(() => {
+    refetch();
+  }, [urlQueryParams]);
+
   useEffect(() => {
     tableState.setIsLoading(
       isFetching ||
@@ -709,6 +715,21 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   columns={dataColumns}
                   onToggleColumn={toggleColumn}
                 />
+              )}
+              {urlQueryParams.size > 0 && (
+                <ActionIcon
+                  variant="transparent"
+                  color="red"
+                  aria-label="table-clear-query-filters"
+                >
+                  <Tooltip label={t`Clear custom query filters`}>
+                    <IconFilterCancel
+                      onClick={() => {
+                        setUrlQueryParams({});
+                      }}
+                    />
+                  </Tooltip>
+                </ActionIcon>
               )}
               {tableProps.enableFilters && filters.length > 0 && (
                 <Indicator
