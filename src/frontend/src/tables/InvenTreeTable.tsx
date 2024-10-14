@@ -28,7 +28,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../App';
 import { Boundary } from '../components/Boundary';
@@ -155,9 +155,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
     setTableSorting,
     loader
   } = useLocalState();
+
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
+
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  const [urlQueryParams] = useSearchParams();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -359,6 +363,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.activeFilters.forEach(
         (flt) => (queryParams[flt.name] = flt.value)
       );
+    }
+
+    // Allow override of filters based on URL query parameters
+    if (urlQueryParams) {
+      for (let [key, value] of urlQueryParams) {
+        queryParams[key] = value;
+      }
     }
 
     // Add custom search term
