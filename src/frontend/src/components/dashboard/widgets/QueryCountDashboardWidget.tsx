@@ -98,18 +98,20 @@ function QueryCountWidget({
  * Construct a dashboard widget descriptor, which displays the number of results for a particular query
  */
 export default function QueryCountDashboardWidget({
+  label,
   title,
   description,
   modelType,
   params
 }: {
+  label: string;
   title: string;
   description: string;
   modelType: ModelType;
   params: any;
 }): DashboardWidgetProps {
   return {
-    label: identifierString(title),
+    label: label,
     title: title,
     description: description,
     minWidth: 2,

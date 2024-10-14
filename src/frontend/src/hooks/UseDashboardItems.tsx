@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { truncateSync } from 'fs';
 import { useMemo } from 'react';
 
 import { api } from '../App';
@@ -48,11 +49,13 @@ export function useDashboardItems(): DashboardLibraryProps {
   const pluginQuery = useQuery({
     enabled: pluginsEnabled,
     queryKey: ['plugin-dashboard-items', user],
-    refetchOnMount: false,
+    refetchOnMount: true,
     queryFn: async () => {
       if (!pluginsEnabled) {
         return Promise.resolve([]);
       }
+
+      console.log('fetching plugin dashboard items...');
 
       return api
         .get(apiUrl(ApiEndpoints.plugin_dashboard_list), {})
@@ -71,7 +74,7 @@ export function useDashboardItems(): DashboardLibraryProps {
     return (
       pluginQuery?.data?.map((item: PluginDashboardItem) => {
         return {
-          label: identifierString(`plugin-${item.plugin}-${item.label}`),
+          label: identifierString(`p-${item.plugin}-${item.label}`),
           title: item.title,
           description: item.description,
           minWidth: item.width,
