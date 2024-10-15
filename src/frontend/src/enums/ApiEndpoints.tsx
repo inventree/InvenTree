@@ -199,8 +199,6 @@ export enum ApiEndpoints {
   plugin_admin = 'plugins/:key/admin/',
 
   // User interface plugin endpoints
-  plugin_panel_list = 'plugins/ui/panels/',
-  plugin_dashboard_list = 'plugins/ui/dashboard/',
   plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
   // Machine API endpoints

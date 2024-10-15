@@ -1,28 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { truncateSync } from 'fs';
 import { useMemo } from 'react';
 
 import { api } from '../App';
 import { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
+import {
+  PluginUIFeature,
+  PluginUIFeatureType
+} from '../components/plugins/PluginUIFeature';
 import RemoteComponent from '../components/plugins/RemoteComponent';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { identifierString } from '../functions/conversion';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { useUserState } from '../states/UserState';
-
-// Define the interface for a plugin-defined dashboard item
-interface PluginDashboardItem {
-  plugin: string;
-  label: string;
-  title: string;
-  description: string;
-  width?: number;
-  height?: number;
-  source: string;
-}
 
 interface DashboardLibraryProps {
   items: DashboardWidgetProps[];
@@ -55,10 +47,12 @@ export function useDashboardItems(): DashboardLibraryProps {
         return Promise.resolve([]);
       }
 
-      console.log('fetching plugin dashboard items...');
+      const url = apiUrl(ApiEndpoints.plugin_ui_features_list, undefined, {
+        feature_type: PluginUIFeatureType.dashboard
+      });
 
       return api
-        .get(apiUrl(ApiEndpoints.plugin_dashboard_list), {})
+        .get(url)
         .then((response: any) => response.data)
         .catch((error: any) => {
           console.error('Failed to fetch plugin dashboard items:', error);
@@ -72,26 +66,31 @@ export function useDashboardItems(): DashboardLibraryProps {
 
   const pluginDashboardItems: DashboardWidgetProps[] = useMemo(() => {
     return (
-      pluginQuery?.data?.map((item: PluginDashboardItem) => {
+      pluginQuery?.data?.map((item: PluginUIFeature) => {
+        const pluginContext = {
+          ...inventreeContext,
+          context: item.context
+        };
+
         return {
-          label: identifierString(`p-${item.plugin}-${item.label}`),
+          label: identifierString(`p-${item.plugin_name}-${item.key}`),
           title: item.title,
           description: item.description,
-          minWidth: item.width,
-          minHeight: item.height,
+          minWidth: item.options?.width ?? 2,
+          minHeight: item.options?.height ?? 1,
           render: () => {
             return (
               <RemoteComponent
-                source={item.source}
-                funcName="renderDashboardItem"
-                context={inventreeContext}
+                pluginFeature={item}
+                defaultFunctionName="renderDashboardItem"
+                context={pluginContext}
               />
             );
           }
         };
       }) ?? []
     );
-  }, [pluginQuery]);
+  }, [pluginQuery, inventreeContext]);
 
   const items: DashboardWidgetProps[] = useMemo(() => {
     return [...builtin, ...pluginDashboardItems];

@@ -1,37 +1,60 @@
 import { t } from '@lingui/macro';
 import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
 import { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
+import { PluginUIFeature } from './PluginUIFeature';
 
 /**
  * A remote component which can be used to display plugin content.
  * Content is loaded dynamically (from an external source).
+ *
+ * @param pluginFeature: The plugin feature to render
+ * @param defaultFunctionName: The default function name to call (if not overridden by pluginFeature.source)
+ * @param pluginContext: The context to pass to the plugin function
+ *
  */
 export default function RemoteComponent({
-  source,
-  funcName,
+  pluginFeature,
+  defaultFunctionName,
   context
 }: {
-  source: string;
-  funcName: string;
+  pluginFeature: PluginUIFeature;
+  defaultFunctionName: string;
   context: InvenTreeContext;
 }) {
   const componentRef = useRef<HTMLDivElement>();
+
   const [renderingError, setRenderingError] = useState<string | undefined>(
     undefined
   );
+
+  const sourceFile = useMemo(() => {
+    return pluginFeature.source.split(':')[0];
+  }, [pluginFeature.source]);
+
+  // Determine the function to call in the external plugin source
+  const functionName = useMemo(() => {
+    // The "source" string may contain a function name, e.g. "source.js:myFunction"
+    if (pluginFeature.source.includes(':')) {
+      return pluginFeature.source.split(':')[1];
+    }
+
+    // By default, return the default function name
+    return defaultFunctionName;
+  }, [pluginFeature.source, defaultFunctionName]);
 
   const reloadPluginContent = async () => {
     if (!componentRef.current) {
       return;
     }
 
-    if (source && funcName) {
-      findExternalPluginFunction(source, funcName).then((func) => {
+    if (sourceFile && functionName) {
+      findExternalPluginFunction(sourceFile, functionName).then((func) => {
         if (func) {
           try {
             func(componentRef.current, context);
@@ -40,20 +63,28 @@ export default function RemoteComponent({
             setRenderingError(`${error}`);
           }
         } else {
-          setRenderingError(`${source}.${funcName}`);
+          setRenderingError(`${sourceFile}.${functionName}`);
         }
       });
+    } else {
+      setRenderingError(
+        t`Invalid source or function name` + ` : ${sourceFile}.${functionName}`
+      );
     }
   };
 
   // Reload the plugin content dynamically
   useEffect(() => {
     reloadPluginContent();
-  }, [source, funcName, context]);
+  }, [sourceFile, functionName, context]);
 
   return (
     <>
-      <Boundary label={`RemoteComponent-${source}-${funcName}`}>
+      <Boundary
+        label={identifierString(
+          `RemoteComponent-${sourceFile}-${functionName}`
+        )}
+      >
         <Stack gap="xs">
           {renderingError && (
             <Alert

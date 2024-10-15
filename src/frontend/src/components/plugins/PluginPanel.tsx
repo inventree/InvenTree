@@ -1,35 +1,23 @@
-import { t } from '@lingui/macro';
-import { Alert, Stack, Text } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { Stack } from '@mantine/core';
+import { ReactNode, useEffect, useRef } from 'react';
 
 import { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
+import { PluginUIFeature } from './PluginUIFeature';
 import RemoteComponent from './RemoteComponent';
 
-// Definition of the plugin panel properties, provided by the server API
-export type PluginPanelProps = {
-  plugin: string;
-  name: string;
-  label: string;
-  icon?: string;
-  content?: string;
-  context?: any;
-  source?: string;
-};
-
+// TODO: Implement this
 export async function isPluginPanelHidden({
-  pluginProps,
+  pluginFeature,
   pluginContext
 }: {
-  pluginProps: PluginPanelProps;
+  pluginFeature: PluginUIFeature;
   pluginContext: InvenTreeContext;
 }): Promise<boolean> {
-  if (!pluginProps.source) {
-    // No custom source supplied - panel is not hidden
-    return false;
-  }
+  // TODO: Implement this properly
+  return false;
 
+  /*
   const func = await findExternalPluginFunction(
     pluginProps.source,
     'isPanelHidden'
@@ -48,6 +36,7 @@ export async function isPluginPanelHidden({
     );
     return true;
   }
+  */
 }
 
 /**
@@ -64,31 +53,19 @@ export async function isPluginPanelHidden({
  *  - `params` is the set of run-time parameters to pass to the content rendering function
  */
 export default function PluginPanelContent({
-  pluginProps,
+  pluginFeature,
   pluginContext
 }: Readonly<{
-  pluginProps: PluginPanelProps;
+  pluginFeature: PluginUIFeature;
   pluginContext: InvenTreeContext;
 }>): ReactNode {
-  // Div for rendering raw content for the panel (if provided)
-  const pluginContentRef = useRef<HTMLDivElement>();
-
-  useEffect(() => {
-    if (pluginProps.content && pluginContentRef.current) {
-      pluginContentRef.current?.setHTMLUnsafe(pluginProps.content.toString());
-    }
-  }, [pluginProps.content, pluginContentRef]);
-
   return (
     <Stack gap="xs">
-      {pluginProps.content && <div ref={pluginContentRef as any}></div>}
-      {pluginProps.source && (
-        <RemoteComponent
-          source={pluginProps.source}
-          funcName="renderPanel"
-          context={pluginContext}
-        />
-      )}
+      <RemoteComponent
+        pluginFeature={pluginFeature}
+        defaultFunctionName="renderPanel"
+        context={pluginContext}
+      />
     </Stack>
   );
 }
