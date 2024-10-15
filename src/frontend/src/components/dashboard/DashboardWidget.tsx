@@ -64,7 +64,12 @@ export default function DashboardWidget({
                   label={t`Remove this widget from the dashboard`}
                   position="bottom"
                 >
-                  <ActionIcon variant="filled" color="red" onClick={onRemove}>
+                  <ActionIcon
+                    aria-label={`remove-dashboard-item-${item.label}`}
+                    variant="filled"
+                    color="red"
+                    onClick={onRemove}
+                  >
                     <IconX />
                   </ActionIcon>
                 </Tooltip>

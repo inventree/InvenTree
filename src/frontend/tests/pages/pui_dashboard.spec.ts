@@ -25,6 +25,14 @@ test('Pages - Dashboard - Basic', async ({ page }) => {
   // Check that the widgets are visible
   await page.getByText('Overdue Sales Orders').waitFor();
   await page.getByText('Overdue Purchase Orders').waitFor();
+
+  // Let's remove one of the widgets
+  await page.getByLabel('dashboard-menu').click();
+  await page.getByRole('menuitem', { name: 'Remove Widgets' }).click();
+  await page.getByLabel('remove-dashboard-item-ovr-so').click();
+
+  // Accept the layout
+  await page.getByLabel('dashboard-accept-layout').click();
 });
 
 test('Pages - Dashboard - Plugins', async ({ page, request }) => {

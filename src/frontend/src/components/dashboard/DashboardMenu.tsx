@@ -57,7 +57,11 @@ export default function DashboardMenu({
         <Group justify="right" wrap="nowrap">
           {(editing || removing) && (
             <Tooltip label={t`Accept Layout`} onClick={onAcceptLayout}>
-              <ActionIcon color="green" variant="transparent">
+              <ActionIcon
+                aria-label={'dashboard-accept-layout'}
+                color="green"
+                variant="transparent"
+              >
                 <IconCircleCheck />
               </ActionIcon>
             </Tooltip>
