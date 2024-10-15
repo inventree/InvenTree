@@ -84,8 +84,8 @@ function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
       },
       {
         id: 'build',
-        title: t`Build Orders`,
-        link: '/build/',
+        title: t`Manufacturing`,
+        link: '/manufacturing/',
         hidden: !user.hasViewRole(UserRoles.build),
         icon: 'build'
       },
