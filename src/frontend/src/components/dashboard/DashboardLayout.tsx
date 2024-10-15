@@ -17,7 +17,20 @@ const ReactGridLayout = WidthProvider(Responsive);
  * Save the dashboard layout to local storage
  */
 function saveDashboardLayout(layouts: any, userId: number | undefined): void {
-  const data = JSON.stringify(layouts);
+  let reducedLayouts: any = {};
+
+  // Reduce the layouts to exclude default attributes from the dataset
+  Object.keys(layouts).forEach((key) => {
+    reducedLayouts[key] = layouts[key].map((item: Layout) => {
+      return {
+        ...item,
+        moved: item.moved ? true : undefined,
+        static: item.static ? true : undefined
+      };
+    });
+  });
+
+  const data = JSON.stringify(reducedLayouts);
 
   if (userId) {
     localStorage?.setItem(`dashboard-layout-${userId}`, data);
@@ -249,8 +262,12 @@ export default function DashboardLayout({}: {}) {
       />
       <DashboardMenu
         onAddWidget={openWidgetDrawer}
-        onToggleEdit={setEditing.toggle}
-        onToggleRemove={setRemoving.toggle}
+        onStartEdit={setEditing.open}
+        onStartRemove={setRemoving.open}
+        onAcceptLayout={() => {
+          setEditing.close();
+          setRemoving.close();
+        }}
         editing={editing}
         removing={removing}
       />
