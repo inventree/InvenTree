@@ -14,15 +14,10 @@ import {
   IconLayoutGridAdd,
   IconLayoutGridRemove
 } from '@tabler/icons-react';
-import { link } from 'fs';
 import { useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-import { UserPermissions, UserRoles } from '../../enums/Roles';
 import useInstanceName from '../../hooks/UseInstanceName';
-import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { MenuLinkItem } from '../items/MenuLinks';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -32,14 +27,16 @@ export default function DashboardMenu({
   editing,
   removing,
   onAddWidget,
-  onToggleEdit,
-  onToggleRemove
+  onStartEdit,
+  onStartRemove,
+  onAcceptLayout
 }: {
   editing: boolean;
   removing: boolean;
   onAddWidget: () => void;
-  onToggleEdit: () => void;
-  onToggleRemove: () => void;
+  onStartEdit: () => void;
+  onStartRemove: () => void;
+  onAcceptLayout: () => void;
 }) {
   const user = useUserState();
   const instanceName = useInstanceName();
@@ -59,16 +56,7 @@ export default function DashboardMenu({
 
         <Group justify="right" wrap="nowrap">
           {(editing || removing) && (
-            <Tooltip
-              label={t`Accept Layout`}
-              onClick={() => {
-                if (editing) {
-                  onToggleEdit();
-                } else if (removing) {
-                  onToggleRemove();
-                }
-              }}
-            >
+            <Tooltip label={t`Accept Layout`} onClick={onAcceptLayout}>
               <ActionIcon color="green" variant="transparent">
                 <IconCircleCheck />
               </ActionIcon>
@@ -102,7 +90,7 @@ export default function DashboardMenu({
               {!editing && !removing && (
                 <Menu.Item
                   leftSection={<IconLayout2 color="blue" size={14} />}
-                  onClick={onToggleEdit}
+                  onClick={onStartEdit}
                 >
                   <Trans>Edit Layout</Trans>
                 </Menu.Item>
@@ -120,7 +108,7 @@ export default function DashboardMenu({
               {!editing && !removing && (
                 <Menu.Item
                   leftSection={<IconLayoutGridRemove color="red" size={14} />}
-                  onClick={onToggleRemove}
+                  onClick={onStartRemove}
                 >
                   <Trans>Remove Widgets</Trans>
                 </Menu.Item>
@@ -129,13 +117,7 @@ export default function DashboardMenu({
               {(editing || removing) && (
                 <Menu.Item
                   leftSection={<IconCircleCheck color="green" size={14} />}
-                  onClick={() => {
-                    if (editing) {
-                      onToggleEdit();
-                    } else if (removing) {
-                      onToggleRemove();
-                    }
-                  }}
+                  onClick={onAcceptLayout}
                 >
                   <Trans>Accept Layout</Trans>
                 </Menu.Item>
