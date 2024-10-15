@@ -40,7 +40,7 @@ export const menuItems: menuItemsCollection = {
   },
   build: {
     id: 'build',
-    text: <Trans>Build</Trans>,
+    text: <Trans>Manufacturing</Trans>,
     link: '/build/'
   },
   purchasing: {
