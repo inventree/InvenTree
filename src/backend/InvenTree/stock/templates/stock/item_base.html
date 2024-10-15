@@ -3,6 +3,7 @@
 {% load plugin_extras %}
 {% load inventree_extras %}
 {% load generic %}
+{% load barcode %}
 {% load i18n %}
 {% load l10n %}
 
@@ -534,7 +535,7 @@ $('#stock-edit-status').click(function () {
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Stock Item QR Code" escape %}',
-        '{{ item.barcode }}',
+        `{% clean_barcode item.barcode %}`
     );
 });
 

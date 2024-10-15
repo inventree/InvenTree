@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load i18n %}
+{% load barcode %}
 {% load inventree_extras %}
 
 {% block sidebar %}
@@ -451,7 +452,7 @@
     $("#show-qr-code").click(function() {
         showQRDialog(
             '{% trans "Part QR Code" escape %}',
-            '{{ part.barcode|safe }}',
+            `{% clean_barcode part.barcode %}`
         );
     });
 
