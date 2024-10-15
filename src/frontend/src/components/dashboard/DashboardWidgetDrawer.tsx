@@ -73,12 +73,17 @@ export default function DashboardWidgetDrawer({
       <Stack gap="xs">
         <Divider />
         <TextInput
+          aria-label="dashboard-widgets-filter-input"
           placeholder={t`Filter dashboard widgets`}
           value={filter}
           onChange={(event) => setFilter(event.currentTarget.value)}
           rightSection={
             filter && (
-              <IconBackspace color="red" onClick={() => setFilter('')} />
+              <IconBackspace
+                aria-label="dashboard-widgets-filter-clear"
+                color="red"
+                onClick={() => setFilter('')}
+              />
             )
           }
           styles={{ root: { width: '100%' } }}

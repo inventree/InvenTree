@@ -76,7 +76,7 @@ export default function DashboardMenu({
                 processing
                 disabled={!editing}
               >
-                <ActionIcon variant="transparent">
+                <ActionIcon variant="transparent" aria-label="dashboard-menu">
                   <IconDotsVertical />
                 </ActionIcon>
               </Indicator>
