@@ -81,7 +81,7 @@ export function useDashboardItems(): DashboardLibraryProps {
           render: () => {
             return (
               <RemoteComponent
-                pluginFeature={item}
+                source={item.source}
                 defaultFunctionName="renderDashboardItem"
                 context={pluginContext}
               />

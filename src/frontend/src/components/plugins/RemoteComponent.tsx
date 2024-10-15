@@ -19,11 +19,11 @@ import { PluginUIFeature } from './PluginUIFeature';
  *
  */
 export default function RemoteComponent({
-  pluginFeature,
+  source,
   defaultFunctionName,
   context
 }: {
-  pluginFeature: PluginUIFeature;
+  source: string;
   defaultFunctionName: string;
   context: InvenTreeContext;
 }) {
@@ -34,19 +34,19 @@ export default function RemoteComponent({
   );
 
   const sourceFile = useMemo(() => {
-    return pluginFeature.source.split(':')[0];
-  }, [pluginFeature.source]);
+    return source.split(':')[0];
+  }, [source]);
 
   // Determine the function to call in the external plugin source
   const functionName = useMemo(() => {
     // The "source" string may contain a function name, e.g. "source.js:myFunction"
-    if (pluginFeature.source.includes(':')) {
-      return pluginFeature.source.split(':')[1];
+    if (source.includes(':')) {
+      return source.split(':')[1];
     }
 
     // By default, return the default function name
     return defaultFunctionName;
-  }, [pluginFeature.source, defaultFunctionName]);
+  }, [source, defaultFunctionName]);
 
   const reloadPluginContent = async () => {
     if (!componentRef.current) {
@@ -63,12 +63,12 @@ export default function RemoteComponent({
             setRenderingError(`${error}`);
           }
         } else {
-          setRenderingError(`${sourceFile}.${functionName}`);
+          setRenderingError(`${sourceFile}:${functionName}`);
         }
       });
     } else {
       setRenderingError(
-        t`Invalid source or function name` + ` : ${sourceFile}.${functionName}`
+        t`Invalid source or function name` + ` - ${sourceFile}:${functionName}`
       );
     }
   };

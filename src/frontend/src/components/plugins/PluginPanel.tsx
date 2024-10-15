@@ -62,7 +62,7 @@ export default function PluginPanelContent({
   return (
     <Stack gap="xs">
       <RemoteComponent
-        pluginFeature={pluginFeature}
+        source={pluginFeature.source}
         defaultFunctionName="renderPanel"
         context={pluginContext}
       />
