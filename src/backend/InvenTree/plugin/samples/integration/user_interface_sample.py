@@ -140,7 +140,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         """Return a list of custom dashboard items."""
         items = [
             {
-                'label': 'broken-dashboard-item',
+                'key': 'broken-dashboard-item',
                 'title': _('Broken Dashboard Item'),
                 'description': _(
                     'This is a broken dashboard item - it will not render!'
@@ -148,7 +148,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'source': '/this/does/not/exist.js',
             },
             {
-                'label': 'sample-dashboard-item',
+                'key': 'sample-dashboard-item',
                 'title': _('Sample Dashboard Item'),
                 'description': _(
                     'This is a sample dashboard item. It renders a simple string of HTML content.'
@@ -160,7 +160,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         # Admin item - only visible to admin users
         if request.user.is_superuser:
             items.append({
-                'label': 'admin-dashboard-item',
+                'key': 'admin-dashboard-item',
                 'title': _('Admin Dashboard Item'),
                 'description': _('This is an admin-only dashboard item.'),
                 'source': self.plugin_static_file('admin_dashboard_item.js'),
@@ -168,7 +168,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         return items
 
-    def get_ui_features(self, feature_type, context, request):
+    def get_ui_features(self, feature_type, context, request) -> list:
         """Return a list of custom features to be injected into the UI."""
         if (
             feature_type == 'template_editor'
@@ -177,12 +177,12 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             return [
                 {
                     'feature_type': 'template_editor',
-                    'options': {
-                        'key': 'sample-template-editor',
-                        'title': 'Sample Template Editor',
-                        'icon': 'keywords',
-                    },
-                    'source': '/static/plugin/sample_template.js:getTemplateEditor',
+                    'key': 'sample-template-editor',
+                    'title': 'Sample Template Editor',
+                    'options': {'icon': 'keywords'},
+                    'source': self.plugin_static_file(
+                        'sample_template.js:getTemplateEditor'
+                    ),
                 }
             ]
 
@@ -190,16 +190,16 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             return [
                 {
                     'feature_type': 'template_preview',
-                    'options': {
-                        'key': 'sample-template-preview',
-                        'title': 'Sample Template Preview',
-                        'icon': 'category',
-                    },
-                    'source': '/static/plugin/sample_template.js:getTemplatePreview',
+                    'key': 'sample-template-preview',
+                    'title': 'Sample Template Preview',
+                    'options': {'icon': 'category'},
+                    'source': self.plugin_static_file(
+                        '/sample_template.js:getTemplatePreview'
+                    ),
                 }
             ]
 
-        return []
+        return super().get_ui_features(feature_type, context, request)
 
     def get_admin_context(self) -> dict:
         """Return custom context data which can be rendered in the admin panel."""

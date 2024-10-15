@@ -13,85 +13,6 @@ from InvenTree.exceptions import log_error
 from plugin import registry
 
 
-class PluginPanelList(APIView):
-    """API endpoint for listing all available plugin panels."""
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = UIPluginSerializers.PluginPanelSerializer
-
-    @extend_schema(
-        responses={200: UIPluginSerializers.PluginPanelSerializer(many=True)}
-    )
-    def get(self, request):
-        """Show available plugin panels."""
-        target_model = request.query_params.get('target_model', None)
-        target_id = request.query_params.get('target_id', None)
-
-        panels = []
-
-        if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
-            # Extract all plugins from the registry which provide custom panels
-            for _plugin in registry.with_mixin('ui', active=True):
-                try:
-                    # Allow plugins to fill this data out
-                    plugin_panels = _plugin.get_ui_panels(
-                        target_model, target_id, request
-                    )
-
-                    if plugin_panels and type(plugin_panels) is list:
-                        for panel in plugin_panels:
-                            panel['plugin'] = _plugin.slug
-
-                            # TODO: Validate each panel before inserting
-                            panels.append(panel)
-                except Exception:
-                    # Custom panels could not load
-                    # Log the error and continue
-                    log_error(f'{_plugin.slug}.get_ui_panels')
-
-        return Response(
-            UIPluginSerializers.PluginPanelSerializer(panels, many=True).data
-        )
-
-
-class PluginDashboardList(APIView):
-    """API endpoint for listing all available plugin dashboard items."""
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = UIPluginSerializers.PluginDashboardItemSerializer
-
-    @extend_schema(
-        responses={200: UIPluginSerializers.PluginDashboardItemSerializer(many=True)}
-    )
-    def get(self, request):
-        """Show available plugin dashboard items."""
-        dashboard_items = []
-
-        if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
-            # Extract all plugins from the registry which provide custom dashboard items
-            for _plugin in registry.with_mixin('ui', active=True):
-                # Allow plugins to fill this data out
-                try:
-                    plugin_dashboard_items = _plugin.get_ui_dashboard_items(request)
-
-                    if plugin_dashboard_items and type(plugin_dashboard_items) is list:
-                        for item in plugin_dashboard_items:
-                            item['plugin'] = _plugin.slug
-
-                            dashboard_items.append(item)
-
-                except Exception:
-                    # Custom dashboard items could not load
-                    # Log the error and continue
-                    log_error(f'{_plugin.slug}.get_ui_dashboard_items')
-
-        return Response(
-            UIPluginSerializers.PluginDashboardItemSerializer(
-                dashboard_items, many=True
-            ).data
-        )
-
-
 class PluginUIFeatureList(APIView):
     """API endpoint for listing all available plugin ui features."""
 
@@ -109,25 +30,40 @@ class PluginUIFeatureList(APIView):
             # Extract all plugins from the registry which provide custom ui features
             for _plugin in registry.with_mixin('ui', active=True):
                 # Allow plugins to fill this data out
-                plugin_features = _plugin.get_ui_features(
-                    feature, request.query_params, request
-                )
 
-                if plugin_features and type(plugin_features) is list:
-                    for _feature in plugin_features:
-                        features.append(_feature)
+                print('checkking plugin:', _plugin)
 
-        return Response(
-            UIPluginSerializers.PluginUIFeatureSerializer(features, many=True).data
-        )
+                try:
+                    plugin_features = _plugin.get_ui_features(
+                        feature, request.query_params, request
+                    )
+
+                    if plugin_features and type(plugin_features) is list:
+                        for _feature in plugin_features:
+                            # Ensure that the required fields are present
+                            _feature['plugin_name'] = _plugin.slug
+                            _feature['feature_type'] = feature
+
+                            # Add the feature to the list (serialize)
+                            features.append(
+                                UIPluginSerializers.PluginUIFeatureSerializer(
+                                    _feature, many=False
+                                ).data
+                            )
+
+                            features.append(_feature)
+                except Exception:
+                    # Custom features could not load
+                    # Log the error and continue
+                    log_error(f'{_plugin.slug}.get_ui_features')
+
+        return Response(features)
 
 
 ui_plugins_api_urls = [
-    path('panels/', PluginPanelList.as_view(), name='api-plugin-panel-list'),
-    path('dashboard/', PluginDashboardList.as_view(), name='api-plugin-dashboard-list'),
     path(
         'features/<str:feature>/',
         PluginUIFeatureList.as_view(),
         name='api-plugin-ui-feature-list',
-    ),
+    )
 ]

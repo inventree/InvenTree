@@ -11,51 +11,13 @@ from rest_framework.request import Request
 logger = logging.getLogger('inventree')
 
 
-class CustomPanel(TypedDict):
-    """Type definition for a custom panel.
-
-    Attributes:
-        plugin: The plugin key (required, must be unique).
-        name: The name of the panel (required, used as a DOM identifier).
-        label: The label of the panel (required, human readable).
-        icon: The icon of the panel (optional, must be a valid icon identifier).
-        content: The content of the panel (optional, raw HTML).
-        context: Optional context data (dict / JSON) which will be passed to the front-end rendering function
-        source: The source of the panel (optional, path to a JavaScript file).
-    """
-
-    plugin: str
-    name: str
-    label: str
-    icon: str
-    content: str
-    context: dict
-    source: str
-
-
-class CustomDashboardItem(TypedDict):
-    """Type definition for a custom dashboard item.
-
-    Attributes:
-        plugin: The plugin key (required, must be unique
-        label: The label of the dashboard item (required, used as a DOM identifier).
-        title: The title of the dashboard item (required, human readable).
-        description: The description of the dashboard item (required, human readable).
-        width: The width of the dashboard item (integer, defaults to 2)
-        height: The height of the dashboard item (integer, defaults to 2)
-        source: The source of the dashboard item (required, path to a JavaScript file).
-    """
-
-    plugin: str
-    label: str
-    title: str
-    description: str
-    width: int
-    height: int
-    source: str
-
-
-FeatureType = Literal['template_editor', 'template_preview']
+# List of supported feature types
+FeatureType = Literal[
+    'dashboard',  # Custom dashboard items
+    'panel',  # Custom panels
+    'template_editor',  # Custom template editor
+    'template_preview',  # Custom template preview
+]
 
 
 class UIFeature(TypedDict):
@@ -69,6 +31,33 @@ class UIFeature(TypedDict):
 
     feature_type: FeatureType
     options: dict
+    source: str
+
+
+class CustomPanelOptions(TypedDict):
+    """Options type definition for a custom panel.
+
+    Attributes:
+        icon: The icon of the panel (optional, must be a valid icon identifier).
+    """
+
+    icon: str
+    content: str
+    source: str
+
+
+class CustomDashboardItemOptions(TypedDict):
+    """Options type definition for a custom dashboard item.
+
+    Attributes:
+        description: The long-form description of the dashboard item (required, human readable).
+        width: The minimum width of the dashboard item (integer, defaults to 2)
+        height: The minimum height of the dashboard item (integer, defaults to 2)
+    """
+
+    description: str
+    width: int
+    height: int
     source: str
 
 
@@ -89,48 +78,6 @@ class UserInterfaceMixin:
         super().__init__()
         self.add_mixin('ui', True, __class__)  # type: ignore
 
-    def get_ui_panels(
-        self, instance_type: str, instance_id: int, request: Request, **kwargs
-    ) -> list[CustomPanel]:
-        """Return a list of custom panels to be injected into the UI.
-
-        Args:
-            instance_type: The type of object being viewed (e.g. 'part')
-            instance_id: The ID of the object being viewed (e.g. 123)
-            request: HTTPRequest object (including user information)
-
-        Returns:
-            list: A list of custom panels to be injected into the UI
-
-        - The returned list should contain a dict for each custom panel to be injected into the UI:
-        - The following keys can be specified:
-        {
-            'name': 'panel_name',  # The name of the panel (required, must be unique)
-            'label': 'Panel Title',  # The title of the panel (required, human readable)
-            'icon': 'icon-name',  # Icon name (optional, must be a valid icon identifier)
-            'content': '<p>Panel content</p>',  # HTML content to be rendered in the panel (optional)
-            'context': {'key': 'value'},  # Context data to be passed to the front-end rendering function (optional)
-            'source': 'static/plugin/panel.js',  # Path to a JavaScript file to be loaded (optional)
-        }
-
-        - Either 'source' or 'content' must be provided
-
-        """
-        # Default implementation returns an empty list
-        return []
-
-    def get_ui_dashboard_items(self, request: Request, **kwargs) -> list[CustomPanel]:
-        """Return a list of custom dashboard items to be injected into the UI.
-
-        Args:
-            request: HTTPRequest object (including user information)
-
-        Returns:
-            list: A list of custom dashboard items to be injected into the UI
-        """
-        # Default implementation returns an empty list
-        return []
-
     def get_ui_features(
         self, feature_type: FeatureType, context: dict, request: Request
     ) -> list[UIFeature]:
@@ -138,11 +85,49 @@ class UserInterfaceMixin:
 
         Arguments:
             feature_type: The type of feature being requested
-            context: Additional context data provided by the UI
+            context: Additional context data provided by the UI (query parameters)
             request: HTTPRequest object (including user information)
 
         Returns:
             list: A list of custom UIFeature dicts to be injected into the UI
+        """
+        print('get_ui_features:', feature_type, context, request)
+
+        if feature_type == 'dashboard':
+            return self.get_ui_dashboard_items(request, context=context)
+
+        if feature_type == 'panel':
+            return self.get_ui_panels()
+
+        # Default implementation returns an empty list
+        return []
+
+    def get_ui_panels(
+        self, request: Request, context: dict, **kwargs
+    ) -> list[UIFeature]:
+        """Return a list of custom panels to be injected into the UI.
+
+        Args:
+            request: HTTPRequest object (including user information)
+
+
+
+        Returns:
+            list: A list of custom panels to be injected into the UI
+        """
+        # Default implementation returns an empty list
+        return []
+
+    def get_ui_dashboard_items(
+        self, request: Request, context: dict, **kwargs
+    ) -> list[UIFeature]:
+        """Return a list of custom dashboard items to be injected into the UI.
+
+        Args:
+            request: HTTPRequest object (including user information)
+
+        Returns:
+            list: A list of custom dashboard items to be injected into the UI
         """
         # Default implementation returns an empty list
         return []
