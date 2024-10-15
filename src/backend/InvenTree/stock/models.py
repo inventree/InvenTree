@@ -1776,7 +1776,7 @@ class StockItem(
 
             # Any "sales order allocations" for the other item must be assigned to this one
             for allocation in other.sales_order_allocations.all():
-                allocation.stock_item = self()
+                allocation.stock_item = self
                 allocation.save()
 
             # Prevent atomicity issues when we are merging our own "parent" part in
