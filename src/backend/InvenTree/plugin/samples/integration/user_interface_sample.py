@@ -57,14 +57,14 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         # First, add a custom panel which will appear on every type of page
         # This panel will contain a simple message
 
-        instance_type = context.get('instance_type', None)
-        instance_id = context.get('instance_id', None)
+        target_model = context.get('target_model', None)
+        target_id = context.get('target_id', None)
 
         # A broken panel which tries to load a non-existent JS file
-        if instance_id is not None and self.get_setting('ENABLE_BROKEN_PANElS'):
+        if target_id is not None and self.get_setting('ENABLE_BROKEN_PANElS'):
             panels.append({
-                'name': 'broken_panel',
-                'label': 'Broken Panel',
+                'key': 'broken-panel',
+                'title': 'Broken Panel',
                 'source': '/this/does/not/exist.js',
             })
 
@@ -87,9 +87,9 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         # Next, add a custom panel which will appear on the 'part' page
         # Note that this content is rendered from a template file,
         # using the django templating system
-        if self.get_setting('ENABLE_PART_PANELS') and instance_type == 'part':
+        if self.get_setting('ENABLE_PART_PANELS') and target_model == 'part':
             try:
-                part = Part.objects.get(pk=instance_id)
+                part = Part.objects.get(pk=target_id)
             except (Part.DoesNotExist, ValueError):
                 part = None
 
@@ -104,7 +104,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         # Next, add a custom panel which will appear on the 'purchaseorder' page
         if (
             self.get_setting('ENABLE_PURCHASE_ORDER_PANELS')
-            and instance_type == 'purchaseorder'
+            and target_model == 'purchaseorder'
         ):
             panels.append({
                 'key': 'purchase_order_panel',

@@ -35,9 +35,15 @@ class PluginUIFeatureList(APIView):
                     plugin_features = _plugin.get_ui_features(
                         feature, request.query_params, request
                     )
+                except Exception:
+                    # Custom features could not load for this plugin
+                    # Log the error and continue
+                    log_error(f'{_plugin.slug}.get_ui_features')
+                    continue
 
-                    if plugin_features and type(plugin_features) is list:
-                        for _feature in plugin_features:
+                if plugin_features and type(plugin_features) is list:
+                    for _feature in plugin_features:
+                        try:
                             # Ensure that the required fields are present
                             _feature['plugin_name'] = _plugin.slug
                             _feature['feature_type'] = str(feature)
@@ -54,10 +60,11 @@ class PluginUIFeatureList(APIView):
                                 ).data
                             )
 
-                except Exception:
-                    # Custom features could not load
-                    # Log the error and continue
-                    log_error(f'{_plugin.slug}.get_ui_features')
+                        except Exception:
+                            # Custom features could not load
+                            # Log the error and continue
+                            log_error(f'{_plugin.slug}.get_ui_features')
+                            continue
 
         return Response(features)
 

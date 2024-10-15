@@ -44,6 +44,23 @@ export function renderPanel(target, data) {
 
 
 /**
+ * Render a panel on a PurchaseOrder detail page
+ */
+export function renderPoPanel(target, data) {
+    if (!target) {
+        console.error("No target provided to renderPoPanel");
+        return;
+    }
+
+    target.innerHTML = `
+    <h4>Order Reference: ${data.instance?.reference}</h4>
+    <hr>
+    <p>This is a custom panel for a PurchaseOrder detail page</p>
+    `;
+}
+
+
+/**
  * Render a panel that is only visible to admin users
  */
 export function renderAdminOnlyPanel(target, data) {
