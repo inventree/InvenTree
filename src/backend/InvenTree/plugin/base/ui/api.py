@@ -40,7 +40,12 @@ class PluginUIFeatureList(APIView):
                         for _feature in plugin_features:
                             # Ensure that the required fields are present
                             _feature['plugin_name'] = _plugin.slug
-                            _feature['feature_type'] = feature
+                            _feature['feature_type'] = str(feature)
+
+                            # Ensure base fields are strings
+                            for field in ['key', 'title', 'description', 'source']:
+                                if field in _feature:
+                                    _feature[field] = str(_feature[field])
 
                             # Add the feature to the list (serialize)
                             features.append(

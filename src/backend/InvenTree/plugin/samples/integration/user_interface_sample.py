@@ -143,6 +143,16 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 ),
                 'source': self.plugin_static_file('sample_dashboard_item.js'),
             },
+            {
+                'key': 'dynamic-dashboard-item',
+                'title': _('Context Dashboard Item'),
+                'description': 'A dashboard item which passes context data from the server',
+                'source': self.plugin_static_file(
+                    'sample_dashboard_item.js:renderContextItem'
+                ),
+                'context': {'foo': 'bar', 'hello': 'world'},
+                'options': {'width': 3, 'height': 2},
+            },
         ]
 
         # Admin item - only visible to admin users
@@ -155,6 +165,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'options': {'width': 4, 'height': 2},
                 'context': {'secret-key': 'this-is-a-secret'},
             })
+
+        print('items:', len(items))
 
         return items
 
