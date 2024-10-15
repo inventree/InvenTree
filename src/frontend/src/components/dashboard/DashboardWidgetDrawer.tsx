@@ -8,10 +8,12 @@ import {
   Stack,
   Table,
   Text,
+  TextInput,
   Tooltip
 } from '@mantine/core';
-import { IconLayoutGridAdd } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useDebouncedValue } from '@mantine/hooks';
+import { IconBackspace, IconLayoutGridAdd } from '@tabler/icons-react';
+import { useMemo, useState } from 'react';
 
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { StylishText } from '../items/StylishText';
@@ -33,6 +35,9 @@ export default function DashboardWidgetDrawer({
   // Load available widgets
   const availableWidgets = useDashboardItems();
 
+  const [filter, setFilter] = useState<string>('');
+  const [filterText] = useDebouncedValue(filter, 500);
+
   // Memoize available (not currently used) widgets
   const unusedWidgets = useMemo(() => {
     return (
@@ -41,6 +46,17 @@ export default function DashboardWidgetDrawer({
       ) ?? []
     );
   }, [availableWidgets.items, currentWidgets]);
+
+  // Filter widgets based on search text
+  const filteredWidgets = useMemo(() => {
+    let words = filterText.trim().toLowerCase().split(' ');
+
+    return unusedWidgets.filter((widget) => {
+      return words.every((word) =>
+        widget.title.toLowerCase().includes(word.trim())
+      );
+    });
+  }, [unusedWidgets, filterText]);
 
   return (
     <Drawer
@@ -56,9 +72,20 @@ export default function DashboardWidgetDrawer({
     >
       <Stack gap="xs">
         <Divider />
+        <TextInput
+          placeholder={t`Filter dashboard widgets`}
+          value={filter}
+          onChange={(event) => setFilter(event.currentTarget.value)}
+          rightSection={
+            filter && (
+              <IconBackspace color="red" onClick={() => setFilter('')} />
+            )
+          }
+          styles={{ root: { width: '100%' } }}
+        />
         <Table>
           <Table.Tbody>
-            {unusedWidgets.map((widget) => (
+            {filteredWidgets.map((widget) => (
               <Table.Tr key={widget.label}>
                 <Table.Td>
                   <Tooltip
