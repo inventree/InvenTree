@@ -2341,18 +2341,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        'DASHBOARD_LAYOUT': {
-            'name': _('Dashboard Layout'),
-            'description': _('Dashboard layout configuration'),
-            'default': '{}',
-            'validator': json.loads,
-        },
-        'DASHBOARD_WIDGETS': {
-            'name': _('Dashboard Widgets'),
-            'description': _('Dashboard widget configuration'),
-            'default': '[]',
-            'validator': json.loads,
-        },
         'LABEL_INLINE': {
             'name': _('Inline label display'),
             'description': _(
