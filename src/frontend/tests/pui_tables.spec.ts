@@ -24,7 +24,7 @@ test('Tables - Filters', async ({ page }) => {
   await doQuickLogin(page);
 
   // Head to the "build order list" page
-  await page.goto(`${baseUrl}/build/`);
+  await page.goto(`${baseUrl}/manufacturing/index/`);
 
   await setFilter(page, 'Status', 'Complete');
   await setFilter(page, 'Responsible', 'allaccess');

@@ -115,10 +115,10 @@ export const ModelInformationDict: ModelDict = {
     icon: 'history'
   },
   build: {
-    label: () => t`Build Order`,
-    label_multiple: () => t`Build Orders`,
-    url_overview: '/build',
-    url_detail: '/build/:pk/',
+    label: () => t`Build`,
+    label_multiple: () => t`Builds`,
+    url_overview: '/manufacturing/build-order/',
+    url_detail: '/manufacturing/build-order/:pk/',
     cui_detail: '/build/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
     admin_url: '/build/build/',
