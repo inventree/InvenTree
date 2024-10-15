@@ -18,7 +18,7 @@ export default function ColorToggleDashboardWidget(): DashboardWidgetProps {
   const title = t`Change Color Mode`;
 
   return {
-    label: 'color-toggle',
+    label: 'clr',
     title: title,
     description: t`Change the color mode of the user interface`,
     minHeight: 1,

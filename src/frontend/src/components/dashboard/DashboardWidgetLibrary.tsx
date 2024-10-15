@@ -144,7 +144,7 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
 export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   return [
     {
-      label: 'getting-started',
+      label: 'gstart',
       title: t`Getting Started`,
       description: t`Getting started with InvenTree`,
       minWidth: 5,

@@ -18,7 +18,7 @@ export default function LanguageSelectDashboardWidget(): DashboardWidgetProps {
   const title = t`Change Language`;
 
   return {
-    label: 'language-select',
+    label: 'lngsel',
     title: title,
     description: t`Change the language of the user interface`,
     minHeight: 1,
