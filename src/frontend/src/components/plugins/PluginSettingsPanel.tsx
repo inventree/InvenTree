@@ -1,10 +1,4 @@
-import { t } from '@lingui/macro';
-import { Alert, Stack, Text } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-
 import { useInvenTreeContext } from './PluginContext';
-import { findExternalPluginFunction } from './PluginSource';
 import RemoteComponent from './RemoteComponent';
 
 /**
@@ -23,10 +17,8 @@ export interface PluginAdminInterface {
  * which exports a function `renderPluginSettings`
  */
 export default function PluginSettingsPanel({
-  pluginInstance,
   pluginAdmin
 }: {
-  pluginInstance: any;
   pluginAdmin: PluginAdminInterface;
 }) {
   const pluginContext = useInvenTreeContext();

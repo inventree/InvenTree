@@ -7,7 +7,6 @@ import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
 import { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
-import { PluginUIFeature } from './PluginUIFeature';
 
 /**
  * A remote component which can be used to display plugin content.
