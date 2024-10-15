@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load generic %}
 
@@ -333,7 +334,7 @@ $("#export-order").click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Purchase Order QR Code" escape %}',
-        '{{ order.barcode }}'
+        `{% clean_barcode order.barcode %}`
     );
 });
 

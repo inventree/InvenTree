@@ -1,5 +1,6 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load plugin_extras %}
 {% load i18n %}
@@ -391,7 +392,7 @@
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Stock Location QR Code" escape %}',
-            '{{ location.barcode }}'
+            `{% clean_barcode location.barcode %}`
         );
     });
 
