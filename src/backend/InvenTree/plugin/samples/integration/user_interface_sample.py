@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from InvenTree.version import INVENTREE_SW_VERSION
 from part.models import Part
 from plugin import InvenTreePlugin
-from plugin.helpers import render_template, render_text
 from plugin.mixins import SettingsMixin, UserInterfaceMixin
 
 
@@ -19,7 +18,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
     SLUG = 'sampleui'
     TITLE = 'Sample User Interface Plugin'
     DESCRIPTION = 'A sample plugin which demonstrates user interface integrations'
-    VERSION = '1.1'
+    VERSION = '2.0'
 
     ADMIN_SOURCE = 'ui_settings.js'
 
@@ -50,33 +49,16 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         },
     }
 
-    def get_ui_panels(self, instance_type: str, instance_id: int, request, **kwargs):
+    def get_ui_panels(self, request, context=None, **kwargs):
         """Return a list of custom panels to be injected into the UI."""
         panels = []
+        context = context or {}
 
         # First, add a custom panel which will appear on every type of page
         # This panel will contain a simple message
 
-        content = render_text(
-            """
-            This is a <i>sample panel</i> which appears on every page.
-            It renders a simple string of <b>HTML</b> content.
-
-            <br>
-            <h5>Instance Details:</h5>
-            <ul>
-            <li>Instance Type: {{ instance_type }}</li>
-            <li>Instance ID: {{ instance_id }}</li>
-            </ul>
-            """,
-            context={'instance_type': instance_type, 'instance_id': instance_id},
-        )
-
-        panels.append({
-            'name': 'sample_panel',
-            'label': 'Sample Panel',
-            'content': content,
-        })
+        instance_type = context.get('instance_type', None)
+        instance_id = context.get('instance_id', None)
 
         # A broken panel which tries to load a non-existent JS file
         if instance_id is not None and self.get_setting('ENABLE_BROKEN_PANElS'):
@@ -90,8 +72,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         # Note that we additionally provide some "context" data to the front-end render function
         if self.get_setting('ENABLE_DYNAMIC_PANEL'):
             panels.append({
-                'name': 'dynamic_panel',
-                'label': 'Dynamic Part Panel',
+                'key': 'dynamic-panel',
+                'title': 'Dynamic Part Panel',
                 'source': self.plugin_static_file('sample_panel.js'),
                 'context': {
                     'version': INVENTREE_SW_VERSION,
@@ -99,7 +81,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                     'random': random.randint(1, 100),
                     'time': time.time(),
                 },
-                'icon': 'part',
+                'options': {'icon': 'part'},
             })
 
         # Next, add a custom panel which will appear on the 'part' page
@@ -111,17 +93,13 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             except (Part.DoesNotExist, ValueError):
                 part = None
 
-            # Note: This panel will *only* be available if the part is active
-            if part and part.active:
-                content = render_template(
-                    self, 'uidemo/custom_part_panel.html', context={'part': part}
-                )
-
-                panels.append({
-                    'name': 'part_panel',
-                    'label': 'Part Panel',
-                    'content': content,
-                })
+            panels.append({
+                'key': 'part-panel',
+                'title': _('Part Panel'),
+                'source': self.plugin_static_file('sample_panel.js:renderPartPanel'),
+                'options': {'icon': 'part'},
+                'context': {'part_name': part.name if part else ''},
+            })
 
         # Next, add a custom panel which will appear on the 'purchaseorder' page
         if (
@@ -129,14 +107,24 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             and instance_type == 'purchaseorder'
         ):
             panels.append({
-                'name': 'purchase_order_panel',
-                'label': 'Purchase Order Panel',
-                'content': 'This is a custom panel which appears on the <b>Purchase Order</b> view page.',
+                'key': 'purchase_order_panel',
+                'title': 'Purchase Order Panel',
+                'source': self.plugin_static_file('sample_panel.js:renderPoPanel'),
+            })
+
+        # Admin panel - only visible to admin users
+        if request.user.is_superuser:
+            panels.append({
+                'key': 'admin-panel',
+                'title': 'Admin Panel',
+                'source': self.plugin_static_file(
+                    'sample_panel.js:renderAdminOnlyPanel'
+                ),
             })
 
         return panels
 
-    def get_ui_dashboard_items(self, request, **kwargs):
+    def get_ui_dashboard_items(self, request, context=None, **kwargs):
         """Return a list of custom dashboard items."""
         items = [
             {
@@ -164,42 +152,37 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'title': _('Admin Dashboard Item'),
                 'description': _('This is an admin-only dashboard item.'),
                 'source': self.plugin_static_file('admin_dashboard_item.js'),
+                'options': {'width': 4, 'height': 2},
+                'context': {'secret-key': 'this-is-a-secret'},
             })
 
         return items
 
-    def get_ui_features(self, feature_type, context, request) -> list:
-        """Return a list of custom features to be injected into the UI."""
-        if (
-            feature_type == 'template_editor'
-            and context.get('template_type') == 'labeltemplate'
-        ):
-            return [
-                {
-                    'feature_type': 'template_editor',
-                    'key': 'sample-template-editor',
-                    'title': 'Sample Template Editor',
-                    'options': {'icon': 'keywords'},
-                    'source': self.plugin_static_file(
-                        'sample_template.js:getTemplateEditor'
-                    ),
-                }
-            ]
+    def get_ui_template_editors(self, request, context):
+        """Return a list of custom template editors."""
+        return [
+            {
+                'key': 'sample-template-editor',
+                'title': 'Sample Template Editor',
+                'options': {'icon': 'keywords'},
+                'source': self.plugin_static_file(
+                    'sample_template.js:getTemplateEditor'
+                ),
+            }
+        ]
 
-        if feature_type == 'template_preview':
-            return [
-                {
-                    'feature_type': 'template_preview',
-                    'key': 'sample-template-preview',
-                    'title': 'Sample Template Preview',
-                    'options': {'icon': 'category'},
-                    'source': self.plugin_static_file(
-                        '/sample_template.js:getTemplatePreview'
-                    ),
-                }
-            ]
-
-        return super().get_ui_features(feature_type, context, request)
+    def get_ui_template_previews(self, request, context):
+        """Return a list of custom template previews."""
+        return [
+            {
+                'key': 'sample-template-preview',
+                'title': 'Sample Template Preview',
+                'options': {'icon': 'category'},
+                'source': self.plugin_static_file(
+                    '/sample_template.js:getTemplatePreview'
+                ),
+            }
+        ]
 
     def get_admin_context(self) -> dict:
         """Return custom context data which can be rendered in the admin panel."""
