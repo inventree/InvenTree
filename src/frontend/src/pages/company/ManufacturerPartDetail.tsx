@@ -276,6 +276,15 @@ export default function ManufacturerPartDetail() {
             title={t`ManufacturerPart`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
+            last_crumb={[
+              {
+                name: manufacturerPart.MPN,
+                url: getDetailUrl(
+                  ModelType.manufacturerpart,
+                  manufacturerPart.pk
+                )
+              }
+            ]}
             actions={manufacturerPartActions}
             imageUrl={manufacturerPart?.part_detail?.thumbnail}
             editAction={editManufacturerPart.open}

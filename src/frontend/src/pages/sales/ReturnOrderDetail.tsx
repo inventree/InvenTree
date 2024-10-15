@@ -442,6 +442,9 @@ export default function ReturnOrderDetail() {
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            last_crumb={[
+              { name: order.reference, url: `/sales/return-order/${order.pk}` }
+            ]}
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
