@@ -43,6 +43,19 @@ export function renderPanel(target, data) {
 }
 
 
+/**
+ * Render a panel that is only visible to admin users
+ */
+export function renderAdminOnlyPanel(target, data) {
+    if (!target) {
+        console.error("No target provided to renderAdminOnlyPanel");
+        return;
+    }
+
+    target.innerHTML = `Hello Admin user! This panel is only visible to admin users.`;
+}
+
+
 // Dynamically hide the panel based on the provided context
 export function isPanelHidden(context) {
 

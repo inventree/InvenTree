@@ -31,8 +31,6 @@ class PluginUIFeatureList(APIView):
             for _plugin in registry.with_mixin('ui', active=True):
                 # Allow plugins to fill this data out
 
-                print('checkking plugin:', _plugin)
-
                 try:
                     plugin_features = _plugin.get_ui_features(
                         feature, request.query_params, request
@@ -51,7 +49,6 @@ class PluginUIFeatureList(APIView):
                                 ).data
                             )
 
-                            features.append(_feature)
                 except Exception:
                     # Custom features could not load
                     # Log the error and continue
