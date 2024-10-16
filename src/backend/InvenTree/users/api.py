@@ -24,6 +24,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.helpers
+import InvenTree.permissions
 from common.models import InvenTreeSetting
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
@@ -33,7 +34,11 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.serializers import (
+    ExtendedUserSerializer,
+    MeUserSerializer,
+    UserCreateSerializer,
+)
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner
 from users.serializers import (
@@ -134,16 +139,27 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = ExendedUserSerializer
+    serializer_class = ExtendedUserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """Detail endpoint for current user."""
 
+    serializer_class = MeUserSerializer
+
+    rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
+
     def get_object(self):
         """Always return the current user object."""
         return self.request.user
+
+    def get_permission_model(self):
+        """Return the model for the permission check.
+
+        Note that for this endpoint, the current user can *always* edit their own details.
+        """
+        return None
 
 
 class UserList(ListCreateAPI):
@@ -151,7 +167,10 @@ class UserList(ListCreateAPI):
 
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsSuperuserOrReadOnly,
+    ]
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['first_name', 'last_name', 'username']

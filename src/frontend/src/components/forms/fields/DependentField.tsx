@@ -18,13 +18,13 @@ export function DependentField({
   definition,
   url,
   setFields
-}: {
+}: Readonly<{
   control: Control<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
-}) {
+}>) {
   const { watch, resetField } = useFormContext();
 
   const mappedFieldNames = useMemo(

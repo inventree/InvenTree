@@ -28,7 +28,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Part`,
       sortable: true,
       noWrap: true,
-      render: (record: any) => PartColumn(record)
+      render: (record: any) => PartColumn({ part: record })
     },
     {
       accessor: 'IPN',
@@ -73,7 +73,7 @@ function partTableColumns(): TableColumn[] {
 
         if (min_stock > stock) {
           extra.push(
-            <Text key="min-stock" color="orange">
+            <Text key="min-stock" c="orange">
               {t`Minimum stock` + `: ${min_stock}`}
             </Text>
           );
@@ -144,7 +144,7 @@ function partTableColumns(): TableColumn[] {
               <Group gap="xs" justify="left" wrap="nowrap">
                 <Text c={color}>{text}</Text>
                 {record.units && (
-                  <Text size="xs" color={color}>
+                  <Text size="xs" c={color}>
                     [{record.units}]
                   </Text>
                 )}
@@ -312,10 +312,10 @@ function partTableFilters(): TableFilter[] {
 export function PartListTable({
   props,
   defaultPartData
-}: {
+}: Readonly<{
   props: InvenTreeTableProps;
   defaultPartData?: any;
-}) {
+}>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
@@ -338,6 +338,7 @@ export function PartListTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-part"
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add Part`}
         onClick={() => newPart.open()}

@@ -11,7 +11,7 @@ from pathlib import Path
 from platform import python_version
 from typing import Optional
 
-from invoke import task
+from invoke import Collection, task
 
 
 def checkPythonVersion():
@@ -367,7 +367,7 @@ def translate_stats(c):
     The file generated from this is needed for the UI.
     """
     # Recompile the translation files (.mo)
-    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    # We do not run 'invoke dev.translate' here, as that will touch the source (.po) files too!
     try:
         manage(c, 'compilemessages', pty=True)
     except Exception:
@@ -411,6 +411,11 @@ def backup(c, clean=False, path=None):
     cmd = '--noinput --compress -v 2'
 
     if path:
+        # Resolve the provided path
+        path = Path(path)
+        if not os.path.isabs(path):
+            path = localDir().joinpath(path).resolve()
+
         cmd += f' -O {path}'
 
     if clean:
@@ -442,6 +447,11 @@ def restore(
     base_cmd = '--noinput --uncompress -v 2'
 
     if path:
+        # Resolve the provided path
+        path = Path(path)
+        if not os.path.isabs(path):
+            path = localDir().joinpath(path).resolve()
+
         base_cmd += f' -I {path}'
 
     if ignore_database:
@@ -1184,7 +1194,7 @@ def frontend_build(c):
 
 
 @task
-def frontend_dev(c):
+def frontend_server(c):
     """Start frontend development server.
 
     Args:
@@ -1439,7 +1449,7 @@ def docs_generate_screenshots(c):
 
 @task
 def clear_generated(c):
-    """Clear generated files from `inv update`."""
+    """Clear generated files from `invoke update`."""
     # pyc/pyo files
     run(c, 'find . -name "*.pyc" -exec rm -f {} +')
     run(c, 'find . -name "*.pyo" -exec rm -f {} +')
@@ -1449,3 +1459,57 @@ def clear_generated(c):
     # Generated translations
     run(c, 'find . -name "django.mo" -exec rm -f {} +')
     run(c, 'find . -name "messages.mo" -exec rm -f {} +')
+
+
+# Collection sorting
+development = Collection(
+    delete_data,
+    docs_server,
+    frontend_server,
+    gunicorn,
+    import_fixtures,
+    schema,
+    server,
+    setup_dev,
+    setup_test,
+    test,
+    test_translations,
+    translate,
+)
+
+internal = Collection(
+    clean_settings,
+    clear_generated,
+    export_settings_definitions,
+    frontend_build,
+    frontend_check,
+    frontend_compile,
+    frontend_install,
+    frontend_trans,
+    render_js_files,
+    rebuild_models,
+    rebuild_thumbnails,
+    showmigrations,
+    translate_stats,
+)
+
+ns = Collection(
+    backup,
+    export_records,
+    frontend_download,
+    import_records,
+    install,
+    migrate,
+    plugins,
+    remove_mfa,
+    restore,
+    static,
+    superuser,
+    update,
+    version,
+    wait,
+    worker,
+)
+
+ns.add_collection(development, 'dev')
+ns.add_collection(internal, 'int')

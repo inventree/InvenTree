@@ -5,7 +5,6 @@ import {
   Box,
   Group,
   Indicator,
-  LoadingOverlay,
   Space,
   Stack,
   Tooltip
@@ -13,6 +12,7 @@ import {
 import {
   IconBarcode,
   IconFilter,
+  IconFilterCancel,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
@@ -29,7 +29,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../App';
 import { Boundary } from '../components/Boundary';
@@ -138,26 +138,31 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable<T = any>({
+export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
   columns,
   props
-}: {
+}: Readonly<{
   url: string;
   tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-}) {
+}>) {
   const {
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
-    setTableSorting
+    setTableSorting,
+    loader
   } = useLocalState();
+
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
+
+  // Extract URL query parameters (e.g. ?active=true&overdue=false)
+  const [urlQueryParams, setUrlQueryParams] = useSearchParams();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -179,10 +184,17 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
+    gcTime: 5000,
     queryFn: async () => {
       if (props.enableColumnCaching == false) {
         return null;
       }
+
+      // If we already have field names, no need to fetch them again
+      if (fieldNames && Object.keys(fieldNames).length > 0) {
+        return null;
+      }
+
       return api
         .options(url, {
           params: tableProps.params
@@ -192,8 +204,9 @@ export function InvenTreeTable<T = any>({
             // Extract field information from the API
 
             let names: Record<string, string> = {};
+
             let fields: ApiFormFieldSet =
-              extractAvailableFields(response, 'POST', true) || {};
+              extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
             mapFields(fields, (path, field) => {
@@ -202,7 +215,7 @@ export function InvenTreeTable<T = any>({
               }
             });
 
-            const cacheKey = tableState.tableKey.split('-')[0];
+            const cacheKey = tableState.tableKey.replaceAll('-', '');
 
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
@@ -219,20 +232,19 @@ export function InvenTreeTable<T = any>({
       return;
     }
 
-    const cacheKey = tableState.tableKey.split('-')[0];
+    const cacheKey = tableState.tableKey.replaceAll('-', '');
 
     // First check the local cache
     const cachedNames = getTableColumnNames(cacheKey);
 
-    if (Object.keys(cachedNames).length > 0) {
+    if (cachedNames != null) {
       // Cached names are available - use them!
       setFieldNames(cachedNames);
       return;
     }
 
-    // Otherwise, fetch the data from the API
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
+  }, [url, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -241,6 +253,10 @@ export function InvenTreeTable<T = any>({
       ...props
     };
   }, [props]);
+
+  const enableSelection: boolean = useMemo(() => {
+    return tableProps.enableSelection || tableProps.enableBulkDelete || false;
+  }, [tableProps]);
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
@@ -308,7 +324,6 @@ export function InvenTreeTable<T = any>({
     columns,
     fieldNames,
     tableProps.rowActions,
-    tableProps.enableSelection,
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
@@ -349,6 +364,13 @@ export function InvenTreeTable<T = any>({
       tableState.activeFilters.forEach(
         (flt) => (queryParams[flt.name] = flt.value)
       );
+    }
+
+    // Allow override of filters based on URL query parameters
+    if (urlQueryParams) {
+      for (let [key, value] of urlQueryParams) {
+        queryParams[key] = value;
+      }
     }
 
     // Add custom search term
@@ -396,7 +418,7 @@ export function InvenTreeTable<T = any>({
   }
 
   // Data Sorting
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
     columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
@@ -430,7 +452,7 @@ export function InvenTreeTable<T = any>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus) => {
+  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
     tableState.setPage(1);
     setSortStatus(status);
 
@@ -496,8 +518,10 @@ export function InvenTreeTable<T = any>({
       });
   };
 
-  const { data, isFetching, refetch } = useQuery({
+  const { data, isFetching, isLoading, refetch } = useQuery({
     queryKey: [
+      'tabledata',
+      url,
       tableState.page,
       props.params,
       sortStatus.columnAccessor,
@@ -510,13 +534,28 @@ export function InvenTreeTable<T = any>({
     refetchOnMount: true
   });
 
+  // Refetch data when the query parameters change
   useEffect(() => {
-    tableState.setIsLoading(isFetching);
-  }, [isFetching]);
+    refetch();
+  }, [urlQueryParams]);
+
+  useEffect(() => {
+    tableState.setIsLoading(
+      isFetching ||
+        isLoading ||
+        tableOptionQuery.isFetching ||
+        tableOptionQuery.isLoading
+    );
+  }, [isFetching, isLoading, tableOptionQuery]);
 
   // Update tableState.records when new data received
   useEffect(() => {
     tableState.setRecords(data ?? []);
+
+    // set pagesize to length if pagination is disabled
+    if (!tableProps.enablePagination) {
+      tableState.setPageSize(data?.length ?? defaultPageSize);
+    }
   }, [data]);
 
   const deleteRecords = useDeleteApiFormModal({
@@ -527,7 +566,7 @@ export function InvenTreeTable<T = any>({
         color="red"
         title={t`Are you sure you want to delete the selected items?`}
       >
-        {t`This action cannot be undone!`}
+        {t`This action cannot be undone`}
       </Alert>
     ),
     initialData: {
@@ -594,6 +633,15 @@ export function InvenTreeTable<T = any>({
     tableState.refreshTable();
   }
 
+  const optionalParams = useMemo(() => {
+    let optionalParamsa: Record<string, any> = {};
+    if (tableProps.enablePagination) {
+      optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
+      optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
+    }
+    return optionalParamsa;
+  }, [tableProps.enablePagination]);
+
   return (
     <>
       {deleteRecords.modal}
@@ -621,12 +669,12 @@ export function InvenTreeTable<T = any>({
                 <ButtonMenu
                   key="barcode-actions"
                   icon={<IconBarcode />}
-                  label={t`Barcode actions`}
-                  tooltip={t`Barcode actions`}
+                  label={t`Barcode Actions`}
+                  tooltip={t`Barcode Actions`}
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}
-              {(tableProps.enableBulkDelete ?? false) && (
+              {tableProps.enableBulkDelete && (
                 <ActionButton
                   disabled={!tableState.hasSelectedRecords}
                   icon={<IconTrash />}
@@ -668,6 +716,21 @@ export function InvenTreeTable<T = any>({
                   onToggleColumn={toggleColumn}
                 />
               )}
+              {urlQueryParams.size > 0 && (
+                <ActionIcon
+                  variant="transparent"
+                  color="red"
+                  aria-label="table-clear-query-filters"
+                >
+                  <Tooltip label={t`Clear custom query filters`}>
+                    <IconFilterCancel
+                      onClick={() => {
+                        setUrlQueryParams({});
+                      }}
+                    />
+                  </Tooltip>
+                </ActionIcon>
+              )}
               {tableProps.enableFilters && filters.length > 0 && (
                 <Indicator
                   size="xs"
@@ -678,7 +741,7 @@ export function InvenTreeTable<T = any>({
                     variant="transparent"
                     aria-label="table-select-filters"
                   >
-                    <Tooltip label={t`Table filters`}>
+                    <Tooltip label={t`Table Filters`}>
                       <IconFilter
                         onClick={() => setFiltersVisible(!filtersVisible)}
                       />
@@ -695,18 +758,12 @@ export function InvenTreeTable<T = any>({
             </Group>
           </Group>
           <Box pos="relative">
-            <LoadingOverlay
-              visible={
-                tableOptionQuery.isLoading || tableOptionQuery.isFetching
-              }
-            />
-
             <DataTable
               withTableBorder
               withColumnBorders
               striped
               highlightOnHover
-              loaderType="dots"
+              loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
               minHeight={300}
@@ -717,12 +774,10 @@ export function InvenTreeTable<T = any>({
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
-                tableProps.enableSelection
-                  ? tableState.selectedRecords
-                  : undefined
+                enableSelection ? tableState.selectedRecords : undefined
               }
               onSelectedRecordsChange={
-                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+                enableSelection ? onSelectedRecordsChange : undefined
               }
               rowExpansion={tableProps.rowExpansion}
               rowStyle={tableProps.rowStyle}
@@ -739,8 +794,7 @@ export function InvenTreeTable<T = any>({
                   overflow: 'hidden'
                 })
               }}
-              recordsPerPageOptions={PAGE_SIZES}
-              onRecordsPerPageChange={updatePageSize}
+              {...optionalParams}
             />
           </Box>
         </Stack>

@@ -17,10 +17,10 @@ import { HostList } from '../../states/states';
 export function HostOptionsForm({
   data,
   saveOptions
-}: {
+}: Readonly<{
   data: HostList;
   saveOptions: (newData: HostList) => void;
-}) {
+}>) {
   const form = useForm({ initialValues: data });
   function deleteItem(key: string) {
     const newData = form.values;

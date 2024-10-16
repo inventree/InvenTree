@@ -68,7 +68,7 @@ interface MachineI {
   restart_required: boolean;
 }
 
-function MachineStatusIndicator({ machine }: { machine: MachineI }) {
+function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
   const style = { marginLeft: '4px' };
 
   // machine is not active, show a gray dot
@@ -142,10 +142,10 @@ export function useMachineTypeDriver({
 function MachineDrawer({
   machinePk,
   refreshTable
-}: {
+}: Readonly<{
   machinePk: string;
   refreshTable: () => void;
-}) {
+}>) {
   const navigate = useNavigate();
   const {
     data: machine,
@@ -406,11 +406,11 @@ export function MachineListTable({
   props,
   renderMachineDrawer = true,
   createProps
-}: {
+}: Readonly<{
   props: InvenTreeTableProps;
   renderMachineDrawer?: boolean;
   createProps?: { machine_type?: string; driver?: string };
-}) {
+}>) {
   const { machineTypes, machineDrivers } = useMachineTypeDriver();
 
   const table = useTable('machine');
@@ -543,6 +543,7 @@ export function MachineListTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="outline"
         variant="outline"
         onClick={() => {
           setCreateFormMachineType(null);

@@ -20,7 +20,8 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -310,11 +311,11 @@ export default function Stock() {
         icon={<InvenTreeIcon icon="stock" />}
         actions={[
           {
-            name: 'Count Stock',
+            name: t`Count Stock`,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
-            tooltip: 'Count Stock',
+            tooltip: t`Count Stock`,
             onClick: () => countStockItems.open()
           },
           {
@@ -387,7 +388,13 @@ export default function Stock() {
               setTreeOpen(true);
             }}
           />
-          <PanelGroup pageKey="stocklocation" panels={locationPanels} />
+          <PanelGroup
+            pageKey="stocklocation"
+            panels={locationPanels}
+            model={ModelType.stocklocation}
+            id={location.pk}
+            instance={location}
+          />
           {transferStockItems.modal}
           {countStockItems.modal}
         </Stack>

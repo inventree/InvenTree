@@ -13,7 +13,7 @@ export const footerLinks = [
     key: 'website'
   },
   {
-    link: 'https://github.com/invenhost/InvenTree',
+    link: 'https://github.com/inventree/InvenTree',
     label: <Trans>GitHub</Trans>,
     key: 'github'
   },
@@ -28,7 +28,11 @@ export const navTabs = [
   { text: <Trans>Dashboard</Trans>, name: 'dashboard' },
   { text: <Trans>Parts</Trans>, name: 'part', role: UserRoles.part },
   { text: <Trans>Stock</Trans>, name: 'stock', role: UserRoles.stock },
-  { text: <Trans>Build</Trans>, name: 'build', role: UserRoles.build },
+  {
+    text: <Trans>Manufacturing</Trans>,
+    name: 'manufacturing',
+    role: UserRoles.build
+  },
   {
     text: <Trans>Purchasing</Trans>,
     name: 'purchasing',
@@ -36,10 +40,6 @@ export const navTabs = [
   },
   { text: <Trans>Sales</Trans>, name: 'sales', role: UserRoles.sales_order }
 ];
-
-if (IS_DEV_OR_DEMO) {
-  navTabs.push({ text: <Trans>Playground</Trans>, name: 'playground' });
-}
 
 export const docLinks = {
   app: 'https://docs.inventree.org/app/',

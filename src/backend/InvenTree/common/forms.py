@@ -22,8 +22,8 @@ class UploadFileForm(forms.Form):
 
         if name:
             # Update label and help_text with file name
-            self.fields['file'].label = _(f'{name.title()} File')
-            self.fields['file'].help_text = _(f'Select {name} file to upload')
+            self.fields['file'].label = name.title() + ' ' + _('File')
+            self.fields['file'].help_text = _('Select file to upload')
 
     def clean_file(self):
         """Run tabular file validation.

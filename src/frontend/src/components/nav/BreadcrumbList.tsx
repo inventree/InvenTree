@@ -25,10 +25,10 @@ export type Breadcrumb = {
 export function BreadcrumbList({
   breadcrumbs,
   navCallback
-}: {
+}: Readonly<{
   breadcrumbs: Breadcrumb[];
   navCallback?: () => void;
-}) {
+}>) {
   const navigate = useNavigate();
 
   const elements = useMemo(() => {

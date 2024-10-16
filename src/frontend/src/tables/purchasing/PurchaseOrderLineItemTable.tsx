@@ -53,13 +53,13 @@ export function PurchaseOrderLineItemTable({
   currency,
   supplierId,
   params
-}: {
+}: Readonly<{
   order: any;
   orderId: number;
   currency: string;
   supplierId?: number;
   params?: any;
-}) {
+}>) {
   const table = useTable('purchase-order-line-item');
 
   const user = useUserState();
@@ -125,17 +125,18 @@ export function PurchaseOrderLineItemTable({
     return [
       {
         accessor: 'part',
-        title: t`Internal Part`,
+        title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
-        accessor: 'description',
-        title: t`Part Description`,
-
-        sortable: false,
-        render: (record: any) => record?.part_detail?.description
+        accessor: 'part_detail.IPN',
+        sortable: false
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false
       },
       ReferenceColumn({}),
       {
@@ -203,13 +204,11 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         ordering: 'SKU'
       },
-      {
-        accessor: 'supplier_link',
+      LinkColumn({
+        accessor: 'supplier_part_detail.link',
         title: t`Supplier Link`,
-
-        sortable: false,
-        render: (record: any) => record?.supplier_part_detail?.link
-      },
+        sortable: false
+      }),
       {
         accessor: 'MPN',
         title: t`Manufacturer Code`,
@@ -335,13 +334,15 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
+        key="import-line-items"
         hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
         tooltip={t`Import Line Items`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
       />,
       <AddItemButton
-        tooltip={t`Add line item`}
+        key="add-line-item"
+        tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
             order: orderId
@@ -351,6 +352,7 @@ export function PurchaseOrderLineItemTable({
         hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
+        key="receive-items"
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}

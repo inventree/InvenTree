@@ -17,7 +17,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
+import {
+  doBasicLogin,
+  doSimpleLogin,
+  followRedirect
+} from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -51,8 +55,7 @@ export function AuthenticationForm() {
             title: t`Login successful`,
             message: t`Logged in successfully`
           });
-
-          navigate(location?.state?.redirectFrom ?? '/home');
+          followRedirect(navigate, location?.state);
         } else {
           showLoginNotification({
             title: t`Login failed`,
@@ -118,7 +121,7 @@ export function AuthenticationForm() {
                 <Anchor
                   component="button"
                   type="button"
-                  color="dimmed"
+                  c="dimmed"
                   size="xs"
                   onClick={() => navigate('/reset-password')}
                 >
@@ -143,7 +146,7 @@ export function AuthenticationForm() {
           <Anchor
             component="button"
             type="button"
-            color="dimmed"
+            c="dimmed"
             size="xs"
             onClick={() => setMode.toggle()}
           >
@@ -278,10 +281,10 @@ export function RegistrationForm() {
 export function ModeSelector({
   loginMode,
   setMode
-}: {
+}: Readonly<{
   loginMode: boolean;
   setMode: any;
-}) {
+}>) {
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const registration_enabled =
     auth_settings?.registration_enabled ||
@@ -297,7 +300,7 @@ export function ModeSelector({
           <Anchor
             component="button"
             type="button"
-            color="dimmed"
+            c="dimmed"
             size="xs"
             onClick={() => setMode.close()}
           >
@@ -308,7 +311,7 @@ export function ModeSelector({
         <Anchor
           component="button"
           type="button"
-          color="dimmed"
+          c="dimmed"
           size="xs"
           onClick={() => setMode.open()}
         >

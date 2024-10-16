@@ -439,7 +439,7 @@ class ReferenceIndexingMixin(models.Model):
             )
 
         # Check that the reference field can be rebuild
-        cls.rebuild_reference_field(value, validate=True)
+        return cls.rebuild_reference_field(value, validate=True)
 
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):

@@ -24,7 +24,7 @@ function StartedCard({
       </div>
       <Anchor href={link} target="_blank">
         <Button>
-          <Trans>Read more</Trans>
+          <Trans>Read More</Trans>
         </Button>
       </Anchor>
     </Paper>
@@ -33,9 +33,9 @@ function StartedCard({
 
 export function GettingStartedCarousel({
   items
-}: {
+}: Readonly<{
   items: DocumentationLinkItem[];
-}) {
+}>) {
   const slides = items.map((item) => (
     <Carousel.Slide key={item.id}>
       <StartedCard {...item} />

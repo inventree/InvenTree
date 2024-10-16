@@ -32,6 +32,8 @@ def clear_static_dir(path, recursive=True):
     # Finally, delete the directory itself to remove orphan folders when uninstalling a plugin
     staticfiles_storage.delete(path)
 
+    logger.info('Cleared static directory: %s', path)
+
 
 def collect_plugins_static_files():
     """Copy static files from all installed plugins into the static directory."""
@@ -41,6 +43,26 @@ def collect_plugins_static_files():
 
     for slug in registry.plugins:
         copy_plugin_static_files(slug, check_reload=False)
+
+
+def clear_plugins_static_files():
+    """Clear out static files for plugins which are no longer active."""
+    installed_plugins = set(registry.plugins.keys())
+
+    path = 'plugins/'
+
+    # Check that the directory actually exists
+    if not staticfiles_storage.exists(path):
+        return
+
+    # Get all static files in the 'plugins' static directory
+    dirs, _files = staticfiles_storage.listdir('plugins/')
+
+    for d in dirs:
+        # Check if the directory is a plugin directory
+        if d not in installed_plugins:
+            # Clear out the static files for this plugin
+            clear_static_dir(f'plugins/{d}/', recursive=True)
 
 
 def copy_plugin_static_files(slug, check_reload=True):
@@ -93,3 +115,8 @@ def copy_plugin_static_files(slug, check_reload=True):
             copied += 1
 
     logger.info("Copied %s static files for plugin '%s'.", copied, slug)
+
+
+def clear_plugin_static_files(slug: str, recursive: bool = True):
+    """Clear static files for the specified plugin."""
+    clear_static_dir(f'plugins/{slug}/', recursive=recursive)

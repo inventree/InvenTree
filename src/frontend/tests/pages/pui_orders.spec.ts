@@ -2,7 +2,7 @@ import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('PUI - Sales Orders', async ({ page }) => {
+test('Sales Orders', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -41,7 +41,93 @@ test('PUI - Sales Orders', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('PUI - Purchase Orders', async ({ page }) => {
+test('Sales Orders - Shipments', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/home`);
+  await page.getByRole('tab', { name: 'Sales' }).click();
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
+
+  // Click through to a particular sales order
+  await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
+  await page.getByRole('cell', { name: 'SO0006' }).first().click();
+  await page.getByRole('tab', { name: 'Shipments' }).click();
+
+  // Create a new shipment
+  await page.getByLabel('action-button-add-shipment').click();
+  await page.getByLabel('text-field-tracking_number').fill('1234567890');
+  await page.getByLabel('text-field-invoice_number').fill('9876543210');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Expected field error
+  await page
+    .getByText('The fields order, reference must make a unique set')
+    .first()
+    .waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Edit one of the existing shipments
+  await page.getByLabel('row-action-menu-0').click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  // Ensure the form has loaded
+  await page.waitForTimeout(500);
+
+  let tracking_number = await page
+    .getByLabel('text-field-tracking_number')
+    .inputValue();
+
+  if (!tracking_number) {
+    tracking_number = '1234567890';
+  } else if (tracking_number.endsWith('x')) {
+    // Remove the 'x' from the end of the tracking number
+    tracking_number = tracking_number.substring(0, tracking_number.length - 1);
+  } else {
+    // Add an 'x' to the end of the tracking number
+    tracking_number += 'x';
+  }
+
+  // Change the tracking number
+  await page.getByLabel('text-field-tracking_number').fill(tracking_number);
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Click through to a particular shipment
+  await page.getByLabel('row-action-menu-0').click();
+  await page.getByRole('menuitem', { name: 'View Shipment' }).click();
+
+  // Click through the various tabs
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+  await page.getByRole('tab', { name: 'Assigned Items' }).click();
+
+  // Ensure assigned items table loads correctly
+  await page.getByRole('cell', { name: 'BATCH-001' }).first().waitFor();
+
+  await page.getByRole('tab', { name: 'Shipment Details' }).click();
+
+  // The "new" tracking number should be visible
+  await page.getByText(tracking_number).waitFor();
+
+  // Link back to sales order
+  await page.getByRole('link', { name: 'SO0006' }).click();
+
+  // Let's try to allocate some stock
+  await page.getByRole('tab', { name: 'Line Items' }).click();
+  await page.getByLabel('row-action-menu-1').click();
+  await page.getByRole('menuitem', { name: 'Allocate stock' }).click();
+  await page
+    .getByText('Select the source location for the stock allocation')
+    .waitFor();
+  await page.getByLabel('number-field-quantity').fill('123');
+  await page.getByLabel('related-field-stock_item').click();
+  await page.getByText('Quantity: 42').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('This field is required.').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Purchase Orders', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -61,7 +147,7 @@ test('PUI - Purchase Orders', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
 
-test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
+test('Purchase Orders - Barcodes', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
@@ -91,4 +177,54 @@ test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+});
+
+test('Purchase Orders - General', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('cell', { name: 'PO0012' }).click();
+  await page.waitForTimeout(200);
+
+  await page.getByRole('tab', { name: 'Line Items' }).click();
+  await page.getByRole('tab', { name: 'Received Stock' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByText('Arrow', { exact: true }).click();
+  await page.waitForTimeout(200);
+
+  await page.getByRole('tab', { name: 'Supplied Parts' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await page.getByRole('tab', { name: 'Contacts' }).click();
+  await page.getByRole('tab', { name: 'Addresses' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByText('AVX Corporation').click();
+  await page.waitForTimeout(200);
+
+  await page.getByRole('tab', { name: 'Addresses' }).click();
+  await page.getByRole('cell', { name: 'West Branch' }).click();
+  await page.locator('.mantine-ScrollArea-root').click();
+  await page
+    .getByRole('row', { name: 'West Branch Yes Surf Avenue 9' })
+    .getByRole('button')
+    .click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  await page.getByLabel('text-field-title').waitFor();
+  await page.getByLabel('text-field-line2').waitFor();
+
+  // Read the current value of the cell, to ensure we always *change* it!
+  const value = await page.getByLabel('text-field-line2').inputValue();
+  await page
+    .getByLabel('text-field-line2')
+    .fill(value == 'old' ? 'new' : 'old');
+
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Details' }).waitFor();
 });

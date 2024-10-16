@@ -2,7 +2,9 @@ import { t } from '@lingui/macro';
 import {
   Accordion,
   Alert,
+  Center,
   Grid,
+  Loader,
   Skeleton,
   Space,
   Stack,
@@ -19,9 +21,8 @@ import {
   IconLayersLinked,
   IconList,
   IconListTree,
-  IconNotes,
+  IconLock,
   IconPackages,
-  IconPaperclip,
   IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
@@ -53,12 +54,14 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -79,13 +82,15 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
-import { useGlobalSettingsState } from '../../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
@@ -98,6 +103,8 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartPricingPanel from './PartPricingPanel';
+import PartSchedulingDetail from './PartSchedulingDetail';
+import PartStocktakeDetail from './PartStocktakeDetail';
 
 /**
  * Detail view for a single Part instance
@@ -111,6 +118,7 @@ export default function PartDetail() {
   const [treeOpen, setTreeOpen] = useState(false);
 
   const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const {
     instance: part,
@@ -349,6 +357,12 @@ export default function PartDetail() {
         type: 'boolean',
         name: 'virtual',
         label: t`Virtual Part`
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        label: t`Subscribed`,
+        icon: 'bell'
       }
     ];
 
@@ -392,7 +406,7 @@ export default function PartDetail() {
           const { data } = useSuspenseQuery({
             queryKey: ['pricing', id],
             queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
+              const url = apiUrl(ApiEndpoints.part_pricing, null, {
                 id: id
               });
 
@@ -503,6 +517,7 @@ export default function PartDetail() {
               appRole={UserRoles.part}
               imageActions={{
                 selectExisting: true,
+                downloadImage: true,
                 uploadFile: true,
                 deleteFile: true
               }}
@@ -523,7 +538,7 @@ export default function PartDetail() {
     ) : (
       <Skeleton />
     );
-  }, [part, instanceQuery]);
+  }, [globalSettings, part, instanceQuery]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -549,7 +564,7 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
-        content: part.pk && (
+        content: part.pk ? (
           <StockItemTable
             tableName="part-stock"
             allowAdd
@@ -557,6 +572,10 @@ export default function PartDetail() {
               part: part.pk
             }}
           />
+        ) : (
+          <Center>
+            <Loader />
+          </Center>
         )
       },
       {
@@ -680,16 +699,21 @@ export default function PartDetail() {
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
+        name: 'stocktake',
+        label: t`Stock History`,
+        icon: <IconClipboardList />,
+        content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
+        hidden:
+          !user.hasViewRole(UserRoles.stocktake) ||
+          !globalSettings.isSet('STOCKTAKE_ENABLE') ||
+          !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
+      },
+      {
         name: 'scheduling',
         label: t`Scheduling`,
         icon: <IconCalendarStats />,
-        content: <PlaceholderPanel />
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardList />,
-        content: <PlaceholderPanel />
+        content: part ? <PartSchedulingDetail part={part} /> : <Skeleton />,
+        hidden: !userSettings.isSet('DISPLAY_SCHEDULE_TAB')
       },
       {
         name: 'test_templates',
@@ -724,28 +748,16 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk ?? -1} />
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.part} model_id={part?.pk} />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.part}
-            modelId={part.pk}
-            editable={user.hasChangeRole(UserRoles.part)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk
+      })
     ];
-  }, [id, part, user]);
+  }, [id, part, user, globalSettings, userSettings]);
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
@@ -885,12 +897,6 @@ export default function PartDetail() {
         color="blue"
         visible={part.building > 0}
         key="in_production"
-      />,
-      <DetailsBadge
-        label={t`Locked`}
-        color="black"
-        visible={part.locked == true}
-        key="locked"
       />,
       <DetailsBadge
         label={t`Inactive`}
@@ -1077,6 +1083,11 @@ export default function PartDetail() {
           />
           <PageDetail
             title={t`Part` + ': ' + part.full_name}
+            icon={
+              part?.locked ? (
+                <IconLock aria-label="part-lock-icon" />
+              ) : undefined
+            }
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
@@ -1122,7 +1133,13 @@ export default function PartDetail() {
               )
             }
           />
-          <PanelGroup pageKey="part" panels={partPanels} />
+          <PanelGroup
+            pageKey="part"
+            panels={partPanels}
+            instance={part}
+            model={ModelType.part}
+            id={part.pk}
+          />
           {transferStockItems.modal}
           {countStockItems.modal}
         </Stack>

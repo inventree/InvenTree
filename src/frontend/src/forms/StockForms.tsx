@@ -2,8 +2,16 @@ import { t } from '@lingui/macro';
 import { Flex, Group, Skeleton, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
+import {
+  IconCalendarExclamation,
+  IconCoins,
+  IconCurrencyDollar,
+  IconLink,
+  IconPackage,
+  IconUsersGroup
+} from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -32,6 +40,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -39,10 +48,18 @@ import { useGlobalSettingsState } from '../states/SettingsState';
  * Construct a set of fields for creating / editing a StockItem instance
  */
 export function useStockFields({
+  item_detail,
+  part_detail,
+  partId,
   create = false
 }: {
+  partId?: number;
+  item_detail?: any;
+  part_detail?: any;
   create: boolean;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   const [part, setPart] = useState<number | null>(null);
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
@@ -66,8 +83,11 @@ export function useStockFields({
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: part,
+        value: partId,
         disabled: !create,
+        filters: {
+          active: create ? true : undefined
+        },
         onValueChange: (value, record) => {
           setPart(value);
           // TODO: implement remaining functionality from old stock.py
@@ -86,7 +106,7 @@ export function useStockFields({
         }
       },
       supplier_part: {
-        // TODO: icon
+        hidden: part_detail?.purchaseable == false,
         value: supplierPart,
         onValueChange: (value) => {
           setSupplierPart(value);
@@ -109,6 +129,7 @@ export function useStockFields({
         description: t`Add given quantity as packs instead of individual items`
       },
       location: {
+        // Cannot adjust location for existing stock items
         hidden: !create,
         onValueChange: (value) => {
           batchGenerator.update({ location: value });
@@ -135,11 +156,12 @@ export function useStockFields({
         onValueChange: (value) => setSerialNumbers(value)
       },
       serial: {
-        hidden: create
-        // TODO: icon
+        hidden:
+          create ||
+          part_detail?.trackable == false ||
+          (!item_detail?.quantity != undefined && item_detail?.quantity != 1)
       },
       batch: {
-        // TODO: icon
         value: batchCode,
         onValueChange: (value) => setBatchCode(value)
       },
@@ -147,22 +169,23 @@ export function useStockFields({
         label: t`Stock Status`
       },
       expiry_date: {
-        // TODO: icon
+        icon: <IconCalendarExclamation />,
+        hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY')
       },
       purchase_price: {
-        // TODO: icon
+        icon: <IconCurrencyDollar />
       },
       purchase_price_currency: {
-        // TODO: icon
+        icon: <IconCoins />
       },
       packaging: {
-        // TODO: icon,
+        icon: <IconPackage />
       },
       link: {
-        // TODO: icon
+        icon: <IconLink />
       },
       owner: {
-        // TODO: icon
+        icon: <IconUsersGroup />
       },
       delete_on_deplete: {}
     };
@@ -171,7 +194,18 @@ export function useStockFields({
     // TODO: refer to stock.py in original codebase
 
     return fields;
-  }, [part, supplierPart, batchCode, serialNumbers, trackable, create]);
+  }, [
+    item_detail,
+    part_detail,
+    part,
+    globalSettings,
+    supplierPart,
+    batchCode,
+    serialNumbers,
+    trackable,
+    create,
+    partId
+  ]);
 }
 
 /**
@@ -187,13 +221,109 @@ export function useCreateStockItem() {
   });
 }
 
+/**
+ * Form set for manually removing (uninstalling) a StockItem from an existing StockItem
+ */
+export function useStockItemUninstallFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {
+        filters: {
+          structural: false
+        }
+      },
+      note: {}
+    };
+  }, []);
+}
+
+/**
+ * Form set for manually installing a StockItem into an existing StockItem
+ */
+export function useStockItemInstallFields({
+  stockItem
+}: {
+  stockItem: any;
+}): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
+  const [selectedPart, setSelectedPart] = useState<number | null>(null);
+
+  useEffect(() => {
+    setSelectedPart(null);
+  }, [stockItem]);
+
+  return useMemo(() => {
+    // Note: The 'part' field is not a part of the API endpoint, so we construct it manually
+    return {
+      part: {
+        field_type: 'related field',
+        required: true,
+        exclude: true,
+        label: t`Part`,
+        description: t`Select the part to install`,
+        model: ModelType.part,
+        api_url: apiUrl(ApiEndpoints.part_list),
+        onValueChange: (value) => {
+          setSelectedPart(value);
+        },
+        filters: {
+          trackable: true,
+          in_bom_for: globalSettings.isSet('STOCK_ENFORCE_BOM_INSTALLATION')
+            ? stockItem.part
+            : undefined
+        }
+      },
+      stock_item: {
+        disabled: !selectedPart,
+        filters: {
+          part_detail: true,
+          in_stock: true,
+          available: true,
+          tracked: true,
+          part: selectedPart ? selectedPart : undefined
+        }
+      },
+      quantity: {},
+      note: {}
+    };
+  }, [globalSettings, selectedPart, stockItem]);
+}
+
+/**
+ * Form set for serializing an existing StockItem
+ */
+export function useStockItemSerializeFields({
+  partId,
+  trackable
+}: {
+  partId: number;
+  trackable: boolean;
+}) {
+  const snPlaceholder = useSerialNumberPlaceholder({
+    partId: partId,
+    key: 'stock-item-serialize',
+    enabled: trackable
+  });
+
+  return useMemo(() => {
+    return {
+      quantity: {},
+      serial_numbers: {
+        placeholder: snPlaceholder
+      },
+      destination: {}
+    };
+  }, [snPlaceholder]);
+}
+
 function StockItemDefaultMove({
   stockItem,
   value
-}: {
+}: Readonly<{
   stockItem: any;
   value: any;
-}) {
+}>) {
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',

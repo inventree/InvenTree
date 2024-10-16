@@ -8,7 +8,7 @@ import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
 import { UserProps } from './states';
 
-interface UserStateProps {
+export interface UserStateProps {
   user: UserProps | undefined;
   token: string | undefined;
   username: () => string;

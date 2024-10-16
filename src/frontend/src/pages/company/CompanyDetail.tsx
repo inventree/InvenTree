@@ -5,10 +5,8 @@ import {
   IconBuildingWarehouse,
   IconInfoCircle,
   IconMap2,
-  IconNotes,
   IconPackageExport,
   IconPackages,
-  IconPaperclip,
   IconShoppingCart,
   IconTruckDelivery,
   IconTruckReturn,
@@ -22,7 +20,6 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   DeleteItemAction,
   EditItemAction,
@@ -31,7 +28,10 @@ import {
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -41,10 +41,10 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
@@ -145,12 +145,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           <Grid.Col span={4}>
             <DetailsImage
               appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
+              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
               src={company.image}
               pk={company.pk}
               refresh={refreshInstance}
               imageActions={{
                 uploadFile: true,
+                downloadImage: true,
                 deleteFile: true
               }}
             />
@@ -168,7 +169,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Company Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
@@ -253,33 +254,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.company}
-            model_id={company.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.company}
-            modelId={company.pk}
-            editable={
-              user.hasChangeRole(UserRoles.purchase_order) ||
-              user.hasChangeRole(UserRoles.sales_order) ||
-              user.hasChangeRole(UserRoles.return_order)
-            }
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.company,
+        model_id: company.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.company,
+        model_id: company.pk
+      })
     ];
   }, [id, company, user]);
 
@@ -343,7 +325,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             editAction={editCompany.open}
             editEnabled={user.hasChangePermission(ModelType.company)}
           />
-          <PanelGroup pageKey="company" panels={companyPanels} />
+          <PanelGroup
+            pageKey="company"
+            panels={companyPanels}
+            instance={company}
+            model={ModelType.company}
+            id={company.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

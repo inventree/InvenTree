@@ -263,7 +263,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     MAX_QUERY_TIME = 7.5
 
     @contextmanager
-    def assertNumQueriesLessThan(self, value, using='default', verbose=None, url=None):
+    def assertNumQueriesLessThan(
+        self, value, using='default', verbose=False, url=None, log_to_file=False
+    ):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -281,7 +283,13 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
 
-        if verbose or n >= value:
+            # Useful for debugging, disabled by default
+            if log_to_file:
+                with open('queries.txt', 'w', encoding='utf-8') as f:
+                    for q in context.captured_queries:
+                        f.write(str(q['sql']) + '\n')
+
+        if verbose and n >= value:
             msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover
         else:
             msg = None
@@ -290,6 +298,18 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             print(f'Warning: {n} queries executed at {url}')
 
         self.assertLess(n, value, msg=msg)
+
+    @classmethod
+    def setUpTestData(cls):
+        """Setup for API tests.
+
+        - Ensure that all global settings are assigned default values.
+        """
+        from common.models import InvenTreeSetting
+
+        InvenTreeSetting.build_default_values()
+
+        super().setUpTestData()
 
     def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
@@ -390,7 +410,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
-        kwargs['data'] = kwargs.get('data', None)
+        kwargs['data'] = kwargs.get('data')
 
         return self.query(
             url, self.client.options, expected_code=expected_code, **kwargs

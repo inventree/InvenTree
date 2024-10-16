@@ -15,16 +15,17 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
+import { LinkColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function AddressTable({
   companyId,
   params
-}: {
+}: Readonly<{
   companyId: number;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
 
   const table = useTable('address');
@@ -91,11 +92,7 @@ export function AddressTable({
         sortable: false,
         switchable: true
       },
-      {
-        accessor: 'link',
-        sortable: false,
-        switchable: true
-      }
+      LinkColumn({})
     ];
   }, []);
 
@@ -182,6 +179,7 @@ export function AddressTable({
 
     return [
       <AddItemButton
+        key="add-address"
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
         hidden={!can_add}

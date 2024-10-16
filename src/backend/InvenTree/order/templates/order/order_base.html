@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load generic %}
 
@@ -143,7 +144,7 @@ src="{% static 'img/blank_image.png' %}"
             {% if order.supplier %}
             <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html" %}
             {% else %}
-            <em>{% trans "No suppplier information available" %}</em>
+            <em>{% trans "No supplier information available" %}</em>
             {% endif %}
         </td>
     </tr>
@@ -333,7 +334,7 @@ $("#export-order").click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Purchase Order QR Code" escape %}',
-        '{{ order.barcode }}'
+        `{% clean_barcode order.barcode %}`
     );
 });
 

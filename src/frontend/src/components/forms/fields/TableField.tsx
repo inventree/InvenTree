@@ -1,8 +1,10 @@
 import { Trans, t } from '@lingui/macro';
-import { Container, Group, Table } from '@mantine/core';
+import { Alert, Container, Group, Table } from '@mantine/core';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 import { ApiFormFieldType } from './ApiFormField';
@@ -20,16 +22,16 @@ export function TableField({
   definition,
   fieldName,
   control
-}: {
+}: Readonly<{
   definition: ApiFormFieldType;
   fieldName: string;
   control: UseControllerReturn<FieldValues, any>;
-}) {
+}>) {
   const {
     field,
     fieldState: { error }
   } = control;
-  const { value, ref } = field;
+  const { value } = field;
 
   const onRowFieldChange = (idx: number, key: string, value: any) => {
     const val = field.value;
@@ -58,8 +60,14 @@ export function TableField({
     <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
       <Table.Thead>
         <Table.Tr>
-          {definition.headers?.map((header) => {
-            return <Table.Th key={header}>{header}</Table.Th>;
+          {definition.headers?.map((header, index) => {
+            return (
+              <Table.Th
+                key={`table-header-${identifierString(header)}-${index}`}
+              >
+                {header}
+              </Table.Th>
+            );
           })}
         </Table.Tr>
       </Table.Thead>
@@ -69,7 +77,17 @@ export function TableField({
             // Table fields require render function
             if (!definition.modelRenderer) {
               return (
-                <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
+                <Table.Tr key="table-row-no-renderer">
+                  <Table.Td colSpan={definition.headers?.length}>
+                    <Alert
+                      color="red"
+                      title={t`Error`}
+                      icon={<IconExclamationCircle />}
+                    >
+                      {`modelRenderer entry required for tables`}
+                    </Alert>
+                  </Table.Td>
+                </Table.Tr>
               );
             }
 

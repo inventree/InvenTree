@@ -19,6 +19,7 @@ import build.models
 import company.models
 import part.models
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -437,6 +438,12 @@ class StockLocationTest(StockAPITestCase):
 
         self.assertEqual(len(res), 1)
 
+        # top_level
+        res = self.get(
+            self.list_url, {'top_level': True, 'cascade': False}, expected_code=200
+        ).json()
+        self.assertEqual(len(res), 4)
+
     def test_stock_location_tree(self):
         """Test the StockLocationTree API endpoint."""
         # Create a number of new locations
@@ -585,6 +592,11 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock()
 
         self.assertEqual(len(response), 29)
+
+    def test_filter_manufacturer(self):
+        """Filter StockItem by manufacturer."""
+        response = self.get_stock(manufacturer='6')
+        self.assertEqual(len(response), 0)
 
     def test_filter_by_part(self):
         """Filter StockItem by Part reference."""
@@ -744,6 +756,79 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(expired=0)
         self.assertEqual(len(response), 25)
+
+    def test_filter_external(self):
+        """Filter StockItem by external."""
+        response = self.get_stock(external=True)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(external=False)
+        self.assertEqual(len(response), 28)
+
+    def test_filter_available(self):
+        """Filter StockItem by available."""
+        response = self.get_stock(available=True)
+        self.assertEqual(len(response), 26)
+
+        response = self.get_stock(available=False)
+        self.assertEqual(len(response), 1)
+
+    def test_filter_installed(self):
+        """Filter StockItem by installed."""
+        response = self.get_stock(installed=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(installed=False)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+
+    def test_filter_has_installed(self):
+        """Filter StockItem by has_installed."""
+        response = self.get_stock(has_installed_items=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(has_installed_items=False)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+
+    def test_filter_has_child_items(self):
+        """Filter StockItem by has_child_items."""
+        response = self.get_stock(has_child_items=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(has_child_items=False)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset (belongs_to)
+
+    def test_filter_sent_to_customer(self):
+        """Filter StockItem by sent_to_customer."""
+        response = self.get_stock(sent_to_customer=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(sent_to_customer=False)
+        self.assertEqual(len(response), 29)  # TODO: adjust test dataset
+
+    def test_filter_has_purchase_price(self):
+        """Filter StockItem by has_purchase_price."""
+        response = self.get_stock(has_purchase_price=True)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(has_purchase_price=False)
+        self.assertEqual(len(response), 28)
+
+    def test_filter_stale(self):
+        """Filter StockItem by stale."""
+        response = self.get_stock(stale=True)
+        self.assertEqual(len(response), 29)
+
+        response = self.get_stock(stale=False)
+        self.assertEqual(len(response), 29)
+
+        # Enable the 'stale' feature
+        set_global_setting('STOCK_STALE_DAYS', '10')
+        response = self.get_stock(stale=True)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(stale=False)
+        self.assertEqual(len(response), 28)
+        set_global_setting('STOCK_STALE_DAYS', '0')
 
     def test_paginate(self):
         """Test that we can paginate results correctly."""
@@ -924,6 +1009,89 @@ class StockItemListTest(StockAPITestCase):
         self.get(
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
+
+    def test_batch_generate_api(self):
+        """Test helper API for batch management."""
+        set_global_setting(
+            'STOCK_BATCH_CODE_TEMPLATE', '{% if item %}{{ item.pk }}{% endif %}'
+        )
+        url = reverse('api-generate-batch-code')
+
+        response = self.post(url)
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('batch_code', response.data)
+        self.assertEqual(len(response.data['batch_code']), 0)
+
+        # With data
+        response = self.post(url, {'item': 1})
+        self.assertEqual(response.data['batch_code'], '1')
+
+        # With full data
+        response = self.post(url, {'item': 1, 'quantity': 2})
+        self.assertEqual(response.data['batch_code'], '1')
+
+    def test_serial_generate_api(self):
+        """Test helper API for serial management."""
+        url = reverse('api-generate-serial-number')
+
+        # Generate serial number
+        response = self.post(url)
+        self.assertIn('serial_number', response.data)
+
+        # With full data
+        response = self.post(url, {'part': 1, 'quantity': 1})
+        self.assertEqual(response.data['serial_number'], '1001')
+        response = self.post(url, {'part': 1, 'quantity': 3})
+        self.assertEqual(response.data['serial_number'], '1001,1002,1003')
+
+        # Wrong quantities
+        response = self.post(url, {'part': 1, 'quantity': 'abc'}, expected_code=400)
+        self.assertEqual(response.data['quantity'], ['A valid integer is required.'])
+
+        response = self.post(url, {'part': 1, 'quantity': -2}, expected_code=400)
+        self.assertEqual(
+            response.data['quantity'], ['Quantity must be greater than zero']
+        )
+
+    def test_child_items(self):
+        """Test that the 'child_items' annotation works as expected."""
+        # Create a trackable part
+        my_part = Part.objects.create(
+            name='Test Part', description='Test Part Description', trackable=True
+        )
+
+        # Create an initial stock item
+        parent_item = StockItem.objects.create(
+            part=my_part, quantity=10, location=StockLocation.objects.first()
+        )
+
+        # Serialize this stock item
+        parent_item.serializeStock(
+            5, [1, 2, 3, 4, 5], user=self.user, notes='Some notes'
+        )
+
+        parent_item.refresh_from_db()
+
+        # Check that the parent item has 5 child items
+        self.assertEqual(parent_item.get_descendants(include_self=False).count(), 5)
+        self.assertEqual(my_part.stock_items.count(), 6)
+
+        # Fetch stock list via API
+        response = self.get(reverse('api-stock-list'), {'part': my_part.pk})
+
+        self.assertEqual(len(response.data), 6)
+
+        # Fetch stock detail
+        response = self.get(reverse('api-stock-detail', kwargs={'pk': parent_item.pk}))
+
+        self.assertEqual(response.data['child_items'], 5)
+
+        for child in parent_item.get_children():
+            response = self.get(reverse('api-stock-detail', kwargs={'pk': child.pk}))
+
+            self.assertEqual(response.data['parent'], parent_item.pk)
+            self.assertEqual(response.data['quantity'], 1)
+            self.assertEqual(response.data['child_items'], 0)
 
 
 class CustomStockItemStatusTest(StockAPITestCase):
@@ -1256,6 +1424,18 @@ class StockItemTest(StockAPITestCase):
 
         # There now should be 10 unique stock entries for this part
         self.assertEqual(trackable_part.stock_entries().count(), 10)
+        self.assertEqual(trackable_part.get_stock_count(), 10)
+
+        # This should fail - wrong serial
+        response = self.post(
+            self.list_url,
+            data={'part': trackable_part.pk, 'quantity': 1, 'serial_numbers': '1'},
+            expected_code=400,
+        )
+        self.assertIn(
+            'The following serial numbers already exist or are invalid : 1',
+            str(response.data),
+        )
         self.assertEqual(trackable_part.get_stock_count(), 10)
 
     def test_default_expiry(self):
@@ -1716,6 +1896,14 @@ class StockTestResultTest(StockAPITestCase):
             'notes': 'I guess there was just too much pressure?',
         }
 
+        # First, test with TEST_UPLOAD_CREATE_TEMPLATE set to False
+        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', False, self.user)
+
+        response = self.post(url, data, expected_code=400)
+
+        # Again, with the setting enabled
+        InvenTreeSetting.set_setting('TEST_UPLOAD_CREATE_TEMPLATE', True, self.user)
+
         response = self.post(url, data, expected_code=201)
 
         # Check that a new test template has been created
@@ -1826,7 +2014,7 @@ class StockTestResultTest(StockAPITestCase):
         # Now, let's delete all the newly created items with a single API request
         # However, we will provide incorrect filters
         response = self.delete(
-            url, {'items': tests, 'filters': {'stock_item': 10}}, expected_code=204
+            url, {'items': tests, 'filters': {'stock_item': 10}}, expected_code=400
         )
 
         self.assertEqual(StockItemTestResult.objects.count(), n + 50)
@@ -2211,3 +2399,38 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             'api-stock-item-metadata': StockItem,
         }.items():
             self.metatester(apikey, model)
+
+
+class StockStatisticsTest(StockAPITestCase):
+    """Tests for the StockStatistics API endpoints."""
+
+    fixtures = [*StockAPITestCase.fixtures, 'build']
+
+    def test_test_statistics(self):
+        """Test the test statistics API endpoints."""
+        part = Part.objects.first()
+        response = self.get(
+            reverse('api-test-statistics-by-part', kwargs={'pk': part.pk}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(response.data, [{}])
+
+        # Now trackable part
+        part1 = Part.objects.filter(trackable=True).first()
+        response = self.get(
+            reverse(
+                'api-test-statistics-by-part',
+                kwargs={'pk': part1.stock_items.first().pk},
+            ),
+            {},
+            expected_code=404,
+        )
+        self.assertIn('detail', response.data)
+
+        # 105
+
+        bld = build.models.Build.objects.first()
+        url = reverse('api-test-statistics-by-build', kwargs={'pk': bld.pk})
+        response = self.get(url, {}, expected_code=200)
+        self.assertEqual(response.data, [{}])

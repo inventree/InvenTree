@@ -33,7 +33,7 @@ const brandIcons: { [key: string]: JSX.Element } = {
   microsoft: <IconBrandAzure />
 };
 
-export function SsoButton({ provider }: { provider: Provider }) {
+export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
   function login() {
     // set preferred provider
     api

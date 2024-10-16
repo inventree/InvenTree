@@ -73,7 +73,11 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
     """
     logger.info('Updating part pricing for %s', pricing.part)
 
-    pricing.update_pricing(counter=counter)
+    pricing.update_pricing(
+        counter=counter,
+        previous_min=pricing.overall_min,
+        previous_max=pricing.overall_max,
+    )
 
 
 @scheduled_task(ScheduledTask.DAILY)

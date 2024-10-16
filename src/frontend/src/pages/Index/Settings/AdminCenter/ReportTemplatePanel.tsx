@@ -21,6 +21,12 @@ export default function ReportTemplateTable() {
             modelRenderer: (instance: any) => (
               <YesNoButton value={instance.landscape} />
             )
+          },
+          attach_to_model: {
+            label: t`Attach to Model`,
+            modelRenderer: (instance: any) => (
+              <YesNoButton value={instance.attach_to_model} />
+            )
           }
         }
       }}

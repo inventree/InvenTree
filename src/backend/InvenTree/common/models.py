@@ -43,6 +43,7 @@ from taggit.managers import TaggableManager
 import build.validators
 import common.currency
 import common.validators
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -779,10 +780,7 @@ class BaseInvenTreeSetting(models.Model):
             )
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive)'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     value = models.CharField(
@@ -1398,6 +1396,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_STORE_RESULTS': {
+            'name': _('Store Barcode Results'),
+            'description': _('Store barcode scan results in the database'),
+            'default': False,
+            'validator': bool,
+        },
+        'BARCODE_RESULTS_MAX_NUM': {
+            'name': _('Barcode Scans Maximum Count'),
+            'description': _('Maximum number of barcode scan results to store'),
+            'default': 100,
+            'validator': [int, MinValueValidator(1)],
+        },
         'BARCODE_INPUT_DELAY': {
             'name': _('Barcode Input Delay'),
             'description': _('Barcode input processing delay time'),
@@ -1703,20 +1713,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Default page size for PDF reports'),
             'default': 'A4',
             'choices': report.helpers.report_page_size_options,
-        },
-        'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Enable Test Reports'),
-            'description': _('Enable generation of test reports'),
-            'default': True,
-            'validator': bool,
-        },
-        'REPORT_ATTACH_TEST_REPORT': {
-            'name': _('Attach Test Reports'),
-            'description': _(
-                'When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'
-            ),
-            'default': False,
-            'validator': bool,
         },
         'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
             'name': _('Globally Unique Serials'),
@@ -2109,6 +2105,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'after_save': reload_plugin_registry,
         },
+        'ENABLE_PLUGINS_INTERFACE': {
+            'name': _('Enable interface integration'),
+            'description': _('Enable plugins to integrate into the user interface'),
+            'default': False,
+            'validator': bool,
+            'after_save': reload_plugin_registry,
+        },
         'PROJECT_CODES_ENABLED': {
             'name': _('Enable project codes'),
             'description': _('Enable project codes for tracking projects'),
@@ -2160,15 +2163,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'TEST_UPLOAD_CREATE_TEMPLATE': {
+            'name': _('Create Template on Upload'),
+            'description': _(
+                'Create a new test template when uploading test data which does not match an existing template'
+            ),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     typ = 'inventree'
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=True,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=True, help_text=_('Settings key')
     )
 
     def to_native_value(self):
@@ -2545,10 +2553,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     extra_unique_fields = ['user']
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     user = models.ForeignKey(
@@ -3444,3 +3449,67 @@ class InvenTreeCustomUserStateModel(models.Model):
             })
 
         return super().clean()
+
+
+class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+    """Model for storing barcode scans results."""
+
+    BARCODE_SCAN_MAX_LEN = 250
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Barcode Scan')
+
+    data = models.CharField(
+        max_length=BARCODE_SCAN_MAX_LEN,
+        verbose_name=_('Data'),
+        help_text=_('Barcode data'),
+        blank=False,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User who scanned the barcode'),
+    )
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Timestamp'),
+        help_text=_('Date and time of the barcode scan'),
+    )
+
+    endpoint = models.CharField(
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('URL endpoint which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    context = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Context'),
+        help_text=_('Context data for the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    response = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Response'),
+        help_text=_('Response data from the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    result = models.BooleanField(
+        verbose_name=_('Result'),
+        help_text=_('Was the barcode scan successful?'),
+        default=False,
+    )

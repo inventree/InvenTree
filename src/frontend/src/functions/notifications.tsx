@@ -6,10 +6,13 @@ import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
  * Show a notification that the feature is not yet implemented
  */
 export function notYetImplemented() {
+  notifications.hide('not-implemented');
+
   notifications.show({
     title: t`Not implemented`,
     message: t`This feature is not yet implemented`,
-    color: 'red'
+    color: 'red',
+    id: 'not-implemented'
   });
 }
 
@@ -18,7 +21,7 @@ export function notYetImplemented() {
  */
 export function permissionDenied() {
   notifications.show({
-    title: t`Permission denied`,
+    title: t`Permission Denied`,
     message: t`You do not have permission to perform this action`,
     color: 'red'
   });
@@ -32,6 +35,17 @@ export function invalidResponse(returnCode: number) {
   notifications.show({
     title: t`Invalid Return Code`,
     message: t`Server returned status ${returnCode}`,
+    color: 'red'
+  });
+}
+
+/**
+ * Display a notification on timeout
+ */
+export function showTimeoutNotification() {
+  notifications.show({
+    title: t`Timeout`,
+    message: t`The request timed out`,
     color: 'red'
   });
 }
@@ -57,6 +71,6 @@ export function showLoginNotification({
     color: success ? 'green' : 'red',
     icon: success ? <IconCircleCheck /> : <IconExclamationCircle />,
     id: 'login',
-    autoClose: 5000
+    autoClose: 2500
   });
 }

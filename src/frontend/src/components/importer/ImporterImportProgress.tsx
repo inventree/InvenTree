@@ -10,9 +10,9 @@ import { StylishText } from '../items/StylishText';
 
 export default function ImporterImportProgress({
   session
-}: {
+}: Readonly<{
   session: ImportSessionState;
-}) {
+}>) {
   const importSessionStatus = useStatusCodes({
     modelType: ModelType.importsession
   });
@@ -36,7 +36,7 @@ export default function ImporterImportProgress({
           <StylishText size="lg">{t`Importing Records`}</StylishText>
           <Loader />
           <Text size="lg">
-            {t`Imported rows`}: {session.sessionData.row_count}
+            {t`Imported Rows`}: {session.sessionData.row_count}
           </Text>
         </Stack>
       </Container>

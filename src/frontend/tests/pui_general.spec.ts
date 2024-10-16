@@ -2,7 +2,7 @@ import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
-test('PUI - Parts', async ({ page }) => {
+test('Parts', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -18,7 +18,7 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('tab', { name: 'Scheduling' }).click();
-  await page.getByRole('tab', { name: 'Stocktake' }).click();
+  await page.getByRole('tab', { name: 'Stock History' }).click();
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
   await page.getByRole('tab', { name: 'Related Parts' }).click();
@@ -42,7 +42,7 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByRole('tab', { name: 'Build Orders' }).click();
 });
 
-test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
+test('Parts - Manufacturer Parts', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/84/manufacturers`);
@@ -55,7 +55,7 @@ test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
   await page.getByText('1551ACLR - 1551ACLR').waitFor();
 });
 
-test('PUI - Parts - Supplier Parts', async ({ page }) => {
+test('Parts - Supplier Parts', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/15/suppliers`);
@@ -68,7 +68,7 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
-test('PUI - Sales', async ({ page }) => {
+test('Sales', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/sales/index/`);
@@ -119,7 +119,7 @@ test('PUI - Sales', async ({ page }) => {
   await page.getByRole('tab', { name: 'Notes' }).click();
 });
 
-test('PUI - Scanning', async ({ page }) => {
+test('Scanning', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByLabel('Homenav').click();
@@ -140,7 +140,7 @@ test('PUI - Scanning', async ({ page }) => {
   await page.getByRole('option', { name: 'Manual input' }).click();
 });
 
-test('PUI - Language / Color', async ({ page }) => {
+test('Language / Color', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
@@ -174,7 +174,7 @@ test('PUI - Language / Color', async ({ page }) => {
   await page.waitForURL('**/platform/dashboard');
 });
 
-test('PUI - Company', async ({ page }) => {
+test('Company', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/company/1/details`);

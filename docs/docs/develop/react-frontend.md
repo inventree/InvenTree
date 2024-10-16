@@ -14,7 +14,7 @@ The React frontend requires its own packages that aren't installed via the usual
 #### Docker
 
 Run the following command:
-`docker compose run inventree-dev-server invoke frontend-compile`
+`docker compose run inventree-dev-server invoke int.frontend-compile`
 This will install the required packages for running the React frontend on your InvenTree dev server.
 
 #### Devcontainer
@@ -24,14 +24,14 @@ This will install the required packages for running the React frontend on your I
 Open a new terminal from the top menu by clicking `Terminal > New Terminal`
 Make sure this terminal is running within the virtual env. The start of the last line should display `(venv)`
 
-Run the command `invoke frontend-compile`. Wait for this to finish
+Run the command `invoke int.frontend-compile`. Wait for this to finish
 
 ### Running
 
 After finishing the install, you need to launch a frontend server to be able to view the new UI.
 
 Using the previously described ways of running commands, execute the following:
-`invoke frontend-dev` in your environment
+`invoke dev.frontend-dev` in your environment
 This command does not run as a background daemon, and will occupy the window it's ran in.
 
 ### Accessing
@@ -40,7 +40,7 @@ When the frontend server is running, it will be available on port 5173.
 i.e: https://localhost:5173/
 
 !!! note "Backend Server"
-    The InvenTree backend server must also be running, for the frontend interface to have something to connect to! To launch a backend server, use the `invoke server` command.
+    The InvenTree backend server must also be running, for the frontend interface to have something to connect to! To launch a backend server, use the `invoke dev.server` command.
 
 ### Debugging
 

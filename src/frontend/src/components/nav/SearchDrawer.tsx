@@ -39,7 +39,7 @@ import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
+import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -56,19 +56,25 @@ function QueryResultGroup({
   query,
   onRemove,
   onResultClick
-}: {
+}: Readonly<{
   query: SearchQuery;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
-}) {
+}>) {
   if (query.results.count == 0) {
     return null;
   }
 
-  const model = ModelInformationDict[query.model];
+  const model = getModelInfo(query.model);
 
   return (
-    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
+    <Paper
+      shadow="sm"
+      radius="xs"
+      p="md"
+      key={`paper-${query.model}`}
+      aria-label={`search-group-${query.model}`}
+    >
       <Stack key={`stack-${query.model}`}>
         <Group justify="space-between" wrap="nowrap">
           <Group justify="left" gap={5} wrap="nowrap">
@@ -84,13 +90,14 @@ function QueryResultGroup({
             color="red"
             variant="transparent"
             radius="xs"
+            aria-label={`remove-search-group-${query.model}`}
             onClick={() => onRemove(query.model)}
           >
             <IconX />
           </ActionIcon>
         </Group>
         <Divider />
-        <Stack>
+        <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
               onClick={(event: any) =>
@@ -115,10 +122,10 @@ function QueryResultGroup({
 export function SearchDrawer({
   opened,
   onClose
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 500);
 
@@ -367,6 +374,7 @@ export function SearchDrawer({
       title={
         <Group justify="space-between" gap={1} wrap="nowrap">
           <TextInput
+            aria-label="global-search-input"
             placeholder={t`Enter search text`}
             radius="xs"
             value={value}
@@ -459,7 +467,7 @@ export function SearchDrawer({
               color="blue"
               radius="sm"
               variant="light"
-              title={t`No results`}
+              title={t`No Results`}
               icon={<IconSearch size="1rem" />}
             >
               <Trans>No results available for search query</Trans>

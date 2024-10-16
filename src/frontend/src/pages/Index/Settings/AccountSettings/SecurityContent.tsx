@@ -209,7 +209,7 @@ function EmailContent() {
   );
 }
 
-function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
+function SsoContent({ dataProvider }: Readonly<{ dataProvider: any }>) {
   const [value, setValue] = useState<string>('');
   const [currentProviders, setCurrentProviders] = useState<[]>();
   const { isLoading, data } = useQuery({
@@ -249,7 +249,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   /* renderer */
   if (isLoading) return <Loader />;
 
-  function ProviderButton({ provider }: { provider: any }) {
+  function ProviderButton({ provider }: Readonly<{ provider: any }>) {
     const button = (
       <Button
         key={provider.id}

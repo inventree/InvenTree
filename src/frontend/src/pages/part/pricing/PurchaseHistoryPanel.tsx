@@ -13,10 +13,10 @@ import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({
   part
-}: {
+}: Readonly<{
   part: any;
-}): ReactNode {
-  const table = useTable('pricing-purchase-history');
+}>): ReactNode {
+  const table = useTable('pricingpurchasehistory');
 
   const calculateUnitPrice = useCallback((record: any) => {
     let pack_quantity = record?.supplier_part_detail?.pack_quantity_native ?? 1;
@@ -85,13 +85,6 @@ export default function PurchaseHistoryPanel({
       }
     ];
   }, []);
-
-  const currency: string = useMemo(() => {
-    if (table.records.length === 0) {
-      return '';
-    }
-    return table.records[0].purchase_price_currency;
-  }, [table.records]);
 
   const purchaseHistoryData = useMemo(() => {
     return table.records.map((record: any) => {

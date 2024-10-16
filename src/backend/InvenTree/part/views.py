@@ -720,7 +720,7 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
             context['part_count'] = 0
 
         # Get current category
-        category = kwargs.get('object', None)
+        category = kwargs.get('object')
 
         if category:
             # Insert "starred" information

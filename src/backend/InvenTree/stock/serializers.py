@@ -268,13 +268,13 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
 
-            else:
+            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
                 logger.debug(
                     "No matching test template found for '%s' - creating a new template",
                     test_name,
                 )
 
-                # Create a new test template based on the provided dasta
+                # Create a new test template based on the provided data
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
                 )
@@ -358,6 +358,7 @@ class StockItemSerializer(
             'customer',
             'delete_on_deplete',
             'expiry_date',
+            'in_stock',
             'is_building',
             'link',
             'location',
@@ -468,6 +469,8 @@ class StockItemSerializer(
         child=serializers.DictField(), source='location.get_path', read_only=True
     )
 
+    in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
+
     """
     Field used when creating a stock item
     """
@@ -519,6 +522,10 @@ class StockItemSerializer(
             'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
+            'customer',
+            'belongs_to',
+            'sales_order',
+            'consumed_by',
             'tags',
         )
 
@@ -820,9 +827,9 @@ class InstallStockItemSerializer(serializers.Serializer):
         quantity = data.get('quantity', stock_item.quantity)
 
         if quantity > stock_item.quantity:
-            raise ValidationError(
-                _('Quantity to install must not exceed available quantity')
-            )
+            raise ValidationError({
+                'quantity': _('Quantity to install must not exceed available quantity')
+            })
 
         return data
 

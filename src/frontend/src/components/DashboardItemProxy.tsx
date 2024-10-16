@@ -14,13 +14,13 @@ export function DashboardItemProxy({
   url,
   params,
   autoupdate = true
-}: {
+}: Readonly<{
   id: string;
   text: string;
   url: ApiEndpoints;
   params: any;
   autoupdate: boolean;
-}) {
+}>) {
   function fetchData() {
     return api
       .get(`${apiUrl(url)}?search=&offset=0&limit=25`, { params: params })

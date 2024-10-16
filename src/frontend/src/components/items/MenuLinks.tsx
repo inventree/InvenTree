@@ -23,10 +23,10 @@ export type menuItemsCollection = {
 function ConditionalDocTooltip({
   item,
   children
-}: {
+}: Readonly<{
   item: MenuLinkItem;
   children: React.ReactNode;
-}) {
+}>) {
   if (item.doctext !== undefined) {
     return (
       <DocTooltip
@@ -46,10 +46,10 @@ function ConditionalDocTooltip({
 export function MenuLinks({
   links,
   highlighted = false
-}: {
+}: Readonly<{
   links: MenuLinkItem[];
   highlighted?: boolean;
-}) {
+}>) {
   const filteredLinks = links.filter(
     (item) => !highlighted || item.highlight === true
   );

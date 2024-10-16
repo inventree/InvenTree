@@ -21,7 +21,8 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -108,6 +109,12 @@ export default function CategoryDetail() {
         label: t`Parent Category`,
         model: ModelType.partcategory,
         hidden: !category?.parent
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        icon: 'notification',
+        label: t`Subscribed`
       }
     ];
 
@@ -164,7 +171,7 @@ export default function CategoryDetail() {
     url: ApiEndpoints.category_list,
     pk: id,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: partCategoryFields({}),
     onFormSuccess: refreshInstance
   });
 
@@ -229,7 +236,7 @@ export default function CategoryDetail() {
     ];
   }, [id, user, category.pk]);
 
-  const categoryPanels: PanelType[] = useMemo(
+  const panels: PanelType[] = useMemo(
     () => [
       {
         name: 'details',
@@ -311,7 +318,13 @@ export default function CategoryDetail() {
             editAction={editCategory.open}
             editEnabled={user.hasChangePermission(ModelType.partcategory)}
           />
-          <PanelGroup pageKey="partcategory" panels={categoryPanels} />
+          <PanelGroup
+            pageKey="partcategory"
+            panels={panels}
+            model={ModelType.partcategory}
+            instance={category}
+            id={category.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

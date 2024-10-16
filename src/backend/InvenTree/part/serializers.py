@@ -244,6 +244,39 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     )
 
 
+class PartSchedulingSerializer(serializers.Serializer):
+    """Serializer class for a PartScheduling entry."""
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = [
+            'date',
+            'quantity',
+            'speculative_quantity',
+            'title',
+            'label',
+            'model',
+            'model_id',
+        ]
+
+    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
+
+    quantity = serializers.FloatField(label=_('Quantity'), required=True)
+
+    speculative_quantity = serializers.FloatField(
+        label=_('Speculative Quantity'), required=False
+    )
+
+    title = serializers.CharField(label=_('Title'), required=True)
+
+    label = serializers.CharField(label=_('Label'), required=True)
+
+    model = serializers.CharField(label=_('Model'), required=True)
+
+    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
+
+
 class PartThumbSerializer(serializers.Serializer):
     """Serializer for the 'image' field of the Part model.
 
@@ -354,11 +387,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         help_text=_('Internal Part Number'),
         max_length=100,
     )
+
     revision = serializers.CharField(
-        required=False,
-        allow_null=True,
-        help_text=_('Part revision or version number'),
-        max_length=100,
+        required=False, default='', allow_blank=True, allow_null=True, max_length=100
     )
 
     # Pricing fields
@@ -909,7 +940,7 @@ class PartSerializer(
     )
 
     revision = serializers.CharField(
-        required=False, default='', allow_blank=True, max_length=100
+        required=False, default='', allow_blank=True, allow_null=True, max_length=100
     )
 
     # Annotated fields
@@ -1195,6 +1226,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
         model = PartStocktakeReport
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
+        read_only_fields = ['date', 'report', 'part_count', 'user']
 
     user_detail = InvenTree.serializers.UserSerializer(
         source='user', read_only=True, many=False

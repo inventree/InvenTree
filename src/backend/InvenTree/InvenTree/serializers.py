@@ -403,18 +403,21 @@ class UserSerializer(InvenTreeModelSerializer):
         read_only_fields = ['username', 'email']
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
+
     first_name = serializers.CharField(
         label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
     )
+
     last_name = serializers.CharField(
         label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
     )
+
     email = serializers.EmailField(
         label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
     )
 
 
-class ExendedUserSerializer(UserSerializer):
+class ExtendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
 
     from users.serializers import GroupSerializer
@@ -437,9 +440,11 @@ class ExendedUserSerializer(UserSerializer):
     is_staff = serializers.BooleanField(
         label=_('Staff'), help_text=_('Does this user have staff permissions')
     )
+
     is_superuser = serializers.BooleanField(
         label=_('Superuser'), help_text=_('Is this user a superuser')
     )
+
     is_active = serializers.BooleanField(
         label=_('Active'), help_text=_('Is this user account active')
     )
@@ -464,8 +469,32 @@ class ExendedUserSerializer(UserSerializer):
         return super().validate(attrs)
 
 
-class UserCreateSerializer(ExendedUserSerializer):
+class MeUserSerializer(ExtendedUserSerializer):
+    """API serializer specifically for the 'me' endpoint."""
+
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options.
+
+        Extends the ExtendedUserSerializer.Meta options,
+        but ensures that certain fields are read-only.
+        """
+
+        read_only_fields = [
+            *ExtendedUserSerializer.Meta.read_only_fields,
+            'is_active',
+            'is_staff',
+            'is_superuser',
+        ]
+
+
+class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
+
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options for the UserCreateSerializer."""
+
+        # Prevent creation of users with superuser or staff permissions
+        read_only_fields = ['groups', 'is_staff', 'is_superuser']
 
     def validate(self, attrs):
         """Expanded valiadation for auth."""
@@ -595,7 +624,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
 
         if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file type'))
+            raise serializers.ValidationError(_('Unsupported file format'))
 
         # Impose a 50MB limit on uploaded BOM files
         max_upload_file_size = 50 * 1024 * 1024
@@ -878,8 +907,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
         try:
             self.remote_image_file = download_image_from_url(url)
-        except Exception as exc:
+        except Exception:
             self.remote_image_file = None
-            raise ValidationError(str(exc))
+            raise ValidationError(_('Failed to download image from remote URL'))
 
         return url

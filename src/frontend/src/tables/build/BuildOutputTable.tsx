@@ -17,16 +17,20 @@ import {
   useCompleteBuildOutputsForm,
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
+import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { LocationColumn, PartColumn } from '../ColumnRenderers';
+import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 type TestResultOverview = {
@@ -34,7 +38,10 @@ type TestResultOverview = {
   result: boolean;
 };
 
-export default function BuildOutputTable({ build }: { build: any }) {
+export default function BuildOutputTable({
+  build,
+  refreshBuild
+}: Readonly<{ build: any; refreshBuild: () => void }>) {
   const user = useUserState();
   const table = useTable('build-outputs');
 
@@ -172,6 +179,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
     url: apiUrl(ApiEndpoints.build_output_create, buildId),
     title: t`Add Build Output`,
     fields: buildOutputFields,
+    timeout: 10000,
     initialData: {
       batch_code: build.batch,
       location: build.destination ?? build.part_detail?.default_location
@@ -186,6 +194,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
     outputs: selectedOutputs,
     onFormSuccess: () => {
       table.refreshTable();
+      refreshBuild();
     }
   });
 
@@ -194,6 +203,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
     outputs: selectedOutputs,
     onFormSuccess: () => {
       table.refreshTable();
+      refreshBuild();
     }
   });
 
@@ -202,17 +212,28 @@ export default function BuildOutputTable({ build }: { build: any }) {
     outputs: selectedOutputs,
     onFormSuccess: () => {
       table.refreshTable();
+      refreshBuild();
     }
+  });
+
+  const editStockItemFields = useStockFields({
+    create: false,
+    item_detail: selectedOutputs[0],
+    part_detail: selectedOutputs[0]?.part_detail
+  });
+
+  const editBuildOutput = useEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: selectedOutputs[0]?.pk,
+    title: t`Edit Build Output`,
+    fields: editStockItemFields,
+    table: table
   });
 
   const tableActions = useMemo(() => {
     return [
-      <AddItemButton
-        tooltip={t`Add Build Output`}
-        hidden={!user.hasAddRole(UserRoles.build)}
-        onClick={addBuildOutput.open}
-      />,
       <ActionButton
+        key="complete-selected-outputs"
         tooltip={t`Complete selected outputs`}
         icon={<InvenTreeIcon icon="success" />}
         color="green"
@@ -223,6 +244,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
         }}
       />,
       <ActionButton
+        key="scrap-selected-outputs"
         tooltip={t`Scrap selected outputs`}
         icon={<InvenTreeIcon icon="delete" />}
         color="red"
@@ -233,6 +255,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
         }}
       />,
       <ActionButton
+        key="cancel-selected-outputs"
         tooltip={t`Cancel selected outputs`}
         icon={<InvenTreeIcon icon="cancel" />}
         color="red"
@@ -241,6 +264,12 @@ export default function BuildOutputTable({ build }: { build: any }) {
           setSelectedOutputs(table.selectedRecords);
           cancelBuildOutputsForm.open();
         }}
+      />,
+      <AddItemButton
+        key="add-build-output"
+        tooltip={t`Add Build Output`}
+        hidden={!user.hasAddRole(UserRoles.build)}
+        onClick={addBuildOutput.open}
       />
     ];
   }, [user, table.selectedRecords, table.hasSelectedRecords]);
@@ -272,6 +301,13 @@ export default function BuildOutputTable({ build }: { build: any }) {
             completeBuildOutputsForm.open();
           }
         },
+        RowEditAction({
+          tooltip: t`Edit Build Output`,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            editBuildOutput.open();
+          }
+        }),
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
@@ -302,7 +338,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
       {
         accessor: 'part',
         sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'quantity',
@@ -317,18 +353,18 @@ export default function BuildOutputTable({ build }: { build: any }) {
             text = `# ${record.serial}`;
           }
 
-          return (
-            <Group justify="left" wrap="nowrap">
-              <Text>{text}</Text>
-              {record.batch && (
-                <Text style={{ fontStyle: 'italic' }} size="sm">
-                  {t`Batch`}: {record.batch}
-                </Text>
-              )}
-            </Group>
-          );
+          return text;
         }
       },
+      {
+        accessor: 'batch',
+        sortable: true
+      },
+      StatusColumn({
+        accessor: 'status',
+        sortable: true,
+        model: ModelType.stockitem
+      }),
       LocationColumn({
         accessor: 'location_detail'
       }),
@@ -401,6 +437,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
       {addBuildOutput.modal}
       {completeBuildOutputsForm.modal}
       {scrapBuildOutputsForm.modal}
+      {editBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
       <InvenTreeTable
         tableState={table}
@@ -413,6 +450,8 @@ export default function BuildOutputTable({ build }: { build: any }) {
             is_building: true,
             build: buildId
           },
+          enableLabels: true,
+          enableReports: true,
           modelType: ModelType.stockitem,
           dataFormatter: formatRecords,
           tableActions: tableActions,

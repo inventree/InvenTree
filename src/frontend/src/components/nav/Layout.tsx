@@ -18,7 +18,14 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
   if (!isLoggedIn()) {
     return (
-      <Navigate to="/logged-in" state={{ redirectFrom: location.pathname }} />
+      <Navigate
+        to="/logged-in"
+        state={{
+          redirectUrl: location.pathname,
+          queryParams: location.search,
+          anchor: location.hash
+        }}
+      />
     );
   }
 

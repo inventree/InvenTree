@@ -439,18 +439,22 @@ class PurchaseOrderTest(OrderTest):
         del data['reference']
 
         # Duplicate with non-existent PK to provoke error
-        data['duplicate_order'] = 10000001
-        data['duplicate_line_items'] = True
-        data['duplicate_extra_lines'] = False
+        data['duplicate'] = {
+            'order_id': 10000001,
+            'copy_lines': True,
+            'copy_extra_lines': False,
+        }
 
         data['reference'] = 'PO-9999'
 
         # Duplicate via the API
         response = self.post(reverse('api-po-list'), data, expected_code=400)
 
-        data['duplicate_order'] = 1
-        data['duplicate_line_items'] = True
-        data['duplicate_extra_lines'] = False
+        data['duplicate'] = {
+            'order_id': 1,
+            'copy_lines': True,
+            'copy_extra_lines': False,
+        }
 
         data['reference'] = 'PO-9999'
 
@@ -466,8 +470,12 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po_dup.lines.count(), po.lines.count())
 
         data['reference'] = 'PO-9998'
-        data['duplicate_line_items'] = False
-        data['duplicate_extra_lines'] = True
+
+        data['duplicate'] = {
+            'order_id': 1,
+            'copy_lines': False,
+            'copy_extra_lines': True,
+        }
 
         response = self.post(reverse('api-po-list'), data, expected_code=201)
 
@@ -513,6 +521,11 @@ class PurchaseOrderTest(OrderTest):
         self.post(url, {}, expected_code=403)
 
         self.assignRole('purchase_order.add')
+
+        # Add a line item
+        sp = SupplierPart.objects.filter(supplier=po.supplier).first()
+
+        models.PurchaseOrderLineItem.objects.create(part=sp, order=po, quantity=100)
 
         # Should fail due to incomplete lines
         response = self.post(url, {}, expected_code=400)

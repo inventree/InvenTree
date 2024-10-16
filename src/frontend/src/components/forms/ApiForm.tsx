@@ -33,7 +33,10 @@ import {
   extractAvailableFields,
   mapFields
 } from '../../functions/forms';
-import { invalidResponse } from '../../functions/notifications';
+import {
+  invalidResponse,
+  showTimeoutNotification
+} from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import { TableState } from '../../hooks/UseTable';
 import { PathParams } from '../../states/ApiState';
@@ -74,7 +77,7 @@ export interface ApiFormAction {
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
-  pk?: number | string | undefined;
+  pk?: number | string;
   pk_field?: string;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -103,10 +106,10 @@ export interface ApiFormProps {
 export function OptionsApiForm({
   props: _props,
   id: pId
-}: {
+}: Readonly<{
   props: ApiFormProps;
   id?: string;
-}) {
+}>) {
   const props = useMemo(
     () => ({
       ..._props,
@@ -197,11 +200,11 @@ export function ApiForm({
   id,
   props,
   optionsLoading
-}: {
+}: Readonly<{
   id: string;
   props: ApiFormProps;
   optionsLoading: boolean;
-}) {
+}>) {
   const navigate = useNavigate();
 
   const [fields, setFields] = useState<ApiFormFieldSet>(
@@ -397,11 +400,13 @@ export function ApiForm({
       data = props.processFormData(data);
     }
 
-    let dataForm = new FormData();
+    let jsonData = { ...data };
+    let formData = new FormData();
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
       let field_type = fields[key]?.field_type;
+      let exclude = fields[key]?.exclude;
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
@@ -418,15 +423,18 @@ export function ApiForm({
         }
       }
 
-      if (value != undefined) {
-        dataForm.append(key, value);
+      if (exclude) {
+        // Remove the field from the data
+        delete jsonData[key];
+      } else if (value != undefined) {
+        formData.append(key, value);
       }
     });
 
     return api({
       method: method,
       url: url,
-      data: hasFiles ? dataForm : data,
+      data: hasFiles ? formData : jsonData,
       timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
@@ -516,6 +524,8 @@ export function ApiForm({
                       // Standard error handling for other fields
                       form.setError(path, { message: v.join(', ') });
                     }
+                  } else if (typeof v === 'string') {
+                    form.setError(path, { message: v });
                   } else {
                     processErrors(v, path);
                   }
@@ -524,6 +534,7 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
+
               break;
             default:
               // Unexpected state on form error
@@ -532,7 +543,7 @@ export function ApiForm({
               break;
           }
         } else {
-          invalidResponse(0);
+          showTimeoutNotification();
           props.onFormError?.();
         }
 
@@ -602,6 +613,15 @@ export function ApiForm({
                           control={form.control}
                           url={url}
                           setFields={setFields}
+                          onKeyDown={(value) => {
+                            if (
+                              value == 'Enter' &&
+                              !isLoading &&
+                              (!props.fetchInitialData || isDirty)
+                            ) {
+                              form.handleSubmit(submitForm, onFormError)();
+                            }
+                          }}
                         />
                       );
                     })}
@@ -649,10 +669,10 @@ export function ApiForm({
 export function CreateApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const createProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
@@ -667,15 +687,15 @@ export function CreateApiForm({
 export function EditApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const editProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      submitText: t`Update` ?? props.submitText,
+      submitText: props.submitText ?? t`Update`,
       method: 'PUT'
     }),
     [props]
@@ -687,10 +707,10 @@ export function EditApiForm({
 export function DeleteApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const deleteProps = useMemo<ApiFormProps>(
     () => ({
       ...props,

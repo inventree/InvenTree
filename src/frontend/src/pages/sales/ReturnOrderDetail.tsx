@@ -1,11 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
-import {
-  IconInfoCircle,
-  IconList,
-  IconNotes,
-  IconPaperclip
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconList } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -15,7 +10,6 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -27,13 +21,16 @@ import {
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -43,7 +40,6 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 
@@ -94,6 +90,7 @@ export default function ReturnOrderDetail() {
         type: 'text',
         name: 'customer_reference',
         label: t`Customer Reference`,
+        icon: 'customer',
         copy: true,
         hidden: !order.customer_reference
       },
@@ -243,6 +240,7 @@ export default function ReturnOrderDetail() {
               <Accordion.Panel>
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
+                  order={order}
                   customerId={order.customer}
                   currency={orderCurrency}
                 />
@@ -264,29 +262,14 @@ export default function ReturnOrderDetail() {
           </Accordion>
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.returnorder}
-            model_id={order.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.returnorder}
-            modelId={order.pk}
-            editable={user.hasChangeRole(UserRoles.return_order)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      })
     ];
   }, [order, id, user]);
 
@@ -302,7 +285,11 @@ export default function ReturnOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
+
+  const duplicateReturnOrderFields = useReturnOrderFields({
+    duplicateOrderId: order.pk
+  });
 
   const editReturnOrder = useEditApiFormModal({
     url: ApiEndpoints.return_order_list,
@@ -317,7 +304,7 @@ export default function ReturnOrderDetail() {
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
-    fields: returnOrderFields,
+    fields: duplicateReturnOrderFields,
     initialData: {
       ...order,
       reference: undefined
@@ -339,7 +326,7 @@ export default function ReturnOrderDetail() {
     title: t`Cancel Return Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Cancel this order`,
-    successMessage: t`Order canceled`
+    successMessage: t`Order cancelled`
   });
 
   const holdOrder = useCreateApiFormModal({
@@ -458,7 +445,13 @@ export default function ReturnOrderDetail() {
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
-          <PanelGroup pageKey="returnorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="returnorder"
+            panels={orderPanels}
+            model={ModelType.returnorder}
+            instance={order}
+            id={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

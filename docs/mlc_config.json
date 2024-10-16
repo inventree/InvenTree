@@ -7,6 +7,9 @@
             "pattern": "http://localhost"
         },
         {
+            "pattern": "https://localhost:5173/"
+        },
+        {
             "pattern": "http://127.0.0.1"
         },
         {

@@ -41,8 +41,8 @@ export function ActionButton(props: ActionButtonProps) {
           aria-label={`action-button-${identifierString(
             props.tooltip ?? props.text ?? ''
           )}`}
-          onClick={() => {
-            props.onClick();
+          onClick={(event: any) => {
+            props.onClick(event);
           }}
           variant={props.variant ?? 'transparent'}
         >

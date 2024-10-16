@@ -247,6 +247,16 @@ class Order(
                     'contact': _('Contact does not match selected company')
                 })
 
+    def clean_line_item(self, line):
+        """Clean a line item for this order.
+
+        Used when duplicating an existing line item,
+        to ensure it is 'fresh'.
+        """
+        line.pk = None
+        line.target_date = None
+        line.order = self
+
     def report_context(self):
         """Generate context data for the reporting interface."""
         return {
@@ -378,6 +388,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Purchase Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this PurchaseOrder."""
+        super().clean_line_item(line)
+        line.received = 0
 
     def report_context(self):
         """Return report context data for this PurchaseOrder."""
@@ -765,7 +780,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_complete(self):
         """Return True if all line items have been received."""
-        return self.lines.count() > 0 and self.pending_line_items().count() == 0
+        return self.pending_line_items().count() == 0
 
     @transaction.atomic
     def receive_line_item(
@@ -776,13 +791,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         batch_code = kwargs.get('batch_code', '')
 
         # Extract optional list of serial numbers
-        serials = kwargs.get('serials', None)
+        serials = kwargs.get('serials')
 
         # Extract optional notes field
         notes = kwargs.get('notes', '')
 
         # Extract optional packaging field
-        packaging = kwargs.get('packaging', None)
+        packaging = kwargs.get('packaging')
 
         if not packaging:
             # Default to the packaging field for the linked supplier part
@@ -790,7 +805,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 packaging = line.part.packaging
 
         # Extract optional barcode field
-        barcode = kwargs.get('barcode', None)
+        barcode = kwargs.get('barcode')
 
         # Prevent null values for barcode
         if barcode is None:
@@ -891,6 +906,11 @@ class SalesOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Sales Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this SalesOrder."""
+        super().clean_line_item(line)
+        line.shipped = 0
 
     def report_context(self):
         """Generate report context data for this SalesOrder."""
@@ -1056,9 +1076,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
-        return self.lines.count() > 0 and all(
-            line.is_completed() for line in self.lines.all()
-        )
+        return all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.
@@ -1718,7 +1736,9 @@ class SalesOrderLineItem(OrderLineItem):
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -1747,6 +1767,17 @@ class SalesOrderShipment(
     def get_api_url():
         """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
+
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'allocations': self.allocations,
+            'order': self.order,
+            'reference': self.reference,
+            'shipment': self,
+            'tracking_number': self.tracking_number,
+            'title': str(self),
+        }
 
     order = models.ForeignKey(
         SalesOrder,
@@ -1845,15 +1876,10 @@ class SalesOrderShipment(
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
         """
+        import order.tasks
+
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
-
-        allocations = self.allocations.all()
-
-        # Iterate through each stock item assigned to this shipment
-        for allocation in allocations:
-            # Mark the allocation as "complete"
-            allocation.complete_allocation(user)
 
         # Update the "shipment" date
         self.shipment_date = kwargs.get(
@@ -1862,30 +1888,38 @@ class SalesOrderShipment(
         self.shipped_by = user
 
         # Was a tracking number provided?
-        tracking_number = kwargs.get('tracking_number', None)
+        tracking_number = kwargs.get('tracking_number')
 
         if tracking_number is not None:
             self.tracking_number = tracking_number
 
         # Was an invoice number provided?
-        invoice_number = kwargs.get('invoice_number', None)
+        invoice_number = kwargs.get('invoice_number')
 
         if invoice_number is not None:
             self.invoice_number = invoice_number
 
         # Was a link provided?
-        link = kwargs.get('link', None)
+        link = kwargs.get('link')
 
         if link is not None:
             self.link = link
 
         # Was a delivery date provided?
-        delivery_date = kwargs.get('delivery_date', None)
+        delivery_date = kwargs.get('delivery_date')
 
         if delivery_date is not None:
             self.delivery_date = delivery_date
 
         self.save()
+
+        # Offload the "completion" of each line item to the background worker
+        # This may take some time, and we don't want to block the main thread
+        InvenTree.tasks.offload_task(
+            order.tasks.complete_sales_order_shipment,
+            shipment_id=self.pk,
+            user_id=user.pk if user else None,
+        )
 
         trigger_event('salesordershipment.completed', id=self.pk)
 
@@ -2082,6 +2116,12 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Return Order')
+
+    def clean_line_item(self, line):
+        """Clean a line item for this ReturnOrder."""
+        super().clean_line_item(line)
+        line.received_date = None
+        line.outcome = ReturnOrderLineStatus.PENDING.value
 
     def report_context(self):
         """Generate report context data for this ReturnOrder."""
@@ -2288,7 +2328,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     # endregion
 
     @transaction.atomic
-    def receive_line_item(self, line, location, user, note=''):
+    def receive_line_item(self, line, location, user, note='', **kwargs):
         """Receive a line item against this ReturnOrder.
 
         Rules:
@@ -2314,7 +2354,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = StockStatus.QUARANTINED.value
+        stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None

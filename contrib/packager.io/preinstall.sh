@@ -2,6 +2,7 @@
 #
 # packager.io preinstall/preremove script
 #
+echo "# PRI01| Running preinstall script - start - $(date)"
 PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
 
 # Envs that should be passed to setup commands
@@ -9,12 +10,14 @@ export SETUP_ENVS=PATH,APP_HOME,INVENTREE_MEDIA_ROOT,INVENTREE_STATIC_ROOT,INVEN
 
 if test -f "${APP_HOME}/env/bin/pip"; then
   # Check if clear-generated is available
-  if sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke clear-generated --help" > /dev/null 2>&1; then
-    echo "# Clearing precompiled files"
-    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke clear-generated"
+  if sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke int.clear-generated --help" > /dev/null 2>&1; then
+    echo "# PRI02| Clearing precompiled files"
+    sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke int.clear-generated"
   else
-    echo "# Clearing precompiled files - skipping"
+    echo "# PRI02| Clearing precompiled files - skipping"
   fi
 else
-  echo "# No python environment found - skipping"
+  echo "# PRI02| No python environment found - skipping"
 fi
+
+echo "# PRI03| Running preinstall script - done - $(date)"
