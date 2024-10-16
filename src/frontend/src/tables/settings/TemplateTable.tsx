@@ -355,7 +355,7 @@ export function TemplateTable({
         name: 'enabled',
         label: t`Enabled`,
         description: t`Filter by enabled status`,
-        type: 'checkbox'
+        type: 'boolean'
       },
       {
         name: 'model_type',

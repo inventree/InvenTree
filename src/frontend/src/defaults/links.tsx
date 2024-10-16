@@ -27,7 +27,8 @@ export const docLinks = {
   getting_started: 'https://docs.inventree.org/en/latest/start/intro/',
   api: 'https://docs.inventree.org/en/latest/api/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/contributing/',
-  faq: 'https://docs.inventree.org/en/latest/faq/'
+  faq: 'https://docs.inventree.org/en/latest/faq/',
+  github: 'https://github.com/inventree/inventree'
 };
 
 export function DocumentationLinks(): MenuLinkItem[] {
@@ -59,6 +60,13 @@ export function DocumentationLinks(): MenuLinkItem[] {
       link: docLinks.faq,
       external: true,
       description: t`Frequently asked questions`
+    },
+    {
+      id: 'github',
+      title: t`GitHub Repository`,
+      link: docLinks.github,
+      external: true,
+      description: t`InvenTree source code on GitHub`
     }
   ];
 }
