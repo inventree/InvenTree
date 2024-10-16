@@ -270,8 +270,6 @@ class Build(
         related_name='builds',
         limit_choices_to={
             'assembly': True,
-            'active': True,
-            'virtual': False,
         },
         help_text=_('Select part to build'),
     )

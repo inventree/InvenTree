@@ -38,6 +38,8 @@ export function BuildOrderTable({
   parentBuildId?: number;
   salesOrderId?: number;
 }>) {
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
@@ -102,7 +104,7 @@ export function BuildOrderTable({
   const ownerFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'active',
         type: 'boolean',
@@ -151,11 +153,21 @@ export function BuildOrderTable({
         choices: ownerFilters.choices
       }
     ];
-  }, [parentBuildId, projectCodeFilters.choices, ownerFilters.choices]);
+
+    // If we are filtering on a specific part, we can include the "include variants" filter
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include variant build orders`
+      });
+    }
+
+    return filters;
+  }, [partId, projectCodeFilters.choices, ownerFilters.choices]);
 
   const user = useUserState();
-
-  const table = useTable('buildorder');
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
