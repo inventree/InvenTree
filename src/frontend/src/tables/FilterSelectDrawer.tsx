@@ -103,10 +103,11 @@ function FilterAddGroup({
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
 
+  // Determine the "type" of filter (default = boolean)
   const filterType: TableFilterType = useMemo(() => {
     return (
       availableFilters?.find((flt) => flt.name === selectedFilter)?.type ??
-      'string'
+      'boolean'
     );
   }, [selectedFilter]);
 
