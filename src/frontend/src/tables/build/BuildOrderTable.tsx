@@ -160,7 +160,7 @@ export function BuildOrderTable({
         name: 'include_variants',
         type: 'boolean',
         label: t`Include Variants`,
-        description: t`Include variant build orders`
+        description: t`Include build orders for part variants`
       });
     }
 
