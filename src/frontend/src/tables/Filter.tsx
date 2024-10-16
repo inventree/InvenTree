@@ -136,3 +136,12 @@ export function MaxDateFilter(): TableFilter {
     type: 'date'
   };
 }
+
+export function HasProjectCodeFilter(): TableFilter {
+  return {
+    name: 'has_project_code',
+    type: 'boolean',
+    label: t`Has Project Code`,
+    description: t`Show orders with an assigned project code`
+  };
+}

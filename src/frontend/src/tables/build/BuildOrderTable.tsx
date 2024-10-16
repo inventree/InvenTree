@@ -25,6 +25,7 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
   OverdueFilter,
@@ -132,11 +133,7 @@ export function BuildOrderTable({
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'issued_by',
         label: t`Issued By`,
