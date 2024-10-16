@@ -81,7 +81,7 @@ export function SalesOrderTable({
         name: 'include_variants',
         type: 'boolean',
         label: t`Include Variants`,
-        description: t`Include sales orders for part variants`
+        description: t`Include orders for part variants`
       });
     }
 

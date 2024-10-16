@@ -390,11 +390,39 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         label=_('Supplier Part'),
     )
 
+    include_variants = rest_filters.BooleanFilter(
+        label='Include Variants', method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'base_part' filter to be set.
+        - Refer to the 'filter_base_part' method for more information.
+        """
+        return queryset
+
     base_part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.filter(purchaseable=True),
-        field_name='part__part',
+        method='filter_base_part',
         label=_('Internal Part'),
     )
+
+    def filter_base_part(self, queryset, name, base_part):
+        """Filter by the 'base_part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = base_part.get_descendants(include_self=True)
+            return queryset.filter(part__part__in=parts)
+        else:
+            return queryset.filter(part__part=base_part)
 
     pending = rest_filters.BooleanFilter(
         method='filter_pending', label=_('Order Pending')
