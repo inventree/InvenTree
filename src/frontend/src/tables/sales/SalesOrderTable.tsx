@@ -43,14 +43,14 @@ export function SalesOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable('sales-order');
+  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
   const user = useUserState();
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'status',
         label: t`Status`,
@@ -76,7 +76,18 @@ export function SalesOrderTable({
         choices: responsibleFilters.choices
       }
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
 
   const salesOrderFields = useSalesOrderFields({});
 
