@@ -2196,7 +2196,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     # endregion
 
     @transaction.atomic
-    def receive_line_item(self, line, location, user, note=''):
+    def receive_line_item(self, line, location, user, note='', **kwargs):
         """Receive a line item against this ReturnOrder.
 
         Rules:
@@ -2222,7 +2222,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = StockStatus.QUARANTINED.value
+        stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None

@@ -1161,10 +1161,12 @@ class StockItem(
             location=location,
         )
 
+        # Clear out allocation information for the stock item
         self.customer = None
         self.belongs_to = None
         self.sales_order = None
         self.location = location
+        self.clearAllocations()
 
         trigger_event('stockitem.returnedfromcustomer', id=self.id)
 
