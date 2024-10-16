@@ -637,6 +637,8 @@ class SalesOrderFilter(OrderFilter):
 
         # Now that we have a queryset of parts, find all the matching sales orders
         line_items = models.SalesOrderLineItem.objects.filter(part__in=parts)
+
+        # Generate a list of ID values for the matching sales orders
         sales_orders = line_items.values_list('order', flat=True).distinct()
 
         # Now we have a list of matching IDs, filter the queryset
@@ -1127,6 +1129,46 @@ class ReturnOrderFilter(OrderFilter):
 
         model = models.ReturnOrder
         fields = ['customer']
+
+    include_variants = rest_filters.BooleanFilter(
+        label='Include Variants', method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', method='filter_part'
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        # Now that we have a queryset of parts, find all the matching return orders
+        line_items = models.ReturnOrderLineItem.objects.filter(item__part__in=parts)
+
+        # Generate a list of ID values for the matching return orders
+        return_orders = line_items.values_list('order', flat=True).distinct()
+
+        # Now we have a list of matching IDs, filter the queryset
+        return queryset.filter(pk__in=return_orders)
 
 
 class ReturnOrderMixin:

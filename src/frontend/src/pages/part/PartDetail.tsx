@@ -21,15 +21,14 @@ import {
   IconLayersLinked,
   IconList,
   IconListTree,
-  IconNotes,
   IconPackages,
-  IconPaperclip,
   IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
   IconTruckDelivery,
+  IconTruckReturn,
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -44,7 +43,6 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
@@ -99,6 +97,7 @@ import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -698,6 +697,13 @@ export default function PartDetail() {
         icon: <IconTruckDelivery />,
         hidden: !part.salable,
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
+        name: 'return_orders',
+        label: t`Return Orders`,
+        icon: <IconTruckReturn />,
+        hidden: !part.salable || !globalSettings.isSet('RETURNORDER_ENABLED'),
+        content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'stocktake',
