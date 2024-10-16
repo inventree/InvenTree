@@ -606,6 +606,7 @@ export default function PartDetail() {
                     modelField="build"
                     modelTarget={ModelType.build}
                     showBuildInfo
+                    showPartInfo
                     allowEdit
                   />
                 </Accordion.Panel>

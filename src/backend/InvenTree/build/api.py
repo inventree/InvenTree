@@ -53,7 +53,7 @@ class BuildFilter(rest_filters.FilterSet):
         field_name='parent',
     )
 
-    include_variants = rest_filters.BooleanFilter(label='Include Variants', method='filter_include_variants')
+    include_variants = rest_filters.BooleanFilter(label=_('Include Variants'), method='filter_include_variants')
 
     def filter_include_variants(self, queryset, name, value):
         """Filter by whether or not to include variants of the selected part.
@@ -613,13 +613,45 @@ class BuildItemFilter(rest_filters.FilterSet):
             'install_into',
         ]
 
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+
+        return queryset
+
     part = rest_filters.ModelChoiceFilter(
         queryset=part.models.Part.objects.all(),
+        label=_('Part'),
+        method='filter_part',
         field_name='stock_item__part',
     )
 
+    def filter_part(self, queryset, name, part):
+        """Filter by 'part' which is being built.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part.
+        - Otherwise, just filter by the selected part.
+        """
+
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            return queryset.filter(stock_item__part__in=part.get_descendants(include_self=True))
+        else:
+            return queryset.filter(stock_item__part=part)
+
     build = rest_filters.ModelChoiceFilter(
         queryset=build.models.Build.objects.all(),
+        label=_('Build Order'),
         field_name='build_line__build',
     )
 

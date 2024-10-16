@@ -391,7 +391,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
     )
 
     include_variants = rest_filters.BooleanFilter(
-        label='Include Variants', method='filter_include_variants'
+        label=_('Include Variants'), method='filter_include_variants'
     )
 
     def filter_include_variants(self, queryset, name, value):
@@ -604,7 +604,7 @@ class SalesOrderFilter(OrderFilter):
         fields = ['customer']
 
     include_variants = rest_filters.BooleanFilter(
-        label='Include Variants', method='filter_include_variants'
+        label=_('Include Variants'), method='filter_include_variants'
     )
 
     def filter_include_variants(self, queryset, name, value):
@@ -962,7 +962,7 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
     )
 
     include_variants = rest_filters.BooleanFilter(
-        label='Include Variants', method='filter_include_variants'
+        label=_('Include Variants'), method='filter_include_variants'
     )
 
     def filter_include_variants(self, queryset, name, value):
@@ -1159,7 +1159,7 @@ class ReturnOrderFilter(OrderFilter):
         fields = ['customer']
 
     include_variants = rest_filters.BooleanFilter(
-        label='Include Variants', method='filter_include_variants'
+        label=_('Include Variants'), method='filter_include_variants'
     )
 
     def filter_include_variants(self, queryset, name, value):
