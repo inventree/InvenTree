@@ -22,9 +22,7 @@ import {
   IconList,
   IconListTree,
   IconLock,
-  IconNotes,
   IconPackages,
-  IconPaperclip,
   IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
@@ -1085,7 +1083,11 @@ export default function PartDetail() {
           />
           <PageDetail
             title={t`Part` + ': ' + part.full_name}
-            icon={part?.locked ? <IconLock /> : undefined}
+            icon={
+              part?.locked ? (
+                <IconLock aria-label="part-lock-icon" />
+              ) : undefined
+            }
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
