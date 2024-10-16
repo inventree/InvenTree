@@ -141,7 +141,7 @@ export default function BomPricingPanel({
         title: t`Component`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.sub_part_detail)
+        render: (record: any) => PartColumn({ part: record.sub_part_detail })
       },
       {
         accessor: 'quantity',

@@ -38,7 +38,7 @@ def print_label(plugin_slug: str, **kwargs):
         # Plugin threw an error - notify the user who attempted to print
         ctx = {'name': _('Label printing failed'), 'message': str(e)}
 
-        user = kwargs.get('user', None)
+        user = kwargs.get('user')
 
         if user:
             # Log an error message to the database

@@ -2,13 +2,13 @@ import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('PUI - Pages - Build Order', async ({ page }) => {
+test('Pages - Build Order', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/`);
 
   // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Build', exact: true }).click();
+  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -30,7 +30,7 @@ test('PUI - Pages - Build Order', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Back to the build list
-  await page.getByLabel('breadcrumb-0-build-orders').click();
+  await page.getByLabel('breadcrumb-0-manufacturing').click();
 
   // Load a different build order
   await page.getByRole('cell', { name: 'BO0011' }).click();
@@ -80,4 +80,80 @@ test('PUI - Pages - Build Order', async ({ page }) => {
     .getByLabel('Build Details')
     .getByText('Making a high level assembly')
     .waitFor();
+});
+
+test('Pages - Build Order - Build Outputs', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/`);
+
+  // Navigate to the correct build order
+  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+
+  // We have now loaded the "Build Order" table. Check for some expected texts
+  await page.getByText('On Hold').first().waitFor();
+  await page.getByText('Pending').first().waitFor();
+
+  await page.getByRole('cell', { name: 'BO0011' }).click();
+  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
+
+  // Create a new build output
+  await page.getByLabel('action-button-add-build-output').click();
+  await page.getByLabel('number-field-quantity').fill('5');
+
+  const placeholder = await page
+    .getByLabel('text-field-serial_numbers')
+    .getAttribute('placeholder');
+
+  let sn = 1;
+
+  if (!!placeholder && placeholder.includes('Next serial number')) {
+    sn = parseInt(placeholder.split(':')[1].trim());
+  }
+
+  // Generate some new serial numbers
+  await page.getByLabel('text-field-serial_numbers').fill(`${sn}, ${sn + 1}`);
+
+  await page.getByLabel('text-field-batch_code').fill('BATCH12345');
+  await page.getByLabel('related-field-location').click();
+  await page.getByText('Reel Storage').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Should be an error as the number of serial numbers doesn't match the quantity
+  await page.getByText('Errors exist for one or more').waitFor();
+  await page.getByText('Number of unique serial').waitFor();
+
+  // Fix the quantity
+  await page.getByLabel('number-field-quantity').fill('2');
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Check that new serial numbers have been created
+  await page
+    .getByRole('cell', { name: `# ${sn}` })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('cell', { name: `# ${sn + 1}` })
+    .first()
+    .waitFor();
+
+  // Cancel one of the newly created outputs
+  const cell = await page.getByRole('cell', { name: `# ${sn}` });
+  const row = await cell.locator('xpath=ancestor::tr').first();
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build outputs have been cancelled').waitFor();
+
+  // Complete the other output
+  const cell2 = await page.getByRole('cell', { name: `# ${sn + 1}` });
+  const row2 = await cell2.locator('xpath=ancestor::tr').first();
+  await row2.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Complete' }).click();
+  await page.getByLabel('related-field-location').click();
+  await page.getByText('Mechanical Lab').click();
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Build outputs have been completed').waitFor();
 });

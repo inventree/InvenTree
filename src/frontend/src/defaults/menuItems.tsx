@@ -12,7 +12,7 @@ export const menuItems: menuItemsCollection = {
   },
   profile: {
     id: 'profile',
-    text: <Trans>Account settings</Trans>,
+    text: <Trans>Account Settings</Trans>,
     link: '/settings/user',
     doctext: <Trans>User attributes and design settings.</Trans>
   },
@@ -39,9 +39,9 @@ export const menuItems: menuItemsCollection = {
     link: '/stock'
   },
   build: {
-    id: 'build',
-    text: <Trans>Build</Trans>,
-    link: '/build/'
+    id: 'manufacturing',
+    text: <Trans>Manufacturing</Trans>,
+    link: '/manufacturing/'
   },
   purchasing: {
     id: 'purchasing',
@@ -64,12 +64,3 @@ export const menuItems: menuItemsCollection = {
     link: '/settings/admin'
   }
 };
-
-if (IS_DEV_OR_DEMO) {
-  menuItems['playground'] = {
-    id: 'playground',
-    text: <Trans>Playground</Trans>,
-    link: '/playground',
-    highlight: true
-  };
-}

@@ -154,6 +154,47 @@ class CompanyTest(InvenTreeAPITestCase):
             len(self.get(url, data={'active': False}, expected_code=200).data), 1
         )
 
+    def test_company_notes(self):
+        """Test the markdown 'notes' field for the Company model."""
+        pk = Company.objects.first().pk
+
+        # Attempt to inject malicious markdown into the "notes" field
+        xss = [
+            '[Click me](javascript:alert(123))',
+            '![x](javascript:alert(123))',
+            '![Uh oh...]("onerror="alert(\'XSS\'))',
+        ]
+
+        for note in xss:
+            response = self.patch(
+                reverse('api-company-detail', kwargs={'pk': pk}),
+                {'notes': note},
+                expected_code=400,
+            )
+
+            self.assertIn(
+                'Data contains prohibited markdown content', str(response.data)
+            )
+
+        # The following markdown is safe, and should be accepted
+        good = [
+            'This is a **bold** statement',
+            'This is a *italic* statement',
+            'This is a [link](https://www.google.com)',
+            'This is an ![image](https://www.google.com/test.jpg)',
+            'This is a `code` block',
+            'This text has ~~strikethrough~~ formatting',
+        ]
+
+        for note in good:
+            response = self.patch(
+                reverse('api-company-detail', kwargs={'pk': pk}),
+                {'notes': note},
+                expected_code=200,
+            )
+
+            self.assertEqual(response.data['notes'], note)
+
 
 class ContactTest(InvenTreeAPITestCase):
     """Tests for the Contact models."""

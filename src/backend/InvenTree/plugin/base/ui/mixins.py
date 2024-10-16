@@ -19,6 +19,7 @@ class CustomPanel(TypedDict):
         label: The label of the panel (required, human readable).
         icon: The icon of the panel (optional, must be a valid icon identifier).
         content: The content of the panel (optional, raw HTML).
+        context: Optional context data (dict / JSON) which will be passed to the front-end rendering function
         source: The source of the panel (optional, path to a JavaScript file).
     """
 
@@ -26,6 +27,7 @@ class CustomPanel(TypedDict):
     label: str
     icon: str
     content: str
+    context: dict
     source: str
 
 
@@ -51,10 +53,6 @@ class UserInterfaceMixin:
 
     - All content is accessed via the API, as requested by the user interface.
     - This means that content can be dynamically generated, based on the current state of the system.
-
-    The following custom UI methods are available:
-    - get_ui_panels: Return a list of custom panels to be injected into the UI
-
     """
 
     class MixinMeta:
@@ -87,6 +85,7 @@ class UserInterfaceMixin:
             'label': 'Panel Title',  # The title of the panel (required, human readable)
             'icon': 'icon-name',  # Icon name (optional, must be a valid icon identifier)
             'content': '<p>Panel content</p>',  # HTML content to be rendered in the panel (optional)
+            'context': {'key': 'value'},  # Context data to be passed to the front-end rendering function (optional)
             'source': 'static/plugin/panel.js',  # Path to a JavaScript file to be loaded (optional)
         }
 

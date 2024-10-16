@@ -288,11 +288,10 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_subscribers(self, include_parents=True):
         """Return a list of users who subscribe to this PartCategory."""
-        cats = self.get_ancestors(include_self=True)
-
         subscribers = set()
 
         if include_parents:
+            cats = self.get_ancestors(include_self=True)
             queryset = PartCategoryStar.objects.filter(category__in=cats)
         else:
             queryset = PartCategoryStar.objects.filter(category=self)
@@ -306,12 +305,12 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status: bool) -> None:
+    def set_starred(self, user, status: bool, **kwargs) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
 
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:
@@ -833,12 +832,38 @@ class Part(
             # This serial number is perfectly valid
             return True
 
-    def find_conflicting_serial_numbers(self, serials: list):
+    def find_conflicting_serial_numbers(self, serials: list) -> list:
         """For a provided list of serials, return a list of those which are conflicting."""
+        from part.models import Part
+        from stock.models import StockItem
+
         conflicts = []
 
+        # First, check for raw conflicts based on efficient database queries
+        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial number must be unique across *all* parts
+            parts = Part.objects.all()
+        else:
+            # Serial number must only be unique across this part "tree"
+            parts = Part.objects.filter(tree_id=self.tree_id)
+
+        items = StockItem.objects.filter(part__in=parts, serial__in=serials)
+        items = items.order_by('serial_int', 'serial')
+
+        for item in items:
+            conflicts.append(item.serial)
+
         for serial in serials:
-            if not self.validate_serial_number(serial, part=self):
+            if serial in conflicts:
+                # Already found a conflict, no need to check further
+                continue
+
+            try:
+                self.validate_serial_number(
+                    serial, raise_error=True, check_duplicates=False
+                )
+            except ValidationError:
+                # Serial number is invalid (as determined by plugin)
                 conflicts.append(serial)
 
         return conflicts
@@ -1425,13 +1450,13 @@ class Part(
         """Return True if the specified user subscribes to this part."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status, **kwargs):
         """Set the "subscription" status of this Part against the specified user."""
         if not user:
             return
 
         # Already subscribed?
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:

@@ -30,9 +30,9 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { PanelType } from '../../../../components/nav/Panel';
-import { PanelGroup } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
+import { PanelType } from '../../../../components/panels/Panel';
+import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
@@ -247,16 +247,17 @@ export default function AdminCenter() {
       {user.isStaff() ? (
         <Stack gap="xs">
           <SettingsHeader
+            label="admin"
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
-            switch_link="/settings/system"
-            switch_text="System Settings"
           />
           <QuickAction />
           <PanelGroup
             pageKey="admin-center"
             panels={adminCenterPanels}
             collapsible={true}
+            model="admincenter"
+            id={null}
           />
         </Stack>
       ) : (

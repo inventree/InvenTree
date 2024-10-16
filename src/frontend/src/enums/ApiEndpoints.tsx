@@ -116,12 +116,14 @@ export enum ApiEndpoints {
   manufacturer_part_list = 'company/part/manufacturer/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
-  // Stock API endpoints
-  stock_item_list = 'stock/',
-  stock_tracking_list = 'stock/track/',
+  // Stock location endpoints
   stock_location_list = 'stock/location/',
   stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
+
+  // Stock item API endpoints
+  stock_item_list = 'stock/',
+  stock_tracking_list = 'stock/track/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
@@ -131,9 +133,12 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
-  stock_install = 'stock/:id/install',
-  build_test_statistics = 'test-statistics/by-build/:id',
-  part_test_statistics = 'test-statistics/by-part/:id',
+  stock_install = 'stock/:id/install/',
+  stock_uninstall = 'stock/:id/uninstall/',
+  stock_serialize = 'stock/:id/serialize/',
+  stock_return = 'stock/:id/return/',
+  build_test_statistics = 'test-statistics/by-build/:id/',
+  part_test_statistics = 'test-statistics/by-part/:id/',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
@@ -158,8 +163,11 @@ export enum ApiEndpoints {
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
-  sales_order_shipment_list = 'order/so/shipment/',
+  sales_order_allocate = 'order/so/:id/allocate/',
   sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
+  sales_order_shipment_list = 'order/so/shipment/',
+  sales_order_shipment_complete = 'order/so/shipment/:id/ship/',
 
   return_order_list = 'order/ro/',
   return_order_issue = 'order/ro/:id/issue/',
@@ -188,6 +196,7 @@ export enum ApiEndpoints {
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:key/activate/',
   plugin_uninstall = 'plugins/:key/uninstall/',
+  plugin_admin = 'plugins/:key/admin/',
 
   // User interface plugin endpoints
   plugin_panel_list = 'plugins/ui/panels/',

@@ -419,7 +419,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
     style_tags = []
 
-    max_width = kwargs.get('max_width', None)
+    max_width = kwargs.get('max_width')
 
     if max_width:
         style_tags.append(f'max-width: {max_width};')

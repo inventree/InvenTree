@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load generic %}
 
@@ -271,7 +272,7 @@ $('#print-order-report').click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Return Order QR Code" escape %}',
-        '{{ order.barcode }}'
+        `{% clean_barcode order.barcode %}`
     );
 });
 

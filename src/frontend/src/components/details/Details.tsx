@@ -11,10 +11,11 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
-import { useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
@@ -50,7 +51,7 @@ type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
-  type: 'string' | 'text';
+  type: 'string' | 'text' | 'date';
   unit?: boolean;
 };
 
@@ -174,6 +175,10 @@ function NameBadge({
   );
 }
 
+function DateValue(props: Readonly<FieldProps>) {
+  return <Text size="sm">{formatDate(props.field_value?.toString())}</Text>;
+}
+
 /**
  * Renders the value of a 'string' or 'text' field.
  * If owner is defined, only renders a badge
@@ -182,37 +187,28 @@ function NameBadge({
 function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
 
-  if (props?.field_data?.value_formatter) {
-    value = props.field_data.value_formatter();
-  }
-
-  if (value === undefined) {
-    return '---';
-  }
+  let renderedValue = null;
 
   if (props.field_data?.badge) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
+  } else if (props?.field_data?.value_formatter) {
+    renderedValue = props.field_data.value_formatter();
+  } else if (value === null || value === undefined) {
+    renderedValue = <Text size="sm">'---'</Text>;
+  } else {
+    renderedValue = <Text size="sm">{value.toString()}</Text>;
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        wordBreak: 'break-word',
-        alignItems: 'flex-start'
-      }}
-    >
-      <Group wrap="nowrap" gap="xs" justify="space-apart">
-        <Group wrap="nowrap" gap="xs" justify="left">
-          {value ? value : props.field_data?.unit && '0'}{' '}
-          {props.field_data.unit == true && props.unit}
-        </Group>
-        {props.field_data.user && (
-          <NameBadge pk={props.field_data?.user} type="user" />
-        )}
+    <Group wrap="nowrap" gap="xs" justify="space-apart">
+      <Group wrap="nowrap" gap="xs" justify="left">
+        {renderedValue}
+        {props.field_data.unit == true && <Text size="xs">{props.unit}</Text>}
       </Group>
-    </div>
+      {props.field_data.user && (
+        <NameBadge pk={props.field_data?.user} type="user" />
+      )}
+    </Group>
   );
 }
 
@@ -306,7 +302,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   return (
-    <div>
+    <>
       {make_link ? (
         <Anchor href="#" onClick={handleLinkClick}>
           <Text>{value}</Text>
@@ -314,7 +310,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       ) : (
         <Text>{value}</Text>
       )}
-    </div>
+    </>
   );
 }
 
@@ -347,9 +343,6 @@ export function DetailsTableField({
 }>) {
   function getFieldType(type: string) {
     switch (type) {
-      case 'text':
-      case 'string':
-        return TableStringValue;
       case 'boolean':
         return BooleanValue;
       case 'link':
@@ -358,6 +351,10 @@ export function DetailsTableField({
         return ProgressBarValue;
       case 'status':
         return StatusValue;
+      case 'date':
+        return DateValue;
+      case 'text':
+      case 'string':
       default:
         return TableStringValue;
     }

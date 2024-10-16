@@ -20,7 +20,7 @@ export async function loadExternalPluginSource(source: string) {
 
   const module = await import(/* @vite-ignore */ source)
     .catch((error) => {
-      console.error('Failed to load plugin source:', error);
+      console.error(`ERR: Failed to load plugin from ${source}:`, error);
       return null;
     })
     .then((module) => {

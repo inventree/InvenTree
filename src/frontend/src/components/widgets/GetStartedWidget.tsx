@@ -8,7 +8,7 @@ export default function GetStartedWidget() {
   return (
     <span>
       <Title order={5}>
-        <Trans>Getting started</Trans>
+        <Trans>Getting Started</Trans>
       </Title>
       <GettingStartedCarousel items={navDocLinks} />
     </span>

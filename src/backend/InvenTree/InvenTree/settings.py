@@ -1093,26 +1093,40 @@ if (
     sys.exit(-1)
 
 COOKIE_MODE = (
-    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'None'))
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'False'))
     .lower()
     .strip()
 )
 
-valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+# Valid modes (as per the django settings documentation)
+valid_cookie_modes = ['lax', 'strict', 'none']
 
-if COOKIE_MODE not in valid_cookie_modes:
-    logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
-    sys.exit(-1)
-
-COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
+if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
+    # Set the cookie mode (in production mode only)
+    COOKIE_MODE = COOKIE_MODE.capitalize()
+else:
+    # Default to False, as per the Django settings
+    COOKIE_MODE = False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
+
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
-SESSION_COOKIE_SECURE = get_boolean_setting(
-    'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+
+"""Set the SESSION_COOKIE_SECURE value based on the following rules:
+- False if the server is running in DEBUG mode
+- True if samesite cookie setting is set to 'None'
+- Otherwise, use the value specified in the configuration file (or env var)
+"""
+SESSION_COOKIE_SECURE = (
+    False
+    if DEBUG
+    else (
+        SESSION_COOKIE_SAMESITE == 'None'
+        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+    )
 )
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
@@ -1264,23 +1278,29 @@ MARKDOWNIFY = {
             'abbr',
             'b',
             'blockquote',
+            'code',
             'em',
             'h1',
             'h2',
             'h3',
+            'h4',
+            'h5',
+            'hr',
             'i',
             'img',
             'li',
             'ol',
             'p',
+            'pre',
+            's',
             'strong',
-            'ul',
             'table',
             'thead',
             'tbody',
             'th',
             'tr',
             'td',
+            'ul',
         ],
     }
 }

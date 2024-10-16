@@ -220,6 +220,7 @@ export function RelatedModelField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      exclude: undefined,
       read_only: undefined
     };
   }, [definition]);

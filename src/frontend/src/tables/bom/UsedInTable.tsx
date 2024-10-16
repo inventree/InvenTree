@@ -31,7 +31,7 @@ export function UsedInTable({
         switchable: false,
         sortable: true,
         title: t`Assembly`,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'part_detail.IPN',
@@ -47,7 +47,7 @@ export function UsedInTable({
         accessor: 'sub_part',
         sortable: true,
         title: t`Component`,
-        render: (record: any) => PartColumn(record.sub_part_detail)
+        render: (record: any) => PartColumn({ part: record.sub_part_detail })
       },
       {
         accessor: 'quantity',

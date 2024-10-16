@@ -1,7 +1,11 @@
 """Sample plugin which demonstrates user interface integrations."""
 
+import random
+import time
+
 from django.utils.translation import gettext_lazy as _
 
+from InvenTree.version import INVENTREE_SW_VERSION
 from part.models import Part
 from plugin import InvenTreePlugin
 from plugin.helpers import render_template, render_text
@@ -15,7 +19,9 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
     SLUG = 'sampleui'
     TITLE = 'Sample User Interface Plugin'
     DESCRIPTION = 'A sample plugin which demonstrates user interface integrations'
-    VERSION = '1.0'
+    VERSION = '1.1'
+
+    ADMIN_SOURCE = 'ui_settings.js'
 
     SETTINGS = {
         'ENABLE_PART_PANELS': {
@@ -73,7 +79,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         })
 
         # A broken panel which tries to load a non-existent JS file
-        if self.get_setting('ENABLE_BROKEN_PANElS'):
+        if instance_id is not None and self.get_setting('ENABLE_BROKEN_PANElS'):
             panels.append({
                 'name': 'broken_panel',
                 'label': 'Broken Panel',
@@ -81,11 +87,18 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             })
 
         # A dynamic panel which will be injected into the UI (loaded from external file)
+        # Note that we additionally provide some "context" data to the front-end render function
         if self.get_setting('ENABLE_DYNAMIC_PANEL'):
             panels.append({
                 'name': 'dynamic_panel',
                 'label': 'Dynamic Part Panel',
-                'source': '/static/plugin/sample_panel.js',
+                'source': self.plugin_static_file('sample_panel.js'),
+                'context': {
+                    'version': INVENTREE_SW_VERSION,
+                    'plugin_version': self.VERSION,
+                    'random': random.randint(1, 100),
+                    'time': time.time(),
+                },
                 'icon': 'part',
             })
 
@@ -155,3 +168,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             ]
 
         return []
+
+    def get_admin_context(self) -> dict:
+        """Return custom context data which can be rendered in the admin panel."""
+        return {'apple': 'banana', 'foo': 'bar', 'hello': 'world'}

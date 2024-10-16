@@ -90,7 +90,7 @@ export function useInstance<T = any>({
   });
 
   const refreshInstance = useCallback(function () {
-    instanceQuery.refetch();
+    return instanceQuery.refetch();
   }, []);
 
   return {

@@ -19,9 +19,9 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
-import { PanelType } from '../../../components/nav/Panel';
-import { PanelGroup } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import { PanelType } from '../../../components/panels/Panel';
+import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -306,12 +306,16 @@ export default function SystemSettings() {
       {user.isStaff() ? (
         <Stack gap="xs">
           <SettingsHeader
+            label="system"
             title={t`System Settings`}
             subtitle={server.instance || ''}
-            switch_link="/settings/user"
-            switch_text={<Trans>Switch to User Setting</Trans>}
           />
-          <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
+          <PanelGroup
+            pageKey="system-settings"
+            panels={systemSettingsPanels}
+            model="systemsettings"
+            id={null}
+          />
         </Stack>
       ) : (
         <PermissionDenied />

@@ -1,12 +1,19 @@
 import { t } from '@lingui/macro';
-import { IconTruckDelivery } from '@tabler/icons-react';
+import { IconArrowRight, IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useSalesOrderShipmentFields } from '../../forms/SalesOrderForms';
+import {
+  useSalesOrderShipmentCompleteFields,
+  useSalesOrderShipmentFields
+} from '../../forms/SalesOrderForms';
+import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -19,7 +26,7 @@ import { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowCancelAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId
@@ -27,12 +34,16 @@ export default function SalesOrderShipmentTable({
   orderId: number;
 }>) {
   const user = useUserState();
+  const navigate = useNavigate();
   const table = useTable('sales-order-shipment');
 
-  const [selectedShipment, setSelectedShipment] = useState<number>(0);
+  const [selectedShipment, setSelectedShipment] = useState<any>({});
 
-  const newShipmentFields = useSalesOrderShipmentFields();
-  const editShipmentFields = useSalesOrderShipmentFields();
+  const newShipmentFields = useSalesOrderShipmentFields({});
+
+  const editShipmentFields = useSalesOrderShipmentFields({});
+
+  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
@@ -46,17 +57,30 @@ export default function SalesOrderShipmentTable({
 
   const deleteShipment = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
-    pk: selectedShipment,
-    title: t`Delete Shipment`,
+    pk: selectedShipment.pk,
+    title: t`Cancel Shipment`,
     table: table
   });
 
   const editShipment = useEditApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
-    pk: selectedShipment,
+    pk: selectedShipment.pk,
     fields: editShipmentFields,
     title: t`Edit Shipment`,
     table: table
+  });
+
+  const completeShipment = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_shipment_complete,
+    pk: selectedShipment.pk,
+    fields: completeShipmentFields,
+    title: t`Complete Shipment`,
+    table: table,
+    focus: 'tracking_number',
+    initialData: {
+      ...selectedShipment,
+      shipment_date: new Date().toISOString().split('T')[0]
+    }
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -64,15 +88,14 @@ export default function SalesOrderShipmentTable({
       {
         accessor: 'reference',
         title: t`Shipment Reference`,
-        switchable: false
+        switchable: false,
+        sortable: true
       },
       {
-        accessor: 'allocations',
-        title: t`Items`,
-        render: (record: any) => {
-          let allocations = record?.allocations ?? [];
-          return allocations.length;
-        }
+        accessor: 'allocated_items',
+        sortable: true,
+        switchable: false,
+        title: t`Items`
       },
       DateColumn({
         accessor: 'shipment_date',
@@ -90,9 +113,6 @@ export default function SalesOrderShipmentTable({
       },
       LinkColumn({
         accessor: 'link'
-      }),
-      NoteColumn({
-        accessor: 'notes'
       })
     ];
   }, []);
@@ -103,22 +123,39 @@ export default function SalesOrderShipmentTable({
 
       return [
         {
+          title: t`View Shipment`,
+          icon: <IconArrowRight />,
+          onClick: (event: any) => {
+            navigateToLink(
+              getDetailUrl(ModelType.salesordershipment, record.pk),
+              navigate,
+              event
+            );
+          }
+        },
+        {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,
+          color: 'green',
           icon: <IconTruckDelivery />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedShipment(record);
+            completeShipment.open();
+          }
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.sales_order),
+          tooltip: t`Edit shipment`,
           onClick: () => {
-            setSelectedShipment(record.pk);
+            setSelectedShipment(record);
             editShipment.open();
           }
         }),
-        RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.sales_order),
+        RowCancelAction({
+          hidden: shipped || !user.hasDeleteRole(UserRoles.sales_order),
+          tooltip: t`Cancel shipment`,
           onClick: () => {
-            setSelectedShipment(record.pk);
+            setSelectedShipment(record);
             deleteShipment.open();
           }
         })
@@ -160,6 +197,7 @@ export default function SalesOrderShipmentTable({
       {newShipment.modal}
       {editShipment.modal}
       {deleteShipment.modal}
+      {completeShipment.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_shipment_list)}
         tableState={table}
@@ -167,6 +205,9 @@ export default function SalesOrderShipmentTable({
         props={{
           tableActions: tableActions,
           tableFilters: tableFilters,
+          modelType: ModelType.salesordershipment,
+          enableSelection: true,
+          enableReports: true,
           rowActions: rowActions,
           params: {
             order: orderId

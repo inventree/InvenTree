@@ -8,7 +8,7 @@ import { setPluginState } from './settings.js';
  * Select a number of stock items from the table,
  * and print labels against them
  */
-test('PUI - Label Printing', async ({ page }) => {
+test('Label Printing', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/stock/location/index/`);
@@ -52,7 +52,7 @@ test('PUI - Label Printing', async ({ page }) => {
  * Navigate to a PurchaseOrder detail page,
  * and print a report against it.
  */
-test('PUI - Report Printing', async ({ page }) => {
+test('Report Printing', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/stock/location/index/`);
@@ -82,7 +82,7 @@ test('PUI - Report Printing', async ({ page }) => {
   await page.context().close();
 });
 
-test('PUI - Report Editing', async ({ page, request }) => {
+test('Report Editing', async ({ page, request }) => {
   const [username, password] = ['admin', 'inventree'];
   await doQuickLogin(page, username, password);
 

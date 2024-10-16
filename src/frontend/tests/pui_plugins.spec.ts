@@ -52,3 +52,37 @@ test('Plugins - Panels', async ({ page, request }) => {
     state: false
   });
 });
+
+/**
+ * Unit test for custom admin integration for plugins
+ */
+test('Plugins - Custom Admin', async ({ page, request }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Ensure that the SampleUI plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'sampleui',
+    state: true
+  });
+
+  // Navigate to the "admin" page
+  await page.goto(`${baseUrl}/settings/admin/plugin/`);
+
+  // Open the plugin drawer, and ensure that the custom admin elements are visible
+  await page.getByText('SampleUI').click();
+  await page.getByRole('button', { name: 'Plugin Information' }).click();
+  await page
+    .getByLabel('Plugin Detail')
+    .getByRole('button', { name: 'Plugin Settings' })
+    .click();
+  await page.getByRole('button', { name: 'Plugin Configuration' }).click();
+
+  // Check for expected custom elements
+  await page
+    .getByRole('heading', { name: 'Custom Plugin Configuration Content' })
+    .waitFor();
+  await page.getByText('apple: banana').waitFor();
+  await page.getByText('foo: bar').waitFor();
+  await page.getByText('hello: world').waitFor();
+});

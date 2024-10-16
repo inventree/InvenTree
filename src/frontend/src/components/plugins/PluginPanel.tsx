@@ -13,6 +13,7 @@ export type PluginPanelProps = {
   label: string;
   icon?: string;
   content?: string;
+  context?: any;
   source?: string;
 };
 
@@ -82,7 +83,9 @@ export default function PluginPanelContent({
               func(ref.current, pluginContext);
               setError('');
             } catch (error) {
-              setError(t`Error occurred while rendering plugin content`);
+              setError(
+                t`Error occurred while rendering plugin content` + `: ${error}`
+              );
             }
           } else {
             setError(t`Plugin did not provide panel rendering function`);

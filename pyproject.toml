@@ -53,6 +53,8 @@ ignore = [
 	"N812",
     # - D417 Missing argument descriptions in the docstring
     "D417",
+    # - RUF032 - decimal-from-float-literal
+    "RUF032",
 
     # TODO These should be followed up and fixed
     # - B904 Within an `except` clause, raise exceptions

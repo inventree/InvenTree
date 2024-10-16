@@ -624,7 +624,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
 
         if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file type'))
+            raise serializers.ValidationError(_('Unsupported file format'))
 
         # Impose a 50MB limit on uploaded BOM files
         max_upload_file_size = 50 * 1024 * 1024
@@ -907,8 +907,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
         try:
             self.remote_image_file = download_image_from_url(url)
-        except Exception as exc:
+        except Exception:
             self.remote_image_file = None
-            raise ValidationError(str(exc))
+            raise ValidationError(_('Failed to download image from remote URL'))
 
         return url

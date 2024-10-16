@@ -21,8 +21,8 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -109,6 +109,12 @@ export default function CategoryDetail() {
         label: t`Parent Category`,
         model: ModelType.partcategory,
         hidden: !category?.parent
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        icon: 'notification',
+        label: t`Subscribed`
       }
     ];
 
@@ -165,7 +171,7 @@ export default function CategoryDetail() {
     url: ApiEndpoints.category_list,
     pk: id,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: partCategoryFields({}),
     onFormSuccess: refreshInstance
   });
 

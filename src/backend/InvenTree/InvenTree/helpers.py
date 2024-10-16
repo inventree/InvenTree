@@ -487,6 +487,11 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     except ValueError:
         raise ValidationError([_('Invalid quantity provided')])
 
+    if expected_quantity > 1000:
+        raise ValidationError({
+            'quantity': [_('Cannot serialize more than 1000 items at once')]
+        })
+
     input_string = str(input_string).strip() if input_string else ''
 
     if len(input_string) == 0:
@@ -551,7 +556,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_(f'Invalid group range: {group}'))
+                    add_error(_(f'Invalid group: {group}'))
                     continue
 
                 group_items = []
@@ -594,7 +599,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_(f'Invalid group range: {group}'))
+                    add_error(_(f'Invalid group: {group}'))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -612,14 +617,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_(f'Invalid group sequence: {group}'))
+                add_error(_(f'Invalid group: {group}'))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_(f'Invalid group sequence: {group}'))
+                    add_error(_(f'Invalid group: {group}'))
                     continue
 
             value = items[0]
@@ -638,7 +643,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_(f'Invalid group sequence: {group}'))
+                add_error(_(f'Invalid group: {group}'))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
@@ -800,6 +805,40 @@ def remove_non_printable_characters(
             cleaned = regex.sub('(?![\x0a])[^\\P{C}]+', '', cleaned)
 
     return cleaned
+
+
+def clean_markdown(value: str):
+    """Clean a markdown string.
+
+    This function will remove javascript and other potentially harmful content from the markdown string.
+    """
+    import markdown
+    from markdownify.templatetags.markdownify import markdownify
+
+    try:
+        markdownify_settings = settings.MARKDOWNIFY['default']
+    except (AttributeError, KeyError):
+        markdownify_settings = {}
+
+    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
+    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
+
+    # Generate raw HTML from provided markdown (without sanitizing)
+    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
+    html = markdown.markdown(
+        value or '',
+        extensions=extensions,
+        extension_configs=extension_configs,
+        output_format='html',
+    )
+
+    # Clean the HTML content (for comparison). Ideally, this should be the same as the original content
+    clean_html = markdownify(value)
+
+    if html != clean_html:
+        raise ValidationError(_('Data contains prohibited markdown content'))
+
+    return value
 
 
 def hash_barcode(barcode_data):

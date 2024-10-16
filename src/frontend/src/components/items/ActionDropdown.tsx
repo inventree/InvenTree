@@ -79,9 +79,7 @@ export function ActionDropdown({
               p="0"
               size="sm"
               rightSection={
-                noindicator || disabled ? null : (
-                  <IconChevronDown stroke={1.5} />
-                )
+                noindicator ? null : <IconChevronDown stroke={1.5} />
               }
               styles={{
                 section: { margin: 0 }

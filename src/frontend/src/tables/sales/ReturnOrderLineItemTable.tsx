@@ -99,7 +99,15 @@ export default function ReturnOrderLineItemTable({
         accessor: 'part',
         title: t`Part`,
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: false
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false
       },
       {
         accessor: 'item_detail.serial',
@@ -157,7 +165,7 @@ export default function ReturnOrderLineItemTable({
     return [
       <AddItemButton
         key="add-line-item"
-        tooltip={t`Add line item`}
+        tooltip={t`Add Line Item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
           newLine.open();

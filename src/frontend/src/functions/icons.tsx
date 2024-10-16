@@ -3,6 +3,7 @@ import {
   Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
+  IconBell,
   IconBinaryTree2,
   IconBookmarks,
   IconBox,
@@ -31,6 +32,7 @@ import {
   IconEdit,
   IconExclamationCircle,
   IconExternalLink,
+  IconFileDownload,
   IconFileUpload,
   IconFlag,
   IconFlagShare,
@@ -143,6 +145,7 @@ const icons = {
   notes: IconNotes,
   photo: IconPhoto,
   upload: IconFileUpload,
+  download: IconFileDownload,
   reject: IconX,
   refresh: IconRefresh,
   select_image: IconGridDots,
@@ -157,6 +160,8 @@ const icons = {
   issue: IconBrandTelegram,
   complete: IconCircleCheck,
   deliver: IconTruckDelivery,
+  bell: IconBell,
+  notification: IconBell,
 
   // Part Icons
   active: IconCheck,

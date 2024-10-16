@@ -1,15 +1,5 @@
-import { Trans, t } from '@lingui/macro';
-import {
-  Alert,
-  Box,
-  Card,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Title,
-  Tooltip
-} from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
@@ -17,7 +7,8 @@ import {
   IconHelpCircle,
   IconInfoCircle,
   IconPlaylistAdd,
-  IconRefresh
+  IconRefresh,
+  IconTrash
 } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,16 +16,15 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { InfoItem } from '../../components/items/InfoItem';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
-import { PluginSettingList } from '../../components/settings/SettingList';
+import PluginDrawer from '../../components/plugins/PluginDrawer';
+import { PluginInterface } from '../../components/plugins/PluginInterface';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -42,172 +32,10 @@ import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
 
-export interface PluginI {
-  pk: number;
-  key: string;
-  name: string;
-  active: boolean;
-  is_builtin: boolean;
-  is_sample: boolean;
-  is_installed: boolean;
-  is_package: boolean;
-  package_name: string | null;
-  meta: {
-    author: string | null;
-    description: string | null;
-    human_name: string | null;
-    license: string | null;
-    package_path: string | null;
-    pub_date: string | null;
-    settings_url: string | null;
-    slug: string | null;
-    version: string | null;
-    website: string | null;
-  };
-  mixins: Record<
-    string,
-    {
-      key: string;
-      human_name: string;
-    }
-  >;
-}
-
-export function PluginDrawer({ pluginKey }: Readonly<{ pluginKey: string }>) {
-  const {
-    instance: plugin,
-    instanceQuery: { isFetching, error }
-  } = useInstance<PluginI>({
-    endpoint: ApiEndpoints.plugin_list,
-    hasPrimaryKey: true,
-    pk: pluginKey,
-    throwError: true
-  });
-
-  if (!pluginKey || isFetching) {
-    return <LoadingOverlay visible={true} />;
-  }
-
-  if (!plugin || error) {
-    return (
-      <Text>
-        {(error as any)?.response?.status === 404 ? (
-          <Trans>Plugin with key {pluginKey} not found</Trans>
-        ) : (
-          <Trans>An error occurred while fetching plugin details</Trans>
-        )}
-      </Text>
-    );
-  }
-
-  return (
-    <Stack gap={'xs'}>
-      <Card withBorder>
-        <Group justify="left">
-          <Box></Box>
-
-          <Group gap={'xs'}>
-            {plugin && <PluginIcon plugin={plugin} />}
-            <Title order={4}>
-              {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
-            </Title>
-          </Group>
-        </Group>
-      </Card>
-      <LoadingOverlay visible={isFetching} overlayProps={{ opacity: 0 }} />
-
-      <Card withBorder>
-        <Stack gap="md">
-          <Title order={4}>
-            <Trans>Plugin information</Trans>
-          </Title>
-          {plugin.active ? (
-            <Stack pos="relative" gap="xs">
-              <InfoItem type="text" name={t`Name`} value={plugin?.name} />
-              <InfoItem
-                type="text"
-                name={t`Description`}
-                value={plugin?.meta.description}
-              />
-              <InfoItem
-                type="text"
-                name={t`Author`}
-                value={plugin?.meta.author}
-              />
-              <InfoItem
-                type="text"
-                name={t`Date`}
-                value={plugin?.meta.pub_date}
-              />
-              <InfoItem
-                type="text"
-                name={t`Version`}
-                value={plugin?.meta.version}
-              />
-              <InfoItem
-                type="boolean"
-                name={t`Active`}
-                value={plugin?.active}
-              />
-            </Stack>
-          ) : (
-            <Text c="red">{t`Plugin is not active`}</Text>
-          )}
-        </Stack>
-      </Card>
-
-      {plugin.active && (
-        <Card withBorder>
-          <Stack gap="md">
-            <Title order={4}>
-              <Trans>Package information</Trans>
-            </Title>
-            <Stack pos="relative" gap="xs">
-              {plugin?.is_package && (
-                <InfoItem
-                  type="text"
-                  name={t`Package Name`}
-                  value={plugin?.package_name}
-                />
-              )}
-              <InfoItem
-                type="text"
-                name={t`Installation Path`}
-                value={plugin?.meta.package_path}
-              />
-              <InfoItem
-                type="boolean"
-                name={t`Builtin`}
-                value={plugin?.is_builtin}
-              />
-              <InfoItem
-                type="boolean"
-                name={t`Package`}
-                value={plugin?.is_package}
-              />
-            </Stack>
-          </Stack>
-        </Card>
-      )}
-
-      {plugin && plugin?.active && (
-        <Card withBorder>
-          <Stack gap="md">
-            <Title order={4}>
-              <Trans>Plugin settings</Trans>
-            </Title>
-            <PluginSettingList pluginKey={pluginKey} />
-          </Stack>
-        </Card>
-      )}
-    </Stack>
-  );
-}
-
 /**
  * Construct an indicator icon for a single plugin
  */
-function PluginIcon({ plugin }: Readonly<{ plugin: PluginI }>) {
+function PluginIcon({ plugin }: Readonly<{ plugin: PluginInterface }>) {
   if (plugin?.is_installed) {
     if (plugin?.active) {
       return (
@@ -301,7 +129,8 @@ export default function PluginListTable() {
     ];
   }, []);
 
-  const [selectedPlugin, setSelectedPlugin] = useState<string>('');
+  const [selectedPlugin, setSelectedPlugin] = useState<any>({});
+  const [selectedPluginKey, setSelectedPluginKey] = useState<string>('');
   const [activate, setActivate] = useState<boolean>(false);
 
   const activateModalContent = useMemo(() => {
@@ -336,33 +165,38 @@ export default function PluginListTable() {
 
       return [
         {
-          hidden: record.is_builtin != false || record.is_installed != false,
+          hidden:
+            record.is_builtin != false ||
+            record.is_installed != true ||
+            record.active != true,
           title: t`Deactivate`,
           color: 'red',
           icon: <IconCircleX />,
           onClick: () => {
-            setSelectedPlugin(record.key);
+            setSelectedPluginKey(record.key);
             setActivate(false);
             activatePluginModal.open();
           }
         },
         {
-          hidden: record.is_builtin != false || record.is_installed != true,
+          hidden:
+            record.is_builtin != false ||
+            !record.is_installed ||
+            record.active != false,
           title: t`Activate`,
+          tooltip: t`Activate selected plugin`,
           color: 'green',
           icon: <IconCircleCheck />,
           onClick: () => {
-            setSelectedPlugin(record.key);
+            setSelectedPluginKey(record.key);
             setActivate(true);
             activatePluginModal.open();
           }
         },
         {
-          hidden:
-            record.active != true ||
-            record.is_package != true ||
-            !record.package_name,
+          hidden: !record.active || !record.is_package || !record.package_name,
           title: t`Update`,
+          tooltip: t`Update selected plugin`,
           color: 'blue',
           icon: <IconRefresh />,
           onClick: () => {
@@ -371,12 +205,39 @@ export default function PluginListTable() {
           }
         },
         {
-          hidden: record.is_installed != false,
-          title: t`Delete`,
+          // Uninstall an installed plugin
+          // Must be inactive, not a builtin, not a sample, and installed as a package
+          hidden:
+            !user.isSuperuser() ||
+            record.active ||
+            record.is_builtin ||
+            record.is_sample ||
+            !record.is_installed ||
+            !record.is_package,
+          title: t`Uninstall`,
+          tooltip: t`Uninstall selected plugin`,
           color: 'red',
           icon: <IconCircleX />,
           onClick: () => {
-            setSelectedPlugin(record.key);
+            setSelectedPluginKey(record.key);
+            uninstallPluginModal.open();
+          }
+        },
+        {
+          // Delete a plugin configuration
+          // Must be inactive, not a builtin, not a sample, and not installed (i.e. no matching plugin)
+          hidden:
+            record.active ||
+            record.is_builtin ||
+            record.is_sample ||
+            record.is_installed ||
+            !user.isSuperuser(),
+          title: t`Delete`,
+          tooltip: t`Delete selected plugin configuration`,
+          color: 'red',
+          icon: <IconTrash />,
+          onClick: () => {
+            setSelectedPluginKey(record.key);
             deletePluginModal.open();
           }
         }
@@ -390,7 +251,7 @@ export default function PluginListTable() {
   const activatePluginModal = useEditApiFormModal({
     title: t`Activate Plugin`,
     url: ApiEndpoints.plugin_activate,
-    pathParams: { key: selectedPlugin },
+    pathParams: { key: selectedPluginKey },
     preFormContent: activateModalContent,
     fetchInitialData: false,
     method: 'POST',
@@ -430,7 +291,7 @@ export default function PluginListTable() {
   const uninstallPluginModal = useEditApiFormModal({
     title: t`Uninstall Plugin`,
     url: ApiEndpoints.plugin_uninstall,
-    // pathParams: { key: selectedPlugin },
+    pathParams: { key: selectedPluginKey },
     fetchInitialData: false,
     timeout: 30000,
     fields: {
@@ -444,7 +305,7 @@ export default function PluginListTable() {
       >
         <Stack gap="xs">
           <Text>{t`The selected plugin will be uninstalled.`}</Text>
-          <Text>{t`This action cannot be undone.`}</Text>
+          <Text>{t`This action cannot be undone`}</Text>
         </Stack>
       </Alert>
     ),
@@ -454,15 +315,14 @@ export default function PluginListTable() {
 
   const deletePluginModal = useDeleteApiFormModal({
     url: ApiEndpoints.plugin_list,
-    pathParams: { key: selectedPlugin },
+    pk: selectedPluginKey,
+    fetchInitialData: false,
     title: t`Delete Plugin`,
     preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`,
     table: table
   });
 
   const reloadPlugins = useCallback(() => {
-    console.log('reloadPlugins:');
-
     api
       .post(apiUrl(ApiEndpoints.plugin_reload), {
         full_reload: true,
@@ -515,10 +375,15 @@ export default function PluginListTable() {
       {activatePluginModal.modal}
       <DetailDrawer
         title={t`Plugin Detail`}
-        size={'50%'}
+        size={'65%'}
         renderContent={(pluginKey) => {
           if (!pluginKey) return;
-          return <PluginDrawer pluginKey={pluginKey} />;
+          return (
+            <PluginDrawer
+              pluginKey={pluginKey}
+              pluginInstance={selectedPlugin}
+            />
+          );
         }}
       />
       <InvenTreeTable
@@ -528,7 +393,10 @@ export default function PluginListTable() {
         props={{
           enableDownload: false,
           rowActions: rowActions,
-          onRowClick: (plugin) => navigate(`${plugin.key}/`),
+          onRowClick: (plugin) => {
+            setSelectedPlugin(plugin);
+            navigate(`${plugin.key}/`);
+          },
           tableActions: tableActions,
           tableFilters: [
             {
