@@ -23,7 +23,15 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import {
+  AssignedToMeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -115,29 +123,17 @@ export function BuildOrderTable({
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.build)
       },
-      {
-        name: 'overdue',
-        label: t`Overdue`,
-        type: 'boolean',
-        description: t`Show overdue status`
-      },
-      {
-        name: 'assigned_to_me',
-        type: 'boolean',
-        label: t`Assigned to me`,
-        description: t`Show orders assigned to me`
-      },
+      OverdueFilter(),
+      AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'issued_by',
         label: t`Issued By`,
