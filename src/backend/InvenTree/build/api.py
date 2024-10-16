@@ -195,6 +195,7 @@ class BuildMixin:
             'build_lines__bom_item',
             'build_lines__build',
             'part',
+            'part__pricing_data'
         )
 
         return queryset
