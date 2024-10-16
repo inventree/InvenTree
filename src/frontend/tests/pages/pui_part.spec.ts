@@ -15,7 +15,7 @@ test('Pages - Part - Locking', async ({ page }) => {
   // Navigate to a known assembly which *is* locked
   await page.goto(`${baseUrl}/part/100/bom`);
   await page.getByRole('tab', { name: 'Bill of Materials' }).click();
-  await page.getByText('Locked', { exact: true }).waitFor();
+  await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
   // Check the "parameters" tab also

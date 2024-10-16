@@ -21,6 +21,7 @@ import {
   IconLayersLinked,
   IconList,
   IconListTree,
+  IconLock,
   IconPackages,
   IconReportAnalytics,
   IconShoppingCart,
@@ -907,12 +908,6 @@ export default function PartDetail() {
         key="in_production"
       />,
       <DetailsBadge
-        label={t`Locked`}
-        color="black"
-        visible={part.locked == true}
-        key="locked"
-      />,
-      <DetailsBadge
         label={t`Inactive`}
         color="red"
         visible={part.active == false}
@@ -1097,12 +1092,17 @@ export default function PartDetail() {
           />
           <PageDetail
             title={t`Part` + ': ' + part.full_name}
+            icon={
+              part?.locked ? (
+                <IconLock aria-label="part-lock-icon" />
+              ) : undefined
+            }
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
-              setTreeOpen(true);
+              setTreeOpen(true); // Open the category tree
             }}
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
