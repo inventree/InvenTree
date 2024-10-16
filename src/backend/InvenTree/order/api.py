@@ -961,9 +961,37 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         label=_('Order'),
     )
 
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), field_name='item__part', label=_('Part')
+    include_variants = rest_filters.BooleanFilter(
+        label='Include Variants', method='filter_include_variants'
     )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+            return queryset.filter(item__part__in=parts)
+        else:
+            return queryset.filter(item__part=part)
 
     outstanding = rest_filters.BooleanFilter(
         label=_('Outstanding'), method='filter_outstanding'
