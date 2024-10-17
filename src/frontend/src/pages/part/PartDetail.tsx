@@ -103,6 +103,7 @@ import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTa
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartPricingPanel from './PartPricingPanel';
+import PartPurchasingPanel from './PartPurchasingPanel';
 import PartSalesPanel from './PartSalesPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
@@ -692,7 +693,7 @@ export default function PartDetail() {
         icon: <IconShoppingCart />,
         hidden:
           !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
-        content: <PartPurchaseOrdersTable partId={part.pk} />
+        content: <PartPurchasingPanel part={part} />
       },
       {
         name: 'sales_orders',

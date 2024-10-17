@@ -947,6 +947,28 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
+class PurchaseHistoryRequestSerializer(
+    part_serializers.PartOrderHistoryRequestSerializer
+):
+    """Serializer for a PurchaseHistory request."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            *part_serializers.PartOrderHistoryRequestSerializer.Meta.fields,
+            'supplier',
+        ]
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company_models.Company.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Supplier'),
+    )
+
+
 class SalesHistoryRequestSerializer(part_serializers.PartOrderHistoryRequestSerializer):
     """Serializer for a SalesHistory request."""
 

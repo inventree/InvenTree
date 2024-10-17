@@ -4,30 +4,34 @@ import { Accordion, Skeleton } from '@mantine/core';
 import { OrderHistoryChart } from '../../components/charts/OrderHistoryChart';
 import { StylishText } from '../../components/items/StylishText';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
+import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 
 /**
- * Construct a panel displaying sales order information for a given part.
+ * Construct a panel displaying purchase order information for a given part.
  */
-export default function PartSalesPanel({ part }: { part: any }) {
+export default function PartPurchasingPanel({ part }: { part: any }) {
   return (
-    <Accordion multiple defaultValue={['sales-orders']}>
-      <Accordion.Item value="sales-orders">
+    <Accordion multiple defaultValue={['purchase-orders']}>
+      <Accordion.Item value="purchase-orders">
         <Accordion.Control>
-          <StylishText size="lg">{t`Sales Orders`}</StylishText>
+          <StylishText size="lg">{t`Purchase Orders`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          {part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />}
+          {part.pk ? (
+            <PartPurchaseOrdersTable partId={part.pk} />
+          ) : (
+            <Skeleton />
+          )}
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value="sales-history">
+      <Accordion.Item value="purchase-history">
         <Accordion.Control>
-          <StylishText size="lg">{t`Sales History`}</StylishText>
+          <StylishText size="lg">{t`Purchase History`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           {part.pk ? (
             <OrderHistoryChart
-              endpoint={ApiEndpoints.sales_order_history}
+              endpoint={ApiEndpoints.purchase_order_history}
               params={{
                 part: part.pk
               }}

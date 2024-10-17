@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.response import Response
 
 import common.models
@@ -597,11 +597,79 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
+class PurchaseHistory(PartOrderHistoryDetail):
+    """API endpoint for providing purchase history data."""
+
+    role_required = ['part.view', 'purchase_order.view']
+
+    request_serializer_class = serializers.PurchaseHistoryRequestSerializer
+
+    @extend_schema(
+        description='Retrieve sales history data',
+        request=serializers.PurchaseHistoryRequestSerializer(many=False),
+        responses={200: part_serializers.PartOrderHistorySerializer(many=True)},
+    )
+    def get(self, request):
+        """Generate sales history data based on the provided parameters."""
+        data = self.process_request(request)
+
+        # TODO: Account for case where part is not supplied
+        part = data.get('part', None)
+        parts = part.get_descendants(include_self=True)
+
+        # TODO: Filter by 'supplier'
+
+        # Generate a list of all purchase order lines which match the selected part
+        lines = (
+            models.PurchaseOrderLineItem.objects.filter(
+                part__part__in=parts,
+                order__status__in=PurchaseOrderStatusGroups.COMPLETE,
+                received__gt=0,
+            )
+            .prefetch_related('part', 'part__part', 'order')
+            .select_related('part__part__pricing_data')
+        )
+
+        # TODO: Account for orders lines which have been received but not yet completed
+
+        # Filter by date range
+        lines = lines.filter(order__complete_date__gte=self.start_date)
+        lines = lines.filter(order__complete_date__lte=self.end_date)
+
+        # Exclude any lines which do not map to an internal part
+        lines = lines.exclude(part__part=None)
+
+        # Exclude any lines which have an order with no completion date
+        lines = lines.exclude(order__complete_date=None)
+
+        # Construct a dictionary of purchase history data to part ID
+        history_items = {}
+        parts = {}
+
+        for line in lines:
+            part = line.part.part
+
+            part_history = history_items.get(part.pk, None) or {}
+
+            if part.pk not in parts:
+                parts[part.pk] = part
+
+            date_key = self.convert_date(line.order.complete_date, self.period)
+            date_entry = part_history.get(date_key, 0)
+            date_entry += line.received
+
+            # Save data back into the dictionary
+            part_history[date_key] = date_entry
+            history_items[part.pk] = part_history
+
+        return self.format_response(parts, history_items)
+
+
 class SalesHistory(PartOrderHistoryDetail):
     """API endpoint for providing sales history data."""
 
-    permission_classes = [permissions.IsAuthenticated]
-    role_required = 'sales_order.view'
+    role_required = ['part.view', 'sales_order.view']
+
     request_serializer_class = serializers.SalesHistoryRequestSerializer
 
     @extend_schema(
@@ -613,9 +681,11 @@ class SalesHistory(PartOrderHistoryDetail):
         """Generate sales history data based on the provided parameters."""
         data = self.process_request(request)
 
+        # TODO: Account for case where part is not supplied
         part = data.get('part', None)
-
         parts = part.get_descendants(include_self=True)
+
+        # TODO: Filter by 'customer'
 
         # Generate a list of sales history data for each selected part
         # Find all *completed* sales orders line items which match the selected part
@@ -628,6 +698,8 @@ class SalesHistory(PartOrderHistoryDetail):
             .prefetch_related('part', 'order', 'allocations')
             .select_related('part__pricing_data')
         )
+
+        # TODO: Account for orders lines which have been shipped but not yet completed
 
         # Filter by date range
         lines = lines.filter(order__shipment_date__gte=self.start_date)
@@ -648,7 +720,7 @@ class SalesHistory(PartOrderHistoryDetail):
 
             date_key = self.convert_date(line.order.shipment_date, self.period)
             date_entry = part_history.get(date_key, 0)
-            date_entry += line.quantity
+            date_entry += line.shipped
 
             # Save data back into the dictionary
             part_history[date_key] = date_entry
@@ -1688,6 +1760,7 @@ order_api_urls = [
                 {StatusView.MODEL_REF: PurchaseOrderStatus},
                 name='api-po-status-codes',
             ),
+            path('history/', PurchaseHistory.as_view(), name='api-po-history'),
             # Purchase order list
             path('', PurchaseOrderList.as_view(), name='api-po-list'),
         ]),

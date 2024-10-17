@@ -154,6 +154,8 @@ export enum ApiEndpoints {
   purchase_order_extra_line_list = 'order/po-extra-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 
+  purchase_order_history = 'order/po/history/',
+
   sales_order_list = 'order/so/',
   sales_order_issue = 'order/so/:id/issue/',
   sales_order_hold = 'order/so/:id/hold/',

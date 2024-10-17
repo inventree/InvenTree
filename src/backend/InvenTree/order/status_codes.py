@@ -35,6 +35,8 @@ class PurchaseOrderStatusGroups:
         PurchaseOrderStatus.RETURNED.value,
     ]
 
+    COMPLETE = [PurchaseOrderStatus.COMPLETE.value]
+
 
 class SalesOrderStatus(StatusCode):
     """Defines a set of status codes for a SalesOrder."""
