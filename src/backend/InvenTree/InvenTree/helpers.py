@@ -20,11 +20,11 @@ from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-import pytz
 import regex
 from bleach import clean
 from djmoney.money import Money
 from PIL import Image
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from common.currency import currency_code_default
 
@@ -925,15 +925,15 @@ def to_local_time(time, target_tz: Optional[str] = None):
 
     if not source_tz:
         # Default to UTC if not provided
-        source_tz = pytz.utc
+        source_tz = ZoneInfo('UTC')
 
     if not target_tz:
         target_tz = server_timezone()
 
     try:
-        target_tz = pytz.timezone(str(target_tz))
-    except pytz.UnknownTimeZoneError:
-        target_tz = pytz.utc
+        target_tz = ZoneInfo(str(target_tz))
+    except ZoneInfoNotFoundError:
+        target_tz = ZoneInfo('UTC')
 
     target_time = time.replace(tzinfo=source_tz).astimezone(target_tz)
 
