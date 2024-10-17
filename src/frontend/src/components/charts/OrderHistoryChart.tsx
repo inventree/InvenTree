@@ -27,7 +27,9 @@ export function OrderHistoryChart({
     dayjs().subtract(1, 'year').toDate()
   );
 
-  const [endDate, setEndDate] = useState<Date>(dayjs().toDate());
+  const [endDate, setEndDate] = useState<Date>(
+    dayjs().add(1, 'month').toDate()
+  );
 
   const [period, setPeriod] = useState<OrderHistoryPeriod>('M');
 
@@ -59,12 +61,11 @@ export function OrderHistoryChart({
   const parts: BarChartSeries[] = useMemo(() => {
     return (
       historyQuery.data?.map((item: any, index: number) => {
-        let part = item?.part ?? -1;
-        let part_detail = item?.part_detail ?? {};
+        let part = item?.part ?? {};
 
         return {
-          name: part.toString(),
-          label: part_detail?.full_name ?? part_detail?.name ?? part,
+          name: part?.pk?.toString() ?? index.toString(),
+          label: part?.full_name ?? part?.name ?? part,
           color: CHART_COLORS[index % CHART_COLORS.length]
         };
       }) ?? []
@@ -75,10 +76,10 @@ export function OrderHistoryChart({
   const historyData = useMemo(() => {
     let data: any = {};
 
-    historyQuery.data?.forEach((item: any) => {
-      let part: number = item?.part ?? -1;
+    historyQuery.data?.forEach((item: any, index: number) => {
+      let part: number = item?.part?.pk ?? index;
       let partKey = part.toString();
-      let entries: any[] = item?.sales_history ?? [];
+      let entries: any[] = item?.history ?? [];
 
       entries.forEach((entry: any) => {
         // Find a matching date entry in the data

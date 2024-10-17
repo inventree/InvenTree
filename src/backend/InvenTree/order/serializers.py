@@ -20,9 +20,11 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
+import company.models as company_models
 import order.models
 import part.filters as part_filters
 import part.models as part_models
+import part.serializers as part_serializers
 import stock.models
 import stock.serializers
 from common.serializers import ProjectCodeSerializer
@@ -945,87 +947,24 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
-class SalesHistoryRequestSerializer(serializers.Serializer):
+class SalesHistoryRequestSerializer(part_serializers.PartOrderHistoryRequestSerializer):
     """Serializer for a SalesHistory request."""
 
     class Meta:
         """Metaclass options."""
 
         fields = [
-            'start_date',
-            'end_date',
-            'part',
-            'include_variants',
-            'period',
-            # 'company'
+            *part_serializers.PartOrderHistoryRequestSerializer.Meta.fields,
+            'customer',
         ]
 
-    start_date = serializers.DateField(label=_('Start Date'), required=True)
-
-    end_date = serializers.DateField(label=_('End Date'), required=True)
-
-    period = serializers.ChoiceField(
-        label=_('Period'),
-        choices=[('M', _('Month')), ('Q', _('Quarter')), ('Y', _('Year'))],
-        required=False,
-        default='D',
-        help_text=_('Group order data by this period'),
-    )
-
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=part_models.Part.objects.all(),
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=company_models.Company.objects.all(),
         many=False,
-        required=True,
-        label=_('Part'),
-    )
-
-    include_variants = serializers.BooleanField(
-        label=_('Include Variants'),
         required=False,
-        default=False,
-        help_text=_('Include part variants in order history'),
+        allow_null=True,
+        label=_('Customer'),
     )
-
-    # company = serializers.PrimaryKeyRelatedField(
-    #     queryset=company_models.Company.objects.all(),
-    #     many=False,
-    #     required=False,
-    #     allow_null=True,
-    #     label=_('Company'),
-    # )
-
-
-class SalesHistoryDataSerializer(serializers.Serializer):
-    """Serializer for a SalesHistory data entrypoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['pk', 'date', 'quantity']
-
-    date = serializers.DateField(label=_('Date'), read_only=True)
-
-    quantity = serializers.FloatField(label=_('Quantity'), read_only=True)
-
-
-class SalesHistorySerializer(serializers.Serializer):
-    """Serializer for a set of SalesHistoryData entries."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = ['part', 'part_detail', 'sales_history']
-
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=part_models.Part.objects.all(),
-        label=_('Part'),
-        many=False,
-        required=True,
-    )
-
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    sales_history = SalesHistoryDataSerializer(many=True, read_only=True)
 
 
 @register_importer()

@@ -21,6 +21,7 @@ from rest_framework.views import APIView
 import common.models
 import common.settings
 import company.models
+import part.serializers as part_serializers
 from generic.states.api import StatusView
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
@@ -659,7 +660,7 @@ class SalesHistory(APIView):
     @extend_schema(
         description='Retrieve sales history data',
         request=serializers.SalesHistoryRequestSerializer(many=False),
-        responses={200: serializers.SalesHistorySerializer(many=True)},
+        responses={200: part_serializers.PartOrderHistorySerializer(many=True)},
     )
     def get(self, request):
         """Generate sales history data based on the provided parameters."""
@@ -670,14 +671,12 @@ class SalesHistory(APIView):
 
         data = cast(dict, serializer.validated_data)
 
-        part = data['part']
-        include_variants = str2bool(data.get('include_variants', False))
-
+        part = data.get('part', None)
         start_date = data['start_date']
         end_date = data['end_date']
         time_period = data.get('period', 'M')
 
-        parts = part.get_descendants(include_self=True) if include_variants else [part]
+        parts = part.get_descendants(include_self=True)
 
         # Generate a list of sales history data for each selected part
         # Find all *completed* sales orders line items which match the selected part
@@ -736,9 +735,11 @@ class SalesHistory(APIView):
             history = sorted(history, key=lambda x: x['date'])
 
             # Construct an entry for each part
-            response.append({'part': parts[part_id], 'sales_history': history})
+            response.append({'part': parts[part_id], 'history': history})
 
-        return Response(serializers.SalesHistorySerializer(response, many=True).data)
+        return Response(
+            part_serializers.PartOrderHistorySerializer(response, many=True).data
+        )
 
 
 class SalesOrderFilter(OrderFilter):

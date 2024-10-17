@@ -2109,3 +2109,55 @@ class BomImportSubmitSerializer(serializers.Serializer):
 
         except Exception as e:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(e))
+
+
+class PartOrderHistoryItemSerializer(serializers.Serializer):
+    """Serializer for a single item in the PartOrderHistorySerializer."""
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = ['date', 'quantity']
+
+    date = serializers.DateField(read_only=True)
+    quantity = serializers.FloatField(read_only=True)
+
+
+class PartOrderHistorySerializer(serializers.Serializer):
+    """A generic serializer class for encoding a sequence of order history events for a part."""
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = ['part', 'history']
+
+    part = PartBriefSerializer(read_only=True, many=False)
+    history = PartOrderHistoryItemSerializer(many=True, read_only=True)
+
+
+class PartOrderHistoryRequestSerializer(serializers.Serializer):
+    """Generic serializer for requesting order history data for a part.
+
+    Note: This serializer can be subclassed to provide additional fields.
+    """
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = ['start_date', 'end_date', 'period', 'part']
+
+    start_date = serializers.DateField(label=_('Start Date'), required=True)
+
+    end_date = serializers.DateField(label=_('End Date'), required=True)
+
+    period = serializers.ChoiceField(
+        label=_('Period'),
+        choices=[('M', _('Month')), ('Q', _('Quarter')), ('Y', _('Year'))],
+        required=False,
+        default='D',
+        help_text=_('Group order data by this period'),
+    )
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(), many=False, required=False, label=_('Part')
+    )
