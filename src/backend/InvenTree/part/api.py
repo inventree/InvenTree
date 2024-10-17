@@ -6,9 +6,11 @@ from datetime import date, timedelta
 from typing import cast
 
 from django.db.models import Count, F, Q
+from django.http import StreamingHttpResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
+import tablib
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
@@ -32,7 +34,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import increment_serial_number, isNull, str2bool
+from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -2085,12 +2087,37 @@ class PartOrderHistoryDetail(APIView):
         self.end_date = data['end_date']
         self.period = data['period']
 
+        self.export_format = data.get('export', None)
+
         # Construct the entire date range
         self.date_range = self.construct_date_range(
             self.start_date, self.end_date, self.period
         )
 
         return data
+
+    def export_data(
+        self, part_dict: dict, history_items: dict
+    ) -> StreamingHttpResponse:
+        """Export the data in the requested format."""
+        # Construct the set of headers
+        headers = [_('Part ID'), _('Part Name'), _('IPN'), *self.date_range]
+
+        dataset = tablib.Dataset(headers=headers)
+
+        # Construct the set of rows
+        for part_id, entries in history_items.items():
+            part = part_dict[part_id]
+
+            quantities = [entries.get(key, 0) for key in self.date_range]
+
+            row = [part_id, part.name, part.IPN, *quantities]
+
+            dataset.append(row)
+
+        data = dataset.export(self.export_format)
+
+        return DownloadFile(data, filename=f'order_history.{self.export_format}')
 
     def format_response(self, part_dict: dict, history_items: dict) -> Response:
         """Format the response data required for the API endpoint.
@@ -2099,6 +2126,10 @@ class PartOrderHistoryDetail(APIView):
             - part_dict: A dictionary of part data, indexed by part ID
             - history_items: A dictionary of history items, indexed by part ID
         """
+        if self.export_format:
+            # Export the data in the requested format
+            return self.export_data(part_dict, history_items)
+
         response = []
 
         for part_id, entries in history_items.items():

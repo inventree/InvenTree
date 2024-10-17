@@ -2144,7 +2144,7 @@ class PartOrderHistoryRequestSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options for this serializer."""
 
-        fields = ['start_date', 'end_date', 'period', 'part']
+        fields = ['start_date', 'end_date', 'period', 'part', 'export']
 
     start_date = serializers.DateField(label=_('Start Date'), required=True)
 
@@ -2160,4 +2160,9 @@ class PartOrderHistoryRequestSerializer(serializers.Serializer):
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(), many=False, required=False, label=_('Part')
+    )
+
+    export = serializers.ChoiceField(
+        choices=[(choice, choice) for choice in InvenTree.helpers.GetExportFormats()],
+        required=False,
     )
