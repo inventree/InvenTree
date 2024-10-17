@@ -18,9 +18,9 @@ export default function PartSalesPanel({ part }: { part: any }) {
           {part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />}
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value="sales-order-history">
+      <Accordion.Item value="sales-history">
         <Accordion.Control>
-          <StylishText size="lg">{t`Sales Order History`}</StylishText>
+          <StylishText size="lg">{t`Sales History`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           {part.pk ? <div>hello world</div> : <Skeleton />}
