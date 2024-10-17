@@ -922,7 +922,6 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         data.update(self.clean_data(request.data))
 
         quantity = data.get('quantity', None)
-        location = data.get('location', None)
 
         if quantity is None:
             raise ValidationError({'quantity': _('Quantity is required')})
@@ -931,6 +930,11 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({'part': _('Valid part must be supplied')})
+
+        location = data.get('location', None)
+        # Override location if not specified
+        if location is None and part.default_location:
+            data['location'] = part.default_location.pk
 
         expiry_date = data.get('expiry_date', None)
 
@@ -1032,10 +1036,6 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
 
         # Extract location information
         location = serializer.validated_data.get('location', None)
-
-        if not location:
-            # Default to the default location for the provided part
-            location = part.get_default_location()
 
         with transaction.atomic():
             if serials:
