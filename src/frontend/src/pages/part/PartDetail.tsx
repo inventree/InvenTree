@@ -351,7 +351,7 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'saleable',
+        name: 'salable',
         label: t`Saleable Part`
       },
       {
