@@ -13,47 +13,6 @@ from InvenTree.exceptions import log_error
 from plugin import registry
 
 
-class PluginPanelList(APIView):
-    """API endpoint for listing all available plugin panels."""
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = UIPluginSerializers.PluginPanelSerializer
-
-    @extend_schema(
-        responses={200: UIPluginSerializers.PluginPanelSerializer(many=True)}
-    )
-    def get(self, request):
-        """Show available plugin panels."""
-        target_model = request.query_params.get('target_model', None)
-        target_id = request.query_params.get('target_id', None)
-
-        panels = []
-
-        if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
-            # Extract all plugins from the registry which provide custom panels
-            for _plugin in registry.with_mixin('ui', active=True):
-                try:
-                    # Allow plugins to fill this data out
-                    plugin_panels = _plugin.get_ui_panels(
-                        target_model, target_id, request
-                    )
-
-                    if plugin_panels and type(plugin_panels) is list:
-                        for panel in plugin_panels:
-                            panel['plugin'] = _plugin.slug
-
-                            # TODO: Validate each panel before inserting
-                            panels.append(panel)
-                except Exception:
-                    # Custom panels could not load
-                    # Log the error and continue
-                    log_error(f'{_plugin.slug}.get_ui_panels')
-
-        return Response(
-            UIPluginSerializers.PluginPanelSerializer(panels, many=True).data
-        )
-
-
 class PluginUIFeatureList(APIView):
     """API endpoint for listing all available plugin ui features."""
 
@@ -71,24 +30,49 @@ class PluginUIFeatureList(APIView):
             # Extract all plugins from the registry which provide custom ui features
             for _plugin in registry.with_mixin('ui', active=True):
                 # Allow plugins to fill this data out
-                plugin_features = _plugin.get_ui_features(
-                    feature, request.query_params, request
-                )
+
+                try:
+                    plugin_features = _plugin.get_ui_features(
+                        feature, request.query_params, request
+                    )
+                except Exception:
+                    # Custom features could not load for this plugin
+                    # Log the error and continue
+                    log_error(f'{_plugin.slug}.get_ui_features')
+                    continue
 
                 if plugin_features and type(plugin_features) is list:
                     for _feature in plugin_features:
-                        features.append(_feature)
+                        try:
+                            # Ensure that the required fields are present
+                            _feature['plugin_name'] = _plugin.slug
+                            _feature['feature_type'] = str(feature)
 
-        return Response(
-            UIPluginSerializers.PluginUIFeatureSerializer(features, many=True).data
-        )
+                            # Ensure base fields are strings
+                            for field in ['key', 'title', 'description', 'source']:
+                                if field in _feature:
+                                    _feature[field] = str(_feature[field])
+
+                            # Add the feature to the list (serialize)
+                            features.append(
+                                UIPluginSerializers.PluginUIFeatureSerializer(
+                                    _feature, many=False
+                                ).data
+                            )
+
+                        except Exception:
+                            # Custom features could not load
+                            # Log the error and continue
+                            log_error(f'{_plugin.slug}.get_ui_features')
+                            continue
+
+        return Response(features)
 
 
 ui_plugins_api_urls = [
-    path('panels/', PluginPanelList.as_view(), name='api-plugin-panel-list'),
     path(
         'features/<str:feature>/',
         PluginUIFeatureList.as_view(),
         name='api-plugin-ui-feature-list',
-    ),
+    )
 ]

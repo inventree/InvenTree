@@ -8,9 +8,12 @@ import {
   useInvenTreeContext
 } from '../components/plugins/PluginContext';
 import PluginPanelContent, {
-  PluginPanelProps,
   isPluginPanelHidden
 } from '../components/plugins/PluginPanel';
+import {
+  PluginUIFeature,
+  PluginUIFeatureType
+} from '../components/plugins/PluginUIFeature';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
@@ -54,8 +57,12 @@ export function usePluginPanels({
         return Promise.resolve([]);
       }
 
+      const url = apiUrl(ApiEndpoints.plugin_ui_features_list, undefined, {
+        feature_type: PluginUIFeatureType.panel
+      });
+
       return api
-        .get(apiUrl(ApiEndpoints.plugin_panel_list), {
+        .get(url, {
           params: {
             target_model: model,
             target_id: id
@@ -87,12 +94,12 @@ export function usePluginPanels({
   // Clear the visibility cache when the plugin data changes
   // This will force the plugin panels to re-calculate their visibility
   useEffect(() => {
-    pluginData?.forEach((props: PluginPanelProps) => {
-      const identifier = identifierString(`${props.plugin}-${props.name}`);
+    pluginData?.forEach((props: PluginUIFeature) => {
+      const identifier = identifierString(`${props.plugin_name}-${props.key}`);
 
       // Check if the panel is hidden (defaults to true until we know otherwise)
       isPluginPanelHidden({
-        pluginProps: props,
+        pluginFeature: props,
         pluginContext: contextData
       }).then((result) => {
         setPanelState((prev) => ({ ...prev, [identifier]: result }));
@@ -102,9 +109,11 @@ export function usePluginPanels({
 
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
-      pluginData?.map((props: PluginPanelProps) => {
-        const iconName: string = props.icon || 'plugin';
-        const identifier = identifierString(`${props.plugin}-${props.name}`);
+      pluginData?.map((props: PluginUIFeature) => {
+        const iconName: string = props.options?.icon || 'plugin';
+        const identifier = identifierString(
+          `${props.plugin_name}-${props.key}`
+        );
         const isHidden: boolean = panelState[identifier] ?? true;
 
         const pluginContext: any = {
@@ -114,11 +123,11 @@ export function usePluginPanels({
 
         return {
           name: identifier,
-          label: props.label,
+          label: props.title,
           icon: <InvenTreeIcon icon={iconName as InvenTreeIconType} />,
           content: (
             <PluginPanelContent
-              pluginProps={props}
+              pluginFeature={props}
               pluginContext={pluginContext}
             />
           ),
