@@ -356,7 +356,8 @@ function completePendingShipments(order_id, options={}) {
     var allocated_shipments = [];
 
     for (var idx = 0; idx < pending_shipments.length; idx++) {
-        if (pending_shipments[idx].allocations.length > 0) {
+
+        if (pending_shipments[idx].allocated_items > 0) {
             allocated_shipments.push(pending_shipments[idx]);
         }
     }
