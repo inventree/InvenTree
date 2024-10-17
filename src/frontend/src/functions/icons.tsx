@@ -190,6 +190,7 @@ const icons = {
   target_date: IconCalendarDot,
   date: IconCalendar,
   shipment_date: IconCalendarCheck,
+  complete_date: IconCalendarCheck,
   location: IconMapPin,
   default_location: IconMapPinHeart,
   category_default_location: IconMapPinHeart,

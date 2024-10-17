@@ -33,6 +33,7 @@ from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
+    ReturnOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
 )
@@ -725,6 +726,69 @@ class SalesHistory(PartOrderHistoryDetail):
             # Save data back into the dictionary
             part_history[date_key] = date_entry
             history_items[part.pk] = part_history
+
+        return self.format_response(parts, history_items)
+
+
+class ReturnHistory(PartOrderHistoryDetail):
+    """API endpoint for providing return history data."""
+
+    role_required = ['part.view', 'return_order.view']
+
+    request_serializer_class = serializers.ReturnHistoryRequestSerializer
+
+    @extend_schema(
+        description='Retrieve sales history data',
+        request=serializers.ReturnHistoryRequestSerializer(many=False),
+        responses={200: part_serializers.PartOrderHistorySerializer(many=True)},
+    )
+    def get(self, request):
+        """Generate sales history data based on the provided parameters."""
+        data = self.process_request(request)
+
+        # TODO: Account for case where part is not supplied
+        part = data.get('part', None)
+        parts = part.get_descendants(include_self=True)
+
+        # TODO: Filter by 'customer'
+
+        # Generate a list of return order lines which match the selected part
+        lines = models.ReturnOrderLineItem.objects.filter(
+            item__part__in=parts, order__status__in=ReturnOrderStatusGroups.COMPLETE
+        ).prefetch_related('item', 'item__part', 'order')
+
+        # Exclude orders which do not have a complete date
+        lines = lines.exclude(order__complete_date=None)
+
+        # TODO: Account for orders lines which have been shipped but not yet completed
+
+        # Filter by date range
+        lines = lines.filter(order__complete_date__gte=self.start_date)
+        lines = lines.filter(order__complete_date__lte=self.end_date)
+
+        # Construct a dictionary of sales history data to part ID
+        history_items = {}
+        parts = {}
+
+        for line in lines:
+            part = line.item.part
+
+            # Extract the date key for the line item
+            part_history = history_items.get(part.pk, None) or {}
+
+            if part.pk not in parts:
+                parts[part.pk] = part
+
+            date_key = self.convert_date(line.order.complete_date, self.period)
+            date_entry = part_history.get(date_key, 0)
+            date_entry += line.item.quantity
+
+            # Save data back into the dictionary
+            part_history[date_key] = date_entry
+            history_items[part.pk] = part_history
+
+        print('part:', parts)
+        print('history:', history_items)
 
         return self.format_response(parts, history_items)
 
@@ -1997,6 +2061,7 @@ order_api_urls = [
                 {StatusView.MODEL_REF: ReturnOrderStatus},
                 name='api-return-order-status-codes',
             ),
+            path('history/', ReturnHistory.as_view(), name='api-ro-history'),
             # Return Order list
             path('', ReturnOrderList.as_view(), name='api-return-order-list'),
         ]),

@@ -104,6 +104,7 @@ import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartPricingPanel from './PartPricingPanel';
 import PartPurchasingPanel from './PartPurchasingPanel';
+import PartReturnPanel from './PartReturnPanel';
 import PartSalesPanel from './PartSalesPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
@@ -710,7 +711,7 @@ export default function PartDetail() {
           !part.salable ||
           !user.hasViewRole(UserRoles.return_order) ||
           !globalSettings.isSet('RETURNORDER_ENABLED'),
-        content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
+        content: <PartReturnPanel part={part} />
       },
       {
         name: 'stocktake',

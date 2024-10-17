@@ -93,6 +93,8 @@ class ReturnOrderStatusGroups:
         ReturnOrderStatus.IN_PROGRESS.value,
     ]
 
+    COMPLETE = [ReturnOrderStatus.COMPLETE.value]
+
 
 class ReturnOrderLineStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrderLineItem."""

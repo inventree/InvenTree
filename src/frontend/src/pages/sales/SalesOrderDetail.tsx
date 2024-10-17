@@ -188,7 +188,16 @@ export default function SalesOrderDetail() {
         type: 'date',
         name: 'creation_date',
         label: t`Creation Date`,
-        copy: true
+        copy: true,
+        hidden: !order.creation_date
+      },
+      {
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
       },
       {
         type: 'date',
