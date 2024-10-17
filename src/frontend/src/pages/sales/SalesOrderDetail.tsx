@@ -184,17 +184,24 @@ export default function SalesOrderDetail() {
 
     let br: DetailsField[] = [
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
+        label: t`Creation Date`,
+        copy: true
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
-        icon: 'calendar',
-        hidden: !order.target_date
+        hidden: !order.target_date,
+        copy: true
+      },
+      {
+        type: 'date',
+        name: 'shipment_date',
+        label: t`Completion Date`,
+        hidden: !order.shipment_date,
+        copy: true
       },
       {
         type: 'text',
