@@ -1596,6 +1596,7 @@ function showAllocationSubTable(index, row, element, options) {
             ...options.queryParams,
             part_detail: true,
             location_detail: true,
+            item_detail: true,
             order_detail: true,
         },
         data: row.allocations,
