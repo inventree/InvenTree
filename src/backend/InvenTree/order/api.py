@@ -787,9 +787,6 @@ class ReturnHistory(PartOrderHistoryDetail):
             part_history[date_key] = date_entry
             history_items[part.pk] = part_history
 
-        print('part:', parts)
-        print('history:', history_items)
-
         return self.format_response(parts, history_items)
 
 
