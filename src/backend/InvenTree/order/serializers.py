@@ -956,13 +956,26 @@ class SalesHistoryRequestSerializer(serializers.Serializer):
             'end_date',
             'part',
             'include_variants',
-            # 'company',
-            # 'currency',
+            'period',
+            # 'company'
         ]
 
     start_date = serializers.DateField(label=_('Start Date'), required=True)
 
     end_date = serializers.DateField(label=_('End Date'), required=True)
+
+    period = serializers.ChoiceField(
+        label=_('Period'),
+        choices=[
+            ('W', _('Week')),
+            ('M', _('Month')),
+            ('Q', _('Quarter')),
+            ('Y', _('Year')),
+        ],
+        required=False,
+        default='D',
+        help_text=_('Group order data by this period'),
+    )
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
@@ -986,11 +999,6 @@ class SalesHistoryRequestSerializer(serializers.Serializer):
     #     label=_('Company'),
     # )
 
-    # currency = serializers.CharField(
-    #     label=_('Currency'),
-    #     choices=common.currency.currency_code_mappings(),
-    # )
-
 
 class SalesHistoryDataSerializer(serializers.Serializer):
     """Serializer for a SalesHistory data entrypoint."""
@@ -1003,10 +1011,6 @@ class SalesHistoryDataSerializer(serializers.Serializer):
     date = serializers.DateField(label=_('Date'), read_only=True)
 
     quantity = serializers.FloatField(label=_('Quantity'), read_only=True)
-
-    # TODO: add 'price' and 'currency' fields
-    # price = serializers.FloatField(label=_('Price'), read_only=True)
-    # currency = serializers.CharField(label=_('Currency'), read_only=True)
 
 
 class SalesHistorySerializer(serializers.Serializer):

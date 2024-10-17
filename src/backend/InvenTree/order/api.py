@@ -1,5 +1,6 @@
 """JSON API for the Order app."""
 
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import cast
 
@@ -602,6 +603,42 @@ class SalesHistory(APIView):
     permission_classes = [permissions.IsAuthenticated]
     role_required = 'sales_order.view'
 
+    def date_to_month(self, d: date):
+        """Convert a date to the first day of the associated month."""
+        return d.replace(day=1)
+
+    def date_to_week(self, d: date):
+        """Convert a date to the first day of the associated week."""
+        return d - timedelta(days=d.weekday())
+
+    def date_to_quarter(self, d: date):
+        """Convert a date to the first day of the associated quarter."""
+        return d.replace(month=(((d.month - 1) // 3) * 3) + 1, day=1)
+
+    def date_to_year(self, d: date):
+        """Convert a date to the first day of the associated year."""
+        return d.replace(month=1, day=1)
+
+    def convert_date(self, d: date, period='M'):
+        """Return the associated date for a given date, for the provided time-period.
+
+        Arguments:
+            - d: The date to find the associated date for
+            - period: The time period to use (e.g. 'W' for week, 'M' for month, 'Q' for quarter, 'Y' for year)
+        """
+        if not d:
+            return None
+
+        # Convert the date to the first day of the associated period (default = month)
+        convert_func = {
+            'W': self.date_to_week,
+            'M': self.date_to_month,
+            'Q': self.date_to_quarter,
+            'Y': self.date_to_year,
+        }.get(period, self.date_to_month)
+
+        return convert_func(d)
+
     @extend_schema(
         description='Retrieve sales history data',
         request=serializers.SalesHistoryRequestSerializer(many=False),
@@ -619,37 +656,58 @@ class SalesHistory(APIView):
         part = data['part']
         include_variants = str2bool(data.get('include_variants', False))
 
-        print('data:')
-        for k, v in data.items():
-            print(f'- {k}: {v}')
+        time_period = data.get('period', 'M')
 
         parts = part.get_descendants(include_self=True) if include_variants else [part]
 
         # Generate a list of sales history data for each selected part
         # Find all *completed* sales orders line items which match the selected part
-        lines = models.SalesOrderLineItem.objects.filter(
-            part__in=parts,
-            order__status__in=SalesOrderStatusGroups.COMPLETE,
-            shipped__gt=0,
-        ).prefetch_related('order', 'allocations')
-
-        print('lines:', lines.count())
+        lines = (
+            models.SalesOrderLineItem.objects.filter(
+                part__in=parts,
+                order__status__in=SalesOrderStatusGroups.COMPLETE,
+                shipped__gt=0,
+            )
+            .prefetch_related('part', 'order', 'allocations')
+            .select_related('part__pricing_data')
+        )
 
         # Construct a dictionary of sales history data to part ID
         history_items = {}
+        parts = {}
 
         for line in lines:
             part = line.part
-            part_history = history_items.get(part.pk, None) or []
-            part_history.append(line)
+
+            # Extract the date key for the line item
+            part_history = history_items.get(part.pk, None) or {}
+
+            if part.pk not in parts:
+                parts[part.pk] = part
+
+            date_key = self.convert_date(line.order.shipment_date, time_period)
+            date_entry = part_history.get(date_key, 0)
+            date_entry += line.quantity
+
+            # Save data back into the dictionary
+            part_history[date_key] = date_entry
             history_items[part.pk] = part_history
 
-        print('history:')
-        print(history_items)
+        # Format entries into response
+        response = []
 
-        # TODO: Format into response
+        for part_id, entries in history_items.items():
+            history = [
+                {'date': date_key, 'quantity': quantity}
+                for date_key, quantity in entries.items()
+            ]
 
-        return Response(serializers.SalesHistorySerializer([], many=True).data)
+            history = sorted(history, key=lambda x: x['date'])
+
+            # Construct an entry for each part
+            response.append({'part': parts[part_id], 'sales_history': history})
+
+        return Response(serializers.SalesHistorySerializer(response, many=True).data)
 
 
 class SalesOrderFilter(OrderFilter):
