@@ -157,16 +157,11 @@ export function CompanyTable({
           params: {
             ...params
           },
+          modelType: ModelType.company,
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
-          rowActions: rowActions,
-          onRowClick: (row: any) => {
-            if (row.pk) {
-              let base = path ?? 'company';
-              navigate(`/${base}/${row.pk}`);
-            }
-          }
+          rowActions: rowActions
         }}
       />
     </>
