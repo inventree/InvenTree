@@ -607,10 +607,6 @@ class SalesHistory(APIView):
         """Convert a date to the first day of the associated month."""
         return d.replace(day=1)
 
-    def date_to_week(self, d: date):
-        """Convert a date to the first day of the associated week."""
-        return d - timedelta(days=d.weekday())
-
     def date_to_quarter(self, d: date):
         """Convert a date to the first day of the associated quarter."""
         return d.replace(month=(((d.month - 1) // 3) * 3) + 1, day=1)
@@ -631,13 +627,34 @@ class SalesHistory(APIView):
 
         # Convert the date to the first day of the associated period (default = month)
         convert_func = {
-            'W': self.date_to_week,
             'M': self.date_to_month,
             'Q': self.date_to_quarter,
             'Y': self.date_to_year,
         }.get(period, self.date_to_month)
 
-        return convert_func(d)
+        return convert_func(d).isoformat().split('T')[0]
+
+    def construct_date_range(self, start_date: date, end_date: date, period='M'):
+        """Construct a list of date keys for the provided date range.
+
+        Arguments:
+            - start_date: The start date
+            - end_date: The end date
+            - period: The time period to use (e.g. 'W' for week, 'M' for month, 'Q' for quarter, 'Y' for year)
+        """
+        date_range = set()
+
+        date_range.add(self.convert_date(start_date, period))
+
+        date = start_date
+
+        while date <= end_date:
+            date_range.add(self.convert_date(date, period))
+            date += timedelta(days=1)
+
+        date_range.add(self.convert_date(end_date, period))
+
+        return sorted(date_range, key=lambda x: x)
 
     @extend_schema(
         description='Retrieve sales history data',
@@ -656,6 +673,8 @@ class SalesHistory(APIView):
         part = data['part']
         include_variants = str2bool(data.get('include_variants', False))
 
+        start_date = data['start_date']
+        end_date = data['end_date']
         time_period = data.get('period', 'M')
 
         parts = part.get_descendants(include_self=True) if include_variants else [part]
@@ -671,6 +690,13 @@ class SalesHistory(APIView):
             .prefetch_related('part', 'order', 'allocations')
             .select_related('part__pricing_data')
         )
+
+        # Filter by date range
+        lines = lines.filter(order__shipment_date__gte=start_date)
+        lines = lines.filter(order__shipment_date__lte=end_date)
+
+        # Construct the entire date range
+        date_range = self.construct_date_range(start_date, end_date, time_period)
 
         # Construct a dictionary of sales history data to part ID
         history_items = {}
@@ -701,6 +727,11 @@ class SalesHistory(APIView):
                 {'date': date_key, 'quantity': quantity}
                 for date_key, quantity in entries.items()
             ]
+
+            # Ensure all empty dates are added too
+            for date_key in date_range:
+                if date_key not in entries:
+                    history.append({'date': date_key, 'quantity': 0})
 
             history = sorted(history, key=lambda x: x['date'])
 

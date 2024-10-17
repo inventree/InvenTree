@@ -966,12 +966,7 @@ class SalesHistoryRequestSerializer(serializers.Serializer):
 
     period = serializers.ChoiceField(
         label=_('Period'),
-        choices=[
-            ('W', _('Week')),
-            ('M', _('Month')),
-            ('Q', _('Quarter')),
-            ('Y', _('Year')),
-        ],
+        choices=[('M', _('Month')), ('Q', _('Quarter')), ('Y', _('Year'))],
         required=False,
         default='D',
         help_text=_('Group order data by this period'),
