@@ -932,13 +932,6 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({'part': _('Valid part must be supplied')})
 
-        # Set default location (if not provided)
-        if 'location' not in data:
-            location = part.get_default_location()
-
-            if location:
-                data['location'] = location.pk
-
         expiry_date = data.get('expiry_date', None)
 
         # An expiry date was *not* specified - try to infer it!
@@ -1036,6 +1029,13 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         # De-serialize the provided data
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
+
+        # Extract location information
+        location = serializer.validated_data.get('location', None)
+
+        if not location:
+            # Default to the default location for the provided part
+            location = part.get_default_location()
 
         with transaction.atomic():
             if serials:
