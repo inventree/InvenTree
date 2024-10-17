@@ -160,11 +160,14 @@ export enum ApiEndpoints {
   sales_order_cancel = 'order/so/:id/cancel/',
   sales_order_ship = 'order/so/:id/ship/',
   sales_order_complete = 'order/so/:id/complete/',
+  sales_order_allocate = 'order/so/:id/allocate/',
+  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
-  sales_order_allocate = 'order/so/:id/allocate/',
-  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
+  sales_order_history = 'order/so/history/',
 
   sales_order_shipment_list = 'order/so/shipment/',
   sales_order_shipment_complete = 'order/so/shipment/:id/ship/',
