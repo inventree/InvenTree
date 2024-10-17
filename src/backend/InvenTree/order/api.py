@@ -12,8 +12,10 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
-from rest_framework import status
+from drf_spectacular.utils import extend_schema
+from rest_framework import permissions, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import common.models
 import common.settings
@@ -592,6 +594,62 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
+
+
+class SalesHistory(APIView):
+    """API endpoint for providing sales history data."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    role_required = 'sales_order.view'
+
+    @extend_schema(
+        description='Retrieve sales history data',
+        request=serializers.SalesHistoryRequestSerializer(many=False),
+        responses={200: serializers.SalesHistorySerializer(many=True)},
+    )
+    def get(self, request):
+        """Generate sales history data based on the provided parameters."""
+        serializer = serializers.SalesHistoryRequestSerializer(
+            data=request.query_params
+        )
+        serializer.is_valid(raise_exception=True)
+
+        data = cast(dict, serializer.validated_data)
+
+        part = data['part']
+        include_variants = str2bool(data.get('include_variants', False))
+
+        print('data:')
+        for k, v in data.items():
+            print(f'- {k}: {v}')
+
+        parts = part.get_descendants(include_self=True) if include_variants else [part]
+
+        # Generate a list of sales history data for each selected part
+        # Find all *completed* sales orders line items which match the selected part
+        lines = models.SalesOrderLineItem.objects.filter(
+            part__in=parts,
+            order__status__in=SalesOrderStatusGroups.COMPLETE,
+            shipped__gt=0,
+        ).prefetch_related('order', 'allocations')
+
+        print('lines:', lines.count())
+
+        # Construct a dictionary of sales history data to part ID
+        history_items = {}
+
+        for line in lines:
+            part = line.part
+            part_history = history_items.get(part.pk, None) or []
+            part_history.append(line)
+            history_items[part.pk] = part_history
+
+        print('history:')
+        print(history_items)
+
+        # TODO: Format into response
+
+        return Response(serializers.SalesHistorySerializer([], many=True).data)
 
 
 class SalesOrderFilter(OrderFilter):
@@ -1751,6 +1809,7 @@ order_api_urls = [
                 {StatusView.MODEL_REF: SalesOrderStatus},
                 name='api-so-status-codes',
             ),
+            path('history/', SalesHistory.as_view(), name='api-so-history'),
             # Sales order list view
             path('', SalesOrderList.as_view(), name='api-so-list'),
         ]),

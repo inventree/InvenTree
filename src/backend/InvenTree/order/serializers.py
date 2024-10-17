@@ -945,6 +945,90 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
+class SalesHistoryRequestSerializer(serializers.Serializer):
+    """Serializer for a SalesHistory request."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'start_date',
+            'end_date',
+            'part',
+            'include_variants',
+            # 'company',
+            # 'currency',
+        ]
+
+    start_date = serializers.DateField(label=_('Start Date'), required=True)
+
+    end_date = serializers.DateField(label=_('End Date'), required=True)
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False,
+        required=True,
+        label=_('Part'),
+    )
+
+    include_variants = serializers.BooleanField(
+        label=_('Include Variants'),
+        required=False,
+        default=False,
+        help_text=_('Include part variants in order history'),
+    )
+
+    # company = serializers.PrimaryKeyRelatedField(
+    #     queryset=company_models.Company.objects.all(),
+    #     many=False,
+    #     required=False,
+    #     allow_null=True,
+    #     label=_('Company'),
+    # )
+
+    # currency = serializers.CharField(
+    #     label=_('Currency'),
+    #     choices=common.currency.currency_code_mappings(),
+    # )
+
+
+class SalesHistoryDataSerializer(serializers.Serializer):
+    """Serializer for a SalesHistory data entrypoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['pk', 'date', 'quantity']
+
+    date = serializers.DateField(label=_('Date'), read_only=True)
+
+    quantity = serializers.FloatField(label=_('Quantity'), read_only=True)
+
+    # TODO: add 'price' and 'currency' fields
+    # price = serializers.FloatField(label=_('Price'), read_only=True)
+    # currency = serializers.CharField(label=_('Currency'), read_only=True)
+
+
+class SalesHistorySerializer(serializers.Serializer):
+    """Serializer for a set of SalesHistoryData entries."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['part', 'part_detail', 'sales_history']
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        label=_('Part'),
+        many=False,
+        required=True,
+    )
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    sales_history = SalesHistoryDataSerializer(many=True, read_only=True)
+
+
 @register_importer()
 class SalesOrderSerializer(
     NotesFieldMixin,
