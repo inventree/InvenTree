@@ -100,6 +100,7 @@ export default function SalesOrderDetail() {
         name: 'customer_reference',
         label: t`Customer Reference`,
         copy: true,
+        icon: 'reference',
         hidden: !order.customer_reference
       },
       {
