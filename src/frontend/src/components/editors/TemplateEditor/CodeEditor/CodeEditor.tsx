@@ -88,8 +88,8 @@ Returns: <small>${tag.returns}</small>`;
 const tooltips = hoverTooltip((view, pos, side) => {
   // extract the word at the current hover position into the variable text
   let { from, to, text } = view.state.doc.lineAt(pos);
-  let start = pos,
-    end = pos;
+  let start = pos;
+  let end = pos;
   while (start > from && /\w/.test(text[start - from - 1])) start--;
   while (end < to && /\w/.test(text[end - from])) end++;
   if ((start == pos && side < 0) || (end == pos && side > 0)) return null;
