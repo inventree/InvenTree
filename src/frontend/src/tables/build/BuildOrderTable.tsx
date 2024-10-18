@@ -95,6 +95,7 @@ export function BuildOrderTable({
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
+        title: t`Completion Date`,
         sortable: true
       }),
       {

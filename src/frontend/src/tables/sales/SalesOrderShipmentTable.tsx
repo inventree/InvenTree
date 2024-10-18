@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -23,7 +24,12 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DateColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  DateColumn,
+  LinkColumn,
+  NoteColumn
+} from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowCancelAction, RowEditAction } from '../RowActions';
@@ -96,6 +102,13 @@ export default function SalesOrderShipmentTable({
         sortable: true,
         switchable: false,
         title: t`Items`
+      },
+      {
+        accessor: 'shipped',
+        title: t`Shipped`,
+        switchable: true,
+        sortable: false,
+        render: (record: any) => <YesNoButton value={!!record.shipment_date} />
       },
       DateColumn({
         accessor: 'shipment_date',

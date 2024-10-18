@@ -23,3 +23,7 @@ class BuildStatusGroups:
         BuildStatus.ON_HOLD.value,
         BuildStatus.PRODUCTION.value,
     ]
+
+    COMPLETE = [
+        BuildStatus.COMPLETE.value,
+    ]

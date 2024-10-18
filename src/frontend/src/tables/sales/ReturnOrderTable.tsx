@@ -15,6 +15,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CreationDateColumn,
+  DateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
@@ -116,6 +117,10 @@ export function ReturnOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
+      DateColumn({
+        accessor: 'complete_date',
+        title: t`Completion Date`
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',

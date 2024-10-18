@@ -100,6 +100,7 @@ export default function SalesOrderDetail() {
         name: 'customer_reference',
         label: t`Customer Reference`,
         copy: true,
+        icon: 'reference',
         hidden: !order.customer_reference
       },
       {
@@ -184,17 +185,33 @@ export default function SalesOrderDetail() {
 
     let br: DetailsField[] = [
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
+        label: t`Creation Date`,
+        copy: true,
+        hidden: !order.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
-        icon: 'calendar',
-        hidden: !order.target_date
+        hidden: !order.target_date,
+        copy: true
+      },
+      {
+        type: 'date',
+        name: 'shipment_date',
+        label: t`Completion Date`,
+        hidden: !order.shipment_date,
+        copy: true
       },
       {
         type: 'text',
