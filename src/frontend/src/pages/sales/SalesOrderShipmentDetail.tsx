@@ -276,9 +276,20 @@ export default function SalesOrderShipmentDetail() {
     }
 
     return [
-      <DetailsBadge label={t`Pending`} color='gray' visible={isPending} />,
-      <DetailsBadge label={t`Shipped`} color='green' visible={!isPending} />,
       <DetailsBadge
+        key='pending'
+        label={t`Pending`}
+        color='gray'
+        visible={isPending}
+      />,
+      <DetailsBadge
+        key='shipped'
+        label={t`Shipped`}
+        color='green'
+        visible={!isPending}
+      />,
+      <DetailsBadge
+        key='delivered'
         label={t`Delivered`}
         color='blue'
         visible={!!shipment.delivery_date}
@@ -293,6 +304,7 @@ export default function SalesOrderShipmentDetail() {
 
     return [
       <PrimaryActionButton
+        key='send-shipment'
         title={t`Send Shipment`}
         icon='sales_orders'
         hidden={!isPending}
@@ -302,16 +314,19 @@ export default function SalesOrderShipmentDetail() {
         }}
       />,
       <BarcodeActionDropdown
+        key='barcode'
         model={ModelType.salesordershipment}
         pk={shipment.pk}
       />,
       <PrintingActions
+        key='print'
         modelType={ModelType.salesordershipment}
         items={[shipment.pk]}
         enableLabels
         enableReports
       />,
       <OptionsActionDropdown
+        key='actions'
         tooltip={t`Shipment Actions`}
         actions={[
           EditItemAction({

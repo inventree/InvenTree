@@ -138,6 +138,7 @@ export default function PartParameterTemplateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         tooltip={t`Add Parameter Template`}
         onClick={() => newTemplate.open()}
         hidden={!user.hasAddRole(UserRoles.part)}

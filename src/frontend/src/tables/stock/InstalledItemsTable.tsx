@@ -87,6 +87,7 @@ export default function InstalledItemsTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='install'
         tooltip={t`Install Item`}
         onClick={() => {
           installItem.open();

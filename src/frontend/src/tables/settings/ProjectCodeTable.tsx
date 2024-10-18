@@ -88,6 +88,7 @@ export default function ProjectCodeTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         onClick={() => newProjectCode.open()}
         tooltip={t`Add project code`}
       />

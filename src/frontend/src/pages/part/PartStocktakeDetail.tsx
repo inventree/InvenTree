@@ -136,6 +136,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         tooltip={t`New Stocktake Report`}
         onClick={() => generateReport.open()}
         hidden={!user.hasAddRole(UserRoles.stocktake)}

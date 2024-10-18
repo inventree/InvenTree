@@ -232,10 +232,12 @@ export default function ManufacturerPartDetail() {
   const manufacturerPartActions = useMemo(() => {
     return [
       <AdminButton
+        key='admin'
         model={ModelType.manufacturerpart}
         pk={manufacturerPart.pk}
       />,
       <OptionsActionDropdown
+        key='options'
         tooltip={t`Manufacturer Part Actions`}
         actions={[
           DuplicateItemAction({

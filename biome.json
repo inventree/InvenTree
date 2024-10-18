@@ -12,13 +12,27 @@
     "rules": {
 		"suspicious" : {
 			"noExplicitAny": "off",
-			"noDoubleEquals": "off"
+			"noDoubleEquals": "off",
+			"noArrayIndexKey": "off",
+			"useDefaultSwitchClauseLast": "off"
 		},
 
 		"style": {
-			"useSelfClosingElements": "off"
+			"useSelfClosingElements": "off",
+			"noUselessElse": "off",
+			"useTemplate": "off",
+			"noNonNullAssertion": "off"
 		}, "correctness":{
-			"useExhaustiveDependencies": "off"
+			"useExhaustiveDependencies": "off",
+			"useJsxKeyInIterable": "off",
+			"noUnsafeOptionalChaining": "off",
+			"noSwitchDeclarations": "off"
+		}, "complexity": {
+			"useLiteralKeys": "off",
+			"noBannedTypes": "off",
+			"noExtraBooleanCast": "off",
+			"noForEach": "off",
+			"noUselessSwitchCase": "off"
 		}
 	}
 }
