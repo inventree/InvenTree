@@ -163,7 +163,7 @@ function stockItemTableColumns(): TableColumn[] {
             if (available > 0) {
               extra.push(
                 <Text key='available' size='sm' c='orange'>
-                  {t`Available` + `: ${available}`}
+                  {`${t`Available`}: ${available}`}
                 </Text>
               );
             } else {

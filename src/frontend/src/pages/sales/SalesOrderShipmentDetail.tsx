@@ -340,8 +340,8 @@ export default function SalesOrderShipmentDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={t`Sales Order Shipment` + `: ${shipment.reference}`}
-            subtitle={t`Sales Order` + `: ${shipment.order_detail?.reference}`}
+            title={`${t`Sales Order Shipment`}: ${shipment.reference}`}
+            subtitle={`${t`Sales Order`}: ${shipment.order_detail?.reference}`}
             breadcrumbs={[
               { name: t`Sales`, url: '/sales/' },
               {

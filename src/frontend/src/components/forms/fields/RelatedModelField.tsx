@@ -316,8 +316,8 @@ export function RelatedModelField({
         isClearable={!definition.required}
         isDisabled={definition.disabled}
         isSearchable={true}
-        placeholder={definition.placeholder || t`Search` + `...`}
-        loadingMessage={() => t`Loading` + `...`}
+        placeholder={definition.placeholder || `${t`Search`}...`}
+        loadingMessage={() => `${t`Loading`}...`}
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
         menuPosition='fixed'

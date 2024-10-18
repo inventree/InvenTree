@@ -56,7 +56,7 @@ export function AddressTable({
           }
 
           if (record?.line2) {
-            address += ' ' + record.line2;
+            address += ` ${record.line2}`;
           }
 
           return address.trim();

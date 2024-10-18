@@ -84,7 +84,7 @@ export default function PluginPanelContent({
               setError('');
             } catch (error) {
               setError(
-                t`Error occurred while rendering plugin content` + `: ${error}`
+                `${t`Error occurred while rendering plugin content`}: ${error}`
               );
             }
           } else {

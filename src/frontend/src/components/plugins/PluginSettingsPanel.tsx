@@ -48,7 +48,7 @@ export default function PluginSettingsPanel({
               setError('');
             } catch (error) {
               setError(
-                `${t`Error·occurred·while·rendering·plugin·settings`}:·${error}`
+                `${t`Error occurred while rendering plugin settings`}: ${error}`
               );
             }
           } else {
