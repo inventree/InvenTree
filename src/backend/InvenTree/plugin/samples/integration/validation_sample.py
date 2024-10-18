@@ -135,6 +135,14 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if serial[0] != part.name[0]:
                 self.raise_error('Serial number must start with same letter as part')
 
+        # Prevent serial numbers which are a multiple of 5
+        try:
+            sn = int(serial)
+            if sn % 5 == 0:
+                self.raise_error('Serial number cannot be a multiple of 5')
+        except ValueError:
+            pass
+
     def increment_serial_number(self, serial: str, part=None, **kwargs):
         """Increment a serial number.
 
