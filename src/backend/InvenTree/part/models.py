@@ -902,14 +902,15 @@ class Part(
                     log_error(f'{plugin.slug}.get_latest_serial_number')
 
         # No plugin returned a result, so we will run the default query
-        stock = (
-            StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
-        )
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
         if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
             # Serial numbers are unique across all parts
-            pass
+            stock = (
+                StockModels.StockItem.objects.all()
+                .exclude(serial=None)
+                .exclude(serial='')
+            )
         else:
             # Serial numbers are unique acros part trees
             stock = stock.filter(part__tree_id=self.tree_id)
