@@ -27,6 +27,7 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.currency import currency_code_default
+from InvenTree.exceptions import log_error
 
 from .settings import MEDIA_URL, STATIC_URL
 
@@ -451,9 +452,12 @@ def increment_serial_number(serial):
 
     # First, let any plugins attempt to increment the serial number
     for plugin in registry.with_mixin('validation'):
-        result = plugin.increment_serial_number(serial)
-        if result is not None:
-            return str(result)
+        try:
+            result = plugin.increment_serial_number(serial)
+            if result is not None:
+                return str(result)
+        except Exception:
+            log_error(f'{plugin.slug}.increment_serial_number')
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
