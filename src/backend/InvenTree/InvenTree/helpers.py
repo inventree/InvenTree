@@ -474,7 +474,9 @@ def increment_serial_number(serial, part=None):
     return increment(serial)
 
 
-def extract_serial_numbers(input_string, expected_quantity: int, starting_value=None):
+def extract_serial_numbers(
+    input_string, expected_quantity: int, starting_value=None, part=None
+):
     """Extract a list of serial numbers from a provided input string.
 
     The input string can be specified using the following concepts:
@@ -494,7 +496,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         starting_value: Provide a starting value for the sequence (or None)
     """
     if starting_value is None:
-        starting_value = increment_serial_number(None)
+        starting_value = increment_serial_number(None, part=part)
 
     try:
         expected_quantity = int(expected_quantity)
@@ -511,12 +513,12 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     if len(input_string) == 0:
         raise ValidationError([_('Empty serial number string')])
 
-    next_value = increment_serial_number(starting_value)
+    next_value = increment_serial_number(starting_value, part=part)
 
     # Substitute ~ character with latest value
     while '~' in input_string and next_value:
         input_string = input_string.replace('~', str(next_value), 1)
-        next_value = increment_serial_number(next_value)
+        next_value = increment_serial_number(next_value, part=part)
 
     # Split input string by whitespace or comma (,) characters
     groups = re.split(r'[\s,]+', input_string)
