@@ -901,11 +901,9 @@ class Part(
                 except Exception:
                     log_error(f'{plugin.slug}.get_latest_serial_number')
 
-            stock = (
-                StockModels.StockItem.objects.all()
-                .exclude(serial=None)
-                .exclude(serial='')
-            )
+        stock = (
+            StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
+        )
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
         if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
