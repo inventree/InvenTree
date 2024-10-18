@@ -28,7 +28,6 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.currency import currency_code_default
-from InvenTree.exceptions import log_error
 
 from .settings import MEDIA_URL, STATIC_URL
 
@@ -445,6 +444,7 @@ def increment_serial_number(serial, part=None):
     Returns:
         incremented value, or None if incrementing could not be performed.
     """
+    from InvenTree.exceptions import log_error
     from plugin.registry import registry
 
     # Ensure we start with a string value
