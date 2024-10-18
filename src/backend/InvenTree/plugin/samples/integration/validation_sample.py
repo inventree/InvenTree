@@ -140,8 +140,17 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-        if serial == 'ZZZ':
-            return 'AAA'
+        try:
+            sn = int(serial)
+            sn += 1
+
+            # Skip any serial number which is a multiple of 5
+            if sn % 5 == 0:
+                sn += 1
+
+            return str(sn)
+        except ValueError:
+            pass
 
         # Return "None" to defer to the next plugin or builtin functionality
         return None
