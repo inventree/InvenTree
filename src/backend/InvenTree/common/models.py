@@ -876,7 +876,14 @@ class BaseInvenTreeSetting(models.Model):
             if self.is_int():
                 value = self.as_int()
 
-            validator(value)
+            try:
+                validator(value)
+            except ValidationError as e:
+                raise e
+            except Exception:
+                raise ValidationError({
+                    'value': _('Value does not pass validation checks')
+                })
 
     def validate_unique(self, exclude=None):
         """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
