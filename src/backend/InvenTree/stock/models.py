@@ -1238,10 +1238,12 @@ class StockItem(
             location=location,
         )
 
+        # Clear out allocation information for the stock item
         self.customer = None
         self.belongs_to = None
         self.sales_order = None
         self.location = location
+        self.clearAllocations()
 
         trigger_event('stockitem.returnedfromcustomer', id=self.id)
 
@@ -1627,8 +1629,9 @@ class StockItem(
         existing = self.part.find_conflicting_serial_numbers(serials)
 
         if len(existing) > 0:
-            exists = ','.join([str(x) for x in existing])
-            msg = _('Serial numbers already exist') + f': {exists}'
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join([str(x) for x in existing])
             raise ValidationError({'serial_numbers': msg})
 
         # Serialize this StockItem
@@ -1864,7 +1867,7 @@ class StockItem(
 
             # Any "sales order allocations" for the other item must be assigned to this one
             for allocation in other.sales_order_allocations.all():
-                allocation.stock_item = self()
+                allocation.stock_item = self
                 allocation.save()
 
             # Prevent atomicity issues when we are merging our own "parent" part in

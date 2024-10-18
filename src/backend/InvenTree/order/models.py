@@ -873,7 +873,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     deltas=tracking_info,
                     location=location,
                     purchaseorder=self,
-                    quantity=quantity,
+                    quantity=float(quantity),
                 )
 
         # Update the number of parts received against the particular line item
@@ -2328,7 +2328,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     # endregion
 
     @transaction.atomic
-    def receive_line_item(self, line, location, user, note=''):
+    def receive_line_item(self, line, location, user, note='', **kwargs):
         """Receive a line item against this ReturnOrder.
 
         Rules:
@@ -2354,7 +2354,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = StockStatus.QUARANTINED.value
+        stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None

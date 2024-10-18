@@ -223,8 +223,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
         hidden: !company?.is_customer,
-        content: company.pk && (
-          <ReturnOrderTable params={{ customer: company.pk }} />
+        content: company.pk ? (
+          <ReturnOrderTable customerId={company.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {

@@ -1,6 +1,7 @@
 """Template tags for rendering various barcodes."""
 
 from django import template
+from django.utils.safestring import mark_safe
 
 import barcode as python_barcode
 import qrcode.constants as ECL
@@ -24,6 +25,23 @@ def image_data(img, fmt='PNG'):
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
     return report.helpers.encode_image_base64(img, fmt)
+
+
+@register.simple_tag()
+def clean_barcode(data):
+    """Return a 'cleaned' string for encoding into a barcode / qrcode.
+
+    - This function runs the data through bleach, and removes any malicious HTML content.
+    - Used to render raw barcode data into the rendered HTML templates
+    """
+    from InvenTree.helpers import strip_html_tags
+
+    cleaned_date = strip_html_tags(data)
+
+    # Remove back-tick character (prevent injection)
+    cleaned_date = cleaned_date.replace('`', '')
+
+    return mark_safe(cleaned_date)
 
 
 @register.simple_tag()

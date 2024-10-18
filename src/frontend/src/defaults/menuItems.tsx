@@ -39,9 +39,9 @@ export const menuItems: menuItemsCollection = {
     link: '/stock'
   },
   build: {
-    id: 'build',
-    text: <Trans>Build</Trans>,
-    link: '/build/'
+    id: 'manufacturing',
+    text: <Trans>Manufacturing</Trans>,
+    link: '/manufacturing/'
   },
   purchasing: {
     id: 'purchasing',

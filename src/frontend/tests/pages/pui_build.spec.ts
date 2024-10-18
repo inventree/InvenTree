@@ -8,7 +8,7 @@ test('Pages - Build Order', async ({ page }) => {
   await page.goto(`${baseUrl}/part/`);
 
   // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Build', exact: true }).click();
+  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -30,7 +30,7 @@ test('Pages - Build Order', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Back to the build list
-  await page.getByLabel('breadcrumb-0-build-orders').click();
+  await page.getByLabel('breadcrumb-0-manufacturing').click();
 
   // Load a different build order
   await page.getByRole('cell', { name: 'BO0011' }).click();
@@ -88,7 +88,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   await page.goto(`${baseUrl}/part/`);
 
   // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Build', exact: true }).click();
+  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();

@@ -270,8 +270,6 @@ class Build(
         related_name='builds',
         limit_choices_to={
             'assembly': True,
-            'active': True,
-            'virtual': False,
         },
         help_text=_('Select part to build'),
     )
@@ -942,7 +940,7 @@ class Build(
                 StockHistoryCode.BUILD_OUTPUT_CREATED,
                 user,
                 deltas={
-                    'quantity': quantity,
+                    'quantity': float(quantity),
                     'buildorder': self.pk,
                     'batch': batch,
                     'location': location.pk if location else None
