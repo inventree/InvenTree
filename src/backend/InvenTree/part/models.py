@@ -55,6 +55,7 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
+from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
 from order import models as OrderModels
@@ -659,6 +660,8 @@ class Part(
             except ValidationError as exc:
                 if raise_error:
                     raise ValidationError({'name': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_name')
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -678,6 +681,8 @@ class Part(
             except ValidationError as exc:
                 if raise_error:
                     raise ValidationError({'IPN': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_ipn')
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -792,6 +797,8 @@ class Part(
                 raise exc
             else:
                 return False
+        except Exception:
+            log_error('part.validate_serial_number')
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -868,7 +875,7 @@ class Part(
 
         return conflicts
 
-    def get_latest_serial_number(self):
+    def get_latest_serial_number(self, allow_plugins=True):
         """Find the 'latest' serial number for this Part.
 
         Here we attempt to find the "highest" serial number which exists for this Part.
@@ -881,15 +888,26 @@ class Part(
         Returns:
             The latest serial number specified for this part, or None
         """
+        from plugin.registry import registry
+
+        if allow_plugins:
+            # Check with plugin system
+            # If any plugin returns a non-null result, that takes priority
+            for plugin in registry.with_mixin('validation'):
+                try:
+                    result = plugin.get_latest_serial_number(self)
+                    if result is not None:
+                        return str(result)
+                except Exception:
+                    log_error(f'{plugin.slug}.get_latest_serial_number')
+
+        # No plugin returned a result, so we will run the default query
         stock = (
             StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
         )
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
-        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
-            # Serial numbers are unique across all parts
-            pass
-        else:
+        if not get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
             # Serial numbers are unique acros part trees
             stock = stock.filter(part__tree_id=self.tree_id)
 
@@ -902,6 +920,12 @@ class Part(
 
         # Return the first serial value
         return stock[0].serial
+
+    def get_next_serial_number(self):
+        """Return the 'next' serial number in sequence."""
+        sn = self.get_latest_serial_number()
+
+        return InvenTree.helpers.increment_serial_number(sn, self)
 
     @property
     def full_name(self) -> str:
@@ -3928,6 +3952,8 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValidationError as exc:
                 # Re-throw the ValidationError against the 'data' field
                 raise ValidationError({'data': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_parameter')
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.

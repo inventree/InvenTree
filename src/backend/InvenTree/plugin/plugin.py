@@ -14,7 +14,7 @@ from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import pui_url
+import InvenTree.helpers
 from plugin.helpers import get_git_log
 
 logger = logging.getLogger('inventree')
@@ -380,9 +380,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             return f'{reverse("settings")}#select-plugin-{self.slug}'
         config = self.plugin_config()
         if config:
-            return pui_url(f'/settings/admin/plugin/{config.pk}/')
+            return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
         else:
-            return pui_url('/settings/admin/plugin/')
+            return InvenTree.helpers.pui_url('/settings/admin/plugin/')
 
     # region package info
     def _get_package_commit(self):
