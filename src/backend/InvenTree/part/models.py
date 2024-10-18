@@ -55,6 +55,7 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
+from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
 from order import models as OrderModels
@@ -659,6 +660,8 @@ class Part(
             except ValidationError as exc:
                 if raise_error:
                     raise ValidationError({'name': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_name')
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -678,6 +681,8 @@ class Part(
             except ValidationError as exc:
                 if raise_error:
                     raise ValidationError({'IPN': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_ipn')
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -792,6 +797,8 @@ class Part(
                 raise exc
             else:
                 return False
+        except Exception:
+            log_error('part.validate_serial_number')
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -3928,6 +3935,8 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValidationError as exc:
                 # Re-throw the ValidationError against the 'data' field
                 raise ValidationError({'data': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_parameter')
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.
