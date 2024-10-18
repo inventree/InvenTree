@@ -220,8 +220,13 @@ export default function CategoryDetail() {
 
   const categoryActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.partcategory} pk={category.pk} />,
+      <AdminButton
+        key='admin'
+        model={ModelType.partcategory}
+        pk={category.pk}
+      />,
       <OptionsActionDropdown
+        key='category-actions'
         tooltip={t`Category Actions`}
         actions={[
           EditItemAction({

@@ -111,6 +111,7 @@ export default function CustomStateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key={'add'}
         onClick={() => newCustomState.open()}
         tooltip={t`Add State`}
       />

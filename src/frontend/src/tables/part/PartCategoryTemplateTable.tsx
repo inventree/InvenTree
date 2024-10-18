@@ -128,6 +128,7 @@ export default function PartCategoryTemplateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         tooltip={t`Add Category Parameter`}
         onClick={() => newTemplate.open()}
         hidden={!user.hasAddRole(UserRoles.part)}
