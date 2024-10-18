@@ -265,7 +265,10 @@ export function BomTable({
             return '-';
           }
 
-          if (!isFinite(record.can_build) || isNaN(record.can_build)) {
+          if (
+            !Number.isFinite(record.can_build) ||
+            Number.isNaN(record.can_build)
+          ) {
             return '-';
           }
 

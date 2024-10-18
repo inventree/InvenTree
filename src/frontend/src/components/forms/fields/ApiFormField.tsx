@@ -197,7 +197,7 @@ export function ApiFormField({
         break;
     }
 
-    if (isNaN(val) || !isFinite(val)) {
+    if (Number.isNaN(val) || !Number.isFinite(val)) {
       val = '';
     }
 

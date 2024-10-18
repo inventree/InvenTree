@@ -49,7 +49,7 @@ import { PartListTable } from '../../tables/part/PartTable';
 export default function CategoryDetail() {
   const { id: _id } = useParams();
   const id = useMemo(
-    () => (!isNaN(Number.parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
 
