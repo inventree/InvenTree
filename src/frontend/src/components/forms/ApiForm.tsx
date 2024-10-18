@@ -641,7 +641,7 @@ export function ApiForm({
           <Group justify='right'>
             {props.actions?.map((action, i) => (
               <Button
-                key={i}
+                key={`${i}-${action.text}`}
                 onClick={action.onClick}
                 variant={action.variant ?? 'outline'}
                 radius='sm'

@@ -61,7 +61,7 @@ export function BreadcrumbList({
           {elements.map((breadcrumb, index) => {
             return (
               <Anchor
-                key={index}
+                key={`${index}-${breadcrumb.name}`}
                 aria-label={`breadcrumb-${index}-${identifierString(
                   breadcrumb.name
                 )}`}

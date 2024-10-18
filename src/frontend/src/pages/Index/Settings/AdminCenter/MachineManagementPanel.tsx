@@ -64,7 +64,7 @@ export default function MachineManagementPanel() {
         ) : (
           <List>
             {registryStatus?.registry_errors?.map((error, i) => (
-              <List.Item key={i}>
+              <List.Item key={`${i}-${error.message}`}>
                 <Code>{error.message}</Code>
               </List.Item>
             ))}

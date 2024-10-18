@@ -273,7 +273,7 @@ function MachineDriverDrawer({
               )}
               <List w='100%'>
                 {machineDriver?.driver_errors.map((error, i) => (
-                  <List.Item key={i}>
+                  <List.Item key={`${i}-${error}`}>
                     <Code>{error}</Code>
                   </List.Item>
                 ))}

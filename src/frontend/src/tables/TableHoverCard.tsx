@@ -32,7 +32,7 @@ export function TableHoverCard({
       return (
         <Stack gap='xs'>
           {extra.map((item, idx) => (
-            <div key={`item-${idx}`}>{item}</div>
+            <div key={`item-${idx}-${item}`}>{item}</div>
           ))}
         </Stack>
       );

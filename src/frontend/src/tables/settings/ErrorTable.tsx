@@ -48,7 +48,7 @@ function ErrorDetail({ error }: { error: any }) {
             <Table.Td colSpan={2}>
               <Stack gap={3}>
                 {error.data.split('\n').map((line: string, index: number) => (
-                  <Text size='xs' key={`error-line-${index}`}>
+                  <Text size='xs' key={`error-line-${index}-${line}`}>
                     {line}
                   </Text>
                 ))}

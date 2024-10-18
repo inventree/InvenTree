@@ -25,7 +25,7 @@ export function ButtonMenu({
       <Menu.Dropdown>
         {label && <Menu.Label>{label}</Menu.Label>}
         {actions.map((action, i) => (
-          <Menu.Item key={i}>{action}</Menu.Item>
+          <Menu.Item key={`${i}-${action}`}>{action}</Menu.Item>
         ))}
       </Menu.Dropdown>
     </Menu>
