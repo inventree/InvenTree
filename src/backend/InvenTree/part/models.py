@@ -875,7 +875,7 @@ class Part(
 
         return conflicts
 
-    def get_latest_serial_number(self):
+    def get_latest_serial_number(self, allow_plugins=True):
         """Find the 'latest' serial number for this Part.
 
         Here we attempt to find the "highest" serial number which exists for this Part.
@@ -888,9 +888,24 @@ class Part(
         Returns:
             The latest serial number specified for this part, or None
         """
-        stock = (
-            StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
-        )
+        from plugin.registry import registry
+
+        if allow_plugins:
+            # Check with plugin system
+            # If any plugin returns a non-null result, that takes priority
+            for plugin in registry.with_mixin('validation'):
+                try:
+                    result = plugin.get_latest_serial_number(self)
+                    if result is not None:
+                        return str(result)
+                except Exception:
+                    log_error(f'{plugin.slug}.get_latest_serial_number')
+
+            stock = (
+                StockModels.StockItem.objects.all()
+                .exclude(serial=None)
+                .exclude(serial='')
+            )
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
         if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
