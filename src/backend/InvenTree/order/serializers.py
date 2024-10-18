@@ -20,9 +20,11 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
+import company.models as company_models
 import order.models
 import part.filters as part_filters
 import part.models as part_models
+import part.serializers as part_serializers
 import stock.models
 import stock.serializers
 from common.serializers import ProjectCodeSerializer
@@ -945,6 +947,52 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
+class PurchaseHistoryRequestSerializer(
+    part_serializers.PartOrderHistoryRequestSerializer
+):
+    """Serializer for a PurchaseHistory request."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            *part_serializers.PartOrderHistoryRequestSerializer.Meta.fields,
+            'supplier',
+        ]
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company_models.Company.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Supplier'),
+    )
+
+
+class SalesHistoryRequestSerializer(part_serializers.PartOrderHistoryRequestSerializer):
+    """Serializer for a SalesHistory request."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            *part_serializers.PartOrderHistoryRequestSerializer.Meta.fields,
+            'customer',
+        ]
+
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=company_models.Company.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Customer'),
+    )
+
+
+class ReturnHistoryRequestSerializer(SalesHistoryRequestSerializer):
+    """Serializer for a ReturnHistory request."""
+
+
 @register_importer()
 class SalesOrderSerializer(
     NotesFieldMixin,
@@ -1770,6 +1818,8 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
+            'issue_date',
+            'complete_date',
             'customer',
             'customer_detail',
             'customer_reference',

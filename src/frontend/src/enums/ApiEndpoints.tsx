@@ -154,17 +154,22 @@ export enum ApiEndpoints {
   purchase_order_extra_line_list = 'order/po-extra-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 
+  purchase_order_history = 'order/po/history/',
+
   sales_order_list = 'order/so/',
   sales_order_issue = 'order/so/:id/issue/',
   sales_order_hold = 'order/so/:id/hold/',
   sales_order_cancel = 'order/so/:id/cancel/',
   sales_order_ship = 'order/so/:id/ship/',
   sales_order_complete = 'order/so/:id/complete/',
+  sales_order_allocate = 'order/so/:id/allocate/',
+  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
-  sales_order_allocate = 'order/so/:id/allocate/',
-  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
+  sales_order_history = 'order/so/history/',
 
   sales_order_shipment_list = 'order/so/shipment/',
   sales_order_shipment_complete = 'order/so/shipment/:id/ship/',
@@ -177,6 +182,8 @@ export enum ApiEndpoints {
   return_order_receive = 'order/ro/:id/receive/',
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
+
+  return_order_history = 'order/ro/history/',
 
   // Template API endpoints
   label_list = 'label/template/',

@@ -100,10 +100,12 @@ import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartT
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
-import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartPricingPanel from './PartPricingPanel';
+import PartPurchasingPanel from './PartPurchasingPanel';
+import PartReturnPanel from './PartReturnPanel';
+import PartSalesPanel from './PartSalesPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
 
@@ -351,7 +353,7 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'saleable',
+        name: 'salable',
         label: t`Saleable Part`
       },
       {
@@ -690,22 +692,26 @@ export default function PartDetail() {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !part.purchaseable,
-        content: <PartPurchaseOrdersTable partId={part.pk} />
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+        content: <PartPurchasingPanel part={part} />
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable,
-        content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
+        hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
+        content: <PartSalesPanel part={part} />
       },
       {
         name: 'return_orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !part.salable || !globalSettings.isSet('RETURNORDER_ENABLED'),
-        content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
+        hidden:
+          !part.salable ||
+          !user.hasViewRole(UserRoles.return_order) ||
+          !globalSettings.isSet('RETURNORDER_ENABLED'),
+        content: <PartReturnPanel part={part} />
       },
       {
         name: 'stocktake',
