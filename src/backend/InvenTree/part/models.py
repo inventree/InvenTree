@@ -901,6 +901,7 @@ class Part(
                 except Exception:
                     log_error(f'{plugin.slug}.get_latest_serial_number')
 
+        # No plugin returned a result, so we will run the default query
         stock = (
             StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
         )
