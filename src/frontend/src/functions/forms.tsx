@@ -109,7 +109,7 @@ export function mapFields(
 
   for (const [k, v] of Object.entries(fields)) {
     const path = _path ? `${_path}.${k}` : k;
-    let value;
+    let value: any;
 
     if (v.field_type === 'nested object' && v.children) {
       value = mapFields(v.children, fieldFunction, path);

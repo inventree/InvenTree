@@ -48,7 +48,7 @@ export type TemplateEditorUIFeature = {
     }) => void;
     template: TemplateI;
   };
-  featureReturnType: void;
+  featureReturnType: undefined;
 };
 
 export type TemplatePreviewUIFeature = {
@@ -74,5 +74,5 @@ export type TemplatePreviewUIFeature = {
       ) => void | Promise<void>;
     }) => void;
   };
-  featureReturnType: void;
+  featureReturnType: undefined;
 };
