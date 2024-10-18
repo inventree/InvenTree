@@ -1138,6 +1138,10 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             raise ValidationError(_("Failed to start auto-allocation task"))
 
 
+class BuildHistoryRequestSerializer(part_serializers.PartOrderHistoryRequestSerializer):
+    """Serializer for requesting a build order history for a particular part."""
+    ...
+
 class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializes a BuildItem object, which is an allocation of a stock item against a build order."""
 
