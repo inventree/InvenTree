@@ -32,12 +32,12 @@ export function MainMenu() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (
-    <Menu width={260} position="bottom-end">
+    <Menu width={260} position='bottom-end'>
       <Menu.Target>
         <UnstyledButton className={classes.layoutHeaderUser}>
           <Group gap={7}>
             {username() ? (
-              <Text fw={500} size="sm" style={{ lineHeight: 1 }} mr={3}>
+              <Text fw={500} size='sm' style={{ lineHeight: 1 }} mr={3}>
                 {username()}
               </Text>
             ) : (
@@ -54,7 +54,7 @@ export function MainMenu() {
         <Menu.Item
           leftSection={<IconUserCog />}
           component={Link}
-          to="/settings/user"
+          to='/settings/user'
         >
           <Trans>Account Settings</Trans>
         </Menu.Item>
@@ -62,7 +62,7 @@ export function MainMenu() {
           <Menu.Item
             leftSection={<IconSettings />}
             component={Link}
-            to="/settings/system"
+            to='/settings/system'
           >
             <Trans>System Settings</Trans>
           </Menu.Item>
@@ -81,7 +81,7 @@ export function MainMenu() {
           <Menu.Item
             leftSection={<IconUserBolt />}
             component={Link}
-            to="/settings/admin"
+            to='/settings/admin'
           >
             <Trans>Admin Center</Trans>
           </Menu.Item>

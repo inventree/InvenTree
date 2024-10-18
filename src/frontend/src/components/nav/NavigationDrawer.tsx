@@ -14,7 +14,7 @@ import { aboutLinks, navDocLinks } from '../../defaults/links';
 import { menuItems } from '../../defaults/menuItems';
 import * as classes from '../../main.css';
 import { DocumentationLinks } from '../items/DocumentationLinks';
-import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
+import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
@@ -53,13 +53,13 @@ function DrawerContent() {
   });
 
   return (
-    <Flex direction="column" mih="100vh" p={16}>
+    <Flex direction='column' mih='100vh' p={16}>
       <Title order={3}>{t`Navigation`}</Title>
       <Container className={classes.layoutContent} p={0}>
-        <ScrollArea h={scrollHeight} type="always" offsetScrollbars>
+        <ScrollArea h={scrollHeight} type='always' offsetScrollbars>
           <Title order={5}>{t`Pages`}</Title>
           <MenuLinks links={onlyItems} />
-          <Space h="md" />
+          <Space h='md' />
           {plugins.length > 0 ? (
             <>
               <Title order={5}>{t`Plugins`}</Title>
@@ -71,10 +71,10 @@ function DrawerContent() {
         </ScrollArea>
       </Container>
       <div ref={ref}>
-        <Space h="md" />
+        <Space h='md' />
         <Title order={5}>{t`Documentation`}</Title>
         <DocumentationLinks links={navDocLinks} />
-        <Space h="md" />
+        <Space h='md' />
         <Title order={5}>{t`About`}</Title>
         <DocumentationLinks links={aboutLinks} />
       </div>

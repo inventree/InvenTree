@@ -25,7 +25,7 @@ import { MenuLinks } from '../items/MenuLinks';
 const onlyItems = Object.values(menuItems);
 
 export function NavHoverMenu({
-  openDrawer: openDrawer
+  openDrawer
 }: Readonly<{
   openDrawer: () => void;
 }>) {
@@ -47,23 +47,23 @@ export function NavHoverMenu({
     <HoverCard
       width={600}
       openDelay={300}
-      position="bottom"
-      shadow="md"
+      position='bottom'
+      shadow='md'
       withinPortal
     >
       <HoverCard.Target>
-        <UnstyledButton onClick={() => openDrawer()} aria-label="Homenav">
+        <UnstyledButton onClick={() => openDrawer()} aria-label='Homenav'>
           <InvenTreeLogo />
         </UnstyledButton>
       </HoverCard.Target>
 
       <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
-        <Group justify="space-between" px="md">
+        <Group justify='space-between' px='md'>
           <ActionIcon
             onClick={openDrawer}
             onMouseOver={openDrawer}
             title={t`Open Navigation`}
-            variant="default"
+            variant='default'
           >
             <IconLayoutSidebar />
           </ActionIcon>
@@ -80,33 +80,33 @@ export function NavHoverMenu({
               <Skeleton height={20} width={40} radius={vars.radiusDefault} />
             )}
           </Group>
-          <Anchor href="#" fz="xs" onClick={openDrawer}>
+          <Anchor href='#' fz='xs' onClick={openDrawer}>
             <Trans>View all</Trans>
           </Anchor>
         </Group>
 
         <Divider
-          my="sm"
-          mx="-md"
+          my='sm'
+          mx='-md'
           color={
             colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
           }
         />
         <MenuLinks links={onlyItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>
-          <Group justify="space-between">
+          <Group justify='space-between'>
             <div>
-              <Text fw={500} fz="sm">
+              <Text fw={500} fz='sm'>
                 <Trans>Get started</Trans>
               </Text>
-              <Text size="xs" c="dimmed">
+              <Text size='xs' c='dimmed'>
                 <Trans>
                   Overview over high-level objects, functions and possible
                   usecases.
                 </Trans>
               </Text>
             </div>
-            <Button variant="default">
+            <Button variant='default'>
               <Trans>Get started</Trans>
             </Button>
           </Group>

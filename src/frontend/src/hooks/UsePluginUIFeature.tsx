@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { api } from '../App';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';
-import {
+import type {
   BaseUIFeature,
   PluginUIFeatureAPIResponse,
   PluginUIFuncWithoutInvenTreeContextType

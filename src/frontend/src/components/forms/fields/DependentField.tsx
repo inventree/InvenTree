@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import { Control, FieldValues, useFormContext } from 'react-hook-form';
+import {
+  type Control,
+  type FieldValues,
+  useFormContext
+} from 'react-hook-form';
 
 import { api } from '../../../App';
 import {
@@ -8,8 +12,8 @@ import {
 } from '../../../functions/forms';
 import {
   ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
+  type ApiFormFieldSet,
+  type ApiFormFieldType
 } from './ApiFormField';
 
 export function DependentField({

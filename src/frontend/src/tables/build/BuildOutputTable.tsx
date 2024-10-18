@@ -27,10 +27,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 type TestResultOverview = {
@@ -118,13 +118,13 @@ export default function BuildOutputTable({
     (records: any[]): any[] => {
       records?.forEach((record: any, index: number) => {
         // Test result information, per record
-        let results: TestResultOverview[] = [];
-        let passCount: number = 0;
+        const results: TestResultOverview[] = [];
+        let passCount = 0;
 
         // Iterate through each
         testTemplates?.forEach((template: any) => {
           // Find the "newest" result for this template in the returned data
-          let result = record.tests
+          const result = record.tests
             ?.filter((test: any) => test.template == template.pk)
             .sort((a: any, b: any) => {
               return a.pk < b.pk ? 1 : -1;
@@ -145,14 +145,14 @@ export default function BuildOutputTable({
         records[index].results = results;
 
         // Stock allocation information, per record
-        let fullyAllocatedCount: number = 0;
+        let fullyAllocatedCount = 0;
 
         // Iterate through each tracked item
         trackedItems?.forEach((item: any) => {
           let allocated = 0;
 
           // Find all allocations which match the build output
-          let allocations = item.allocations.filter(
+          const allocations = item.allocations.filter(
             (allocation: any) => (allocation.install_into = record.pk)
           );
 
@@ -233,10 +233,10 @@ export default function BuildOutputTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
-        key="complete-selected-outputs"
+        key='complete-selected-outputs'
         tooltip={t`Complete selected outputs`}
-        icon={<InvenTreeIcon icon="success" />}
-        color="green"
+        icon={<InvenTreeIcon icon='success' />}
+        color='green'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
           setSelectedOutputs(table.selectedRecords);
@@ -244,10 +244,10 @@ export default function BuildOutputTable({
         }}
       />,
       <ActionButton
-        key="scrap-selected-outputs"
+        key='scrap-selected-outputs'
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon="delete" />}
-        color="red"
+        icon={<InvenTreeIcon icon='delete' />}
+        color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
           setSelectedOutputs(table.selectedRecords);
@@ -255,10 +255,10 @@ export default function BuildOutputTable({
         }}
       />,
       <ActionButton
-        key="cancel-selected-outputs"
+        key='cancel-selected-outputs'
         tooltip={t`Cancel selected outputs`}
-        icon={<InvenTreeIcon icon="cancel" />}
-        color="red"
+        icon={<InvenTreeIcon icon='cancel' />}
+        color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
           setSelectedOutputs(table.selectedRecords);
@@ -266,7 +266,7 @@ export default function BuildOutputTable({
         }}
       />,
       <AddItemButton
-        key="add-build-output"
+        key='add-build-output'
         tooltip={t`Add Build Output`}
         hidden={!user.hasAddRole(UserRoles.build)}
         onClick={addBuildOutput.open}
@@ -281,21 +281,21 @@ export default function BuildOutputTable({
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
-          icon: <InvenTreeIcon icon="plus" />,
+          icon: <InvenTreeIcon icon='plus' />,
           onClick: notYetImplemented
         },
         {
           title: t`Deallocate`,
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
-          icon: <InvenTreeIcon icon="minus" />,
+          icon: <InvenTreeIcon icon='minus' />,
           onClick: notYetImplemented
         },
         {
           title: t`Complete`,
           tooltip: t`Complete build output`,
           color: 'green',
-          icon: <InvenTreeIcon icon="success" />,
+          icon: <InvenTreeIcon icon='success' />,
           onClick: () => {
             setSelectedOutputs([record]);
             completeBuildOutputsForm.open();
@@ -311,7 +311,7 @@ export default function BuildOutputTable({
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
-          icon: <InvenTreeIcon icon="delete" />,
+          icon: <InvenTreeIcon icon='delete' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);
@@ -321,7 +321,7 @@ export default function BuildOutputTable({
         {
           title: t`Cancel`,
           tooltip: t`Cancel build output`,
-          icon: <InvenTreeIcon icon="cancel" />,
+          icon: <InvenTreeIcon icon='cancel' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);
@@ -395,11 +395,11 @@ export default function BuildOutputTable({
             record.results?.map((result: TestResultOverview) => {
               return (
                 result && (
-                  <Group justify="left" key={result.name} wrap="nowrap">
+                  <Group justify='left' key={result.name} wrap='nowrap'>
                     {result.result ? (
-                      <IconCircleCheck color="green" />
+                      <IconCircleCheck color='green' />
                     ) : (
-                      <IconCircleX color="red" />
+                      <IconCircleX color='red' />
                     )}
                     <Text>{result.name}</Text>
                   </Group>

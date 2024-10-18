@@ -8,7 +8,7 @@ import {
   Title
 } from '@mantine/core';
 import { IconSwitch } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useUserState } from '../../states/UserState';
@@ -34,13 +34,13 @@ export function SettingsHeader({
   const navigate = useNavigate();
 
   return (
-    <Group justify="space-between">
-      <Stack gap="0" ml={'sm'}>
+    <Group justify='space-between'>
+      <Stack gap='0' ml={'sm'}>
         <Group>
-          <StylishText size="xl">{title}</StylishText>
-          {shorthand && <Text c="dimmed">({shorthand})</Text>}
+          <StylishText size='xl'>{title}</StylishText>
+          {shorthand && <Text c='dimmed'>({shorthand})</Text>}
         </Group>
-        <Group>{subtitle ? <Text c="dimmed">{subtitle}</Text> : null}</Group>
+        <Group>{subtitle ? <Text c='dimmed'>{subtitle}</Text> : null}</Group>
       </Stack>
       {user.isStaff() && (
         <SegmentedControl

@@ -13,7 +13,7 @@ export function PlaceholderPill() {
       withArrow
       label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing.`}
     >
-      <Badge color="teal" variant="outline">
+      <Badge color='teal' variant='outline'>
         <Trans>PLH</Trans>
       </Badge>
     </Tooltip>
@@ -27,11 +27,11 @@ export function PlaceholderPanel() {
   return (
     <Stack>
       <Alert
-        color="teal"
+        color='teal'
         title={t`This panel is a placeholder.`}
         icon={<IconInfoCircle />}
       >
-        <Text c="gray">This panel has not yet been implemented</Text>
+        <Text c='gray'>This panel has not yet been implemented</Text>
       </Alert>
     </Stack>
   );

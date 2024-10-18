@@ -45,19 +45,19 @@ export function BreadcrumbList({
   }, [breadcrumbs]);
 
   return (
-    <Paper p="7" radius="xs" shadow="xs">
-      <Group gap="xs">
+    <Paper p='7' radius='xs' shadow='xs'>
+      <Group gap='xs'>
         {navCallback && (
           <ActionIcon
-            key="nav-breadcrumb-action"
-            aria-label="nav-breadcrumb-action"
+            key='nav-breadcrumb-action'
+            aria-label='nav-breadcrumb-action'
             onClick={navCallback}
-            variant="transparent"
+            variant='transparent'
           >
             <IconMenu2 />
           </ActionIcon>
         )}
-        <Breadcrumbs key="breadcrumbs" separator=">">
+        <Breadcrumbs key='breadcrumbs' separator='>'>
           {elements.map((breadcrumb, index) => {
             return (
               <Anchor
@@ -72,7 +72,7 @@ export function BreadcrumbList({
               >
                 <Group gap={4}>
                   {breadcrumb.icon}
-                  <Text size="sm">{breadcrumb.name}</Text>
+                  <Text size='sm'>{breadcrumb.name}</Text>
                 </Group>
               </Anchor>
             );

@@ -29,7 +29,7 @@ import {
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -93,7 +93,7 @@ export function SalesOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-sales-order"
+        key='add-sales-order'
         tooltip={t`Add Sales Order`}
         onClick={() => newSalesOrder.open()}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
@@ -108,8 +108,8 @@ export function SalesOrderTable({
         accessor: 'customer__name',
         title: t`Customer`,
         sortable: true,
-        render: function (record: any) {
-          let customer = record.customer_detail ?? {};
+        render: (record: any) => {
+          const customer = record.customer_detail ?? {};
 
           return (
             <Thumbnail

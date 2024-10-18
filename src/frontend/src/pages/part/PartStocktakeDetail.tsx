@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ChartTooltipProps, LineChart } from '@mantine/charts';
+import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Center,
   Divider,
@@ -26,7 +26,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../../tables/Column';
+import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 
@@ -53,13 +53,13 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
   const value_max = payload.find((item) => item.name == 'value_max');
 
   return (
-    <Paper px="md" py="sm" withBorder shadow="md" radius="md">
-      <Text key="title">{formattedLabel}</Text>
+    <Paper px='md' py='sm' withBorder shadow='md' radius='md'>
+      <Text key='title'>{formattedLabel}</Text>
       <Divider />
-      <Text key="quantity" fz="sm">
+      <Text key='quantity' fz='sm'>
         {t`Quantity`} : {quantity?.value}
       </Text>
-      <Text key="values" fz="sm">
+      <Text key='values' fz='sm'>
         {t`Value`} : {formatPriceRange(value_min?.value, value_max?.value)}
       </Text>
     </Paper>
@@ -166,7 +166,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
   );
 
   const chartData = useMemo(() => {
-    let records =
+    const records =
       table.records?.map((record: any) => {
         return {
           date: new Date(record.date).valueOf(),
@@ -227,7 +227,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
           <LineChart
             data={chartData}
             mah={'500px'}
-            dataKey="date"
+            dataKey='date'
             withLegend
             withYAxis
             withRightYAxis

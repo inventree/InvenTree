@@ -18,7 +18,7 @@ import { ActionButton } from '../../components/buttons/ActionButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
-import { PluginInterface } from '../../components/plugins/PluginInterface';
+import type { PluginInterface } from '../../components/plugins/PluginInterface';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
@@ -28,9 +28,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import type { RowAction } from '../RowActions';
 
 /**
  * Construct an indicator icon for a single plugin
@@ -40,13 +40,13 @@ function PluginIcon({ plugin }: Readonly<{ plugin: PluginInterface }>) {
     if (plugin?.active) {
       return (
         <Tooltip label={t`Plugin is active`}>
-          <IconCircleCheck color="green" />
+          <IconCircleCheck color='green' />
         </Tooltip>
       );
     } else {
       return (
         <Tooltip label={t`Plugin is inactive`}>
-          <IconCircleX color="red" />
+          <IconCircleX color='red' />
         </Tooltip>
       );
     }
@@ -75,13 +75,13 @@ export default function PluginListTable() {
         accessor: 'name',
         title: t`Plugin`,
         sortable: true,
-        render: function (record: any) {
+        render: (record: any) => {
           if (!record) {
             return;
           }
 
           return (
-            <Group justify="left">
+            <Group justify='left'>
               <PluginIcon plugin={record} />
               <Text>{record.name}</Text>
             </Group>
@@ -98,14 +98,14 @@ export default function PluginListTable() {
         accessor: 'meta.description',
         title: t`Description`,
         sortable: false,
-        render: function (record: any) {
+        render: (record: any) => {
           if (record.active) {
             return record?.meta.description;
           } else {
             return (
               <Text
                 style={{ fontStyle: 'italic' }}
-                size="sm"
+                size='sm'
               >{t`Description not available`}</Text>
             );
           }
@@ -135,7 +135,7 @@ export default function PluginListTable() {
 
   const activateModalContent = useMemo(() => {
     return (
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Alert
           color={activate ? 'green' : 'red'}
           icon={<IconCircleCheck />}
@@ -299,11 +299,11 @@ export default function PluginListTable() {
     },
     preFormContent: (
       <Alert
-        color="red"
+        color='red'
         icon={<IconInfoCircle />}
         title={t`Confirm plugin uninstall`}
       >
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <Text>{t`The selected plugin will be uninstalled.`}</Text>
           <Text>{t`This action cannot be undone`}</Text>
         </Stack>
@@ -347,15 +347,15 @@ export default function PluginListTable() {
 
     return [
       <ActionButton
-        key="reload"
-        color="green"
+        key='reload'
+        color='green'
         icon={<IconRefresh />}
         tooltip={t`Reload Plugins`}
         onClick={reloadPlugins}
       />,
       <ActionButton
-        key="install"
-        color="green"
+        key='install'
+        color='green'
         icon={<IconPlaylistAdd />}
         tooltip={t`Install Plugin`}
         onClick={() => {

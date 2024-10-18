@@ -108,7 +108,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   let sn = 1;
 
   if (!!placeholder && placeholder.includes('Next serial number')) {
-    sn = parseInt(placeholder.split(':')[1].trim());
+    sn = Number.parseInt(placeholder.split(':')[1].trim());
   }
 
   // Generate some new serial numbers

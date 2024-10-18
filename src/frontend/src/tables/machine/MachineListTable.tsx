@@ -48,10 +48,10 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { MachineDriverI, MachineTypeI } from './MachineTypeTable';
+import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {
   pk: string;
@@ -74,7 +74,7 @@ function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
   // machine is not active, show a gray dot
   if (!machine.active) {
     return (
-      <Indicator style={style} color="gray">
+      <Indicator style={style} color='gray'>
         <Box></Box>
       </Indicator>
     );
@@ -201,7 +201,7 @@ function MachineDrawer({
           notifications.show({
             message: t`Machine restarted`,
             color: 'green',
-            icon: <IconCheck size="1rem" />
+            icon: <IconCheck size='1rem' />
           });
         });
     },
@@ -237,11 +237,11 @@ function MachineDrawer({
   });
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       {machineEditModal.modal}
       {machineDeleteModal.modal}
 
-      <Group justify="space-between">
+      <Group justify='space-between'>
         <Box></Box>
 
         <Group>
@@ -251,7 +251,7 @@ function MachineDrawer({
 
         <Group>
           {machine?.restart_required && (
-            <Badge color="red">
+            <Badge color='red'>
               <Trans>Restart required</Trans>
             </Badge>
           )}
@@ -285,22 +285,22 @@ function MachineDrawer({
       </Group>
 
       <Card withBorder>
-        <Stack gap="md">
-          <Group justify="space-between">
+        <Stack gap='md'>
+          <Group justify='space-between'>
             <Title order={4}>
               <Trans>Machine information</Trans>
             </Title>
-            <ActionIcon variant="outline" onClick={() => refetch()}>
+            <ActionIcon variant='outline' onClick={() => refetch()}>
               <IconRefresh />
             </ActionIcon>
           </Group>
-          <Stack pos="relative" gap="xs">
+          <Stack pos='relative' gap='xs'>
             <LoadingOverlay
               visible={isFetching}
               overlayProps={{ opacity: 0 }}
             />
             <InfoItem name={t`Machine Type`}>
-              <Group gap="xs">
+              <Group gap='xs'>
                 {machineType ? (
                   <DetailDrawerLink
                     to={`../type-${machine?.machine_type}`}
@@ -313,7 +313,7 @@ function MachineDrawer({
               </Group>
             </InfoItem>
             <InfoItem name={t`Machine Driver`}>
-              <Group gap="xs">
+              <Group gap='xs'>
                 {machineDriver ? (
                   <DetailDrawerLink
                     to={`../driver-${machine?.driver}`}
@@ -332,32 +332,32 @@ function MachineDrawer({
               <YesNoButton value={machine?.active || false} />
             </InfoItem>
             <InfoItem name={t`Status`}>
-              <Flex direction="column">
+              <Flex direction='column'>
                 {machine?.status === -1 ? (
-                  <Text fz="xs">No status</Text>
+                  <Text fz='xs'>No status</Text>
                 ) : (
                   StatusRenderer({
                     status: `${machine?.status || -1}`,
                     type: `MachineStatus__${machine?.status_model}` as any
                   })
                 )}
-                <Text fz="sm">{machine?.status_text}</Text>
+                <Text fz='sm'>{machine?.status_text}</Text>
               </Flex>
             </InfoItem>
-            <Group justify="space-between" gap="xs">
-              <Text fz="sm" fw={700}>
+            <Group justify='space-between' gap='xs'>
+              <Text fz='sm' fw={700}>
                 <Trans>Errors</Trans>:
               </Text>
               {machine && machine?.machine_errors.length > 0 ? (
-                <Badge color="red" style={{ marginLeft: '10px' }}>
+                <Badge color='red' style={{ marginLeft: '10px' }}>
                   {machine?.machine_errors.length}
                 </Badge>
               ) : (
-                <Text fz="xs">
+                <Text fz='xs'>
                   <Trans>No errors reported</Trans>
                 </Text>
               )}
-              <List w="100%">
+              <List w='100%'>
                 {machine?.machine_errors.map((error, i) => (
                   <List.Item key={i}>
                     <Code>{error}</Code>
@@ -368,7 +368,7 @@ function MachineDrawer({
           </Stack>
         </Stack>
       </Card>
-      <Space h="10px" />
+      <Space h='10px' />
 
       {machine?.is_driver_available && (
         <>
@@ -378,7 +378,7 @@ function MachineDrawer({
             </Title>
             <MachineSettingList
               machinePk={machinePk}
-              configType="M"
+              configType='M'
               onChange={refreshAll}
             />
           </Card>
@@ -389,7 +389,7 @@ function MachineDrawer({
             </Title>
             <MachineSettingList
               machinePk={machinePk}
-              configType="D"
+              configType='D'
               onChange={refreshAll}
             />
           </Card>
@@ -421,19 +421,17 @@ export function MachineListTable({
       {
         accessor: 'name',
         sortable: true,
-        render: function (record) {
-          return (
-            <Group justify="left" wrap="nowrap">
-              <MachineStatusIndicator machine={record} />
-              <Text>{record.name}</Text>
-              {record.restart_required && (
-                <Badge color="red">
-                  <Trans>Restart required</Trans>
-                </Badge>
-              )}
-            </Group>
-          );
-        }
+        render: (record) => (
+          <Group justify='left' wrap='nowrap'>
+            <MachineStatusIndicator machine={record} />
+            <Text>{record.name}</Text>
+            {record.restart_required && (
+              <Badge color='red'>
+                <Trans>Restart required</Trans>
+              </Badge>
+            )}
+          </Group>
+        )
       },
       {
         accessor: 'machine_type',
@@ -443,7 +441,7 @@ export function MachineListTable({
             (m) => m.slug === record.machine_type
           );
           return (
-            <Group gap="xs">
+            <Group gap='xs'>
               <Text>
                 {machineType ? machineType.name : record.machine_type}
               </Text>
@@ -458,7 +456,7 @@ export function MachineListTable({
         render: (record) => {
           const driver = machineDrivers?.find((d) => d.slug === record.driver);
           return (
-            <Group gap="xs">
+            <Group gap='xs'>
               <Text>{driver ? driver.name : record.driver}</Text>
               {!record.is_driver_available && <UnavailableIndicator />}
             </Group>
@@ -543,8 +541,8 @@ export function MachineListTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="outline"
-        variant="outline"
+        key='outline'
+        variant='outline'
         onClick={() => {
           setCreateFormMachineType(null);
           createMachineForm.open();

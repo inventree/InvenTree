@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import {
   Button,
   Indicator,
-  IndicatorProps,
+  type IndicatorProps,
   Menu,
   Tooltip
 } from '@mantine/core';
@@ -17,9 +17,9 @@ import {
   IconTrash,
   IconUnlink
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from './QRCode';
@@ -67,17 +67,17 @@ export function ActionDropdown({
   }, [tooltip]);
 
   return !hidden && hasActions ? (
-    <Menu position="bottom-end" key={menuName}>
+    <Menu position='bottom-end' key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
-          <Tooltip label={tooltip} hidden={!tooltip} position="bottom">
+          <Tooltip label={tooltip} hidden={!tooltip} position='bottom'>
             <Button
-              radius="sm"
+              radius='sm'
               variant={noindicator ? 'transparent' : 'light'}
               disabled={disabled}
               aria-label={menuName}
-              p="0"
-              size="sm"
+              p='0'
+              size='sm'
               rightSection={
                 noindicator ? null : <IconChevronDown stroke={1.5} />
               }
@@ -102,7 +102,7 @@ export function ActionDropdown({
               <Tooltip
                 label={action.tooltip}
                 hidden={!action.tooltip}
-                position="left"
+                position='left'
               >
                 <Menu.Item
                   aria-label={id}
@@ -232,7 +232,7 @@ function GeneralBarcodeAction({
 export function EditItemAction(props: ActionDropdownItem): ActionDropdownItem {
   return {
     ...props,
-    icon: <IconEdit color="blue" />,
+    icon: <IconEdit color='blue' />,
     name: t`Edit`,
     tooltip: props.tooltip ?? t`Edit item`
   };
@@ -244,7 +244,7 @@ export function DeleteItemAction(
 ): ActionDropdownItem {
   return {
     ...props,
-    icon: <IconTrash color="red" />,
+    icon: <IconTrash color='red' />,
     name: t`Delete`,
     tooltip: props.tooltip ?? t`Delete item`
   };
@@ -253,7 +253,7 @@ export function DeleteItemAction(
 export function HoldItemAction(props: ActionDropdownItem): ActionDropdownItem {
   return {
     ...props,
-    icon: <InvenTreeIcon icon="hold" iconProps={{ color: 'orange' }} />,
+    icon: <InvenTreeIcon icon='hold' iconProps={{ color: 'orange' }} />,
     name: t`Hold`,
     tooltip: props.tooltip ?? t`Hold`
   };
@@ -264,7 +264,7 @@ export function CancelItemAction(
 ): ActionDropdownItem {
   return {
     ...props,
-    icon: <InvenTreeIcon icon="cancel" iconProps={{ color: 'red' }} />,
+    icon: <InvenTreeIcon icon='cancel' iconProps={{ color: 'red' }} />,
     name: t`Cancel`,
     tooltip: props.tooltip ?? t`Cancel`
   };
@@ -276,7 +276,7 @@ export function DuplicateItemAction(
 ): ActionDropdownItem {
   return {
     ...props,
-    icon: <IconCopy color="green" />,
+    icon: <IconCopy color='green' />,
     name: t`Duplicate`,
     tooltip: props.tooltip ?? t`Duplicate item`
   };

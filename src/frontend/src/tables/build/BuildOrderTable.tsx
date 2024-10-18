@@ -23,7 +23,7 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -178,7 +178,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
-        key="add-build-order"
+        key='add-build-order'
       />
     ];
   }, [user]);

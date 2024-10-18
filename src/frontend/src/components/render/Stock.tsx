@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
 import { ApiIcon } from '../items/ApiIcon';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -67,7 +67,7 @@ export function RenderStockItem(
     <RenderInlineModel
       {...props}
       primary={instance.part_detail?.full_name}
-      suffix={<Text size="sm">{quantity_string}</Text>}
+      suffix={<Text size='sm'>{quantity_string}</Text>}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined

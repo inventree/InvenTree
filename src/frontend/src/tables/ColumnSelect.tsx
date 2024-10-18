@@ -10,9 +10,9 @@ export function TableColumnSelect({
   onToggleColumn: (columnName: string) => void;
 }>) {
   return (
-    <Menu shadow="xs" closeOnItemClick={false}>
+    <Menu shadow='xs' closeOnItemClick={false}>
       <Menu.Target>
-        <ActionIcon variant="transparent" aria-label="table-select-columns">
+        <ActionIcon variant='transparent' aria-label='table-select-columns'>
           <Tooltip label={t`Select Columns`}>
             <IconAdjustments />
           </Tooltip>
@@ -29,7 +29,7 @@ export function TableColumnSelect({
                 checked={!col.hidden}
                 label={col.title || col.accessor}
                 onChange={() => onToggleColumn(col.accessor)}
-                radius="sm"
+                radius='sm'
               />
             </Menu.Item>
           ))}

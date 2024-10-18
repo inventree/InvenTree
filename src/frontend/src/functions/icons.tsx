@@ -1,5 +1,5 @@
 import {
-  Icon,
+  type Icon,
   Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
@@ -63,7 +63,7 @@ import {
   IconPoint,
   IconPrinter,
   IconProgressCheck,
-  IconProps,
+  type IconProps,
   IconQrcode,
   IconQuestionMark,
   IconRefresh,
@@ -94,7 +94,7 @@ import {
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
-import React from 'react';
+import type React from 'react';
 
 const icons = {
   name: IconPoint,

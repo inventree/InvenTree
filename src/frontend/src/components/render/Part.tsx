@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
 import { ApiIcon } from '../items/ApiIcon';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance
@@ -18,7 +18,7 @@ export function RenderPart(
   let badgeText = '';
   let badgeColor = '';
 
-  let stock = instance.total_in_stock;
+  const stock = instance.total_in_stock;
 
   if (instance.active == false) {
     badgeColor = 'red';
@@ -32,7 +32,7 @@ export function RenderPart(
   }
 
   const badge = (
-    <Badge size="xs" color={badgeColor}>
+    <Badge size='xs' color={badgeColor}>
       {badgeText}
     </Badge>
   );

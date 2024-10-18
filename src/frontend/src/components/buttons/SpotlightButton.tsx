@@ -12,8 +12,8 @@ export function SpotlightButton() {
     <ActionIcon
       onClick={() => firstSpotlight.open()}
       title={t`Open spotlight`}
-      variant="transparent"
-      aria-label="open-spotlight"
+      variant='transparent'
+      aria-label='open-spotlight'
     >
       <IconCommand />
     </ActionIcon>

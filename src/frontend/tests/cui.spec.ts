@@ -6,7 +6,7 @@ test('CUI - Index', async ({ page }) => {
   await page.goto(`${classicUrl}/api/`);
   await page.goto(`${classicUrl}/index/`, { timeout: 10000 });
   console.log('Page title:', await page.title());
-  await expect(page).toHaveTitle(RegExp('^InvenTree.*Sign In$'));
+  await expect(page).toHaveTitle(/^InvenTree.*Sign In$/);
   await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible();
 
   await page.getByLabel('username').fill(user.username);

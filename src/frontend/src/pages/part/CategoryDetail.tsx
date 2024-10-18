@@ -10,7 +10,10 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
@@ -21,7 +24,7 @@ import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -46,7 +49,7 @@ import { PartListTable } from '../../tables/part/PartTable';
 export default function CategoryDetail() {
   const { id: _id } = useParams();
   const id = useMemo(
-    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    () => (!isNaN(Number.parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
 
@@ -74,14 +77,14 @@ export default function CategoryDetail() {
       return <Skeleton />;
     }
 
-    let left: DetailsField[] = [
+    const left: DetailsField[] = [
       {
         type: 'text',
         name: 'name',
         label: t`Name`,
         copy: true,
         value_formatter: () => (
-          <Group gap="xs">
+          <Group gap='xs'>
             {category.icon && <ApiIcon name={category.icon} />}
             {category.name}
           </Group>
@@ -118,7 +121,7 @@ export default function CategoryDetail() {
       }
     ];
 
-    let right: DetailsField[] = [
+    const right: DetailsField[] = [
       {
         type: 'text',
         name: 'part_count',
@@ -294,7 +297,7 @@ export default function CategoryDetail() {
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
       >
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <LoadingOverlay visible={instanceQuery.isFetching} />
           <NavigationTree
             modelType={ModelType.partcategory}
@@ -319,7 +322,7 @@ export default function CategoryDetail() {
             editEnabled={user.hasChangePermission(ModelType.partcategory)}
           />
           <PanelGroup
-            pageKey="partcategory"
+            pageKey='partcategory'
             panels={panels}
             model={ModelType.partcategory}
             instance={category}

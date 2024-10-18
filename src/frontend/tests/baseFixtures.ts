@@ -1,11 +1,11 @@
-import { test as baseTest } from '@playwright/test';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import os from 'os';
 import * as path from 'path';
+import { test as baseTest } from '@playwright/test';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
-let platform = os.platform();
+const platform = os.platform();
 let systemKeyVar;
 if (platform === 'darwin') {
   systemKeyVar = 'Meta';

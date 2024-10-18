@@ -7,9 +7,9 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -52,13 +52,13 @@ export function UsedInTable({
       {
         accessor: 'quantity',
         render: (record: any) => {
-          let quantity = formatDecimal(record.quantity);
-          let units = record.sub_part_detail?.units;
+          const quantity = formatDecimal(record.quantity);
+          const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify="space-between" grow>
+            <Group justify='space-between' grow>
               <Text>{quantity}</Text>
-              {units && <Text size="xs">{units}</Text>}
+              {units && <Text size='xs'>{units}</Text>}
             </Group>
           );
         }

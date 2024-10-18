@@ -19,16 +19,11 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
-  DataTableCellClickHandler,
-  DataTableSortStatus
+  type DataTableCellClickHandler,
+  type DataTableSortStatus
 } from 'mantine-datatable';
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import type React from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../App';
@@ -36,22 +31,22 @@ import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ModelType } from '../enums/ModelType';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import { TableState } from '../hooks/UseTable';
+import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
-import { TableColumn } from './Column';
+import type { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
-import { TableFilter } from './Filter';
+import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import { RowAction, RowActions } from './RowActions';
+import { type RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
 const defaultPageSize: number = 25;
@@ -203,9 +198,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
           if (response.status == 200) {
             // Extract field information from the API
 
-            let names: Record<string, string> = {};
+            const names: Record<string, string> = {};
 
-            let fields: ApiFormFieldSet =
+            const fields: ApiFormFieldSet =
               extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
@@ -285,7 +280,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols = columns
+    const cols = columns
       .filter((col) => col?.hidden != true)
       .map((col) => {
         let hidden: boolean = col.hidden ?? false;
@@ -330,9 +325,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {
-    let newColumns = [...dataColumns];
+    const newColumns = [...dataColumns];
 
-    let colIdx = newColumns.findIndex((col) => col.accessor == columnName);
+    const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
 
     if (colIdx >= 0 && colIdx < newColumns.length) {
       newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
@@ -354,8 +349,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
   /*
    * Construct query filters for the current table
    */
-  function getTableFilters(paginate: boolean = false) {
-    let queryParams = {
+  function getTableFilters(paginate = false) {
+    const queryParams = {
       ...tableProps.params
     };
 
@@ -368,7 +363,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     // Allow override of filters based on URL query parameters
     if (urlQueryParams) {
-      for (let [key, value] of urlQueryParams) {
+      for (const [key, value] of urlQueryParams) {
         queryParams[key] = value;
       }
     }
@@ -380,14 +375,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     // Pagination
     if (tableProps.enablePagination && paginate) {
-      let pageSize = tableState.pageSize ?? defaultPageSize;
+      const pageSize = tableState.pageSize ?? defaultPageSize;
       if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
       queryParams.limit = pageSize;
       queryParams.offset = (tableState.page - 1) * pageSize;
     }
 
     // Ordering
-    let ordering = getOrderingTerm();
+    const ordering = getOrderingTerm();
 
     if (ordering) {
       if (sortStatus.direction == 'asc') {
@@ -403,12 +398,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Data download callback
   function downloadData(fileFormat: string) {
     // Download entire dataset (no pagination)
-    let queryParams = getTableFilters(false);
+    const queryParams = getTableFilters(false);
 
     // Specify file format
     queryParams.export = fileFormat;
 
-    let downloadUrl = api.getUri({
+    const downloadUrl = api.getUri({
       url: url,
       params: queryParams
     });
@@ -434,7 +429,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Return the ordering parameter
   function getOrderingTerm() {
-    let key = sortStatus.columnAccessor;
+    const key = sortStatus.columnAccessor;
 
     // Sorting column not specified
     if (key == '') {
@@ -443,7 +438,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     // Find matching column:
     // If column provides custom ordering term, use that
-    let column = dataColumns.find((col: any) => col.accessor == key);
+    const column = dataColumns.find((col: any) => col.accessor == key);
     return column?.ordering || key;
   }
 
@@ -462,14 +457,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
-    let queryParams = getTableFilters(true);
+    const queryParams = getTableFilters(true);
 
     return api
       .get(url, {
         params: queryParams,
         timeout: 5 * 1000
       })
-      .then(function (response) {
+      .then((response) => {
         switch (response.status) {
           case 200:
             setMissingRecordsText(
@@ -512,7 +507,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
         return [];
       })
-      .catch(function (error) {
+      .catch((error) => {
         setMissingRecordsText(t`Error` + ': ' + error.message);
         return [];
       });
@@ -563,7 +558,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     title: t`Delete Selected Items`,
     preFormContent: (
       <Alert
-        color="red"
+        color='red'
         title={t`Are you sure you want to delete the selected items?`}
       >
         {t`This action cannot be undone`}
@@ -618,7 +613,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         if (pk) {
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model
-          let url = getDetailUrl(tableProps.modelType, pk);
+          const url = getDetailUrl(tableProps.modelType, pk);
           navigateToLink(url, navigate, event);
         }
       }
@@ -634,7 +629,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   }
 
   const optionalParams = useMemo(() => {
-    let optionalParamsa: Record<string, any> = {};
+    const optionalParamsa: Record<string, any> = {};
     if (tableProps.enablePagination) {
       optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
       optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
@@ -646,7 +641,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
     <>
       {deleteRecords.modal}
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
-        <Boundary label="table-filter-drawer">
+        <Boundary label='table-filter-drawer'>
           <FilterSelectDrawer
             availableFilters={filters}
             tableState={tableState}
@@ -656,9 +651,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
         </Boundary>
       )}
       <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
-        <Stack gap="sm">
-          <Group justify="apart" grow wrap="nowrap">
-            <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
+        <Stack gap='sm'>
+          <Group justify='apart' grow wrap='nowrap'>
+            <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
               <PrintingActions
                 items={tableState.selectedIds}
                 modelType={tableProps.modelType}
@@ -667,7 +662,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               />
               {(tableProps.barcodeActions?.length ?? 0) > 0 && (
                 <ButtonMenu
-                  key="barcode-actions"
+                  key='barcode-actions'
                   icon={<IconBarcode />}
                   label={t`Barcode Actions`}
                   tooltip={t`Barcode Actions`}
@@ -678,7 +673,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 <ActionButton
                   disabled={!tableState.hasSelectedRecords}
                   icon={<IconTrash />}
-                  color="red"
+                  color='red'
                   tooltip={t`Delete selected records`}
                   onClick={() => {
                     deleteRecords.open();
@@ -690,7 +685,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               ))}
             </Group>
             <Space />
-            <Group justify="right" gap={5} wrap="nowrap">
+            <Group justify='right' gap={5} wrap='nowrap'>
               {tableProps.enableSearch && (
                 <TableSearchInput
                   searchCallback={(term: string) =>
@@ -699,7 +694,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                 />
               )}
               {tableProps.enableRefresh && (
-                <ActionIcon variant="transparent" aria-label="table-refresh">
+                <ActionIcon variant='transparent' aria-label='table-refresh'>
                   <Tooltip label={t`Refresh data`}>
                     <IconRefresh
                       onClick={() => {
@@ -718,9 +713,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
               )}
               {urlQueryParams.size > 0 && (
                 <ActionIcon
-                  variant="transparent"
-                  color="red"
-                  aria-label="table-clear-query-filters"
+                  variant='transparent'
+                  color='red'
+                  aria-label='table-clear-query-filters'
                 >
                   <Tooltip label={t`Clear custom query filters`}>
                     <IconFilterCancel
@@ -733,13 +728,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
               )}
               {tableProps.enableFilters && filters.length > 0 && (
                 <Indicator
-                  size="xs"
+                  size='xs'
                   label={tableState.activeFilters?.length ?? 0}
                   disabled={tableState.activeFilters?.length == 0}
                 >
                   <ActionIcon
-                    variant="transparent"
-                    aria-label="table-select-filters"
+                    variant='transparent'
+                    aria-label='table-select-filters'
                   >
                     <Tooltip label={t`Table Filters`}>
                       <IconFilter
@@ -751,13 +746,13 @@ export function InvenTreeTable<T extends Record<string, any>>({
               )}
               {tableProps.enableDownload && (
                 <DownloadAction
-                  key="download-action"
+                  key='download-action'
                   downloadCallback={downloadData}
                 />
               )}
             </Group>
           </Group>
-          <Box pos="relative">
+          <Box pos='relative'>
             <DataTable
               withTableBorder
               withColumnBorders

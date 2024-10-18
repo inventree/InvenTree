@@ -21,19 +21,14 @@ import {
   IconRefresh
 } from '@tabler/icons-react';
 import Split from '@uiw/react-split';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
-import { TablerIconType } from '../../../functions/icons';
+import type { TablerIconType } from '../../../functions/icons';
 import { apiUrl } from '../../../states/ApiState';
-import { TemplateI } from '../../../tables/settings/TemplateTable';
+import type { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
 import { ModelInformationDict } from '../../render/ModelType';
@@ -159,13 +154,13 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   }, [editorValue]);
 
   const updatePreview = useCallback(
-    async (confirmed: boolean, saveTemplate: boolean = true) => {
+    async (confirmed: boolean, saveTemplate = true) => {
       if (!confirmed) {
         openConfirmModal({
           title: t`Save & Reload Preview`,
           children: (
             <Alert
-              color="yellow"
+              color='yellow'
               icon={<IconAlertTriangle />}
               title={t`Are you sure you want to Save & Reload the preview?`}
             >
@@ -268,17 +263,17 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
               <Tabs.Tab
                 key={Editor.key}
                 value={Editor.key}
-                leftSection={<Editor.icon size="0.8rem" />}
+                leftSection={<Editor.icon size='0.8rem' />}
               >
                 {Editor.name}
               </Tabs.Tab>
             ))}
 
-            <Group justify="right" style={{ flex: '1' }} wrap="nowrap">
+            <Group justify='right' style={{ flex: '1' }} wrap='nowrap'>
               <SplitButton
                 loading={isPreviewLoading}
-                defaultSelected="preview_save"
-                name="preview-options"
+                defaultSelected='preview_save'
+                name='preview-options'
                 options={[
                   {
                     key: 'preview',
@@ -331,7 +326,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
               <Tabs.Tab
                 key={PreviewArea.key}
                 value={PreviewArea.key}
-                leftSection={<PreviewArea.icon size="0.8rem" />}
+                leftSection={<PreviewArea.icon size='0.8rem' />}
               >
                 {PreviewArea.name}
               </Tabs.Tab>
@@ -380,7 +375,7 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                 <PreviewArea.component ref={previewRef} />
 
                 {errorOverlay && (
-                  <Overlay color="red" center blur={0.2}>
+                  <Overlay color='red' center blur={0.2}>
                     <CloseButton
                       onClick={() => setErrorOverlay(null)}
                       style={{
@@ -389,13 +384,13 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                         right: '10px',
                         color: '#fff'
                       }}
-                      variant="filled"
+                      variant='filled'
                     />
                     <Alert
-                      color="red"
+                      color='red'
                       icon={<IconExclamationCircle />}
                       title={t`Error rendering template`}
-                      mx="10px"
+                      mx='10px'
                     >
                       <Code>{errorOverlay}</Code>
                     </Alert>

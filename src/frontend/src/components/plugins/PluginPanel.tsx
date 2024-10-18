@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
 import { Alert, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { InvenTreeContext } from './PluginContext';
+import type { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 // Definition of the plugin panel properties, provided by the server API
@@ -109,10 +109,10 @@ export default function PluginPanelContent({
   }, [pluginProps, pluginContext]);
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       {error && (
         <Alert
-          color="red"
+          color='red'
           title={t`Error Loading Plugin`}
           icon={<IconExclamationCircle />}
         >

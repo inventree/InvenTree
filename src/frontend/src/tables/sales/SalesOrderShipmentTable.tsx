@@ -22,11 +22,11 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, NoteColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowCancelAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowCancelAction, RowEditAction } from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId
@@ -167,7 +167,7 @@ export default function SalesOrderShipmentTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-shipment"
+        key='add-shipment'
         tooltip={t`Add shipment`}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
         onClick={() => {

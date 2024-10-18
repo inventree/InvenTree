@@ -6,7 +6,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -20,7 +23,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -76,7 +79,7 @@ export default function SalesOrderShipmentDetail() {
       return <Skeleton />;
     }
 
-    let data: any = {
+    const data: any = {
       ...shipment,
       customer: customer?.pk,
       customer_name: customer?.name,
@@ -84,7 +87,7 @@ export default function SalesOrderShipmentDetail() {
     };
 
     // Top Left: Order / customer information
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         model: ModelType.salesorder,
@@ -126,7 +129,7 @@ export default function SalesOrderShipmentDetail() {
     ];
 
     // Top right: Shipment information
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'tracking_number',
@@ -214,7 +217,7 @@ export default function SalesOrderShipmentDetail() {
             shipmentId={shipment.pk}
             showPartInfo
             allowEdit={isPending}
-            modelField="item"
+            modelField='item'
             modelTarget={ModelType.stockitem}
           />
         )
@@ -273,11 +276,11 @@ export default function SalesOrderShipmentDetail() {
     }
 
     return [
-      <DetailsBadge label={t`Pending`} color="gray" visible={isPending} />,
-      <DetailsBadge label={t`Shipped`} color="green" visible={!isPending} />,
+      <DetailsBadge label={t`Pending`} color='gray' visible={isPending} />,
+      <DetailsBadge label={t`Shipped`} color='green' visible={!isPending} />,
       <DetailsBadge
         label={t`Delivered`}
-        color="blue"
+        color='blue'
         visible={!!shipment.delivery_date}
       />
     ];
@@ -291,9 +294,9 @@ export default function SalesOrderShipmentDetail() {
     return [
       <PrimaryActionButton
         title={t`Send Shipment`}
-        icon="sales_orders"
+        icon='sales_orders'
         hidden={!isPending}
-        color="green"
+        color='green'
         onClick={() => {
           completeShipment.open();
         }}
@@ -335,7 +338,7 @@ export default function SalesOrderShipmentDetail() {
         status={shipmentStatus}
         loading={shipmentQuery.isFetching || customerQuery.isFetching}
       >
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
             title={t`Sales Order Shipment` + `: ${shipment.reference}`}
             subtitle={t`Sales Order` + `: ${shipment.order_detail?.reference}`}
@@ -353,7 +356,7 @@ export default function SalesOrderShipmentDetail() {
             actions={shipmentActions}
           />
           <PanelGroup
-            pageKey="salesordershipment"
+            pageKey='salesordershipment'
             panels={shipmentPanels}
             model={ModelType.salesordershipment}
             instance={shipment}

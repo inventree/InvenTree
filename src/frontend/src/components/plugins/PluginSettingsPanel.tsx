@@ -69,10 +69,10 @@ export default function PluginSettingsPanel({
 
   return (
     <>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {error && (
           <Alert
-            color="red"
+            color='red'
             title={t`Error Loading Plugin`}
             icon={<IconExclamationCircle />}
           >

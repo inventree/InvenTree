@@ -2,7 +2,7 @@ import { TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import { useCallback, useEffect, useId, useState } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 /*
  * Custom implementation of the mantine <TextInput> component,
@@ -57,7 +57,7 @@ export default function TextField({
       type={definition.field_type}
       value={rawText || ''}
       error={error?.message}
-      radius="sm"
+      radius='sm'
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
         if (event.currentTarget.value != value) {
@@ -67,7 +67,7 @@ export default function TextField({
       onKeyDown={(event) => onKeyDown(event.code)}
       rightSection={
         value && !definition.required ? (
-          <IconX size="1rem" color="red" onClick={() => onTextChange('')} />
+          <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
         ) : null
       }
     />

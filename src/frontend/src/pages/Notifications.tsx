@@ -63,7 +63,7 @@ export default function NotificationsPage() {
       {
         name: 'unread',
         label: t`Notifications`,
-        icon: <IconBellExclamation size="18" />,
+        icon: <IconBellExclamation size='18' />,
         content: (
           <NotificationTable
             params={{ read: false }}
@@ -74,7 +74,10 @@ export default function NotificationsPage() {
                 color: 'green',
                 icon: <IconCircleCheck />,
                 onClick: () => {
-                  let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
+                  const url = apiUrl(
+                    ApiEndpoints.notifications_list,
+                    record.pk
+                  );
                   api
                     .patch(url, {
                       read: true
@@ -98,7 +101,7 @@ export default function NotificationsPage() {
       {
         name: 'history',
         label: t`History`,
-        icon: <IconBellCheck size="18" />,
+        icon: <IconBellCheck size='18' />,
         content: (
           <NotificationTable
             params={{ read: true }}
@@ -108,7 +111,10 @@ export default function NotificationsPage() {
                 title: t`Mark as unread`,
                 icon: <IconCircleX />,
                 onClick: () => {
-                  let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
+                  const url = apiUrl(
+                    ApiEndpoints.notifications_list,
+                    record.pk
+                  );
 
                   api
                     .patch(url, {
@@ -134,7 +140,7 @@ export default function NotificationsPage() {
             ]}
             tableActions={[
               <ActionButton
-                color="red"
+                color='red'
                 icon={<IconTrash />}
                 tooltip={`Delete notifications`}
                 onClick={deleteNotifications}
@@ -149,7 +155,7 @@ export default function NotificationsPage() {
   return (
     <Stack>
       <PageDetail title={t`Notifications`} />
-      <PanelGroup pageKey="notifications" panels={notificationPanels} />
+      <PanelGroup pageKey='notifications' panels={notificationPanels} />
     </Stack>
   );
 }

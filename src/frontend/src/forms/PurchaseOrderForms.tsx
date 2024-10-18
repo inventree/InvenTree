@@ -29,13 +29,13 @@ import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 import {
   TableFieldExtraRow,
-  TableFieldRowProps
+  type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
@@ -144,7 +144,7 @@ export function usePurchaseOrderFields({
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {
         icon: <IconHash />
       },
@@ -307,7 +307,7 @@ function LineItemFormRow({
 
   // Info string with details about certain selected locations
   const locationDescription = useMemo(() => {
-    let text = t`Choose Location`;
+    const text = t`Choose Location`;
 
     if (location === null) {
       return text;
@@ -354,7 +354,7 @@ function LineItemFormRow({
       >
         <FocusTrap>
           <TextInput
-            label="Barcode data"
+            label='Barcode data'
             data-autofocus
             value={barcodeInput}
             onChange={(e) => setBarcodeInput(e.target.value)}
@@ -363,11 +363,11 @@ function LineItemFormRow({
       </Modal>
       <Table.Tr>
         <Table.Td>
-          <Flex gap="sm" align="center">
+          <Flex gap='sm' align='center'>
             <Thumbnail
               size={40}
               src={record.part_detail.thumbnail}
-              align="center"
+              align='center'
             />
             <div>{record.part_detail.name}</div>
           </Flex>
@@ -382,7 +382,7 @@ function LineItemFormRow({
         </Table.Td>
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
           <StandaloneField
-            fieldName="quantity"
+            fieldName='quantity'
             fieldDefinition={{
               field_type: 'number',
               value: props.item.quantity,
@@ -393,62 +393,62 @@ function LineItemFormRow({
           />
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-          <Flex gap="1px">
+          <Flex gap='1px'>
             <ActionButton
-              size="sm"
+              size='sm'
               onClick={() => locationHandlers.toggle()}
-              icon={<InvenTreeIcon icon="location" />}
+              icon={<InvenTreeIcon icon='location' />}
               tooltip={t`Set Location`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={locationOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
-              size="sm"
+              size='sm'
               onClick={() => batchHandlers.toggle()}
-              icon={<InvenTreeIcon icon="batch_code" />}
+              icon={<InvenTreeIcon icon='batch_code' />}
               tooltip={t`Assign Batch Code${
                 record.trackable && ' and Serial Numbers'
               }`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={batchOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
-              size="sm"
-              icon={<InvenTreeIcon icon="packaging" />}
+              size='sm'
+              icon={<InvenTreeIcon icon='packaging' />}
               tooltip={t`Adjust Packaging`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               onClick={() => packagingHandlers.toggle()}
               variant={packagingOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
-              icon={<InvenTreeIcon icon="status" />}
+              icon={<InvenTreeIcon icon='status' />}
               tooltip={t`Change Status`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={statusOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
-              icon={<InvenTreeIcon icon="note" />}
+              icon={<InvenTreeIcon icon='note' />}
               tooltip={t`Add Note`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={noteOpen ? 'filled' : 'transparent'}
               onClick={() => noteHandlers.toggle()}
             />
             {barcode ? (
               <ActionButton
-                icon={<InvenTreeIcon icon="unlink" />}
+                icon={<InvenTreeIcon icon='unlink' />}
                 tooltip={t`Unlink Barcode`}
-                tooltipAlignment="top"
-                variant="filled"
-                color="red"
+                tooltipAlignment='top'
+                variant='filled'
+                color='red'
                 onClick={() => setBarcode(undefined)}
               />
             ) : (
               <ActionButton
-                icon={<InvenTreeIcon icon="barcode" />}
+                icon={<InvenTreeIcon icon='barcode' />}
                 tooltip={t`Scan Barcode`}
-                tooltipAlignment="top"
-                variant="transparent"
+                tooltipAlignment='top'
+                variant='transparent'
                 onClick={() => open()}
               />
             )}
@@ -459,9 +459,9 @@ function LineItemFormRow({
       {locationOpen && (
         <Table.Tr>
           <Table.Td colSpan={10}>
-            <Group grow preventGrowOverflow={false} justify="flex-apart" p="xs">
-              <Container flex={0} p="xs">
-                <InvenTreeIcon icon="downright" />
+            <Group grow preventGrowOverflow={false} justify='flex-apart' p='xs'>
+              <Container flex={0} p='xs'>
+                <InvenTreeIcon icon='downright' />
               </Container>
               <StandaloneField
                 fieldDefinition={{
@@ -477,7 +477,7 @@ function LineItemFormRow({
                   description: locationDescription,
                   value: location,
                   label: t`Location`,
-                  icon: <InvenTreeIcon icon="location" />
+                  icon: <InvenTreeIcon icon='location' />
                 }}
                 defaultValue={
                   record.destination ??
@@ -490,7 +490,7 @@ function LineItemFormRow({
                 {(record.part_detail.default_location ||
                   record.part_detail.category_default_location) && (
                   <ActionButton
-                    icon={<InvenTreeIcon icon="default_location" />}
+                    icon={<InvenTreeIcon icon='default_location' />}
                     tooltip={t`Store at default location`}
                     onClick={() =>
                       props.changeFn(
@@ -500,24 +500,24 @@ function LineItemFormRow({
                           record.part_detail.category_default_location
                       )
                     }
-                    tooltipAlignment="top"
+                    tooltipAlignment='top'
                   />
                 )}
                 {record.destination && (
                   <ActionButton
-                    icon={<InvenTreeIcon icon="destination" />}
+                    icon={<InvenTreeIcon icon='destination' />}
                     tooltip={t`Store at line item destination `}
                     onClick={() =>
                       props.changeFn(props.idx, 'location', record.destination)
                     }
-                    tooltipAlignment="top"
+                    tooltipAlignment='top'
                   />
                 )}
                 {!record.destination &&
                   record.destination_detail &&
                   record.received > 0 && (
                     <ActionButton
-                      icon={<InvenTreeIcon icon="repeat_destination" />}
+                      icon={<InvenTreeIcon icon='repeat_destination' />}
                       tooltip={t`Store with already received stock`}
                       onClick={() =>
                         props.changeFn(
@@ -526,7 +526,7 @@ function LineItemFormRow({
                           record.destination_detail.pk
                         )
                       }
-                      tooltipAlignment="top"
+                      tooltipAlignment='top'
                     />
                   )}
               </Flex>

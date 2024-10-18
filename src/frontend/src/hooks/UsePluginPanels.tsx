@@ -2,19 +2,19 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
-import { PanelType } from '../components/panels/Panel';
+import type { PanelType } from '../components/panels/Panel';
 import {
-  InvenTreeContext,
+  type InvenTreeContext,
   useInvenTreeContext
 } from '../components/plugins/PluginContext';
 import PluginPanelContent, {
-  PluginPanelProps,
+  type PluginPanelProps,
   isPluginPanelHidden
 } from '../components/plugins/PluginPanel';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
-import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 

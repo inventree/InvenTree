@@ -3,7 +3,7 @@ import { Title } from '@mantine/core';
 import { lazy } from 'react';
 
 import {
-  LayoutItemType,
+  type LayoutItemType,
   WidgetLayout
 } from '../../components/widgets/WidgetLayout';
 import { LoadingItem } from '../../functions/loading';

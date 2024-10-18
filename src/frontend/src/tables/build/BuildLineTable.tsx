@@ -24,11 +24,11 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn, PartColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import type { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({
@@ -95,15 +95,15 @@ export default function BuildLineTable({
   }, []);
 
   const renderAvailableColumn = useCallback((record: any) => {
-    let bom_item = record?.bom_item_detail ?? {};
-    let extra: any[] = [];
+    const bom_item = record?.bom_item_detail ?? {};
+    const extra: any[] = [];
     let available = record?.available_stock;
 
     // Account for substitute stock
     if (record.available_substitute_stock > 0) {
       available += record.available_substitute_stock;
       extra.push(
-        <Text key="substitite" size="sm">
+        <Text key='substitite' size='sm'>
           {t`Includes substitute stock`}
         </Text>
       );
@@ -113,7 +113,7 @@ export default function BuildLineTable({
     if (bom_item.allow_variants && record.available_variant_stock > 0) {
       available += record.available_variant_stock;
       extra.push(
-        <Text key="variant" size="sm">
+        <Text key='variant' size='sm'>
           {t`Includes variant stock`}
         </Text>
       );
@@ -122,7 +122,7 @@ export default function BuildLineTable({
     // Account for in-production stock
     if (record.in_production > 0) {
       extra.push(
-        <Text key="production" size="sm">
+        <Text key='production' size='sm'>
           {t`In production`}: {record.in_production}
         </Text>
       );
@@ -131,7 +131,7 @@ export default function BuildLineTable({
     // Account for stock on order
     if (record.on_order > 0) {
       extra.push(
-        <Text key="on-order" size="sm">
+        <Text key='on-order' size='sm'>
           {t`On order`}: {record.on_order}
         </Text>
       );
@@ -140,7 +140,7 @@ export default function BuildLineTable({
     // Account for "external" stock
     if (record.external_stock > 0) {
       extra.push(
-        <Text key="external" size="sm">
+        <Text key='external' size='sm'>
           {t`External stock`}: {record.external_stock}
         </Text>
       );
@@ -150,7 +150,7 @@ export default function BuildLineTable({
 
     if (!sufficient) {
       extra.push(
-        <Text key="insufficient" c="orange" size="sm">
+        <Text key='insufficient' c='orange' size='sm'>
           {t`Insufficient stock`}
         </Text>
       );
@@ -165,7 +165,7 @@ export default function BuildLineTable({
             available
           ) : (
             <Text
-              c="red"
+              c='red'
               style={{ fontStyle: 'italic' }}
             >{t`No stock available`}</Text>
           )
@@ -229,10 +229,10 @@ export default function BuildLineTable({
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
-            <Group justify="space-between" wrap="nowrap">
+            <Group justify='space-between' wrap='nowrap'>
               <Text>{record.bom_item_detail?.quantity}</Text>
               {record?.part_detail?.units && (
-                <Text size="xs">[{record.part_detail.units}]</Text>
+                <Text size='xs'>[{record.part_detail.units}]</Text>
               )}
             </Group>
           );
@@ -244,10 +244,10 @@ export default function BuildLineTable({
         switchable: false,
         render: (record: any) => {
           return (
-            <Group justify="space-between" wrap="nowrap">
+            <Group justify='space-between' wrap='nowrap'>
               <Text>{record.quantity}</Text>
               {record?.part_detail?.units && (
-                <Text size="xs">[{record.part_detail.units}]</Text>
+                <Text size='xs'>[{record.part_detail.units}]</Text>
               )}
             </Group>
           );
@@ -319,7 +319,7 @@ export default function BuildLineTable({
     successMessage: t`Auto allocation in progress`,
     table: table,
     preFormContent: (
-      <Alert color="green" title={t`Auto Allocate Stock`}>
+      <Alert color='green' title={t`Auto Allocate Stock`}>
         <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
       </Alert>
     )
@@ -352,7 +352,7 @@ export default function BuildLineTable({
       build_line: selectedLine
     },
     preFormContent: (
-      <Alert color="red" title={t`Deallocate Stock`}>
+      <Alert color='red' title={t`Deallocate Stock`}>
         {selectedLine == undefined ? (
           <Text>{t`Deallocate all untracked stock for this build order`}</Text>
         ) : (
@@ -366,7 +366,7 @@ export default function BuildLineTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      let part = record.part_detail ?? {};
+      const part = record.part_detail ?? {};
 
       // Consumable items have no appropriate actions
       if (record?.bom_item_detail?.consumable) {
@@ -381,20 +381,20 @@ export default function BuildLineTable({
       const hasOutput = !!outputId;
 
       // Can allocate
-      let canAllocate =
+      const canAllocate =
         user.hasChangeRole(UserRoles.build) &&
         record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
       // Can de-allocate
-      let canDeallocate =
+      const canDeallocate =
         user.hasChangeRole(UserRoles.build) &&
         record.allocated > 0 &&
         record.trackable == hasOutput;
 
-      let canOrder =
+      const canOrder =
         user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
-      let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
+      const canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
 
       return [
         {
@@ -449,22 +449,22 @@ export default function BuildLineTable({
     const visible = production && canEdit;
     return [
       <ActionButton
-        key="auto-allocate"
+        key='auto-allocate'
         icon={<IconWand />}
         tooltip={t`Auto Allocate Stock`}
         hidden={!visible}
-        color="blue"
+        color='blue'
         onClick={() => {
           autoAllocateStock.open();
         }}
       />,
       <ActionButton
-        key="allocate-stock"
+        key='allocate-stock'
         icon={<IconArrowRight />}
         tooltip={t`Allocate Stock`}
         hidden={!visible}
         disabled={!table.hasSelectedRecords}
-        color="green"
+        color='green'
         onClick={() => {
           setSelectedRows(
             table.selectedRecords.filter(
@@ -478,12 +478,12 @@ export default function BuildLineTable({
         }}
       />,
       <ActionButton
-        key="deallocate-stock"
+        key='deallocate-stock'
         icon={<IconCircleMinus />}
         tooltip={t`Deallocate Stock`}
         hidden={!visible}
         disabled={table.hasSelectedRecords}
-        color="red"
+        color='red'
         onClick={() => {
           setSelectedLine(null);
           deallocateStock.open();

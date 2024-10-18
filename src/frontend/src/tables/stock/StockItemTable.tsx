@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
@@ -9,7 +9,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
-  StockOperationProps,
+  type StockOperationProps,
   useAddStockItem,
   useAssignStockItem,
   useChangeStockStatus,
@@ -27,7 +27,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import {
   DateColumn,
   DescriptionColumn,
@@ -35,7 +35,7 @@ import {
   PartColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -69,12 +69,12 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Stock`,
       render: (record: any) => {
         // TODO: Push this out into a custom renderer
-        let quantity = record?.quantity ?? 0;
-        let allocated = record?.allocated ?? 0;
-        let available = quantity - allocated;
+        const quantity = record?.quantity ?? 0;
+        const allocated = record?.allocated ?? 0;
+        const available = quantity - allocated;
         let text = quantity;
-        let part = record?.part_detail ?? {};
-        let extra: ReactNode[] = [];
+        const part = record?.part_detail ?? {};
+        const extra: ReactNode[] = [];
         let color = undefined;
 
         if (record.serial && quantity == 1) {
@@ -85,43 +85,43 @@ function stockItemTableColumns(): TableColumn[] {
           color = 'blue';
           extra.push(
             <Text
-              key="production"
-              size="sm"
+              key='production'
+              size='sm'
             >{t`This stock item is in production`}</Text>
           );
         } else if (record.sales_order) {
           extra.push(
             <Text
-              key="sales-order"
-              size="sm"
+              key='sales-order'
+              size='sm'
             >{t`This stock item has been assigned to a sales order`}</Text>
           );
         } else if (record.customer) {
           extra.push(
             <Text
-              key="customer"
-              size="sm"
+              key='customer'
+              size='sm'
             >{t`This stock item has been assigned to a customer`}</Text>
           );
         } else if (record.belongs_to) {
           extra.push(
             <Text
-              key="belongs-to"
-              size="sm"
+              key='belongs-to'
+              size='sm'
             >{t`This stock item is installed in another stock item`}</Text>
           );
         } else if (record.consumed_by) {
           extra.push(
             <Text
-              key="consumed-by"
-              size="sm"
+              key='consumed-by'
+              size='sm'
             >{t`This stock item has been consumed by a build order`}</Text>
           );
         } else if (!record.in_stock) {
           extra.push(
             <Text
-              key="unavailable"
-              size="sm"
+              key='unavailable'
+              size='sm'
             >{t`This stock item is unavailable`}</Text>
           );
         }
@@ -129,13 +129,13 @@ function stockItemTableColumns(): TableColumn[] {
         if (record.expired) {
           extra.push(
             <Text
-              key="expired"
-              size="sm"
+              key='expired'
+              size='sm'
             >{t`This stock item has expired`}</Text>
           );
         } else if (record.stale) {
           extra.push(
-            <Text key="stale" size="sm">{t`This stock item is stale`}</Text>
+            <Text key='stale' size='sm'>{t`This stock item is stale`}</Text>
           );
         }
 
@@ -145,15 +145,15 @@ function stockItemTableColumns(): TableColumn[] {
               color = 'orange';
               extra.push(
                 <Text
-                  key="fully-allocated"
-                  size="sm"
+                  key='fully-allocated'
+                  size='sm'
                 >{t`This stock item is fully allocated`}</Text>
               );
             } else {
               extra.push(
                 <Text
-                  key="partially-allocated"
-                  size="sm"
+                  key='partially-allocated'
+                  size='sm'
                 >{t`This stock item is partially allocated`}</Text>
               );
             }
@@ -162,16 +162,16 @@ function stockItemTableColumns(): TableColumn[] {
           if (available != quantity) {
             if (available > 0) {
               extra.push(
-                <Text key="available" size="sm" c="orange">
+                <Text key='available' size='sm' c='orange'>
                   {t`Available` + `: ${available}`}
                 </Text>
               );
             } else {
               extra.push(
                 <Text
-                  key="no-stock"
-                  size="sm"
-                  c="red"
+                  key='no-stock'
+                  size='sm'
+                  c='red'
                 >{t`No stock available`}</Text>
               );
             }
@@ -180,8 +180,8 @@ function stockItemTableColumns(): TableColumn[] {
           if (quantity <= 0) {
             extra.push(
               <Text
-                key="depleted"
-                size="sm"
+                key='depleted'
+                size='sm'
               >{t`This stock item has been depleted`}</Text>
             );
           }
@@ -194,10 +194,10 @@ function stockItemTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group gap="xs" justify="left" wrap="nowrap">
+              <Group gap='xs' justify='left' wrap='nowrap'>
                 <Text c={color}>{text}</Text>
                 {part.units && (
-                  <Text size="xs" c={color}>
+                  <Text size='xs' c={color}>
                     [{part.units}]
                   </Text>
                 )}
@@ -251,11 +251,11 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Stock Value`,
       sortable: false,
       render: (record: any) => {
-        let min_price =
+        const min_price =
           record.purchase_price || record.part_detail?.pricing_min;
-        let max_price =
+        const max_price =
           record.purchase_price || record.part_detail?.pricing_max;
-        let currency = record.purchase_price_currency || undefined;
+        const currency = record.purchase_price_currency || undefined;
 
         return formatPriceRange(min_price, max_price, {
           currency: currency,
@@ -384,8 +384,8 @@ export function StockItemTable({
   allowAdd?: boolean;
   tableName: string;
 }>) {
-  let tableColumns = useMemo(() => stockItemTableColumns(), []);
-  let tableFilters = useMemo(() => stockItemTableFilters(), []);
+  const tableColumns = useMemo(() => stockItemTableColumns(), []);
+  const tableFilters = useMemo(() => stockItemTableFilters(), []);
 
   const table = useTable(tableName);
   const user = useUserState();
@@ -425,21 +425,21 @@ export function StockItemTable({
   const deleteStock = useDeleteStockItem(tableActionParams);
 
   const tableActions = useMemo(() => {
-    let can_delete_stock = user.hasDeleteRole(UserRoles.stock);
-    let can_add_stock = user.hasAddRole(UserRoles.stock);
-    let can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
-    let can_add_order = user.hasAddRole(UserRoles.purchase_order);
-    let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
+    const can_delete_stock = user.hasDeleteRole(UserRoles.stock);
+    const can_add_stock = user.hasAddRole(UserRoles.stock);
+    const can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
+    const can_add_order = user.hasAddRole(UserRoles.purchase_order);
+    const can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
       <ActionDropdown
-        key="stock-actions"
+        key='stock-actions'
         tooltip={t`Stock Actions`}
-        icon={<InvenTreeIcon icon="stock" />}
+        icon={<InvenTreeIcon icon='stock' />}
         disabled={table.selectedRecords.length === 0}
         actions={[
           {
             name: t`Add Stock`,
-            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             tooltip: t`Add a new stock item`,
             disabled: !can_add_stock,
             onClick: () => {
@@ -448,7 +448,7 @@ export function StockItemTable({
           },
           {
             name: t`Remove Stock`,
-            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             tooltip: t`Remove some quantity from a stock item`,
             disabled: !can_add_stock,
             onClick: () => {
@@ -458,7 +458,7 @@ export function StockItemTable({
           {
             name: t`Count Stock`,
             icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             tooltip: t`Count Stock`,
             disabled: !can_add_stocktake,
@@ -469,7 +469,7 @@ export function StockItemTable({
           {
             name: t`Transfer Stock`,
             icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
             tooltip: t`Move Stock items to new locations`,
             disabled: !can_add_stock,
@@ -479,7 +479,7 @@ export function StockItemTable({
           },
           {
             name: t`Change stock status`,
-            icon: <InvenTreeIcon icon="info" iconProps={{ color: 'blue' }} />,
+            icon: <InvenTreeIcon icon='info' iconProps={{ color: 'blue' }} />,
             tooltip: t`Change the status of stock items`,
             disabled: !can_add_stock,
             onClick: () => {
@@ -488,7 +488,7 @@ export function StockItemTable({
           },
           {
             name: t`Merge stock`,
-            icon: <InvenTreeIcon icon="merge" />,
+            icon: <InvenTreeIcon icon='merge' />,
             tooltip: t`Merge stock items`,
             disabled: !can_add_stock,
             onClick: () => {
@@ -497,14 +497,14 @@ export function StockItemTable({
           },
           {
             name: t`Order stock`,
-            icon: <InvenTreeIcon icon="buy" />,
+            icon: <InvenTreeIcon icon='buy' />,
             tooltip: t`Order new stock`,
             disabled: !can_add_order || !can_change_order,
             onClick: notYetImplemented
           },
           {
             name: t`Assign to customer`,
-            icon: <InvenTreeIcon icon="customer" />,
+            icon: <InvenTreeIcon icon='customer' />,
             tooltip: t`Order new stock`,
             disabled: !can_add_stock,
             onClick: () => {
@@ -513,7 +513,7 @@ export function StockItemTable({
           },
           {
             name: t`Delete stock`,
-            icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
+            icon: <InvenTreeIcon icon='delete' iconProps={{ color: 'red' }} />,
             tooltip: t`Delete Stock Items`,
             disabled: !can_delete_stock,
             onClick: () => {
@@ -523,7 +523,7 @@ export function StockItemTable({
         ]}
       />,
       <AddItemButton
-        key="add-stock-item"
+        key='add-stock-item'
         hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
         tooltip={t`Add Stock Item`}
         onClick={() => newStockItem.open()}

@@ -36,7 +36,7 @@ export default function MachineManagementPanel() {
     <Stack>
       <MachineListTable props={{}} />
 
-      <Space h="10px" />
+      <Space h='10px' />
 
       <Stack gap={'xs'}>
         <Title order={5}>
@@ -45,14 +45,14 @@ export default function MachineManagementPanel() {
         <MachineTypeListTable props={{}} />
       </Stack>
 
-      <Space h="10px" />
+      <Space h='10px' />
 
       <Stack gap={'xs'}>
         <Group>
           <Title order={5}>
             <Trans>Machine Error Stack</Trans>
           </Title>
-          <ActionIcon variant="outline" onClick={() => refetch()}>
+          <ActionIcon variant='outline' onClick={() => refetch()}>
             <IconRefresh />
           </ActionIcon>
         </Group>

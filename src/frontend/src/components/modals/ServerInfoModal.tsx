@@ -8,7 +8,7 @@ import {
   Table,
   Title
 } from '@mantine/core';
-import { ContextModalProps } from '@mantine/modals';
+import type { ContextModalProps } from '@mantine/modals';
 
 import { useServerApiState } from '../../states/ApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
@@ -97,7 +97,7 @@ export function ServerInfoModal({
                 <Trans>Background Worker</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color="red">
+                <Badge color='red'>
                   <Trans>Background worker not running</Trans>
                 </Badge>
               </Table.Td>
@@ -109,7 +109,7 @@ export function ServerInfoModal({
                 <Trans>Email Settings</Trans>
               </Table.Td>
               <Table.Td>
-                <Badge color="red">
+                <Badge color='red'>
                   <Trans>Email settings not configured</Trans>
                 </Badge>
               </Table.Td>
@@ -137,9 +137,9 @@ export function ServerInfoModal({
         </Table.Tbody>
       </Table>
       <Divider />
-      <Group justify="right">
+      <Group justify='right'>
         <Button
-          color="red"
+          color='red'
           onClick={() => {
             context.closeModal(id);
           }}

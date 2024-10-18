@@ -7,7 +7,7 @@ import {
   IconEdit,
   IconTrash
 } from '@tabler/icons-react';
-import { ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { cancelEvent } from '../functions/events';
 
@@ -97,7 +97,7 @@ export function RowActions({
         withinPortal={true}
         label={action.tooltip ?? action.title}
         key={action.title}
-        position="left"
+        position='left'
       >
         <Menu.Item
           color={action.color}
@@ -121,7 +121,7 @@ export function RowActions({
       <Menu
         withinPortal={true}
         disabled={disabled}
-        position="bottom-end"
+        position='bottom-end'
         opened={opened}
         onChange={setOpened}
       >
@@ -132,8 +132,8 @@ export function RowActions({
               aria-label={`row-action-menu-${index ?? ''}`}
               onClick={openMenu}
               disabled={disabled}
-              variant="subtle"
-              color="gray"
+              variant='subtle'
+              color='gray'
             >
               <IconDots />
             </ActionIcon>

@@ -9,7 +9,7 @@ import {
   useState
 } from 'react';
 
-import { EditorComponent } from '../TemplateEditor';
+import type { EditorComponent } from '../TemplateEditor';
 
 type Tag = {
   label: string;

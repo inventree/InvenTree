@@ -16,9 +16,9 @@ export function ButtonMenu({
   tooltip?: string;
 }>) {
   return (
-    <Menu shadow="xs">
+    <Menu shadow='xs'>
       <Menu.Target>
-        <ActionIcon variant="default">
+        <ActionIcon variant='default'>
           <Tooltip label={tooltip}>{icon}</Tooltip>
         </ActionIcon>
       </Menu.Target>

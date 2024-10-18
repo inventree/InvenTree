@@ -1,8 +1,8 @@
-import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIconType } from '../../functions/icons';
-import { TemplateI } from '../../tables/settings/TemplateTable';
-import { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
-import { InvenTreeContext } from './PluginContext';
+import type { ModelType } from '../../enums/ModelType';
+import type { InvenTreeIconType } from '../../functions/icons';
+import type { TemplateI } from '../../tables/settings/TemplateTable';
+import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
+import type { InvenTreeContext } from './PluginContext';
 
 // #region  Type Helpers
 export type BaseUIFeature = {

@@ -13,11 +13,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -52,7 +52,7 @@ export function useBuildOrderFields({
   const globalSettings = useGlobalSettingsState();
 
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {},
       part: {
         disabled: !create,
@@ -151,8 +151,8 @@ export function useBuildOrderOutputFields({
   const [quantity, setQuantity] = useState<number>(0);
 
   useEffect(() => {
-    let build_quantity = build.quantity ?? 0;
-    let build_complete = build.completed ?? 0;
+    const build_quantity = build.quantity ?? 0;
+    const build_complete = build.completed ?? 0;
 
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
@@ -213,7 +213,10 @@ function BuildOutputFormRow({
         <Table.Td>{serial}</Table.Td>
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
-          <StatusRenderer status={record.status} type={ModelType.stockitem} />{' '}
+          <StatusRenderer
+            status={record.status}
+            type={ModelType.stockitem}
+          />{' '}
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
@@ -421,7 +424,7 @@ function BuildAllocateLineRow({
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
-          let available = instance.quantity - instance.allocated;
+          const available = instance.quantity - instance.allocated;
 
           if (available < props.item.quantity) {
             props.changeFn(
@@ -461,14 +464,14 @@ function BuildAllocateLineRow({
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="stock_item"
+          fieldName='stock_item'
           fieldDefinition={stockField}
           error={props.rowErrors?.stock_item?.message}
         />
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="quantity"
+          fieldName='quantity'
           fieldDefinition={quantityField}
           error={props.rowErrors?.quantity?.message}
         />
@@ -546,7 +549,7 @@ export function useAllocateStockToBuildForm({
 
   const preFormContent = useMemo(() => {
     return (
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <StandaloneField fieldDefinition={sourceLocationField} />
       </Stack>
     );

@@ -1,5 +1,5 @@
 import { SimpleGrid, Text, UnstyledButton } from '@mantine/core';
-import React from 'react';
+import type React from 'react';
 import { Link } from 'react-router-dom';
 
 import * as classes from '../../main.css';
@@ -64,7 +64,7 @@ export function MenuLinks({
             to={item.link}
             p={0}
           >
-            <Text size="sm" fw={500}>
+            <Text size='sm' fw={500}>
               {item.text}
             </Text>
           </UnstyledButton>

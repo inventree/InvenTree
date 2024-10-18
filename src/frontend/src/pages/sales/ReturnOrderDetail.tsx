@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -23,7 +26,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
@@ -79,7 +82,7 @@ export default function ReturnOrderDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'reference',
@@ -115,7 +118,7 @@ export default function ReturnOrderDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'line_items',
@@ -149,7 +152,7 @@ export default function ReturnOrderDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         external: true,
@@ -171,7 +174,7 @@ export default function ReturnOrderDetail() {
       // TODO: Project code
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'text',
         name: 'creation_date',
@@ -233,9 +236,9 @@ export default function ReturnOrderDetail() {
             multiple={true}
             defaultValue={['line-items', 'extra-items']}
           >
-            <Accordion.Item value="line-items" key="lineitems">
+            <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ReturnOrderLineItemTable
@@ -246,9 +249,9 @@ export default function ReturnOrderDetail() {
                 />
               </Accordion.Panel>
             </Accordion.Item>
-            <Accordion.Item value="extra-items" key="extraitems">
+            <Accordion.Item value='extra-items' key='extraitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ExtraLineItemTable
@@ -372,16 +375,16 @@ export default function ReturnOrderDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={() => issueOrder.open()}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={() => completeOrder.open()}
       />,
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
@@ -434,7 +437,7 @@ export default function ReturnOrderDetail() {
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
             title={t`Return Order` + `: ${order.reference}`}
             subtitle={order.description}
@@ -446,7 +449,7 @@ export default function ReturnOrderDetail() {
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
           <PanelGroup
-            pageKey="returnorder"
+            pageKey='returnorder'
             panels={orderPanels}
             model={ModelType.returnorder}
             instance={order}

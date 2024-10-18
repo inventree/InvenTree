@@ -1,21 +1,21 @@
 import {
-  MantineColorScheme,
-  MantineTheme,
+  type MantineColorScheme,
+  type MantineTheme,
   useMantineColorScheme,
   useMantineTheme
 } from '@mantine/core';
-import { AxiosInstance } from 'axios';
+import type { AxiosInstance } from 'axios';
 import { useMemo } from 'react';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { useLocalState } from '../../states/LocalState';
 import {
-  SettingsStateProps,
+  type SettingsStateProps,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import { UserStateProps, useUserState } from '../../states/UserState';
+import { type UserStateProps, useUserState } from '../../states/UserState';
 
 /**
  * A set of properties which are passed to a plugin,

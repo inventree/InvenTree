@@ -5,7 +5,7 @@ import { IconCheck } from '@tabler/icons-react';
 
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { HostList } from '../../states/states';
+import type { HostList } from '../../states/states';
 import { EditButton } from '../buttons/EditButton';
 import { HostOptionsForm } from './HostOptionsForm';
 

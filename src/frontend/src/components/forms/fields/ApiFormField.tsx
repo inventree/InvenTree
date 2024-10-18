@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
-import { UseFormReturnType } from '@mantine/form';
+import type { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { ReactNode, useCallback, useEffect, useMemo } from 'react';
-import { Control, FieldValues, useController } from 'react-hook-form';
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import { ModelType } from '../../../enums/ModelType';
+import type { ModelType } from '../../../enums/ModelType';
 import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
@@ -186,12 +186,12 @@ export function ApiFormField({
 
     switch (definition.field_type) {
       case 'integer':
-        val = parseInt(value) ?? '';
+        val = Number.parseInt(value) ?? '';
         break;
       case 'decimal':
       case 'float':
       case 'number':
-        val = parseFloat(value) ?? '';
+        val = Number.parseFloat(value) ?? '';
         break;
       default:
         break;
@@ -246,8 +246,8 @@ export function ApiFormField({
             ref={ref}
             id={fieldId}
             aria-label={`boolean-field-${fieldName}`}
-            radius="lg"
-            size="sm"
+            radius='lg'
+            size='sm'
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
@@ -264,7 +264,7 @@ export function ApiFormField({
         return (
           <NumberInput
             {...reducedDefinition}
-            radius="sm"
+            radius='sm'
             ref={field.ref}
             id={fieldId}
             aria-label={`number-field-${field.name}`}
@@ -289,7 +289,7 @@ export function ApiFormField({
             {...reducedDefinition}
             id={fieldId}
             ref={field.ref}
-            radius="sm"
+            radius='sm'
             value={value}
             error={error?.message}
             onChange={(payload: File | null) => onChange(payload)}
@@ -325,7 +325,7 @@ export function ApiFormField({
         );
       default:
         return (
-          <Alert color="red" title={t`Error`}>
+          <Alert color='red' title={t`Error`}>
             Invalid field type for field '{fieldName}': '
             {fieldDefinition.field_type}'
           </Alert>

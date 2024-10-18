@@ -10,7 +10,7 @@ export function StylishText({
   size?: string;
 }>) {
   return (
-    <Text size={size} className={classes.signText} variant="gradient">
+    <Text size={size} className={classes.signText} variant='gradient'>
       {children}
     </Text>
   );

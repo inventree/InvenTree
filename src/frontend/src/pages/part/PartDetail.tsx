@@ -33,19 +33,22 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -61,7 +64,7 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -70,7 +73,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import {
-  StockOperationProps,
+  type StockOperationProps,
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
@@ -145,7 +148,7 @@ export default function PartDetail() {
     }
 
     // Construct the details tables
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'string',
         name: 'name',
@@ -231,7 +234,7 @@ export default function PartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'total_in_stock',
@@ -306,7 +309,7 @@ export default function PartDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'boolean',
         name: 'active',
@@ -367,7 +370,7 @@ export default function PartDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'creation_date',
@@ -567,7 +570,7 @@ export default function PartDetail() {
         icon: <IconPackages />,
         content: part.pk ? (
           <StockItemTable
-            tableName="part-stock"
+            tableName='part-stock'
             allowAdd
             params={{
               part: part.pk
@@ -597,14 +600,14 @@ export default function PartDetail() {
             defaultValue={['buildallocations', 'salesallocations']}
           >
             {part.component && (
-              <Accordion.Item value="buildallocations" key="buildallocations">
+              <Accordion.Item value='buildallocations' key='buildallocations'>
                 <Accordion.Control>
-                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <BuildAllocatedStockTable
                     partId={part.pk}
-                    modelField="build"
+                    modelField='build'
                     modelTarget={ModelType.build}
                     showBuildInfo
                     allowEdit
@@ -613,14 +616,14 @@ export default function PartDetail() {
               </Accordion.Item>
             )}
             {part.salable && (
-              <Accordion.Item value="salesallocations" key="salesallocations">
+              <Accordion.Item value='salesallocations' key='salesallocations'>
                 <Accordion.Control>
-                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <SalesOrderAllocationTable
                     partId={part.pk}
-                    modelField="order"
+                    modelField='order'
                     modelTarget={ModelType.salesorder}
                     showOrderInfo
                   />
@@ -774,7 +777,7 @@ export default function PartDetail() {
         return [];
       }
 
-      let revisions = [];
+      const revisions = [];
 
       // First, fetch information for the top-level part
       if (part.revision_of) {
@@ -821,7 +824,7 @@ export default function PartDetail() {
       return [];
     }
 
-    let options: any[] = partRevisionQuery.data.map((revision: any) => {
+    const options: any[] = partRevisionQuery.data.map((revision: any) => {
       return {
         value: revision.pk,
         label: revision.full_name,
@@ -867,49 +870,49 @@ export default function PartDetail() {
         label={t`In Stock` + `: ${part.total_in_stock}`}
         color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.total_in_stock > 0}
-        key="in_stock"
+        key='in_stock'
       />,
       <DetailsBadge
         label={t`Available` + `: ${part.unallocated_stock}`}
-        color="yellow"
-        key="available_stock"
+        color='yellow'
+        key='available_stock'
         visible={part.unallocated_stock != part.total_in_stock}
       />,
       <DetailsBadge
         label={t`No Stock`}
-        color="orange"
+        color='orange'
         visible={part.total_in_stock == 0}
-        key="no_stock"
+        key='no_stock'
       />,
       <DetailsBadge
         label={t`Required` + `: ${required}`}
-        color="grape"
+        color='grape'
         visible={required > 0}
-        key="required"
+        key='required'
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
-        color="blue"
+        color='blue'
         visible={part.ordering > 0}
-        key="on_order"
+        key='on_order'
       />,
       <DetailsBadge
         label={t`In Production` + `: ${part.building}`}
-        color="blue"
+        color='blue'
         visible={part.building > 0}
-        key="in_production"
+        key='in_production'
       />,
       <DetailsBadge
         label={t`Locked`}
-        color="black"
+        color='black'
         visible={part.locked == true}
-        key="locked"
+        key='locked'
       />,
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={part.active == false}
-        key="inactive"
+        key='inactive'
       />
     ];
   }, [part, instanceQuery]);
@@ -977,8 +980,8 @@ export default function PartDetail() {
       }
     },
     preFormContent: (
-      <Alert color="red" title={t`Deleting this part cannot be reversed`}>
-        <Stack gap="xs">
+      <Alert color='red' title={t`Deleting this part cannot be reversed`}>
+        <Stack gap='xs'>
           <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
         </Stack>
       </Alert>
@@ -1007,7 +1010,7 @@ export default function PartDetail() {
         pk={part.pk}
         hash={part?.barcode_hash}
         perm={user.hasChangeRole(UserRoles.part)}
-        key="action_dropdown"
+        key='action_dropdown'
       />,
       <PrintingActions
         modelType={ModelType.part}
@@ -1021,7 +1024,7 @@ export default function PartDetail() {
         actions={[
           {
             icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             name: t`Count Stock`,
             tooltip: t`Count part stock`,
@@ -1032,7 +1035,7 @@ export default function PartDetail() {
           },
           {
             icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
             name: t`Transfer Stock`,
             tooltip: t`Transfer part stock`,
@@ -1077,7 +1080,7 @@ export default function PartDetail() {
       {editPart.modal}
       {deletePart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <NavigationTree
             title={t`Part Categories`}
             modelType={ModelType.partcategory}
@@ -1102,11 +1105,11 @@ export default function PartDetail() {
             actions={partActions}
             detail={
               enableRevisionSelection ? (
-                <Stack gap="xs">
+                <Stack gap='xs'>
                   <Text>{t`Select Part Revision`}</Text>
                   <Select
-                    id="part-revision-select"
-                    aria-label="part-revision-select"
+                    id='part-revision-select'
+                    aria-label='part-revision-select'
                     options={partRevisionOptions}
                     value={{
                       value: part.pk,
@@ -1136,7 +1139,7 @@ export default function PartDetail() {
             }
           />
           <PanelGroup
-            pageKey="part"
+            pageKey='part'
             panels={partPanels}
             instance={part}
             model={ModelType.part}

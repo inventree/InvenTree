@@ -2,12 +2,12 @@ import { Trans, t } from '@lingui/macro';
 import { Alert, Container, Group, Table } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 export interface TableFieldRowProps {
   item: any;
@@ -77,10 +77,10 @@ export function TableField({
             // Table fields require render function
             if (!definition.modelRenderer) {
               return (
-                <Table.Tr key="table-row-no-renderer">
+                <Table.Tr key='table-row-no-renderer'>
                   <Table.Td colSpan={definition.headers?.length}>
                     <Alert
-                      color="red"
+                      color='red'
                       title={t`Error`}
                       icon={<IconExclamationCircle />}
                     >
@@ -101,7 +101,7 @@ export function TableField({
             });
           })
         ) : (
-          <Table.Tr key="table-row-no-entries">
+          <Table.Tr key='table-row-no-entries'>
             <Table.Td
               style={{ textAlign: 'center' }}
               colSpan={definition.headers?.length}
@@ -113,7 +113,7 @@ export function TableField({
                   gap: '5px'
                 }}
               >
-                <InvenTreeIcon icon="info" />
+                <InvenTreeIcon icon='info' />
                 <Trans>No entries available</Trans>
               </span>
             </Table.Td>
@@ -165,9 +165,9 @@ export function TableFieldExtraRow({
     visible && (
       <Table.Tr>
         <Table.Td colSpan={10}>
-          <Group grow preventGrowOverflow={false} justify="flex-apart" p="xs">
-            <Container flex={0} p="xs">
-              <InvenTreeIcon icon="downright" />
+          <Group grow preventGrowOverflow={false} justify='flex-apart' p='xs'>
+            <Container flex={0} p='xs'>
+              <InvenTreeIcon icon='downright' />
             </Container>
             <StandaloneField
               fieldDefinition={field}
