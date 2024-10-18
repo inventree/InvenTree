@@ -46,7 +46,7 @@ export function RenderStockLocationType({
     <RenderInlineModel
       primary={instance.name}
       prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      secondary={instance.description + ` (${instance.location_count})`}
+      secondary={`${instance.description}·(${instance.location_count})`}
     />
   );
 }
@@ -58,9 +58,9 @@ export function RenderStockItem(
   let quantity_string = '';
 
   if (instance?.serial !== null && instance?.serial !== undefined) {
-    quantity_string += t`Serial Number` + `: ${instance.serial}`;
+    quantity_string += `${t`Serial·Number`}:·${instance.serial}`;
   } else if (instance?.quantity) {
-    quantity_string = t`Quantity` + `: ${instance.quantity}`;
+    quantity_string = `${t`Quantity`}:·${instance.quantity}`;
   }
 
   return (
