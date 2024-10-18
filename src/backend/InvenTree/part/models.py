@@ -910,6 +910,12 @@ class Part(
         # Return the first serial value
         return stock[0].serial
 
+    def get_next_serial_number(self):
+        """Return the 'next' serial number in sequence."""
+        sn = self.get_latest_serial_number()
+
+        return InvenTree.helpers.increment_serial_number(sn, self)
+
     @property
     def full_name(self) -> str:
         """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings."""

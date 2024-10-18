@@ -433,7 +433,7 @@ def DownloadFile(
     return response
 
 
-def increment_serial_number(serial):
+def increment_serial_number(serial, part=None):
     """Given a serial number, (attempt to) generate the *next* serial number.
 
     Note: This method is exposed to custom plugins.
