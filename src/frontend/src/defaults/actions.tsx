@@ -31,7 +31,9 @@ export function getActions(navigate: NavigateFunction) {
       id: 'documentation',
       label: t`Documentation`,
       description: t`Visit the documentation to learn more about InvenTree`,
-      onClick: () => (window.location.href = docLinks.faq),
+      onClick: () => {
+        window.location.href = docLinks.faq;
+      },
       leftSection: <IconLink size='1.2rem' />
     },
     {
