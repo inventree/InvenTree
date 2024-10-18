@@ -135,6 +135,17 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             if serial[0] != part.name[0]:
                 self.raise_error('Serial number must start with same letter as part')
 
+    def increment_serial_number(self, serial: str, part=None, **kwargs):
+        """Increment a serial number.
+
+        These examples are silly, but serve to demonstrate how the feature could be used
+        """
+        if serial == 'ZZZ':
+            return 'AAA'
+
+        # Return "None" to defer to the next plugin or builtin functionality
+        return None
+
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification.
 

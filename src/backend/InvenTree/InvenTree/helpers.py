@@ -2,6 +2,7 @@
 
 import datetime
 import hashlib
+import inspect
 import io
 import logging
 import os
@@ -453,7 +454,16 @@ def increment_serial_number(serial, part=None):
     # First, let any plugins attempt to increment the serial number
     for plugin in registry.with_mixin('validation'):
         try:
-            result = plugin.increment_serial_number(serial)
+            if not hasattr(plugin, 'increment_serial_number'):
+                continue
+
+            signature = inspect.signature(plugin.increment_serial_number)
+
+            # Note: 2024-08-21 - The 'part' parameter has been added to the signature
+            if 'part' in signature.parameters:
+                result = plugin.increment_serial_number(serial, part=part)
+            else:
+                result = plugin.increment_serial_number(serial)
             if result is not None:
                 return str(result)
         except Exception:

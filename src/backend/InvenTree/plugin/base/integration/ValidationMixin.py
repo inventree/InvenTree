@@ -191,7 +191,9 @@ class ValidationMixin:
         """
         return None
 
-    def increment_serial_number(self, serial: str) -> str:
+    def increment_serial_number(
+        self, serial: str, part: part.models.Part = None, **kwargs
+    ) -> str:
         """Return the next sequential serial based on the provided value.
 
         A plugin which implements this method can either return:
@@ -201,6 +203,7 @@ class ValidationMixin:
 
         Arguments:
             serial: Current serial value (string)
+            part: The Part instance for which this serial number is being incremented
 
         Returns:
             The next serial number in the sequence (string), or None
