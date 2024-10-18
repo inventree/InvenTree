@@ -13,6 +13,12 @@
 		"suspicious" : {
 			"noExplicitAny": "off",
 			"noDoubleEquals": "off"
+		},
+
+		"style": {
+			"useSelfClosingElements": "off"
+		}, "correctness":{
+			"useExhaustiveDependencies": "off"
 		}
 	}
 }
