@@ -57,7 +57,10 @@ test('Stock - Serial Numbers', async ({ page }) => {
   await page.getByLabel('open-search').click();
 
   await page.getByLabel('global-search-input').clear();
+
+  await page.waitForTimeout(250);
   await page.getByLabel('global-search-input').fill('widget green');
+  await page.waitForTimeout(250);
 
   // Remove the "stock item" results group
   await page.getByLabel('remove-search-group-stockitem').click();
