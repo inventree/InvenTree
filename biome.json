@@ -28,7 +28,6 @@
 			"noUnsafeOptionalChaining": "off",
 			"noSwitchDeclarations": "off"
 		}, "complexity": {
-			"useLiteralKeys": "off",
 			"noBannedTypes": "off",
 			"noExtraBooleanCast": "off",
 			"noForEach": "off",

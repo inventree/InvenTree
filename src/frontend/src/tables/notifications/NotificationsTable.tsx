@@ -32,7 +32,7 @@ export function NotificationTable({
         sortable: true
       },
       {
-        accessor: `name`,
+        accessor: 'name',
         title: t`Notification`
       },
       {

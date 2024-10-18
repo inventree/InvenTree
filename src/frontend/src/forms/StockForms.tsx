@@ -1006,7 +1006,7 @@ export function useAssignStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockAssignFields,
     endpoint: ApiEndpoints.stock_assign,
-    title: `Assign Stock to Customer`
+    title: t`Assign Stock to Customer`
   });
 }
 

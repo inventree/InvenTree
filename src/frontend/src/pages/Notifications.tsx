@@ -91,7 +91,7 @@ export default function NotificationsPage() {
             tableActions={[
               <ActionButton
                 icon={<IconMailOpened />}
-                tooltip={`Mark all as read`}
+                tooltip={t`Mark all as read`}
                 onClick={markAllAsRead}
               />
             ]}
@@ -142,7 +142,7 @@ export default function NotificationsPage() {
               <ActionButton
                 color='red'
                 icon={<IconTrash />}
-                tooltip={`Delete notifications`}
+                tooltip={t`Delete notifications`}
                 onClick={deleteNotifications}
               />
             ]}

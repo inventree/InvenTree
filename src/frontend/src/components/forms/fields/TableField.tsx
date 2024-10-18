@@ -84,7 +84,7 @@ export function TableField({
                       title={t`Error`}
                       icon={<IconExclamationCircle />}
                     >
-                      {`modelRenderer entry required for tables`}
+                      {t`modelRenderer entry required for tables`}
                     </Alert>
                   </Table.Td>
                 </Table.Tr>

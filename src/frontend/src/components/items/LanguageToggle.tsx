@@ -11,7 +11,7 @@ export function LanguageToggle() {
     <Group
       justify='center'
       style={{
-        border: open === true ? `1px dashed ` : ``,
+        border: open === true ? '1px dashed' : '',
         margin: open === true ? 2 : 12,
         padding: open === true ? 8 : 0
       }}

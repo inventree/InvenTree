@@ -256,8 +256,8 @@ export default function PluginListTable() {
     fetchInitialData: false,
     method: 'POST',
     successMessage: activate
-      ? `The plugin was activated`
-      : `The plugin was deactivated`,
+      ? t`The plugin was activated`
+      : t`The plugin was deactivated`,
     fields: {
       active: {
         hidden: true

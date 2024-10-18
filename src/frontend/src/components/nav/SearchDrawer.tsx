@@ -229,7 +229,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.purchase_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS')
       },
       {
         model: ModelType.salesorder,
@@ -243,7 +243,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.sales_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
       },
       {
         model: ModelType.returnorder,
@@ -257,7 +257,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.return_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];
   }, [user, userSettings]);
