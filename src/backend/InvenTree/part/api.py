@@ -34,7 +34,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
+from InvenTree.helpers import DownloadFile, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -816,15 +816,10 @@ class PartSerialNumberDetail(RetrieveAPI):
         part = self.get_object()
 
         # Calculate the "latest" serial number
-        latest = part.get_latest_serial_number()
+        latest_serial = part.get_latest_serial_number()
+        next_serial = part.get_next_serial_number()
 
-        data = {'latest': latest}
-
-        if latest is not None:
-            next_serial = increment_serial_number(latest)
-
-            if next_serial != latest:
-                data['next'] = next_serial
+        data = {'latest': latest_serial, 'next': next_serial}
 
         return Response(data)
 

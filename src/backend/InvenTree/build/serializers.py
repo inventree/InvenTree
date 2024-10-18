@@ -396,7 +396,8 @@ class BuildOutputCreateSerializer(serializers.Serializer):
                 self.serials = InvenTree.helpers.extract_serial_numbers(
                     serial_numbers,
                     quantity,
-                    part.get_latest_serial_number()
+                    part.get_latest_serial_number(),
+                    part=part
                 )
             except DjangoValidationError as e:
                 raise ValidationError({
