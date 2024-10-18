@@ -9,7 +9,7 @@ type ApiIconProps = {
 export const ApiIcon = ({ name: _name, size = 22 }: ApiIconProps) => {
   const [iconPackage, name, variant] = _name.split(':');
   const icon = useIconState(
-    (s) => s.packagesMap[iconPackage]?.['icons'][name]?.['variants'][variant]
+    (s) => s.packagesMap[iconPackage]?.icons[name]?.variants[variant]
   );
   const unicode = icon ? String.fromCodePoint(Number.parseInt(icon, 16)) : '';
 

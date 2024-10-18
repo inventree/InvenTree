@@ -72,7 +72,7 @@ export function RelatedModelField({
 
       api.get(url).then((response) => {
         const pk_field = definition.pk_field ?? 'pk';
-        if (response.data && response.data[pk_field]) {
+        if (response.data?.[pk_field]) {
           const value = {
             value: response.data[pk_field],
             data: response.data

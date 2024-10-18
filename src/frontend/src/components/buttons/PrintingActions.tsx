@@ -57,8 +57,8 @@ export function PrintingActions({
     const fields: ApiFormFieldSet = printingFields.data || {};
 
     // Override field values
-    fields['template'] = {
-      ...fields['template'],
+    fields.template = {
+      ...fields.template,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -66,14 +66,14 @@ export function PrintingActions({
       }
     };
 
-    fields['items'] = {
-      ...fields['items'],
+    fields.items = {
+      ...fields.items,
       value: items,
       hidden: true
     };
 
-    fields['plugin'] = {
-      ...fields['plugin'],
+    fields.plugin = {
+      ...fields.plugin,
       filters: {
         active: true,
         mixin: 'labels'
