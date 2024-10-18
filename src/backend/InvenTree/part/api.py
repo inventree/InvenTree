@@ -2064,7 +2064,7 @@ class PartOrderHistoryDetail(APIView):
 
         while date <= end_date:
             date_range.add(self.convert_date(date, period))
-            date += timedelta(days=1)
+            date += timedelta(days=10)
 
         date_range.add(self.convert_date(end_date, period))
 

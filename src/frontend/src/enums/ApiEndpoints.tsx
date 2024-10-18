@@ -81,6 +81,8 @@ export enum ApiEndpoints {
   build_order_auto_allocate = 'build/:id/auto-allocate/',
   build_order_allocate = 'build/:id/allocate/',
   build_order_deallocate = 'build/:id/unallocate/',
+  build_order_history = 'build/history/',
+
   build_line_list = 'build/line/',
   build_item_list = 'build/item/',
 

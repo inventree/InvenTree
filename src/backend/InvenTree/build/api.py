@@ -336,7 +336,7 @@ class BuildHistory(PartOrderHistoryDetail):
         # Generate a list of all build orders for the selected part(s)
         orders = Build.objects.filter(
             part__in=parts,
-            order__status__in=BuildStatusGroups.COMPLETE,
+            status__in=BuildStatusGroups.COMPLETE,
             completed__gt=0
         ).prefetch_related(
             'part',
@@ -348,8 +348,8 @@ class BuildHistory(PartOrderHistoryDetail):
         orders = orders.exclude(completion_date=None)
 
         # Filter by date range
-        orders = orders.filter(order__completion_date__gte=self.start_date)
-        orders = orders.filter(order__completion_date__lte=self.end_date)
+        orders = orders.filter(completion_date__gte=self.start_date)
+        orders = orders.filter(completion_date__lte=self.end_date)
 
         parts = {}
         history_items = {}

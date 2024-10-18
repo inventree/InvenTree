@@ -90,7 +90,6 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
-import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
@@ -100,6 +99,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
+import PartBuildPanel from './PartBuildPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartPurchasingPanel from './PartPurchasingPanel';
 import PartReturnPanel from './PartReturnPanel';
@@ -645,7 +645,7 @@ export default function PartDetail() {
         label: t`Build Orders`,
         icon: <IconTools />,
         hidden: !part.assembly || !part.active,
-        content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
+        content: <PartBuildPanel part={part} />
       },
       {
         name: 'used_in',
