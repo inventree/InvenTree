@@ -182,7 +182,7 @@ export default function CategoryDetail() {
     return [
       {
         value: 0,
-        display_name: `Move items to parent category`
+        display_name: t`Move items to parent category`
       },
       {
         value: 1,

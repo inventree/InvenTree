@@ -16,7 +16,7 @@ export function getActions(navigate: NavigateFunction) {
     {
       id: 'home',
       label: t`Home`,
-      description: `Go to the home page`,
+      description: t`Go to the home page`,
       onClick: () => navigate(menuItems.home.link),
       leftSection: <IconHome size='1.2rem' />
     },
