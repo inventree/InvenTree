@@ -873,7 +873,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     deltas=tracking_info,
                     location=location,
                     purchaseorder=self,
-                    quantity=quantity,
+                    quantity=float(quantity),
                 )
 
         # Update the number of parts received against the particular line item
