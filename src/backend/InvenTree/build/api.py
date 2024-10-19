@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
 from django_filters import rest_framework as rest_filters
-from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError
 
 from importer.mixins import DataExportViewMixin
@@ -23,7 +22,6 @@ import build.admin
 import build.serializers
 from build.models import Build, BuildLine, BuildItem
 import part.models
-import part.serializers as part_serializers
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
 
