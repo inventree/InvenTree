@@ -137,7 +137,7 @@ export default function StockDetail() {
       {
         type: 'text',
         name: 'tests',
-        label: `Completed Tests`,
+        label: t`Completed Tests`,
         icon: 'progress',
         hidden: !part?.testable
       },

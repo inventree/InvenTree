@@ -223,7 +223,7 @@ export default function Stock() {
     return [
       {
         value: 0,
-        display_name: `Move items to parent location`
+        display_name: t`Move items to parent location`
       },
       {
         value: 1,
