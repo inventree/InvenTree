@@ -21,7 +21,8 @@
 			"useSelfClosingElements": "off",
 			"noUselessElse": "off",
 			"useTemplate": "off",
-			"noNonNullAssertion": "off"
+			"noNonNullAssertion": "off",
+			"noParameterAssign": "off"
 		}, "correctness":{
 			"useExhaustiveDependencies": "off",
 			"useJsxKeyInIterable": "off",
@@ -31,7 +32,10 @@
 			"noBannedTypes": "off",
 			"noExtraBooleanCast": "off",
 			"noForEach": "off",
-			"noUselessSwitchCase": "off"
+			"noUselessSwitchCase": "off",
+			"useLiteralKeys":"off"
+		}, "performance": {
+			"noDelete":"off"
 		}
 	}
 }
