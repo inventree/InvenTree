@@ -6,7 +6,7 @@ import { test as baseTest } from '@playwright/test';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 const platform = os.platform();
-let systemKeyVar;
+let systemKeyVar: string;
 if (platform === 'darwin') {
   systemKeyVar = 'Meta';
 } else {
