@@ -57,7 +57,7 @@ export function formatCurrency(
 
   value = Number.parseFloat(value.toString());
 
-  if (isNaN(value) || !isFinite(value)) {
+  if (Number.isNaN(value) || !Number.isFinite(value)) {
     return null;
   }
 

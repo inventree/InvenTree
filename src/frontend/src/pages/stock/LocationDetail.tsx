@@ -51,7 +51,7 @@ export default function Stock() {
   const { id: _id } = useParams();
 
   const id = useMemo(
-    () => (!isNaN(Number.parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
 
