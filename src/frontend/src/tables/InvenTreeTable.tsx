@@ -356,9 +356,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     // Add custom filters
     if (tableState.activeFilters) {
-      tableState.activeFilters.forEach(
-        (flt) => (queryParams[flt.name] = flt.value)
-      );
+      tableState.activeFilters.forEach((flt) => {
+        queryParams[flt.name] = flt.value;
+      });
     }
 
     // Allow override of filters based on URL query parameters
