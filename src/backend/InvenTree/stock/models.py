@@ -1629,8 +1629,9 @@ class StockItem(
         existing = self.part.find_conflicting_serial_numbers(serials)
 
         if len(existing) > 0:
-            exists = ','.join([str(x) for x in existing])
-            msg = _('Serial numbers already exist') + f': {exists}'
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join([str(x) for x in existing])
             raise ValidationError({'serial_numbers': msg})
 
         # Serialize this StockItem

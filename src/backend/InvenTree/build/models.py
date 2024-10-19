@@ -940,7 +940,7 @@ class Build(
                 StockHistoryCode.BUILD_OUTPUT_CREATED,
                 user,
                 deltas={
-                    'quantity': quantity,
+                    'quantity': float(quantity),
                     'buildorder': self.pk,
                     'batch': batch,
                     'location': location.pk if location else None
