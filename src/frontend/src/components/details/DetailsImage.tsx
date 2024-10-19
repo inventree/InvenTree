@@ -423,7 +423,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
                   visible={hovered}
                   actions={props.imageActions}
                   apiPath={props.apiPath}
-                  hasImage={props.src ? true : false}
+                  hasImage={!!props.src}
                   pk={props.pk}
                   setImage={setAndRefresh}
                   downloadImage={downloadImage.open}
