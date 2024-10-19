@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { L } from '@lingui/react/dist/shared/react.e5f95de8';
 import {
   Badge,
   Button,
@@ -12,6 +13,8 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
+import { DateInput, DateValue } from '@mantine/dates';
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '../components/items/StylishText';
@@ -19,6 +22,7 @@ import { TableState } from '../hooks/UseTable';
 import {
   TableFilter,
   TableFilterChoice,
+  TableFilterType,
   getTableFilterOptions
 } from './Filter';
 
@@ -99,6 +103,14 @@ function FilterAddGroup({
     return getTableFilterOptions(filter);
   }, [selectedFilter]);
 
+  // Determine the "type" of filter (default = boolean)
+  const filterType: TableFilterType = useMemo(() => {
+    return (
+      availableFilters?.find((flt) => flt.name === selectedFilter)?.type ??
+      'boolean'
+    );
+  }, [selectedFilter]);
+
   const setSelectedValue = useCallback(
     (value: string | null) => {
       // Find the matching filter
@@ -126,6 +138,18 @@ function FilterAddGroup({
     [selectedFilter]
   );
 
+  const setDateValue = useCallback(
+    (value: DateValue) => {
+      if (value) {
+        let date = value.toString();
+        setSelectedValue(dayjs(date).format('YYYY-MM-DD'));
+      } else {
+        setSelectedValue('');
+      }
+    },
+    [setSelectedValue]
+  );
+
   return (
     <Stack gap="xs">
       <Divider />
@@ -137,16 +161,23 @@ function FilterAddGroup({
         onChange={(value: string | null) => setSelectedFilter(value)}
         maxDropdownHeight={800}
       />
-      {selectedFilter && (
-        <Select
-          data={valueOptions}
-          label={t`Value`}
-          searchable={true}
-          placeholder={t`Select filter value`}
-          onChange={(value: string | null) => setSelectedValue(value)}
-          maxDropdownHeight={800}
-        />
-      )}
+      {selectedFilter &&
+        (filterType === 'date' ? (
+          <DateInput
+            label={t`Value`}
+            placeholder={t`Select date value`}
+            onChange={setDateValue}
+          />
+        ) : (
+          <Select
+            data={valueOptions}
+            label={t`Value`}
+            searchable={true}
+            placeholder={t`Select filter value`}
+            onChange={(value: string | null) => setSelectedValue(value)}
+            maxDropdownHeight={800}
+          />
+        ))}
     </Stack>
   );
 }

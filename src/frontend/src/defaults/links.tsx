@@ -13,7 +13,7 @@ export const footerLinks = [
     key: 'website'
   },
   {
-    link: 'https://github.com/invenhost/InvenTree',
+    link: 'https://github.com/inventree/InvenTree',
     label: <Trans>GitHub</Trans>,
     key: 'github'
   },

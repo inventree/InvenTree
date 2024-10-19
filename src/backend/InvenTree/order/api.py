@@ -390,11 +390,39 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         label=_('Supplier Part'),
     )
 
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'base_part' filter to be set.
+        - Refer to the 'filter_base_part' method for more information.
+        """
+        return queryset
+
     base_part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.filter(purchaseable=True),
-        field_name='part__part',
+        method='filter_base_part',
         label=_('Internal Part'),
     )
+
+    def filter_base_part(self, queryset, name, base_part):
+        """Filter by the 'base_part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = base_part.get_descendants(include_self=True)
+            return queryset.filter(part__part__in=parts)
+        else:
+            return queryset.filter(part__part=base_part)
 
     pending = rest_filters.BooleanFilter(
         method='filter_pending', label=_('Order Pending')
@@ -575,6 +603,47 @@ class SalesOrderFilter(OrderFilter):
         model = models.SalesOrder
         fields = ['customer']
 
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', method='filter_part'
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter SalesOrder by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        # Construct a queryset of parts to filter by
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        # Now that we have a queryset of parts, find all the matching sales orders
+        line_items = models.SalesOrderLineItem.objects.filter(part__in=parts)
+
+        # Generate a list of ID values for the matching sales orders
+        sales_orders = line_items.values_list('order', flat=True).distinct()
+
+        # Now we have a list of matching IDs, filter the queryset
+        return queryset.filter(pk__in=sales_orders)
+
 
 class SalesOrderMixin:
     """Mixin class for SalesOrder endpoints."""
@@ -635,17 +704,6 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
-
-        # Filter by "Part"
-        # Only return SalesOrder which have LineItem referencing the part
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(id__in=[so.id for so in part.sales_orders()])
-            except (Part.DoesNotExist, ValueError):
-                pass
 
         # Filter by 'date range'
         min_date = params.get('min_date', None)
@@ -903,9 +961,37 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         label=_('Order'),
     )
 
-    part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.all(), field_name='item__part', label=_('Part')
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
     )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+            return queryset.filter(item__part__in=parts)
+        else:
+            return queryset.filter(item__part=part)
 
     outstanding = rest_filters.BooleanFilter(
         label=_('Outstanding'), method='filter_outstanding'
@@ -1071,6 +1157,46 @@ class ReturnOrderFilter(OrderFilter):
 
         model = models.ReturnOrder
         fields = ['customer']
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', method='filter_part'
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        # Now that we have a queryset of parts, find all the matching return orders
+        line_items = models.ReturnOrderLineItem.objects.filter(item__part__in=parts)
+
+        # Generate a list of ID values for the matching return orders
+        return_orders = line_items.values_list('order', flat=True).distinct()
+
+        # Now we have a list of matching IDs, filter the queryset
+        return queryset.filter(pk__in=return_orders)
 
 
 class ReturnOrderMixin:

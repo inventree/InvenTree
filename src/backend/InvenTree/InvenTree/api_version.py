@@ -1,12 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 268
+INVENTREE_API_VERSION = 269
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v269 - 2024-10-16 : https://github.com/inventree/InvenTree/pull/8295
+    - Adds "include_variants" filter to the BuildOrder API endpoint
+    - Adds "include_variants" filter to the SalesOrder API endpoint
+    - Adds "include_variants" filter to the PurchaseOrderLineItem API endpoint
+    - Adds "include_variants" filter to the ReturnOrder API endpoint
 
 268 - 2024-10-11 : https://github.com/inventree/InvenTree/pull/8274
     - Adds "in_stock" attribute to the StockItem serializer
