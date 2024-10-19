@@ -2,15 +2,11 @@
 
 import functools
 import re
-from datetime import date, timedelta
-from typing import cast
 
 from django.db.models import Count, F, Q
-from django.http import StreamingHttpResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-import tablib
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
@@ -18,7 +14,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import order.models
 import part.filters
@@ -34,7 +29,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import DownloadFile, isNull, str2bool
+from InvenTree.helpers import isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -2001,151 +1996,6 @@ class BomItemSubstituteDetail(RetrieveUpdateDestroyAPI):
 
     queryset = BomItemSubstitute.objects.all()
     serializer_class = part_serializers.BomItemSubstituteSerializer
-
-
-class PartOrderHistoryDetail(APIView):
-    """A generic API endpoint for retrieving order history for a Part object.
-
-    Note: This endpoint is expected to be overridden by a specific implementation.
-    """
-
-    permission_classes = [permissions.IsAuthenticated, RolePermission]
-
-    # Override the 'role_required' array in the subclass as necessary
-    role_required = ['part.view']
-
-    # Override the 'request_serializer_class' in the subclass as necessary
-    request_serializer_class = part_serializers.PartOrderHistoryRequestSerializer
-
-    def date_to_month(self, d: date):
-        """Convert a date to the first day of the associated month."""
-        return d.replace(day=1)
-
-    def date_to_quarter(self, d: date):
-        """Convert a date to the first day of the associated quarter."""
-        return d.replace(month=(((d.month - 1) // 3) * 3) + 1, day=1)
-
-    def date_to_year(self, d: date):
-        """Convert a date to the first day of the associated year."""
-        return d.replace(month=1, day=1)
-
-    def convert_date(self, d: date, period='M'):
-        """Return the associated date for a given date, for the provided time-period.
-
-        Arguments:
-            - d: The date to find the associated date for
-            - period: The time period to use (e.g. 'W' for week, 'M' for month, 'Q' for quarter, 'Y' for year)
-        """
-        if not d:
-            return None
-
-        # Convert the date to the first day of the associated period (default = month)
-        convert_func = {
-            'M': self.date_to_month,
-            'Q': self.date_to_quarter,
-            'Y': self.date_to_year,
-        }.get(period, self.date_to_month)
-
-        return convert_func(d).isoformat().split('T')[0]
-
-    def construct_date_range(self, start_date: date, end_date: date, period='M'):
-        """Construct a list of date keys for the provided date range.
-
-        Arguments:
-            - start_date: The start date
-            - end_date: The end date
-            - period: The time period to use (e.g. 'W' for week, 'M' for month, 'Q' for quarter, 'Y' for year)
-        """
-        date_range = set()
-
-        date_range.add(self.convert_date(start_date, period))
-
-        date = start_date
-
-        while date <= end_date:
-            date_range.add(self.convert_date(date, period))
-            date += timedelta(days=10)
-
-        date_range.add(self.convert_date(end_date, period))
-
-        return sorted(date_range, key=lambda x: x)
-
-    def process_request(self, request) -> dict:
-        """Process the incoming request, and return a dictionary of data."""
-        serializer = self.request_serializer_class(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-
-        data = cast(dict, serializer.validated_data)
-
-        # Cache the known request data
-        self.start_date = data['start_date']
-        self.end_date = data['end_date']
-        self.period = data['period']
-
-        self.export_format = data.get('export', None)
-
-        # Construct the entire date range
-        self.date_range = self.construct_date_range(
-            self.start_date, self.end_date, self.period
-        )
-
-        return data
-
-    def export_data(
-        self, part_dict: dict, history_items: dict
-    ) -> StreamingHttpResponse:
-        """Export the data in the requested format."""
-        # Construct the set of headers
-        headers = [_('Part ID'), _('Part Name'), _('IPN'), *self.date_range]
-
-        dataset = tablib.Dataset(headers=headers)
-
-        # Construct the set of rows
-        for part_id, entries in history_items.items():
-            part = part_dict[part_id]
-
-            quantities = [entries.get(key, 0) for key in self.date_range]
-
-            row = [part_id, part.name, part.IPN, *quantities]
-
-            dataset.append(row)
-
-        data = dataset.export(self.export_format)
-
-        return DownloadFile(data, filename=f'order_history.{self.export_format}')
-
-    def format_response(self, part_dict: dict, history_items: dict) -> Response:
-        """Format the response data required for the API endpoint.
-
-        Arguments:
-            - part_dict: A dictionary of part data, indexed by part ID
-            - history_items: A dictionary of history items, indexed by part ID
-        """
-        if self.export_format:
-            # Export the data in the requested format
-            return self.export_data(part_dict, history_items)
-
-        response = []
-
-        for part_id, entries in history_items.items():
-            history = [
-                {'date': date_key, 'quantity': quantity}
-                for date_key, quantity in entries.items()
-            ]
-
-            # Ensure all empty dates are added too
-            for date_key in self.date_range:
-                if date_key not in entries:
-                    history.append({'date': date_key, 'quantity': 0})
-
-            history = sorted(history, key=lambda x: x['date'])
-
-            # Construct an entry for each part
-            response.append({'part': part_dict[part_id], 'history': history})
-
-        return Response(
-            part_serializers.PartOrderHistorySerializer(response, many=True).data
-        )
 
 
 part_api_urls = [

@@ -22,7 +22,6 @@ import common.models
 import build.admin
 import build.serializers
 from build.models import Build, BuildLine, BuildItem
-from part.api import PartOrderHistoryDetail
 import part.models
 import part.serializers as part_serializers
 from users.models import Owner
@@ -312,65 +311,6 @@ class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
 
         return super().destroy(request, *args, **kwargs)
 
-
-class BuildHistory(PartOrderHistoryDetail):
-    """API endpoint for providing build history data."""
-
-    role_required = ['part.view', 'build.view']
-
-    request_serializer = build.serializers.BuildHistoryRequestSerializer
-
-    @extend_schema(
-        description='Retrieve sales history data',
-        request=build.serializers.BuildHistoryRequestSerializer(many=False),
-        responses={200: part_serializers.PartOrderHistorySerializer(many=True)},
-    )
-    def get(self, request):
-        """Generate build history data based on the request parameters."""
-        data = self.process_request(request)
-
-        # TODO: Account for case where part data is not supplied
-        part = data.get('part', None)
-        parts = part.get_descendants(include_self=True)
-
-        # Generate a list of all build orders for the selected part(s)
-        orders = Build.objects.filter(
-            part__in=parts,
-            status__in=BuildStatusGroups.COMPLETE,
-            completed__gt=0
-        ).prefetch_related(
-            'part',
-        ).select_related(
-            'part__pricing_data'
-        )
-
-        # Exclude orders without a completion date
-        orders = orders.exclude(completion_date=None)
-
-        # Filter by date range
-        orders = orders.filter(completion_date__gte=self.start_date)
-        orders = orders.filter(completion_date__lte=self.end_date)
-
-        parts = {}
-        history_items = {}
-
-        for order in orders:
-            part = order.part
-
-            part_history = history_items.get(part.pk, None) or {}
-
-            if part.pk not in parts:
-                parts[part.pk] = part
-
-            date_key = self.convert_date(order.completion_date, self.period)
-            date_entry = part_history.get(date_key, 0)
-            date_entry += order.completed
-
-            # Save data back into the dictionary
-            part_history[date_key] = date_entry
-            history_items[part.pk] = part_history
-
-        return self.format_response(parts, history_items)
 
 class BuildUnallocate(CreateAPI):
     """API endpoint for unallocating stock items from a build order.
@@ -851,8 +791,6 @@ build_api_urls = [
 
     # Build order status code information
     path('status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
-
-    path('history/', BuildHistory.as_view(), name='api-bo-history'),
 
     # Build List
     path('', BuildList.as_view(), name='api-build-list'),
