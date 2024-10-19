@@ -42,6 +42,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -526,7 +527,10 @@ export default function BuildDetail() {
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
               { name: t`Manufacturing`, url: '/manufacturing' },
-              { name: build.reference, url: `/build/${build.pk}` }
+              {
+                name: build.reference,
+                url: getDetailUrl(ModelType.build, build.pk)
+              }
             ]}
             actions={buildActions}
           />

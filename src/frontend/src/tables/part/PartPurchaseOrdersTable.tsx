@@ -123,6 +123,12 @@ export default function PartPurchaseOrdersTable({
         label: t`Order Status`,
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
+      },
+      {
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
       }
     ];
   }, []);

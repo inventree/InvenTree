@@ -21,15 +21,15 @@ import {
   IconLayersLinked,
   IconList,
   IconListTree,
-  IconNotes,
+  IconLock,
   IconPackages,
-  IconPaperclip,
   IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
   IconTools,
   IconTruckDelivery,
+  IconTruckReturn,
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -102,6 +102,7 @@ import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -610,6 +611,7 @@ export default function PartDetail() {
                     modelField='build'
                     modelTarget={ModelType.build}
                     showBuildInfo
+                    showPartInfo
                     allowEdit
                   />
                 </Accordion.Panel>
@@ -701,6 +703,13 @@ export default function PartDetail() {
         icon: <IconTruckDelivery />,
         hidden: !part.salable,
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
+        name: 'return_orders',
+        label: t`Return Orders`,
+        icon: <IconTruckReturn />,
+        hidden: !part.salable || !globalSettings.isSet('RETURNORDER_ENABLED'),
+        content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'stocktake',
@@ -1093,12 +1102,17 @@ export default function PartDetail() {
           />
           <PageDetail
             title={t`Part` + ': ' + part.full_name}
+            icon={
+              part?.locked ? (
+                <IconLock aria-label='part-lock-icon' />
+              ) : undefined
+            }
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
-              setTreeOpen(true);
+              setTreeOpen(true); // Open the category tree
             }}
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}

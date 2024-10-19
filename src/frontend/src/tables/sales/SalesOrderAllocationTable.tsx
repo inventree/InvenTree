@@ -47,17 +47,30 @@ export default function SalesOrderAllocationTable({
   modelField?: string;
 }>) {
   const user = useUserState();
-  const table = useTable('salesorderallocations');
+  const table = useTable(
+    !!partId ? 'salesorderallocations-part' : 'salesorderallocations'
+  );
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    const filters: TableFilter[] = [
       {
         name: 'outstanding',
         label: t`Outstanding`,
         description: t`Show outstanding allocations`
       }
     ];
-  }, []);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
