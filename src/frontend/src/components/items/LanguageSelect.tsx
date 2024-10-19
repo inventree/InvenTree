@@ -37,7 +37,7 @@ export function LanguageSelect({ width = 80 }: Readonly<{ width?: number }>) {
       value={value}
       onChange={setValue}
       searchable
-      aria-label="Select language"
+      aria-label='Select language'
     />
   );
 }

@@ -57,7 +57,7 @@ export function CurrencyTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
-        key="refresh"
+        key='refresh'
         onClick={refreshCurrencies}
         tooltip={t`Refresh currency exchange rates`}
         icon={<IconReload />}
@@ -75,7 +75,7 @@ export function CurrencyTable({
         tableActions: tableActions,
         dataFormatter: (data: any) => {
           setInfo(data);
-          let rates = data.exchange_rates ?? {};
+          const rates = data.exchange_rates ?? {};
 
           return Object.entries(rates).map(([currency, rate]) => {
             return {
@@ -93,7 +93,7 @@ export default function CurrencyManagmentPanel() {
   const [info, setInfo] = useState<any>({});
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <FactCollection
         items={[
           { title: t`Last fetched`, value: info?.updated },

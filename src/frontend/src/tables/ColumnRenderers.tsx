@@ -11,10 +11,10 @@ import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
-import { TableColumn, TableColumnProps } from './Column';
+import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
@@ -26,15 +26,15 @@ export function PartColumn({
   full_name?: boolean;
 }) {
   return part ? (
-    <Group justify="space-between" wrap="nowrap">
+    <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
         text={full_name ? part?.full_name : part?.name}
       />
-      <Group justify="flex-end" wrap="nowrap" gap="xs">
+      <Group justify='flex-end' wrap='nowrap' gap='xs'>
         {part?.active == false && (
           <Tooltip label={t`Part is not active`}>
-            <IconExclamationCircle color="red" size={16} />
+            <IconExclamationCircle color='red' size={16} />
           </Tooltip>
         )}
         {part?.locked && (
@@ -44,7 +44,7 @@ export function PartColumn({
         )}
         {part?.starred && (
           <Tooltip label={t`You are subscribed to notifications for this part`}>
-            <IconBell size={16} color="green" />
+            <IconBell size={16} color='green' />
           </Tooltip>
         )}
       </Group>
@@ -61,7 +61,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
     sortable: true,
     ordering: 'location',
     render: (record: any) => {
-      let location = resolveItem(record, props.accessor ?? '');
+      const location = resolveItem(record, props.accessor ?? '');
 
       if (!location) {
         return (
@@ -101,7 +101,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
     accessor: 'link',
     sortable: false,
     render: (record: any) => {
-      let url = resolveItem(record, props.accessor ?? 'link');
+      const url = resolveItem(record, props.accessor ?? 'link');
 
       if (!url) {
         return '-';
@@ -110,8 +110,8 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
       return (
         <Anchor
           href={url}
-          target="_blank"
-          rel="noreferrer noopener"
+          target='_blank'
+          rel='noreferrer noopener'
           onClick={(event: any) => {
             cancelEvent(event);
 
@@ -259,7 +259,7 @@ export function CurrencyColumn({
     title: title ?? t`Currency`,
     sortable: sortable ?? true,
     render: (record: any) => {
-      let currency_key = currency_accessor ?? `${accessor}_currency`;
+      const currency_key = currency_accessor ?? `${accessor}_currency`;
       return formatCurrency(resolveItem(record, accessor), {
         currency: currency ?? resolveItem(record, currency_key)
       });

@@ -15,10 +15,10 @@ export default function MobileAppView() {
   }
   return (
     <BaseContext>
-      <Center h="100vh">
+      <Center h='100vh'>
         <Container>
           <Stack>
-            <Title c="red">
+            <Title c='red'>
               <Trans>Mobile viewport detected</Trans>
             </Title>
             <Text>

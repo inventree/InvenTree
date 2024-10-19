@@ -7,8 +7,8 @@ function dec2hex(dec: number) {
 /**
  * Generate a unique ID string with the specified number of values
  */
-export function generateUniqueId(length: number = 8): string {
-  let arr = new Uint8Array(length / 2);
+export function generateUniqueId(length = 8): string {
+  const arr = new Uint8Array(length / 2);
   window.crypto.getRandomValues(arr);
 
   return Array.from(arr, dec2hex).join('');

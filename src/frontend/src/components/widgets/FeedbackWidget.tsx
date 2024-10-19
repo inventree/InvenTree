@@ -24,10 +24,10 @@ export default function FeedbackWidget() {
         possibilities we will have going forward.
       </Trans>
       <Button
-        component="a"
-        href="https://github.com/inventree/InvenTree/discussions/5328"
-        variant="outline"
-        leftSection={<IconExternalLink size="0.9rem" />}
+        component='a'
+        href='https://github.com/inventree/InvenTree/discussions/5328'
+        variant='outline'
+        leftSection={<IconExternalLink size='0.9rem' />}
       >
         <Trans>Provide Feedback</Trans>
       </Button>

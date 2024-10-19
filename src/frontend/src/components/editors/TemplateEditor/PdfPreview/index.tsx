@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { IconFileTypePdf } from '@tabler/icons-react';
 
-import { PreviewArea } from '../TemplateEditor';
+import type { PreviewArea } from '../TemplateEditor';
 import { PdfPreviewComponent } from './PdfPreview';
 
 export const PdfPreview: PreviewArea = {

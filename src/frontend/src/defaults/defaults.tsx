@@ -1,4 +1,4 @@
-import { MantineSize } from '@mantine/core';
+import type { MantineSize } from '@mantine/core';
 
 export const emptyServerAPI = {
   server: null,

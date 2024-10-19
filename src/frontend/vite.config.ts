@@ -1,7 +1,7 @@
+import { platform, release } from 'node:os';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
-import { platform, release } from 'node:os';
 import license from 'rollup-plugin-license';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import istanbul from 'vite-plugin-istanbul';

@@ -1,5 +1,10 @@
-import { ActionIcon, FloatingPosition, Group, Tooltip } from '@mantine/core';
-import { ReactNode } from 'react';
+import {
+  ActionIcon,
+  type FloatingPosition,
+  Group,
+  Tooltip
+} from '@mantine/core';
+import type { ReactNode } from 'react';
 
 import { identifierString } from '../../functions/conversion';
 
@@ -46,7 +51,7 @@ export function ActionButton(props: ActionButtonProps) {
           }}
           variant={props.variant ?? 'transparent'}
         >
-          <Group gap="xs" wrap="nowrap">
+          <Group gap='xs' wrap='nowrap'>
             {props.icon}
           </Group>
         </ActionIcon>

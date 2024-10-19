@@ -1,6 +1,6 @@
 import {
-  MantineColorScheme,
-  MantineColorSchemeManager,
+  type MantineColorScheme,
+  type MantineColorSchemeManager,
   isMantineColorScheme
 } from '@mantine/core';
 

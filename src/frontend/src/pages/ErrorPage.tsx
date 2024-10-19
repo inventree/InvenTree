@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouteError } from 'react-router-dom';
 
 import GenericErrorPage from '../components/errors/GenericErrorPage';
-import { ErrorResponse } from '../states/states';
+import type { ErrorResponse } from '../states/states';
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;

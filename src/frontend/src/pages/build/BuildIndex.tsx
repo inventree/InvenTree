@@ -35,9 +35,9 @@ export default function BuildIndex() {
     <Stack>
       <PageDetail title={t`Manufacturing`} actions={[]} />
       <PanelGroup
-        pageKey="build-index"
+        pageKey='build-index'
         panels={panels}
-        model="manufacturing"
+        model='manufacturing'
         id={null}
       />
     </Stack>

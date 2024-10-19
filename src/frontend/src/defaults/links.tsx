@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { openContextModal } from '@mantine/modals';
 
-import { DocumentationLinkItem } from '../components/items/DocumentationLinks';
+import type { DocumentationLinkItem } from '../components/items/DocumentationLinks';
 import { StylishText } from '../components/items/StylishText';
 import { UserRoles } from '../enums/Roles';
 import { IS_DEV_OR_DEMO } from '../main';
@@ -81,7 +81,7 @@ export function serverInfo() {
   return openContextModal({
     modal: 'info',
     title: (
-      <StylishText size="xl">
+      <StylishText size='xl'>
         <Trans>System Information</Trans>
       </StylishText>
     ),
@@ -94,7 +94,7 @@ export function aboutInvenTree() {
   return openContextModal({
     modal: 'about',
     title: (
-      <StylishText size="xl">
+      <StylishText size='xl'>
         <Trans>About InvenTree</Trans>
       </StylishText>
     ),
@@ -107,7 +107,7 @@ export function licenseInfo() {
   return openContextModal({
     modal: 'license',
     title: (
-      <StylishText size="xl">
+      <StylishText size='xl'>
         <Trans>License Information</Trans>
       </StylishText>
     ),

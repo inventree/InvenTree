@@ -29,7 +29,7 @@ export default function Dashboard() {
           page.
         </Trans>
       </Text>
-      <SimpleGrid cols={4} pt="md">
+      <SimpleGrid cols={4} pt='md'>
         {dashboardItems.map((item) => (
           <DashboardItemProxy key={item.id} {...item} autoupdate={autoupdate} />
         ))}

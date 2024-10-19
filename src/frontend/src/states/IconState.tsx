@@ -49,7 +49,7 @@ export const useIconState = create<IconState>()((set, get) => ({
               }) format("${format}")`
           )
           .join(',\n');
-        const font = new FontFace(fontName, src + ';');
+        const font = new FontFace(fontName, `${src};`);
         await font.load();
         document.fonts.add(font);
 

@@ -31,7 +31,7 @@ import {
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -49,7 +49,7 @@ export function ReturnOrderTable({
   const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    let filters: TableFilter[] = [
+    const filters: TableFilter[] = [
       {
         name: 'status',
         label: t`Status`,
@@ -95,8 +95,8 @@ export function ReturnOrderTable({
         accessor: 'customer__name',
         title: t`Customer`,
         sortable: true,
-        render: function (record: any) {
-          let customer = record.customer_detail ?? {};
+        render: (record: any) => {
+          const customer = record.customer_detail ?? {};
 
           return (
             <Thumbnail
@@ -143,7 +143,7 @@ export function ReturnOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-return-order"
+        key='add-return-order'
         tooltip={t`Add Return Order`}
         onClick={() => newReturnOrder.open()}
         hidden={!user.hasAddRole(UserRoles.return_order)}

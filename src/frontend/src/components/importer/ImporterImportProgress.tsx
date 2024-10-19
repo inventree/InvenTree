@@ -4,7 +4,7 @@ import { useInterval } from '@mantine/hooks';
 import { useEffect } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
-import { ImportSessionState } from '../../hooks/UseImportSession';
+import type { ImportSessionState } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';
 
@@ -32,10 +32,10 @@ export default function ImporterImportProgress({
   return (
     <Center>
       <Container>
-        <Stack gap="xs">
-          <StylishText size="lg">{t`Importing Records`}</StylishText>
+        <Stack gap='xs'>
+          <StylishText size='lg'>{t`Importing Records`}</StylishText>
           <Loader />
-          <Text size="lg">
+          <Text size='lg'>
             {t`Imported Rows`}: {session.sessionData.row_count}
           </Text>
         </Stack>

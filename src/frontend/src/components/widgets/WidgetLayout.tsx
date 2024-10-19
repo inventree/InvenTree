@@ -54,7 +54,7 @@ export function WidgetLayout({
   const [boxShown, setBoxShown] = useDisclosure(true);
 
   useEffect(() => {
-    let layout = getFromLS('layouts') || [];
+    const layout = getFromLS('layouts') || [];
     const new_layout = JSON.parse(JSON.stringify(layout));
     setLayouts(new_layout);
   }, []);
@@ -140,22 +140,22 @@ function WidgetControlBar({
   useHotkeys([['mod+E', () => editFnc()]]);
 
   return (
-    <Group justify="right">
+    <Group justify='right'>
       <Menu
-        shadow="md"
+        shadow='md'
         width={200}
         openDelay={100}
         closeDelay={400}
-        position="bottom-end"
+        position='bottom-end'
       >
         <Menu.Target>
           <Indicator
-            color="red"
-            position="bottom-start"
+            color='red'
+            position='bottom-start'
             processing
             disabled={!editable}
           >
-            <ActionIcon variant="transparent">
+            <ActionIcon variant='transparent'>
               <IconDotsVertical />
             </ActionIcon>
           </Indicator>
@@ -177,7 +177,7 @@ function WidgetControlBar({
             }
             onClick={editFnc}
             rightSection={
-              <Text size="xs" c="dimmed">
+              <Text size='xs' c='dimmed'>
                 ⌘E
               </Text>
             }

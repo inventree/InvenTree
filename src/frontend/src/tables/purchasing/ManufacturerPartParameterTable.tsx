@@ -13,9 +13,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ManufacturerPartParameterTable({
   params
@@ -104,7 +104,7 @@ export default function ManufacturerPartParameterTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-parameter"
+        key='add-parameter'
         tooltip={t`Add Parameter`}
         onClick={() => {
           createParameter.open();

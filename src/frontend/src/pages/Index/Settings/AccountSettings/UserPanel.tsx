@@ -9,11 +9,11 @@ export function AccountContent() {
 
   return (
     <div>
-      <SimpleGrid cols={2} spacing="md">
-        <Container w="100%">
+      <SimpleGrid cols={2} spacing='md'>
+        <Container w='100%'>
           <AccountDetailPanel />
         </Container>
-        <Grid gutter="md">
+        <Grid gutter='md'>
           <Grid.Col>
             <UserTheme height={SECONDARY_COL_HEIGHT} />
           </Grid.Col>

@@ -40,7 +40,7 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { CameraDevice } from 'html5-qrcode/camera/core';
+import type { CameraDevice } from 'html5-qrcode/camera/core';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
@@ -159,10 +159,10 @@ export default function Scan() {
 
         // Fetch instance data
         if (item.model && item.pk) {
-          let model_info = ModelInformationDict[item.model];
+          const model_info = ModelInformationDict[item.model];
 
-          if (model_info && model_info.api_endpoint) {
-            let url = apiUrl(model_info.api_endpoint, item.pk);
+          if (model_info?.api_endpoint) {
+            const url = apiUrl(model_info.api_endpoint, item.pk);
 
             api
               .get(url)
@@ -217,7 +217,7 @@ export default function Scan() {
     { value: InputMethod.ImageBarcode, label: t`Image Barcode` }
   ];
 
-  const inp = (function () {
+  const inp = (() => {
     switch (inputValue) {
       case InputMethod.Manual:
         return <InputManual action={addItems} />;
@@ -257,28 +257,28 @@ export default function Scan() {
     if (uniqueObjectTypes.length === 0) {
       return (
         <Group gap={0}>
-          <IconQuestionMark color="orange" />
+          <IconQuestionMark color='orange' />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
     } else if (uniqueObjectTypes.length > 1) {
       return (
         <Group gap={0}>
-          <IconAlertCircle color="orange" />
+          <IconAlertCircle color='orange' />
           <Trans>Multiple object types selected</Trans>
         </Group>
       );
     }
     return (
       <>
-        <Text fz="sm" c="dimmed">
+        <Text fz='sm' c='dimmed'>
           <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
         </Text>
         <Group>
           <ActionIcon
             onClick={notYetImplemented}
             title={t`Count`}
-            variant="default"
+            variant='default'
           >
             <IconNumber />
           </ActionIcon>
@@ -290,8 +290,8 @@ export default function Scan() {
   // rendering
   return (
     <>
-      <Group justify="space-between">
-        <Group justify="left">
+      <Group justify='space-between'>
+        <Group justify='left'>
           <StylishText>
             <Trans>Scan Page</Trans>
           </StylishText>
@@ -301,8 +301,8 @@ export default function Scan() {
         </Group>
         <Button
           onClick={toggleFullscreen}
-          size="sm"
-          variant="subtle"
+          size='sm'
+          variant='subtle'
           title={t`Toggle Fullscreen`}
         >
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
@@ -312,8 +312,8 @@ export default function Scan() {
       <Grid maw={'100%'}>
         <Grid.Col span={4}>
           <Stack>
-            <Stack gap="xs">
-              <Group justify="space-between">
+            <Stack gap='xs'>
+              <Group justify='space-between'>
                 <TitleWithDoc
                   order={3}
                   text={t`Select the input method you want to use to scan items.`}
@@ -347,15 +347,15 @@ export default function Scan() {
                   <Text>
                     <Trans>{selection.length} items selected</Trans>
                   </Text>
-                  <Text fz="sm" c="dimmed">
+                  <Text fz='sm' c='dimmed'>
                     <Trans>General Actions</Trans>
                   </Text>
                   <Group>
                     <ActionIcon
-                      color="red"
+                      color='red'
                       onClick={btnDeleteHistory}
                       title={t`Delete`}
-                      variant="default"
+                      variant='default'
                     >
                       <IconTrash />
                     </ActionIcon>
@@ -363,7 +363,7 @@ export default function Scan() {
                       onClick={btnRunSelectedBarcode}
                       disabled={selection.length > 1}
                       title={t`Lookup part`}
-                      variant="default"
+                      variant='default'
                     >
                       <IconSearch />
                     </ActionIcon>
@@ -371,7 +371,7 @@ export default function Scan() {
                       onClick={btnOpenSelectedLink}
                       disabled={!selectionLinked}
                       title={t`Open Link`}
-                      variant="default"
+                      variant='default'
                     >
                       <IconLink />
                     </ActionIcon>
@@ -383,7 +383,7 @@ export default function Scan() {
           </Stack>
         </Grid.Col>
         <Grid.Col span={8}>
-          <Group justify="space-between">
+          <Group justify='space-between'>
             <TitleWithDoc
               order={3}
               text={t`History is locally kept in this browser.`}
@@ -392,9 +392,9 @@ export default function Scan() {
               <Trans>History</Trans>
             </TitleWithDoc>
             <ActionIcon
-              color="red"
+              color='red'
               onClick={btnDeleteFullHistory}
-              variant="default"
+              variant='default'
               title={t`Delete History`}
             >
               <IconTrash />
@@ -465,7 +465,7 @@ function HistoryTable({
     );
   return (
     <ScrollArea>
-      <Table miw={800} verticalSpacing="sm">
+      <Table miw={800} verticalSpacing='sm'>
         <thead>
           <tr>
             <th style={{ width: rem(40) }}>
@@ -549,13 +549,13 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
           onChange={(event) => setValue(event.currentTarget.value)}
           onKeyDown={getHotkeyHandler([['Enter', btnAddItem]])}
         />
-        <ActionIcon onClick={btnAddItem} w={16} variant="default">
+        <ActionIcon onClick={btnAddItem} w={16} variant='default'>
           <IconPlus />
         </ActionIcon>
       </Group>
 
       {IS_DEV_OR_DEMO && (
-        <Button onClick={btnAddDummyItem} variant="outline">
+        <Button onClick={btnAddDummyItem} variant='outline'>
           <Trans>Add dummy item</Trans>
         </Button>
       )}
@@ -579,7 +579,7 @@ export function InputImageBarcode({
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
 
-  let lastValue: string = '';
+  let lastValue = '';
 
   // Mount QR code once we are loaded
   useEffect(() => {
@@ -727,8 +727,8 @@ export function InputImageBarcode({
   }, [cameraValue]);
 
   return (
-    <Stack gap="xs">
-      <Group gap="xs" preventGrowOverflow>
+    <Stack gap='xs'>
+      <Group gap='xs' preventGrowOverflow>
         <Select
           value={cameraValue}
           onChange={setCameraValue}
@@ -736,24 +736,24 @@ export function InputImageBarcode({
             return { value: device.id, label: device.label };
           })}
           maw={200}
-          size="sm"
+          size='sm'
         />
         {scanningEnabled ? (
           <ActionIcon
-            size="input-sm"
+            size='input-sm'
             onClick={btnStopScanning}
             title={t`Stop scanning`}
-            variant="default"
+            variant='default'
           >
             <IconPlayerStopFilled />
           </ActionIcon>
         ) : (
           <ActionIcon
-            size="input-sm"
+            size='input-sm'
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
-            variant="default"
+            variant='default'
           >
             <IconPlayerPlayFilled />
           </ActionIcon>
@@ -764,9 +764,9 @@ export function InputImageBarcode({
         </Badge>
       </Group>
       {scanningEnabled ? (
-        <Container px={0} id="reader" w={'100%'} mih="300px" />
+        <Container px={0} id='reader' w={'100%'} mih='300px' />
       ) : (
-        <Container px={0} id="reader" w={'100%'} mih="300px">
+        <Container px={0} id='reader' w={'100%'} mih='300px'>
           {notScanningPlaceholder}
         </Container>
       )}

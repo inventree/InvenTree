@@ -8,7 +8,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { InfoItem } from '../items/InfoItem';
 import { StylishText } from '../items/StylishText';
 import { PluginSettingList } from '../settings/SettingList';
-import { PluginInterface } from './PluginInterface';
+import type { PluginInterface } from './PluginInterface';
 import PluginSettingsPanel from './PluginSettingsPanel';
 
 /**
@@ -36,7 +36,7 @@ export default function PluginDrawer({
   if (!pluginInstance.active) {
     return (
       <Alert
-        color="red"
+        color='red'
         title={t`Plugin Inactive`}
         icon={<IconExclamationCircle />}
       >
@@ -48,42 +48,42 @@ export default function PluginDrawer({
   return (
     <>
       <Accordion defaultValue={['plugin-details', 'plugin-settings']} multiple>
-        <Accordion.Item value="plugin-details">
+        <Accordion.Item value='plugin-details'>
           <Accordion.Control>
-            <StylishText size="lg">{t`Plugin Information`}</StylishText>
+            <StylishText size='lg'>{t`Plugin Information`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <Stack gap="xs">
+            <Stack gap='xs'>
               <Card withBorder>
-                <Stack gap="md">
-                  <Stack pos="relative" gap="xs">
+                <Stack gap='md'>
+                  <Stack pos='relative' gap='xs'>
                     <InfoItem
-                      type="text"
+                      type='text'
                       name={t`Name`}
                       value={pluginInstance?.name}
                     />
                     <InfoItem
-                      type="text"
+                      type='text'
                       name={t`Description`}
                       value={pluginInstance?.meta.description}
                     />
                     <InfoItem
-                      type="text"
+                      type='text'
                       name={t`Author`}
                       value={pluginInstance?.meta.author}
                     />
                     <InfoItem
-                      type="text"
+                      type='text'
                       name={t`Date`}
                       value={pluginInstance?.meta.pub_date}
                     />
                     <InfoItem
-                      type="text"
+                      type='text'
                       name={t`Version`}
                       value={pluginInstance?.meta.version}
                     />
                     <InfoItem
-                      type="boolean"
+                      type='boolean'
                       name={t`Active`}
                       value={pluginInstance?.active}
                     />
@@ -91,27 +91,27 @@ export default function PluginDrawer({
                 </Stack>
               </Card>
               <Card withBorder>
-                <Stack gap="md">
-                  <Stack pos="relative" gap="xs">
+                <Stack gap='md'>
+                  <Stack pos='relative' gap='xs'>
                     {pluginInstance?.is_package && (
                       <InfoItem
-                        type="text"
+                        type='text'
                         name={t`Package Name`}
                         value={pluginInstance?.package_name}
                       />
                     )}
                     <InfoItem
-                      type="text"
+                      type='text'
                       name={t`Installation Path`}
                       value={pluginInstance?.meta.package_path}
                     />
                     <InfoItem
-                      type="boolean"
+                      type='boolean'
                       name={t`Builtin`}
                       value={pluginInstance?.is_builtin}
                     />
                     <InfoItem
-                      type="boolean"
+                      type='boolean'
                       name={t`Package`}
                       value={pluginInstance?.is_package}
                     />
@@ -122,9 +122,9 @@ export default function PluginDrawer({
           </Accordion.Panel>
         </Accordion.Item>
         {hasSettings && (
-          <Accordion.Item value="plugin-settings">
+          <Accordion.Item value='plugin-settings'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Plugin Settings`}</StylishText>
+              <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
@@ -134,9 +134,9 @@ export default function PluginDrawer({
           </Accordion.Item>
         )}
         {pluginAdmin?.source && (
-          <Accordion.Item value="plugin-custom">
+          <Accordion.Item value='plugin-custom'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Plugin Configuration`}</StylishText>
+              <StylishText size='lg'>{t`Plugin Configuration`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>

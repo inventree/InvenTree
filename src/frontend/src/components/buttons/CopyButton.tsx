@@ -3,7 +3,7 @@ import {
   ActionIcon,
   Button,
   CopyButton as MantineCopyButton,
-  MantineSize,
+  type MantineSize,
   Text,
   Tooltip
 } from '@mantine/core';
@@ -30,13 +30,13 @@ export function CopyButton({
           <ButtonComponent
             color={copied ? 'teal' : 'gray'}
             onClick={copy}
-            variant="transparent"
+            variant='transparent'
             size={size ?? 'sm'}
           >
             {copied ? (
-              <InvenTreeIcon icon="check" />
+              <InvenTreeIcon icon='check' />
             ) : (
-              <InvenTreeIcon icon="copy" />
+              <InvenTreeIcon icon='copy' />
             )}
             {content}
             {label && (

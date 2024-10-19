@@ -30,7 +30,7 @@ export default function PluginManagementPanel() {
         <Alert
           title={<Trans>Info</Trans>}
           icon={<IconInfoCircle />}
-          color="blue"
+          color='blue'
         >
           <Trans>
             External plugins are not enabled for this InvenTree installation.
@@ -38,19 +38,19 @@ export default function PluginManagementPanel() {
         </Alert>
       )}
 
-      <Accordion defaultValue="pluginlist">
-        <Accordion.Item value="pluginlist">
+      <Accordion defaultValue='pluginlist'>
+        <Accordion.Item value='pluginlist'>
           <Accordion.Control>
-            <StylishText size="lg">{t`Plugins`}</StylishText>
+            <StylishText size='lg'>{t`Plugins`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
             <PluginListTable />
           </Accordion.Panel>
         </Accordion.Item>
 
-        <Accordion.Item value="pluginsettings">
+        <Accordion.Item value='pluginsettings'>
           <Accordion.Control>
-            <StylishText size="lg">{t`Plugin Settings`}</StylishText>
+            <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
             <GlobalSettingList
@@ -68,9 +68,9 @@ export default function PluginManagementPanel() {
           </Accordion.Panel>
         </Accordion.Item>
         {user.isSuperuser() && (
-          <Accordion.Item value="pluginerror">
+          <Accordion.Item value='pluginerror'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Plugin Errors`}</StylishText>
+              <StylishText size='lg'>{t`Plugin Errors`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <PluginErrorTable />

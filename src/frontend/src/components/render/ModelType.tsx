@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 
 export interface ModelInformationInterface {
   label: string;

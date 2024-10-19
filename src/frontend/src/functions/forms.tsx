@@ -1,11 +1,11 @@
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
-import {
+import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { PathParams, apiUrl } from '../states/ApiState';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import { type PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 
 /**
@@ -35,7 +35,7 @@ export function extractAvailableFields(
     return null;
   }
 
-  let actions: any = response.data?.actions ?? null;
+  const actions: any = response.data?.actions ?? null;
 
   if (!method || !actions) {
     return null;
@@ -109,7 +109,7 @@ export function mapFields(
 
   for (const [k, v] of Object.entries(fields)) {
     const path = _path ? `${_path}.${k}` : k;
-    let value;
+    let value: any;
 
     if (v.field_type === 'nested object' && v.children) {
       value = mapFields(v.children, fieldFunction, path);

@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 
 import {
   ActionDropdown,
-  ActionDropdownItem
+  type ActionDropdownItem
 } from '../components/items/ActionDropdown';
 
 export function DownloadAction({

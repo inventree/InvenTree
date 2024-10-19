@@ -25,7 +25,7 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import {
   CurrencyColumn,
   LinkColumn,
@@ -37,7 +37,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -71,7 +71,7 @@ export function PurchaseOrderLineItemTable({
   );
 
   const importSessionFields = useMemo(() => {
-    let fields = dataImporterSessionFields();
+    const fields = dataImporterSessionFields();
 
     fields.model_type.hidden = true;
     fields.model_type.value = ModelType.purchaseorderlineitem;
@@ -145,21 +145,21 @@ export function PurchaseOrderLineItemTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let supplier_part = record?.supplier_part_detail ?? {};
-          let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
-          let extra = [];
+          const supplier_part = record?.supplier_part_detail ?? {};
+          const part = record?.part_detail ?? supplier_part?.part_detail ?? {};
+          const extra = [];
 
           if (supplier_part.pack_quantity_native != 1) {
-            let total = record.quantity * supplier_part.pack_quantity_native;
+            const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key="pack-quantity">
+              <Text key='pack-quantity'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key="total-quantity">
+              <Text key='total-quantity'>
                 {t`Total Quantity`}: {total} {part?.units}
               </Text>
             );
@@ -291,7 +291,7 @@ export function PurchaseOrderLineItemTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
+      const received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
         {
@@ -334,14 +334,14 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
-        key="import-line-items"
+        key='import-line-items'
         hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
         tooltip={t`Import Line Items`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
       />,
       <AddItemButton
-        key="add-line-item"
+        key='add-line-item'
         tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
@@ -352,7 +352,7 @@ export function PurchaseOrderLineItemTable({
         hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
-        key="receive-items"
+        key='receive-items'
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}

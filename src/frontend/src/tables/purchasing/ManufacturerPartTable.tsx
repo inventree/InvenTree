@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -15,10 +15,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
@@ -43,7 +43,7 @@ export function ManufacturerPartTable({
         accessor: 'manufacturer',
         sortable: true,
         render: (record: any) => {
-          let manufacturer = record?.manufacturer_detail ?? {};
+          const manufacturer = record?.manufacturer_detail ?? {};
 
           return (
             <Thumbnail
@@ -96,13 +96,13 @@ export function ManufacturerPartTable({
   });
 
   const tableActions = useMemo(() => {
-    let can_add =
+    const can_add =
       user.hasAddRole(UserRoles.purchase_order) &&
       user.hasAddRole(UserRoles.part);
 
     return [
       <AddItemButton
-        key="add-manufacturer-part"
+        key='add-manufacturer-part'
         tooltip={t`Add Manufacturer Part`}
         onClick={() => createManufacturerPart.open()}
         hidden={!can_add}

@@ -31,7 +31,7 @@ import { lazy, useMemo } from 'react';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import { PanelType } from '../../../../components/panels/Panel';
+import type { PanelType } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -145,7 +145,7 @@ export default function AdminCenter() {
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
-          <Stack gap="xs">
+          <Stack gap='xs'>
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <Divider />
             <ProjectCodeTable />
@@ -221,17 +221,17 @@ export default function AdminCenter() {
         <Trans>Quick Actions</Trans>
       </Title>
       <SimpleGrid cols={3}>
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <Text>
             <Trans>Add a new user</Trans>
           </Text>
         </Paper>
 
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <PlaceholderPill />
         </Paper>
 
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <PlaceholderPill />
         </Paper>
       </SimpleGrid>
@@ -245,18 +245,18 @@ export default function AdminCenter() {
   return (
     <>
       {user.isStaff() ? (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <SettingsHeader
-            label="admin"
+            label='admin'
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
           />
           <QuickAction />
           <PanelGroup
-            pageKey="admin-center"
+            pageKey='admin-center'
             panels={adminCenterPanels}
             collapsible={true}
-            model="admincenter"
+            model='admincenter'
             id={null}
           />
         </Stack>

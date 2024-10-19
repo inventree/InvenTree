@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import { Navigate, NavigateFunction } from 'react-router-dom';
+import { Navigate, type NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -37,7 +37,7 @@ function post(path: string, params: any, method = 'post') {
   form.action = path;
 
   for (const key in params) {
-    if (params.hasOwnProperty(key)) {
+    if (params.hasOwn(key)) {
       const hiddenField = document.createElement('input');
       hiddenField.type = 'hidden';
       hiddenField.name = key;
@@ -68,7 +68,7 @@ export const doBasicLogin = async (username: string, password: string) => {
 
   const login_url = apiUrl(ApiEndpoints.user_login);
 
-  let result: boolean = false;
+  let result = false;
 
   // Attempt login with
   await api

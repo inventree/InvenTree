@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Carousel } from '@mantine/carousel';
 import { Anchor, Button, Paper, Text, Title } from '@mantine/core';
 
-import { DocumentationLinkItem } from './DocumentationLinks';
+import type { DocumentationLinkItem } from './DocumentationLinks';
 import * as classes from './GettingStartedCarousel.css';
 import { PlaceholderPill } from './Placeholder';
 
@@ -13,16 +13,16 @@ function StartedCard({
   placeholder
 }: DocumentationLinkItem) {
   return (
-    <Paper shadow="md" p="xl" radius="md" className={classes.card}>
+    <Paper shadow='md' p='xl' radius='md' className={classes.card}>
       <div>
         <Title order={3} className={classes.title}>
           {title} {placeholder && <PlaceholderPill />}
         </Title>
-        <Text size="sm" className={classes.category} lineClamp={2}>
+        <Text size='sm' className={classes.category} lineClamp={2}>
           {description}
         </Text>
       </div>
-      <Anchor href={link} target="_blank">
+      <Anchor href={link} target='_blank'>
         <Button>
           <Trans>Read More</Trans>
         </Button>
@@ -47,7 +47,7 @@ export function GettingStartedCarousel({
       slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
       slideGap={{ base: 0, sm: 'md' }}
       slidesToScroll={3}
-      align="start"
+      align='start'
       loop
     >
       {slides}

@@ -38,7 +38,7 @@ export default function PurchasingIndex() {
         label: t`Customers`,
         icon: <IconBuildingStore />,
         content: (
-          <CompanyTable path="sales/customer" params={{ is_customer: true }} />
+          <CompanyTable path='sales/customer' params={{ is_customer: true }} />
         )
       }
     ];
@@ -52,7 +52,7 @@ export default function PurchasingIndex() {
     <Stack>
       <PageDetail title={t`Sales`} />
       <PanelGroup
-        pageKey="sales-index"
+        pageKey='sales-index'
         panels={panels}
         model={'sales'}
         id={null}

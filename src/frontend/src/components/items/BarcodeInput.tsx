@@ -1,7 +1,8 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Box, Button, Divider, TextInput } from '@mantine/core';
 import { IconQrcode } from '@tabler/icons-react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 import { InputImageBarcode } from '../../pages/Index/Scan';
 
@@ -47,10 +48,10 @@ export function BarcodeInput({
             <IconQrcode />
           </ActionIcon>
         }
-        w="100%"
+        w='100%'
       />
       {onAction ? (
-        <Button color="green" onClick={onAction} mt="lg" fullWidth>
+        <Button color='green' onClick={onAction} mt='lg' fullWidth>
           {actionText}
         </Button>
       ) : null}

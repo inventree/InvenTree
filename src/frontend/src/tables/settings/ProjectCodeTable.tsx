@@ -13,10 +13,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, ResponsibleColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of project codes
@@ -88,6 +88,7 @@ export default function ProjectCodeTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         onClick={() => newProjectCode.open()}
         tooltip={t`Add project code`}
       />

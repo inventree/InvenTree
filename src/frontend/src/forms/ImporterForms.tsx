@@ -1,4 +1,4 @@
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
 export function dataImporterSessionFields(): ApiFormFieldSet {
   return {

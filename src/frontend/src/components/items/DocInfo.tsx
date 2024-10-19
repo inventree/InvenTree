@@ -1,6 +1,6 @@
 import { IconInfoCircle } from '@tabler/icons-react';
 
-import { BaseDocProps, DocTooltip } from './DocTooltip';
+import { type BaseDocProps, DocTooltip } from './DocTooltip';
 
 interface DocInfoProps extends BaseDocProps {
   size?: number;

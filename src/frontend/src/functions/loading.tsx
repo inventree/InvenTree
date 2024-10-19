@@ -16,8 +16,8 @@ function LoadingFallback() {
   );
 }
 
-export const Loadable = (Component: any) => (props: JSX.IntrinsicAttributes) =>
-  (
+export const Loadable =
+  (Component: any) => (props: JSX.IntrinsicAttributes) => (
     <Suspense fallback={<LoadingFallback />}>
       <Component {...props} />
     </Suspense>

@@ -1,5 +1,5 @@
 import { ModelInformationDict } from '../components/render/ModelType';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { base_url } from '../main';
 
 /**
@@ -17,8 +17,8 @@ export function getDetailUrl(
   }
 
   if (!!pk && modelInfo && modelInfo.url_detail) {
-    let url = modelInfo.url_detail.replace(':pk', pk.toString());
-    let base = base_url;
+    const url = modelInfo.url_detail.replace(':pk', pk.toString());
+    const base = base_url;
 
     if (absolute && base) {
       return `/${base}${url}`;

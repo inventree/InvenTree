@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 
-import { menuItemsCollection } from '../components/items/MenuLinks';
+import type { menuItemsCollection } from '../components/items/MenuLinks';
 import { IS_DEV_OR_DEMO } from '../main';
 
 export const menuItems: menuItemsCollection = {

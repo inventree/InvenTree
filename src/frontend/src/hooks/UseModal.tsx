@@ -1,9 +1,10 @@
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import React, { useCallback } from 'react';
+import type React from 'react';
+import { useCallback } from 'react';
 
 import { StylishText } from '../components/items/StylishText';
-import { UiSizeType } from '../defaults/formatters';
+import type { UiSizeType } from '../defaults/formatters';
 
 export interface UseModalProps {
   title: string;
@@ -38,7 +39,7 @@ export function useModal(props: UseModalProps) {
         onClose={close}
         closeOnClickOutside={props.closeOnClickOutside}
         size={props.size ?? 'xl'}
-        title={<StylishText size="xl">{props.title}</StylishText>}
+        title={<StylishText size='xl'>{props.title}</StylishText>}
       >
         {props.children}
       </Modal>

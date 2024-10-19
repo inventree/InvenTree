@@ -1,9 +1,9 @@
-import { DataTableSortStatus } from 'mantine-datatable';
+import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { UiSizeType } from '../defaults/formatters';
-import { HostList } from './states';
+import type { UiSizeType } from '../defaults/formatters';
+import type { HostList } from './states';
 
 interface LocalStateProps {
   autoupdate: boolean;

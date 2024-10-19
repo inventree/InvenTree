@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function TestStatisticsTable({
@@ -13,7 +13,7 @@ export function TestStatisticsTable({
   const [templateColumnList, setTemplateColumnList] = useState(initialColumns);
 
   const testTemplateColumns: TableColumn[] = useMemo(() => {
-    let data = templateColumnList ?? [];
+    const data = templateColumnList ?? [];
     return data;
   }, [templateColumnList]);
 
@@ -39,7 +39,7 @@ export function TestStatisticsTable({
 
   function statCountString(count: number, total: number) {
     if (count > 0) {
-      let percentage =
+      const percentage =
         ' (' +
         ((100.0 * count) / total).toLocaleString(undefined, {
           minimumFractionDigits: 0,
@@ -58,7 +58,7 @@ export function TestStatisticsTable({
       [key: string]: string;
     }
     // Construct a list of test templates
-    let results: ResultRow[] = [
+    const results: ResultRow[] = [
       { id: 'row_passed', col_0: t`Passed` },
       { id: 'row_failed', col_0: t`Failed` },
       { id: 'row_total', col_0: t`Total` }
@@ -67,10 +67,10 @@ export function TestStatisticsTable({
 
     columnIndex = 1;
 
-    let newColumns: TableColumn[] = [];
-    for (let key in records[0]) {
+    const newColumns: TableColumn[] = [];
+    for (const key in records[0]) {
       if (key == 'total') continue;
-      let acc = 'col_' + columnIndex.toString();
+      const acc = 'col_' + columnIndex.toString();
 
       const resultKeys = ['passed', 'failed', 'total'];
 

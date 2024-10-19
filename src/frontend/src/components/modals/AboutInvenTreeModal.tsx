@@ -11,7 +11,7 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { ContextModalProps } from '@mantine/modals';
+import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
@@ -50,22 +50,18 @@ export function AboutInvenTreeModal({
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
   });
 
-  function fillTable(
-    lookup: AboutLookupRef[],
-    data: any,
-    alwaysLink: boolean = false
-  ) {
+  function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup.map((map: AboutLookupRef, idx) => (
       <tr key={idx}>
         <td>{map.title}</td>
         <td>
-          <Group justify="space-between" gap="xs">
+          <Group justify='space-between' gap='xs'>
             {alwaysLink ? (
-              <Anchor href={data[map.ref]} target="_blank">
+              <Anchor href={data[map.ref]} target='_blank'>
                 {data[map.ref]}
               </Anchor>
             ) : map.link ? (
-              <Anchor href={map.link} target="_blank">
+              <Anchor href={map.link} target='_blank'>
                 {data[map.ref]}
               </Anchor>
             ) : (
@@ -103,15 +99,15 @@ export function AboutInvenTreeModal({
           <Trans>Your InvenTree version status is</Trans>
         </Text>
         {data.dev ? (
-          <Badge color="blue">
+          <Badge color='blue'>
             <Trans>Development Version</Trans>
           </Badge>
         ) : data.up_to_date ? (
-          <Badge color="green">
+          <Badge color='green'>
             <Trans>Up to Date</Trans>
           </Badge>
         ) : (
-          <Badge color="teal">
+          <Badge color='teal'>
             <Trans>Update Available</Trans>
           </Badge>
         )}
@@ -177,11 +173,11 @@ export function AboutInvenTreeModal({
         </tbody>
       </Table>
       <Divider />
-      <Group justify="space-between">
+      <Group justify='space-between'>
         <CopyButton value={copyval} label={t`Copy version information`} />
         <Space />
         <Button
-          color="red"
+          color='red'
           onClick={() => {
             context.closeModal(id);
           }}

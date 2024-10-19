@@ -1,13 +1,13 @@
 import { t } from '@lingui/macro';
 import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { DateColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
@@ -82,7 +82,7 @@ export default function SaleHistoryPanel({
       {saleHistoryData.length > 0 ? (
         <BarChart
           data={saleHistoryData}
-          dataKey="name"
+          dataKey='name'
           series={[
             { name: 'sale_price', label: t`Sale Price`, color: 'blue.6' }
           ]}

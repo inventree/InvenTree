@@ -3,8 +3,8 @@ import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
-import { UiSizeType } from '../defaults/formatters';
+import { type ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
+import type { UiSizeType } from '../defaults/formatters';
 import { useModal } from './UseModal';
 
 /**

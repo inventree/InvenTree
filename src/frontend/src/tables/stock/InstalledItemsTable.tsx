@@ -15,7 +15,7 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -87,6 +87,7 @@ export default function InstalledItemsTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='install'
         tooltip={t`Install Item`}
         onClick={() => {
           installItem.open();

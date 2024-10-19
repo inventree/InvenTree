@@ -48,7 +48,7 @@ export default function PluginSettingsPanel({
               setError('');
             } catch (error) {
               setError(
-                t`Error occurred while rendering plugin settings` + `: ${error}`
+                `${t`Error occurred while rendering plugin settings`}: ${error}`
               );
             }
           } else {
@@ -69,10 +69,10 @@ export default function PluginSettingsPanel({
 
   return (
     <>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {error && (
           <Alert
-            color="red"
+            color='red'
             title={t`Error Loading Plugin`}
             icon={<IconExclamationCircle />}
           >

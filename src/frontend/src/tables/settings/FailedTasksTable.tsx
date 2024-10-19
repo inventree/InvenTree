@@ -8,7 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function FailedTasksTable() {
@@ -54,14 +54,14 @@ export default function FailedTasksTable() {
     <>
       <Drawer
         opened={opened}
-        size="xl"
-        position="right"
+        size='xl'
+        position='right'
         title={<StylishText>{t`Error Details`}</StylishText>}
         onClose={close}
       >
         {error.split('\n').map((line: string, index: number) => {
           return (
-            <Text key={`error-${index}`} size="sm">
+            <Text key={`error-${index}`} size='sm'>
               {line}
             </Text>
           );

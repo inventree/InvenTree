@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { AuthProps, ServerAPIProps } from './states';
+import type { AuthProps, ServerAPIProps } from './states';
 
 interface ServerApiStateProps {
   server: ServerAPIProps;

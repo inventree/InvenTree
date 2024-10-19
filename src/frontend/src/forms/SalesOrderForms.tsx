@@ -5,12 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
@@ -24,7 +24,7 @@ export function useSalesOrderFields({
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
       customer: {
@@ -147,8 +147,8 @@ function SalesOrderAllocateLineRow({
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
-          let available = instance.quantity - instance.allocated;
-          let required = record.quantity - record.allocated;
+          const available = instance.quantity - instance.allocated;
+          const required = record.quantity - record.allocated;
 
           let quantity = props.item?.quantity ?? 0;
 
@@ -190,14 +190,14 @@ function SalesOrderAllocateLineRow({
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="stock_item"
+          fieldName='stock_item'
           fieldDefinition={stockItemField}
           error={props.rowErrors?.stock_item?.message}
         />
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="quantity"
+          fieldName='quantity'
           fieldDefinition={quantityField}
           error={props.rowErrors?.quantity?.message}
         />

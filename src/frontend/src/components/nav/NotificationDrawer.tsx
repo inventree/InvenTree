@@ -76,8 +76,8 @@ export function NotificationDrawer({
   return (
     <Drawer
       opened={opened}
-      size="md"
-      position="right"
+      size='md'
+      position='right'
       onClose={onClose}
       withCloseButton={false}
       styles={{
@@ -89,12 +89,12 @@ export function NotificationDrawer({
         }
       }}
       title={
-        <Group justify="space-between" wrap="nowrap">
-          <StylishText size="lg">{t`Notifications`}</StylishText>
-          <Group justify="end" wrap="nowrap">
+        <Group justify='space-between' wrap='nowrap'>
+          <StylishText size='lg'>{t`Notifications`}</StylishText>
+          <Group justify='end' wrap='nowrap'>
             <Tooltip label={t`Mark all as read`}>
               <ActionIcon
-                variant="transparent"
+                variant='transparent'
                 onClick={() => {
                   markAllAsRead();
                 }}
@@ -108,7 +108,7 @@ export function NotificationDrawer({
                   onClose();
                   navigateToLink('/notifications/unread', navigate, event);
                 }}
-                variant="transparent"
+                variant='transparent'
               >
                 <IconArrowRight />
               </ActionIcon>
@@ -117,43 +117,43 @@ export function NotificationDrawer({
         </Group>
       }
     >
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Divider />
         {!hasNotifications && (
-          <Alert color="green">
-            <Text size="sm">{t`You have no unread notifications.`}</Text>
+          <Alert color='green'>
+            <Text size='sm'>{t`You have no unread notifications.`}</Text>
           </Alert>
         )}
         {hasNotifications &&
           notificationQuery.data?.results?.map((notification: any) => (
-            <Group justify="space-between" key={notification.pk}>
-              <Stack gap="3">
+            <Group justify='space-between' key={notification.pk}>
+              <Stack gap='3'>
                 {notification?.target?.link ? (
                   <Text
-                    size="sm"
+                    size='sm'
                     component={Link}
                     to={notification?.target?.link}
-                    target="_blank"
+                    target='_blank'
                   >
                     {notification.target?.name ??
                       notification.name ??
                       t`Notification`}
                   </Text>
                 ) : (
-                  <Text size="sm">
+                  <Text size='sm'>
                     {notification.target?.name ??
                       notification.name ??
                       t`Notification`}
                   </Text>
                 )}
-                <Text size="xs">{notification.age_human ?? ''}</Text>
+                <Text size='xs'>{notification.age_human ?? ''}</Text>
               </Stack>
               <Space />
               <ActionIcon
-                color="gray"
-                variant="hover"
+                color='gray'
+                variant='hover'
                 onClick={() => {
-                  let url = apiUrl(
+                  const url = apiUrl(
                     ApiEndpoints.notifications_list,
                     notification.pk
                   );
@@ -174,7 +174,7 @@ export function NotificationDrawer({
           ))}
         {notificationQuery.isFetching && (
           <Center>
-            <Loader size="sm" />
+            <Loader size='sm' />
           </Center>
         )}
       </Stack>

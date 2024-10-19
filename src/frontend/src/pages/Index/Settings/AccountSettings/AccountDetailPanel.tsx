@@ -4,7 +4,7 @@ import { IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { notYetImplemented } from '../../../../functions/notifications';
@@ -35,8 +35,8 @@ export function AccountDetailPanel() {
   return (
     <>
       {editUser.modal}
-      <Stack gap="xs">
-        <Group justify="space-between">
+      <Stack gap='xs'>
+        <Group justify='space-between'>
           <Title order={3}>
             <Trans>User Details</Trans>
           </Title>

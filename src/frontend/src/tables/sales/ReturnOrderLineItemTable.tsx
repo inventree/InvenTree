@@ -21,7 +21,7 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import {
   DateColumn,
   LinkColumn,
@@ -30,9 +30,9 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -164,7 +164,7 @@ export default function ReturnOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
+        key='add-line-item'
         tooltip={t`Add Line Item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
@@ -172,7 +172,7 @@ export default function ReturnOrderLineItemTable({
         }}
       />,
       <ActionButton
-        key="receive-items"
+        key='receive-items'
         tooltip={t`Receive selected items`}
         icon={<IconSquareArrowRight />}
         hidden={!inProgress || !user.hasChangeRole(UserRoles.return_order)}

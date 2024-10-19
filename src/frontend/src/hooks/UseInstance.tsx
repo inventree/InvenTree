@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { PathParams, apiUrl } from '../states/ApiState';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import { type PathParams, apiUrl } from '../states/ApiState';
 
 /**
  * Custom hook for loading a single instance of an instance from the API
@@ -89,9 +89,7 @@ export function useInstance<T = any>({
     refetchInterval: updateInterval
   });
 
-  const refreshInstance = useCallback(function () {
-    return instanceQuery.refetch();
-  }, []);
+  const refreshInstance = useCallback(() => instanceQuery.refetch(), []);
 
   return {
     instance,

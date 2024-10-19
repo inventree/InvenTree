@@ -9,7 +9,7 @@ import {
   IconLink,
   IconPhoto
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { useLocalState } from '../../states/LocalState';
 
@@ -18,7 +18,7 @@ import { useLocalState } from '../../states/LocalState';
  */
 export function attachmentIcon(attachment: string): ReactNode {
   const sz = 18;
-  let suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
+  const suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
   switch (suffix) {
     case 'pdf':
       return <IconFileTypePdf size={sz} />;
@@ -59,7 +59,7 @@ export function AttachmentLink({
   attachment: string;
   external?: boolean;
 }>): ReactNode {
-  let text = external ? attachment : attachment.split('/').pop();
+  const text = external ? attachment : attachment.split('/').pop();
 
   const host = useLocalState((s) => s.host);
 
@@ -72,9 +72,9 @@ export function AttachmentLink({
   }, [host, attachment, external]);
 
   return (
-    <Group justify="left" gap="sm" wrap="nowrap">
+    <Group justify='left' gap='sm' wrap='nowrap'>
       {external ? <IconLink /> : attachmentIcon(attachment)}
-      <Anchor href={url} target="_blank" rel="noopener noreferrer">
+      <Anchor href={url} target='_blank' rel='noopener noreferrer'>
         {text}
       </Anchor>
     </Group>

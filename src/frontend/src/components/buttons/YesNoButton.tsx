@@ -19,9 +19,9 @@ export function PassFailButton({
   return (
     <Badge
       color={v ? 'lime.5' : 'red.6'}
-      variant="filled"
-      radius="lg"
-      size="sm"
+      variant='filled'
+      radius='lg'
+      size='sm'
       style={{ maxWidth: '50px' }}
     >
       {v ? pass : fail}

@@ -1,6 +1,6 @@
 import { Button, Tooltip } from '@mantine/core';
 
-import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 
 /**
  * A "primary action" button for display on a page detail, (for example)
@@ -25,12 +25,12 @@ export default function PrimaryActionButton({
   }
 
   return (
-    <Tooltip label={tooltip ?? title} position="bottom" hidden={!tooltip}>
+    <Tooltip label={tooltip ?? title} position='bottom' hidden={!tooltip}>
       <Button
         leftSection={icon && <InvenTreeIcon icon={icon} />}
         color={color}
-        radius="sm"
-        p="xs"
+        radius='sm'
+        p='xs'
         onClick={onClick}
       >
         {title}

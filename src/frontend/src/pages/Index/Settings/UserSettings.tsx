@@ -12,7 +12,7 @@ import {
 import { useMemo } from 'react';
 
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
-import { PanelType } from '../../../components/panels/Panel';
+import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
@@ -146,9 +146,9 @@ export default function UserSettings() {
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <SettingsHeader
-        label="user"
+        label='user'
         title={t`Account Settings`}
         subtitle={
           user?.first_name && user?.last_name
@@ -158,9 +158,9 @@ export default function UserSettings() {
         shorthand={user?.username || ''}
       />
       <PanelGroup
-        pageKey="user-settings"
+        pageKey='user-settings'
         panels={userSettingsPanels}
-        model="usersettings"
+        model='usersettings'
         id={null}
       />
     </Stack>

@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Code, Flex, Group, Text } from '@mantine/core';
-import { Link, To } from 'react-router-dom';
+import { Link, type To } from 'react-router-dom';
 
 import { YesNoButton } from '../buttons/YesNoButton';
 import { DetailDrawerLink } from '../nav/DetailDrawer';
@@ -43,8 +43,8 @@ export function InfoItem({
   }
 
   return (
-    <Group justify="space-between">
-      <Text fz="sm" fw={700}>
+    <Group justify='space-between'>
+      <Text fz='sm' fw={700}>
         {name}:
       </Text>
       <Flex>

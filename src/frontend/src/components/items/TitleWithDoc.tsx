@@ -1,4 +1,4 @@
-import { Group, Title, TitleProps } from '@mantine/core';
+import { Group, Title, type TitleProps } from '@mantine/core';
 
 import { DocInfo } from './DocInfo';
 

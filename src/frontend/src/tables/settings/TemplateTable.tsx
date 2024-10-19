@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -10,23 +10,23 @@ import {
   PdfPreview,
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
-import {
+import type {
   Editor,
   PreviewArea
 } from '../../components/editors/TemplateEditor/TemplateEditor';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   getPluginTemplateEditor,
   getPluginTemplatePreview
 } from '../../components/plugins/PluginUIFeature';
-import {
+import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ApiEndpoints } from '../../enums/ApiEndpoints';
+import type { ModelType } from '../../enums/ModelType';
 import { GetIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
@@ -40,12 +40,12 @@ import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -109,7 +109,7 @@ export function TemplateDrawer({
             name: editor.options.title,
             icon: GetIcon(editor.options.icon),
             component: getPluginTemplateEditor(editor.func, template)
-          } as Editor)
+          }) as Editor
       ) || [])
     );
 
@@ -137,7 +137,7 @@ export function TemplateDrawer({
             name: preview.options.title,
             icon: GetIcon(preview.options.icon),
             component: getPluginTemplatePreview(preview.func, template)
-          } as PreviewArea)
+          }) as PreviewArea
       ) || [])
     );
 
@@ -161,8 +161,8 @@ export function TemplateDrawer({
   }
 
   return (
-    <Stack gap="xs" style={{ display: 'flex', flex: '1' }}>
-      <Group justify="left">
+    <Stack gap='xs' style={{ display: 'flex', flex: '1' }}>
+      <Group justify='left'>
         <Title order={4}>{template?.name}</Title>
       </Group>
 
@@ -329,7 +329,7 @@ export function TemplateTable({
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <AddItemButton
-        key="add-template"
+        key='add-template'
         onClick={() => newTemplate.open()}
         tooltip={t`Add template`}
         hidden={!user.hasAddPermission(templateProps.modelType)}

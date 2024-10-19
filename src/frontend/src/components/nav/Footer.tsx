@@ -7,11 +7,11 @@ import { InvenTreeLogoHomeButton } from '../items/InvenTreeLogo';
 export function Footer() {
   const items = footerLinks.map((link) => (
     <Anchor<'a'>
-      c="dimmed"
+      c='dimmed'
       key={link.key}
       href={link.link}
       onClick={(event) => event.preventDefault()}
-      size="sm"
+      size='sm'
     >
       {link.label}
     </Anchor>

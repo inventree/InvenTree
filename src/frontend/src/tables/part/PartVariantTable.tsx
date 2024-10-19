@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { PartListTable } from './PartTable';
 
 /**

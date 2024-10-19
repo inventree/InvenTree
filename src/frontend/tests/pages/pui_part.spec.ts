@@ -50,7 +50,7 @@ test('Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
 
   // Overview Graph
-  let graph = page.getByLabel('pricing-overview-chart');
+  const graph = page.getByLabel('pricing-overview-chart');
   await graph.waitFor();
   await graph.getByText('$60').waitFor();
   await graph.locator('tspan').filter({ hasText: 'BOM Pricing' }).waitFor();
@@ -92,7 +92,7 @@ test('Pages - Part - Pricing (Supplier)', async ({ page }) => {
   await page.getByRole('button', { name: 'SKU Not sorted' }).waitFor();
 
   // Supplier Pricing - linkjumping
-  let target = page.getByText('ARR-26041-LPC').first();
+  const target = page.getByText('ARR-26041-LPC').first();
   await target.waitFor();
   await target.click();
   // await page.waitForURL('**/purchasing/supplier-part/697/');
@@ -118,7 +118,7 @@ test('Pages - Part - Pricing (Variant)', async ({ page }) => {
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
 
   // Variant Pricing - linkjumping
-  let target = page.getByText('Green Chair').first();
+  const target = page.getByText('Green Chair').first();
   await target.waitFor();
   await target.click();
   await page.waitForURL('**/part/109/**');

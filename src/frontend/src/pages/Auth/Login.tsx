@@ -75,8 +75,8 @@ export default function Login() {
 
   // Main rendering block
   return (
-    <Center mih="100vh">
-      <Container w="md" miw={400}>
+    <Center mih='100vh'>
+      <Container w='md' miw={400}>
         {hostEdit ? (
           <InstanceOptions
             hostKey={hostKey}
@@ -85,8 +85,8 @@ export default function Login() {
           />
         ) : (
           <>
-            <Paper radius="md" p="xl" withBorder>
-              <Text size="lg" fw={500}>
+            <Paper radius='md' p='xl' withBorder>
+              <Text size='lg' fw={500}>
                 {loginMode ? (
                   <Trans>Welcome, log in below</Trans>
                 ) : (

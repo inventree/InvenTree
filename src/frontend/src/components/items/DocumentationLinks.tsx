@@ -35,7 +35,7 @@ export function DocumentationLinks({
     link: DocumentationLinkItem;
   }) => {
     const content = (
-      <Text size="sm" fw={500}>
+      <Text size='sm' fw={500}>
         {link.title}
       </Text>
     );
@@ -50,7 +50,7 @@ export function DocumentationLinks({
 
       if (link.action)
         return (
-          <Anchor component="button" type="button" onClick={link.action}>
+          <Anchor component='button' type='button' onClick={link.action}>
             {children}
           </Anchor>
         );

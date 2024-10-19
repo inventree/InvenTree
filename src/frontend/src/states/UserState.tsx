@@ -2,11 +2,11 @@ import { create } from 'zustand';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { UserPermissions, UserRoles } from '../enums/Roles';
+import type { ModelType } from '../enums/ModelType';
+import { UserPermissions, type UserRoles } from '../enums/Roles';
 import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { UserProps } from './states';
+import type { UserProps } from './states';
 
 export interface UserStateProps {
   user: UserProps | undefined;
