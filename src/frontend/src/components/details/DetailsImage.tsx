@@ -367,7 +367,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   // Sets a new image, and triggers upstream instance refresh
   const setAndRefresh = (image: string) => {
     setImg(image);
-    props.refresh && props.refresh();
+    props.refresh?.();
   };
 
   const permissions = useUserState();

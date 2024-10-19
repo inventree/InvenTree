@@ -161,7 +161,7 @@ export default function Scan() {
         if (item.model && item.pk) {
           const model_info = ModelInformationDict[item.model];
 
-          if (model_info && model_info.api_endpoint) {
+          if (model_info?.api_endpoint) {
             const url = apiUrl(model_info.api_endpoint, item.pk);
 
             api

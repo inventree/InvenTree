@@ -473,7 +473,7 @@ export default function PartDetail() {
             }
           });
 
-          if (data && data.quantity) {
+          if (data?.quantity) {
             return `${data.quantity} (${data.date})`;
           } else {
             return '-';
