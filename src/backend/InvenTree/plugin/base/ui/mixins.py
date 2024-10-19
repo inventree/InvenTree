@@ -32,6 +32,9 @@ class UIFeature(TypedDict):
         source: The source of the feature (required, path to a JavaScript file).
     """
 
+    key: str
+    title: str
+    description: str
     feature_type: FeatureType
     options: dict
     source: str
