@@ -382,7 +382,7 @@ function moveToDefault(
   refresh: () => void
 ) {
   modals.openConfirmModal({
-    title: <StylishText>Confirm Stock Transfer</StylishText>,
+    title: <StylishText>{t`Confirm Stock Transfer`}</StylishText>,
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
       if (
