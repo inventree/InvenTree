@@ -167,15 +167,16 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
+      let rtnValue = value;
       // Allow for custom value adjustments (per field)
       if (definition.adjustValue) {
-        value = definition.adjustValue(value);
+        rtnValue = definition.adjustValue(value);
       }
 
-      field.onChange(value);
+      field.onChange(rtnValue);
 
       // Run custom callback for this field
-      definition.onValueChange?.(value);
+      definition.onValueChange?.(rtnValue);
     },
     [fieldName, definition]
   );
