@@ -90,20 +90,20 @@ import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
+import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
-import PartBuildPanel from './PartBuildPanel';
 import PartPricingPanel from './PartPricingPanel';
-import PartPurchasingPanel from './PartPurchasingPanel';
-import PartReturnPanel from './PartReturnPanel';
-import PartSalesPanel from './PartSalesPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
 
@@ -645,7 +645,7 @@ export default function PartDetail() {
         label: t`Build Orders`,
         icon: <IconTools />,
         hidden: !part.assembly || !part.active,
-        content: <PartBuildPanel part={part} />
+        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',
@@ -692,14 +692,18 @@ export default function PartDetail() {
         icon: <IconShoppingCart />,
         hidden:
           !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
-        content: <PartPurchasingPanel part={part} />
+        content: part.pk ? (
+          <PartPurchaseOrdersTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
         hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
-        content: <PartSalesPanel part={part} />
+        content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'return_orders',
@@ -709,7 +713,7 @@ export default function PartDetail() {
           !part.salable ||
           !user.hasViewRole(UserRoles.return_order) ||
           !globalSettings.isSet('RETURNORDER_ENABLED'),
-        content: <PartReturnPanel part={part} />
+        content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'stocktake',
