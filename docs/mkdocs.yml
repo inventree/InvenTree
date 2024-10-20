@@ -98,6 +98,7 @@ nav:
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - Serving Files: start/serving_files.md
+    - User Accounts: start/accounts.md
     - Data Backup: start/backup.md
     - Migrating Data: start/migrate.md
     - Advanced Topics: start/advanced.md
