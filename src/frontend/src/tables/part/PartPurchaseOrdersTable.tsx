@@ -25,6 +25,7 @@ export default function PartPurchaseOrdersTable({
     return [
       ReferenceColumn({
         accessor: 'order_detail.reference',
+        ordering: 'order',
         sortable: true,
         switchable: false,
         title: t`Purchase Order`
@@ -32,6 +33,7 @@ export default function PartPurchaseOrdersTable({
       StatusColumn({
         accessor: 'order_detail.status',
         sortable: true,
+        ordering: 'status',
         title: t`Status`,
         model: ModelType.purchaseorder
       }),
@@ -55,6 +57,7 @@ export default function PartPurchaseOrdersTable({
       },
       {
         accessor: 'quantity',
+        sortable: true,
         switchable: false,
         render: (record: any) => {
           let supplier_part = record?.supplier_part_detail ?? {};
@@ -99,6 +102,11 @@ export default function PartPurchaseOrdersTable({
       DateColumn({
         accessor: 'target_date',
         title: t`Target Date`
+      }),
+      DateColumn({
+        accessor: 'order_detail.complete_date',
+        ordering: 'complete_date',
+        title: t`Completion Date`
       }),
       {
         accessor: 'purchase_price',
