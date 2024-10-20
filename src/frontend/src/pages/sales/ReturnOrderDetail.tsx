@@ -173,17 +173,35 @@ export default function ReturnOrderDetail() {
 
     let br: DetailsField[] = [
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
+        label: t`Creation Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
-        icon: 'calendar',
+        copy: true,
         hidden: !order.target_date
+      },
+      {
+        type: 'date',
+        name: 'complete_date',
+        icon: 'calendar_check',
+        label: t`Completion Date`,
+        copy: true,
+        hidden: !order.complete_date
       },
       {
         type: 'text',

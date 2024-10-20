@@ -1773,6 +1773,8 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
+            'issue_date',
+            'complete_date',
             'customer',
             'customer_detail',
             'customer_reference',

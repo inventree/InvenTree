@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import {
-  Accordion,
   Alert,
   Center,
   Grid,
@@ -54,7 +53,6 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -89,7 +87,6 @@ import {
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
-import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
@@ -99,10 +96,10 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
-import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
+import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
@@ -351,7 +348,7 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'saleable',
+        name: 'salable',
         label: t`Saleable Part`
       },
       {
@@ -591,45 +588,7 @@ export default function PartDetail() {
         label: t`Allocations`,
         icon: <IconBookmarks />,
         hidden: !part.component && !part.salable,
-        content: (
-          <Accordion
-            multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
-          >
-            {part.component && (
-              <Accordion.Item value="buildallocations" key="buildallocations">
-                <Accordion.Control>
-                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <BuildAllocatedStockTable
-                    partId={part.pk}
-                    modelField="build"
-                    modelTarget={ModelType.build}
-                    showBuildInfo
-                    showPartInfo
-                    allowEdit
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
-            )}
-            {part.salable && (
-              <Accordion.Item value="salesallocations" key="salesallocations">
-                <Accordion.Control>
-                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <SalesOrderAllocationTable
-                    partId={part.pk}
-                    modelField="order"
-                    modelTarget={ModelType.salesorder}
-                    showOrderInfo
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
-            )}
-          </Accordion>
-        )
+        content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
         name: 'bom',
@@ -644,8 +603,8 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly || !part.active,
-        content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',
@@ -677,7 +636,8 @@ export default function PartDetail() {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable,
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
         content: part.pk && (
           <SupplierPartTable
             params={{
@@ -690,21 +650,29 @@ export default function PartDetail() {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !part.purchaseable,
-        content: <PartPurchaseOrdersTable partId={part.pk} />
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+        content: part.pk ? (
+          <PartPurchaseOrdersTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable,
+        hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'return_orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !part.salable || !globalSettings.isSet('RETURNORDER_ENABLED'),
+        hidden:
+          !part.salable ||
+          !user.hasViewRole(UserRoles.return_order) ||
+          !globalSettings.isSet('RETURNORDER_ENABLED'),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
