@@ -16,6 +16,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  DateColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -136,6 +137,12 @@ export default function SalesOrderAllocationTable({
         switchable: true,
         sortable: false
       },
+      DateColumn({
+        accessor: 'shipment_detail.shipment_date',
+        title: t`Shipment Date`,
+        switchable: true,
+        sortable: false
+      }),
       {
         accessor: 'shipment_date',
         title: t`Shipped`,

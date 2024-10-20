@@ -72,6 +72,15 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     setApiDefaults();
   },
   fetchUserToken: async () => {
+    // If neither the csrf or session cookies are available, we cannot fetch a token
+    if (
+      !document.cookie.includes('csrftoken') &&
+      !document.cookie.includes('sessionid')
+    ) {
+      get().clearToken();
+      return;
+    }
+
     await api
       .get(apiUrl(ApiEndpoints.user_token))
       .then((response) => {
@@ -88,6 +97,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   fetchUserState: async () => {
     if (!get().token) {
       await get().fetchUserToken();
+    }
+
+    // If we still don't have a token, clear the user state and return
+    if (!get().token) {
+      get().clearUserState();
+      return;
     }
 
     // Fetch user data

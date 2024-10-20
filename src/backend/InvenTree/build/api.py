@@ -6,9 +6,8 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
-from rest_framework.exceptions import ValidationError
-
 from django_filters import rest_framework as rest_filters
+from rest_framework.exceptions import ValidationError
 
 from importer.mixins import DataExportViewMixin
 
@@ -152,7 +151,7 @@ class BuildFilter(rest_filters.FilterSet):
     def filter_responsible(self, queryset, name, owner):
         """Filter by orders which are assigned to the specified owner."""
 
-        owners = list(Owner.objects.filter(pk=value))
+        owners = list(Owner.objects.filter(pk=owner))
 
         # if we query by a user, also find all ownerships through group memberships
         if len(owners) > 0 and owners[0].label() == 'user':
