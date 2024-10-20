@@ -550,6 +550,7 @@ class PurchaseOrderLineItemList(
         'SKU': 'part__SKU',
         'part_name': 'part__part__name',
         'order': 'order__reference',
+        'status': 'order__status',
         'complete_date': 'order__complete_date',
     }
 
@@ -564,6 +565,7 @@ class PurchaseOrderLineItemList(
         'total_price',
         'target_date',
         'order',
+        'status',
         'complete_date',
     ]
 
