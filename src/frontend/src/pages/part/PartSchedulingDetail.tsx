@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Alert,
-  Anchor,
   Center,
   Divider,
   Loader,
@@ -66,23 +65,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
       {
         accessor: 'label',
         switchable: false,
-        title: t`Order`,
-        render: (record: any) => {
-          const url = getDetailUrl(record.model, record.model_id);
-
-          if (url) {
-            return (
-              <Anchor
-                href="#"
-                onClick={(event: any) => navigateToLink(url, navigate, event)}
-              >
-                {record.label}
-              </Anchor>
-            );
-          } else {
-            return record.label;
-          }
-        }
+        title: t`Order`
       },
       DescriptionColumn({
         accessor: 'title',
@@ -264,7 +247,14 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
           tableState={table}
           columns={tableColumns}
           props={{
-            enableSearch: false
+            enableSearch: false,
+            onRowClick: (record: any, index: number, event: any) => {
+              const url = getDetailUrl(record.model, record.model_id);
+
+              if (url) {
+                navigateToLink(url, navigate, event);
+              }
+            }
           }}
         />
         {table.isLoading ? (
