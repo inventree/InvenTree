@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
+  Alert,
   Anchor,
   Center,
   Divider,
@@ -245,8 +246,18 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
     return [min_date.valueOf(), max_date.valueOf()];
   }, [chartData]);
 
+  const hasSchedulingInfo: boolean = useMemo(
+    () => table.recordCount > 0,
+    [table.recordCount]
+  );
+
   return (
     <>
+      {!table.isLoading && !hasSchedulingInfo && (
+        <Alert color="blue" title={t`No information available`}>
+          <Text>{t`There is no scheduling information available for the selected part`}</Text>
+        </Alert>
+      )}
       <SimpleGrid cols={2}>
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.part_scheduling, part.pk)}
