@@ -277,7 +277,10 @@ export default function PartDetail() {
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
-        hidden: !part.component || part.required_for_build_orders <= 0
+        hidden:
+          !part.component ||
+          (part.required_for_build_orders <= 0 &&
+            part.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
@@ -285,7 +288,10 @@ export default function PartDetail() {
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
-        hidden: !part.salable || part.required_for_sales_orders <= 0
+        hidden:
+          !part.salable ||
+          (part.required_for_sales_orders <= 0 &&
+            part.allocated_to_sales_orders <= 0)
       },
       {
         type: 'string',
