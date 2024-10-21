@@ -174,7 +174,6 @@ const icons = {
   trackable: IconCornerUpRightDouble,
   purchaseable: IconShoppingCart,
   saleable: IconCurrencyDollar,
-  salable: IconCurrencyDollar,
   virtual: IconWorldCode,
   inactive: IconX,
   part: IconBox,
