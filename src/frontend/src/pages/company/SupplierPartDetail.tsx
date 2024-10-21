@@ -95,7 +95,7 @@ export default function SupplierPartDetail() {
       },
       {
         type: 'string',
-        name: 'part_detail.description',
+        name: 'description',
         label: t`Description`,
         copy: true,
         icon: 'info'
