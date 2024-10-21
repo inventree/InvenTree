@@ -118,6 +118,14 @@ export default function PartDetail() {
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
+  const { instance: serials } = useInstance({
+    endpoint: ApiEndpoints.part_serial_numbers,
+    pk: id,
+    hasPrimaryKey: true,
+    refetchOnMount: false,
+    defaultValue: {}
+  });
+
   const {
     instance: part,
     refreshInstance,
@@ -132,13 +140,20 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  part.required =
-    (part?.required_for_build_orders ?? 0) +
-    (part?.required_for_sales_orders ?? 0);
-
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
+    }
+
+    let data = { ...part };
+
+    data.required =
+      (data?.required_for_build_orders ?? 0) +
+      (data?.required_for_sales_orders ?? 0);
+
+    // Provide latest serial number info
+    if (!!serials.latest) {
+      data.latest_serial_number = serials.latest;
     }
 
     // Construct the details tables
@@ -277,7 +292,10 @@ export default function PartDetail() {
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
-        hidden: !part.component || part.required_for_build_orders <= 0
+        hidden:
+          !part.component ||
+          (part.required_for_build_orders <= 0 &&
+            part.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
@@ -285,7 +303,10 @@ export default function PartDetail() {
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
-        hidden: !part.salable || part.required_for_sales_orders <= 0
+        hidden:
+          !part.salable ||
+          (part.required_for_sales_orders <= 0 &&
+            part.allocated_to_sales_orders <= 0)
       },
       {
         type: 'string',
@@ -349,6 +370,7 @@ export default function PartDetail() {
       {
         type: 'boolean',
         name: 'salable',
+        icon: 'saleable',
         label: t`Saleable Part`
       },
       {
@@ -433,6 +455,14 @@ export default function PartDetail() {
         }
       });
     }
+
+    br.push({
+      type: 'string',
+      name: 'latest_serial_number',
+      label: t`Latest Serial Number`,
+      hidden: !part.trackable || !data.latest_serial_number,
+      icon: 'serial'
+    });
 
     // Add in stocktake information
     if (id && part.last_stocktake) {
@@ -526,17 +556,17 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={part} />
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={part} />
-        <DetailsTable fields={bl} item={part} />
-        <DetailsTable fields={br} item={part} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     ) : (
       <Skeleton />
     );
-  }, [globalSettings, part, instanceQuery]);
+  }, [globalSettings, part, serials, instanceQuery]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {

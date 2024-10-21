@@ -96,9 +96,10 @@ export default function SupplierPartDetail() {
       {
         type: 'string',
         name: 'part_detail.description',
-        label: t`Description`,
+        label: t`Part Description`,
         copy: true,
-        icon: 'info'
+        icon: 'info',
+        hidden: !data.part_detail?.description
       },
       {
         type: 'link',
@@ -132,6 +133,13 @@ export default function SupplierPartDetail() {
         label: t`SKU`,
         copy: true,
         icon: 'reference'
+      },
+      {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !data.description
       },
       {
         type: 'link',

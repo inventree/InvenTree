@@ -525,7 +525,7 @@ export default function StockDetail() {
 
   const editStockItemFields = useStockFields({
     create: false,
-    part_detail: stockitem.part_detail
+    partId: stockitem.part
   });
 
   const editStockItem = useEditApiFormModal({
