@@ -98,6 +98,14 @@ export default function BuildAllocatedStockTable({
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
+        accessor: 'part_detail.IPN',
+        ordering: 'IPN',
+        hidden: !showPartInfo,
+        title: t`IPN`,
+        sortable: true,
+        switchable: true
+      },
+      {
         hidden: !showPartInfo,
         accessor: 'bom_reference',
         title: t`Reference`,
