@@ -64,8 +64,6 @@ export function useInstance<T = any>({
 
       const url = apiUrl(endpoint, pk, pathParams);
 
-      console.log('instanceQuery: ', url);
-
       return api
         .get(url, {
           timeout: 10000,

@@ -118,11 +118,7 @@ export default function PartDetail() {
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
-  const {
-    instance: serials,
-    refreshInstance: refreshSerials,
-    instanceQuery: serialsQuery
-  } = useInstance({
+  const { instance: serials } = useInstance({
     endpoint: ApiEndpoints.part_serial_numbers,
     pk: id,
     hasPrimaryKey: true,
@@ -141,7 +137,7 @@ export default function PartDetail() {
     params: {
       path_detail: true
     },
-    refetchOnMount: false
+    refetchOnMount: true
   });
 
   const detailsPanel = useMemo(() => {
