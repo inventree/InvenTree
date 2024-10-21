@@ -1646,22 +1646,6 @@ function addFieldCallbacks(fields, options) {
 function addFieldCallback(name, field, options) {
     const el = getFormFieldElement(name, options);
 
-    if (field.onEdit) {
-        el.change(function() {
-
-            var value = getFormFieldValue(name, field, options);
-            let onEditHandlers = field.onEdit;
-
-            if (!Array.isArray(onEditHandlers)) {
-                onEditHandlers = [onEditHandlers];
-            }
-
-            for (const onEdit of onEditHandlers) {
-                onEdit(value, name, field, options);
-            }
-        });
-    }
-
     if(field.onInput){
 
         el.on('input', function(){
