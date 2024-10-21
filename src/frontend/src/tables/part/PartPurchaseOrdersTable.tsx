@@ -96,10 +96,6 @@ export default function PartPurchaseOrdersTable({
         }
       },
       DateColumn({
-        accessor: 'order_detail.complete_date',
-        title: t`Order Completed Date`
-      }),
-      DateColumn({
         accessor: 'target_date',
         title: t`Target Date`
       }),
