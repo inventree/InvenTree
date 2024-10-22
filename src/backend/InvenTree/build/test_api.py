@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from part.models import Part, BomItem
-from build.models import Build, BuildItem
+from build.models import Build, BuildItem, BuildLine
 from stock.models import StockItem
 
 from build.status_codes import BuildStatus
@@ -1471,3 +1471,28 @@ class BuildOutputScrapTest(BuildAPITest):
             output.refresh_from_db()
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
+
+
+class BuildLineTests(BuildAPITest):
+    """Unit tests for the BuildLine API endpoints."""
+
+    def test_filter_available(self):
+        """Filter BuildLine objects by 'available' status."""
+
+        url = reverse('api-build-line-list')
+
+        pk = 1
+
+        # First *all* BuildLine objects
+        response = self.get(url)
+
+        self.assertEqual(len(response.data), BuildLine.objects.count())
+
+        # Filter by 'available' status
+        response = self.get(url, data={'available': True})
+
+        print("True:", len(response.data))
+
+        response = self.get(url, data={'available': False})
+
+        print("False:", len(response.data))
