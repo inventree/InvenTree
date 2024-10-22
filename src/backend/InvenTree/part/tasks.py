@@ -8,14 +8,13 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-import part_models as part_models
-
 import common.currency
 import common.notifications
 import company.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
+import part.models as part_models
 import part.stocktake
 from common.settings import get_global_setting
 from InvenTree.tasks import (
