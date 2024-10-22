@@ -149,7 +149,10 @@ export function PurchaseOrderLineItemTable({
           let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
           let extra = [];
 
-          if (supplier_part.pack_quantity_native != 1) {
+          if (
+            supplier_part?.pack_quantity_native != undefined &&
+            supplier_part.pack_quantity_native != 1
+          ) {
             let total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
