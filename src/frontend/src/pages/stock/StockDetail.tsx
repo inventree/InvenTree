@@ -420,7 +420,9 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        hidden: !showSalesAlloctions && !showBuildAllocations,
+        hidden:
+          !stockitem.in_stock ||
+          (!showSalesAlloctions && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
