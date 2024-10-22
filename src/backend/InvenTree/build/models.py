@@ -645,7 +645,8 @@ class Build(
         if not InvenTree.tasks.offload_task(
             build.tasks.complete_build_allocations,
             self.pk,
-            user.pk if user else None
+            user.pk if user else None,
+            group='build'
         ):
             raise ValidationError(_("Failed to offload task to complete build allocations"))
 
@@ -772,7 +773,8 @@ class Build(
             if not InvenTree.tasks.offload_task(
                 build.tasks.complete_build_allocations,
                 self.pk,
-                user.pk if user else None
+                user.pk if user else None,
+                group='build',
             ):
                 raise ValidationError(_("Failed to offload task to complete build allocations"))
 
@@ -1441,7 +1443,11 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.create_build_line_items()
 
             # Run checks on required parts
-            InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+            InvenTree.tasks.offload_task(
+                build_tasks.check_build_stock,
+                instance,
+                group='build'
+            )
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
