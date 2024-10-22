@@ -21,6 +21,7 @@ from django.core.files.storage import Storage, default_storage
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
+import bleach
 import pytz
 import regex
 from bleach import clean
@@ -816,7 +817,6 @@ def clean_markdown(value: str):
     This function will remove javascript and other potentially harmful content from the markdown string.
     """
     import markdown
-    from markdownify.templatetags.markdownify import markdownify
 
     try:
         markdownify_settings = settings.MARKDOWNIFY['default']
@@ -835,8 +835,34 @@ def clean_markdown(value: str):
         output_format='html',
     )
 
-    # Clean the HTML content (for comparison). Ideally, this should be the same as the original content
-    clean_html = markdownify(value)
+    # Bleach settings
+    whitelist_tags = markdownify_settings.get(
+        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
+    )
+    whitelist_attrs = markdownify_settings.get(
+        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
+    )
+    whitelist_styles = markdownify_settings.get(
+        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
+    )
+    whitelist_protocols = markdownify_settings.get(
+        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
+    )
+    strip = markdownify_settings.get('STRIP', True)
+
+    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
+        allowed_css_properties=whitelist_styles
+    )
+    cleaner = bleach.Cleaner(
+        tags=whitelist_tags,
+        attributes=whitelist_attrs,
+        css_sanitizer=css_sanitizer,
+        protocols=whitelist_protocols,
+        strip=strip,
+    )
+
+    # Clean the HTML content (for comparison). This must be the same as the original content
+    clean_html = cleaner.clean(html)
 
     if html != clean_html:
         raise ValidationError(_('Data contains prohibited markdown content'))
