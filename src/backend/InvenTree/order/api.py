@@ -872,6 +872,8 @@ class SalesOrderLineItemList(
         'part',
         'part__name',
         'quantity',
+        'allocated',
+        'shipped',
         'reference',
         'sale_price',
         'target_date',

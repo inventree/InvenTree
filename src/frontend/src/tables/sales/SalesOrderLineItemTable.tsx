@@ -162,6 +162,7 @@ export default function SalesOrderLineItemTable({
       },
       {
         accessor: 'allocated',
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
@@ -172,6 +173,7 @@ export default function SalesOrderLineItemTable({
       },
       {
         accessor: 'shipped',
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
