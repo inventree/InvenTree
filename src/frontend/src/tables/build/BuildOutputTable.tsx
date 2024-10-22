@@ -218,8 +218,8 @@ export default function BuildOutputTable({
 
   const editStockItemFields = useStockFields({
     create: false,
-    item_detail: selectedOutputs[0],
-    part_detail: selectedOutputs[0]?.part_detail
+    partId: partId,
+    stockItem: selectedOutputs[0]
   });
 
   const editBuildOutput = useEditApiFormModal({

@@ -420,7 +420,9 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        hidden: !showSalesAlloctions && !showBuildAllocations,
+        hidden:
+          !stockitem.in_stock ||
+          (!showSalesAlloctions && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
@@ -525,7 +527,7 @@ export default function StockDetail() {
 
   const editStockItemFields = useStockFields({
     create: false,
-    part_detail: stockitem.part_detail
+    partId: stockitem.part
   });
 
   const editStockItem = useEditApiFormModal({
