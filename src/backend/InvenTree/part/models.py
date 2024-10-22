@@ -2561,7 +2561,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         try:
             InvenTree.tasks.offload_task(
                 part_tasks.notify_low_stock_if_required,
-                instance,
+                instance.pk,
                 group='notification',
                 force_async=True,
             )
