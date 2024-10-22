@@ -771,12 +771,29 @@ class SalesOrderLineItemFilter(LineItemFilter):
         queryset=Part.objects.all(), field_name='part', label=_('Part')
     )
 
-    completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
+    allocated = rest_filters.BooleanFilter(
+        label=_('Allocated'), method='filter_allocated'
+    )
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by lines which are 'allocated'.
+
+        A line is 'allocated' when allocated >= quantity
+        """
+        q = Q(allocated__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    completed = rest_filters.BooleanFilter(
+        label=_('Completed'), method='filter_completed'
+    )
 
     def filter_completed(self, queryset, name, value):
         """Filter by lines which are "completed".
 
-        A line is completed when shipped >= quantity
+        A line is 'completed' when shipped >= quantity
         """
         q = Q(shipped__gte=F('quantity'))
 

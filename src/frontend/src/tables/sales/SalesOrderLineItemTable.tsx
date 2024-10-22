@@ -33,6 +33,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
@@ -266,6 +267,21 @@ export default function SalesOrderLineItemTable({
     }
   });
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'allocated',
+        label: t`Allocated`,
+        description: t`Show lines which are fully allocated`
+      },
+      {
+        name: 'completed',
+        label: t`Completed`,
+        description: t`Show lines which are completed`
+      }
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -404,6 +420,7 @@ export default function SalesOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.part,
           modelField: 'part'
         }}
