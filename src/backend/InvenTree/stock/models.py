@@ -2405,7 +2405,10 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
-            part_tasks.notify_low_stock_if_required, instance.part, group='notification'
+            part_tasks.notify_low_stock_if_required,
+            instance.part,
+            group='notification',
+            force_async=True,
         )
 
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
@@ -2425,6 +2428,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
                 part_tasks.notify_low_stock_if_required,
                 instance.part,
                 group='notification',
+                force_async=True,
             )
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):

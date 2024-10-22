@@ -2560,7 +2560,10 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         # Run this check in the background
         try:
             InvenTree.tasks.offload_task(
-                part_tasks.notify_low_stock_if_required, instance, group='notification'
+                part_tasks.notify_low_stock_if_required,
+                instance,
+                group='notification',
+                force_async=True,
             )
         except PicklingError:
             # Can sometimes occur if the referenced Part has issues
