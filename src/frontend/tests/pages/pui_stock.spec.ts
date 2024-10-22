@@ -80,6 +80,9 @@ test('Stock - Serial Numbers', async ({ page }) => {
   await page.getByLabel('text-field-serial_numbers').fill('200-250');
   await page.getByLabel('number-field-quantity').fill('10');
 
+  // Add delay to account to field debounce
+  await page.waitForTimeout(250);
+
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Expected error messages
