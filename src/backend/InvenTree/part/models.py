@@ -2564,7 +2564,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
             )
         except PicklingError:
             # Can sometimes occur if the referenced Part has issues
-            pass
+            log_error('after_save_part')
 
         # Schedule a background task to rebuild any supplier parts
         InvenTree.tasks.offload_task(
