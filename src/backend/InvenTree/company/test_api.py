@@ -159,6 +159,7 @@ class CompanyTest(InvenTreeAPITestCase):
     def test_company_notes(self):
         """Test the markdown 'notes' field for the Company model."""
         pk = Company.objects.first().pk
+        url = reverse('api-company-detail', kwargs={'pk': pk})
 
         # Attempt to inject malicious markdown into the "notes" field
         xss = [
@@ -168,15 +169,22 @@ class CompanyTest(InvenTreeAPITestCase):
         ]
 
         for note in xss:
-            response = self.patch(
-                reverse('api-company-detail', kwargs={'pk': pk}),
-                {'notes': note},
-                expected_code=400,
-            )
+            response = self.patch(url, {'notes': note}, expected_code=400)
 
             self.assertIn(
                 'Data contains prohibited markdown content', str(response.data)
             )
+
+        # Tests with disallowed tags
+        invalid_tags = [
+            '<iframe src="javascript:alert(123)"></iframe>',
+            '<canvas>A disallowed tag!</canvas>',
+        ]
+
+        for note in invalid_tags:
+            response = self.patch(url, {'notes': note}, expected_code=400)
+
+            self.assertIn('Remove HTML tags from this value', str(response.data))
 
         # The following markdown is safe, and should be accepted
         good = [
@@ -186,14 +194,11 @@ class CompanyTest(InvenTreeAPITestCase):
             'This is an ![image](https://www.google.com/test.jpg)',
             'This is a `code` block',
             'This text has ~~strikethrough~~ formatting',
+            'This text has a raw link - https://www.google.com - and should still pass the test',
         ]
 
         for note in good:
-            response = self.patch(
-                reverse('api-company-detail', kwargs={'pk': pk}),
-                {'notes': note},
-                expected_code=200,
-            )
+            response = self.patch(url, {'notes': note}, expected_code=200)
 
             self.assertEqual(response.data['notes'], note)
 
