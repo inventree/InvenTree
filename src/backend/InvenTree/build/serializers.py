@@ -1277,7 +1277,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item_detail',
             'part_detail',
             'quantity',
-            'allocations',
 
             # BOM item detail fields
             'reference',
@@ -1340,7 +1339,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     # Foreign key fields
     bom_item_detail = part_serializers.BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
     part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
-    allocations = BuildItemSerializer(many=True, read_only=True)
 
     # Annotated (calculated) fields
     allocated = serializers.FloatField(
