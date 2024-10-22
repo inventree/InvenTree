@@ -14,11 +14,12 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-from sql_util.utils import SubqueryCount
+from sql_util.utils import SubqueryCount, SubquerySum
 
 import order.models
 import part.filters as part_filters
@@ -1165,6 +1166,15 @@ class SalesOrderLineItemSerializer(
             building=part_filters.annotate_in_production_quantity(reference='part__')
         )
 
+        # Annotate total 'allocated' stock quantity
+        queryset = queryset.annotate(
+            allocated=Coalesce(
+                SubquerySum('allocations__quantity'),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
@@ -1182,7 +1192,7 @@ class SalesOrderLineItemSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
+    allocated = serializers.FloatField(read_only=True)
 
     shipped = InvenTreeDecimalField(read_only=True)
 
