@@ -106,7 +106,7 @@ export function RelatedPartTable({
     return [
       <AddItemButton
         key="add-related-part"
-        tooltip={t`Add related part`}
+        tooltip={t`Add Related Part`}
         hidden={!user.hasAddRole(UserRoles.part)}
         onClick={() => newRelatedPart.open()}
       />

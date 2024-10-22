@@ -8,9 +8,6 @@ export const LayoutComponent = Loadable(
   lazy(() => import('./components/nav/Layout'))
 );
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
-export const Playground = Loadable(
-  lazy(() => import('./pages/Index/Playground'))
-);
 
 export const CompanyDetail = Loadable(
   lazy(() => import('./pages/company/CompanyDetail'))
@@ -54,6 +51,7 @@ export const StockDetail = Loadable(
 export const BuildIndex = Loadable(
   lazy(() => import('./pages/build/BuildIndex'))
 );
+
 export const BuildDetail = Loadable(
   lazy(() => import('./pages/build/BuildDetail'))
 );
@@ -72,6 +70,10 @@ export const SalesIndex = Loadable(
 
 export const SalesOrderDetail = Loadable(
   lazy(() => import('./pages/sales/SalesOrderDetail'))
+);
+
+export const SalesOrderShipmentDetail = Loadable(
+  lazy(() => import('./pages/sales/SalesOrderShipmentDetail'))
 );
 
 export const ReturnOrderDetail = Loadable(
@@ -121,7 +123,6 @@ export const routes = (
       <Route path="home/" element={<Home />} />,
       <Route path="dashboard/" element={<Dashboard />} />,
       <Route path="notifications/*" element={<Notifications />} />,
-      <Route path="playground/" element={<Playground />} />,
       <Route path="scan/" element={<Scan />} />,
       <Route path="settings/">
         <Route index element={<Navigate to="admin/" />} />
@@ -139,9 +140,10 @@ export const routes = (
         <Route path="location/:id?/*" element={<LocationDetail />} />
         <Route path="item/:id/*" element={<StockDetail />} />
       </Route>
-      <Route path="build/">
-        <Route index element={<BuildIndex />} />
-        <Route path=":id/*" element={<BuildDetail />} />
+      <Route path="manufacturing/">
+        <Route index element={<Navigate to="index/" />} />
+        <Route path="index/*" element={<BuildIndex />} />
+        <Route path="build-order/:id/*" element={<BuildDetail />} />
       </Route>
       <Route path="purchasing/">
         <Route index element={<Navigate to="index/" />} />
@@ -160,6 +162,7 @@ export const routes = (
         <Route index element={<Navigate to="index/" />} />
         <Route path="index/*" element={<SalesIndex />} />
         <Route path="sales-order/:id/*" element={<SalesOrderDetail />} />
+        <Route path="shipment/:id/*" element={<SalesOrderShipmentDetail />} />
         <Route path="return-order/:id/*" element={<ReturnOrderDetail />} />
         <Route path="customer/:id/*" element={<CustomerDetail />} />
       </Route>

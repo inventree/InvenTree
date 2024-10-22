@@ -1,6 +1,7 @@
 {% load i18n %}
 
 /* globals
+    DOMPurify,
     EasyMDE,
     inventreeFormDataUpload,
     inventreeGet,
@@ -497,6 +498,11 @@ function setupNotesField(element, url, options={}) {
                     onError(error);
                 }
             });
+        },
+        renderingConfig: {
+            sanitizerFunction: function (html) {
+                return DOMPurify.sanitize(html);
+            }
         },
         shortcuts: [],
     });

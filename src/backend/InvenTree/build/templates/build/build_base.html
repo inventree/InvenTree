@@ -3,6 +3,7 @@
 {% load static %}
 {% load i18n %}
 {% load generic %}
+{% load barcode %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -310,7 +311,7 @@ src="{% static 'img/blank_image.png' %}"
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Build Order QR Code" escape %}',
-            '{{ build.barcode }}'
+            `{% clean_barcode build.barcode %}`
         );
     });
 

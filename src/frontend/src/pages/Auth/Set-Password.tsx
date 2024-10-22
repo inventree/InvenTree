@@ -45,12 +45,7 @@ export default function Set_Password() {
   useEffect(() => {
     // make sure we have a token
     if (!token || !uid) {
-      notifications.show({
-        title: t`No token provided`,
-        message: t`You need to provide a token to set a new password. Check your inbox for a reset link.`,
-        color: 'red'
-      });
-      navigate('/login');
+      invalidToken();
     }
   }, [token]);
 
@@ -109,7 +104,7 @@ export default function Set_Password() {
               />
             </Stack>
             <Button type="submit" onClick={handleSet}>
-              <Trans>Send mail</Trans>
+              <Trans>Send Email</Trans>
             </Button>
           </Stack>
         </Container>

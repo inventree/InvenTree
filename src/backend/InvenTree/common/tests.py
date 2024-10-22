@@ -23,7 +23,12 @@ import PIL
 import common.validators
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from InvenTree.unit_test import (
+    AdminTestCase,
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    PluginMixin,
+)
 from part.models import Part, PartParameterTemplate
 from plugin import registry
 from plugin.models import NotificationUserSetting
@@ -1790,3 +1795,14 @@ class SelectionListTest(InvenTreeAPITestCase):
             expected_code=201,
         )
         self.assertEqual(response.data['data'], self.entry1.value)
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(
+            model=Attachment,
+            model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
+        )

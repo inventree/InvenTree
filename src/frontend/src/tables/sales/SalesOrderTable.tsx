@@ -26,6 +26,9 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
@@ -40,14 +43,14 @@ export function SalesOrderTable({
   partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable('sales-order');
+  const table = useTable(!!partId ? 'salesorder-part' : 'salesorder-index');
   const user = useUserState();
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'status',
         label: t`Status`,
@@ -57,17 +60,15 @@ export function SalesOrderTable({
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'assigned_to',
         label: t`Responsible`,
@@ -75,7 +76,18 @@ export function SalesOrderTable({
         choices: responsibleFilters.choices
       }
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
 
   const salesOrderFields = useSalesOrderFields({});
 

@@ -21,7 +21,7 @@ export function notYetImplemented() {
  */
 export function permissionDenied() {
   notifications.show({
-    title: t`Permission denied`,
+    title: t`Permission Denied`,
     message: t`You do not have permission to perform this action`,
     color: 'red'
   });
@@ -35,6 +35,17 @@ export function invalidResponse(returnCode: number) {
   notifications.show({
     title: t`Invalid Return Code`,
     message: t`Server returned status ${returnCode}`,
+    color: 'red'
+  });
+}
+
+/**
+ * Display a notification on timeout
+ */
+export function showTimeoutNotification() {
+  notifications.show({
+    title: t`Timeout`,
+    message: t`The request timed out`,
     color: 'red'
   });
 }

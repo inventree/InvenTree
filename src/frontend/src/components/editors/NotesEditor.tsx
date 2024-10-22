@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
+import DOMPurify from 'dompurify';
 import EasyMDE, { default as SimpleMde } from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,39 +12,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { ModelInformationDict } from '../render/ModelType';
-
-/*
- * Upload an drag-n-dropped image to the server against a model type and instance.
- */
-async function uploadNotesImage(
-  image: File,
-  modelType: ModelType,
-  modelId: number
-): Promise<string> {
-  const formData = new FormData();
-  formData.append('image', image);
-
-  formData.append('model_type', modelType);
-  formData.append('model_id', modelId.toString());
-
-  const response = await api
-    .post(apiUrl(ApiEndpoints.notes_image_upload), formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .catch(() => {
-      notifications.hide('notes');
-      notifications.show({
-        title: t`Error`,
-        message: t`Image upload failed`,
-        color: 'red',
-        id: 'notes'
-      });
-    });
-
-  return response?.data?.image ?? '';
-}
 
 /*
  * A text editor component for editing notes against a model type and instance.
@@ -131,6 +99,7 @@ export default function NotesEditor({
     enabled: true
   });
 
+  // Update internal markdown data when the query data changes
   useEffect(() => {
     setMarkdown(dataQuery.data ?? '');
   }, [dataQuery.data]);
@@ -150,14 +119,20 @@ export default function NotesEditor({
             title: t`Success`,
             message: t`Notes saved successfully`,
             color: 'green',
-            id: 'notes'
+            id: 'notes',
+            autoClose: 2000
           });
         })
-        .catch(() => {
+        .catch((error) => {
           notifications.hide('notes');
+
+          let msg =
+            error?.response?.data?.non_field_errors[0] ??
+            t`Failed to save notes`;
+
           notifications.show({
-            title: t`Error`,
-            message: t`Failed to save notes`,
+            title: t`Error Saving Notes`,
+            message: msg,
             color: 'red',
             id: 'notes'
           });
@@ -169,36 +144,7 @@ export default function NotesEditor({
   const editorOptions: SimpleMde.Options = useMemo(() => {
     let icons: any[] = [];
 
-    if (editable) {
-      if (editing) {
-        icons.push({
-          name: 'edit-disabled',
-          action: () => setEditing(false),
-          className: 'fa fa-eye',
-          title: t`Disable Editing`
-        });
-
-        icons.push('|', 'side-by-side', '|');
-      } else {
-        icons.push({
-          name: 'edit-enabled',
-          action: () => setEditing(true),
-          className: 'fa fa-edit',
-          title: t`Enable Editing`
-        });
-      }
-    }
-
     if (editing) {
-      icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
-      icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
-      icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
-      icons.push('table', 'link', 'image', '|');
-      icons.push('horizontal-rule', '|', 'guide'); // Misc
-
-      icons.push('|', 'undo', 'redo'); // Undo/Redo
-      icons.push('|');
-
       icons.push({
         name: 'save-notes',
         action: (editor: SimpleMde) => {
@@ -207,6 +153,32 @@ export default function NotesEditor({
         className: 'fa fa-save',
         title: t`Save Notes`
       });
+
+      icons.push('|');
+
+      icons.push('heading-1', 'heading-2', 'heading-3', '|'); // Headings
+      icons.push('bold', 'italic', 'strikethrough', '|'); // Text styles
+      icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|'); // Text formatting
+      icons.push('table', 'link', 'image', '|');
+      icons.push('horizontal-rule', '|', 'guide'); // Misc
+
+      icons.push('|', 'undo', 'redo'); // Undo/Redo
+
+      icons.push('|');
+
+      icons.push({
+        name: 'edit-disabled',
+        action: () => setEditing(false),
+        className: 'fa fa-times',
+        title: t`Close Editor`
+      });
+    } else if (editable) {
+      icons.push({
+        name: 'edit-enabled',
+        action: () => setEditing(true),
+        className: 'fa fa-edit',
+        title: t`Enable Editing`
+      });
     }
 
     return {
@@ -214,6 +186,11 @@ export default function NotesEditor({
       uploadImage: true,
       imagePathAbsolute: true,
       imageUploadFunction: imageUploadHandler,
+      renderingConfig: {
+        sanitizerFunction: (html: string) => {
+          return DOMPurify.sanitize(html);
+        }
+      },
       sideBySideFullscreen: false,
       shortcuts: {},
       spellChecker: false
@@ -241,10 +218,13 @@ export default function NotesEditor({
 
   return (
     <SimpleMDE
-      value={markdown}
-      onChange={setMarkdown}
-      options={editorOptions}
+      autoFocus
       getMdeInstance={(instance: SimpleMde) => setMdeInstance(instance)}
+      onChange={(value: string) => {
+        setMarkdown(value);
+      }}
+      options={editorOptions}
+      value={markdown}
     />
   );
 }

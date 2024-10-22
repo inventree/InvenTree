@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
-import { PanelType } from '../components/nav/Panel';
+import { PanelType } from '../components/panels/Panel';
 import {
   InvenTreeContext,
   useInvenTreeContext
@@ -88,9 +88,7 @@ export function usePluginPanels({
   // This will force the plugin panels to re-calculate their visibility
   useEffect(() => {
     pluginData?.forEach((props: PluginPanelProps) => {
-      const identifier = identifierString(
-        `plugin-panel-${props.plugin}-${props.name}`
-      );
+      const identifier = identifierString(`${props.plugin}-${props.name}`);
 
       // Check if the panel is hidden (defaults to true until we know otherwise)
       isPluginPanelHidden({
@@ -106,9 +104,7 @@ export function usePluginPanels({
     return (
       pluginData?.map((props: PluginPanelProps) => {
         const iconName: string = props.icon || 'plugin';
-        const identifier = identifierString(
-          `plugin-panel-${props.plugin}-${props.name}`
-        );
+        const identifier = identifierString(`${props.plugin}-${props.name}`);
         const isHidden: boolean = panelState[identifier] ?? true;
 
         const pluginContext: any = {

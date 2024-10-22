@@ -11,9 +11,9 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PanelType } from '../../../components/nav/Panel';
-import { PanelGroup } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import { PanelType } from '../../../components/panels/Panel';
+import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
@@ -148,6 +148,7 @@ export default function UserSettings() {
   return (
     <Stack gap="xs">
       <SettingsHeader
+        label="user"
         title={t`Account Settings`}
         subtitle={
           user?.first_name && user?.last_name
@@ -155,11 +156,13 @@ export default function UserSettings() {
             : null
         }
         shorthand={user?.username || ''}
-        switch_link="/settings/system"
-        switch_text={<Trans>Switch to System Setting</Trans>}
-        switch_condition={user?.is_staff || false}
       />
-      <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
+      <PanelGroup
+        pageKey="user-settings"
+        panels={userSettingsPanels}
+        model="usersettings"
+        id={null}
+      />
     </Stack>
   );
 }

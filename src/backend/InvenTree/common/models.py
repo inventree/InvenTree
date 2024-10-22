@@ -780,10 +780,7 @@ class BaseInvenTreeSetting(models.Model):
             )
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive)'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     value = models.CharField(
@@ -2179,10 +2176,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     typ = 'inventree'
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=True,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=True, help_text=_('Settings key')
     )
 
     def to_native_value(self):
@@ -2559,10 +2553,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     extra_unique_fields = ['user']
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     user = models.ForeignKey(

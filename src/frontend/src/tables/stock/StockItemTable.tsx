@@ -47,7 +47,7 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part',
       sortable: true,
-      render: (record: any) => PartColumn(record?.part_detail)
+      render: (record: any) => PartColumn({ part: record?.part_detail })
     },
     {
       accessor: 'part_detail.IPN',
@@ -77,18 +77,6 @@ function stockItemTableColumns(): TableColumn[] {
         let extra: ReactNode[] = [];
         let color = undefined;
 
-        // Determine if a stock item is "in stock"
-        // TODO: Refactor this out into a function
-        let in_stock =
-          !record?.belongs_to &&
-          !record?.consumed_by &&
-          !record?.customer &&
-          !record?.is_building &&
-          !record?.sales_order &&
-          !record?.expired &&
-          record?.quantity &&
-          record?.quantity > 0;
-
         if (record.serial && quantity == 1) {
           text = `# ${record.serial}`;
         }
@@ -101,41 +89,40 @@ function stockItemTableColumns(): TableColumn[] {
               size="sm"
             >{t`This stock item is in production`}</Text>
           );
-        }
-
-        if (record.sales_order) {
+        } else if (record.sales_order) {
           extra.push(
             <Text
               key="sales-order"
               size="sm"
             >{t`This stock item has been assigned to a sales order`}</Text>
           );
-        }
-
-        if (record.customer) {
+        } else if (record.customer) {
           extra.push(
             <Text
               key="customer"
               size="sm"
             >{t`This stock item has been assigned to a customer`}</Text>
           );
-        }
-
-        if (record.belongs_to) {
+        } else if (record.belongs_to) {
           extra.push(
             <Text
               key="belongs-to"
               size="sm"
             >{t`This stock item is installed in another stock item`}</Text>
           );
-        }
-
-        if (record.consumed_by) {
+        } else if (record.consumed_by) {
           extra.push(
             <Text
               key="consumed-by"
               size="sm"
             >{t`This stock item has been consumed by a build order`}</Text>
+          );
+        } else if (!record.in_stock) {
+          extra.push(
+            <Text
+              key="unavailable"
+              size="sm"
+            >{t`This stock item is unavailable`}</Text>
           );
         }
 
@@ -152,53 +139,55 @@ function stockItemTableColumns(): TableColumn[] {
           );
         }
 
-        if (allocated > 0) {
-          if (allocated >= quantity) {
-            color = 'orange';
+        if (record.in_stock) {
+          if (allocated > 0) {
+            if (allocated >= quantity) {
+              color = 'orange';
+              extra.push(
+                <Text
+                  key="fully-allocated"
+                  size="sm"
+                >{t`This stock item is fully allocated`}</Text>
+              );
+            } else {
+              extra.push(
+                <Text
+                  key="partially-allocated"
+                  size="sm"
+                >{t`This stock item is partially allocated`}</Text>
+              );
+            }
+          }
+
+          if (available != quantity) {
+            if (available > 0) {
+              extra.push(
+                <Text key="available" size="sm" c="orange">
+                  {t`Available` + `: ${available}`}
+                </Text>
+              );
+            } else {
+              extra.push(
+                <Text
+                  key="no-stock"
+                  size="sm"
+                  c="red"
+                >{t`No stock available`}</Text>
+              );
+            }
+          }
+
+          if (quantity <= 0) {
             extra.push(
               <Text
-                key="fully-allocated"
+                key="depleted"
                 size="sm"
-              >{t`This stock item is fully allocated`}</Text>
-            );
-          } else {
-            extra.push(
-              <Text
-                key="partially-allocated"
-                size="sm"
-              >{t`This stock item is partially allocated`}</Text>
+              >{t`This stock item has been depleted`}</Text>
             );
           }
         }
 
-        if (available != quantity) {
-          if (available > 0) {
-            extra.push(
-              <Text key="available" size="sm" c="orange">
-                {t`Available` + `: ${available}`}
-              </Text>
-            );
-          } else {
-            extra.push(
-              <Text
-                key="no-stock"
-                size="sm"
-                c="red"
-              >{t`No stock available`}</Text>
-            );
-          }
-        }
-
-        if (quantity <= 0) {
-          extra.push(
-            <Text
-              key="depleted"
-              size="sm"
-            >{t`This stock item has been depleted`}</Text>
-          );
-        }
-
-        if (!in_stock) {
+        if (!record.in_stock) {
           color = 'red';
         }
 
@@ -412,7 +401,7 @@ export function StockItemTable({
     };
   }, [table]);
 
-  const stockItemFields = useStockFields({ create: true });
+  const stockItemFields = useStockFields({ create: true, partId: params.part });
 
   const newStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
@@ -449,7 +438,7 @@ export function StockItemTable({
         disabled={table.selectedRecords.length === 0}
         actions={[
           {
-            name: t`Add stock`,
+            name: t`Add Stock`,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             tooltip: t`Add a new stock item`,
             disabled: !can_add_stock,
@@ -458,7 +447,7 @@ export function StockItemTable({
             }
           },
           {
-            name: t`Remove stock`,
+            name: t`Remove Stock`,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             tooltip: t`Remove some quantity from a stock item`,
             disabled: !can_add_stock,
@@ -478,7 +467,7 @@ export function StockItemTable({
             }
           },
           {
-            name: t`Transfer stock`,
+            name: t`Transfer Stock`,
             icon: (
               <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
             ),
@@ -525,7 +514,7 @@ export function StockItemTable({
           {
             name: t`Delete stock`,
             icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
-            tooltip: t`Delete stock items`,
+            tooltip: t`Delete Stock Items`,
             disabled: !can_delete_stock,
             onClick: () => {
               deleteStock.open();

@@ -28,7 +28,7 @@ import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-import { PanelType } from './Panel';
+import { PanelType } from '../panels/Panel';
 
 /**
  * Set of properties which define a panel group:
@@ -127,9 +127,14 @@ function BasePanelGroup({
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
-      <Paper p="sm" radius="xs" shadow="xs">
-        <Tabs value={currentPanel} orientation="vertical" keepMounted={false}>
-          <Tabs.List justify="left">
+      <Paper p="sm" radius="xs" shadow="xs" aria-label={`${pageKey}`}>
+        <Tabs
+          value={currentPanel}
+          orientation="vertical"
+          keepMounted={false}
+          aria-label={`panel-group-${pageKey}`}
+        >
+          <Tabs.List justify="left" aria-label={`panel-tabs-${pageKey}`}>
             {allPanels.map(
               (panel) =>
                 !panel.hidden && (

@@ -55,6 +55,7 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
+from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
 from order import models as OrderModels
@@ -288,11 +289,10 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_subscribers(self, include_parents=True):
         """Return a list of users who subscribe to this PartCategory."""
-        cats = self.get_ancestors(include_self=True)
-
         subscribers = set()
 
         if include_parents:
+            cats = self.get_ancestors(include_self=True)
             queryset = PartCategoryStar.objects.filter(category__in=cats)
         else:
             queryset = PartCategoryStar.objects.filter(category=self)
@@ -306,12 +306,12 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status: bool) -> None:
+    def set_starred(self, user, status: bool, **kwargs) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
 
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:
@@ -660,6 +660,8 @@ class Part(
             except ValidationError as exc:
                 if raise_error:
                     raise ValidationError({'name': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_name')
 
     def validate_ipn(self, raise_error=True):
         """Ensure that the IPN (internal part number) is valid for this Part".
@@ -679,6 +681,8 @@ class Part(
             except ValidationError as exc:
                 if raise_error:
                     raise ValidationError({'IPN': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_ipn')
 
         # If we get to here, none of the plugins have raised an error
         pattern = get_global_setting('PART_IPN_REGEX', '', create=False).strip()
@@ -793,6 +797,8 @@ class Part(
                 raise exc
             else:
                 return False
+        except Exception:
+            log_error('part.validate_serial_number')
 
         """
         If we are here, none of the loaded plugins (if any) threw an error or exited early
@@ -833,17 +839,43 @@ class Part(
             # This serial number is perfectly valid
             return True
 
-    def find_conflicting_serial_numbers(self, serials: list):
+    def find_conflicting_serial_numbers(self, serials: list) -> list:
         """For a provided list of serials, return a list of those which are conflicting."""
+        from part.models import Part
+        from stock.models import StockItem
+
         conflicts = []
 
+        # First, check for raw conflicts based on efficient database queries
+        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # Serial number must be unique across *all* parts
+            parts = Part.objects.all()
+        else:
+            # Serial number must only be unique across this part "tree"
+            parts = Part.objects.filter(tree_id=self.tree_id)
+
+        items = StockItem.objects.filter(part__in=parts, serial__in=serials)
+        items = items.order_by('serial_int', 'serial')
+
+        for item in items:
+            conflicts.append(item.serial)
+
         for serial in serials:
-            if not self.validate_serial_number(serial, part=self):
+            if serial in conflicts:
+                # Already found a conflict, no need to check further
+                continue
+
+            try:
+                self.validate_serial_number(
+                    serial, raise_error=True, check_duplicates=False
+                )
+            except ValidationError:
+                # Serial number is invalid (as determined by plugin)
                 conflicts.append(serial)
 
         return conflicts
 
-    def get_latest_serial_number(self):
+    def get_latest_serial_number(self, allow_plugins=True):
         """Find the 'latest' serial number for this Part.
 
         Here we attempt to find the "highest" serial number which exists for this Part.
@@ -856,15 +888,26 @@ class Part(
         Returns:
             The latest serial number specified for this part, or None
         """
+        from plugin.registry import registry
+
+        if allow_plugins:
+            # Check with plugin system
+            # If any plugin returns a non-null result, that takes priority
+            for plugin in registry.with_mixin('validation'):
+                try:
+                    result = plugin.get_latest_serial_number(self)
+                    if result is not None:
+                        return str(result)
+                except Exception:
+                    log_error(f'{plugin.slug}.get_latest_serial_number')
+
+        # No plugin returned a result, so we will run the default query
         stock = (
             StockModels.StockItem.objects.all().exclude(serial=None).exclude(serial='')
         )
 
         # Generate a query for any stock items for this part variant tree with non-empty serial numbers
-        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
-            # Serial numbers are unique across all parts
-            pass
-        else:
+        if not get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
             # Serial numbers are unique acros part trees
             stock = stock.filter(part__tree_id=self.tree_id)
 
@@ -877,6 +920,12 @@ class Part(
 
         # Return the first serial value
         return stock[0].serial
+
+    def get_next_serial_number(self):
+        """Return the 'next' serial number in sequence."""
+        sn = self.get_latest_serial_number()
+
+        return InvenTree.helpers.increment_serial_number(sn, self)
 
     @property
     def full_name(self) -> str:
@@ -1425,13 +1474,13 @@ class Part(
         """Return True if the specified user subscribes to this part."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status, **kwargs):
         """Set the "subscription" status of this Part against the specified user."""
         if not user:
             return
 
         # Already subscribed?
-        if self.is_starred_by(user) == status:
+        if self.is_starred_by(user, **kwargs) == status:
             return
 
         if status:
@@ -3917,6 +3966,8 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValidationError as exc:
                 # Re-throw the ValidationError against the 'data' field
                 raise ValidationError({'data': exc.message})
+            except Exception:
+                log_error(f'{plugin.slug}.validate_part_parameter')
 
     def calculate_numeric_value(self):
         """Calculate a numeric value for the parameter data.

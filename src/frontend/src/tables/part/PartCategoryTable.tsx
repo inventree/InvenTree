@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
+import { Group, Tooltip } from '@mantine/core';
+import { IconBell } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -36,9 +37,20 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         sortable: true,
         switchable: false,
         render: (record: any) => (
-          <Group gap="xs">
-            {record.icon && <ApiIcon name={record.icon} />}
-            {record.name}
+          <Group gap="xs" wrap="nowrap" justify="space-between">
+            <Group gap="xs" wrap="nowrap">
+              {record.icon && <ApiIcon name={record.icon} />}
+              {record.name}
+            </Group>
+            <Group gap="xs" justify="flex-end" wrap="nowrap">
+              {record.starred && (
+                <Tooltip
+                  label={t`You are subscribed to notifications for this category`}
+                >
+                  <IconBell color="green" size={16} />
+                </Tooltip>
+              )}
+            </Group>
           </Group>
         )
       },
@@ -81,10 +93,12 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     ];
   }, []);
 
+  const newCategoryFields = partCategoryFields({ create: true });
+
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
-    fields: partCategoryFields(),
+    fields: newCategoryFields,
     focus: 'name',
     initialData: {
       parent: parentId
@@ -96,11 +110,13 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
 
+  const editCategoryFields = partCategoryFields({ create: false });
+
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: editCategoryFields,
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 

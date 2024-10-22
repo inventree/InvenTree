@@ -358,6 +358,7 @@ class StockItemSerializer(
             'customer',
             'delete_on_deplete',
             'expiry_date',
+            'in_stock',
             'is_building',
             'link',
             'location',
@@ -468,6 +469,8 @@ class StockItemSerializer(
         child=serializers.DictField(), source='location.get_path', read_only=True
     )
 
+    in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
+
     """
     Field used when creating a stock item
     """
@@ -519,6 +522,10 @@ class StockItemSerializer(
             'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
+            'customer',
+            'belongs_to',
+            'sales_order',
+            'consumed_by',
             'tags',
         )
 
@@ -721,7 +728,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
         try:
             serials = InvenTree.helpers.extract_serial_numbers(
-                serial_numbers, quantity, item.part.get_latest_serial_number()
+                serial_numbers,
+                quantity,
+                item.part.get_latest_serial_number(),
+                part=item.part,
             )
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
@@ -748,6 +758,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
             data['serial_numbers'],
             data['quantity'],
             item.part.get_latest_serial_number(),
+            part=item.part,
         )
 
         item.serializeStock(
@@ -820,9 +831,9 @@ class InstallStockItemSerializer(serializers.Serializer):
         quantity = data.get('quantity', stock_item.quantity)
 
         if quantity > stock_item.quantity:
-            raise ValidationError(
-                _('Quantity to install must not exceed available quantity')
-            )
+            raise ValidationError({
+                'quantity': _('Quantity to install must not exceed available quantity')
+            })
 
         return data
 

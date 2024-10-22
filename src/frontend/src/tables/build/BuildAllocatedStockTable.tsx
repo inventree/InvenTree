@@ -45,17 +45,30 @@ export default function BuildAllocatedStockTable({
   modelField?: string;
 }>) {
   const user = useUserState();
-  const table = useTable('buildallocatedstock');
+  const table = useTable(
+    !!partId ? 'buildallocatedstock-part' : 'buildallocatedstock'
+  );
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'tracked',
         label: t`Allocated to Output`,
         description: t`Show items allocated to a build output`
       }
     ];
-  }, []);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -82,7 +95,15 @@ export default function BuildAllocatedStockTable({
         title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
+      },
+      {
+        accessor: 'part_detail.IPN',
+        ordering: 'IPN',
+        hidden: !showPartInfo,
+        title: t`IPN`,
+        sortable: true,
+        switchable: true
       },
       {
         hidden: !showPartInfo,

@@ -8,8 +8,6 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
-  IconNotes,
-  IconPaperclip,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -22,7 +20,6 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -33,13 +30,16 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -53,7 +53,6 @@ import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
@@ -262,7 +261,11 @@ export default function BuildDetail() {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        )
         // TODO: Hide if build is complete
       },
       {
@@ -339,26 +342,14 @@ export default function BuildDetail() {
         ),
         hidden: !build?.part_detail?.testable
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.build} model_id={Number(id)} />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.build}
-            modelId={build.pk}
-            editable={user.hasChangeRole(UserRoles.build)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      })
     ];
   }, [build, id, user]);
 
@@ -532,8 +523,11 @@ export default function BuildDetail() {
             editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
-              { name: t`Build Orders`, url: '/build' },
-              { name: build.reference, url: `/build/${build.pk}` }
+              { name: t`Manufacturing`, url: '/manufacturing' },
+              {
+                name: build.reference,
+                url: getDetailUrl(ModelType.build, build.pk)
+              }
             ]}
             actions={buildActions}
           />

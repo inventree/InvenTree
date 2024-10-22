@@ -24,7 +24,7 @@ function StartedCard({
       </div>
       <Anchor href={link} target="_blank">
         <Button>
-          <Trans>Read more</Trans>
+          <Trans>Read More</Trans>
         </Button>
       </Anchor>
     </Paper>

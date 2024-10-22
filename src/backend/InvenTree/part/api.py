@@ -29,7 +29,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import increment_serial_number, isNull, str2bool
+from InvenTree.helpers import isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -270,7 +270,7 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
-            self.get_object().set_starred(request.user, starred)
+            self.get_object().set_starred(request.user, starred, include_parents=False)
 
         response = super().update(request, *args, **kwargs)
 
@@ -811,15 +811,10 @@ class PartSerialNumberDetail(RetrieveAPI):
         part = self.get_object()
 
         # Calculate the "latest" serial number
-        latest = part.get_latest_serial_number()
+        latest_serial = part.get_latest_serial_number()
+        next_serial = part.get_next_serial_number()
 
-        data = {'latest': latest}
-
-        if latest is not None:
-            next_serial = increment_serial_number(latest)
-
-            if next_serial != latest:
-                data['next'] = next_serial
+        data = {'latest': latest_serial, 'next': next_serial}
 
         return Response(data)
 
@@ -1423,7 +1418,9 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
-            self.get_object().set_starred(request.user, starred)
+            self.get_object().set_starred(
+                request.user, starred, include_variants=False, include_categories=False
+            )
 
         response = super().update(request, *args, **kwargs)
 

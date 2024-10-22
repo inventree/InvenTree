@@ -1,8 +1,10 @@
 import { Trans, t } from '@lingui/macro';
-import { Container, Group, Input, Table } from '@mantine/core';
+import { Alert, Container, Group, Table } from '@mantine/core';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
@@ -67,76 +69,91 @@ export function TableField({
   );
 
   return (
-    <Input.Wrapper {...fieldDefinition}>
-      <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
-        <Table.Thead>
-          <Table.Tr>
-            {definition.headers?.map((header) => {
-              return <Table.Th key={header}>{header}</Table.Th>;
-            })}
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {value.length > 0 ? (
-            value.map((item: any, idx: number) => {
-              // Table fields require render function
-              if (!definition.modelRenderer) {
-                return (
-                  <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
-                );
-              }
-
-              return definition.modelRenderer({
-                item: item,
-                idx: idx,
-                rowErrors: rowErrors(idx),
-                control: control,
-                changeFn: onRowFieldChange,
-                removeFn: removeRow
-              });
-            })
-          ) : (
-            <Table.Tr key="table-row-no-entries">
-              <Table.Td
-                style={{ textAlign: 'center' }}
-                colSpan={definition.headers?.length}
+    <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
+      <Table.Thead>
+        <Table.Tr>
+          {definition.headers?.map((header, index) => {
+            return (
+              <Table.Th
+                key={`table-header-${identifierString(header)}-${index}`}
               >
-                <span
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '5px'
-                  }}
-                >
-                  <InvenTreeIcon icon="info" />
-                  <Trans>No entries available</Trans>
-                </span>
-              </Table.Td>
-            </Table.Tr>
-          )}
-        </Table.Tbody>
-        {definition.addRow && (
-          <Table.Tfoot>
-            <Table.Tr>
-              <Table.Td colSpan={definition.headers?.length}>
-                <AddItemButton
-                  tooltip={t`Add new row`}
-                  onClick={() => {
-                    if (definition.addRow === undefined) return;
-                    const ret = definition.addRow();
-                    if (ret) {
-                      const val = field.value;
-                      val.push(ret);
-                      field.onChange(val);
-                    }
-                  }}
-                />
-              </Table.Td>
-            </Table.Tr>
-          </Table.Tfoot>
+                {header}
+              </Table.Th>
+            );
+          })}
+        </Table.Tr>
+      </Table.Thead>
+
+      <Table.Tbody>
+        {value.length > 0 ? (
+          value.map((item: any, idx: number) => {
+            // Table fields require render function
+            if (!definition.modelRenderer) {
+              return (
+                <Table.Tr key="table-row-no-renderer">
+                  <Table.Td colSpan={definition.headers?.length}>
+                    <Alert
+                      color="red"
+                      title={t`Error`}
+                      icon={<IconExclamationCircle />}
+                    >
+                      {`modelRenderer entry required for tables`}
+                    </Alert>
+                  </Table.Td>
+                </Table.Tr>
+              );
+            }
+
+            return definition.modelRenderer({
+              item: item,
+              idx: idx,
+              rowErrors: rowErrors(idx),
+              control: control,
+              changeFn: onRowFieldChange,
+              removeFn: removeRow
+            });
+          })
+        ) : (
+          <Table.Tr key="table-row-no-entries">
+            <Table.Td
+              style={{ textAlign: 'center' }}
+              colSpan={definition.headers?.length}
+            >
+              <span
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '5px'
+                }}
+              >
+                <InvenTreeIcon icon="info" />
+                <Trans>No entries available</Trans>
+              </span>
+            </Table.Td>
+          </Table.Tr>
         )}
-      </Table>
-    </Input.Wrapper>
+      </Table.Tbody>
+      {definition.addRow && (
+        <Table.Tfoot>
+          <Table.Tr>
+            <Table.Td colSpan={definition.headers?.length}>
+              <AddItemButton
+                tooltip={t`Add new row`}
+                onClick={() => {
+                  if (definition.addRow === undefined) return;
+                  const ret = definition.addRow();
+                  if (ret) {
+                    const val = field.value;
+                    val.push(ret);
+                    field.onChange(val);
+                  }
+                }}
+              />
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tfoot>
+      )}
+    </Table>
   );
 }
 

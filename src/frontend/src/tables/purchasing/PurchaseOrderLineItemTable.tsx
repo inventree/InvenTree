@@ -125,17 +125,18 @@ export function PurchaseOrderLineItemTable({
     return [
       {
         accessor: 'part',
-        title: t`Internal Part`,
+        title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
-        accessor: 'description',
-        title: t`Part Description`,
-
-        sortable: false,
-        render: (record: any) => record?.part_detail?.description
+        accessor: 'part_detail.IPN',
+        sortable: false
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false
       },
       ReferenceColumn({}),
       {
@@ -148,7 +149,10 @@ export function PurchaseOrderLineItemTable({
           let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
           let extra = [];
 
-          if (supplier_part.pack_quantity_native != 1) {
+          if (
+            supplier_part?.pack_quantity_native != undefined &&
+            supplier_part.pack_quantity_native != 1
+          ) {
             let total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
@@ -341,7 +345,7 @@ export function PurchaseOrderLineItemTable({
       />,
       <AddItemButton
         key="add-line-item"
-        tooltip={t`Add line item`}
+        tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
             order: orderId

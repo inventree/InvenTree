@@ -83,7 +83,7 @@ class LabelPrintingMixin:
                 [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
         """
         # Check if pdf data is provided
-        pdf_data = kwargs.get('pdf_data', None)
+        pdf_data = kwargs.get('pdf_data')
 
         if not pdf_data:
             pdf_data = (

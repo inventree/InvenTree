@@ -339,13 +339,13 @@ class InvenTreeNotificationBodies:
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""
-    targets = kwargs.get('targets', None)
-    target_fnc = kwargs.get('target_fnc', None)
+    targets = kwargs.get('targets')
+    target_fnc = kwargs.get('target_fnc')
     target_args = kwargs.get('target_args', [])
     target_kwargs = kwargs.get('target_kwargs', {})
-    target_exclude = kwargs.get('target_exclude', None)
+    target_exclude = kwargs.get('target_exclude')
     context = kwargs.get('context', {})
-    delivery_methods = kwargs.get('delivery_methods', None)
+    delivery_methods = kwargs.get('delivery_methods')
 
     # Check if data is importing currently
     if isImportingData():

@@ -64,7 +64,14 @@ export function usePartFields({
       salable: {},
       virtual: {},
       locked: {},
-      active: {}
+      active: {},
+      starred: {
+        field_type: 'boolean',
+        label: t`Subscribed`,
+        description: t`Subscribe to notifications for this part`,
+        disabled: false,
+        required: false
+      }
     };
 
     // Additional fields for creation
@@ -114,6 +121,10 @@ export function usePartFields({
       delete fields['default_expiry'];
     }
 
+    if (create) {
+      delete fields['starred'];
+    }
+
     return fields;
   }, [create, settings]);
 }
@@ -121,25 +132,44 @@ export function usePartFields({
 /**
  * Construct a set of fields for creating / editing a PartCategory instance
  */
-export function partCategoryFields(): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = {
-    parent: {
-      description: t`Parent part category`,
-      required: false
-    },
-    name: {},
-    description: {},
-    default_location: {
-      filters: {
-        structural: false
+export function partCategoryFields({
+  create
+}: {
+  create?: boolean;
+}): ApiFormFieldSet {
+  let fields: ApiFormFieldSet = useMemo(() => {
+    let fields: ApiFormFieldSet = {
+      parent: {
+        description: t`Parent part category`,
+        required: false
+      },
+      name: {},
+      description: {},
+      default_location: {
+        filters: {
+          structural: false
+        }
+      },
+      default_keywords: {},
+      structural: {},
+      starred: {
+        field_type: 'boolean',
+        label: t`Subscribed`,
+        description: t`Subscribe to notifications for this category`,
+        disabled: false,
+        required: false
+      },
+      icon: {
+        field_type: 'icon'
       }
-    },
-    default_keywords: {},
-    structural: {},
-    icon: {
-      field_type: 'icon'
+    };
+
+    if (create) {
+      delete fields['starred'];
     }
-  };
+
+    return fields;
+  }, [create]);
 
   return fields;
 }
