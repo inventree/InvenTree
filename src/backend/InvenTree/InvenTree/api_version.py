@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 271
+INVENTREE_API_VERSION = 272
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-271 - 2024-10-16 : https://github.com/inventree/InvenTree/pull/8278
+v272 - 2024-10-16 : https://github.com/inventree/InvenTree/pull/8278
     - Allow build order list to be filtered by "outstanding" (alias for "active")
+
+v271 - 2024-10-22 : https://github.com/inventree/InvenTree/pull/8331
+    - Fixes for SalesOrderLineItem endpoints
 
 v270 - 2024-10-19 : https://github.com/inventree/InvenTree/pull/8307
     - Adds missing date fields from order API endpoint(s)

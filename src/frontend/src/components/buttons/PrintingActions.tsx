@@ -11,6 +11,7 @@ import { extractAvailableFields } from '../../functions/forms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useUserSettingsState } from '../../states/SettingsState';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
@@ -28,6 +29,8 @@ export function PrintingActions({
   modelType?: ModelType;
 }) {
   const { host } = useLocalState.getState();
+
+  const userSettings = useUserSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
@@ -74,6 +77,7 @@ export function PrintingActions({
 
     fields['plugin'] = {
       ...fields['plugin'],
+      value: userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
       filters: {
         active: true,
         mixin: 'labels'

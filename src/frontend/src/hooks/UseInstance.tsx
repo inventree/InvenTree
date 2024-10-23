@@ -51,7 +51,13 @@ export function useInstance<T = any>({
   const [requestStatus, setRequestStatus] = useState<number>(0);
 
   const instanceQuery = useQuery<T>({
-    queryKey: ['instance', endpoint, pk, params, pathParams],
+    queryKey: [
+      'instance',
+      endpoint,
+      pk,
+      JSON.stringify(params),
+      JSON.stringify(pathParams)
+    ],
     queryFn: async () => {
       if (hasPrimaryKey) {
         if (

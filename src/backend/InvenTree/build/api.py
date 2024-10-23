@@ -740,10 +740,12 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         'quantity',
         'location',
         'reference',
+        'IPN',
     ]
 
     ordering_field_aliases = {
         'part': 'stock_item__part__name',
+        'IPN': 'stock_item__part__IPN',
         'sku': 'stock_item__supplier_part__SKU',
         'location': 'stock_item__location__name',
         'reference': 'build_line__bom_item__reference',
@@ -752,6 +754,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     search_fields = [
         'stock_item__supplier_part__SKU',
         'stock_item__part__name',
+        'stock_item__part__IPN',
         'build_line__bom_item__reference',
     ]
 

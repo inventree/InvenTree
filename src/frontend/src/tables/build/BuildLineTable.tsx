@@ -8,6 +8,7 @@ import {
   IconWand
 } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
@@ -18,7 +19,9 @@ import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
 } from '../../forms/BuildForms';
+import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
@@ -44,6 +47,7 @@ export default function BuildLineTable({
 }>) {
   const table = useTable('buildline');
   const user = useUserState();
+  const navigate = useNavigate();
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const isActive: boolean = useMemo(() => {
@@ -367,34 +371,38 @@ export default function BuildLineTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       let part = record.part_detail ?? {};
-
-      // Consumable items have no appropriate actions
-      if (record?.bom_item_detail?.consumable) {
-        return [];
-      }
-
-      // Only allow actions when build is in production
-      if (!build?.status || build.status != buildStatus.PRODUCTION) {
-        return [];
-      }
+      const in_production = build.status == buildStatus.PRODUCTION;
+      const consumable = record.bom_item_detail?.consumable ?? false;
 
       const hasOutput = !!outputId;
 
       // Can allocate
       let canAllocate =
+        in_production &&
+        !consumable &&
         user.hasChangeRole(UserRoles.build) &&
         record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
       // Can de-allocate
       let canDeallocate =
+        in_production &&
+        !consumable &&
         user.hasChangeRole(UserRoles.build) &&
         record.allocated > 0 &&
         record.trackable == hasOutput;
 
       let canOrder =
-        user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
-      let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
+        in_production &&
+        !consumable &&
+        user.hasAddRole(UserRoles.purchase_order) &&
+        part.purchaseable;
+
+      let canBuild =
+        in_production &&
+        !consumable &&
+        user.hasAddRole(UserRoles.build) &&
+        part.assembly;
 
       return [
         {
@@ -436,6 +444,17 @@ export default function BuildLineTable({
               quantity: record.quantity - record.allocated
             });
             newBuildOrder.open();
+          }
+        },
+        {
+          icon: <IconArrowRight />,
+          title: t`View Part`,
+          onClick: (event: any) => {
+            navigateToLink(
+              getDetailUrl(ModelType.part, record.part),
+              navigate,
+              event
+            );
           }
         }
       ];
