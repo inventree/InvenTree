@@ -315,13 +315,13 @@ mkdocs-include-markdown-plugin==6.2.2 \
     --hash=sha256:d293950f6499d2944291ca7b9bc4a60e652bbfd3e3a42b564f6cceee268694e7 \
     --hash=sha256:f2bd5026650492a581d2fd44be6c22f90391910d76582b96a34c264f2d17875d
     # via -r docs/requirements.in
-mkdocs-macros-plugin==1.3.5 \
-    --hash=sha256:58bd47ea7097d1a2824dc9d0d912c211823c5e6e6fe8a19a3ecf33346f7d6547 \
-    --hash=sha256:5fd6969e2c43e23031ffb719bebe7421163ea26f4dc360af2343144ca979b04b
+mkdocs-macros-plugin==1.3.6 \
+    --hash=sha256:074bc072cac14c28724037b6988743cd9425752bdd35ae05fbf96b1b2457f3b7 \
+    --hash=sha256:74fd418c8e1f9f021b7a45bb1c7d7461d8ae09ccec241787f3971e733374da8c
     # via -r docs/requirements.in
-mkdocs-material==9.5.40 \
-    --hash=sha256:8e7a16ada34e79a7b6459ff2602584222f522c738b6a023d1bea853d5049da6f \
-    --hash=sha256:b69d70e667ec51fc41f65e006a3184dd00d95b2439d982cb1586e4c018943156
+mkdocs-material==9.5.42 \
+    --hash=sha256:452a7c5d21284b373f36b981a2cbebfff59263feebeede1bc28652e9c5bbe316 \
+    --hash=sha256:92779b5e9b5934540c574c11647131d217dc540dce72b05feeda088c8eb1b8f2
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
