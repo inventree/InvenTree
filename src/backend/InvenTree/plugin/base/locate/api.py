@@ -59,7 +59,11 @@ class LocatePluginView(GenericAPIView):
                 StockItem.objects.get(pk=item_pk)
 
                 offload_task(
-                    registry.call_plugin_function, plugin, 'locate_stock_item', item_pk
+                    registry.call_plugin_function,
+                    plugin,
+                    'locate_stock_item',
+                    item_pk,
+                    group='plugin',
                 )
 
                 data['item'] = item_pk
@@ -78,6 +82,7 @@ class LocatePluginView(GenericAPIView):
                     plugin,
                     'locate_stock_location',
                     location_pk,
+                    group='plugin',
                 )
 
                 data['location'] = location_pk

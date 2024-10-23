@@ -40,7 +40,7 @@ def trigger_event(event, *args, **kwargs):
     if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
         kwargs['force_async'] = True
 
-    offload_task(register_event, event, *args, **kwargs)
+    offload_task(register_event, event, *args, group='plugin', **kwargs)
 
 
 def register_event(event, *args, **kwargs):
@@ -77,7 +77,9 @@ def register_event(event, *args, **kwargs):
                     kwargs['force_async'] = True
 
                 # Offload a separate task for each plugin
-                offload_task(process_event, slug, event, *args, **kwargs)
+                offload_task(
+                    process_event, slug, event, *args, group='plugin', **kwargs
+                )
 
 
 def process_event(plugin_slug, event, *args, **kwargs):
