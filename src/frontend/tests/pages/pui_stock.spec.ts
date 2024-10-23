@@ -94,7 +94,10 @@ test('Stock - Serial Numbers', async ({ page }) => {
 
   // Now, with correct quantity
   await page.getByLabel('number-field-quantity').fill('51');
+  await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForTimeout(250);
+
   await page
     .getByText(
       /The following serial numbers already exist or are invalid : 200,201,202,203,204/
