@@ -201,7 +201,7 @@ export function PurchaseOrderLineItemTable({
         title: t`Pack Quantity`
       },
       {
-        accessor: 'supplier_part_detail.SKU',
+        accessor: 'sku',
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
@@ -213,12 +213,10 @@ export function PurchaseOrderLineItemTable({
         sortable: false
       }),
       {
-        accessor: 'MPN',
+        accessor: 'mpn',
+        ordering: 'MPN',
         title: t`Manufacturer Code`,
-        sortable: true,
-
-        render: (record: any) =>
-          record?.supplier_part_detail?.manufacturer_part_detail?.MPN
+        sortable: true
       },
       CurrencyColumn({
         accessor: 'purchase_price',

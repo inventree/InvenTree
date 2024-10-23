@@ -2098,7 +2098,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 sortable: true,
                 sortName: 'MPN',
-                field: 'supplier_part_detail.manufacturer_part_detail.MPN',
+                field: 'mpn',
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
