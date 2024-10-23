@@ -118,6 +118,7 @@ test('Stock - Serial Numbers', async ({ page }) => {
 test('Stock - Stock Actions', async ({ page }) => {
   await doQuickLogin(page);
 
+  // Find an in-stock, untracked item
   await page.goto(
     `${baseUrl}/stock/location/index/stock-items?in_stock=1&serialized=0`
   );
@@ -146,4 +147,13 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('This field is required.').first().waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Find an item which has been sent to a customer
+  await page.goto(`${baseUrl}/stock/item/1012/details`);
+  await page.getByText('Batch Code: 2022-11-12').waitFor();
+  await page.getByText('Unavailable').waitFor();
+  await page.getByLabel('action-menu-stock-operations').click();
+  await page.getByLabel('action-menu-stock-operations-return').click();
+
+  await page.waitForTimeout(2500);
 });
