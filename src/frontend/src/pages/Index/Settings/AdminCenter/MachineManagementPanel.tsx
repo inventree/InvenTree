@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import {
   Accordion,
   ActionIcon,
@@ -7,8 +7,7 @@ import {
   Group,
   List,
   Stack,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import { IconInfoCircle, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
