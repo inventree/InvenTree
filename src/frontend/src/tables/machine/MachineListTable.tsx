@@ -570,7 +570,7 @@ export function MachineListTable({
       {renderMachineDrawer && (
         <DetailDrawer
           title={t`Machine Detail`}
-          size={'lg'}
+          size={'xl'}
           renderContent={(id) => {
             if (!id || !id.startsWith('machine-')) return false;
             return (
