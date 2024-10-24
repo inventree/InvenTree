@@ -826,6 +826,9 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
+        elif self.is_float():
+            self.value = self.as_float()
+
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
         )
@@ -862,6 +865,14 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError, TypeError):
                 raise ValidationError({'value': _('Value must be an integer value')})
 
+        # Floating point validator
+        if validator is float:
+            try:
+                # Coerce into a floating point value
+                value = float(value)
+            except (ValueError, TypeError):
+                raise ValidationError({'value': _('Value must be a valid number')})
+
         # If a list of validators is supplied, iterate through each one
         if type(validator) in [list, tuple]:
             for v in validator:
@@ -873,8 +884,11 @@ class BaseInvenTreeSetting(models.Model):
             if self.is_bool():
                 value = self.as_bool()
 
-            if self.is_int():
+            elif self.is_int():
                 value = self.as_int()
+
+            elif self.is_float():
+                value = self.as_float()
 
             try:
                 validator(value)
@@ -977,6 +991,9 @@ class BaseInvenTreeSetting(models.Model):
         if not model_name:
             return None
 
+        # Enforce lower-case model name
+        model_name = str(model_name).strip().lower()
+
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
@@ -1075,6 +1092,39 @@ class BaseInvenTreeSetting(models.Model):
                     return True
 
         return False
+
+    def is_float(self):
+        """Check if the setting is required to be a float value."""
+        validator = self.__class__.get_setting_validator(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return self.__class__.validator_is_float(validator)
+
+    @classmethod
+    def validator_is_float(cls, validator):
+        """Return if validator is for float."""
+        if validator == float:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == float:
+                    return True
+
+        return False
+
+    def as_float(self):
+        """Return the value of this setting converted to a float value.
+
+        If an error occurs, return the default value
+        """
+        try:
+            value = float(self.value)
+        except (ValueError, TypeError):
+            value = self.default_value
+
+        return value
 
     def is_int(self):
         """Check if the setting is required to be an integer value."""
