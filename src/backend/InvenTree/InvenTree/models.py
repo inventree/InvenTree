@@ -1090,10 +1090,11 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
     """Callback when a new task failure log is generated."""
     from django.conf import settings
 
-    max_attempts = settings.Q_CLUSTER.get('max_attempts', 5)
+    max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
+    n = instance.attempt_count
 
     # Only notify once the maximum number of attempts has been reached
-    if not instance.success and instance.attempt_count >= max_attempts:
+    if not instance.success and n >= max_attempts:
         try:
             url = InvenTree.helpers_model.construct_absolute_url(
                 reverse(
@@ -1109,7 +1110,9 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
             {
                 'failure': instance,
                 'name': _('Task Failure'),
-                'message': _(f"Background worker task '{instance.func}' has failed"),
+                'message': _(
+                    f"Background worker task '{instance.func}' failed after {n} attempts"
+                ),
                 'link': url,
             },
         )
