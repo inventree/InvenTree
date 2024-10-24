@@ -191,6 +191,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             InvenTree.tasks.offload_task(
                 build.tasks.create_child_builds,
                 build_order.pk,
+                group='build',
             )
 
         return build_order
@@ -396,7 +397,8 @@ class BuildOutputCreateSerializer(serializers.Serializer):
                 self.serials = InvenTree.helpers.extract_serial_numbers(
                     serial_numbers,
                     quantity,
-                    part.get_latest_serial_number()
+                    part.get_latest_serial_number(),
+                    part=part
                 )
             except DjangoValidationError as e:
                 raise ValidationError({
@@ -1133,7 +1135,8 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
-            optional_items=data['optional_items']
+            optional_items=data['optional_items'],
+            group='build'
         ):
             raise ValidationError(_("Failed to start auto-allocation task"))
 

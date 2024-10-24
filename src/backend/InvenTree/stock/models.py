@@ -1629,8 +1629,9 @@ class StockItem(
         existing = self.part.find_conflicting_serial_numbers(serials)
 
         if len(existing) > 0:
-            exists = ','.join([str(x) for x in existing])
-            msg = _('Serial numbers already exist') + f': {exists}'
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join([str(x) for x in existing])
             raise ValidationError({'serial_numbers': msg})
 
         # Serialize this StockItem
@@ -1679,7 +1680,7 @@ class StockItem(
 
         # Rebuild the stock tree
         InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='part'
         )
 
     @transaction.atomic
@@ -1914,7 +1915,7 @@ class StockItem(
         # Rebuild stock trees as required
         for tree_id in tree_ids:
             InvenTree.tasks.offload_task(
-                stock.tasks.rebuild_stock_item_tree, tree_id=tree_id
+                stock.tasks.rebuild_stock_item_tree, tree_id=tree_id, group='stock'
             )
 
     @transaction.atomic
@@ -2011,7 +2012,7 @@ class StockItem(
 
         # Rebuild the tree for this parent item
         InvenTree.tasks.offload_task(
-            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id
+            stock.tasks.rebuild_stock_item_tree, tree_id=self.tree_id, group='stock'
         )
 
         # Attempt to reload the new item from the database
@@ -2404,7 +2405,10 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
-            part_tasks.notify_low_stock_if_required, instance.part
+            part_tasks.notify_low_stock_if_required,
+            instance.part.pk,
+            group='notification',
+            force_async=True,
         )
 
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
@@ -2421,7 +2425,10 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     if created and not InvenTree.ready.isImportingData():
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             InvenTree.tasks.offload_task(
-                part_tasks.notify_low_stock_if_required, instance.part
+                part_tasks.notify_low_stock_if_required,
+                instance.part.pk,
+                group='notification',
+                force_async=True,
             )
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):

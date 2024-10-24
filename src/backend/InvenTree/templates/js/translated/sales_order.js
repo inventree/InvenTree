@@ -281,55 +281,13 @@ function completeSalesOrderShipment(shipment_id, options={}) {
     // Request the list of stock items which will be shipped
     inventreeGet(`{% url "api-so-shipment-list" %}${shipment_id}/`, {}, {
         success: function(shipment) {
-            var allocations = shipment.allocations;
+            let allocations = shipment.allocated_items ?? 0;
 
-            var html = '';
-
-            if (!allocations || allocations.length == 0) {
-                html = `
-                <div class='alert alert-block alert-danger'>
-                {% trans "No stock items have been allocated to this shipment" %}
-                </div>
-                `;
-            } else {
-                html = `
-                {% trans "The following stock items will be shipped" %}
-                <table class='table table-striped table-condensed'>
-                    <thead>
-                        <tr>
-                            <th>{% trans "Part" %}</th>
-                            <th>{% trans "Stock Item" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                `;
-
-                allocations.forEach(function(allocation) {
-
-                    var part = allocation.part_detail;
-                    var thumb = thumbnailImage(part.thumbnail || part.image);
-
-                    var stock = '';
-
-                    if (allocation.serial) {
-                        stock = `{% trans "Serial Number" %}: ${allocation.serial}`;
-                    } else {
-                        stock = `{% trans "Quantity" %}: ${allocation.quantity}`;
-                    }
-
-                    html += `
-                    <tr>
-                        <td>${thumb} ${part.full_name}</td>
-                        <td>${stock}</td>
-                    </tr>
-                    `;
-                });
-
-                html += `
-                    </tbody>
-                </table>
-                `;
-            }
+            var html = allocations == 0 ? (
+                `<div class='alert alert-block alert-danger'>
+                    {% trans "No stock items have been allocated to this shipment" %}
+                </div>`
+            ) : '';
 
             constructForm(`{% url "api-so-shipment-list" %}${shipment_id}/ship/`, {
                 method: 'POST',
@@ -398,7 +356,8 @@ function completePendingShipments(order_id, options={}) {
     var allocated_shipments = [];
 
     for (var idx = 0; idx < pending_shipments.length; idx++) {
-        if (pending_shipments[idx].allocations.length > 0) {
+
+        if (pending_shipments[idx].allocated_items > 0) {
             allocated_shipments.push(pending_shipments[idx]);
         }
     }
@@ -1638,6 +1597,7 @@ function showAllocationSubTable(index, row, element, options) {
             ...options.queryParams,
             part_detail: true,
             location_detail: true,
+            item_detail: true,
             order_detail: true,
         },
         data: row.allocations,

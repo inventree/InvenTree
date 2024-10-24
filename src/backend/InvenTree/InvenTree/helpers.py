@@ -2,6 +2,7 @@
 
 import datetime
 import hashlib
+import inspect
 import io
 import logging
 import os
@@ -20,6 +21,7 @@ from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+import bleach
 import pytz
 import regex
 from bleach import clean
@@ -432,7 +434,7 @@ def DownloadFile(
     return response
 
 
-def increment_serial_number(serial):
+def increment_serial_number(serial, part=None):
     """Given a serial number, (attempt to) generate the *next* serial number.
 
     Note: This method is exposed to custom plugins.
@@ -443,6 +445,7 @@ def increment_serial_number(serial):
     Returns:
         incremented value, or None if incrementing could not be performed.
     """
+    from InvenTree.exceptions import log_error
     from plugin.registry import registry
 
     # Ensure we start with a string value
@@ -451,16 +454,30 @@ def increment_serial_number(serial):
 
     # First, let any plugins attempt to increment the serial number
     for plugin in registry.with_mixin('validation'):
-        result = plugin.increment_serial_number(serial)
-        if result is not None:
-            return str(result)
+        try:
+            if not hasattr(plugin, 'increment_serial_number'):
+                continue
+
+            signature = inspect.signature(plugin.increment_serial_number)
+
+            # Note: 2024-08-21 - The 'part' parameter has been added to the signature
+            if 'part' in signature.parameters:
+                result = plugin.increment_serial_number(serial, part=part)
+            else:
+                result = plugin.increment_serial_number(serial)
+            if result is not None:
+                return str(result)
+        except Exception:
+            log_error(f'{plugin.slug}.increment_serial_number')
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
     return increment(serial)
 
 
-def extract_serial_numbers(input_string, expected_quantity: int, starting_value=None):
+def extract_serial_numbers(
+    input_string, expected_quantity: int, starting_value=None, part=None
+):
     """Extract a list of serial numbers from a provided input string.
 
     The input string can be specified using the following concepts:
@@ -480,7 +497,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         starting_value: Provide a starting value for the sequence (or None)
     """
     if starting_value is None:
-        starting_value = increment_serial_number(None)
+        starting_value = increment_serial_number(None, part=part)
 
     try:
         expected_quantity = int(expected_quantity)
@@ -497,12 +514,12 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     if len(input_string) == 0:
         raise ValidationError([_('Empty serial number string')])
 
-    next_value = increment_serial_number(starting_value)
+    next_value = increment_serial_number(starting_value, part=part)
 
     # Substitute ~ character with latest value
     while '~' in input_string and next_value:
         input_string = input_string.replace('~', str(next_value), 1)
-        next_value = increment_serial_number(next_value)
+        next_value = increment_serial_number(next_value, part=part)
 
     # Split input string by whitespace or comma (,) characters
     groups = re.split(r'[\s,]+', input_string)
@@ -813,7 +830,6 @@ def clean_markdown(value: str):
     This function will remove javascript and other potentially harmful content from the markdown string.
     """
     import markdown
-    from markdownify.templatetags.markdownify import markdownify
 
     try:
         markdownify_settings = settings.MARKDOWNIFY['default']
@@ -832,8 +848,34 @@ def clean_markdown(value: str):
         output_format='html',
     )
 
-    # Clean the HTML content (for comparison). Ideally, this should be the same as the original content
-    clean_html = markdownify(value)
+    # Bleach settings
+    whitelist_tags = markdownify_settings.get(
+        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
+    )
+    whitelist_attrs = markdownify_settings.get(
+        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
+    )
+    whitelist_styles = markdownify_settings.get(
+        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
+    )
+    whitelist_protocols = markdownify_settings.get(
+        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
+    )
+    strip = markdownify_settings.get('STRIP', True)
+
+    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
+        allowed_css_properties=whitelist_styles
+    )
+    cleaner = bleach.Cleaner(
+        tags=whitelist_tags,
+        attributes=whitelist_attrs,
+        css_sanitizer=css_sanitizer,
+        protocols=whitelist_protocols,
+        strip=strip,
+    )
+
+    # Clean the HTML content (for comparison). This must be the same as the original content
+    clean_html = cleaner.clean(html)
 
     if html != clean_html:
         raise ValidationError(_('Data contains prohibited markdown content'))

@@ -997,7 +997,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(
-                    serial_numbers, quantity, part.get_latest_serial_number()
+                    serial_numbers, quantity, part.get_latest_serial_number(), part=part
                 )
 
                 # Determine if any of the specified serial numbers are invalid
