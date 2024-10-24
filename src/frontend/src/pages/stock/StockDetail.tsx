@@ -420,7 +420,9 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        hidden: !showSalesAlloctions && !showBuildAllocations,
+        hidden:
+          !stockitem.in_stock ||
+          (!showSalesAlloctions && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
@@ -629,6 +631,7 @@ export default function StockDetail() {
   });
 
   const stockActions = useMemo(() => {
+    const inStock = stockitem.in_stock;
     const serial = stockitem.serial;
     const serialized =
       serial != null &&
@@ -652,13 +655,12 @@ export default function StockDetail() {
       />,
       <ActionDropdown
         tooltip={t`Stock Operations`}
-        hidden={!stockitem.in_stock}
         icon={<IconPackages />}
         actions={[
           {
             name: t`Count`,
             tooltip: t`Count stock`,
-            hidden: serialized,
+            hidden: serialized || !inStock,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
@@ -669,7 +671,7 @@ export default function StockDetail() {
           {
             name: t`Add`,
             tooltip: t`Add Stock`,
-            hidden: serialized,
+            hidden: serialized || !inStock,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
@@ -678,7 +680,7 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove Stock`,
-            hidden: serialized,
+            hidden: serialized || !inStock,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
@@ -687,7 +689,10 @@ export default function StockDetail() {
           {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
-            hidden: serialized || stockitem?.part_detail?.trackable != true,
+            hidden:
+              !inStock ||
+              serialized ||
+              stockitem?.part_detail?.trackable != true,
             icon: <InvenTreeIcon icon="serial" iconProps={{ color: 'blue' }} />,
             onClick: () => {
               serializeStockItem.open();
@@ -696,6 +701,7 @@ export default function StockDetail() {
           {
             name: t`Transfer`,
             tooltip: t`Transfer Stock`,
+            hidden: !inStock,
             icon: (
               <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
             ),
@@ -706,7 +712,7 @@ export default function StockDetail() {
           {
             name: t`Return`,
             tooltip: t`Return from customer`,
-            hidden: !stockitem.customer,
+            hidden: !stockitem.sales_order,
             icon: (
               <InvenTreeIcon
                 icon="return_orders"

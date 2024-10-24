@@ -216,7 +216,8 @@ def create_child_builds(build_id: int) -> None:
         # Offload the child build order creation to the background task queue
         InvenTree.tasks.offload_task(
             create_child_builds,
-            sub_order.pk
+            sub_order.pk,
+            group='build'
         )
 
 
