@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-24 02:13+0000\n"
-"PO-Revision-Date: 2024-10-24 02:16\n"
+"POT-Creation-Date: 2024-10-24 11:16+0000\n"
+"PO-Revision-Date: 2024-10-24 11:19\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -64,7 +64,7 @@ msgstr "Chi tiết lỗi có thể được tìm thấy trong bảng quản tr�
 msgid "Enter date"
 msgstr "Nhập ngày"
 
-#: InvenTree/fields.py:204 InvenTree/models.py:926 build/serializers.py:510
+#: InvenTree/fields.py:204 InvenTree/models.py:928 build/serializers.py:510
 #: build/serializers.py:588 build/templates/build/sidebar.html:29
 #: company/models.py:833
 #: company/templates/company/manufacturer_part_sidebar.html:11
@@ -382,56 +382,56 @@ msgstr ""
 msgid "Email"
 msgstr "Email"
 
-#: InvenTree/models.py:103
+#: InvenTree/models.py:105
 msgid "Error running plugin validation"
 msgstr "Lỗi xác thực plugin"
 
-#: InvenTree/models.py:172
+#: InvenTree/models.py:174
 msgid "Metadata must be a python dict object"
 msgstr "Siêu dữ liệu phải là đối tượng từ điển của python"
 
-#: InvenTree/models.py:178
+#: InvenTree/models.py:180
 msgid "Plugin Metadata"
 msgstr "Phụ trợ siêu dữ liệu"
 
-#: InvenTree/models.py:179
+#: InvenTree/models.py:181
 msgid "JSON metadata field, for use by external plugins"
 msgstr "Trường siêu dữ liệu JSON, được sử dụng bởi phụ trợ bên ngoài"
 
-#: InvenTree/models.py:406
+#: InvenTree/models.py:408
 msgid "Improperly formatted pattern"
 msgstr "Mẫu được định dạng không thích hợp"
 
-#: InvenTree/models.py:413
+#: InvenTree/models.py:415
 msgid "Unknown format key specified"
 msgstr "Khóa định dạng không rõ ràng đã được chỉ định"
 
-#: InvenTree/models.py:419
+#: InvenTree/models.py:421
 msgid "Missing required format key"
 msgstr "Thiếu khóa định dạng cần thiết"
 
-#: InvenTree/models.py:430
+#: InvenTree/models.py:432
 msgid "Reference field cannot be empty"
 msgstr "Trường tham chiếu không thể rỗng"
 
-#: InvenTree/models.py:438
+#: InvenTree/models.py:440
 msgid "Reference must match required pattern"
 msgstr "Tham chiếu phải phù hợp với mẫu yêu cầu"
 
-#: InvenTree/models.py:469
+#: InvenTree/models.py:471
 msgid "Reference number is too large"
 msgstr "Số tham chiếu quá lớn"
 
-#: InvenTree/models.py:720
+#: InvenTree/models.py:722
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "Tên trùng lặp không thể tồn tại trong cùng cấp thư mục"
 
-#: InvenTree/models.py:737
+#: InvenTree/models.py:739
 msgid "Invalid choice"
 msgstr "Lựa chọn sai"
 
-#: InvenTree/models.py:767 common/models.py:2764 common/models.py:3191
-#: common/models.py:3411 common/serializers.py:455 company/models.py:590
+#: InvenTree/models.py:769 common/models.py:2764 common/models.py:3191
+#: common/models.py:3411 common/serializers.py:460 company/models.py:590
 #: machine/models.py:24 part/models.py:1044 part/models.py:3815
 #: plugin/models.py:51 report/models.py:149 stock/models.py:83
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -450,7 +450,7 @@ msgstr "Lựa chọn sai"
 msgid "Name"
 msgstr "Tên"
 
-#: InvenTree/models.py:773 build/models.py:251
+#: InvenTree/models.py:775 build/models.py:251
 #: build/templates/build/detail.html:24 common/models.py:159
 #: company/models.py:518 company/models.py:824
 #: company/templates/company/company_base.html:77
@@ -487,44 +487,53 @@ msgstr "Tên"
 msgid "Description"
 msgstr "Mô tả"
 
-#: InvenTree/models.py:774 stock/models.py:90
+#: InvenTree/models.py:776 stock/models.py:90
 msgid "Description (optional)"
 msgstr "Mô tả (tùy chọn)"
 
-#: InvenTree/models.py:789 common/models.py:3544
+#: InvenTree/models.py:791 common/models.py:3544
 #: templates/js/translated/part.js:2812 templates/js/translated/stock.js:2842
 msgid "Path"
 msgstr "Đường dẫn"
 
-#: InvenTree/models.py:926
+#: InvenTree/models.py:928
 msgid "Markdown notes (optional)"
 msgstr "Ghi chú markdown (không bắt buộc)"
 
-#: InvenTree/models.py:957
+#: InvenTree/models.py:959
 msgid "Barcode Data"
 msgstr "Dữ liệu mã vạch"
 
-#: InvenTree/models.py:958
+#: InvenTree/models.py:960
 msgid "Third party barcode data"
 msgstr "Dữ liệu mã vạch của bên thứ ba"
 
-#: InvenTree/models.py:964
+#: InvenTree/models.py:966
 msgid "Barcode Hash"
 msgstr "Dữ liệu băm mã vạch"
 
-#: InvenTree/models.py:965
+#: InvenTree/models.py:967
 msgid "Unique hash of barcode data"
 msgstr "Chuỗi băm duy nhất của dữ liệu mã vạch"
 
-#: InvenTree/models.py:1032
+#: InvenTree/models.py:1034
 msgid "Existing barcode found"
 msgstr "Mã vạch đã tồn tại"
 
-#: InvenTree/models.py:1075
+#: InvenTree/models.py:1112
+msgid "Task Failure"
+msgstr ""
+
+#: InvenTree/models.py:1114
+#, python-brace-format
+msgid "Background worker task '{instance.func}' failed after {n} attempts"
+msgstr ""
+
+#: InvenTree/models.py:1142
 msgid "Server Error"
 msgstr "Lỗi máy chủ"
 
-#: InvenTree/models.py:1076
+#: InvenTree/models.py:1143
 msgid "An error has been logged by the server."
 msgstr "Lỗi đã được ghi lại bởi máy chủ."
 
@@ -3984,7 +3993,7 @@ msgstr ""
 msgid "File size in bytes"
 msgstr ""
 
-#: common/models.py:3398 common/serializers.py:604
+#: common/models.py:3398 common/serializers.py:609
 msgid "Invalid model type specified for attachment"
 msgstr ""
 
@@ -4163,79 +4172,79 @@ msgstr "Hàng đã được nhận theo đơn đặt mua"
 msgid "Items have been received against a return order"
 msgstr "Hàng đã nhận theo đơn hàng trả lại"
 
-#: common/notifications.py:453
+#: common/notifications.py:457
 msgid "Error raised by plugin"
 msgstr "Lỗi được thông báo bởi phần mở rộng"
 
-#: common/serializers.py:418
+#: common/serializers.py:423
 msgid "Is Running"
 msgstr "Đang chạy"
 
-#: common/serializers.py:424
+#: common/serializers.py:429
 msgid "Pending Tasks"
 msgstr "Công việc chờ xử lý"
 
-#: common/serializers.py:430
+#: common/serializers.py:435
 msgid "Scheduled Tasks"
 msgstr "Tác vụ theo lịch"
 
-#: common/serializers.py:436
+#: common/serializers.py:441
 msgid "Failed Tasks"
 msgstr "Tác vụ thất bại"
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Task ID"
 msgstr "ID tác vụ"
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Unique task ID"
 msgstr "ID tác vụ duy nhất"
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock"
 msgstr "Khoá"
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock time"
 msgstr "Thời gian khóa"
 
-#: common/serializers.py:455
+#: common/serializers.py:460
 msgid "Task name"
 msgstr "Tên công việc"
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function"
 msgstr "Chức năng"
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function name"
 msgstr "Tên chức năng"
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Arguments"
 msgstr "Đối số"
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Task arguments"
 msgstr "Đối số công việc"
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Keyword Arguments"
 msgstr "Đối số từ khóa"
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Task keyword arguments"
 msgstr "Đối số từ khóa công việc"
 
-#: common/serializers.py:572
+#: common/serializers.py:577
 msgid "Filename"
 msgstr "Tên tập tin"
 
-#: common/serializers.py:579 report/api.py:100 report/serializers.py:54
+#: common/serializers.py:584 report/api.py:100 report/serializers.py:54
 msgid "Model Type"
 msgstr ""
 
-#: common/serializers.py:607
+#: common/serializers.py:612
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 

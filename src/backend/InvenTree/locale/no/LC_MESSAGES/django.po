@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-24 02:13+0000\n"
-"PO-Revision-Date: 2024-10-24 02:16\n"
+"POT-Creation-Date: 2024-10-24 11:16+0000\n"
+"PO-Revision-Date: 2024-10-24 11:19\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -64,7 +64,7 @@ msgstr "Feildetaljer kan finnes i admin-panelet"
 msgid "Enter date"
 msgstr "Oppgi dato"
 
-#: InvenTree/fields.py:204 InvenTree/models.py:926 build/serializers.py:510
+#: InvenTree/fields.py:204 InvenTree/models.py:928 build/serializers.py:510
 #: build/serializers.py:588 build/templates/build/sidebar.html:29
 #: company/models.py:833
 #: company/templates/company/manufacturer_part_sidebar.html:11
@@ -382,56 +382,56 @@ msgstr ""
 msgid "Email"
 msgstr "E-post"
 
-#: InvenTree/models.py:103
+#: InvenTree/models.py:105
 msgid "Error running plugin validation"
 msgstr "Feil under validering av utvidelse"
 
-#: InvenTree/models.py:172
+#: InvenTree/models.py:174
 msgid "Metadata must be a python dict object"
 msgstr "Metadata må være et python dict-objekt"
 
-#: InvenTree/models.py:178
+#: InvenTree/models.py:180
 msgid "Plugin Metadata"
 msgstr "Utvidelse-metadata"
 
-#: InvenTree/models.py:179
+#: InvenTree/models.py:181
 msgid "JSON metadata field, for use by external plugins"
 msgstr "JSON-metadatafelt, for bruk av eksterne utvidelser"
 
-#: InvenTree/models.py:406
+#: InvenTree/models.py:408
 msgid "Improperly formatted pattern"
 msgstr "Uriktig formatert mønster"
 
-#: InvenTree/models.py:413
+#: InvenTree/models.py:415
 msgid "Unknown format key specified"
 msgstr "Ukjent formatnøkkel spesifisert"
 
-#: InvenTree/models.py:419
+#: InvenTree/models.py:421
 msgid "Missing required format key"
 msgstr "Mangler nødvendig formatnøkkel"
 
-#: InvenTree/models.py:430
+#: InvenTree/models.py:432
 msgid "Reference field cannot be empty"
 msgstr "Referansefeltet kan ikke være tomt"
 
-#: InvenTree/models.py:438
+#: InvenTree/models.py:440
 msgid "Reference must match required pattern"
 msgstr "Referansen må samsvare påkrevd mønster"
 
-#: InvenTree/models.py:469
+#: InvenTree/models.py:471
 msgid "Reference number is too large"
 msgstr "Referansenummeret er for stort"
 
-#: InvenTree/models.py:720
+#: InvenTree/models.py:722
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "Duplikatnavn kan ikke eksistere under samme overordnede"
 
-#: InvenTree/models.py:737
+#: InvenTree/models.py:739
 msgid "Invalid choice"
 msgstr "Ugyldig valg"
 
-#: InvenTree/models.py:767 common/models.py:2764 common/models.py:3191
-#: common/models.py:3411 common/serializers.py:455 company/models.py:590
+#: InvenTree/models.py:769 common/models.py:2764 common/models.py:3191
+#: common/models.py:3411 common/serializers.py:460 company/models.py:590
 #: machine/models.py:24 part/models.py:1044 part/models.py:3815
 #: plugin/models.py:51 report/models.py:149 stock/models.py:83
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -450,7 +450,7 @@ msgstr "Ugyldig valg"
 msgid "Name"
 msgstr "Navn"
 
-#: InvenTree/models.py:773 build/models.py:251
+#: InvenTree/models.py:775 build/models.py:251
 #: build/templates/build/detail.html:24 common/models.py:159
 #: company/models.py:518 company/models.py:824
 #: company/templates/company/company_base.html:77
@@ -487,44 +487,53 @@ msgstr "Navn"
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: InvenTree/models.py:774 stock/models.py:90
+#: InvenTree/models.py:776 stock/models.py:90
 msgid "Description (optional)"
 msgstr "Beskrivelse (valgfritt)"
 
-#: InvenTree/models.py:789 common/models.py:3544
+#: InvenTree/models.py:791 common/models.py:3544
 #: templates/js/translated/part.js:2812 templates/js/translated/stock.js:2842
 msgid "Path"
 msgstr "Sti"
 
-#: InvenTree/models.py:926
+#: InvenTree/models.py:928
 msgid "Markdown notes (optional)"
 msgstr "Markdown-notater (valgfritt)"
 
-#: InvenTree/models.py:957
+#: InvenTree/models.py:959
 msgid "Barcode Data"
 msgstr "Strekkodedata"
 
-#: InvenTree/models.py:958
+#: InvenTree/models.py:960
 msgid "Third party barcode data"
 msgstr "Tredjeparts strekkodedata"
 
-#: InvenTree/models.py:964
+#: InvenTree/models.py:966
 msgid "Barcode Hash"
 msgstr "Strekkode-hash"
 
-#: InvenTree/models.py:965
+#: InvenTree/models.py:967
 msgid "Unique hash of barcode data"
 msgstr "Unik hash av strekkodedata"
 
-#: InvenTree/models.py:1032
+#: InvenTree/models.py:1034
 msgid "Existing barcode found"
 msgstr "Eksisterende strekkode funnet"
 
-#: InvenTree/models.py:1075
+#: InvenTree/models.py:1112
+msgid "Task Failure"
+msgstr ""
+
+#: InvenTree/models.py:1114
+#, python-brace-format
+msgid "Background worker task '{instance.func}' failed after {n} attempts"
+msgstr ""
+
+#: InvenTree/models.py:1142
 msgid "Server Error"
 msgstr "Serverfeil"
 
-#: InvenTree/models.py:1076
+#: InvenTree/models.py:1143
 msgid "An error has been logged by the server."
 msgstr "En feil har blitt logget av serveren."
 
@@ -3984,7 +3993,7 @@ msgstr "Filstørrelse"
 msgid "File size in bytes"
 msgstr "Filstørrelse i byte"
 
-#: common/models.py:3398 common/serializers.py:604
+#: common/models.py:3398 common/serializers.py:609
 msgid "Invalid model type specified for attachment"
 msgstr "Ugyldig modelltype spesifisert for vedlegg"
 
@@ -4163,79 +4172,79 @@ msgstr "Artikler har blitt mottatt mot en innkjøpsordre"
 msgid "Items have been received against a return order"
 msgstr "Artikler har blitt mottatt mot en returordre"
 
-#: common/notifications.py:453
+#: common/notifications.py:457
 msgid "Error raised by plugin"
 msgstr "Feil oppstått i utvidelse"
 
-#: common/serializers.py:418
+#: common/serializers.py:423
 msgid "Is Running"
 msgstr "Kjører"
 
-#: common/serializers.py:424
+#: common/serializers.py:429
 msgid "Pending Tasks"
 msgstr "Ventende oppgaver"
 
-#: common/serializers.py:430
+#: common/serializers.py:435
 msgid "Scheduled Tasks"
 msgstr "Planlagte oppgaver"
 
-#: common/serializers.py:436
+#: common/serializers.py:441
 msgid "Failed Tasks"
 msgstr "Mislykkede oppgaver"
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Task ID"
 msgstr "Oppgave-ID"
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Unique task ID"
 msgstr "Unik oppgave-ID"
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock"
 msgstr "Lås"
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock time"
 msgstr "Låsetidspunkt"
 
-#: common/serializers.py:455
+#: common/serializers.py:460
 msgid "Task name"
 msgstr "Oppgavenavn"
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function"
 msgstr "Funksjon"
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function name"
 msgstr "Funksjonsnavn"
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Arguments"
 msgstr "Argumenter"
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Task arguments"
 msgstr "Oppgaveargumenter"
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Keyword Arguments"
 msgstr "Nøkkelordargumenter"
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Task keyword arguments"
 msgstr "Nøkkelordargumenter for oppgave"
 
-#: common/serializers.py:572
+#: common/serializers.py:577
 msgid "Filename"
 msgstr "Filnavn"
 
-#: common/serializers.py:579 report/api.py:100 report/serializers.py:54
+#: common/serializers.py:584 report/api.py:100 report/serializers.py:54
 msgid "Model Type"
 msgstr "Modelltype"
 
-#: common/serializers.py:607
+#: common/serializers.py:612
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "Brukeren har ikke tillatelse tillatelse å opprette eller endre vedlegg for denne modellen"
 
