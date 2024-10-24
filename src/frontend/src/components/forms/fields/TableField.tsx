@@ -6,6 +6,7 @@ import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { StandaloneField } from '../StandaloneField';
 import { ApiFormFieldType } from './ApiFormField';
 
@@ -46,6 +47,17 @@ export function TableField({
     field.onChange(val);
   };
 
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      modelRenderer: undefined,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined,
+      addRow: undefined
+    };
+  }, [definition]);
+
   // Extract errors associated with the current row
   const rowErrors = useCallback(
     (idx: number) => {
@@ -71,6 +83,7 @@ export function TableField({
           })}
         </Table.Tr>
       </Table.Thead>
+
       <Table.Tbody>
         {value.length > 0 ? (
           value.map((item: any, idx: number) => {
@@ -120,6 +133,26 @@ export function TableField({
           </Table.Tr>
         )}
       </Table.Tbody>
+      {definition.addRow && (
+        <Table.Tfoot>
+          <Table.Tr>
+            <Table.Td colSpan={definition.headers?.length}>
+              <AddItemButton
+                tooltip={t`Add new row`}
+                onClick={() => {
+                  if (definition.addRow === undefined) return;
+                  const ret = definition.addRow();
+                  if (ret) {
+                    const val = field.value;
+                    val.push(ret);
+                    field.onChange(val);
+                  }
+                }}
+              />
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tfoot>
+      )}
     </Table>
   );
 }
