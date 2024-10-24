@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-24 02:13+0000\n"
-"PO-Revision-Date: 2024-10-24 02:16\n"
+"POT-Creation-Date: 2024-10-24 11:16+0000\n"
+"PO-Revision-Date: 2024-10-24 11:19\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -64,7 +64,7 @@ msgstr ""
 msgid "Enter date"
 msgstr ""
 
-#: InvenTree/fields.py:204 InvenTree/models.py:926 build/serializers.py:510
+#: InvenTree/fields.py:204 InvenTree/models.py:928 build/serializers.py:510
 #: build/serializers.py:588 build/templates/build/sidebar.html:29
 #: company/models.py:833
 #: company/templates/company/manufacturer_part_sidebar.html:11
@@ -382,56 +382,56 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: InvenTree/models.py:103
+#: InvenTree/models.py:105
 msgid "Error running plugin validation"
 msgstr ""
 
-#: InvenTree/models.py:172
+#: InvenTree/models.py:174
 msgid "Metadata must be a python dict object"
 msgstr ""
 
-#: InvenTree/models.py:178
+#: InvenTree/models.py:180
 msgid "Plugin Metadata"
 msgstr ""
 
-#: InvenTree/models.py:179
+#: InvenTree/models.py:181
 msgid "JSON metadata field, for use by external plugins"
 msgstr ""
 
-#: InvenTree/models.py:406
+#: InvenTree/models.py:408
 msgid "Improperly formatted pattern"
 msgstr ""
 
-#: InvenTree/models.py:413
+#: InvenTree/models.py:415
 msgid "Unknown format key specified"
 msgstr ""
 
-#: InvenTree/models.py:419
+#: InvenTree/models.py:421
 msgid "Missing required format key"
 msgstr ""
 
-#: InvenTree/models.py:430
+#: InvenTree/models.py:432
 msgid "Reference field cannot be empty"
 msgstr ""
 
-#: InvenTree/models.py:438
+#: InvenTree/models.py:440
 msgid "Reference must match required pattern"
 msgstr ""
 
-#: InvenTree/models.py:469
+#: InvenTree/models.py:471
 msgid "Reference number is too large"
 msgstr ""
 
-#: InvenTree/models.py:720
+#: InvenTree/models.py:722
 msgid "Duplicate names cannot exist under the same parent"
 msgstr ""
 
-#: InvenTree/models.py:737
+#: InvenTree/models.py:739
 msgid "Invalid choice"
 msgstr ""
 
-#: InvenTree/models.py:767 common/models.py:2764 common/models.py:3191
-#: common/models.py:3411 common/serializers.py:455 company/models.py:590
+#: InvenTree/models.py:769 common/models.py:2764 common/models.py:3191
+#: common/models.py:3411 common/serializers.py:460 company/models.py:590
 #: machine/models.py:24 part/models.py:1044 part/models.py:3815
 #: plugin/models.py:51 report/models.py:149 stock/models.py:83
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: InvenTree/models.py:773 build/models.py:251
+#: InvenTree/models.py:775 build/models.py:251
 #: build/templates/build/detail.html:24 common/models.py:159
 #: company/models.py:518 company/models.py:824
 #: company/templates/company/company_base.html:77
@@ -487,44 +487,53 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: InvenTree/models.py:774 stock/models.py:90
+#: InvenTree/models.py:776 stock/models.py:90
 msgid "Description (optional)"
 msgstr ""
 
-#: InvenTree/models.py:789 common/models.py:3544
+#: InvenTree/models.py:791 common/models.py:3544
 #: templates/js/translated/part.js:2812 templates/js/translated/stock.js:2842
 msgid "Path"
 msgstr ""
 
-#: InvenTree/models.py:926
+#: InvenTree/models.py:928
 msgid "Markdown notes (optional)"
 msgstr ""
 
-#: InvenTree/models.py:957
+#: InvenTree/models.py:959
 msgid "Barcode Data"
 msgstr ""
 
-#: InvenTree/models.py:958
+#: InvenTree/models.py:960
 msgid "Third party barcode data"
 msgstr ""
 
-#: InvenTree/models.py:964
+#: InvenTree/models.py:966
 msgid "Barcode Hash"
 msgstr ""
 
-#: InvenTree/models.py:965
+#: InvenTree/models.py:967
 msgid "Unique hash of barcode data"
 msgstr ""
 
-#: InvenTree/models.py:1032
+#: InvenTree/models.py:1034
 msgid "Existing barcode found"
 msgstr ""
 
-#: InvenTree/models.py:1075
+#: InvenTree/models.py:1112
+msgid "Task Failure"
+msgstr ""
+
+#: InvenTree/models.py:1114
+#, python-brace-format
+msgid "Background worker task '{instance.func}' failed after {n} attempts"
+msgstr ""
+
+#: InvenTree/models.py:1142
 msgid "Server Error"
 msgstr ""
 
-#: InvenTree/models.py:1076
+#: InvenTree/models.py:1143
 msgid "An error has been logged by the server."
 msgstr ""
 
@@ -3984,7 +3993,7 @@ msgstr ""
 msgid "File size in bytes"
 msgstr ""
 
-#: common/models.py:3398 common/serializers.py:604
+#: common/models.py:3398 common/serializers.py:609
 msgid "Invalid model type specified for attachment"
 msgstr ""
 
@@ -4163,79 +4172,79 @@ msgstr ""
 msgid "Items have been received against a return order"
 msgstr ""
 
-#: common/notifications.py:453
+#: common/notifications.py:457
 msgid "Error raised by plugin"
 msgstr ""
 
-#: common/serializers.py:418
+#: common/serializers.py:423
 msgid "Is Running"
 msgstr ""
 
-#: common/serializers.py:424
+#: common/serializers.py:429
 msgid "Pending Tasks"
 msgstr ""
 
-#: common/serializers.py:430
+#: common/serializers.py:435
 msgid "Scheduled Tasks"
 msgstr ""
 
-#: common/serializers.py:436
+#: common/serializers.py:441
 msgid "Failed Tasks"
 msgstr ""
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Task ID"
 msgstr ""
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Unique task ID"
 msgstr ""
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock"
 msgstr ""
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock time"
 msgstr ""
 
-#: common/serializers.py:455
+#: common/serializers.py:460
 msgid "Task name"
 msgstr ""
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function"
 msgstr ""
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function name"
 msgstr ""
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Arguments"
 msgstr ""
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Task arguments"
 msgstr ""
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Keyword Arguments"
 msgstr ""
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Task keyword arguments"
 msgstr ""
 
-#: common/serializers.py:572
+#: common/serializers.py:577
 msgid "Filename"
 msgstr ""
 
-#: common/serializers.py:579 report/api.py:100 report/serializers.py:54
+#: common/serializers.py:584 report/api.py:100 report/serializers.py:54
 msgid "Model Type"
 msgstr ""
 
-#: common/serializers.py:607
+#: common/serializers.py:612
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 
