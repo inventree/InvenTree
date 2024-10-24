@@ -191,6 +191,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             InvenTree.tasks.offload_task(
                 build.tasks.create_child_builds,
                 build_order.pk,
+                group='build',
             )
 
         return build_order
@@ -1134,7 +1135,8 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
-            optional_items=data['optional_items']
+            optional_items=data['optional_items'],
+            group='build'
         ):
             raise ValidationError(_("Failed to start auto-allocation task"))
 
