@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-import build.models
+import build.models as build_models
 import common.notifications
 import InvenTree.helpers
 import InvenTree.helpers_email
@@ -26,7 +26,7 @@ logger = logging.getLogger('inventree')
 
 def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
-    build_order = build.models.Build.objects.filter(pk=build_id).first()
+    build_order = build_models.Build.objects.filter(pk=build_id).first()
 
     if not build_order:
         logger.warning("Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist", build_id)
@@ -37,7 +37,7 @@ def auto_allocate_build(build_id: int, **kwargs):
 
 def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
-    build_order = build.models.Build.objects.filter(pk=build_id).first()
+    build_order = build_models.Build.objects.filter(pk=build_id).first()
 
     if user_id:
         try:
@@ -71,7 +71,7 @@ def update_build_order_lines(bom_item_pk: int):
     assemblies = bom_item.get_assemblies()
 
     # Find all active builds which reference any of the parts
-    builds = build.models.Build.objects.filter(
+    builds = build_models.Build.objects.filter(
         part__in=list(assemblies),
         status__in=BuildStatusGroups.ACTIVE_CODES
     )
@@ -79,7 +79,7 @@ def update_build_order_lines(bom_item_pk: int):
     # Iterate through each build, and update the relevant line items
     for bo in builds:
         # Try to find a matching build order line
-        line = build.models.BuildLine.objects.filter(
+        line = build_models.BuildLine.objects.filter(
             build=bo,
             bom_item=bom_item,
         ).first()
@@ -93,7 +93,7 @@ def update_build_order_lines(bom_item_pk: int):
                 line.save()
         else:
             # Create a new line item
-            build.models.BuildLine.objects.create(
+            build_models.BuildLine.objects.create(
                 build=bo,
                 bom_item=bom_item,
                 quantity=q,
@@ -103,7 +103,7 @@ def update_build_order_lines(bom_item_pk: int):
         logger.info("Updated %s build orders for part %s", builds.count(), bom_item.part)
 
 
-def check_build_stock(build: build.models.Build):
+def check_build_stock(build: build_models.Build):
     """Check the required stock for a newly created build order.
 
     Send an email out to any subscribed users if stock is low.
@@ -192,8 +192,8 @@ def create_child_builds(build_id: int) -> None:
     """
 
     try:
-        build_order = build.models.Build.objects.get(pk=build_id)
-    except (Build.DoesNotExist, ValueError):
+        build_order = build_models.Build.objects.get(pk=build_id)
+    except (build_models.Build.DoesNotExist, ValueError):
         return
 
     assembly_items = build_order.part.get_bom_items().filter(sub_part__assembly=True)
@@ -201,7 +201,7 @@ def create_child_builds(build_id: int) -> None:
     for item in assembly_items:
         quantity = item.quantity * build_order.quantity
 
-        sub_order = build.models.Build.objects.create(
+        sub_order = build_models.Build.objects.create(
             part=item.sub_part,
             quantity=quantity,
             title=build_order.title,
@@ -221,7 +221,7 @@ def create_child_builds(build_id: int) -> None:
         )
 
 
-def notify_overdue_build_order(bo: build.models.Build):
+def notify_overdue_build_order(bo: build_models.Build):
     """Notify appropriate users that a Build has just become 'overdue'."""
     targets = []
 
@@ -270,7 +270,7 @@ def check_overdue_build_orders():
     """
     yesterday = InvenTree.helpers.current_date() - timedelta(days=1)
 
-    overdue_orders = build.models.Build.objects.filter(
+    overdue_orders = build_models.Build.objects.filter(
         target_date=yesterday,
         status__in=BuildStatusGroups.ACTIVE_CODES
     )

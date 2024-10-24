@@ -352,16 +352,20 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         return
 
     # Resolve object reference
-    obj_ref_value = getattr(obj, obj_ref)
+    refs = [obj_ref, 'pk', 'id', 'uid']
+
+    obj_ref_value = None
+
+    # Find the first reference that is available
+    for ref in refs:
+        if hasattr(obj, ref):
+            obj_ref_value = getattr(obj, ref)
+            break
 
     # Try with some defaults
     if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'pk', None)
-    if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'id', None)
-    if not obj_ref_value:
         raise KeyError(
-            f"Could not resolve an object reference for '{obj!s}' with {obj_ref}, pk, id"
+            f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
         )
 
     # Check if we have notified recently...
