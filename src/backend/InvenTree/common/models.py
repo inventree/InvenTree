@@ -970,6 +970,9 @@ class BaseInvenTreeSetting(models.Model):
         if not model_name:
             return None
 
+        # Enforce lower-case model name
+        model_name = str(model_name).strip().lower()
+
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
