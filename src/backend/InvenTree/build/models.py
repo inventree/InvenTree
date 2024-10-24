@@ -1471,6 +1471,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         build: Link to a Build object
         bom_item: Link to a BomItem object
         quantity: Number of units required for the Build
+        consumed: Number of units which have been consumed against this line item
     """
 
     class Meta:
@@ -1518,6 +1519,15 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         help_text=_('Required quantity for build order'),
     )
 
+    consumed = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Consumed'),
+        help_text=_('Quantity of consumed stock'),
+    )
+
     @property
     def part(self):
         """Return the sub_part reference from the link bom_item"""
@@ -1548,6 +1558,10 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
     def is_overallocated(self):
         """Return True if this BuildLine is over-allocated"""
         return self.allocated_quantity() > self.quantity
+
+    def is_fully_consumed(self):
+        """Return True if this BuildLine is fully consumed"""
+        return self.consumed >= self.quantity
 
 
 class BuildItem(InvenTree.models.InvenTreeMetadataModel):
@@ -1713,9 +1727,16 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
 
         TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
+        TODO: Revisit, and refactor!
 
         """
         item = self.stock_item
+
+        # Ensure we are not allocating more than available
+        if self.quantity > item.quantity:
+            raise ValidationError({
+                'quantity': _('Allocated quantity exceeds available stock quantity')
+            })
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > self.quantity:
@@ -1756,6 +1777,10 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     'quantity': float(item.quantity),
                 }
             )
+
+        # Increase the "consumed" count for the associated BuildLine
+        self.build_line.consumed += self.quantity
+        self.build_line.save()
 
     build_line = models.ForeignKey(
         BuildLine,
