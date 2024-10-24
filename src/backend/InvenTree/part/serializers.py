@@ -1325,6 +1325,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             exclude_external=data.get('exclude_external', True),
             generate_report=data.get('generate_report', True),
             update_parts=data.get('update_parts', True),
+            group='report',
         )
 
 

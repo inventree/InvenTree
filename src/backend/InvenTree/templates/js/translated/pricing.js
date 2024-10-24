@@ -811,12 +811,10 @@ function loadPurchasePriceHistoryTable(options={}) {
                     }
 
                     var html = '';
-                    var supplier = row.supplier_part_detail.supplier_detail;
 
-                    html += imageHoverIcon(supplier.thumbnail || supplier.image);
                     html += renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
                     html += ' - ';
-                    html += renderLink(supplier.name, `/company/${supplier.pk}/`);
+                    html += renderLink(order.supplier_name, `/company/${order.supplier}/`);
 
                     return html;
                 }

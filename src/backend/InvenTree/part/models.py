@@ -2550,7 +2550,7 @@ class Part(
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
 def after_save_part(sender, instance: Part, created, **kwargs):
     """Function to be executed after a Part is saved."""
-    from pickle import PicklingError
+    from django.conf import settings
 
     from part import tasks as part_tasks
 
@@ -2558,17 +2558,19 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
-        try:
-            InvenTree.tasks.offload_task(
-                part_tasks.notify_low_stock_if_required, instance
-            )
-        except PicklingError:
-            # Can sometimes occur if the referenced Part has issues
-            pass
+        InvenTree.tasks.offload_task(
+            part_tasks.notify_low_stock_if_required,
+            instance.pk,
+            group='notification',
+            force_async=not settings.TESTING,  # Force async unless in testing mode
+        )
 
         # Schedule a background task to rebuild any supplier parts
         InvenTree.tasks.offload_task(
-            part_tasks.rebuild_supplier_parts, instance.pk, force_async=True
+            part_tasks.rebuild_supplier_parts,
+            instance.pk,
+            force_async=True,
+            group='part',
         )
 
 
@@ -2705,6 +2707,7 @@ class PartPricing(common.models.MetaMixin):
             self,
             counter=counter,
             force_async=background,
+            group='pricing',
         )
 
     def update_pricing(
@@ -3870,7 +3873,10 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
         if not created:
             # Schedule a background task to rebuild the parameters against this template
             InvenTree.tasks.offload_task(
-                part_tasks.rebuild_parameters, instance.pk, force_async=True
+                part_tasks.rebuild_parameters,
+                instance.pk,
+                force_async=True,
+                group='part',
             )
 
 
@@ -4562,7 +4568,9 @@ def update_bom_build_lines(sender, instance, created, **kwargs):
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         import build.tasks
 
-        InvenTree.tasks.offload_task(build.tasks.update_build_order_lines, instance.pk)
+        InvenTree.tasks.offload_task(
+            build.tasks.update_build_order_lines, instance.pk, group='build'
+        )
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='post_save_bom_item')

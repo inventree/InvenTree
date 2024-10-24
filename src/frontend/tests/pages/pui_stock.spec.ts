@@ -94,7 +94,10 @@ test('Stock - Serial Numbers', async ({ page }) => {
 
   // Now, with correct quantity
   await page.getByLabel('number-field-quantity').fill('51');
+  await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForTimeout(250);
+
   await page
     .getByText(
       /The following serial numbers already exist or are invalid : 200,201,202,203,204/
@@ -107,4 +110,50 @@ test('Stock - Serial Numbers', async ({ page }) => {
 
   // Close the form
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+/**
+ * Test various 'actions' on the stock detail page
+ */
+test('Stock - Stock Actions', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Find an in-stock, untracked item
+  await page.goto(
+    `${baseUrl}/stock/location/index/stock-items?in_stock=1&serialized=0`
+  );
+  await page.getByText('530470210').first().click();
+  await page
+    .locator('div')
+    .filter({ hasText: /^Quantity: 270$/ })
+    .first()
+    .waitFor();
+
+  // Check for expected action sections
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
+  await page.getByRole('banner').getByRole('button').click();
+
+  await page.getByLabel('action-menu-printing-actions').click();
+  await page.getByLabel('action-menu-printing-actions-print-labels').click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  await page.getByLabel('action-menu-stock-operations').click();
+  await page.getByLabel('action-menu-stock-operations-count').waitFor();
+  await page.getByLabel('action-menu-stock-operations-add').waitFor();
+  await page.getByLabel('action-menu-stock-operations-remove').waitFor();
+  await page.getByLabel('action-menu-stock-operations-transfer').click();
+  await page.getByLabel('text-field-notes').fill('test notes');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('This field is required.').first().waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Find an item which has been sent to a customer
+  await page.goto(`${baseUrl}/stock/item/1012/details`);
+  await page.getByText('Batch Code: 2022-11-12').waitFor();
+  await page.getByText('Unavailable').waitFor();
+  await page.getByLabel('action-menu-stock-operations').click();
+  await page.getByLabel('action-menu-stock-operations-return').click();
+
+  await page.waitForTimeout(2500);
 });
