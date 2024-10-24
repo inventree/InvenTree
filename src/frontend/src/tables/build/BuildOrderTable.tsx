@@ -115,10 +115,10 @@ export function BuildOrderTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     let filters: TableFilter[] = [
       {
-        name: 'active',
+        name: 'outstanding',
         type: 'boolean',
-        label: t`Active`,
-        description: t`Show active orders`
+        label: t`Outstanding`,
+        description: t`Show outstanding orders`
       },
       {
         name: 'status',
