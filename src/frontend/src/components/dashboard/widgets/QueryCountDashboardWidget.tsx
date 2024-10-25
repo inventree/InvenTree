@@ -62,12 +62,17 @@ function QueryCountWidget({
 
   const onFollowLink = useCallback(
     (event: any) => {
-      // TODO: Pass the query parameters to the target page, so that the user can see the results
-
-      // TODO: Note that the url_overview properties are out of date and need to be updated!!
-
       if (modelProperties.url_overview) {
-        navigateToLink(modelProperties.url_overview, navigate, event);
+        let url = modelProperties.url_overview;
+
+        if (params) {
+          url += '?';
+          for (const key in params) {
+            url += `${key}=${params[key]}&`;
+          }
+        }
+
+        navigateToLink(url, navigate, event);
       }
     },
     [modelProperties, params]
@@ -76,21 +81,24 @@ function QueryCountWidget({
   // TODO: Improve visual styling
 
   return (
-    <Stack justify="middle" align="stretch">
-      <Group gap="xs" wrap="nowrap">
-        <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-
-        <Group gap="xs" wrap="nowrap" justify="space-apart">
-          <StylishText size="md">{title}</StylishText>
-          <Space />
+    <Group gap="xs" wrap="nowrap">
+      <InvenTreeIcon icon={icon ?? modelProperties.icon} />
+      <Group gap="xs" wrap="nowrap" justify="space-between">
+        <StylishText size="md">{title}</StylishText>
+        <Group gap="xs" wrap="nowrap" justify="right">
           {query.isFetching ? (
             <Loader size="sm" />
           ) : (
             <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
           )}
+          {modelProperties?.url_overview && (
+            <ActionIcon size="sm" variant="transparent" onClick={onFollowLink}>
+              <IconExternalLink />
+            </ActionIcon>
+          )}
         </Group>
       </Group>
-    </Stack>
+    </Group>
   );
 }
 

@@ -117,7 +117,7 @@ export const ModelInformationDict: ModelDict = {
   build: {
     label: () => t`Build`,
     label_multiple: () => t`Builds`,
-    url_overview: '/manufacturing/build-order/',
+    url_overview: '/manufacturing/index/buildorders/',
     url_detail: '/manufacturing/build-order/:pk/',
     cui_detail: '/build/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
@@ -160,7 +160,7 @@ export const ModelInformationDict: ModelDict = {
   purchaseorder: {
     label: () => t`Purchase Order`,
     label_multiple: () => t`Purchase Orders`,
-    url_overview: '/purchasing/purchase-order',
+    url_overview: '/purchasing/index/purchaseorders',
     url_detail: '/purchasing/purchase-order/:pk/',
     cui_detail: '/order/purchase-order/:pk/',
     api_endpoint: ApiEndpoints.purchase_order_list,
@@ -176,7 +176,7 @@ export const ModelInformationDict: ModelDict = {
   salesorder: {
     label: () => t`Sales Order`,
     label_multiple: () => t`Sales Orders`,
-    url_overview: '/sales/sales-order',
+    url_overview: '/sales/index/salesorders',
     url_detail: '/sales/sales-order/:pk/',
     cui_detail: '/order/sales-order/:pk/',
     api_endpoint: ApiEndpoints.sales_order_list,
@@ -194,7 +194,7 @@ export const ModelInformationDict: ModelDict = {
   returnorder: {
     label: () => t`Return Order`,
     label_multiple: () => t`Return Orders`,
-    url_overview: '/sales/return-order',
+    url_overview: '/sales/index/returnorders',
     url_detail: '/sales/return-order/:pk/',
     cui_detail: '/order/return-order/:pk/',
     api_endpoint: ApiEndpoints.return_order_list,
