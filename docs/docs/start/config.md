@@ -370,13 +370,13 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOMIZE | customize.hide_pui_banner | Disable PUI banner | False |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
-the wanted values. Setting the variable is a bit tricky in bash because of json syntax. Example:
+the wanted values. Example:
 
 ```
-export INVENTREE_CUSTOMIZE="{\"login_message\":\"Hallo Michi\",\"hide_pui_banner\":\"True\"}"
+INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi","hide_pui_banner":"True"}
 ```
 
-This example removes the PUI banner and sets a login message. Take care of the double quotes. 
+This example removes the PUI banner and sets a login message. Take care of the double quotes.
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 
