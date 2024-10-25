@@ -1300,7 +1300,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
-            'total_available_stock',
             'external_stock',
 
             # Extra fields only for data export
@@ -1337,7 +1336,15 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
     # Foreign key fields
-    bom_item_detail = part_serializers.BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
+    bom_item_detail = part_serializers.BomItemSerializer(
+        source='bom_item',
+        many=False,
+        read_only=True,
+        pricing=False,
+        sub_part_detail=False,
+        part_detail=False
+    )
+
     part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
 
     # Annotated (calculated) fields
@@ -1356,15 +1363,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         read_only=True
     )
 
-    available_stock = serializers.FloatField(
-        label=_('Available Stock'),
-        read_only=True
-    )
-
+    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
+    available_stock = serializers.FloatField(read_only=True, label=_('Available Stock'))
     available_substitute_stock = serializers.FloatField(read_only=True, label=_('Available Substitute Stock'))
     available_variant_stock = serializers.FloatField(read_only=True, label=_('Available Variant Stock'))
-    total_available_stock = serializers.FloatField(read_only=True, label=_('Total Available Stock'))
-    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
 
     @staticmethod
     def annotate_queryset(queryset, build=None):
@@ -1404,15 +1406,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item__substitutes__part__stock_items__sales_order_allocations',
 
             'allocations',
-            'allocations__stock_item',
-            'allocations__stock_item__part',
-            'allocations__stock_item__location',
-            'allocations__stock_item__location__tags',
-            'allocations__stock_item__supplier_part',
-            'allocations__stock_item__supplier_part__part',
-            'allocations__stock_item__supplier_part__supplier',
-            'allocations__stock_item__supplier_part__manufacturer_part',
-            'allocations__stock_item__supplier_part__manufacturer_part__manufacturer',
         )
 
         # Annotate the "allocated" quantity
@@ -1503,14 +1496,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         queryset = queryset.annotate(
             available_variant_stock=ExpressionWrapper(
                 F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
-                output_field=FloatField(),
-            )
-        )
-
-        # Annotate with the 'total available stock'
-        queryset = queryset.annotate(
-            total_available_stock=ExpressionWrapper(
-                F('available_stock') + F('available_substitute_stock') + F('available_variant_stock'),
                 output_field=FloatField(),
             )
         )
