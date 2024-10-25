@@ -404,9 +404,8 @@ class BuildLineEndpoint:
             self.source_build = self.get_source_build()
 
         source_build = self.source_build
-        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
-        return queryset
+        return build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
 
 class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
@@ -460,6 +459,7 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
             pass
 
         return source_build
+
 
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""

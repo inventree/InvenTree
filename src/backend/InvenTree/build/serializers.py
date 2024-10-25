@@ -1349,6 +1349,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         many=False,
         read_only=True,
         pricing=False,
+        substitutes=False,
         sub_part_detail=False,
         part_detail=False
     )
@@ -1414,7 +1415,18 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         # Defer expensive fields which we do not need for this serializer
+
         queryset = queryset.defer(
+            'build__lft',
+            'build__rght',
+            'build__level',
+            'build__tree_id',
+            'build__destination',
+            'build__take_from',
+            'build__completed_by',
+            'build__issued_by',
+            'build__sales_order',
+            'build__parent',
             'build__notes',
             'build__metadata',
             'build__responsible',
@@ -1423,7 +1435,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'build__project_code',
         ).defer(
             'bom_item__metadata'
-
         ).defer(
             'bom_item__part__lft',
             'bom_item__part__rght',
@@ -1431,6 +1442,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item__part__tree_id',
             'bom_item__part__tags',
             'bom_item__part__notes',
+            'bom_item__part__variant_of',
+            'bom_item__part__revision_of',
             'bom_item__part__creation_user',
             'bom_item__part__bom_checked_by',
             'bom_item__part__default_supplier',
@@ -1442,6 +1455,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item__sub_part__tree_id',
             'bom_item__sub_part__tags',
             'bom_item__sub_part__notes',
+            'bom_item__sub_part__variant_of',
+            'bom_item__sub_part__revision_of',
             'bom_item__sub_part__creation_user',
             'bom_item__sub_part__bom_checked_by',
             'bom_item__sub_part__default_supplier',

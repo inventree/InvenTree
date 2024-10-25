@@ -1481,18 +1481,19 @@ class BuildLineTests(BuildAPITest):
 
         url = reverse('api-build-line-list')
 
-        pk = 1
-
         # First *all* BuildLine objects
         response = self.get(url)
-
         self.assertEqual(len(response.data), BuildLine.objects.count())
 
         # Filter by 'available' status
-        response = self.get(url, data={'available': True})
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': True}, max_query_time=15)
+        n_t = len(response.data)
+        self.assertGreater(n_t, 0)
 
-        print("True:", len(response.data))
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': False}, max_query_time=15)
+        n_f = len(response.data)
+        self.assertGreater(n_f, 0)
 
-        response = self.get(url, data={'available': False})
-
-        print("False:", len(response.data))
+        self.assertEqual(n_t + n_f, BuildLine.objects.count())
