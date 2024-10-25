@@ -153,7 +153,7 @@ export default function DashboardLayout({}: {}) {
       let _layouts: any = { ...layouts };
 
       Object.keys(_layouts).forEach((key) => {
-        _layouts[key] = updateLayoutForWidget(_layouts[key], true);
+        _layouts[key] = updateLayoutForWidget(_layouts[key], widgets, true);
       });
 
       setLayouts(_layouts);
@@ -185,7 +185,7 @@ export default function DashboardLayout({}: {}) {
 
   // When the layout is rendered, ensure that the widget attributes are observed
   const updateLayoutForWidget = useCallback(
-    (layout: any[], overrideSize: boolean) => {
+    (layout: any[], widgets: any[], overrideSize: boolean) => {
       return layout.map((item: Layout): Layout => {
         // Find the matching widget
         let widget = widgets.find(
@@ -212,7 +212,7 @@ export default function DashboardLayout({}: {}) {
         };
       });
     },
-    [widgets]
+    []
   );
 
   // Rebuild layout when the widget list changes
@@ -224,7 +224,11 @@ export default function DashboardLayout({}: {}) {
     (layout: any, newLayouts: any) => {
       // Reconstruct layouts based on the widget requirements
       Object.keys(newLayouts).forEach((key) => {
-        newLayouts[key] = updateLayoutForWidget(newLayouts[key], false);
+        newLayouts[key] = updateLayoutForWidget(
+          newLayouts[key],
+          widgets,
+          false
+        );
       });
 
       if (layouts && loaded && availableWidgets.loaded) {
@@ -232,7 +236,7 @@ export default function DashboardLayout({}: {}) {
         setLayouts(newLayouts);
       }
     },
-    [loaded, availableWidgets.loaded]
+    [loaded, widgets, availableWidgets.loaded]
   );
 
   // Load the dashboard layout from local storage
