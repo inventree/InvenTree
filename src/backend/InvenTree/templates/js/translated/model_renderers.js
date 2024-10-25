@@ -49,6 +49,9 @@
  */
 function getModelRenderer(model) {
 
+    // Ensure correct formatting of provided model name
+    model = model.toString().toLowerCase();
+
     // Find a custom renderer
     switch (model) {
     case 'company':

@@ -185,7 +185,12 @@ class LabelPrintingMixin:
                 # Exclude the 'context' object - cannot be pickled
                 print_args.pop('context', None)
 
-                offload_task(plugin_label.print_label, self.plugin_slug(), **print_args)
+                offload_task(
+                    plugin_label.print_label,
+                    self.plugin_slug(),
+                    group='plugin',
+                    **print_args,
+                )
 
             # Update the progress of the print job
             output.progress += int(100 / N)
