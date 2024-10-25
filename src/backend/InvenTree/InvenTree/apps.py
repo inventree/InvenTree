@@ -40,9 +40,14 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
+
+        if not InvenTree.ready.isPluginRegistryLoaded():
+            return
+
+        # Skip if not in worker or main thread
         if (
-            not InvenTree.ready.isPluginRegistryLoaded()
-            or not InvenTree.ready.isInMainThread()
+            not InvenTree.ready.isInMainThread()
+            and not InvenTree.ready.isInWorkerThread()
         ):
             return
 
@@ -52,7 +57,6 @@ class InvenTreeConfig(AppConfig):
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.remove_obsolete_tasks()
-
             self.collect_tasks()
             self.start_background_tasks()
 
