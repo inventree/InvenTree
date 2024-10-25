@@ -2502,7 +2502,10 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
 
     // Load the allocation items into the table
     sub_table.bootstrapTable({
-        data: build_line.allocations,
+        url: '{% url "api-build-item-list" %}',
+        queryParams: {
+            build_line: build_line.pk,
+        },
         showHeader: false,
         columns: [
             {
