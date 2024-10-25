@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 import common.models
 import InvenTree.helpers
-from InvenTree.ready import isImportingData
+from InvenTree.ready import isImportingData, isRebuildingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
 from users.models import Owner
@@ -192,7 +192,8 @@ class MethodStorageClass:
         Args:
             selected_classes (class, optional): References to the classes that should be registered. Defaults to None.
         """
-        logger.debug('Collecting notification methods')
+        logger.debug('Collecting notification methods...')
+
         current_method = (
             InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
         )
@@ -216,7 +217,11 @@ class MethodStorageClass:
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
+
         logger.info('Found %s notification methods', len(storage.liste))
+
+        for item in storage.liste:
+            logger.debug(' - %s', str(item))
 
     def get_usersettings(self, user) -> list:
         """Returns all user settings for a specific user.
@@ -348,7 +353,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     delivery_methods = kwargs.get('delivery_methods')
 
     # Check if data is importing currently
-    if isImportingData():
+    if isImportingData() or isRebuildingData():
         return
 
     # Resolve object reference
@@ -439,7 +444,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         # Set delivery flag
         common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
-        logger.debug("No possible users for notification '%s'", category)
+        logger.info("No possible users for notification '%s'", category)
 
 
 def trigger_superuser_notification(plugin: PluginConfig, msg: str):
