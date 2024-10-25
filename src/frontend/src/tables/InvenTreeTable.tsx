@@ -657,6 +657,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
       )}
       <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
         <Stack gap="sm">
+          {urlQueryParams.size > 0 && (
+            <Alert
+              color="yellow"
+              withCloseButton
+              title={t`Custom query filters are active`}
+              onClose={() => setUrlQueryParams({})}
+            ></Alert>
+          )}
           <Group justify="apart" grow wrap="nowrap">
             <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
               <PrintingActions
@@ -715,21 +723,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   columns={dataColumns}
                   onToggleColumn={toggleColumn}
                 />
-              )}
-              {urlQueryParams.size > 0 && (
-                <ActionIcon
-                  variant="transparent"
-                  color="red"
-                  aria-label="table-clear-query-filters"
-                >
-                  <Tooltip label={t`Clear custom query filters`}>
-                    <IconFilterCancel
-                      onClick={() => {
-                        setUrlQueryParams({});
-                      }}
-                    />
-                  </Tooltip>
-                </ActionIcon>
               )}
               {tableProps.enableFilters && filters.length > 0 && (
                 <Indicator
