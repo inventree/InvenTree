@@ -1280,6 +1280,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_detail',
             'quantity',
 
+            # Build detail fields
+            'build_reference',
+
             # BOM item detail fields
             'reference',
             'consumable',
@@ -1314,6 +1317,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item',
             'allocations',
         ]
+
+    # Build info fields
+    build_reference = serializers.CharField(source='build.reference', label=_('Build Reference'), read_only=True)
 
     # Part info fields
     part = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part', label=_('Part'), many=False, read_only=True)
@@ -1390,14 +1396,13 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'build',
             'bom_item',
             'bom_item__part',
-            'bom_item__part__pricing_data',
             'bom_item__sub_part',
-            'bom_item__sub_part__pricing_data',
         )
 
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
-            'bom_item__sub_part__tags',
+            'allocations',
+
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
@@ -1406,12 +1411,44 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item__substitutes__part__stock_items',
             'bom_item__substitutes__part__stock_items__allocations',
             'bom_item__substitutes__part__stock_items__sales_order_allocations',
+        )
 
-            'allocations',
+        # Defer expensive fields which we do not need for this serializer
+        queryset = queryset.defer(
+            'build__notes',
+            'build__metadata',
+            'build__responsible',
+            'build__barcode_data',
+            'build__barcode_hash',
+            'build__project_code',
+        ).defer(
+            'bom_item__metadata'
+
+        ).defer(
+            'bom_item__part__lft',
+            'bom_item__part__rght',
+            'bom_item__part__level',
+            'bom_item__part__tree_id',
+            'bom_item__part__tags',
+            'bom_item__part__notes',
+            'bom_item__part__creation_user',
+            'bom_item__part__bom_checked_by',
+            'bom_item__part__default_supplier',
+            'bom_item__part__responsible_owner',
+        ).defer(
+            'bom_item__sub_part__lft',
+            'bom_item__sub_part__rght',
+            'bom_item__sub_part__level',
+            'bom_item__sub_part__tree_id',
+            'bom_item__sub_part__tags',
+            'bom_item__sub_part__notes',
+            'bom_item__sub_part__creation_user',
+            'bom_item__sub_part__bom_checked_by',
+            'bom_item__sub_part__default_supplier',
+            'bom_item__sub_part__responsible_owner',
         )
 
         # Annotate the "allocated" quantity
-        # Difficulty: Easy
         queryset = queryset.annotate(
             allocated=Coalesce(
                 Sum('allocations__quantity'), 0,
@@ -1439,7 +1476,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         # Annotate the "on_order" quantity
-        # Difficulty: Medium
         queryset = queryset.annotate(
             on_order=part.filters.annotate_on_order_quantity(reference=ref),
         )
