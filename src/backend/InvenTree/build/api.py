@@ -750,6 +750,7 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     search_fields = [
         'stock_item__supplier_part__SKU',
         'stock_item__part__name',
+        'stock_item__part__IPN',
         'build_line__bom_item__reference',
     ]
 
