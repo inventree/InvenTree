@@ -181,8 +181,19 @@ class MethodStorageClass:
     Is initialized on startup as one instance named `storage` in this file.
     """
 
-    liste = None
+    methods_list = None
     user_settings = {}
+
+    @property
+    def methods(self):
+        """Return all available methods.
+
+        This is cached, and stored internally.
+        """
+        if self.methods_list is None:
+            self.collect()
+
+        return self.methods_list
 
     def collect(self, selected_classes=None):
         """Collect all classes in the environment that are notification methods.
@@ -216,11 +227,11 @@ class MethodStorageClass:
             item.plugin = plugin() if plugin else None
             filtered_list[ref] = item
 
-        storage.liste = list(filtered_list.values())
+        storage.methods_list = list(filtered_list.values())
 
-        logger.info('Found %s notification methods', len(storage.liste))
+        logger.info('Found %s notification methods', len(storage.methods_list))
 
-        for item in storage.liste:
+        for item in storage.methods_list:
             logger.debug(' - %s', str(item))
 
     def get_usersettings(self, user) -> list:
@@ -235,7 +246,8 @@ class MethodStorageClass:
             list: All applicablae notification settings.
         """
         methods = []
-        for item in storage.liste:
+
+        for item in storage.methods:
             if item.USER_SETTING:
                 new_key = f'NOTIFICATION_METHOD_{item.METHOD_NAME.upper()}'
 
@@ -251,6 +263,7 @@ class MethodStorageClass:
                     'icon': getattr(item, 'METHOD_ICON', ''),
                     'method': item.METHOD_NAME,
                 })
+
         return methods
 
 
@@ -427,7 +440,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
         # Collect possible methods
         if delivery_methods is None:
-            delivery_methods = storage.liste or []
+            delivery_methods = storage.methods or []
         else:
             delivery_methods = delivery_methods - IGNORED_NOTIFICATION_CLS
 
