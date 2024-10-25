@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from part.models import Part, BomItem
-from build.models import Build, BuildItem
+from build.models import Build, BuildItem, BuildLine
 from stock.models import StockItem
 
 from build.status_codes import BuildStatus
@@ -1471,3 +1471,29 @@ class BuildOutputScrapTest(BuildAPITest):
             output.refresh_from_db()
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
+
+
+class BuildLineTests(BuildAPITest):
+    """Unit tests for the BuildLine API endpoints."""
+
+    def test_filter_available(self):
+        """Filter BuildLine objects by 'available' status."""
+
+        url = reverse('api-build-line-list')
+
+        # First *all* BuildLine objects
+        response = self.get(url)
+        self.assertEqual(len(response.data), BuildLine.objects.count())
+
+        # Filter by 'available' status
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': True}, max_query_time=15)
+        n_t = len(response.data)
+        self.assertGreater(n_t, 0)
+
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': False}, max_query_time=15)
+        n_f = len(response.data)
+        self.assertGreater(n_f, 0)
+
+        self.assertEqual(n_t + n_f, BuildLine.objects.count())

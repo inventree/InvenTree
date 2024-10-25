@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-10-23 04:21\n"
+"PO-Revision-Date: 2024-10-24 04:28\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -641,10 +641,10 @@ msgstr "Servidor"
 #: src/pages/part/CategoryDetail.tsx:81
 #: src/pages/part/PartDetail.tsx:164
 #: src/pages/stock/LocationDetail.tsx:83
-#: src/tables/machine/MachineTypeTable.tsx:67
-#: src/tables/machine/MachineTypeTable.tsx:111
-#: src/tables/machine/MachineTypeTable.tsx:218
-#: src/tables/machine/MachineTypeTable.tsx:321
+#: src/tables/machine/MachineTypeTable.tsx:70
+#: src/tables/machine/MachineTypeTable.tsx:119
+#: src/tables/machine/MachineTypeTable.tsx:237
+#: src/tables/machine/MachineTypeTable.tsx:340
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:32
 #: src/tables/settings/GroupTable.tsx:147
@@ -1495,10 +1495,10 @@ msgstr ""
 #: src/tables/bom/UsedInTable.tsx:44
 #: src/tables/build/BuildAllocatedStockTable.tsx:83
 #: src/tables/build/BuildLineTable.tsx:200
-#: src/tables/machine/MachineTypeTable.tsx:71
-#: src/tables/machine/MachineTypeTable.tsx:114
-#: src/tables/machine/MachineTypeTable.tsx:221
-#: src/tables/machine/MachineTypeTable.tsx:325
+#: src/tables/machine/MachineTypeTable.tsx:74
+#: src/tables/machine/MachineTypeTable.tsx:129
+#: src/tables/machine/MachineTypeTable.tsx:240
+#: src/tables/machine/MachineTypeTable.tsx:344
 #: src/tables/part/RelatedPartTable.tsx:66
 #: src/tables/plugin/PluginListTable.tsx:99
 #: src/tables/sales/SalesOrderAllocationTable.tsx:87
@@ -1528,8 +1528,8 @@ msgstr "Data"
 #: src/tables/build/BuildOrderTable.tsx:120
 #: src/tables/company/CompanyTable.tsx:62
 #: src/tables/company/CompanyTable.tsx:96
-#: src/tables/machine/MachineListTable.tsx:331
-#: src/tables/machine/MachineListTable.tsx:594
+#: src/tables/machine/MachineListTable.tsx:333
+#: src/tables/machine/MachineListTable.tsx:605
 #: src/tables/part/ParametricPartTable.tsx:223
 #: src/tables/part/PartTable.tsx:178
 #: src/tables/part/PartVariantTable.tsx:15
@@ -1551,8 +1551,8 @@ msgid "Installation Path"
 msgstr "Caminho de Instalação"
 
 #: src/components/plugins/PluginDrawer.tsx:110
-#: src/tables/machine/MachineTypeTable.tsx:137
-#: src/tables/machine/MachineTypeTable.tsx:257
+#: src/tables/machine/MachineTypeTable.tsx:152
+#: src/tables/machine/MachineTypeTable.tsx:276
 #: src/tables/plugin/PluginListTable.tsx:409
 msgid "Builtin"
 msgstr "Embutido"
@@ -1612,7 +1612,7 @@ msgstr ""
 msgid "Error Loading Plugin Preview"
 msgstr ""
 
-#: src/components/render/Instance.tsx:222
+#: src/components/render/Instance.tsx:224
 msgid "Unknown model: {model}"
 msgstr "Modelo desconhecido: {model}"
 
@@ -1712,7 +1712,7 @@ msgstr "Categorias da Peça"
 #: src/forms/BuildForms.tsx:378
 #: src/forms/BuildForms.tsx:508
 #: src/forms/SalesOrderForms.tsx:248
-#: src/pages/stock/StockDetail.tsx:826
+#: src/pages/stock/StockDetail.tsx:830
 #: src/tables/stock/StockTrackingTable.tsx:49
 msgid "Stock Item"
 msgstr "Item de Estoque"
@@ -1733,7 +1733,7 @@ msgstr "Localização de Stock"
 #: src/components/render/ModelType.tsx:88
 #: src/pages/stock/LocationDetail.tsx:189
 #: src/pages/stock/LocationDetail.tsx:372
-#: src/pages/stock/StockDetail.tsx:818
+#: src/pages/stock/StockDetail.tsx:822
 msgid "Stock Locations"
 msgstr "Localizações de Stock"
 
@@ -2022,7 +2022,7 @@ msgstr "Estoque"
 #: src/components/render/Stock.tsx:61
 #: src/forms/ReturnOrderForms.tsx:190
 #: src/pages/stock/StockDetail.tsx:166
-#: src/pages/stock/StockDetail.tsx:758
+#: src/pages/stock/StockDetail.tsx:762
 #: src/tables/build/BuildAllocatedStockTable.tsx:123
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:114
 #: src/tables/sales/SalesOrderAllocationTable.tsx:106
@@ -2042,7 +2042,7 @@ msgstr "Número de Série"
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
 #: src/pages/stock/StockDetail.tsx:161
-#: src/pages/stock/StockDetail.tsx:764
+#: src/pages/stock/StockDetail.tsx:768
 #: src/tables/build/BuildOrderTestTable.tsx:198
 #: src/tables/part/PartPurchaseOrdersTable.tsx:93
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:144
@@ -3008,7 +3008,7 @@ msgstr "Lote"
 #: src/pages/sales/ReturnOrderDetail.tsx:113
 #: src/pages/sales/SalesOrderDetail.tsx:122
 #: src/tables/build/BuildOrderTable.tsx:125
-#: src/tables/machine/MachineListTable.tsx:334
+#: src/tables/machine/MachineListTable.tsx:336
 #: src/tables/part/PartPurchaseOrdersTable.tsx:37
 #: src/tables/purchasing/PurchaseOrderTable.tsx:58
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:157
@@ -3205,7 +3205,7 @@ msgstr "Armazenar com estoque já recebido"
 #: src/forms/PurchaseOrderForms.tsx:542
 #: src/pages/build/BuildDetail.tsx:214
 #: src/pages/stock/StockDetail.tsx:185
-#: src/pages/stock/StockDetail.tsx:780
+#: src/pages/stock/StockDetail.tsx:784
 #: src/tables/build/BuildAllocatedStockTable.tsx:130
 #: src/tables/build/BuildOrderTestTable.tsx:189
 #: src/tables/sales/SalesOrderAllocationTable.tsx:113
@@ -3371,7 +3371,7 @@ msgstr "Remover Estoque"
 
 #: src/forms/StockForms.tsx:971
 #: src/pages/part/PartDetail.tsx:1037
-#: src/pages/stock/StockDetail.tsx:700
+#: src/pages/stock/StockDetail.tsx:703
 #: src/tables/stock/StockItemTable.tsx:470
 msgid "Transfer Stock"
 msgstr "Transferir Estoque"
@@ -4226,7 +4226,8 @@ msgid "Location Types"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:211
-#: src/tables/machine/MachineTypeTable.tsx:289
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:48
+#: src/tables/machine/MachineTypeTable.tsx:308
 msgid "Machines"
 msgstr "Máquinas"
 
@@ -4243,16 +4244,40 @@ msgid "Advanced Options"
 msgstr "Opções Avançadas"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:43
-msgid "Machine types"
-msgstr "Tipo de máquina"
+#~ msgid "Machine types"
+#~ msgstr "Machine types"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:53
-msgid "Machine Error Stack"
-msgstr "Erro de máquina na Stack"
+#~ msgid "Machine Error Stack"
+#~ msgstr "Machine Error Stack"
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:56
+msgid "Machine Types"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
-msgid "There are no machine registry errors."
-msgstr "Não há erros de registro da máquina."
+#~ msgid "There are no machine registry errors."
+#~ msgstr "There are no machine registry errors."
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:64
+msgid "Machine Errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:77
+msgid "Registry Registry Errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:80
+msgid "There are machine registry errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:86
+msgid "Machine Registry Errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:89
+msgid "There are no machine registry errors"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:31
 #: src/tables/settings/UserTable.tsx:118
@@ -4433,10 +4458,6 @@ msgstr "Opções de Exibição"
 #: src/pages/Logged-In.tsx:24
 #~ msgid "Found an exsisting login - using it to log you in."
 #~ msgstr "Found an exsisting login - using it to log you in."
-
-#: src/pages/NotFound.tsx:17
-#~ msgid "Not Found"
-#~ msgstr "Not Found"
 
 #: src/pages/NotFound.tsx:20
 #~ msgid "Sorry, this page is not known or was moved."
@@ -5139,7 +5160,7 @@ msgstr "Pode Produzir"
 
 #: src/pages/part/PartDetail.tsx:322
 #: src/pages/part/PartDetail.tsx:903
-#: src/pages/stock/StockDetail.tsx:753
+#: src/pages/stock/StockDetail.tsx:757
 #: src/tables/build/BuildOrderTestTable.tsx:220
 #: src/tables/stock/StockItemTable.tsx:321
 msgid "In Production"
@@ -5270,7 +5291,7 @@ msgstr "Peças Relacionadas"
 
 #: src/pages/part/PartDetail.tsx:879
 #: src/pages/stock/StockDetail.tsx:172
-#: src/pages/stock/StockDetail.tsx:770
+#: src/pages/stock/StockDetail.tsx:774
 #: src/tables/build/BuildLineTable.tsx:70
 #: src/tables/part/PartTable.tsx:117
 #: src/tables/stock/StockItemTable.tsx:166
@@ -6086,7 +6107,7 @@ msgstr ""
 msgid "Item returned to stock"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:656
+#: src/pages/stock/StockDetail.tsx:657
 msgid "Stock Operations"
 msgstr "Operações de Stock"
 
@@ -6117,31 +6138,31 @@ msgstr ""
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:699
+#: src/pages/stock/StockDetail.tsx:702
 msgid "Transfer"
 msgstr "Transferir"
 
-#: src/pages/stock/StockDetail.tsx:709
+#: src/pages/stock/StockDetail.tsx:713
 msgid "Return"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:710
+#: src/pages/stock/StockDetail.tsx:714
 msgid "Return from customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:725
+#: src/pages/stock/StockDetail.tsx:729
 msgid "Stock Item Actions"
 msgstr "Ações do Item do Estoque"
 
-#: src/pages/stock/StockDetail.tsx:795
+#: src/pages/stock/StockDetail.tsx:799
 msgid "Stale"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:801
+#: src/pages/stock/StockDetail.tsx:805
 msgid "Expired"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:807
+#: src/pages/stock/StockDetail.tsx:811
 msgid "Unavailable"
 msgstr ""
 
@@ -7091,12 +7112,12 @@ msgid "Machine restarted"
 msgstr "Máquina reiniciada"
 
 #: src/tables/machine/MachineListTable.tsx:212
-#: src/tables/machine/MachineListTable.tsx:262
+#: src/tables/machine/MachineListTable.tsx:261
 msgid "Edit machine"
 msgstr "Editar Máquina"
 
 #: src/tables/machine/MachineListTable.tsx:226
-#: src/tables/machine/MachineListTable.tsx:266
+#: src/tables/machine/MachineListTable.tsx:265
 msgid "Delete machine"
 msgstr "Remover máquina"
 
@@ -7108,33 +7129,37 @@ msgstr "Máquina excluída com sucesso."
 msgid "Are you sure you want to remove the machine \"{0}\"?"
 msgstr "Tem certeza de que deseja remover a máquina \"{0}\"?"
 
-#: src/tables/machine/MachineListTable.tsx:255
-#: src/tables/machine/MachineListTable.tsx:431
+#: src/tables/machine/MachineListTable.tsx:254
+#: src/tables/machine/MachineListTable.tsx:442
 msgid "Restart required"
 msgstr "É necessário reiniciar"
 
-#: src/tables/machine/MachineListTable.tsx:259
+#: src/tables/machine/MachineListTable.tsx:258
 msgid "Machine Actions"
 msgstr "Ações da máquina"
 
-#: src/tables/machine/MachineListTable.tsx:271
+#: src/tables/machine/MachineListTable.tsx:270
 msgid "Restart"
 msgstr "Reiniciar"
 
-#: src/tables/machine/MachineListTable.tsx:273
+#: src/tables/machine/MachineListTable.tsx:272
 msgid "Restart machine"
 msgstr "Reiniciar a máquina"
 
-#: src/tables/machine/MachineListTable.tsx:275
+#: src/tables/machine/MachineListTable.tsx:274
 msgid "manual restart required"
 msgstr "Requer reinicialização manual"
 
 #: src/tables/machine/MachineListTable.tsx:291
-msgid "Machine information"
-msgstr "Informações da máquina"
+#~ msgid "Machine information"
+#~ msgstr "Machine information"
+
+#: src/tables/machine/MachineListTable.tsx:292
+msgid "Machine Information"
+msgstr ""
 
 #: src/tables/machine/MachineListTable.tsx:302
-#: src/tables/machine/MachineListTable.tsx:599
+#: src/tables/machine/MachineListTable.tsx:610
 msgid "Machine Type"
 msgstr "Tipo de Máquina"
 
@@ -7142,25 +7167,25 @@ msgstr "Tipo de Máquina"
 msgid "Machine Driver"
 msgstr "Controlador da Máquina"
 
-#: src/tables/machine/MachineListTable.tsx:328
+#: src/tables/machine/MachineListTable.tsx:330
 msgid "Initialized"
 msgstr "Inicializado"
 
-#: src/tables/machine/MachineListTable.tsx:349
-#: src/tables/machine/MachineTypeTable.tsx:263
+#: src/tables/machine/MachineListTable.tsx:351
+#: src/tables/machine/MachineTypeTable.tsx:282
 msgid "Errors"
 msgstr "Erros"
 
-#: src/tables/machine/MachineListTable.tsx:357
-#: src/tables/machine/MachineTypeTable.tsx:271
+#: src/tables/machine/MachineListTable.tsx:359
+#: src/tables/machine/MachineTypeTable.tsx:290
 msgid "No errors reported"
 msgstr "Não há erros relatados"
 
-#: src/tables/machine/MachineListTable.tsx:377
+#: src/tables/machine/MachineListTable.tsx:378
 msgid "Machine Settings"
 msgstr "Definições da Máquina"
 
-#: src/tables/machine/MachineListTable.tsx:388
+#: src/tables/machine/MachineListTable.tsx:394
 msgid "Driver Settings"
 msgstr "Configurações do controlador"
 
@@ -7168,72 +7193,97 @@ msgstr "Configurações do controlador"
 #~ msgid "Create machine"
 #~ msgstr "Create machine"
 
-#: src/tables/machine/MachineListTable.tsx:505
+#: src/tables/machine/MachineListTable.tsx:516
+#: src/tables/machine/MachineListTable.tsx:558
 msgid "Add machine"
 msgstr "Adicionar máquina"
 
 #: src/tables/machine/MachineListTable.tsx:561
-msgid "Machine detail"
-msgstr "Detalhes da Máquina"
+#~ msgid "Machine detail"
+#~ msgstr "Machine detail"
 
-#: src/tables/machine/MachineListTable.tsx:608
+#: src/tables/machine/MachineListTable.tsx:572
+msgid "Machine Detail"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:619
 msgid "Driver"
 msgstr "Controlador"
 
-#: src/tables/machine/MachineTypeTable.tsx:75
+#: src/tables/machine/MachineTypeTable.tsx:78
 msgid "Builtin driver"
 msgstr "Controlador embutido"
 
-#: src/tables/machine/MachineTypeTable.tsx:91
+#: src/tables/machine/MachineTypeTable.tsx:96
+msgid "Not Found"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:99
 msgid "Machine type not found."
 msgstr "Tipo de máquina não encontrado."
 
 #: src/tables/machine/MachineTypeTable.tsx:99
-msgid "Machine type information"
-msgstr "Informação do tipo máquina"
+#~ msgid "Machine type information"
+#~ msgstr "Machine type information"
 
-#: src/tables/machine/MachineTypeTable.tsx:112
-#: src/tables/machine/MachineTypeTable.tsx:219
+#: src/tables/machine/MachineTypeTable.tsx:109
+msgid "Machine Type Information"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:124
+#: src/tables/machine/MachineTypeTable.tsx:238
 msgid "Slug"
 msgstr "Lesma"
 
-#: src/tables/machine/MachineTypeTable.tsx:120
-#: src/tables/machine/MachineTypeTable.tsx:240
+#: src/tables/machine/MachineTypeTable.tsx:135
+#: src/tables/machine/MachineTypeTable.tsx:259
 msgid "Provider plugin"
 msgstr "Extensão do Provedor"
 
-#: src/tables/machine/MachineTypeTable.tsx:132
-#: src/tables/machine/MachineTypeTable.tsx:252
+#: src/tables/machine/MachineTypeTable.tsx:147
+#: src/tables/machine/MachineTypeTable.tsx:271
 msgid "Provider file"
 msgstr "Arquivo do Provedor"
 
 #: src/tables/machine/MachineTypeTable.tsx:148
-msgid "Available drivers"
-msgstr "Controladores Disponíveis"
+#~ msgid "Available drivers"
+#~ msgstr "Available drivers"
 
-#: src/tables/machine/MachineTypeTable.tsx:198
+#: src/tables/machine/MachineTypeTable.tsx:162
+msgid "Available Drivers"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:217
 msgid "Machine driver not found."
 msgstr "Controlador da máquina não encontrado."
 
-#: src/tables/machine/MachineTypeTable.tsx:206
+#: src/tables/machine/MachineTypeTable.tsx:225
 msgid "Machine driver information"
 msgstr "Informação do controlador da máquina"
 
-#: src/tables/machine/MachineTypeTable.tsx:226
+#: src/tables/machine/MachineTypeTable.tsx:245
 msgid "Machine type"
 msgstr "Tipo de Máquina"
 
-#: src/tables/machine/MachineTypeTable.tsx:329
+#: src/tables/machine/MachineTypeTable.tsx:338
+#~ msgid "Machine type detail"
+#~ msgstr "Machine type detail"
+
+#: src/tables/machine/MachineTypeTable.tsx:348
 msgid "Builtin type"
 msgstr "Tipo embutido"
 
-#: src/tables/machine/MachineTypeTable.tsx:338
-msgid "Machine type detail"
-msgstr "Detalhes do tipo de Máquina"
-
 #: src/tables/machine/MachineTypeTable.tsx:348
-msgid "Machine driver detail"
-msgstr "Detalhes do controlador da Máquina"
+#~ msgid "Machine driver detail"
+#~ msgstr "Machine driver detail"
+
+#: src/tables/machine/MachineTypeTable.tsx:357
+msgid "Machine Type Detail"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:367
+msgid "Machine Driver Detail"
+msgstr ""
 
 #: src/tables/notifications/NotificationsTable.tsx:26
 msgid "Age"

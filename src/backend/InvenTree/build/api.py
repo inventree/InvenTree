@@ -373,10 +373,10 @@ class BuildLineFilter(rest_filters.FilterSet):
         To determine this, we need to know:
 
         - The quantity required for each BuildLine
-        - The quantity available for each BuildLine
+        - The quantity available for each BuildLine (including variants and substitutes)
         - The quantity allocated for each BuildLine
         """
-        flt = Q(quantity__lte=F('total_available_stock') + F('allocated'))
+        flt = Q(quantity__lte=F('allocated') + F('available_stock') + F('available_substitute_stock') + F('available_variant_stock'))
 
         if str2bool(value):
             return queryset.filter(flt)
@@ -402,10 +402,13 @@ class BuildLineEndpoint:
     def get_queryset(self):
         """Override queryset to select-related and annotate"""
         queryset = super().get_queryset()
-        source_build = self.get_source_build()
-        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
-        return queryset
+        if not hasattr(self, 'source_build'):
+            self.source_build = self.get_source_build()
+
+        source_build = self.source_build
+
+        return build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
 
 class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
@@ -449,15 +452,17 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
     def get_source_build(self) -> Build | None:
         """Return the target build for the BuildLine queryset."""
 
+        source_build = None
+
         try:
             build_id = self.request.query_params.get('build', None)
             if build_id:
-                build = Build.objects.get(pk=build_id)
-                return build
+                source_build = Build.objects.filter(pk=build_id).first()
         except (Build.DoesNotExist, AttributeError, ValueError):
             pass
 
-        return None
+        return source_build
+
 
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""

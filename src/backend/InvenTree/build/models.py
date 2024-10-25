@@ -887,7 +887,6 @@ class Build(
 
                 # Auto-allocate stock based on serial number
                 if auto_allocate:
-                    allocations = []
 
                     for bom_item in trackable_parts:
                         valid_part_ids = valid_parts.get(bom_item.pk, [])
