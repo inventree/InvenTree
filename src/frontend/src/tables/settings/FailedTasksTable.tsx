@@ -1,6 +1,8 @@
 import { t } from '@lingui/macro';
 import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { hideNotification, showNotification } from '@mantine/notifications';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { StylishText } from '../../components/items/StylishText';
@@ -80,8 +82,19 @@ export default function FailedTasksTable({
           afterBulkDelete: onRecordsUpdated,
           enableSelection: true,
           onRowClick: (row: any) => {
-            setError(row.result);
-            open();
+            if (row.result) {
+              setError(row.result);
+              open();
+            } else {
+              hideNotification('failed-task');
+              showNotification({
+                id: 'failed-task',
+                title: t`No Information`,
+                message: t`No error details are available for this task`,
+                color: 'red',
+                icon: <IconExclamationCircle />
+              });
+            }
           }
         }}
       />

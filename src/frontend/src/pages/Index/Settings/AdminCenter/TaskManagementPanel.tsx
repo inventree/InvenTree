@@ -7,17 +7,11 @@ import { FactCollection } from '../../../../components/settings/FactCollection';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
 import { useInstance } from '../../../../hooks/UseInstance';
-
-const PendingTasksTable = Loadable(
-  lazy(() => import('../../../../tables/settings/PendingTasksTable'))
-);
+import FailedTasksTable from '../../../../tables/settings/FailedTasksTable';
+import PendingTasksTable from '../../../../tables/settings/PendingTasksTable';
 
 const ScheduledTasksTable = Loadable(
   lazy(() => import('../../../../tables/settings/ScheduledTasksTable'))
-);
-
-const FailedTasksTable = Loadable(
-  lazy(() => import('../../../../tables/settings/FailedTasksTable'))
 );
 
 export default function TaskManagementPanel() {
