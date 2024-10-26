@@ -102,9 +102,8 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             })
 
         # Next, add a custom panel which will appear on the 'purchaseorder' page
-        if (
-            self.get_setting('ENABLE_PURCHASE_ORDER_PANELS')
-            and target_model == 'purchaseorder'
+        if target_model == 'purchaseorder' and self.get_setting(
+            'ENABLE_PURCHASE_ORDER_PANELS'
         ):
             panels.append({
                 'key': 'purchase_order_panel',
@@ -165,8 +164,6 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'options': {'width': 4, 'height': 2},
                 'context': {'secret-key': 'this-is-a-secret'},
             })
-
-        print('items:', len(items))
 
         return items
 

@@ -33,10 +33,10 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         plugins = registry.with_mixin('ui')
         self.assertGreater(len(plugins), 0)
 
-    def test_dashboard_items(self):
+    def test_ui_dashboard_items(self):
         """Test that the sample UI plugin provides custom dashboard items."""
 
-    def test_panels(self):
+    def test_ui_panels(self):
         """Test that the sample UI plugin provides custom panels."""
         from part.models import Part
 
@@ -48,7 +48,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         _part.active = True
         _part.save()
 
-        url = reverse('api-plugin-panel-list')
+        url = reverse('api-plugin-ui-feature-list', kwargs={'feature': 'panel'})
 
         query_data = {'target_model': 'part', 'target_id': _part.pk}
 
@@ -62,7 +62,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         response = self.get(url, data=query_data)
 
         # There should be 4 active panels for the part by default
-        self.assertEqual(4, len(response.data))
+        self.assertEqual(3, len(response.data))
 
         _part.active = False
         _part.save()
@@ -77,23 +77,27 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
         response = self.get(url, data=query_data)
 
-        # There should still be 3 panels
-        self.assertEqual(3, len(response.data))
+        # There should still be 2 panels
+        self.assertEqual(2, len(response.data))
 
-        # Check for the correct panel names
-        self.assertEqual(response.data[0]['name'], 'sample_panel')
-        self.assertIn('content', response.data[0])
-        self.assertNotIn('source', response.data[0])
+        for panel in response.data:
+            self.assertEqual(panel['plugin_name'], 'sampleui')
+            self.assertEqual(panel['feature_type'], 'panel')
 
-        self.assertEqual(response.data[1]['name'], 'broken_panel')
-        self.assertEqual(response.data[1]['source'], '/this/does/not/exist.js')
-        self.assertNotIn('content', response.data[1])
+        self.assertEqual(response.data[0]['key'], 'broken-panel')
+        self.assertEqual(response.data[0]['title'], 'Broken Panel')
+        self.assertEqual(response.data[0]['source'], '/this/does/not/exist.js')
 
-        self.assertEqual(response.data[2]['name'], 'dynamic_panel')
+        self.assertEqual(response.data[1]['key'], 'dynamic-panel')
+        self.assertEqual(response.data[1]['title'], 'Dynamic Part Panel')
         self.assertEqual(
-            response.data[2]['source'], '/static/plugins/sampleui/sample_panel.js'
+            response.data[1]['source'], '/static/plugins/sampleui/sample_panel.js'
         )
-        self.assertNotIn('content', response.data[2])
+
+        ctx = response.data[1]['context']
+
+        for k in ['version', 'plugin_version', 'random', 'time']:
+            self.assertIn(k, ctx)
 
         # Next, disable the global setting for UI integration
         InvenTreeSetting.set_setting(
