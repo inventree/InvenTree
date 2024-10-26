@@ -100,6 +100,7 @@ nav:
     - Serving Files: start/serving_files.md
     - User Accounts: start/accounts.md
     - Data Backup: start/backup.md
+    - Invoke: start/invoke.md
     - Migrating Data: start/migrate.md
     - Advanced Topics: start/advanced.md
   - Parts:
@@ -303,4 +304,4 @@ extra:
       link: https://reddit.com/r/inventree
 
 use_directory_urls: true
-strict: true
+strict: false

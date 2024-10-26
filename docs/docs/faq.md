@@ -14,37 +14,17 @@ InvenTree installation is not officially supported natively on Windows. However 
 
 ### Command 'invoke' not found
 
-If the `invoke` command does not work, it means that the [invoke](https://pypi.org/project/invoke/) python library has not been correctly installed.
+If the `invoke` command does not work, it means that the invoke tool has not been correctly installed.
 
-Update the installed python packages with PIP:
+Refer to the [invoke installation guide](./start/invoke.md#installation) for more information.
 
-```
-pip3 install -U --require-hashes -r requirements.txt
-```
+### Can't find any collection named tasks
+
+Refer to the [invoke guide](./start/invoke.md#can-t-find-any-collection-named-tasks) for more information.
 
 ### Invoke Version
 
-If the installed version of invoke is too old, users may see error messages during the installation procedure, such as:
-
-- *'update' did not receive all required positional arguments!*
-- *Function has keyword-only arguments or annotations*
-
-As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `{{ config.extra.min_invoke_version }}`.
-
-To determine the version of invoke you have installed, run either:
-
-```
-invoke --version
-```
-```
-python -m invoke --version
-```
-
-If you are running an older version of invoke, ensure it is updated to the latest version:
-
-```
-pip install -U invoke
-```
+If the installed version of invoke is too old, users may see error messages during the installation procedure. Refer to the [invoke guide](./start/invoke.md#minimum-version) for more information.
 
 ### No module named 'django'
 
