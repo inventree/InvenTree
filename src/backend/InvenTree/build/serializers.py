@@ -191,6 +191,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             InvenTree.tasks.offload_task(
                 build.tasks.create_child_builds,
                 build_order.pk,
+                group='build',
             )
 
         return build_order
@@ -1134,7 +1135,8 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
-            optional_items=data['optional_items']
+            optional_items=data['optional_items'],
+            group='build'
         ):
             raise ValidationError(_("Failed to start auto-allocation task"))
 
@@ -1277,7 +1279,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item_detail',
             'part_detail',
             'quantity',
-            'allocations',
+
+            # Build detail fields
+            'build_reference',
 
             # BOM item detail fields
             'reference',
@@ -1301,7 +1305,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
-            'total_available_stock',
             'external_stock',
 
             # Extra fields only for data export
@@ -1314,6 +1317,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item',
             'allocations',
         ]
+
+    # Build info fields
+    build_reference = serializers.CharField(source='build.reference', label=_('Build Reference'), read_only=True)
 
     # Part info fields
     part = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part', label=_('Part'), many=False, read_only=True)
@@ -1338,9 +1344,17 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
     # Foreign key fields
-    bom_item_detail = part_serializers.BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
+    bom_item_detail = part_serializers.BomItemSerializer(
+        source='bom_item',
+        many=False,
+        read_only=True,
+        pricing=False,
+        substitutes=False,
+        sub_part_detail=False,
+        part_detail=False
+    )
+
     part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
-    allocations = BuildItemSerializer(many=True, read_only=True)
 
     # Annotated (calculated) fields
     allocated = serializers.FloatField(
@@ -1358,15 +1372,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         read_only=True
     )
 
-    available_stock = serializers.FloatField(
-        label=_('Available Stock'),
-        read_only=True
-    )
-
+    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
+    available_stock = serializers.FloatField(read_only=True, label=_('Available Stock'))
     available_substitute_stock = serializers.FloatField(read_only=True, label=_('Available Substitute Stock'))
     available_variant_stock = serializers.FloatField(read_only=True, label=_('Available Variant Stock'))
-    total_available_stock = serializers.FloatField(read_only=True, label=_('Total Available Stock'))
-    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
 
     @staticmethod
     def annotate_queryset(queryset, build=None):
@@ -1388,14 +1397,13 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'build',
             'bom_item',
             'bom_item__part',
-            'bom_item__part__pricing_data',
             'bom_item__sub_part',
-            'bom_item__sub_part__pricing_data',
         )
 
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
-            'bom_item__sub_part__tags',
+            'allocations',
+
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
@@ -1404,21 +1412,58 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item__substitutes__part__stock_items',
             'bom_item__substitutes__part__stock_items__allocations',
             'bom_item__substitutes__part__stock_items__sales_order_allocations',
+        )
 
-            'allocations',
-            'allocations__stock_item',
-            'allocations__stock_item__part',
-            'allocations__stock_item__location',
-            'allocations__stock_item__location__tags',
-            'allocations__stock_item__supplier_part',
-            'allocations__stock_item__supplier_part__part',
-            'allocations__stock_item__supplier_part__supplier',
-            'allocations__stock_item__supplier_part__manufacturer_part',
-            'allocations__stock_item__supplier_part__manufacturer_part__manufacturer',
+        # Defer expensive fields which we do not need for this serializer
+
+        queryset = queryset.defer(
+            'build__lft',
+            'build__rght',
+            'build__level',
+            'build__tree_id',
+            'build__destination',
+            'build__take_from',
+            'build__completed_by',
+            'build__issued_by',
+            'build__sales_order',
+            'build__parent',
+            'build__notes',
+            'build__metadata',
+            'build__responsible',
+            'build__barcode_data',
+            'build__barcode_hash',
+            'build__project_code',
+        ).defer(
+            'bom_item__metadata'
+        ).defer(
+            'bom_item__part__lft',
+            'bom_item__part__rght',
+            'bom_item__part__level',
+            'bom_item__part__tree_id',
+            'bom_item__part__tags',
+            'bom_item__part__notes',
+            'bom_item__part__variant_of',
+            'bom_item__part__revision_of',
+            'bom_item__part__creation_user',
+            'bom_item__part__bom_checked_by',
+            'bom_item__part__default_supplier',
+            'bom_item__part__responsible_owner',
+        ).defer(
+            'bom_item__sub_part__lft',
+            'bom_item__sub_part__rght',
+            'bom_item__sub_part__level',
+            'bom_item__sub_part__tree_id',
+            'bom_item__sub_part__tags',
+            'bom_item__sub_part__notes',
+            'bom_item__sub_part__variant_of',
+            'bom_item__sub_part__revision_of',
+            'bom_item__sub_part__creation_user',
+            'bom_item__sub_part__bom_checked_by',
+            'bom_item__sub_part__default_supplier',
+            'bom_item__sub_part__responsible_owner',
         )
 
         # Annotate the "allocated" quantity
-        # Difficulty: Easy
         queryset = queryset.annotate(
             allocated=Coalesce(
                 Sum('allocations__quantity'), 0,
@@ -1446,7 +1491,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         )
 
         # Annotate the "on_order" quantity
-        # Difficulty: Medium
         queryset = queryset.annotate(
             on_order=part.filters.annotate_on_order_quantity(reference=ref),
         )
@@ -1505,14 +1549,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         queryset = queryset.annotate(
             available_variant_stock=ExpressionWrapper(
                 F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
-                output_field=FloatField(),
-            )
-        )
-
-        # Annotate with the 'total available stock'
-        queryset = queryset.annotate(
-            total_available_stock=ExpressionWrapper(
-                F('available_stock') + F('available_substitute_stock') + F('available_variant_stock'),
                 output_field=FloatField(),
             )
         )

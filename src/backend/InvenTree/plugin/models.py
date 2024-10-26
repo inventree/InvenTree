@@ -236,7 +236,9 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         if active:
             offload_task(check_for_migrations)
-            offload_task(plugin.staticfiles.copy_plugin_static_files, self.key)
+            offload_task(
+                plugin.staticfiles.copy_plugin_static_files, self.key, group='plugin'
+            )
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

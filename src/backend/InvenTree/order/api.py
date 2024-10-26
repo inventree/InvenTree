@@ -550,6 +550,7 @@ class PurchaseOrderLineItemList(
         'SKU': 'part__SKU',
         'part_name': 'part__part__name',
         'order': 'order__reference',
+        'status': 'order__status',
         'complete_date': 'order__complete_date',
     }
 
@@ -564,6 +565,7 @@ class PurchaseOrderLineItemList(
         'total_price',
         'target_date',
         'order',
+        'status',
         'complete_date',
     ]
 
@@ -769,12 +771,29 @@ class SalesOrderLineItemFilter(LineItemFilter):
         queryset=Part.objects.all(), field_name='part', label=_('Part')
     )
 
-    completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
+    allocated = rest_filters.BooleanFilter(
+        label=_('Allocated'), method='filter_allocated'
+    )
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by lines which are 'allocated'.
+
+        A line is 'allocated' when allocated >= quantity
+        """
+        q = Q(allocated__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    completed = rest_filters.BooleanFilter(
+        label=_('Completed'), method='filter_completed'
+    )
 
     def filter_completed(self, queryset, name, value):
         """Filter by lines which are "completed".
 
-        A line is completed when shipped >= quantity
+        A line is 'completed' when shipped >= quantity
         """
         q = Q(shipped__gte=F('quantity'))
 
@@ -853,6 +872,8 @@ class SalesOrderLineItemList(
         'part',
         'part__name',
         'quantity',
+        'allocated',
+        'shipped',
         'reference',
         'sale_price',
         'target_date',

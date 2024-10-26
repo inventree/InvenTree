@@ -31,7 +31,7 @@ Run the command `invoke int.frontend-compile`. Wait for this to finish
 After finishing the install, you need to launch a frontend server to be able to view the new UI.
 
 Using the previously described ways of running commands, execute the following:
-`invoke dev.frontend-dev` in your environment
+`invoke dev.frontend-server` in your environment
 This command does not run as a background daemon, and will occupy the window it's ran in.
 
 ### Accessing

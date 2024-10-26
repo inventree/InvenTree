@@ -1919,6 +1919,7 @@ class SalesOrderShipment(
             order.tasks.complete_sales_order_shipment,
             shipment_id=self.pk,
             user_id=user.pk if user else None,
+            group='sales_order',
         )
 
         trigger_event('salesordershipment.completed', id=self.pk)
