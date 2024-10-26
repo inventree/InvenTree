@@ -21,7 +21,7 @@ const FailedTasksTable = Loadable(
 );
 
 export default function TaskManagementPanel() {
-  const { instance: taskInfo } = useInstance({
+  const { instance: taskInfo, refreshInstance: refreshTaskInfo } = useInstance({
     endpoint: ApiEndpoints.task_overview,
     hasPrimaryKey: false,
     refetchOnMount: true,
@@ -51,7 +51,7 @@ export default function TaskManagementPanel() {
               <StylishText size="lg">{t`Pending Tasks`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <PendingTasksTable />
+              <PendingTasksTable onRecordsUpdated={refreshTaskInfo} />
             </Accordion.Panel>
           </Accordion.Item>
           <Accordion.Item value="scheduled" key="scheduled-tasks">
@@ -67,7 +67,7 @@ export default function TaskManagementPanel() {
               <StylishText size="lg">{t`Failed Tasks`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <FailedTasksTable />
+              <FailedTasksTable onRecordsUpdated={refreshTaskInfo} />
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>

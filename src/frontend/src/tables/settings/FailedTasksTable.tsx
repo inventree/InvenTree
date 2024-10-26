@@ -11,7 +11,11 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export default function FailedTasksTable() {
+export default function FailedTasksTable({
+  onRecordsUpdated
+}: {
+  onRecordsUpdated: () => void;
+}) {
   const table = useTable('tasks-failed');
   const user = useUserState();
 
@@ -73,6 +77,7 @@ export default function FailedTasksTable() {
         columns={columns}
         props={{
           enableBulkDelete: user.isStaff(),
+          afterBulkDelete: onRecordsUpdated,
           enableSelection: true,
           onRowClick: (row: any) => {
             setError(row.result);
