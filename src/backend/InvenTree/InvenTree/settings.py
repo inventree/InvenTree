@@ -33,7 +33,8 @@ from . import config, locales
 
 checkMinPythonVersion()
 
-INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
+INVENTREE_BASE_URL = 'https://inventree.org'
+INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv or 'TESTING' in os.environ
