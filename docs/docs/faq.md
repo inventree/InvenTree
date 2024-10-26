@@ -20,7 +20,7 @@ Refer to the [invoke installation guide](./start/invoke.md#installation) for mor
 
 ### Can't find any collection named tasks
 
-Refer to the [invoke guide](./start/invoke.md#can-t-find-any-collection-named-tasks) for more information.
+Refer to the [invoke guide](./start/invoke.md#cant-find-any-collection-named-tasks) for more information.
 
 ### Invoke Version
 

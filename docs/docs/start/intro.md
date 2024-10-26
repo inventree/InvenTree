@@ -72,7 +72,6 @@ InvenTree requires a minimum Python version of {{ config.extra.min_python_versio
 
 InvenTree makes use of the [invoke](https://www.pyinvoke.org/) python toolkit for performing various administrative actions. You can read [more about out use of the invoke tool here](./invoke.md)
 
-
 ### Virtual Environment
 
 Installing the required Python packages inside a virtual environment allows a local install separate to the system-wide Python installation. While not strictly necessary, using a virtual environment is **highly recommended** as it prevents conflicts between the different Python installations.

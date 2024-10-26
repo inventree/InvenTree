@@ -8,7 +8,13 @@ InvenTree uses the [invoke](https://www.pyinvoke.org/) tool to manage various sy
 
 ### Installation
 
-InvenTree setup and administration requires that the invoke tool is installed. This
+InvenTree setup and administration requires that the invoke tool is installed. This is usually installed automatically as part of the InvenTree installation process - however (if you are configuring InvenTree from source) you may need to install it manually.
+
+To install the invoke tool, run the following command:
+
+```
+pip install -U invoke
+```
 
 ### Minimum Version
 
@@ -37,7 +43,16 @@ To run the `invoke` tool from the command line, you must be in the top-level Inv
 
 If you have installed InvenTree via [docker](./docker_install.md), then you need to ensure that the `invoke` commands are called from within the docker container context.
 
-For example, to run the `update` task, you might use:
+For example, to run the `update` task, you might use the following command to run the `invoke` command - using the `docker compose` tool.
+
+```
+docker compose run --rm inventree-server invoke update
+```
+
+!!! note "Docker Compose Directory"
+    The `docker compose` command should be run from the directory where the `docker-compose.yml` file is located.
+
+Alternatively, to manually run the command within the environment of the running docker container:
 
 ```
 docker exec -it inventree-server invoke update
@@ -68,6 +83,16 @@ This provides a list of the available invoke commands - also displayed below:
 
 ```
 {{ invoke_commands() }}
+```
+
+### Task Information
+
+Each task has a brief description of its purpose, which is displayed when running the `invoke --list` command. To find more detailed information about a specific task, run the command with the `--help` flag.
+
+For example, to find more information about the `update` task, run:
+
+```
+invoke update --help
 ```
 
 ### Internal Tasks
