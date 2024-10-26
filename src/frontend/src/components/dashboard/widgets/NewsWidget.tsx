@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { IconMailCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
 import { formatDate } from '../../../defaults/formatters';
@@ -105,6 +105,11 @@ export default function NewsWidget() {
     [newsItems]
   );
 
+  const hasNews = useMemo(
+    () => (newsItems.data?.length ?? 0) > 0,
+    [newsItems.data]
+  );
+
   if (!user.isSuperuser()) {
     return (
       <Alert color="red" title={t`Requires Superuser`}>
@@ -120,11 +125,15 @@ export default function NewsWidget() {
         <Container>
           <Table>
             <Table.Tbody>
-              {newsItems.data?.map((item: any) => {
-                return (
+              {hasNews ? (
+                newsItems.data?.map((item: any) => (
                   <NewsItem key={item.pk} item={item} onMarkRead={markRead} />
-                );
-              })}
+                ))
+              ) : (
+                <Alert color="green" title={t`No News`}>
+                  <Text>{t`There are no unread news items`}</Text>
+                </Alert>
+              )}
             </Table.Tbody>
           </Table>
         </Container>
