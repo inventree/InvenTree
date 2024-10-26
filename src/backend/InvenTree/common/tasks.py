@@ -71,8 +71,8 @@ def update_news_feed():
             continue
 
         # Enforce proper links for the entries
-        if entry.link.startswith('/'):
-            entry.link = settings.INVENTREE_BASE_URL + entry
+        if entry.link and str(entry.link).startswith('/'):
+            entry.link = settings.INVENTREE_BASE_URL + str(entry.link)
 
         # Create entry
         try:
