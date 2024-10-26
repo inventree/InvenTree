@@ -33,6 +33,9 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         plugins = registry.with_mixin('ui')
         self.assertGreater(len(plugins), 0)
 
+    def test_dashboard_items(self):
+        """Test that the sample UI plugin provides custom dashboard items."""
+
     def test_panels(self):
         """Test that the sample UI plugin provides custom panels."""
         from part.models import Part
@@ -105,8 +108,8 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         # Set the setting back to True for subsequent tests
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_INTERFACE', True, change_user=None)
 
-    def test_ui_features(self):
-        """Test that the sample UI plugin provides custom features."""
+    def test_ui_template_editors(self):
+        """Test that the sample UI plugin provides template editor features."""
         template_editor_url = reverse(
             'api-plugin-ui-feature-list', kwargs={'feature': 'template_editor'}
         )
@@ -120,30 +123,41 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
             'template_model': 'part',
         }
 
-        # Request custom template editor information
+        # Request custom label template editor information
         response = self.get(template_editor_url, data=query_data_label)
         self.assertEqual(1, len(response.data))
 
+        data = response.data[0]
+
+        for k, v in {
+            'plugin_name': 'sampleui',
+            'key': 'sample-template-editor',
+            'title': 'Sample Template Editor',
+            'source': '/static/plugins/sampleui/sample_template.js:getTemplateEditor',
+        }.items():
+            self.assertEqual(data[k], v)
+
+        # Request custom report template editor information
         response = self.get(template_editor_url, data=query_data_report)
         self.assertEqual(0, len(response.data))
 
+        # Request custom report template preview information
         response = self.get(template_preview_url, data=query_data_report)
         self.assertEqual(1, len(response.data))
 
-        # Check for the correct feature details here
-        self.assertEqual(response.data[0]['feature_type'], 'template_preview')
-        self.assertDictEqual(
-            response.data[0]['options'],
-            {
-                'key': 'sample-template-preview',
-                'title': 'Sample Template Preview',
-                'icon': 'category',
-            },
-        )
-        self.assertEqual(
-            response.data[0]['source'],
-            '/static/plugin/sample_template.js:getTemplatePreview',
-        )
+        data = response.data[0]
+
+        for k, v in {
+            'plugin_name': 'sampleui',
+            'feature_type': 'template_preview',
+            'key': 'sample-template-preview',
+            'title': 'Sample Template Preview',
+            'context': None,
+            'source': '/static/plugins/sampleui/sample_template.js:getTemplatePreview',
+        }.items():
+            self.assertEqual(data[k], v)
+
+        self.assertDictEqual(data['options'], {'icon': 'category'})
 
         # Next, disable the global setting for UI integration
         InvenTreeSetting.set_setting(

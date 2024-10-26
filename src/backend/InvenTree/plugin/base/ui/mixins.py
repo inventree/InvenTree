@@ -91,21 +91,20 @@ class UserInterfaceMixin:
 
         Returns:
             list: A list of custom UIFeature dicts to be injected into the UI
+
         """
-        if feature_type == 'dashboard':
-            return self.get_ui_dashboard_items(request, context=context)
+        feature_map = {
+            'dashboard': self.get_ui_dashboard_items,
+            'panel': self.get_ui_panels,
+            'template_editor': self.get_ui_template_editors,
+            'template_preview': self.get_ui_template_previews,
+        }
 
-        if feature_type == 'panel':
-            return self.get_ui_panels(request, context=context)
-
-        if feature_type == 'template_editor':
-            return self.get_ui_template_editors(request, context=context)
-
-        if feature_type == 'template_preview':
-            return self.get_ui_template_previews(request, context=context)
-
-        # Default implementation returns an empty list
-        return []
+        if feature_type in feature_map:
+            return feature_map[feature_type](request, context=context)
+        else:
+            logger.warning(f'Invalid feature type: {feature_type}')
+            return []
 
     def get_ui_panels(
         self, request: Request, context: dict, **kwargs

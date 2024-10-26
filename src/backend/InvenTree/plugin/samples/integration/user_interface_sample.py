@@ -172,16 +172,20 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
     def get_ui_template_editors(self, request, context):
         """Return a list of custom template editors."""
-        return [
-            {
-                'key': 'sample-template-editor',
-                'title': 'Sample Template Editor',
-                'options': {'icon': 'keywords'},
-                'source': self.plugin_static_file(
-                    'sample_template.js:getTemplateEditor'
-                ),
-            }
-        ]
+        # If the context is a label template, return a custom template editor
+        if context.get('template_type') == 'labeltemplate':
+            return [
+                {
+                    'key': 'sample-template-editor',
+                    'title': 'Sample Template Editor',
+                    'options': {'icon': 'keywords'},
+                    'source': self.plugin_static_file(
+                        'sample_template.js:getTemplateEditor'
+                    ),
+                }
+            ]
+
+        return []
 
     def get_ui_template_previews(self, request, context):
         """Return a list of custom template previews."""
@@ -191,7 +195,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'title': 'Sample Template Preview',
                 'options': {'icon': 'category'},
                 'source': self.plugin_static_file(
-                    '/sample_template.js:getTemplatePreview'
+                    'sample_template.js:getTemplatePreview'
                 ),
             }
         ]
