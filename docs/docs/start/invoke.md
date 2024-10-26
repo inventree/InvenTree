@@ -70,6 +70,14 @@ This provides a list of the available invoke commands - also displayed below:
 {{ invoke_commands() }}
 ```
 
+### Internal Tasks
+
+Tasks with the `int.` prefix are internal tasks, and are not intended for general use. These are called by other tasks, and should generally not be called directly.
+
+### Developer Tasks
+
+Tasks with the `dev.` prefix are tasks intended for InvenTree developers, and are also not intended for general use.
+
 ## Common Issues
 
 Below are some common issues that users may encounter when using the `invoke` tool, and how to resolve them.
