@@ -661,7 +661,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
             <Alert
               color="yellow"
               withCloseButton
-              title={t`Custom query filters are active`}
+              title={t`Custom table filters are active`}
               onClose={() => setUrlQueryParams({})}
             ></Alert>
           )}

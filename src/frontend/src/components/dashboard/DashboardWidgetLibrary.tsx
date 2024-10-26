@@ -5,6 +5,7 @@ import { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
+import NewsWidget from './widgets/NewsWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 
 /**
@@ -150,11 +151,19 @@ export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
       minWidth: 5,
       minHeight: 4,
       render: () => <GetStartedWidget />
+    },
+    {
+      label: 'news',
+      title: t`News Updates`,
+      description: t`The latest news from InvenTree`,
+      minWidth: 5,
+      minHeight: 4,
+      render: () => <NewsWidget />
     }
   ];
 }
 
-export function BuiltingSettinsWidgets(): DashboardWidgetProps[] {
+export function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
   return [ColorToggleDashboardWidget(), LanguageSelectDashboardWidget()];
 }
 
@@ -166,6 +175,6 @@ export default function DashboardWidgetLibrary(): DashboardWidgetProps[] {
   return [
     ...BuiltinQueryCountWidgets(),
     ...BuiltinGettingStartedWidgets(),
-    ...BuiltingSettinsWidgets()
+    ...BuiltinSettingsWidgets()
   ];
 }

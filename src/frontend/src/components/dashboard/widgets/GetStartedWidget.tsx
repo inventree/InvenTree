@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
 import { DocumentationLinks } from '../../../defaults/links';
@@ -10,9 +11,9 @@ export default function GetStartedWidget() {
   const docLinks: MenuLinkItem[] = useMemo(() => DocumentationLinks(), []);
 
   return (
-    <span>
+    <Stack>
       <StylishText size="xl">{t`Getting Started`}</StylishText>
       <GettingStartedCarousel items={docLinks} />
-    </span>
+    </Stack>
   );
 }

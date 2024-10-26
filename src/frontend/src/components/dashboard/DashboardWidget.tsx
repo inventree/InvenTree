@@ -51,7 +51,8 @@ export default function DashboardWidget({
             width: '100%',
             height: '100%',
             padding: '0px',
-            margin: '0px'
+            margin: '0px',
+            overflowY: 'hidden'
           }}
         >
           {item.render()}
