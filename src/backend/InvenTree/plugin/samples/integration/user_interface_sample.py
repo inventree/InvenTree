@@ -154,7 +154,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             },
         ]
 
-        # Admin item - only visible to admin users
+        # Admin item - only visible to users with superuser access
         if request.user.is_superuser:
             items.append({
                 'key': 'admin-dashboard-item',
