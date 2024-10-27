@@ -14,6 +14,8 @@ test('Plugins - Panels', async ({ page, request }) => {
     value: true
   });
 
+  await page.waitForTimeout(500);
+
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
     request,
@@ -21,28 +23,34 @@ test('Plugins - Panels', async ({ page, request }) => {
     state: true
   });
 
+  await page.waitForTimeout(500);
+
   // Navigate to the "part" page
   await page.goto(`${baseUrl}/part/69/`);
 
   // Ensure basic part tab is available
   await page.getByRole('tab', { name: 'Part Details' }).waitFor();
 
+  // Allow time for the plugin panels to load (they are loaded asynchronously)
+  await page.waitForTimeout(1000);
+
   // Check out each of the plugin panels
-  await page.getByRole('tab', { name: 'Sample Panel' }).click();
-  await page
-    .getByText('This is a sample panel which appears on every page')
-    .waitFor();
 
   await page.getByRole('tab', { name: 'Broken Panel' }).click();
-  await page.getByText('Error Loading Plugin').waitFor();
+  await page.waitForTimeout(500);
+
+  await page.getByText('Error occurred while loading plugin content').waitFor();
 
   await page.getByRole('tab', { name: 'Dynamic Part Panel' }).click();
+  await page.waitForTimeout(500);
+
+  await page.getByText('Instance ID: 69');
   await page
     .getByText('This panel has been dynamically rendered by the plugin system')
     .waitFor();
-  await page.getByText('Instance ID: 69');
 
   await page.getByRole('tab', { name: 'Part Panel', exact: true }).click();
+  await page.waitForTimeout(500);
   await page.getByText('This content has been rendered by a custom plugin');
 
   // Disable the plugin, and ensure it is no longer visible

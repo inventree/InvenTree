@@ -44,6 +44,25 @@ export function renderPanel(target, data) {
 
 
 /**
+ * Render a panel on a Part detail page
+ */
+export function renderPartPanel(target, data) {
+
+    if (!target) {
+        console.error("No target provided to renderPartPanel");
+        return;
+    }
+
+    target.innerHTML = `
+    <h4>Part Detail Panel</h4>
+    <hr>
+    <p>This is a custom panel for a Part detail page</p>
+    `;
+}
+
+
+
+/**
  * Render a panel on a PurchaseOrder detail page
  */
 export function renderPoPanel(target, data) {
