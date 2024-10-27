@@ -35,6 +35,56 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
     def test_ui_dashboard_items(self):
         """Test that the sample UI plugin provides custom dashboard items."""
+        # Ensure the user has superuser status
+        self.user.is_superuser = True
+        self.user.save()
+
+        url = reverse('api-plugin-ui-feature-list', kwargs={'feature': 'dashboard'})
+
+        response = self.get(url)
+        self.assertEqual(len(response.data), 4)
+
+        for item in response.data:
+            self.assertEqual(item['plugin_name'], 'sampleui')
+
+        self.assertEqual(response.data[0]['key'], 'broken-dashboard-item')
+        self.assertEqual(response.data[0]['title'], 'Broken Dashboard Item')
+        self.assertEqual(response.data[0]['source'], '/this/does/not/exist.js')
+
+        self.assertEqual(response.data[1]['key'], 'sample-dashboard-item')
+        self.assertEqual(response.data[1]['title'], 'Sample Dashboard Item')
+        self.assertEqual(
+            response.data[1]['source'],
+            '/static/plugins/sampleui/sample_dashboard_item.js',
+        )
+
+        self.assertEqual(response.data[2]['key'], 'dynamic-dashboard-item')
+        self.assertEqual(response.data[2]['title'], 'Context Dashboard Item')
+        self.assertEqual(
+            response.data[2]['source'],
+            '/static/plugins/sampleui/sample_dashboard_item.js:renderContextItem',
+        )
+
+        self.assertEqual(response.data[3]['key'], 'admin-dashboard-item')
+        self.assertEqual(response.data[3]['title'], 'Admin Dashboard Item')
+        self.assertEqual(
+            response.data[3]['source'],
+            '/static/plugins/sampleui/admin_dashboard_item.js',
+        )
+
+        # Additional options and context data should be passed through to the client
+        self.assertDictEqual(response.data[3]['options'], {'width': 4, 'height': 2})
+
+        self.assertDictEqual(
+            response.data[3]['context'], {'secret-key': 'this-is-a-secret'}
+        )
+
+        # Remove superuser status - the 'admin-dashboard-item' should disappear
+        self.user.is_superuser = False
+        self.user.save()
+
+        response = self.get(url)
+        self.assertEqual(len(response.data), 3)
 
     def test_ui_panels(self):
         """Test that the sample UI plugin provides custom panels."""
