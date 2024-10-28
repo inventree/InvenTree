@@ -47,6 +47,19 @@ import {
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
+ * Filter a list of allocations based on a particular output.
+ * - If the output is specified, only return allocations for that output
+ * - Otherwise, return all allocations
+ */
+function filterAllocationsForOutput(allocations: any[], output: any) {
+  if (!output?.pk) {
+    return allocations;
+  }
+
+  return allocations.filter((a) => a.install_into == output.pk);
+}
+
+/**
  * Render a sub-table of allocated stock against a particular build line.
  *
  * - Renders a simplified table of stock allocated against the build line
@@ -56,14 +69,26 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 function BuildLineSubTable({
   lineItem,
+  output,
   onEditAllocation,
   onDeleteAllocation
 }: {
   lineItem: any;
+  output: any;
   onEditAllocation: (pk: number) => void;
   onDeleteAllocation: (pk: number) => void;
 }) {
   const user = useUserState();
+
+  /**
+   * Memoize a list of allocations for the build line.
+   * - If the output is specified, only show allocations for that output.
+   * - Otherwise, show all allocations.
+   */
+  const allocations = useMemo(
+    () => filterAllocationsForOutput(lineItem.allocations, output),
+    [lineItem.allocations, output]
+  );
 
   const tableColumns: any[] = useMemo(() => {
     return [
@@ -132,7 +157,7 @@ function BuildLineSubTable({
           pinLastColumn
           idAccessor="pk"
           columns={tableColumns}
-          records={lineItem.allocations}
+          records={allocations}
         />
       </Stack>
     </Paper>
@@ -143,17 +168,17 @@ function BuildLineSubTable({
  * Render a table of build lines for a particular build.
  */
 export default function BuildLineTable({
-  buildId,
   build,
-  outputId,
+  output,
+  simplified,
   params = {}
 }: Readonly<{
-  buildId: number;
   build: any;
-  outputId?: number;
+  output?: any;
+  simplified?: boolean;
   params?: any;
 }>) {
-  const table = useTable('buildline');
+  const table = useTable(simplified ? 'buildline-simplified' : 'buildline');
   const user = useUserState();
   const navigate = useNavigate();
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
@@ -288,6 +313,39 @@ export default function BuildLineTable({
     );
   }, []);
 
+  // Calculate the total required stock count for a given build line
+  const getRowRequiredCount = useCallback(
+    (record: any) => {
+      let quantity = record.quantity;
+
+      if (output?.quantity) {
+        quantity = output.quantity * record.bom_item_detail.quantity;
+      }
+
+      return quantity;
+    },
+    [output]
+  );
+
+  // Calculate the total number of allocations against a particular build line and output
+  const getRowAllocationCount = useCallback(
+    (record: any) => {
+      const output_id = output?.pk ?? undefined;
+
+      let count = 0;
+
+      // Allocations matching the output ID, or all allocations if no output ID is specified
+      record.allocations
+        ?.filter((a: any) => a.install_into == output_id || !output_id)
+        .forEach((a: any) => {
+          count += a.quantity;
+        });
+
+      return count;
+    },
+    [output]
+  );
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -297,7 +355,11 @@ export default function BuildLineTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          const hasAllocatedItems = record?.allocated_items > 0;
+          const allocations = filterAllocationsForOutput(
+            record.allocations,
+            output
+          );
+          const hasAllocatedItems = allocations.length > 0;
 
           return (
             <Group wrap="nowrap">
@@ -335,24 +397,29 @@ export default function BuildLineTable({
       },
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
-        ordering: 'optional'
+        ordering: 'optional',
+        hidden: simplified
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
-        ordering: 'consumable'
+        ordering: 'consumable',
+        hidden: simplified
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
-        ordering: 'allow_variants'
+        ordering: 'allow_variants',
+        hidden: simplified
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.inherited',
         ordering: 'inherited',
-        title: t`Gets Inherited`
+        title: t`Gets Inherited`,
+        hidden: simplified
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
-        ordering: 'trackable'
+        ordering: 'trackable',
+        hidden: simplified
       }),
       {
         accessor: 'bom_item_detail.quantity',
@@ -372,12 +439,16 @@ export default function BuildLineTable({
       },
       {
         accessor: 'quantity',
+        title: t`Required Quantity`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
+          // If a build output is specified, use the provided quantity
+          const quantity = getRowRequiredCount(record);
+
           return (
             <Group justify="space-between" wrap="nowrap">
-              <Text>{record.quantity}</Text>
+              <Text>{quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
               )}
@@ -396,19 +467,22 @@ export default function BuildLineTable({
         switchable: false,
         hidden: !isActive,
         render: (record: any) => {
+          const required = getRowRequiredCount(record);
+          const allocated = getRowAllocationCount(record);
+
           return record?.bom_item_detail?.consumable ? (
             <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
-              value={record.allocated}
-              maximum={record.quantity}
+              value={allocated}
+              maximum={required}
             />
           );
         }
       }
     ];
-  }, [isActive, table]);
+  }, [simplified, isActive, table, output]);
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
@@ -459,7 +533,7 @@ export default function BuildLineTable({
 
   const allocateStock = useAllocateStockToBuildForm({
     build: build,
-    outputId: null,
+    outputId: output?.pk ?? null,
     buildId: build.pk,
     lineItems: selectedRows,
     onFormSuccess: () => {
@@ -524,7 +598,7 @@ export default function BuildLineTable({
       const in_production = build.status == buildStatus.PRODUCTION;
       const consumable = record.bom_item_detail?.consumable ?? false;
 
-      const hasOutput = !!outputId;
+      const hasOutput = !!output?.pk;
 
       // Can allocate
       let canAllocate =
@@ -590,7 +664,7 @@ export default function BuildLineTable({
           onClick: () => {
             setInitialData({
               part: record.part,
-              parent: buildId,
+              parent: build.pk,
               quantity: record.quantity - record.allocated
             });
             newBuildOrder.open();
@@ -609,13 +683,13 @@ export default function BuildLineTable({
         }
       ];
     },
-    [user, outputId, build, buildStatus]
+    [user, output, build, buildStatus]
   );
 
   const tableActions = useMemo(() => {
     const production = build.status == buildStatus.PRODUCTION;
     const canEdit = user.hasChangeRole(UserRoles.build);
-    const visible = production && canEdit;
+    const visible = production && canEdit && !simplified;
     return [
       <ActionButton
         key="auto-allocate"
@@ -663,6 +737,7 @@ export default function BuildLineTable({
     user,
     build,
     buildStatus,
+    simplified,
     table.hasSelectedRecords,
     table.selectedRecords
   ]);
@@ -673,12 +748,15 @@ export default function BuildLineTable({
       allowMultiple: true,
       expandable: ({ record }: { record: any }) => {
         // Only items with allocated stock can be expanded
-        return record?.allocated_items > 0;
+        return (
+          filterAllocationsForOutput(record.allocations, output).length > 0
+        );
       },
       content: ({ record }: { record: any }) => {
         return (
           <BuildLineSubTable
             lineItem={record}
+            output={output}
             onEditAllocation={(pk: number) => {
               setSelectedAllocation(pk);
               editAllocation.open();
@@ -691,7 +769,7 @@ export default function BuildLineTable({
         );
       }
     };
-  }, [table.refreshTable, buildId]);
+  }, [output]);
 
   return (
     <>
@@ -708,7 +786,7 @@ export default function BuildLineTable({
         props={{
           params: {
             ...params,
-            build: buildId,
+            build: build.pk,
             part_detail: true
           },
           tableActions: tableActions,

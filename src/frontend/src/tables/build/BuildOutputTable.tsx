@@ -1,13 +1,25 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import {
+  Divider,
+  Drawer,
+  Group,
+  Loader,
+  Paper,
+  Space,
+  Stack,
+  Text
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import { StylishText } from '../../components/items/StylishText';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -32,11 +44,79 @@ import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
+import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {
   name: string;
   result: boolean;
 };
+
+/**
+ * Detail drawer view for allocating stock against a specific build output
+ */
+function OutputAllocationDrawer({
+  build,
+  output,
+  opened,
+  close
+}: {
+  build: any;
+  output: any;
+  opened: boolean;
+  close: () => void;
+}) {
+  return (
+    <>
+      <Drawer
+        position="bottom"
+        size="lg"
+        title={
+          <Group p="md" wrap="nowrap" justify="space-apart">
+            <StylishText size="lg">{t`Build Output Stock Allocation`}</StylishText>
+            <Space h="lg" />
+            <PartColumn part={build.part_detail} />
+            {output?.serial && (
+              <Text size="sm">
+                {t`Serial Number`}: {output.serial}
+              </Text>
+            )}
+            {output?.batch && (
+              <Text size="sm">
+                {t`Batch Code`}: {output.batch}
+              </Text>
+            )}
+            <Space h="lg" />
+          </Group>
+        }
+        opened={opened}
+        onClose={close}
+        withCloseButton
+        closeOnEscape
+        closeOnClickOutside
+        styles={{
+          header: {
+            width: '100%'
+          },
+          title: {
+            width: '100%'
+          }
+        }}
+      >
+        <Divider />
+        <Paper p="md">
+          <BuildLineTable
+            simplified
+            build={build}
+            output={output}
+            params={{
+              tracked: true
+            }}
+          />
+        </Paper>
+      </Drawer>
+    </>
+  );
+}
 
 export default function BuildOutputTable({
   build,
@@ -432,6 +512,18 @@ export default function BuildOutputTable({
     trackedItems
   ]);
 
+  const [drawerOpen, { open: openDrawer, close: closeDrawer }] =
+    useDisclosure(false);
+
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      content: ({ record }: { record: any }) => {
+        return <BuildLineTable build={build} output={record} />;
+      }
+    };
+  }, [buildId]);
+
   return (
     <>
       {addBuildOutput.modal}
@@ -439,6 +531,12 @@ export default function BuildOutputTable({
       {scrapBuildOutputsForm.modal}
       {editBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
+      <OutputAllocationDrawer
+        build={build}
+        output={selectedOutputs[0]}
+        opened={drawerOpen}
+        close={closeDrawer}
+      />
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.stock_item_list)}
@@ -452,11 +550,18 @@ export default function BuildOutputTable({
           },
           enableLabels: true,
           enableReports: true,
-          modelType: ModelType.stockitem,
+          // modelType: ModelType.stockitem,
           dataFormatter: formatRecords,
           tableActions: tableActions,
           rowActions: rowActions,
-          enableSelection: true
+          // rowExpansion: rowExpansion,
+          enableSelection: true,
+          onRowClick: (record: any) => {
+            if (hasTrackedItems && !!record.serial) {
+              setSelectedOutputs([record]);
+              openDrawer();
+            }
+          }
         }}
       />
     </>

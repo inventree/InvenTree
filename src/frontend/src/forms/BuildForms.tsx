@@ -512,6 +512,7 @@ export function useAllocateStockToBuildForm({
             lineItems.find((item) => item.pk == row.item.build_line) ?? {};
           return (
             <BuildAllocateLineRow
+              key={row.idx}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -566,7 +567,7 @@ export function useAllocateStockToBuildForm({
           build_line: item.pk,
           stock_item: undefined,
           quantity: Math.max(0, item.quantity - item.allocated),
-          output: null
+          output: outputId
         };
       })
     },
