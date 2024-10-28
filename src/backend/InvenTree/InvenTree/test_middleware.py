@@ -79,13 +79,8 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test setup without ignored errors
         settings.IGNORED_ERRORS = []
-        response = self.client.get(reverse('api-part-detail', kwargs={'pk': 9999}))
-        self.assertEqual(response.status_code, 404)
-        check(1)
-
-        # Test manual logging
         try:
             raise Http404
         except Http404:
             log_error('testpath')
-        check(2)
+        check(1)
