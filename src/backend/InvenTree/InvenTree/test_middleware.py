@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.http import Http404
-from django.test import tag
 from django.urls import reverse
 
 from error_report.models import Error
@@ -11,8 +10,6 @@ from InvenTree.exceptions import log_error
 from InvenTree.unit_test import InvenTreeTestCase
 
 
-# TODO change test to not rely on CUI
-@tag('cui')
 class MiddlewareTests(InvenTreeTestCase):
     """Test for middleware functions."""
 
@@ -36,8 +33,8 @@ class MiddlewareTests(InvenTreeTestCase):
         self.check_path(reverse('account_login'), 302)
 
         # check that frontend code is redirected to login
-        response = self.check_path(reverse('stats'), 302)
-        self.assertEqual(response.url, '/accounts/login/?next=/stats/')
+        response = self.check_path(reverse('index'), 302)
+        self.assertEqual(response.url, '/accounts/login/?next=/')
 
     def test_token_auth(self):
         """Test auth with token auth."""
@@ -48,16 +45,16 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
         # this should raise a 401
-        self.check_path(reverse('settings.js'), 401)
+        self.check_path(reverse('api-doc'), 302)
 
         # request with token
-        self.check_path(reverse('settings.js'), HTTP_Authorization=f'Token {token}')
+        self.check_path(reverse('api-doc'), HTTP_Authorization=f'Token {token}')
 
         # Request with broken token
-        self.check_path(reverse('settings.js'), 401, HTTP_Authorization='Token abcd123')
+        self.check_path(reverse('api-doc'), 302, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
-        self.check_path(reverse('settings.js'), 401)
+        self.check_path(reverse('api-doc'), 302)
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
@@ -70,7 +67,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test normal setup
         check()
-        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        response = self.client.get(reverse('api-part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check()
 
@@ -82,7 +79,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test setup without ignored errors
         settings.IGNORED_ERRORS = []
-        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        response = self.client.get(reverse('api-part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check(1)
 
