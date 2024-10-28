@@ -206,6 +206,7 @@ frontendpatterns = [
         RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='account_login',
     ),
+    path('accounts/', include('allauth_2fa.urls')),  # MFA support
 ]
 
 urlpatterns += frontendpatterns
