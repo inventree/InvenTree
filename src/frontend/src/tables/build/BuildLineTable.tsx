@@ -25,7 +25,11 @@ import {
 import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -121,6 +125,7 @@ function BuildLineSubTable({
     <Paper p="md">
       <Stack gap="xs">
         <DataTable
+          minHeight={50}
           withTableBorder
           withColumnBorders
           striped
@@ -287,7 +292,7 @@ export default function BuildLineTable({
     return [
       {
         accessor: 'bom_item',
-        title: t`Component Part`,
+        title: t`Component`,
         ordering: 'part',
         sortable: true,
         switchable: false,
@@ -491,6 +496,28 @@ export default function BuildLineTable({
     table: table
   });
 
+  const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
+
+  const editAllocation = useEditApiFormModal({
+    url: ApiEndpoints.build_item_list,
+    pk: selectedAllocation,
+    title: t`Edit Stock Allocation`,
+    fields: {
+      stock_item: {
+        disabled: true
+      },
+      quantity: {}
+    },
+    table: table
+  });
+
+  const deleteAllocation = useDeleteApiFormModal({
+    url: ApiEndpoints.build_item_list,
+    pk: selectedAllocation,
+    title: t`Delete Stock Allocation`,
+    table: table
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       let part = record.part_detail ?? {};
@@ -653,10 +680,12 @@ export default function BuildLineTable({
           <BuildLineSubTable
             lineItem={record}
             onEditAllocation={(pk: number) => {
-              // TODO
+              setSelectedAllocation(pk);
+              editAllocation.open();
             }}
             onDeleteAllocation={(pk: number) => {
-              // TODO
+              setSelectedAllocation(pk);
+              deleteAllocation.open();
             }}
           />
         );
@@ -670,6 +699,8 @@ export default function BuildLineTable({
       {newBuildOrder.modal}
       {allocateStock.modal}
       {deallocateStock.modal}
+      {editAllocation.modal}
+      {deleteAllocation.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}
         tableState={table}
