@@ -2734,6 +2734,15 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             },
             {
+                field: 'trackable',
+                title: '{% trans "Trackable" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.part_detail.trackable);
+                }
+            },
+            {
                 field: 'unit_quantity',
                 sortable: true,
                 title: '{% trans "Unit Quantity" %}',
