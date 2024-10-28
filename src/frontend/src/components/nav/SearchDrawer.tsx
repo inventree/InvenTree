@@ -70,8 +70,8 @@ function QueryResultGroup({
 
   return (
     <Paper
+      withBorder
       shadow="sm"
-      radius="xs"
       p="md"
       key={`paper-${query.model}`}
       aria-label={`search-group-${query.model}`}
@@ -391,7 +391,6 @@ export function SearchDrawer({
             <ActionIcon
               size="lg"
               variant="transparent"
-              radius="xs"
               onClick={() => searchQuery.refetch()}
             >
               <IconRefresh />
@@ -400,7 +399,7 @@ export function SearchDrawer({
           <Menu>
             <Menu.Target>
               <Tooltip label={t`Search Options`} position="bottom-end">
-                <ActionIcon size="lg" variant="transparent" radius="xs">
+                <ActionIcon size="lg" variant="transparent">
                   <IconSettings />
                 </ActionIcon>
               </Tooltip>
@@ -414,7 +413,6 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchRegex(event.currentTarget.checked)
                   }
-                  radius="sm"
                 />
               </Menu.Item>
               <Menu.Item>
@@ -424,7 +422,6 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchWhole(event.currentTarget.checked)
                   }
-                  radius="sm"
                 />
               </Menu.Item>
             </Menu.Dropdown>
