@@ -2,7 +2,6 @@
 
 import os
 
-from django.test import tag
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
@@ -35,8 +34,6 @@ class ViewTests(InvenTreeTestCase):
 
         return str(response.content.decode())
 
-    # TODO: Replace this with a PUI test
-    @tag('cui')
     def test_url_login(self):
         """Test logging in via arguments."""
         # Log out
