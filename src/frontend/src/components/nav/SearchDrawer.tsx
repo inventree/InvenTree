@@ -101,10 +101,11 @@ function QueryResultGroup({
         <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
+              underline="never"
               onClick={(event: any) =>
                 onResultClick(query.model, result.pk, event)
               }
-              key={result.pk}
+              key={`result-${query.model}-${result.pk}`}
             >
               <RenderInstance instance={result} model={query.model} />
             </Anchor>
