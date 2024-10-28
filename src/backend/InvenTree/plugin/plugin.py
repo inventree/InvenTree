@@ -375,6 +375,11 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
+        from plugin.registry import registry
+
+        if registry.is_loading:
+            return None
+
         config = self.plugin_config()
         if config:
             return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
