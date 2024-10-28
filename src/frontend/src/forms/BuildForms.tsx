@@ -17,7 +17,10 @@ import {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import {
+  TableFieldErrorWrapper,
+  TableFieldRowProps
+} from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -210,7 +213,11 @@ function BuildOutputFormRow({
         <Table.Td>
           <PartColumn part={record.part_detail} />
         </Table.Td>
-        <Table.Td>{serial}</Table.Td>
+        <Table.Td>
+          <TableFieldErrorWrapper props={props} errorKey="output">
+            {serial}
+          </TableFieldErrorWrapper>
+        </Table.Td>
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
           <StatusRenderer status={record.status} type={ModelType.stockitem} />{' '}
@@ -259,7 +266,7 @@ export function useCompleteBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
+        headers: [t`Part`, t`Build Output`, t`Batch`, t`Status`]
       },
       status_custom_key: {},
       location: {
