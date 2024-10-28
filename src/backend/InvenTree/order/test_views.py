@@ -1,8 +1,5 @@
 """Unit tests for Order views (see views.py)."""
 
-from django.test import tag
-from django.urls import reverse
-
 from InvenTree.unit_test import InvenTreeTestCase
 
 
@@ -33,18 +30,3 @@ class OrderViewTestCase(InvenTreeTestCase):
         'return_order.add',
         'return_order.delete',
     ]
-
-
-@tag('cui')
-class PurchaseOrderTests(OrderViewTestCase):
-    """Tests for PurchaseOrder views."""
-
-    def test_po_export(self):
-        """Export PurchaseOrder."""
-        response = self.client.get(
-            reverse('po-export', args=(1,)),
-            headers={'x-requested-with': 'XMLHttpRequest'},
-        )
-
-        # Response should be streaming-content (file download)
-        self.assertIn('streaming_content', dir(response))
