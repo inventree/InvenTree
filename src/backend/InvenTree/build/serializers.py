@@ -1409,6 +1409,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         queryset = queryset.prefetch_related(
             'allocations',
             'allocations__stock_item',
+            'allocations__stock_item__part',
             'allocations__stock_item__location',
 
             'bom_item__sub_part__stock_items',
