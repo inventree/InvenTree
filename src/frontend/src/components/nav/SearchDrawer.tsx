@@ -14,7 +14,8 @@ import {
   Space,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
@@ -376,7 +377,6 @@ export function SearchDrawer({
           <TextInput
             aria-label="global-search-input"
             placeholder={t`Enter search text`}
-            radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
             leftSection={<IconSearch size="0.8rem" />}
@@ -387,19 +387,23 @@ export function SearchDrawer({
             }
             styles={{ root: { width: '100%' } }}
           />
-          <ActionIcon
-            size="lg"
-            variant="outline"
-            radius="xs"
-            onClick={() => searchQuery.refetch()}
-          >
-            <IconRefresh />
-          </ActionIcon>
+          <Tooltip label={t`Refresh search results`} position="bottom-end">
+            <ActionIcon
+              size="lg"
+              variant="transparent"
+              radius="xs"
+              onClick={() => searchQuery.refetch()}
+            >
+              <IconRefresh />
+            </ActionIcon>
+          </Tooltip>
           <Menu>
             <Menu.Target>
-              <ActionIcon size="lg" variant="outline" radius="xs">
-                <IconSettings />
-              </ActionIcon>
+              <Tooltip label={t`Search Options`} position="bottom-end">
+                <ActionIcon size="lg" variant="transparent" radius="xs">
+                  <IconSettings />
+                </ActionIcon>
+              </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>{t`Search Options`}</Menu.Label>
