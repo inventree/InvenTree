@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
   DataTableCellClickHandler,
+  DataTableRowExpansionProps,
   DataTableSortStatus
 } from 'mantine-datatable';
 import React, {
@@ -103,7 +104,7 @@ export type InvenTreeTableProps<T = any> = {
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
-  rowExpansion?: any;
+  rowExpansion?: DataTableRowExpansionProps<T>;
   idAccessor?: string;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
@@ -633,6 +634,33 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.refreshTable();
   }
 
+  /**
+   * Memoize row expansion options:
+   * - If rowExpansion is not provided, return undefined
+   * - Otherwise, return the rowExpansion object
+   * - Utilize the useTable hook to track expanded rows
+   */
+  const rowExpansion: DataTableRowExpansionProps<T> | undefined =
+    useMemo(() => {
+      if (!props.rowExpansion) {
+        return undefined;
+      }
+
+      return {
+        ...props.rowExpansion,
+        expanded: {
+          recordIds: tableState.expandedRecords,
+          onRecordIdsChange: (ids: any[]) => {
+            tableState.setExpandedRecords(ids);
+          }
+        }
+      };
+    }, [
+      tableState.expandedRecords,
+      tableState.setExpandedRecords,
+      props.rowExpansion
+    ]);
+
   const optionalParams = useMemo(() => {
     let optionalParamsa: Record<string, any> = {};
     if (tableProps.enablePagination) {
@@ -779,7 +807,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               onSelectedRecordsChange={
                 enableSelection ? onSelectedRecordsChange : undefined
               }
-              rowExpansion={tableProps.rowExpansion}
+              rowExpansion={rowExpansion}
               rowStyle={tableProps.rowStyle}
               fetching={isFetching}
               noRecordsText={missingRecordsText}

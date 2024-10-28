@@ -1,12 +1,17 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Space, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconChevronCompactDown,
+  IconChevronCompactRight,
+  IconChevronDown,
+  IconChevronRight,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
   IconWand
 } from '@tabler/icons-react';
+import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -184,10 +189,30 @@ export default function BuildLineTable({
     return [
       {
         accessor: 'bom_item',
+        title: t`Component Part`,
         ordering: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
+        render: (record: any) => {
+          const hasAllocatedItems = record?.allocated_items > 0;
+
+          return (
+            <Group wrap="nowrap">
+              <ActionIcon
+                size="sm"
+                variant="transparent"
+                disabled={!hasAllocatedItems}
+              >
+                {table.isRowExpanded(record.pk) ? (
+                  <IconChevronDown />
+                ) : (
+                  <IconChevronRight />
+                )}
+              </ActionIcon>
+              <PartColumn part={record.part_detail} />
+            </Group>
+          );
+        }
       },
       {
         accessor: 'part_detail.IPN',
@@ -280,7 +305,7 @@ export default function BuildLineTable({
         }
       }
     ];
-  }, [isActive]);
+  }, [isActive, table]);
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
@@ -517,6 +542,20 @@ export default function BuildLineTable({
     table.selectedRecords
   ]);
 
+  // Control row expansion
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        // Only items with allocated stock can be expanded
+        return record?.allocated_items > 0;
+      },
+      content: ({ record }: { record: any }) => {
+        return <div>hello world: {record.pk}</div>;
+      }
+    };
+  }, []);
+
   return (
     <>
       {autoAllocateStock.modal}
@@ -537,7 +576,8 @@ export default function BuildLineTable({
           tableFilters: tableFilters,
           rowActions: rowActions,
           enableDownload: true,
-          enableSelection: true
+          enableSelection: true,
+          rowExpansion: rowExpansion
         }}
       />
     </>
