@@ -81,8 +81,6 @@
                         {% block sidebar %}
                         <!-- Sidebar goes here -->
                         {% endblock sidebar %}
-                        {% include "plugin/panel_menu.html" %}
-                        {% include "sidebar_toggle.html" with target='sidebar' %}
                     </ul>
                 </div>
             </div>
@@ -137,25 +135,16 @@
             {% endblock content %}
         </main>
     </div>
-
-    {% include 'modals.html' %}
-    {% include "notifications.html" %}
-    {% include "search.html" %}
 </div>
 
 
 <!-- general JS -->
-<script defer type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
-<script defer type='text/javascript' src="{% static 'script/inventree/message.js' %}"></script>
-
 {% block js_load %}
 {% endblock js_load %}
 
 <script defer type='text/javascript'>
 
 $(document).ready(function () {
-
-    {% include "plugin/panel_js.html" %}
 
 {% block js_ready %}
 {% endblock js_ready %}
