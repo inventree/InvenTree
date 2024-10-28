@@ -44,7 +44,7 @@ class BuildTestSimple(InvenTreeTestCase):
     def test_url(self):
         """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
-        self.assertEqual(b1.get_absolute_url(), 'TOBEREFACTORED')
+        self.assertEqual(b1.get_absolute_url(), '/platform/manufacturing/build-order/1')
 
     def test_is_complete(self):
         """Test build completion status"""

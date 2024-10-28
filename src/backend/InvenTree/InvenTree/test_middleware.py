@@ -32,15 +32,12 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
 
-        # check that account things go through
-        self.check_path(reverse('account_login'))
+        # check that account things are rereouted
+        self.check_path(reverse('account_login'), 302)
 
         # check that frontend code is redirected to login
         response = self.check_path(reverse('stats'), 302)
         self.assertEqual(response.url, '/accounts/login/?next=/stats/')
-
-        # check that a 401 is raised
-        self.check_path(reverse('settings.js'), 401)
 
     def test_token_auth(self):
         """Test auth with token auth."""
