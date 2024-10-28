@@ -1,9 +1,7 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Alert, Group, Space, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Paper, Stack, Text } from '@mantine/core';
 import {
   IconArrowRight,
-  IconChevronCompactDown,
-  IconChevronCompactRight,
   IconChevronDown,
   IconChevronRight,
   IconCircleMinus,
@@ -11,7 +9,7 @@ import {
   IconTool,
   IconWand
 } from '@tabler/icons-react';
-import { DataTableRowExpansionProps } from 'mantine-datatable';
+import { DataTable, DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,12 +31,112 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn, PartColumn } from '../ColumnRenderers';
+import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import {
+  RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction
+} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
+/**
+ * Render a sub-table of allocated stock against a particular build line.
+ *
+ * - Renders a simplified table of stock allocated against the build line
+ * - Provides "edit" and "delete" actions for each allocation
+ *
+ * Note: We expect that the "lineItem" object contains an allocations[] list
+ */
+function BuildLineSubTable({
+  lineItem,
+  onEditAllocation,
+  onDeleteAllocation
+}: {
+  lineItem: any;
+  onEditAllocation: (pk: number) => void;
+  onDeleteAllocation: (pk: number) => void;
+}) {
+  const user = useUserState();
+
+  const tableColumns: any[] = useMemo(() => {
+    return [
+      {
+        accessor: 'part',
+        title: t`Part`,
+        render: (record: any) => {
+          return <PartColumn part={record.part_detail} />;
+        }
+      },
+      {
+        accessor: 'quantity',
+        title: t`Quantity`,
+        render: (record: any) => {
+          if (!!record.stock_item_detail?.serial) {
+            return `# ${record.stock_item_detail.serial}`;
+          }
+          return record.quantity;
+        }
+      },
+      {
+        accessor: 'stock_item_detail.batch',
+        title: t`Batch`
+      },
+      LocationColumn({
+        accessor: 'location_detail'
+      }),
+      {
+        accessor: '---actions---',
+        title: ' ',
+        width: 50,
+        render: (record: any) => {
+          return (
+            <RowActions
+              title={t`Actions`}
+              index={record.pk}
+              actions={[
+                RowEditAction({
+                  hidden: !user.hasChangeRole(UserRoles.build),
+                  onClick: () => {
+                    onEditAllocation(record.pk);
+                  }
+                }),
+                RowDeleteAction({
+                  hidden: !user.hasDeleteRole(UserRoles.build),
+                  onClick: () => {
+                    onDeleteAllocation(record.pk);
+                  }
+                })
+              ]}
+            />
+          );
+        }
+      }
+    ];
+  }, [user, onEditAllocation, onDeleteAllocation]);
+
+  return (
+    <Paper p="md">
+      <Stack gap="xs">
+        <DataTable
+          withTableBorder
+          withColumnBorders
+          striped
+          pinLastColumn
+          idAccessor="pk"
+          columns={tableColumns}
+          records={lineItem.allocations}
+        />
+      </Stack>
+    </Paper>
+  );
+}
+
+/**
+ * Render a table of build lines for a particular build.
+ */
 export default function BuildLineTable({
   buildId,
   build,
@@ -551,10 +649,20 @@ export default function BuildLineTable({
         return record?.allocated_items > 0;
       },
       content: ({ record }: { record: any }) => {
-        return <div>hello world: {record.pk}</div>;
+        return (
+          <BuildLineSubTable
+            lineItem={record}
+            onEditAllocation={(pk: number) => {
+              // TODO
+            }}
+            onDeleteAllocation={(pk: number) => {
+              // TODO
+            }}
+          />
+        );
       }
     };
-  }, []);
+  }, [table.refreshTable, buildId]);
 
   return (
     <>
