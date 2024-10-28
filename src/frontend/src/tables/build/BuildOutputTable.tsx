@@ -1,7 +1,19 @@
 import { t } from '@lingui/macro';
-import { Divider, Drawer, Group, Paper, Space, Text } from '@mantine/core';
+import {
+  Alert,
+  Divider,
+  Drawer,
+  Group,
+  Paper,
+  Space,
+  Text
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -21,7 +33,6 @@ import {
 } from '../../forms/BuildForms';
 import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -95,7 +106,6 @@ function OutputAllocationDrawer({
         <Divider />
         <Paper p="md">
           <BuildLineTable
-            simplified
             build={build}
             output={output}
             params={{
@@ -155,7 +165,7 @@ export default function BuildOutputTable({
   }, [partId, testTemplates]);
 
   // Fetch the "tracked" BOM items associated with the partId
-  const { data: trackedItems } = useQuery({
+  const { data: trackedItems, refetch: refetchTrackedItems } = useQuery({
     queryKey: ['trackeditems', buildId],
     queryFn: async () => {
       if (!buildId || buildId < 0) {
@@ -181,7 +191,7 @@ export default function BuildOutputTable({
   // Ensure base table data is updated correctly
   useEffect(() => {
     table.refreshTable();
-  }, [hasTrackedItems, hasRequiredTests]);
+  }, [testTemplates, trackedItems, hasTrackedItems, hasRequiredTests]);
 
   // Format table records
   const formatRecords = useCallback(
@@ -222,13 +232,11 @@ export default function BuildOutputTable({
           let allocated = 0;
 
           // Find all allocations which match the build output
-          let allocations = item.allocations.filter(
-            (allocation: any) => allocation.install_into == record.pk
-          );
-
-          allocations.forEach((allocation: any) => {
-            allocated += allocation.quantity;
-          });
+          item.allocations
+            ?.filter((allocation: any) => allocation.install_into == record.pk)
+            ?.forEach((allocation: any) => {
+              allocated += allocation.quantity;
+            });
 
           if (allocated >= item.bom_item_detail.quantity) {
             fullyAllocatedCount += 1;
@@ -300,6 +308,32 @@ export default function BuildOutputTable({
     table: table
   });
 
+  const deallocateBuildOutput = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_deallocate,
+    pk: build.pk,
+    title: t`Deallocate Stock`,
+    preFormContent: (
+      <Alert
+        color="yellow"
+        icon={<IconExclamationCircle />}
+        title={t`Deallocate Stock`}
+      >
+        {t`This action will deallocate all stock from the selected build output`}
+      </Alert>
+    ),
+    fields: {
+      output: {
+        hidden: true
+      }
+    },
+    initialData: {
+      output: selectedOutputs[0]?.pk
+    },
+    onFormSuccess: () => {
+      refetchTrackedItems();
+    }
+  });
+
   const tableActions = useMemo(() => {
     return [
       <ActionButton
@@ -364,7 +398,10 @@ export default function BuildOutputTable({
           color: 'red',
           hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon="minus" />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedOutputs([record]);
+            deallocateBuildOutput.open();
+          }
         },
         {
           title: t`Complete`,
@@ -516,6 +553,7 @@ export default function BuildOutputTable({
       {completeBuildOutputsForm.modal}
       {scrapBuildOutputsForm.modal}
       {editBuildOutput.modal}
+      {deallocateBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
       <OutputAllocationDrawer
         build={build}

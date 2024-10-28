@@ -145,18 +145,19 @@ function BuildLineSubTable({
 export default function BuildLineTable({
   build,
   output,
-  simplified,
   params = {}
 }: Readonly<{
   build: any;
   output?: any;
-  simplified?: boolean;
   params?: any;
 }>) {
-  const table = useTable(simplified ? 'buildline-simplified' : 'buildline');
   const user = useUserState();
   const navigate = useNavigate();
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
+  const hasOutput: boolean = useMemo(() => !!output?.pk, [output]);
+
+  const table = useTable(hasOutput ? 'buildline-output' : 'buildline');
 
   const isActive: boolean = useMemo(() => {
     return (
@@ -336,28 +337,28 @@ export default function BuildLineTable({
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
         ordering: 'optional',
-        hidden: simplified
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable',
-        hidden: simplified
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
         ordering: 'allow_variants',
-        hidden: simplified
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.inherited',
         ordering: 'inherited',
         title: t`Gets Inherited`,
-        hidden: simplified
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
         ordering: 'trackable',
-        hidden: simplified
+        hidden: hasOutput
       }),
       {
         accessor: 'bom_item_detail.quantity',
@@ -401,6 +402,7 @@ export default function BuildLineTable({
       {
         accessor: 'allocated',
         switchable: false,
+        sortable: true,
         hidden: !isActive,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
@@ -415,7 +417,7 @@ export default function BuildLineTable({
         }
       }
     ];
-  }, [simplified, isActive, table, output]);
+  }, [hasOutput, isActive, table, output]);
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
@@ -483,12 +485,12 @@ export default function BuildLineTable({
         hidden: true
       },
       output: {
-        hidden: true,
-        value: null
+        hidden: true
       }
     },
     initialData: {
-      build_line: selectedLine
+      build_line: selectedLine,
+      output: output?.pk ?? null
     },
     preFormContent: (
       <Alert color="red" title={t`Deallocate Stock`}>
@@ -622,13 +624,13 @@ export default function BuildLineTable({
   const tableActions = useMemo(() => {
     const production = build.status == buildStatus.PRODUCTION;
     const canEdit = user.hasChangeRole(UserRoles.build);
-    const visible = production && canEdit && !simplified;
+    const visible = production && canEdit;
     return [
       <ActionButton
         key="auto-allocate"
         icon={<IconWand />}
         tooltip={t`Auto Allocate Stock`}
-        hidden={!visible}
+        hidden={!visible || hasOutput}
         color="blue"
         onClick={() => {
           autoAllocateStock.open();
@@ -642,14 +644,17 @@ export default function BuildLineTable({
         disabled={!table.hasSelectedRecords}
         color="green"
         onClick={() => {
-          setSelectedRows(
-            table.selectedRecords.filter(
-              (r) =>
-                r.allocated < r.quantity &&
-                !r.trackable &&
-                !r.bom_item_detail.consumable
-            )
-          );
+          let rows = table.selectedRecords
+            .filter((r) => r.allocatedQuantity < r.requiredQuantity)
+            .filter((r) => !r.bom_item_detail?.consumable);
+
+          if (hasOutput) {
+            rows = rows.filter((r) => r.trackable);
+          } else {
+            rows = rows.filter((r) => !r.trackable);
+          }
+
+          setSelectedRows(rows);
           allocateStock.open();
         }}
       />,
@@ -657,7 +662,7 @@ export default function BuildLineTable({
         key="deallocate-stock"
         icon={<IconCircleMinus />}
         tooltip={t`Deallocate Stock`}
-        hidden={!visible}
+        hidden={!visible || hasOutput}
         disabled={table.hasSelectedRecords}
         color="red"
         onClick={() => {
@@ -670,7 +675,7 @@ export default function BuildLineTable({
     user,
     build,
     buildStatus,
-    simplified,
+    hasOutput,
     table.hasSelectedRecords,
     table.selectedRecords
   ]);
@@ -721,7 +726,7 @@ export default function BuildLineTable({
       allowMultiple: true,
       expandable: ({ record }: { record: any }) => {
         // Only items with allocated stock can be expanded
-        return record.allocatedQuantity > 0;
+        return table.isRowExpanded(record.pk) || record.allocatedQuantity > 0;
       },
       content: ({ record }: { record: any }) => {
         return (
@@ -739,7 +744,7 @@ export default function BuildLineTable({
         );
       }
     };
-  }, [output]);
+  }, [table.isRowExpanded, output]);
 
   return (
     <>
