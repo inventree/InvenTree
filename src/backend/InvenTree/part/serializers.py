@@ -1608,6 +1608,7 @@ class BomItemSerializer(
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
+        substitutes = kwargs.pop('substitutes', True)
 
         super().__init__(*args, **kwargs)
 
@@ -1616,6 +1617,9 @@ class BomItemSerializer(
 
         if not sub_part_detail:
             self.fields.pop('sub_part_detail', None)
+
+        if not substitutes:
+            self.fields.pop('substitutes', None)
 
         if not pricing:
             self.fields.pop('pricing_min', None)

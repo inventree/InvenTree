@@ -33,7 +33,7 @@ The source data used in the demo instance can be found on our [GitHub page](http
 
 ### Local Setup
 
-If you wish to install the demo dataset locally (for initial testing), you can run the following command:
+If you wish to install the demo dataset locally (for initial testing), you can run the following command (via [invoke](./start/invoke.md)):
 
 ```bash
 invoke dev.setup-test -i
@@ -48,7 +48,7 @@ This will install the demo dataset into your local InvenTree instance.
 
 ### Clear Data
 
-To clear demo data from your instance, and start afresh with a clean database, you can run the following command:
+To clear demo data from your instance, and start afresh with a clean database, you can run the following command (via [invoke](./start/invoke.md)):
 
 ```bash
 invoke dev.delete-data

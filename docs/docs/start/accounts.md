@@ -17,7 +17,7 @@ This account is created when you first run the InvenTree server instance. The us
 
 ### Create Superuser
 
-Another way to create an administrator account is to use the `superuser` command. This will create a new superuser account with the specified username and password.
+Another way to create an administrator account is to use the `superuser` command (via [invoke](./invoke.md)). This will create a new superuser account with the specified username and password.
 
 ```bash
 invoke superuser

@@ -95,7 +95,7 @@ def notification_list(context, *args, **kwargs):
             'description': a.__doc__,
             'name': a.__name__,
         }
-        for a in storage.liste
+        for a in storage.methods
     ]
 
 
