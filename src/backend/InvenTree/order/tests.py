@@ -46,6 +46,11 @@ class OrderTest(TestCase):
                 self.assertEqual(
                     order.get_absolute_url(), f'/order/purchase-order/{pk}/'
                 )
+            else:
+                self.assertEqual(
+                    order.get_absolute_url(),
+                    f'/platform/purchasing/purchase-order/{pk}',
+                )
 
             self.assertEqual(order.reference, f'PO-{pk:04d}')
 
