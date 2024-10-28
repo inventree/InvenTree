@@ -39,8 +39,8 @@ class MiddlewareTests(InvenTreeTestCase):
     def test_token_auth(self):
         """Test auth with token auth."""
         # get token
-        # response = self.client.get(reverse('api-token'), format='json', data={})
-        # token = response.data['token']
+        response = self.client.get(reverse('api-token'), format='json', data={})
+        token = response.data['token']
 
         # logout
         self.client.logout()
@@ -54,7 +54,7 @@ class MiddlewareTests(InvenTreeTestCase):
         self.check_path(reverse('api-license'), 401)
 
         # request with token
-        # self.check_path(reverse('api-license'), HTTP_Authorization=f'Token {token}')
+        self.check_path(reverse('api-license'), HTTP_Authorization=f'Token {token}')
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
