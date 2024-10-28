@@ -1301,7 +1301,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
             # Annotated fields
             'allocated',
-            'allocated_items',
             'in_production',
             'on_order',
             'available_stock',
@@ -1368,12 +1367,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     # Total quantity of allocated stock
     allocated = serializers.FloatField(
         label=_('Allocated Stock'),
-        read_only=True
-    )
-
-    # Total number of individual allocations
-    allocated_items = serializers.IntegerField(
-        label=_('Allocated Items'),
         read_only=True
     )
 
@@ -1486,10 +1479,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             allocated=Coalesce(
                 Sum('allocations__quantity'), 0,
                 output_field=models.DecimalField()
-            ),
-            allocated_items=Coalesce(
-                Count('allocations'), 0,
-                output_field=models.IntegerField()
             )
         )
 
