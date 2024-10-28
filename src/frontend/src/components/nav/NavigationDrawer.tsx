@@ -15,6 +15,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
@@ -47,6 +48,9 @@ export function NavigationDrawer({
 
 function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
+
   const [scrollHeight, setScrollHeight] = useState(0);
   const ref = useRef(null);
   const { height } = useViewportSize();
@@ -112,10 +116,11 @@ function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
         id: 'barcode',
         title: t`Scan Barcode`,
         link: '/scan',
-        icon: 'barcode'
+        icon: 'barcode',
+        hidden: !globalSettings.isSet('BARCODE_ENABLE')
       }
     ];
-  }, [user]);
+  }, [user, globalSettings]);
 
   const menuItemsSettings: MenuLinkItem[] = useMemo(() => {
     return [
