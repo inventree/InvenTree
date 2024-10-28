@@ -330,16 +330,14 @@ export default function BuildLineTable({
   // Calculate the total number of allocations against a particular build line and output
   const getRowAllocationCount = useCallback(
     (record: any) => {
-      const output_id = output?.pk ?? undefined;
+      let allocations = filterAllocationsForOutput(record.allocations, output);
 
       let count = 0;
 
       // Allocations matching the output ID, or all allocations if no output ID is specified
-      record.allocations
-        ?.filter((a: any) => a.install_into == output_id || !output_id)
-        .forEach((a: any) => {
-          count += a.quantity;
-        });
+      allocations.forEach((a: any) => {
+        count += a.quantity;
+      });
 
       return count;
     },

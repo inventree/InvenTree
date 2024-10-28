@@ -361,13 +361,18 @@ export default function BuildOutputTable({
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
+          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon="plus" />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedOutputs([record]);
+            openDrawer();
+          }
         },
         {
           title: t`Deallocate`,
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
+          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon="minus" />,
           onClick: notYetImplemented
         },
@@ -410,7 +415,7 @@ export default function BuildOutputTable({
         }
       ];
     },
-    [user, partId]
+    [user, partId, hasTrackedItems]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
