@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 272
+INVENTREE_API_VERSION = 273
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v273 - 2024-10-28 : https://github.com/inventree/InvenTree/pull/8376
+    - Fixes for the BuildLine API endpoint
 
 v272 - 2024-10-25 : https://github.com/inventree/InvenTree/pull/8343
     - Adjustments to BuildLine API serializers
