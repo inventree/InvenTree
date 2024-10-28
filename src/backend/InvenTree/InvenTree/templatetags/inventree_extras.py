@@ -8,7 +8,6 @@ from django import template
 from django.conf import settings as djangosettings
 from django.templatetags.static import StaticNode
 from django.urls import NoReverseMatch, reverse
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -393,117 +392,6 @@ def global_settings(*args, **kwargs):
 def visible_global_settings(*args, **kwargs):
     """Return any global settings which are not marked as 'hidden'."""
     return common.models.InvenTreeSetting.allValues(exclude_hidden=True)
-
-
-@register.simple_tag()
-def progress_bar(val, max_val, *args, **kwargs):
-    """Render a progress bar element."""
-    item_id = kwargs.get('id', 'progress-bar')
-
-    val = InvenTree.helpers.normalize(val)
-    max_val = InvenTree.helpers.normalize(max_val)
-
-    if val > max_val:
-        style = 'progress-bar-over'
-    elif val < max_val:
-        style = 'progress-bar-under'
-    else:
-        style = ''
-
-    percent = float(val / max_val) * 100 if max_val != 0 else 0
-
-    if percent > 100:
-        percent = 100
-    elif percent < 0:
-        percent = 0
-
-    style_tags = []
-
-    max_width = kwargs.get('max_width')
-
-    if max_width:
-        style_tags.append(f'max-width: {max_width};')
-
-    html = f"""
-    <div id='{item_id}' class='progress' style='{' '.join(style_tags)}'>
-        <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
-        <div class='progress-value'>{val} / {max_val}</div>
-    </div>
-    """
-
-    return mark_safe(html)
-
-
-@register.simple_tag()
-def get_color_theme_css(user):
-    """Return the custom theme .css file for the selected user."""
-    user_theme_name = get_user_color_theme(user)
-    # Build path to CSS sheet
-    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
-
-    # Build static URL
-    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
-
-    return inventree_css_static_url
-
-
-@register.simple_tag()
-def get_user_color_theme(user):
-    """Get current user color theme."""
-    from common.models import ColorTheme
-
-    try:
-        if not user.is_authenticated:
-            return 'default'
-    except Exception:
-        return 'default'
-
-    try:
-        user_theme = ColorTheme.objects.filter(user_obj=user).get()
-        user_theme_name = user_theme.name
-        if not user_theme_name or not ColorTheme.is_valid_choice(user_theme):
-            user_theme_name = 'default'
-    except ColorTheme.DoesNotExist:
-        user_theme_name = 'default'
-
-    return user_theme_name
-
-
-@register.simple_tag()
-def get_available_themes(*args, **kwargs):
-    """Return the available theme choices."""
-    themes = []
-
-    from common.models import ColorTheme
-
-    for key, name in ColorTheme.get_color_themes_choices():
-        themes.append({'key': key, 'name': name})
-
-    return themes
-
-
-@register.simple_tag()
-def primitive_to_javascript(primitive):
-    """Convert a python primitive to a javascript primitive.
-
-    e.g. True -> true
-         'hello' -> '"hello"'
-    """
-    if type(primitive) is bool:
-        return str(primitive).lower()
-
-    elif type(primitive) in [int, float]:
-        return primitive
-    # Wrap with quotes
-    return format_html("'{}'", primitive)
-
-
-@register.simple_tag()
-def js_bool(val):
-    """Return a javascript boolean value (true or false)."""
-    if val:
-        return 'true'
-    return 'false'
 
 
 @register.filter
