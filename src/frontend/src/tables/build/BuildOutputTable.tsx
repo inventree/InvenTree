@@ -153,7 +153,7 @@ export default function BuildOutputTable({
 
           // Find all allocations which match the build output
           let allocations = item.allocations.filter(
-            (allocation: any) => (allocation.install_into = record.pk)
+            (allocation: any) => allocation.install_into == record.pk
           );
 
           allocations.forEach((allocation: any) => {
