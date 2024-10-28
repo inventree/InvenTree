@@ -2505,6 +2505,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
         url: '{% url "api-build-item-list" %}',
         queryParams: {
             build_line: build_line.pk,
+            output: options.output ?? undefined,
         },
         showHeader: false,
         columns: [
@@ -2609,9 +2610,10 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
  */
 function loadBuildLineTable(table, build_id, options={}) {
 
+    const params = options.params || {};
+    const output = options.output;
+
     let name = 'build-lines';
-    let params = options.params || {};
-    let output = options.output;
 
     params.build = build_id;
 
@@ -2647,6 +2649,7 @@ function loadBuildLineTable(table, build_id, options={}) {
         detailFormatter: function(_index, row, element) {
             renderBuildLineAllocationTable(element, row, {
                 parent_table: table,
+                output: output,
             });
         },
         formatNoMatches: function() {
