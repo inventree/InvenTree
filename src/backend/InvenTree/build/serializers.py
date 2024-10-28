@@ -1307,6 +1307,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'available_variant_stock',
             'external_stock',
 
+            # Related fields
+            'allocations',
+
             # Extra fields only for data export
             'part_description',
             'part_category_name',
@@ -1329,6 +1332,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part_description = serializers.CharField(source='bom_item.sub_part.description', label=_('Part Description'), read_only=True)
     part_category_id = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part.category', label=_('Part Category ID'), read_only=True)
     part_category_name = serializers.CharField(source='bom_item.sub_part.category.name', label=_('Part Category Name'), read_only=True)
+
+    allocations = BuildItemSerializer(many=True, read_only=True)
 
     # BOM item info fields
     reference = serializers.CharField(source='bom_item.reference', label=_('Reference'), read_only=True)
@@ -1403,6 +1408,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
             'allocations',
+            'allocations__stock_item',
+            'allocations__stock_item__location',
 
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
