@@ -203,7 +203,7 @@ frontendpatterns = [
     # Add a redirect for login views
     path(
         'accounts/login/',
-        RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='account_login',
     ),
 ]
