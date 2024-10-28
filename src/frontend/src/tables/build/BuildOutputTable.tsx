@@ -1,18 +1,8 @@
 import { t } from '@lingui/macro';
-import {
-  Divider,
-  Drawer,
-  Group,
-  Loader,
-  Paper,
-  Space,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Divider, Drawer, Group, Paper, Space, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
@@ -520,15 +510,6 @@ export default function BuildOutputTable({
   const [drawerOpen, { open: openDrawer, close: closeDrawer }] =
     useDisclosure(false);
 
-  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
-    return {
-      allowMultiple: true,
-      content: ({ record }: { record: any }) => {
-        return <BuildLineTable build={build} output={record} />;
-      }
-    };
-  }, [buildId]);
-
   return (
     <>
       {addBuildOutput.modal}
@@ -555,11 +536,9 @@ export default function BuildOutputTable({
           },
           enableLabels: true,
           enableReports: true,
-          // modelType: ModelType.stockitem,
           dataFormatter: formatRecords,
           tableActions: tableActions,
           rowActions: rowActions,
-          // rowExpansion: rowExpansion,
           enableSelection: true,
           onRowClick: (record: any) => {
             if (hasTrackedItems && !!record.serial) {
