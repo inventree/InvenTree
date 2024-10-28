@@ -37,6 +37,9 @@ The following files required for this setup are provided with the InvenTree sour
 
 Download these files to a directory on your local machine.
 
+!!! warning "File Extensions"
+    If your computer adds *.txt* extensions to any of the downloaded files, rename the file and remove the added extension before continuing!
+
 !!! success "Working Directory"
     This tutorial assumes you are working from a directory where all of these files are located.
 
