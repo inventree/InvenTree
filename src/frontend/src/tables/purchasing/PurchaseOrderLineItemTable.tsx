@@ -35,6 +35,7 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
@@ -238,6 +239,16 @@ export function PurchaseOrderLineItemTable({
     ];
   }, [orderId, user]);
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'received',
+        label: t`Received`,
+        description: t`Show line items which have been received`
+      }
+    ];
+  }, []);
+
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
@@ -384,6 +395,7 @@ export function PurchaseOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.supplierpart,
           modelField: 'part'
         }}
