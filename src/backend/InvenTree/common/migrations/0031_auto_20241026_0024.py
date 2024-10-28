@@ -28,7 +28,7 @@ def update_news_feed_urls(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('common', '0030_barcodescanresult'),
+        ('common', '0016_alter_notificationentry_updated'),
     ]
 
     operations = [
