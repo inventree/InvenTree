@@ -45,16 +45,16 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
         # this should raise a 401
-        self.check_path(reverse('api-doc'), 302)
+        self.check_path(reverse('api-license'), 401)
 
         # request with token
-        self.check_path(reverse('api-doc'), HTTP_Authorization=f'Token {token}')
+        self.check_path(reverse('api-license'), HTTP_Authorization=f'Token {token}')
 
         # Request with broken token
-        self.check_path(reverse('api-doc'), 302, HTTP_Authorization='Token abcd123')
+        self.check_path(reverse('api-license'), 401, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
-        self.check_path(reverse('api-doc'), 302)
+        self.check_path(reverse('api-license'), 401)
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
