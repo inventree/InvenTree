@@ -341,8 +341,6 @@ def remove_mfa(c, mail=''):
 @task(help={'frontend': 'Build the frontend', 'clear': 'Remove existing static files'})
 def static(c, frontend=False, clear=True):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
-    manage(c, 'prerender')
-
     if frontend and node_available():
         frontend_trans(c)
         frontend_build(c)
@@ -940,17 +938,10 @@ def test_translations(c):
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
-        'cui': 'Do not run CUI tests',
     }
 )
 def test(
-    c,
-    disable_pty=False,
-    runtest='',
-    migrations=False,
-    report=False,
-    coverage=False,
-    cui=False,
+    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -985,9 +976,6 @@ def test(
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
-
-    if cui:
-        cmd += ' --exclude-tag=cui'
 
     if coverage:
         # Run tests within coverage environment, and generate report

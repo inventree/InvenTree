@@ -63,28 +63,6 @@ jobs:
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
 
-  javascript:
-    name: Style - Classic UI [JS]
-    runs-on: ubuntu-20.04
-
-    needs: ["pre-commit"]
-
-    steps:
-      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # pin@v4.2.1
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-          install: true
-      - name: Check Templated JS Files
-        run: |
-          cd .github/scripts
-          python3 check_js_templates.py
-      - name: Lint Javascript Files
-        run: |
-          python src/backend/InvenTree/manage.py prerender
-          cd src/backend && npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
-
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
@@ -257,7 +235,6 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
-          npm: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server

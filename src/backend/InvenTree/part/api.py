@@ -2250,8 +2250,6 @@ part_api_urls = [
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # BOM download
             path('bom-download/', views.BomDownload.as_view(), name='api-bom-download'),
-            # Old pricing endpoint
-            path('pricing2/', views.PartPricing.as_view(), name='part-pricing'),
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),

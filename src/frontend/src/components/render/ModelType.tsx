@@ -9,7 +9,6 @@ export interface ModelInformationInterface {
   url_overview?: string;
   url_detail?: string;
   api_endpoint: ApiEndpoints;
-  cui_detail?: string;
   admin_url?: string;
 }
 
@@ -29,7 +28,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Parts`,
     url_overview: '/part',
     url_detail: '/part/:pk/',
-    cui_detail: '/part/:pk/',
     api_endpoint: ApiEndpoints.part_list,
     admin_url: '/part/part/'
   },
@@ -52,7 +50,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Supplier Parts`,
     url_overview: '/supplierpart',
     url_detail: '/purchasing/supplier-part/:pk/',
-    cui_detail: '/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
     admin_url: '/company/supplierpart/'
   },
@@ -61,7 +58,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Manufacturer Parts`,
     url_overview: '/manufacturerpart',
     url_detail: '/purchasing/manufacturer-part/:pk/',
-    cui_detail: '/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,
     admin_url: '/company/manufacturerpart/'
   },
@@ -70,7 +66,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Part Categories`,
     url_overview: '/part/category',
     url_detail: '/part/category/:pk/',
-    cui_detail: '/part/category/:pk/',
     api_endpoint: ApiEndpoints.category_list,
     admin_url: '/part/partcategory/'
   },
@@ -79,7 +74,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Stock Items`,
     url_overview: '/stock/item',
     url_detail: '/stock/item/:pk/',
-    cui_detail: '/stock/item/:pk/',
     api_endpoint: ApiEndpoints.stock_item_list,
     admin_url: '/stock/stockitem/'
   },
@@ -88,7 +82,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Stock Locations`,
     url_overview: '/stock/location',
     url_detail: '/stock/location/:pk/',
-    cui_detail: '/stock/location/:pk/',
     api_endpoint: ApiEndpoints.stock_location_list,
     admin_url: '/stock/stocklocation/'
   },
@@ -107,7 +100,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Builds`,
     url_overview: '/manufacturing/build-order/',
     url_detail: '/manufacturing/build-order/:pk/',
-    cui_detail: '/build/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
     admin_url: '/build/build/'
   },
@@ -116,7 +108,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Build Lines`,
     url_overview: '/build/line',
     url_detail: '/build/line/:pk/',
-    cui_detail: '/build/line/:pk/',
     api_endpoint: ApiEndpoints.build_line_list
   },
   builditem: {
@@ -129,7 +120,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Companies`,
     url_overview: '/company',
     url_detail: '/company/:pk/',
-    cui_detail: '/company/:pk/',
     api_endpoint: ApiEndpoints.company_list,
     admin_url: '/company/company/'
   },
@@ -145,7 +135,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Purchase Orders`,
     url_overview: '/purchasing/purchase-order',
     url_detail: '/purchasing/purchase-order/:pk/',
-    cui_detail: '/order/purchase-order/:pk/',
     api_endpoint: ApiEndpoints.purchase_order_list,
     admin_url: '/order/purchaseorder/'
   },
@@ -159,7 +148,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Sales Orders`,
     url_overview: '/sales/sales-order',
     url_detail: '/sales/sales-order/:pk/',
-    cui_detail: '/order/sales-order/:pk/',
     api_endpoint: ApiEndpoints.sales_order_list,
     admin_url: '/order/salesorder/'
   },
@@ -175,7 +163,6 @@ export const ModelInformationDict: ModelDict = {
     label_multiple: () => t`Return Orders`,
     url_overview: '/sales/return-order',
     url_detail: '/sales/return-order/:pk/',
-    cui_detail: '/order/return-order/:pk/',
     api_endpoint: ApiEndpoints.return_order_list,
     admin_url: '/order/returnorder/'
   },
