@@ -73,7 +73,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         if self.get_setting('ENABLE_DYNAMIC_PANEL'):
             panels.append({
                 'key': 'dynamic-panel',
-                'title': 'Dynamic Part Panel',
+                'title': 'Dynamic Panel',
                 'source': self.plugin_static_file('sample_panel.js'),
                 'context': {
                     'version': INVENTREE_SW_VERSION,
