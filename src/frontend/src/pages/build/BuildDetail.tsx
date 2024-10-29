@@ -251,11 +251,7 @@ export default function BuildDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconListNumbers />,
-        content: build?.pk ? (
-          <BuildLineTable build={build} buildId={build.pk} />
-        ) : (
-          <Skeleton />
-        )
+        content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
       },
       {
         name: 'incomplete-outputs',
