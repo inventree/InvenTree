@@ -29,7 +29,8 @@ class UIFeature(TypedDict):
         description: The long-form description of the feature (optional, human readable)
         feature_type: The feature type (required, see documentation for all available types)
         options: Feature options (required, see documentation for all available options for each type)
-        source: The source of the feature (required, path to a JavaScript file).
+        context: Additional context data to be passed to the rendering function (optional, dict)
+        source: The source of the feature (required, path to a JavaScript file, with optional function name).
     """
 
     key: str
@@ -37,6 +38,7 @@ class UIFeature(TypedDict):
     description: str
     feature_type: FeatureType
     options: dict
+    context: dict
     source: str
 
 
@@ -80,7 +82,7 @@ class UserInterfaceMixin:
         self.add_mixin('ui', True, __class__)  # type: ignore
 
     def get_ui_features(
-        self, feature_type: FeatureType, context: dict, request: Request
+        self, feature_type: FeatureType, context: dict, request: Request, **kwargs
     ) -> list[UIFeature]:
         """Return a list of custom features to be injected into the UI.
 
@@ -101,7 +103,7 @@ class UserInterfaceMixin:
         }
 
         if feature_type in feature_map:
-            return feature_map[feature_type](request, context=context)
+            return feature_map[feature_type](request, context, **kwargs)
         else:
             logger.warning(f'Invalid feature type: {feature_type}')
             return []
@@ -135,7 +137,7 @@ class UserInterfaceMixin:
         return []
 
     def get_ui_template_editors(
-        self, request: Request, context: dict
+        self, request: Request, context: dict, **kwargs
     ) -> list[UIFeature]:
         """Return a list of custom template editors to be injected into the UI.
 
@@ -149,7 +151,7 @@ class UserInterfaceMixin:
         return []
 
     def get_ui_template_previews(
-        self, request: Request, context: dict
+        self, request: Request, context: dict, **kwargs
     ) -> list[UIFeature]:
         """Return a list of custom template previews to be injected into the UI.
 

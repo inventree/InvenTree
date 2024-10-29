@@ -4,19 +4,96 @@ title: User Interface Mixin
 
 ## User Interface Mixin
 
-The *User Interface* mixin class provides a set of methods to implement custom functionality for the InvenTree web interface.
+The `UserInterfaceMixin` class provides a set of methods to implement custom functionality for the InvenTree web interface.
 
 ### Enable User Interface Mixin
 
 To enable user interface plugins, the global setting `ENABLE_PLUGINS_INTERFACE` must be enabled, in the [plugin settings](../../settings/global.md#plugin-settings).
 
-## Plugin Context
+## Custom UI Features
 
-When rendering certain content in the user interface, the rendering functions are passed a `context` object which contains information about the current page being rendered. The type of the `context` object is defined in the `PluginContext` file:
+The InvenTree user interface functionality can be extended in various ways using plugins. Multiple types of user interface *features* can be added to the InvenTree user interface.
 
-{{ includefile("src/frontend/src/components/plugins/PluginContext.tsx", title="Plugin Context", fmt="javascript") }}
+The entrypoint for user interface plugins is the `UserInterfaceMixin` class, which provides a number of methods which can be overridden to provide custom functionality. The `get_ui_features` method is used to extract available user interface features from the plugin:
 
-## Custom Panels
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_features
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+Note here that the `get_ui_features` calls other methods to extract the available features from the plugin, based on the requested feature type. These methods can be overridden to provide custom functionality.
+
+!!! info "Implementation"
+    Your custom plugin does not need to override the `get_ui_features` method. Instead, override one of the other methods to provide custom functionality.
+
+### UIFeature Return Type
+
+The `get_ui_features` method should return a list of `UIFeature` objects, which define the available user interface features for the plugin. The `UIFeature` class is defined as follows:
+
+::: plugin.base.ui.mixins.UIFeature
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+Note that the *options* field contains fields which may be specific to a particular feature type - read the documentation below on each feature type for more information.
+
+### Dynamic Feature Loading
+
+Each of the provided feature types can be loaded dynamically by the plugin, based on the information provided in the API request. For example, the plugin can choose to show or hide a particular feature based on the user permissions, or the current state of the system.
+
+For examples of this dynamic feature loading, refer to the [sample plugin](#sample-plugin) implementation which demonstrates how to dynamically load custom panels based on the provided context.
+
+### Javascript Source Files
+
+The rendering function for the custom user interface features expect that the plugin provides a Javascript source file which contains the necessary code to render the custom content. The path to this file should be provided in the `source` field of the `UIFeature` object.
+
+Note that the `source` field can include the name of the function to be called (if this differs from the expected default function name).
+
+For example:
+
+```
+"source": "/static/plugins/my_plugin/my_plugin.js:my_custom_function"
+```
+
+## Available UI Feature Types
+
+The following user interface feature types are available:
+
+### Dashboard Items
+
+The InvenTree dashboard is a collection of "items" which are displayed on the main dashboard page. Custom dashboard items can be added to the dashboard by implementing the `get_ui_dashboard_items` method:
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_dashboard_items
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+The *options* field in the returned `UIFeature` object can contain the following properties:
+
+::: plugin.base.ui.mixins.CustomDashboardItemOptions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+Refer to the [sample plugin](#sample-plugin) for an example of how to implement server side rendering for custom panels.
+
+### Panels
 
 Many of the pages in the InvenTree web interface are built using a series of "panels" which are displayed on the page. Custom panels can be added to these pages, by implementing the `get_ui_panels` method:
 
@@ -29,71 +106,9 @@ Many of the pages in the InvenTree web interface are built using a series of "pa
       summary: False
       members: []
 
-The custom panels can display content which is generated either on the server side, or on the client side (see below).
+The *options* field in the returned `UIFeature` object can contain the following properties:
 
-### Server Side Rendering
-
-The panel content can be generated on the server side, by returning a 'content' attribute in the response. This 'content' attribute is expected to be raw HTML, and is rendered directly into the page. This is particularly useful for displaying static content.
-
-Server-side rendering is simple to implement, and can make use of the powerful Django templating system.
-
-Refer to the [sample plugin](#sample-plugin) for an example of how to implement server side rendering for custom panels.
-
-**Advantages:**
-
-- Simple to implement
-- Can use Django templates to render content
-- Has access to the full InvenTree database, and content not available on the client side (via the API)
-
-**Disadvantages:**
-
-- Content is rendered on the server side, and cannot be updated without a page refresh
-- Content is not interactive
-
-### Client Side Rendering
-
-The panel content can also be generated on the client side, by returning a 'source' attribute in the response. This 'source' attribute is expected to be a URL which points to a JavaScript file which will be loaded by the client.
-
-Refer to the [sample plugin](#sample-plugin) for an example of how to implement client side rendering for custom panels.
-
-#### Panel Render Function
-
-The JavaScript file must implement a `renderPanel` function, which is called by the client when the panel is rendered. This function is passed two parameters:
-
-- `target`: The HTML element which the panel content should be rendered into
-- `context`: A dictionary of context data which can be used to render the panel content
-
-
-**Example**
-
-```javascript
-export function renderPanel(target, context) {
-    target.innerHTML = "<h1>Hello, world!</h1>";
-}
-```
-
-#### Panel Visibility Function
-
-The JavaScript file can also implement a `isPanelHidden` function, which is called by the client to determine if the panel is displayed. This function is passed a single parameter, *context* - which is the same as the context data passed to the `renderPanel` function.
-
-The `isPanelHidden` function should return a boolean value, which determines if the panel is displayed or not, based on the context data.
-
-If the `isPanelHidden` function is not implemented, the panel will be displayed by default.
-
-**Example**
-
-```javascript
-export function isPanelHidden(context) {
-    // Only visible for active parts
-    return context.model == 'part' && context.instance?.active;
-}
-```
-
-## Custom UI Functions
-
-User interface plugins can also provide additional user interface functions. These functions can be provided via the `get_ui_features` method:
-
-::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_features
+::: plugin.base.ui.mixins.CustomPanelOptions
     options:
       show_bases: False
       show_root_heading: False
@@ -102,36 +117,49 @@ User interface plugins can also provide additional user interface functions. The
       summary: False
       members: []
 
-::: plugin.samples.integration.user_interface_sample.SampleUserInterfacePlugin.get_ui_features
+Refer to the [sample plugin](#sample-plugin) for an example of how to implement server side rendering for custom panels.
+
+### Template Editors
+
+The `get_ui_template_editors` feature type can be used to provide custom template editors.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_template_editors
     options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
-
-Currently the following functions can be extended:
-
-### Template editors
-
-The `template_editor` feature type can be used to provide custom template editors.
-
-**Example:**
-
-{{ includefile("src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js", title="sample_template.js", fmt="javascript") }}
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
 
 ### Template previews
 
-The `template_preview` feature type can be used to provide custom template previews. For an example see:
+The `get_ui_template_previews` feature type can be used to provide custom template previews:
 
-**Example:**
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_template_previews
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
 
-{{ includefile("src/backend/InvenTree/plugin/samples/static/plugin/sample_template.js", title="sample_template.js", fmt="javascript") }}
+## Plugin Context
+
+When rendering certain content in the user interface, the rendering functions are passed a `context` object which contains information about the current page being rendered. The type of the `context` object is defined in the `PluginContext` file:
+
+{{ includefile("src/frontend/src/components/plugins/PluginContext.tsx", title="Plugin Context", fmt="javascript") }}
+
+This context data can be used to provide additional information to the rendering functions, and can be used to dynamically render content based on the current state of the system.
+
+### Additional Context
+
+Note that additional context can be passed to the rendering functions by adding additional key-value pairs to the `context` field in the `UIFeature` return type (provided by the backend via the API). This field is optional, and can be used at the discretion of the plugin developer.
 
 ## Sample Plugin
 
-A sample plugin which implements custom user interface functionality is provided in the InvenTree source code:
+A sample plugin which implements custom user interface functionality is provided in the InvenTree source code, which provides a full working example of how to implement custom user interface functionality.
 
 ::: plugin.samples.integration.user_interface_sample.SampleUserInterfacePlugin
     options:

@@ -49,7 +49,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         },
     }
 
-    def get_ui_panels(self, request, context=None, **kwargs):
+    def get_ui_panels(self, request, context, **kwargs):
         """Return a list of custom panels to be injected into the UI."""
         panels = []
         context = context or {}
@@ -123,7 +123,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         return panels
 
-    def get_ui_dashboard_items(self, request, context=None, **kwargs):
+    def get_ui_dashboard_items(self, request, context, **kwargs):
         """Return a list of custom dashboard items."""
         items = [
             {
@@ -167,7 +167,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         return items
 
-    def get_ui_template_editors(self, request, context):
+    def get_ui_template_editors(self, request, context, **kwargs):
         """Return a list of custom template editors."""
         # If the context is a label template, return a custom template editor
         if context.get('template_type') == 'labeltemplate':
@@ -184,7 +184,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         return []
 
-    def get_ui_template_previews(self, request, context):
+    def get_ui_template_previews(self, request, context, **kwargs):
         """Return a list of custom template previews."""
         return [
             {
@@ -192,7 +192,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'title': 'Sample Template Preview',
                 'options': {'icon': 'category'},
                 'source': self.plugin_static_file(
-                    'sample_template.js:getTemplatePreview'
+                    'sample_preview.js:getTemplatePreview'
                 ),
             }
         ]

@@ -1,43 +1,9 @@
 import { Stack } from '@mantine/core';
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode } from 'react';
 
 import { InvenTreeContext } from './PluginContext';
-import { findExternalPluginFunction } from './PluginSource';
 import { PluginUIFeature } from './PluginUIFeature';
 import RemoteComponent from './RemoteComponent';
-
-// TODO: Implement this
-export async function isPluginPanelHidden({
-  pluginFeature,
-  pluginContext
-}: {
-  pluginFeature: PluginUIFeature;
-  pluginContext: InvenTreeContext;
-}): Promise<boolean> {
-  // TODO: Implement this properly
-  return false;
-
-  /*
-  const func = await findExternalPluginFunction(
-    pluginProps.source,
-    'isPanelHidden'
-  );
-
-  if (!func) {
-    return false;
-  }
-
-  try {
-    return func(pluginContext);
-  } catch (error) {
-    console.error(
-      'Error occurred while checking if plugin panel is hidden:',
-      error
-    );
-    return true;
-  }
-  */
-}
 
 /**
  * A custom panel which can be used to display plugin content.
