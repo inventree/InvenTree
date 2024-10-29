@@ -1027,6 +1027,7 @@ def get_objectreference(
         'name': str(item),
         'model_name': str(model_cls._meta.verbose_name),
         'model_type': str(model_cls._meta.model_name),
+        'model_id': getattr(item, 'pk', None),
         **ret,
     }
 
