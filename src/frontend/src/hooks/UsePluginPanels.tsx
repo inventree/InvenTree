@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { api } from '../App';
 import { PanelType } from '../components/panels/Panel';
@@ -7,9 +7,7 @@ import {
   InvenTreeContext,
   useInvenTreeContext
 } from '../components/plugins/PluginContext';
-import PluginPanelContent, {
-  isPluginPanelHidden
-} from '../components/plugins/PluginPanel';
+import PluginPanelContent from '../components/plugins/PluginPanel';
 import {
   PluginUIFeature,
   PluginUIFeatureType
@@ -87,26 +85,6 @@ export function usePluginPanels({
     };
   }, [model, id, instance]);
 
-  // Track which panels are hidden: { panelName: true/false }
-  // We need to memoize this as the plugins can determine this dynamically
-  const [panelState, setPanelState] = useState<Record<string, boolean>>({});
-
-  // Clear the visibility cache when the plugin data changes
-  // This will force the plugin panels to re-calculate their visibility
-  useEffect(() => {
-    pluginData?.forEach((props: PluginUIFeature) => {
-      const identifier = identifierString(`${props.plugin_name}-${props.key}`);
-
-      // Check if the panel is hidden (defaults to true until we know otherwise)
-      isPluginPanelHidden({
-        pluginFeature: props,
-        pluginContext: contextData
-      }).then((result) => {
-        setPanelState((prev) => ({ ...prev, [identifier]: result }));
-      });
-    });
-  }, [pluginData, contextData]);
-
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
       pluginData?.map((props: PluginUIFeature) => {
@@ -114,7 +92,6 @@ export function usePluginPanels({
         const identifier = identifierString(
           `${props.plugin_name}-${props.key}`
         );
-        const isHidden: boolean = panelState[identifier] ?? true;
 
         const pluginContext: any = {
           ...contextData,
@@ -130,12 +107,11 @@ export function usePluginPanels({
               pluginFeature={props}
               pluginContext={pluginContext}
             />
-          ),
-          hidden: isHidden
+          )
         };
       }) ?? []
     );
-  }, [panelState, pluginData, contextData]);
+  }, [pluginData, contextData]);
 
   return pluginPanels;
 }
