@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 274
+INVENTREE_API_VERSION = 275
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v274 - 2024-10-29 : https://github.com/inventree/InvenTree/pull/8278
+v275 - 2024-10-29 : https://github.com/inventree/InvenTree/pull/8278
     - Allow build order list to be filtered by "outstanding" (alias for "active")
+
+v274 - 2024-10-29 : https://github.com/inventree/InvenTree/pull/8392
+    - Add more detailed information to NotificationEntry API serializer
 
 v273 - 2024-10-28 : https://github.com/inventree/InvenTree/pull/8376
     - Fixes for the BuildLine API endpoint

@@ -18,6 +18,7 @@ import {
 } from './Company';
 import {
   RenderContentType,
+  RenderError,
   RenderImportSession,
   RenderProjectCode
 } from './Generic';
@@ -92,7 +93,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin,
-  [ModelType.contenttype]: RenderContentType
+  [ModelType.contenttype]: RenderContentType,
+  [ModelType.error]: RenderError
 };
 
 export type RenderInstanceProps = {

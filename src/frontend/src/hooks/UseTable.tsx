@@ -23,6 +23,7 @@ export type TableState = {
   clearActiveFilters: () => void;
   expandedRecords: any[];
   setExpandedRecords: (records: any[]) => void;
+  isRowExpanded: (pk: number) => boolean;
   selectedRecords: any[];
   selectedIds: number[];
   hasSelectedRecords: boolean;
@@ -78,6 +79,14 @@ export function useTable(tableName: string): TableState {
 
   // Array of expanded records
   const [expandedRecords, setExpandedRecords] = useState<any[]>([]);
+
+  // Function to determine if a record is expanded
+  const isRowExpanded = useCallback(
+    (pk: number) => {
+      return expandedRecords.includes(pk);
+    },
+    [expandedRecords]
+  );
 
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
@@ -148,6 +157,7 @@ export function useTable(tableName: string): TableState {
     clearActiveFilters,
     expandedRecords,
     setExpandedRecords,
+    isRowExpanded,
     selectedRecords,
     selectedIds,
     setSelectedRecords,

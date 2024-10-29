@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Accordion, Alert, Card, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
@@ -18,12 +19,18 @@ export default function PluginDrawer({
   pluginKey,
   pluginInstance
 }: {
-  pluginKey: string;
+  pluginKey?: string;
   pluginInstance: PluginInterface;
 }) {
+  const { id } = useParams();
+
+  const pluginPrimaryKey: string = useMemo(() => {
+    return pluginKey || id || '';
+  }, [pluginKey, id]);
+
   const { instance: pluginAdmin } = useInstance({
     endpoint: ApiEndpoints.plugin_admin,
-    pathParams: { key: pluginKey },
+    pathParams: { key: pluginPrimaryKey },
     defaultValue: {},
     hasPrimaryKey: false,
     refetchOnMount: true
@@ -128,7 +135,7 @@ export default function PluginDrawer({
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <PluginSettingList pluginKey={pluginKey} />
+                <PluginSettingList pluginKey={pluginPrimaryKey} />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>
