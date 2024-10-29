@@ -80,6 +80,8 @@ The InvenTree dashboard is a collection of "items" which are displayed on the ma
       summary: False
       members: []
 
+#### Dashboard Item Options
+
 The *options* field in the returned `UIFeature` object can contain the following properties:
 
 ::: plugin.base.ui.mixins.CustomDashboardItemOptions
@@ -90,6 +92,12 @@ The *options* field in the returned `UIFeature` object can contain the following
       show_sources: True
       summary: False
       members: []
+
+#### Source Function
+
+The frontend code expects a path to a javascript file containing a function named `renderDashboardItem` which will be called to render the custom dashboard item. Note that this function name can be overridden by appending the function name in the `source` field of the `UIFeature` object.
+
+#### Example
 
 Refer to the [sample plugin](#sample-plugin) for an example of how to implement server side rendering for custom panels.
 
@@ -106,6 +114,8 @@ Many of the pages in the InvenTree web interface are built using a series of "pa
       summary: False
       members: []
 
+#### Panel Options
+
 The *options* field in the returned `UIFeature` object can contain the following properties:
 
 ::: plugin.base.ui.mixins.CustomPanelOptions
@@ -116,6 +126,12 @@ The *options* field in the returned `UIFeature` object can contain the following
       show_sources: True
       summary: False
       members: []
+
+#### Source Function
+
+The frontend code expects a path to a javascript file containing a function named `renderPanel` which will be called to render the custom panel. Note that this function name can be overridden by appending the function name in the `source` field of the `UIFeature` object.
+
+#### Example
 
 Refer to the [sample plugin](#sample-plugin) for an example of how to implement server side rendering for custom panels.
 
