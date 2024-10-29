@@ -32,5 +32,6 @@ export enum ModelType {
   reporttemplate = 'reporttemplate',
   labeltemplate = 'labeltemplate',
   pluginconfig = 'pluginconfig',
-  contenttype = 'contenttype'
+  contenttype = 'contenttype',
+  error = 'error'
 }

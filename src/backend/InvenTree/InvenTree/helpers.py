@@ -1022,7 +1022,14 @@ def get_objectreference(
     ret = {}
     if url_fnc:
         ret['link'] = url_fnc()
-    return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
+
+    return {
+        'name': str(item),
+        'model_name': str(model_cls._meta.verbose_name),
+        'model_type': str(model_cls._meta.model_name),
+        'model_id': getattr(item, 'pk', None),
+        **ret,
+    }
 
 
 Inheritors_T = TypeVar('Inheritors_T')
