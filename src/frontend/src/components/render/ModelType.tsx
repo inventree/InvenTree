@@ -257,7 +257,8 @@ export const ModelInformationDict: ModelDict = {
     label: () => t`Error`,
     label_multiple: () => t`Errors`,
     api_endpoint: ApiEndpoints.error_report_list,
-    url_overview: '/settings/admin/errors'
+    url_overview: '/settings/admin/errors',
+    url_detail: '/settings/admin/errors/:pk/'
   }
 };
 
