@@ -51,6 +51,8 @@ function NotificationEntry({
     let model_info = ModelInformationDict[model_type as ModelType];
     if (model_info?.url_detail && model_id) {
       link = getDetailUrl(model_type as ModelType, model_id);
+    } else if (model_info?.url_overview) {
+      link = model_info.url_overview;
     }
   }
 
