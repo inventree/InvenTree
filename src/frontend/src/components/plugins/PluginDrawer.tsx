@@ -24,7 +24,7 @@ export default function PluginDrawer({
 }) {
   const { id } = useParams();
 
-  const pluginPrimaryKey = useMemo(() => {
+  const pluginPrimaryKey: string = useMemo(() => {
     return pluginKey || id || '';
   }, [pluginKey, id]);
 
@@ -135,7 +135,7 @@ export default function PluginDrawer({
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <PluginSettingList pluginKey={pluginKey} />
+                <PluginSettingList pluginKey={pluginPrimaryKey} />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>
