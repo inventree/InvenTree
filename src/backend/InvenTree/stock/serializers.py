@@ -380,8 +380,8 @@ class StockItemSerializer(
             'status_text',
             'status_custom_key',
             'supplier_part',
-            'sku',
-            'mpn',
+            'SKU',
+            'MPN',
             'barcode_hash',
             'updated',
             'stocktake_date',
@@ -581,11 +581,11 @@ class StockItemSerializer(
         source='get_status_display', read_only=True, label=_('Status')
     )
 
-    sku = serializers.CharField(
+    SKU = serializers.CharField(
         source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
     )
 
-    mpn = serializers.CharField(
+    MPN = serializers.CharField(
         source='supplier_part.manufacturer_part.MPN',
         read_only=True,
         label=_('Manufacturer Part Number'),

@@ -225,13 +225,14 @@ function stockItemTableColumns(): TableColumn[] {
       }
     },
     {
-      accessor: 'supplier_part',
+      accessor: 'SKU',
       title: t`Supplier Part`,
-      ordering: 'SKU',
-      sortable: true,
-      render: (record: any) => {
-        return record.supplier_part_detail?.SKU;
-      }
+      sortable: true
+    },
+    {
+      accessor: 'MPN',
+      title: t`Manufacturer Part`,
+      sortable: true
     },
     {
       accessor: 'purchase_price',
