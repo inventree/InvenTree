@@ -85,6 +85,7 @@ import {
   useUserSettingsState
 } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
+import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
@@ -99,7 +100,6 @@ import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartAllocationPanel from './PartAllocationPanel';
-import PartBomPanel from './PartBomPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
@@ -625,7 +625,7 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: <PartBomPanel part={part} />
+        content: part.pk ? <BomTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'builds',
