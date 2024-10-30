@@ -42,21 +42,25 @@ import { ModelInformationDict } from '../../render/ModelType';
 type EditorProps = {
   template: TemplateI;
 };
+
 type EditorRef = {
   setCode: (code: string) => void | Promise<void>;
   getCode: () => (string | undefined) | Promise<string | undefined>;
 };
+
 export type EditorComponent = React.ForwardRefExoticComponent<
   EditorProps & React.RefAttributes<EditorRef>
 >;
+
 export type Editor = {
   key: string;
   name: string;
-  icon: TablerIconType;
+  icon?: TablerIconType;
   component: EditorComponent;
 };
 
 type PreviewAreaProps = {};
+
 export type PreviewAreaRef = {
   updatePreview: (
     code: string,
@@ -65,9 +69,11 @@ export type PreviewAreaRef = {
     templateEditorProps: TemplateEditorProps
   ) => void | Promise<void>;
 };
+
 export type PreviewAreaComponent = React.ForwardRefExoticComponent<
   PreviewAreaProps & React.RefAttributes<PreviewAreaRef>
 >;
+
 export type PreviewArea = {
   key: string;
   name: string;
@@ -266,15 +272,17 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
             }}
           >
             <Tabs.List>
-              {editors.map((Editor) => (
-                <Tabs.Tab
-                  key={Editor.key}
-                  value={Editor.key}
-                  leftSection={<Editor.icon size="0.8rem" />}
-                >
-                  {Editor.name}
-                </Tabs.Tab>
-              ))}
+              {editors.map((Editor, index) => {
+                return (
+                  <Tabs.Tab
+                    key={Editor.key}
+                    value={Editor.key}
+                    leftSection={Editor.icon && <Editor.icon size="0.8rem" />}
+                  >
+                    {Editor.name}
+                  </Tabs.Tab>
+                );
+              })}
 
               <Group justify="right" style={{ flex: '1' }} wrap="nowrap">
                 <SplitButton
@@ -333,7 +341,9 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
                 <Tabs.Tab
                   key={PreviewArea.key}
                   value={PreviewArea.key}
-                  leftSection={<PreviewArea.icon size="0.8rem" />}
+                  leftSection={
+                    PreviewArea.icon && <PreviewArea.icon size="0.8rem" />
+                  }
                 >
                   {PreviewArea.name}
                 </Tabs.Tab>

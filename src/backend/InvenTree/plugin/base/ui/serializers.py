@@ -17,6 +17,7 @@ class PluginUIFeatureSerializer(serializers.Serializer):
             'key',
             'title',
             'description',
+            'icon',
             'options',
             'context',
             'source',
@@ -46,6 +47,11 @@ class PluginUIFeatureSerializer(serializers.Serializer):
     # Long-form description of the feature (optional)
     description = serializers.CharField(
         label=_('Feature Description'), required=False, allow_blank=True
+    )
+
+    # Optional icon
+    icon = serializers.CharField(
+        label=_('Feature Icon'), required=False, allow_blank=True
     )
 
     # Additional options, specific to the particular UI feature

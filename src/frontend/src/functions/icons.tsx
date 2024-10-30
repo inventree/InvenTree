@@ -265,8 +265,8 @@ export type TablerIconType = React.ForwardRefExoticComponent<
  * Returns a Tabler Icon for the model field name supplied
  * @param field string defining field name
  */
-export function GetIcon(field: InvenTreeIconType) {
-  return icons[field];
+export function GetIcon(field: string): TablerIconType {
+  return icons[field as InvenTreeIconType];
 }
 
 // Aliasing the new type name to make it distinct

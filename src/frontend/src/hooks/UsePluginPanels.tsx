@@ -88,7 +88,7 @@ export function usePluginPanels({
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
       pluginData?.map((props: PluginUIFeature) => {
-        const iconName: string = props.options?.icon || 'plugin';
+        const iconName: string = props?.icon || 'plugin';
         const identifier = identifierString(
           `${props.plugin_name}-${props.key}`
         );

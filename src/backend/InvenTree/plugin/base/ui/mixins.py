@@ -27,6 +27,7 @@ class UIFeature(TypedDict):
         key: The key of the feature (required, must be a unique identifier)
         title: The title of the feature (required, human readable)
         description: The long-form description of the feature (optional, human readable)
+        icon: The icon of the feature (optional, must be a valid icon identifier)
         feature_type: The feature type (required, see documentation for all available types)
         options: Feature options (required, see documentation for all available options for each type)
         context: Additional context data to be passed to the rendering function (optional, dict)
@@ -36,6 +37,7 @@ class UIFeature(TypedDict):
     key: str
     title: str
     description: str
+    icon: str
     feature_type: FeatureType
     options: dict
     context: dict
@@ -48,8 +50,6 @@ class CustomPanelOptions(TypedDict):
     Attributes:
         icon: The icon of the panel (optional, must be a valid icon identifier).
     """
-
-    icon: str
 
 
 class CustomDashboardItemOptions(TypedDict):

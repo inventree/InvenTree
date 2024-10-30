@@ -75,13 +75,13 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'dynamic-panel',
                 'title': 'Dynamic Panel',
                 'source': self.plugin_static_file('sample_panel.js'),
+                'icon': 'part',
                 'context': {
                     'version': INVENTREE_SW_VERSION,
                     'plugin_version': self.VERSION,
                     'random': random.randint(1, 100),
                     'time': time.time(),
                 },
-                'options': {'icon': 'part'},
             })
 
         # Next, add a custom panel which will appear on the 'part' page
@@ -97,7 +97,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'part-panel',
                 'title': _('Part Panel'),
                 'source': self.plugin_static_file('sample_panel.js:renderPartPanel'),
-                'options': {'icon': 'part'},
+                'icon': 'part',
                 'context': {'part_name': part.name if part else ''},
             })
 
@@ -175,7 +175,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 {
                     'key': 'sample-template-editor',
                     'title': 'Sample Template Editor',
-                    'options': {'icon': 'keywords'},
+                    'icon': 'keywords',
                     'source': self.plugin_static_file(
                         'sample_template.js:getTemplateEditor'
                     ),
@@ -190,7 +190,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             {
                 'key': 'sample-template-preview',
                 'title': 'Sample Template Preview',
-                'options': {'icon': 'category'},
+                'icon': 'category',
                 'source': self.plugin_static_file(
                     'sample_preview.js:getTemplatePreview'
                 ),
