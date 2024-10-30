@@ -255,7 +255,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols = columns
+    let cols: TableColumn[] = columns
       .filter((col) => col?.hidden != true)
       .map((col) => {
         let hidden: boolean = col.hidden ?? false;
@@ -267,6 +267,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         return {
           ...col,
           hidden: hidden,
+          noWrap: true,
           title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
         };
       });
@@ -605,20 +606,22 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   return (
     <>
-      <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
-        <InvenTreeTableHeader
-          tableUrl={url}
-          tableState={tableState}
-          tableProps={tableProps}
-          hasSwitchableColumns={hasSwitchableColumns}
-          columns={dataColumns}
-          filters={filters}
-          toggleColumn={toggleColumn}
-        />
-      </Boundary>
+      {!tableProps.noHeader && (
+        <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
+          <InvenTreeTableHeader
+            tableUrl={url}
+            tableState={tableState}
+            tableProps={tableProps}
+            hasSwitchableColumns={hasSwitchableColumns}
+            columns={dataColumns}
+            filters={filters}
+            toggleColumn={toggleColumn}
+          />
+        </Boundary>
+      )}
       <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
         <DataTable
-          withTableBorder
+          withTableBorder={!tableProps.noHeader}
           withColumnBorders
           striped
           highlightOnHover
