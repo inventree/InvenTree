@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
+  IconChevronDown,
+  IconChevronRight,
   IconCircleCheck,
   IconFileArrowLeft,
   IconLock,
   IconSwitch3
 } from '@tabler/icons-react';
+import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,23 +65,20 @@ function availableStockQuantity(record: any): number {
 }
 
 export function BomTable({
-  partId,
-  partLocked,
+  part,
+  simplified,
   params = {}
 }: Readonly<{
-  partId: number;
-  partLocked?: boolean;
+  part: any;
+  simplified?: boolean;
   params?: any;
 }>) {
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
 
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const partId = useMemo(() => part.pk, [part]);
+  const partLocked = useMemo(() => part.locked, [part]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -98,17 +98,28 @@ export function BomTable({
 
           return (
             part && (
-              <TableHoverCard
-                value={
-                  <Thumbnail
-                    src={part.thumbnail || part.image}
-                    alt={part.description}
-                    text={part.full_name}
-                  />
-                }
-                extra={extra}
-                title={t`Part Information`}
-              />
+              <Group wrap="nowrap">
+                {part.assembly && (
+                  <ActionIcon size="sm" variant="transparent">
+                    {table.isRowExpanded(record.pk) ? (
+                      <IconChevronDown />
+                    ) : (
+                      <IconChevronRight />
+                    )}
+                  </ActionIcon>
+                )}
+                <TableHoverCard
+                  value={
+                    <Thumbnail
+                      src={part.thumbnail || part.image}
+                      alt={part.description}
+                      text={part.full_name}
+                    />
+                  }
+                  extra={extra}
+                  title={t`Part Information`}
+                />
+              </Group>
             )
           );
         }
@@ -296,7 +307,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [partId, params]);
+  }, [partId, params, table.isRowExpanded]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -378,8 +389,9 @@ export function BomTable({
     title: t`Import BOM Data`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      // TODO: Open import session drawer
+      // setSelectedSession(response.pk);
+      // setImportOpened(true);
     }
   });
 
@@ -529,53 +541,47 @@ export function BomTable({
     ];
   }, [partLocked, user]);
 
+  // Control row-expansion for multi-level BOMs
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        return (
+          table.isRowExpanded(record.pk) || record.sub_part_detail.assembly
+        );
+      },
+      content: ({ record }: { record: any }) => {
+        return <BomTable simplified part={record.sub_part_detail} />;
+      }
+    };
+  }, [table.isRowExpanded]);
+
   return (
     <>
-      {importBomItem.modal}
-      {newBomItem.modal}
-      {editBomItem.modal}
-      {validateBom.modal}
-      {deleteBomItem.modal}
-      <Stack gap="xs">
-        {partLocked && (
-          <Alert
-            title={t`Part is Locked`}
-            color="orange"
-            icon={<IconLock />}
-            p="xs"
-          >
-            <Text>{t`Bill of materials cannot be edited, as the part is locked`}</Text>
-          </Alert>
-        )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.bom_list)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            params: {
-              ...params,
-              part: partId,
-              part_detail: true,
-              sub_part_detail: true
-            },
-            tableActions: tableActions,
-            tableFilters: tableFilters,
-            modelType: ModelType.part,
-            modelField: 'sub_part',
-            rowActions: rowActions,
-            enableSelection: !partLocked,
-            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
-            enableDownload: true
-          }}
-        />
-      </Stack>
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
+      {!simplified && importBomItem.modal}
+      {!simplified && newBomItem.modal}
+      {!simplified && editBomItem.modal}
+      {!simplified && validateBom.modal}
+      {!simplified && deleteBomItem.modal}
+
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.bom_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            part: partId,
+            part_detail: true,
+            sub_part_detail: true
+          },
+          tableActions: tableActions,
+          tableFilters: tableFilters,
+          rowExpansion: rowExpansion,
+          rowActions: rowActions
+          // noHeader: simplified ?? false,
+          // enableSelection: !partLocked,
+          // enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
         }}
       />
     </>
