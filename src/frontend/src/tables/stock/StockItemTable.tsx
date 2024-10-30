@@ -217,34 +217,31 @@ function stockItemTableColumns(): TableColumn[] {
     LocationColumn({
       accessor: 'location_detail'
     }),
-    DateColumn({
-      accessor: 'stocktake_date',
-      title: t`Stocktake Date`,
-      sortable: true
-    }),
-    DateColumn({
-      title: t`Expiry Date`,
-      accessor: 'expiry_date',
-      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY')
-    }),
-    DateColumn({
-      title: t`Last Updated`,
-      accessor: 'updated'
-    }),
-    // TODO: purchase order
-    // TODO: Supplier part
+    {
+      accessor: 'purchase_order',
+      title: t`Purchase Order`,
+      render: (record: any) => {
+        return record.purchase_order_reference;
+      }
+    },
+    {
+      accessor: 'supplier_part',
+      title: t`Supplier Part`,
+      ordering: 'SKU',
+      sortable: true,
+      render: (record: any) => {
+        return record.supplier_part_detail?.SKU;
+      }
+    },
     {
       accessor: 'purchase_price',
+      title: t`Unit Price`,
       sortable: true,
       switchable: true,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
         })
-    },
-    {
-      accessor: 'packaging',
-      sortable: true
     },
     {
       accessor: 'stock_value',
@@ -264,9 +261,24 @@ function stockItemTableColumns(): TableColumn[] {
       }
     },
     {
-      accessor: 'notes',
-      sortable: false
-    }
+      accessor: 'packaging',
+      sortable: true
+    },
+
+    DateColumn({
+      title: t`Expiry Date`,
+      accessor: 'expiry_date',
+      hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY')
+    }),
+    DateColumn({
+      title: t`Last Updated`,
+      accessor: 'updated'
+    }),
+    DateColumn({
+      accessor: 'stocktake_date',
+      title: t`Stocktake Date`,
+      sortable: true
+    })
   ];
 }
 
