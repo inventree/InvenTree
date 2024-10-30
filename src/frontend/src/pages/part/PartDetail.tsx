@@ -618,7 +618,11 @@ export default function PartDetail() {
         label: t`Allocations`,
         icon: <IconBookmarks />,
         hidden: !part.component && !part.salable,
-        content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
+        content: part?.pk ? (
+          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'bom',
