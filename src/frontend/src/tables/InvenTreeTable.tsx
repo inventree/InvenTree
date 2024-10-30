@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
@@ -606,60 +607,64 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   return (
     <>
-      {!tableProps.noHeader && (
-        <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
-          <InvenTreeTableHeader
-            tableUrl={url}
-            tableState={tableState}
-            tableProps={tableProps}
-            hasSwitchableColumns={hasSwitchableColumns}
-            columns={dataColumns}
-            filters={filters}
-            toggleColumn={toggleColumn}
-          />
+      <Stack gap="xs">
+        {!tableProps.noHeader && (
+          <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
+            <InvenTreeTableHeader
+              tableUrl={url}
+              tableState={tableState}
+              tableProps={tableProps}
+              hasSwitchableColumns={hasSwitchableColumns}
+              columns={dataColumns}
+              filters={filters}
+              toggleColumn={toggleColumn}
+            />
+          </Boundary>
+        )}
+        <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
+          <Box pos="relative">
+            <DataTable
+              withTableBorder={!tableProps.noHeader}
+              withColumnBorders
+              striped
+              highlightOnHover
+              loaderType={loader}
+              pinLastColumn={tableProps.rowActions != undefined}
+              idAccessor={tableProps.idAccessor}
+              minHeight={300}
+              totalRecords={tableState.recordCount}
+              recordsPerPage={tableState.pageSize}
+              page={tableState.page}
+              onPageChange={tableState.setPage}
+              sortStatus={sortStatus}
+              onSortStatusChange={handleSortStatusChange}
+              selectedRecords={
+                enableSelection ? tableState.selectedRecords : undefined
+              }
+              onSelectedRecordsChange={
+                enableSelection ? onSelectedRecordsChange : undefined
+              }
+              rowExpansion={rowExpansion}
+              rowStyle={tableProps.rowStyle}
+              fetching={isFetching}
+              noRecordsText={missingRecordsText}
+              records={tableState.records}
+              columns={dataColumns}
+              onCellClick={handleCellClick}
+              noHeader={tableProps.noHeader ?? false}
+              defaultColumnProps={{
+                noWrap: true,
+                textAlign: 'left',
+                cellsStyle: () => (theme) => ({
+                  // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
+                  overflow: 'hidden'
+                })
+              }}
+              {...optionalParams}
+            />
+          </Box>
         </Boundary>
-      )}
-      <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
-        <DataTable
-          withTableBorder={!tableProps.noHeader}
-          withColumnBorders
-          striped
-          highlightOnHover
-          loaderType={loader}
-          pinLastColumn={tableProps.rowActions != undefined}
-          idAccessor={tableProps.idAccessor}
-          minHeight={300}
-          totalRecords={tableState.recordCount}
-          recordsPerPage={tableState.pageSize}
-          page={tableState.page}
-          onPageChange={tableState.setPage}
-          sortStatus={sortStatus}
-          onSortStatusChange={handleSortStatusChange}
-          selectedRecords={
-            enableSelection ? tableState.selectedRecords : undefined
-          }
-          onSelectedRecordsChange={
-            enableSelection ? onSelectedRecordsChange : undefined
-          }
-          rowExpansion={rowExpansion}
-          rowStyle={tableProps.rowStyle}
-          fetching={isFetching}
-          noRecordsText={missingRecordsText}
-          records={tableState.records}
-          columns={dataColumns}
-          onCellClick={handleCellClick}
-          noHeader={tableProps.noHeader ?? false}
-          defaultColumnProps={{
-            noWrap: true,
-            textAlign: 'left',
-            cellsStyle: () => (theme) => ({
-              // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
-              overflow: 'hidden'
-            })
-          }}
-          {...optionalParams}
-        />
-      </Boundary>
+      </Stack>
     </>
   );
 }
