@@ -237,6 +237,13 @@ function LineItemFormRow({
     onClose: () => props.changeFn(props.idx, 'location', undefined)
   });
 
+  useEffect(() => {
+    if (!!record.destination) {
+      props.changeFn(props.idx, 'location', record.destination);
+      locationHandlers.open();
+    }
+  }, [record.destination]);
+
   // Batch code generator
   const batchCodeGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
