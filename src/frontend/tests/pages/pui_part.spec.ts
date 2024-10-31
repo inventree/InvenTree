@@ -18,6 +18,11 @@ test('Pages - Part - Locking', async ({ page }) => {
   await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
+  // Check expected "badge" values
+  await page.getByText('In Stock: 13').waitFor();
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('In Production: 50').waitFor();
+
   // Check the "parameters" tab also
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByText('Part parameters cannot be').waitFor();
