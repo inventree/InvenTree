@@ -340,7 +340,7 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['notes', 'tags', 'tracking_items']
+    export_exclude_fields = ['tags', 'tracking_items']
 
     export_only_fields = ['part_pricing_min', 'part_pricing_max']
 
