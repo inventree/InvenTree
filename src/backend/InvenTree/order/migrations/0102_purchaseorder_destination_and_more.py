@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='purchaseorder',
             name='destination',
-            field=mptt.fields.TreeForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='purchase_orders', to='stock.stocklocation', verbose_name='Destination for received items'),
+            field=mptt.fields.TreeForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='purchase_orders', to='stock.stocklocation', verbose_name='Destination', help_text='Destination for received items'),
         ),
         migrations.AlterField(
             model_name='purchaseorderlineitem',

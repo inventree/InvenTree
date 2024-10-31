@@ -549,7 +549,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         related_name='purchase_orders',
         blank=True,
         null=True,
-        verbose_name=_('Destination for received items'),
+        verbose_name=_('Destination'),
+        help_text=_('Destination for received items'),
     )
 
     @transaction.atomic

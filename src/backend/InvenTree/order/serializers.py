@@ -318,6 +318,7 @@ class PurchaseOrderSerializer(
             'supplier_name',
             'total_price',
             'order_currency',
+            'destination',
         ])
 
         read_only_fields = ['issue_date', 'complete_date', 'creation_date']

@@ -166,6 +166,7 @@ export function usePurchaseOrderFields({
       target_date: {
         icon: <IconCalendar />
       },
+      destination: {},
       link: {},
       contact: {
         icon: <IconUser />,

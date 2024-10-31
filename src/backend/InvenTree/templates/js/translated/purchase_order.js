@@ -111,6 +111,9 @@ function purchaseOrderFields(options={}) {
         target_date: {
             icon: 'fa-calendar-alt',
         },
+        destination: {
+            icon: 'fa-sitemap'
+        },
         link: {
             icon: 'fa-link',
         },
