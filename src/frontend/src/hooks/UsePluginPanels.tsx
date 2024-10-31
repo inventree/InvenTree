@@ -67,8 +67,8 @@ export function usePluginPanels({
           }
         })
         .then((response: any) => response.data)
-        .catch((error: any) => {
-          console.error('Failed to fetch plugin panels:', error);
+        .catch((_error: any) => {
+          console.error('Failed to fetch plugin panels');
           return [];
         });
     }
