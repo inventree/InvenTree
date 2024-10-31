@@ -18,9 +18,43 @@ test('Pages - Part - Locking', async ({ page }) => {
   await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
+  // Check expected "badge" values
+  await page.getByText('In Stock: 13').waitFor();
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('In Production: 50').waitFor();
+
   // Check the "parameters" tab also
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByText('Part parameters cannot be').waitFor();
+});
+
+test('Pages - Part - Allocations', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Let's look at the allocations for a single stock item
+  await page.goto(`${baseUrl}/stock/item/324/`);
+  await page.getByRole('tab', { name: 'Allocations' }).click();
+
+  await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
+  await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
+  await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
+
+  // Let's look at the allocations for the entire part
+  await page.getByRole('tab', { name: 'Details' }).click();
+  await page.getByRole('link', { name: 'Leg' }).click();
+
+  await page.getByRole('tab', { name: 'Part Details' }).click();
+  await page.getByText('660 / 760').waitFor();
+
+  await page.getByRole('tab', { name: 'Allocations' }).click();
+
+  // Number of table records
+  await page.getByText('1 - 4 / 4').waitFor();
+  await page.getByRole('cell', { name: 'Making red square tables' }).waitFor();
+
+  // Navigate through to the build order
+  await page.getByRole('cell', { name: 'BO0007' }).click();
+  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
 });
 
 test('Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
