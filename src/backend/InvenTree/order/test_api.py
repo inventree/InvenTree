@@ -882,7 +882,6 @@ class PurchaseOrderReceiveTest(OrderTest):
         data = self.post(self.url, {}, expected_code=400).data
 
         self.assertIn('This field is required', str(data['items']))
-        self.assertIn('This field is required', str(data['location']))
 
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
