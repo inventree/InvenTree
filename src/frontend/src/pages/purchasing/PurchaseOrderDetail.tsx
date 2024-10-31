@@ -154,6 +154,14 @@ export default function PurchaseOrderDetail() {
         progress: order.completed_lines
       },
       {
+        type: 'link',
+        model: ModelType.stocklocation,
+        link: true,
+        name: 'destination',
+        label: t`Destination`,
+        hidden: !order.destination
+      },
+      {
         type: 'text',
         name: 'currency',
         label: t`Order Currency`,
