@@ -193,8 +193,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             InvenTree.tasks.offload_task(
                 build.tasks.create_child_builds,
                 build_order.pk,
-                group='build',
-                force_async=True
+                group='build'
             )
 
         return build_order
