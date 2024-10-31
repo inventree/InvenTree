@@ -251,7 +251,7 @@ function LineItemFormRow({
     }
   });
 
-  // Serial numbebr generator
+  // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator((value: any) => {
     if (value) {
       props.changeFn(props.idx, 'serial_numbers', value);
@@ -487,7 +487,7 @@ function LineItemFormRow({
                     props.changeFn(props.idx, 'location', value);
                   },
                   description: locationDescription,
-                  value: location,
+                  value: props.item.location,
                   label: t`Location`,
                   icon: <InvenTreeIcon icon="location" />
                 }}
