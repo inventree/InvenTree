@@ -1377,6 +1377,27 @@ class ReturnOrderLineItemFilter(LineItemFilter):
         return queryset.filter(received_date=None)
 
 
+class ReturnOrderPartLineItemFilter(LineItemFilter):
+    """Custom filters for the ReturnOrderPartLineItemList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        price_field = 'price'
+        model = models.ReturnOrderPartLineItem
+        fields = ['order', 'part']
+
+    outcome = rest_filters.NumberFilter(label='outcome')
+
+    received = rest_filters.BooleanFilter(label='received', method='filter_received')
+
+    def filter_received(self, queryset, name, value):
+        """Filter by 'received' field."""
+        if str2bool(value):
+            return queryset.exclude(received_date=None)
+        return queryset.filter(received_date=None)
+
+
 class ReturnOrderLineItemMixin:
     """Mixin class for ReturnOrderLineItem endpoints."""
 
@@ -1407,6 +1428,35 @@ class ReturnOrderLineItemMixin:
         return queryset
 
 
+class ReturnOrderPartLineItemMixin:
+    """Mixin class for ReturnOrderPartLineItem endpoints."""
+
+    queryset = models.ReturnOrderPartLineItem.objects.all()
+    serializer_class = serializers.ReturnOrderPartLineItemSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer for this endpoint with extra data as requested."""
+        try:
+            params = self.request.query_params
+
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related('order', 'part')
+
+        return queryset
+
+
 class ReturnOrderLineItemList(
     ReturnOrderLineItemMixin, DataExportViewMixin, ListCreateAPI
 ):
@@ -1426,7 +1476,27 @@ class ReturnOrderLineItemList(
     ]
 
 
+class ReturnOrderPartLineItemList(
+    ReturnOrderPartLineItemMixin, DataExportViewMixin, ListCreateAPI
+):
+    """API endpoint for accessing a list of ReturnOrderPartLineItemList objects."""
+
+    filterset_class = ReturnOrderPartLineItemFilter
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['reference', 'target_date', 'received_date']
+
+    search_fields = ['part__name', 'part__description', 'reference']
+
+
 class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a ReturnOrderLineItem object."""
+
+
+class ReturnOrderPartLineItemDetail(
+    ReturnOrderPartLineItemMixin, RetrieveUpdateDestroyAPI
+):
     """API endpoint for detail view of a ReturnOrderLineItem object."""
 
 
@@ -1914,6 +1984,40 @@ order_api_urls = [
             ),
             path(
                 '', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'
+            ),
+        ]),
+    ),
+    # API endpoints for return order part lines
+    path(
+        'ro-part-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.ReturnOrderPartLineItem},
+                        name='api-return-order-part-line-metadata',
+                    ),
+                    path(
+                        '',
+                        ReturnOrderPartLineItemDetail.as_view(),
+                        name='api-return-order-part-line-detail',
+                    ),
+                ]),
+            ),
+            # Return order part line item status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: ReturnOrderLineStatus},
+                name='api-return-order-part-line-status-codes',
+            ),
+            path(
+                '',
+                ReturnOrderPartLineItemList.as_view(),
+                name='api-return-order-part-line-list',
             ),
         ]),
     ),

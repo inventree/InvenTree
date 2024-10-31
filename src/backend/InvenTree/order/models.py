@@ -474,7 +474,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
-        return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
+        return f'{self.reference} - {self.supplier.name if self.supplier else _("deleted")}'
 
     reference = models.CharField(
         unique=True,
@@ -990,7 +990,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
-        return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
+        return f'{self.reference} - {self.customer.name if self.customer else _("deleted")}'
 
     reference = models.CharField(
         unique=True,
@@ -2160,7 +2160,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
-        return f"{self.reference} - {self.customer.name if self.customer else _('no customer')}"
+        return f'{self.reference} - {self.customer.name if self.customer else _("no customer")}'
 
     reference = models.CharField(
         unique=True,
@@ -2328,6 +2328,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     # endregion
 
+    # TODO: Handle special logic here - DUPLICATE FOR FLEX
     @transaction.atomic
     def receive_line_item(self, line, location, user, note='', **kwargs):
         """Receive a line item against this ReturnOrder.
@@ -2355,10 +2356,13 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
+        # TODO: fix
+        # stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
+        # TODO: qty
+        stock_item.quantity += 1
         stock_item.save(add_note=False)
         stock_item.clearAllocations()
 
@@ -2424,6 +2428,79 @@ class ReturnOrderLineItem(OrderLineItem):
         related_name='return_order_lines',
         verbose_name=_('Item'),
         help_text=_('Select item to return from customer'),
+    )
+
+    received_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Received Date'),
+        help_text=_('The date this this return item was received'),
+    )
+
+    @property
+    def received(self):
+        """Return True if this item has been received."""
+        return self.received_date is not None
+
+    outcome = InvenTreeCustomStatusModelField(
+        default=ReturnOrderLineStatus.PENDING.value,
+        choices=ReturnOrderLineStatus.items(),
+        verbose_name=_('Outcome'),
+        help_text=_('Outcome for this line item'),
+    )
+
+    price = InvenTreeModelMoneyField(
+        null=True,
+        blank=True,
+        verbose_name=_('Price'),
+        help_text=_('Cost associated with return or repair for this line item'),
+    )
+
+
+class ReturnOrderPartLineItem(OrderLineItem):
+    """Model for a single PartLineItem in a ReturnOrder."""
+
+    class Meta:
+        """Metaclass options for this model."""
+
+        verbose_name = _('Return Order Part Line Item')
+        unique_together = [('order', 'part')]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with this model."""
+        return reverse('api-return-order-part-line-list')
+
+    def clean(self):
+        """Perform extra validation steps for the ReturnOrderPartLineItem model."""
+        super().clean()
+        if self.quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than 0')})
+
+    order = models.ForeignKey(
+        ReturnOrder,
+        on_delete=models.CASCADE,
+        related_name='part_lines',
+        verbose_name=_('Order'),
+        help_text=_('Return Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.CASCADE,
+        related_name='return_order_part_line_items',
+        verbose_name=_('Part'),
+        help_text=_('Select part to return from customer'),
+        limit_choices_to={'salable': True, 'virtual': False},
+    )
+
+    quantity = RoundingDecimalField(
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=0,
+        verbose_name=_('Quantity'),
+        help_text=_('Enter stock return quantity'),
     )
 
     received_date = models.DateField(

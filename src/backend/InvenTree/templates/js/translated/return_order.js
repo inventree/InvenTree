@@ -479,6 +479,66 @@ function editReturnOrderLineItem(pk, options={}) {
     });
 }
 
+/*
+ * Construct a set of fields for a ReturnOrderLineItem form
+ */
+function returnOrderPartLineItemFields(options={}) {
+
+    let fields = {
+        order: {
+            filters: {
+                customer_detail: true,
+            }
+        },
+        part: {},
+        quantity: {},
+        reference: {},
+        outcome: {
+            icon: 'fa-route',
+        },
+        price: {
+            icon: 'fa-dollar-sign',
+        },
+        price_currency: {
+            icon: 'fa-coins',
+        },
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        notes: {
+            icon: 'fa-sticky-note',
+        },
+        link: {
+            icon: 'fa-link',
+        },
+    };
+
+    return fields;
+}
+
+
+/*
+ * Create a new ReturnOrderLineItem
+ */
+function createReturnOrderPartLineItem(options={}) {
+
+    let fields = returnOrderPartLineItemFields();
+
+    if (options.order) {
+        fields.order.value = options.order;
+        fields.order.hidden = true;
+    }
+
+    constructForm('{% url "api-return-order-part-line-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Part Line Item" %}',
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
 
 /*
  * Receive one or more items against a ReturnOrder
@@ -707,8 +767,9 @@ function loadReturnOrderLineItemTable(options={}) {
                 switchable: false,
                 title: '{% trans "Part" %}',
                 formatter: function(value, row) {
+                    // TODO: dynamic formatter?
                     let part = row.part_detail;
-                    let html = thumbnailImage(part.thumbnail) + ' ';
+                    let html = thumbnailImage(part ? part.thumbnail : '') + ' ';
                     html += renderLink(part.full_name, `/part/${part.pk}/`);
                     return html;
                 }
@@ -721,6 +782,193 @@ function loadReturnOrderLineItemTable(options={}) {
                 formatter: function(value, row) {
                     return renderLink(`{% trans "Serial Number" %}: ${row.item_detail.serial}`, `/stock/item/${row.item}/`);
                 }
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+            },
+            {
+                field: 'outcome',
+                title: '{% trans "Outcome" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    return returnOrderLineItemStatusDisplay(value);
+                }
+            },
+            {
+                field: 'price',
+                title: '{% trans "Price" %}',
+                formatter: function(value, row) {
+                    return formatCurrency(row.price, {
+                        currency: row.price_currency,
+                    });
+                }
+            },
+            {
+                sortable: true,
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
+                formatter: function(value, row) {
+                    let html = renderDate(value);
+
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "This line item is overdue" %}');
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'received_date',
+                title: '{% trans "Received" %}',
+                sortable: true,
+                formatter: function(value) {
+                    if (!value) {
+                        yesNoLabel(value);
+                    } else {
+                        return renderDate(value);
+                    }
+                }
+            },
+            {
+                field: 'notes',
+                title: '{% trans "Notes" %}',
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderLink(value, value);
+                    }
+                }
+            },
+            {
+                field: 'buttons',
+                title: '',
+                switchable: false,
+                formatter: function(value, row) {
+                    let buttons = '';
+                    let pk = row.pk;
+
+                    if (options.allow_edit) {
+
+                        if (options.allow_receive && !row.received_date) {
+                            buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Mark item as received" %}');
+                        }
+
+                        buttons += makeEditButton('button-line-edit', pk, '{% trans "Edit line item" %}');
+                    }
+
+                    if (options.allow_delete) {
+                        buttons += makeDeleteButton('button-line-delete', pk, '{% trans "Delete line item" %}');
+                    }
+
+                    return wrapButtons(buttons);
+                }
+            }
+        ]
+    });
+}
+
+/*
+ * Load a table displaying line items for a particular ReturnOrder
+ */
+function loadReturnOrderPartLineItemTable(options={}) {
+
+    var table = options.table;
+
+    options.params = options.params || {};
+
+    options.params.order = options.order;
+    options.params.item_detail = true;
+    options.params.order_detail = false;
+    options.params.part_detail = true;
+
+    let filters = loadTableFilters('returnorderpartlineitem', options.params);
+
+    setupFilterList('returnorderpartlineitem', $(table), '#filter-list-returnorderpartlines', {download: true});
+
+    function setupCallbacks() {
+        if (options.allow_edit) {
+
+            // Callback for "receive" button
+            if (options.allow_receive) {
+                $(table).find('.button-line-receive').click(function() {
+                    let pk = $(this).attr('pk');
+
+                    let line = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                    receiveReturnOrderPartItems(
+                        options.order,
+                        [line],
+                        {
+                            onSuccess: function(response) {
+                                reloadBootstrapTable(table);
+                            }
+                        }
+                    );
+                });
+            }
+
+            // Callback for "edit" button
+            $(table).find('.button-line-edit').click(function() {
+                let pk = $(this).attr('pk');
+
+                constructForm(`{% url "api-return-order-part-line-list" %}${pk}/`, {
+                    fields: returnOrderPartLineItemFields(),
+                    title: '{% trans "Edit Line Item" %}',
+                    refreshTable: table,
+                });
+            });
+        }
+
+        if (options.allow_delete) {
+            // Callback for "delete" button
+            $(table).find('.button-line-delete').click(function() {
+                let pk = $(this).attr('pk');
+
+                constructForm(`{% url "api-return-order-part-line-list" %}${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Line Item" %}',
+                    refreshTable: table,
+                });
+            });
+        }
+    }
+
+    $(table).inventreeTable({
+        url: '{% url "api-return-order-part-line-list" %}',
+        name: 'returnorderpartlineitems',
+        formatNoMatches: function() {
+            return '{% trans "No matching part line items" %}';
+        },
+        onPostBody: setupCallbacks,
+        queryParams: filters,
+        original: options.params,
+        showColumns: true,
+        showFooter: true,
+        uniqueId: 'pk',
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                field: 'part',
+                sortable: true,
+                switchable: false,
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    let part = row.part_detail;
+                    let html = thumbnailImage(part.thumbnail) + ' ';
+                    html += renderLink(part.full_name, `/part/${part.pk}/`);
+                    return html;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
             },
             {
                 field: 'reference',

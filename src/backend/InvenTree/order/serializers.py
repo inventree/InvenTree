@@ -1896,6 +1896,34 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
         return item
 
 
+class ReturnOrderPartLineItemReceiveSerializer(serializers.Serializer):
+    """Serializer for receiving a single part line item against a ReturnOrder."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['part']
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.ReturnOrderLineItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Return order line item'),
+    )
+
+    def validate_line_item(self, item):
+        """Validation for a single line item."""
+        # TODO: improve?
+        # if item.order != self.context['order']:
+        #     raise ValidationError(_('Line item does not match return order'))
+
+        # if item.received:
+        #     raise ValidationError(_('Line item has already been received'))
+
+        return item
+
+
 class ReturnOrderReceiveSerializer(serializers.Serializer):
     """Serializer for receiving items against a ReturnOrder."""
 
@@ -1905,6 +1933,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         fields = ['items', 'location']
 
     items = ReturnOrderLineItemReceiveSerializer(many=True)
+    part_items = ReturnOrderPartLineItemReceiveSerializer(many=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -1940,12 +1969,15 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
         data = self.validated_data
         items = data['items']
+        items = data['items']
         location = data['location']
 
+        # TODO: update here...
         with transaction.atomic():
             for item in items:
                 line_item = item['item']
                 order.receive_line_item(line_item, location, request.user)
+        # TODO: add flex_items
 
 
 @register_importer()
@@ -2002,6 +2034,57 @@ class ReturnOrderLineItemSerializer(
     )
     part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
 
+    price = InvenTreeMoneySerializer(allow_null=True)
+    price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
+
+
+@register_importer()
+class ReturnOrderPartLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a ReturnOrderPartLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.ReturnOrderPartLineItem
+
+        fields = [
+            'pk',
+            'order',
+            'order_detail',
+            'part',
+            'quantity',
+            'received_date',
+            'outcome',
+            'part_detail',
+            'price',
+            'price_currency',
+            'link',
+            'reference',
+            'notes',
+            'target_date',
+            'link',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer."""
+        order_detail = kwargs.pop('order_detail', False)
+        part_detail = kwargs.pop('part_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail', None)
+
+        if not part_detail:
+            self.fields.pop('part_detail', None)
+
+    order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    quantity = InvenTreeDecimalField()
     price = InvenTreeMoneySerializer(allow_null=True)
     price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
 

@@ -332,12 +332,32 @@ class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
         clean_model_instances = True
 
 
+class ReturnOrderPartLineItemResource(PriceResourceMixin, InvenTreeResource):
+    """Class for managing import / export of ReturnOrderPartLineItem data."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.ReturnOrderPartLineItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+
 class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
     """Admin class for ReturnOrderLine model."""
 
     resource_class = ReturnOrderLineItemResource
 
     list_display = ['order', 'item', 'reference']
+
+
+class ReturnOrderPartLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for ReturnOrderPartLine model."""
+
+    resource_class = ReturnOrderPartLineItemResource
+
+    list_display = ['order', 'part', 'reference']
 
 
 class ReturnOrderExtraLineClass(PriceResourceMixin, InvenTreeResource):
@@ -370,4 +390,5 @@ admin.site.register(models.SalesOrderAllocation, SalesOrderAllocationAdmin)
 # Return Order models
 admin.site.register(models.ReturnOrder, ReturnOrderAdmin)
 admin.site.register(models.ReturnOrderLineItem, ReturnOrderLineItemAdmin)
+admin.site.register(models.ReturnOrderPartLineItem, ReturnOrderPartLineItemAdmin)
 admin.site.register(models.ReturnOrderExtraLine, ReturnOrdeerExtraLineAdmin)
