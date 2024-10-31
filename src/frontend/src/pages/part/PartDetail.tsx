@@ -618,18 +618,18 @@ export default function PartDetail() {
         label: t`Allocations`,
         icon: <IconBookmarks />,
         hidden: !part.component && !part.salable,
-        content: part?.pk ? (
-          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
-        ) : (
-          <Skeleton />
-        )
+        content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: part.pk ? <BomTable partId={part.pk} /> : <Skeleton />
+        content: part?.pk ? (
+          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'builds',
