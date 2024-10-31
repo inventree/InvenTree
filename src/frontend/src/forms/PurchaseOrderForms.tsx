@@ -604,6 +604,7 @@ type LineFormHandlers = {
 type LineItemsForm = {
   items: any[];
   orderPk: number;
+  destinationPk?: number;
   formProps?: LineFormHandlers;
 };
 
@@ -679,7 +680,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
     title: t`Receive Line Items`,
     fields: fields,
     initialData: {
-      location: null
+      location: props.destinationPk
     },
     size: '80%'
   });
