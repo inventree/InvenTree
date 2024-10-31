@@ -221,6 +221,7 @@ class InfoView(AjaxView):
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
+            'worker_count': settings.BACKGROUND_WORKER_COUNT,
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
