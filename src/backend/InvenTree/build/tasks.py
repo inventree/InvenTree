@@ -214,6 +214,15 @@ def create_child_builds(build_id: int) -> None:
             # Random delay, to reduce likelihood of race conditions from multiple build orders being created simultaneously
             time.sleep(random.random())
 
+            # Check if the child build order has already been created
+            if build_models.Build.objects.filter(
+                part=item.sub_part,
+                parent=build_order,
+                quantity=quantity,
+                status__in=BuildStatusGroups.ACTIVE_CODES
+            ).exists():
+                continue
+
             sub_order = build_models.Build.objects.create(
                 part=item.sub_part,
                 quantity=quantity,
