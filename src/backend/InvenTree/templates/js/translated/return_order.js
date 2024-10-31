@@ -904,9 +904,8 @@ function loadReturnOrderLineItemTable(options={}) {
                 switchable: false,
                 title: '{% trans "Part" %}',
                 formatter: function(value, row) {
-                    // TODO: dynamic formatter?
                     let part = row.part_detail;
-                    let html = thumbnailImage(part ? part.thumbnail : '') + ' ';
+                    let html = thumbnailImage(part.thumbnail) + ' ';
                     html += renderLink(part.full_name, `/part/${part.pk}/`);
                     return html;
                 }
