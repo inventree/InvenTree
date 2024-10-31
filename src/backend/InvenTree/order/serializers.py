@@ -1932,7 +1932,6 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         fields = ['items', 'location']
 
     items = ReturnOrderLineItemReceiveSerializer(many=True)
-    part_items = ReturnOrderPartLineItemReceiveSerializer(many=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),

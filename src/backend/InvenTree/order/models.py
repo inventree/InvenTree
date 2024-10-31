@@ -2399,28 +2399,27 @@ class ReturnOrder(TotalPriceMixin, Order):
             logger.warning('receive_line_item called with item already returned')
             return
 
-        # part = line.part
+        part = line.part
 
-        # TODO: find or create stock item in specified LOCATION
-        stock_item = line.item
+        stock_items = stock.models.StockItem.objects.filter(
+            part=part, location=location
+        )
+        if len(stock_items) > 0:
+            stock_item = stock_items[0]
+            stock_item.quantity += line.quantity
+        else:
+            stock_item = stock.models.StockItem(
+                part=part, quantity=line.quantity, location=location
+            )
 
         deltas = {
             'returnorder': self.pk,
             'location': location.pk,
-            # TODO: add more details?
-            'quantity': line.quantity,
+            'quantity': f'{line.quantity}',
         }
 
-        if stock_item.customer:
-            deltas['customer'] = stock_item.customer.pk
-
         # Update the StockItem
-        stock_item.location = location
-        stock_item.customer = None
-        stock_item.sales_order = None
-        stock_item.quantity += line.quantity
         stock_item.save(add_note=False)
-        stock_item.clearAllocations()
 
         # Add a tracking entry to the StockItem
         stock_item.add_tracking_entry(
