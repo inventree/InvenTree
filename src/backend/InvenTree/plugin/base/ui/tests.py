@@ -139,7 +139,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['source'], '/this/does/not/exist.js')
 
         self.assertEqual(response.data[1]['key'], 'dynamic-panel')
-        self.assertEqual(response.data[1]['title'], 'Dynamic Part Panel')
+        self.assertEqual(response.data[1]['title'], 'Dynamic Panel')
         self.assertEqual(
             response.data[1]['source'], '/static/plugins/sampleui/sample_panel.js'
         )
@@ -187,7 +187,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
             'plugin_name': 'sampleui',
             'key': 'sample-template-editor',
             'title': 'Sample Template Editor',
-            'source': '/static/plugins/sampleui/sample_template.js:getTemplateEditor',
+            'source': '/static/plugins/sampleui/sample_preview.js:getTemplatePreview',
         }.items():
             self.assertEqual(data[k], v)
 
