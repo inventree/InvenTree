@@ -29,30 +29,7 @@ Independent of the preferred installation method, InvenTree provides a number of
 
 ## System Components
 
-The InvenTree server ecosystem consists of the following components:
-
-### Database
-
-A persistent database is required for data storage. By default, InvenTree is configured to use [PostgreSQL](https://www.postgresql.org/) - and this is the recommended database backend to use. However, InvenTree can also be configured to connect to any database backend [supported by Django]({% include "django.html" %}/ref/databases/)
-
-
-### Web Server
-
-The bulk of the InvenTree code base supports the custom web server application. The web server application services user requests and facilitates database access. The webserver provides access to the [API](../api/api.md) for performing database query actions.
-
-InvenTree uses [Gunicorn](https://gunicorn.org/) as the web server - a Python WSGI HTTP server.
-
-### Background Tasks
-
-A separate application handles management of [background tasks](../settings/tasks.md), separate to user-facing web requests. The background task manager is required to perform asynchronous tasks, such as sending emails, generating reports, and other long-running tasks.
-
-InvenTree uses [django-q2](https://django-q2.readthedocs.io/en/master/) as the background task manager.
-
-### File Storage
-
-Uploaded *media* files (images, attachments, reports, etc) and *static* files (javascript, html) are stored to a persistent storage volume. A *file server* is required to serve these files to the user.
-
-InvenTree uses [Caddy](https://caddyserver.com/) as a file server, which is configured to serve both *static* and *media* files. Additionally, Caddy provides SSL termination and reverse proxy services.
+The InvenTree software stack is composed of multiple components, each of which is required for a fully functional server environment. Your can read more about the [InvenTree processes here](./processes.md).
 
 ## OS Requirements
 
@@ -150,4 +127,4 @@ So, for a production setup, you should set `INVENTREE_DEBUG=false` in the [confi
 Turning off DEBUG mode creates further work for the system administrator. In particular, when running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that the InvenTree server can run "monolithically" without the need for a separate web server.
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details

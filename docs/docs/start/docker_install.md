@@ -104,10 +104,11 @@ docker compose up -d
 
 This command launches the following containers:
 
-- `inventree-db` - PostgreSQL database
-- `inventree-server` - InvenTree web server
-- `inventree-worker` - Background worker
-- `inventree-proxy` - Caddy reverse proxy
+- `inventree-db` - [PostgreSQL database](./processes.md#database)
+- `inventree-server` - [InvenTree web server](./processes.md#web-server)
+- `inventree-worker` - [Background worker](./processes.md#background-worker)
+- `inventree-proxy` - [Caddy reverse proxy](./processes.md#proxy-server)
+- `inventree-cache` - [Redis cache](./processes.md#cache-server)
 
 !!! success "Up and Running!"
     You should now be able to view the InvenTree login screen at [http://inventree.localhost](http://inventree.localhost) (or whatever custom domain you have configured in the `.env` file).
