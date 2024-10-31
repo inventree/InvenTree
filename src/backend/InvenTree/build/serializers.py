@@ -180,6 +180,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
 
         return reference
 
+    @transaction.atomic
     def create(self, validated_data):
         """Save the Build object."""
 
