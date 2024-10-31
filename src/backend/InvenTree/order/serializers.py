@@ -927,8 +927,8 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
             for item in items:
                 # Select location (in descending order of priority)
                 loc = (
-                    location
-                    or item.get('location', None)
+                    item.get('location', None)
+                    or location
                     or item['line_item'].get_destination()
                 )
 
