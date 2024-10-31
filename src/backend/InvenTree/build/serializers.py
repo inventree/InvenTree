@@ -180,6 +180,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
 
         return reference
 
+    @transaction.atomic
     def create(self, validated_data):
         """Save the Build object."""
 
@@ -192,7 +193,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             InvenTree.tasks.offload_task(
                 build.tasks.create_child_builds,
                 build_order.pk,
-                group='build',
+                group='build'
             )
 
         return build_order
