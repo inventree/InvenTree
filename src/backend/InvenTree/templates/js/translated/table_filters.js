@@ -125,6 +125,20 @@ function getReturnOrderLineItemFilters() {
     };
 }
 
+// Return a dictionary of filters for the return order part line item table
+function getReturnOrderPartLineItemFilters() {
+    return {
+        received: {
+            type: 'bool',
+            title: '{% trans "Received" %}',
+        },
+        outcome: {
+            title: '{% trans "Outcome" %}',
+            options: returnOrderLineItemCodes,
+        }
+    };
+}
+
 
 // Return a dictionary of filters for the variants table
 function getVariantsTableFilters() {
@@ -908,6 +922,8 @@ function getAvailableTableFilters(tableKey) {
         return getReturnOrderFilters();
     case 'returnorderlineitem':
         return getReturnOrderLineItemFilters();
+    case 'returnorderpartlineitem':
+        return getReturnOrderPartLineItemFilters();
     case 'salesorder':
         return getSalesOrderFilters();
     case 'salesorderallocation':

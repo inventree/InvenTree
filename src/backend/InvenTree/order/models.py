@@ -2328,7 +2328,6 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     # endregion
 
-    # TODO: Handle special logic here - DUPLICATE FOR FLEX
     @transaction.atomic
     def receive_line_item(self, line, location, user, note='', **kwargs):
         """Receive a line item against this ReturnOrder.
@@ -2356,13 +2355,70 @@ class ReturnOrder(TotalPriceMixin, Order):
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        # TODO: fix
-        # stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
+        stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
-        # TODO: qty
-        stock_item.quantity += 1
+        stock_item.save(add_note=False)
+        stock_item.clearAllocations()
+
+        # Add a tracking entry to the StockItem
+        stock_item.add_tracking_entry(
+            StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER,
+            user,
+            notes=note,
+            deltas=deltas,
+            location=location,
+            returnorder=self,
+        )
+
+        # Update the LineItem
+        line.received_date = InvenTree.helpers.current_date()
+        line.save()
+
+        trigger_event('returnorder.received', id=self.pk)
+
+        # Notify responsible users
+        notify_responsible(
+            self,
+            ReturnOrder,
+            exclude=user,
+            content=InvenTreeNotificationBodies.ReturnOrderItemsReceived,
+        )
+
+    @transaction.atomic
+    def receive_part_line_item(self, line, location, user, note='', **kwargs):
+        """Receive a part line item against this ReturnOrder.
+
+        Rules:
+        - Finds or creates a StockItem at the specified location
+        - Adds a tracking entry to the StockItem
+        """
+        # Prevent an item from being "received" multiple times
+        if line.received_date is not None:
+            logger.warning('receive_line_item called with item already returned')
+            return
+
+        # part = line.part
+
+        # TODO: find or create stock item in specified LOCATION
+        stock_item = line.item
+
+        deltas = {
+            'returnorder': self.pk,
+            'location': location.pk,
+            # TODO: add more details?
+            'quantity': line.quantity,
+        }
+
+        if stock_item.customer:
+            deltas['customer'] = stock_item.customer.pk
+
+        # Update the StockItem
+        stock_item.location = location
+        stock_item.customer = None
+        stock_item.sales_order = None
+        stock_item.quantity += line.quantity
         stock_item.save(add_note=False)
         stock_item.clearAllocations()
 

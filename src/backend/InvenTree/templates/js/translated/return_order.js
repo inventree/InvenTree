@@ -677,6 +677,143 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
     });
 }
 
+/*
+ * Receive one or more part items against a ReturnOrder
+ */
+function receiveReturnOrderPartItems(order_id, line_items, options={}) {
+
+    if (line_items.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Part Line Items" %}',
+            '{% trans "At least one part line item must be selected" %}'
+        );
+        return;
+    }
+
+    function renderLineItem(line_item) {
+        let pk = line_item.pk;
+
+        // Render thumbnail + description
+        let thumb = thumbnailImage(line_item.part_detail.thumbnail);
+
+        let buttons = '';
+
+        if (line_items.length > 1) {
+            buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
+        }
+
+        buttons = wrapButtons(buttons);
+
+        let html = `
+        <tr id='receive_row_${pk}' class='stock-receive-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${line_item.part_detail.full_name}
+            </td>
+            <td id='item_${pk}'>
+                ${line_item.quantity}
+            </td>
+            <td id='actions_${pk}'>${buttons}</td>
+        </tr>`;
+
+        return html;
+    }
+
+    let table_entries = '';
+
+    line_items.forEach(function(item) {
+        if (!item.received_date) {
+            table_entries += renderLineItem(item);
+        }
+    });
+
+    let html = '';
+
+    html += `
+    <table class='table table-striped table-condensed' id='order-receive-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Quantity" %}</th>
+            </tr>
+        </thead>
+        <tbody>${table_entries}</tbody>
+    </table>`;
+
+    constructForm(`{% url "api-return-order-list" %}${order_id}/receive-parts/`, {
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            location: {
+                filters: {
+                    structural: false,
+                },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                },
+            }
+        },
+        confirm: true,
+        confirmMessage: '{% trans "Confirm receipt of items" %}',
+        title: '{% trans "Receive Return Order Items" %}',
+        afterRender: function(fields, opts) {
+            // Add callback to remove rows
+            $(opts.modal).find('.button-row-remove').click(function() {
+                let pk = $(this).attr('pk');
+                $(opts.modal).find(`#receive_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            // Extract data elements from the form
+            let data = {
+                items: [],
+                location: getFormFieldValue('location', {}, opts),
+            };
+
+            let item_pk_values = [];
+
+            line_items.forEach(function(item) {
+                let pk = item.pk;
+                let row = $(opts.modal).find(`#receive_row_${pk}`);
+
+                if (row.exists()) {
+                    data.items.push({
+                        item: pk,
+                    });
+                    item_pk_values.push(pk);
+                }
+            });
+
+            opts.nested = {
+                'items': item_pk_values,
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        handleFormSuccess(response, options);
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    });
+}
+
 
 /*
  * Load a table displaying line items for a particular ReturnOrder

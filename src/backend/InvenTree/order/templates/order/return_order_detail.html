@@ -40,6 +40,7 @@
         <table class='table table-striped table-condensed' id='return-order-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
+
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Line Items" %}</h4>
@@ -67,6 +68,7 @@
         <table class='table table-striped table-condensed' id='return-order-part-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
+
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
             <h4>{% trans "Extra Lines" %}</h4>
@@ -180,7 +182,6 @@ onPanelLoad('order-details', function() {
     });
 
     $('#new-return-order-extra-line').click(function() {
-
         createExtraLineItem({
             order: {{ order.pk }},
             table: '#return-order-extra-lines-table',

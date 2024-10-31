@@ -1902,24 +1902,23 @@ class ReturnOrderPartLineItemReceiveSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['part']
+        fields = ['item']
 
-    part = serializers.PrimaryKeyRelatedField(
-        queryset=order.models.ReturnOrderLineItem.objects.all(),
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.ReturnOrderPartLineItem.objects.all(),
         many=False,
         allow_null=False,
         required=True,
-        label=_('Return order line item'),
+        label=_('Return order part line item'),
     )
 
     def validate_line_item(self, item):
         """Validation for a single line item."""
-        # TODO: improve?
-        # if item.order != self.context['order']:
-        #     raise ValidationError(_('Line item does not match return order'))
+        if item.order != self.context['order']:
+            raise ValidationError(_('Line item does not match return order'))
 
-        # if item.received:
-        #     raise ValidationError(_('Line item has already been received'))
+        if item.received:
+            raise ValidationError(_('Line item has already been received'))
 
         return item
 
@@ -1972,12 +1971,63 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         items = data['items']
         location = data['location']
 
-        # TODO: update here...
         with transaction.atomic():
             for item in items:
                 line_item = item['item']
                 order.receive_line_item(line_item, location, request.user)
-        # TODO: add flex_items
+
+
+class ReturnOrderReceivePartsSerializer(serializers.Serializer):
+    """Serializer for receiving parts against a ReturnOrder."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['items', 'location']
+
+    items = ReturnOrderPartLineItemReceiveSerializer(many=True)
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    def validate(self, data):
+        """Perform data validation for this serializer."""
+        order = self.context['order']
+        if order.status != ReturnOrderStatus.IN_PROGRESS:
+            raise ValidationError(
+                _('Items can only be received against orders which are in progress')
+            )
+
+        data = super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_('Part line items must be provided'))
+
+        return data
+
+    @transaction.atomic
+    def save(self):
+        """Saving this serializer marks the returned items as received."""
+        order = self.context['order']
+        request = self.context['request']
+
+        data = self.validated_data
+        items = data['items']
+        items = data['items']
+        location = data['location']
+
+        with transaction.atomic():
+            for item in items:
+                line_item = item['item']
+                order.receive_part_line_item(line_item, location, request.user)
 
 
 @register_importer()

@@ -1356,6 +1356,13 @@ class ReturnOrderReceive(ReturnOrderContextMixin, CreateAPI):
     serializer_class = serializers.ReturnOrderReceiveSerializer
 
 
+class ReturnOrderReceiveParts(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to receive parts against a ReturnOrder."""
+
+    queryset = models.ReturnOrder.objects.none()
+    serializer_class = serializers.ReturnOrderReceivePartsSerializer
+
+
 class ReturnOrderLineItemFilter(LineItemFilter):
     """Custom filters for the ReturnOrderLineItemList endpoint."""
 
@@ -1932,6 +1939,11 @@ order_api_urls = [
                         'receive/',
                         ReturnOrderReceive.as_view(),
                         name='api-return-order-receive',
+                    ),
+                    path(
+                        'receive-parts/',
+                        ReturnOrderReceiveParts.as_view(),
+                        name='api-return-order-receive-parts',
                     ),
                     path(
                         'metadata/',
