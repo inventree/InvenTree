@@ -88,6 +88,7 @@ nav:
     - Security: security.md
   - Install:
     - Introduction: start/intro.md
+    - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
