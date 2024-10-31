@@ -1364,6 +1364,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         method: 'POST',
         fields: {
             location: {
+                value: options.destination,
                 filters: {
                     structural: false,
                 },
