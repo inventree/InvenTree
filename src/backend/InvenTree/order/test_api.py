@@ -1060,9 +1060,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_1.count(), 1)
         self.assertEqual(stock_2.count(), 1)
 
-        # Same location for each received item, as overall 'location' field is provided
+        # Check received locations
         self.assertEqual(stock_1.last().location.pk, 1)
-        self.assertEqual(stock_2.last().location.pk, 1)
+        self.assertEqual(stock_2.last().location.pk, 2)
 
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
