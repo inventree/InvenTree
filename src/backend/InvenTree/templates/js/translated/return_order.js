@@ -36,11 +36,13 @@
     completeReturnOrder,
     createReturnOrder,
     createReturnOrderLineItem,
+    createReturnOrderPartLineItem,
     editReturnOrder,
     editReturnOrderLineItem,
     issueReturnOrder,
     loadReturnOrderTable,
     loadReturnOrderLineItemTable,
+    loadReturnOrderPartLineItemTable,
 */
 
 
@@ -1103,8 +1105,17 @@ function loadReturnOrderPartLineItemTable(options={}) {
                 }
             },
             {
+                sortable: true,
+                switchable: false,
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                footerFormatter: function(data) {
+                    return data.map(function(row) {
+                        return +row['quantity'];
+                    }).reduce(function(sum, i) {
+                        return sum + i;
+                    }, 0);
+                },
             },
             {
                 field: 'reference',
