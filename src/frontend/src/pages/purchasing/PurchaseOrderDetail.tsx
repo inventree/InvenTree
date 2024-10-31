@@ -165,8 +165,7 @@ export default function PurchaseOrderDetail() {
         type: 'text',
         name: 'currency',
         label: t`Order Currency`,
-        value_formatter: () =>
-          order?.order_currency ?? order?.supplier_detail?.currency
+        value_formatter: () => orderCurrency
       },
       {
         type: 'text',
@@ -198,8 +197,15 @@ export default function PurchaseOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
       }
-      // TODO: Project code
     ];
 
     let br: DetailsField[] = [
@@ -261,7 +267,7 @@ export default function PurchaseOrderDetail() {
         <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
-  }, [order, instanceQuery]);
+  }, [order, orderCurrency, instanceQuery]);
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
