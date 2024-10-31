@@ -66,14 +66,14 @@ In addition to the location where the InvenTree source code is located, you will
 InvenTree requires a directory for storage of [static files](./config.md#static-file-storage).
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 #### Media Files
 
 InvenTree requires a directory for storage of [user uploaded files](./config.md#uploaded-file-storage)
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 #### Backup Directory
 
