@@ -202,6 +202,9 @@ def create_child_builds(build_id: int) -> None:
 
     assembly_items = build_order.part.get_bom_items().filter(sub_part__assembly=True)
 
+    # Random delay, to reduce likelihood of race conditions from multiple build orders being created simultaneously
+    time.sleep(random.random())
+
     with transaction.atomic():
         # Atomic transaction to ensure that all child build orders are created together, or not at all
         # This is critical to prevent duplicate child build orders being created (e.g. if the task is re-run)
@@ -211,8 +214,6 @@ def create_child_builds(build_id: int) -> None:
         for item in assembly_items:
             quantity = item.quantity * build_order.quantity
 
-            # Random delay, to reduce likelihood of race conditions from multiple build orders being created simultaneously
-            time.sleep(random.random())
 
             # Check if the child build order has already been created
             if build_models.Build.objects.filter(
@@ -244,9 +245,6 @@ def create_child_builds(build_id: int) -> None:
                 pk,
                 group='build'
             )
-
-            # Random delay, to reduce likelihood of race conditions from multiple build orders being created simultaneously
-            time.sleep(random.random())
 
 
 def notify_overdue_build_order(bo: build_models.Build):
