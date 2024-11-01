@@ -52,7 +52,7 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
         .then((response: any) => response.data)
         .catch((error: any) => {
           console.error(
-            `Failed to fetch plugin ui features for feature "${featureType}":`,
+            `ERR: Failed to fetch plugin ui features for feature "${featureType}":`,
             error
           );
           return [];
