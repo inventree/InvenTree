@@ -147,10 +147,7 @@ export default function PluginDrawer({
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <PluginSettingsPanel
-                  pluginInstance={pluginInstance}
-                  pluginAdmin={pluginAdmin}
-                />
+                <PluginSettingsPanel pluginAdmin={pluginAdmin} />
               </Card>
             </Accordion.Panel>
           </Accordion.Item>

@@ -135,6 +135,14 @@ export default function InvenTreeTableHeader({
           />
         </Boundary>
       )}
+      {tableState.queryFilters.size > 0 && (
+        <Alert
+          color="yellow"
+          withCloseButton
+          title={t`Custom table filters are active`}
+          onClose={() => tableState.clearQueryFilters()}
+        ></Alert>
+      )}
 
       <Group justify="apart" grow wrap="nowrap">
         <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
@@ -192,21 +200,6 @@ export default function InvenTreeTableHeader({
               columns={columns}
               onToggleColumn={toggleColumn}
             />
-          )}
-          {tableState.queryFilters.size > 0 && (
-            <ActionIcon
-              variant="transparent"
-              color="red"
-              aria-label="table-clear-query-filters"
-            >
-              <Tooltip label={t`Clear custom query filters`}>
-                <IconFilterCancel
-                  onClick={() => {
-                    tableState.clearQueryFilters();
-                  }}
-                />
-              </Tooltip>
-            </ActionIcon>
           )}
           {tableProps.enableFilters && filters.length > 0 && (
             <Indicator

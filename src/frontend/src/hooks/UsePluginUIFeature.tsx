@@ -52,7 +52,7 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
         .then((response: any) => response.data)
         .catch((error: any) => {
           console.error(
-            `Failed to fetch plugin ui features for feature "${featureType}":`,
+            `ERR: Failed to fetch plugin ui features for feature "${featureType}":`,
             error
           );
           return [];
@@ -70,21 +70,25 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
     }[]
   >(() => {
     return (
-      pluginData?.map((feature) => ({
-        options: feature.options,
-        func: (async (featureContext) => {
-          const func = await findExternalPluginFunction(
-            feature.source,
-            'getFeature'
-          );
-          if (!func) return;
+      pluginData?.map((feature) => {
+        return {
+          options: {
+            ...feature
+          },
+          func: (async (featureContext) => {
+            const func = await findExternalPluginFunction(
+              feature.source,
+              'getFeature'
+            );
+            if (!func) return;
 
-          return func({
-            featureContext,
-            inventreeContext
-          });
-        }) as PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>
-      })) || []
+            return func({
+              featureContext,
+              inventreeContext
+            });
+          }) as PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>
+        };
+      }) || []
     );
   }, [pluginData, inventreeContext]);
 }
