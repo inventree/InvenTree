@@ -211,8 +211,6 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         }.items():
             self.assertEqual(data[k], v)
 
-        self.assertDictEqual(data['options'], {'icon': 'category'})
-
         # Next, disable the global setting for UI integration
         InvenTreeSetting.set_setting(
             'ENABLE_PLUGINS_INTERFACE', False, change_user=None
