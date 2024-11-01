@@ -187,7 +187,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
             'plugin_name': 'sampleui',
             'key': 'sample-template-editor',
             'title': 'Sample Template Editor',
-            'source': '/static/plugins/sampleui/sample_preview.js:getTemplatePreview',
+            'source': '/static/plugins/sampleui/sample_template.js:getTemplateEditor',
         }.items():
             self.assertEqual(data[k], v)
 
@@ -207,7 +207,7 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
             'key': 'sample-template-preview',
             'title': 'Sample Template Preview',
             'context': None,
-            'source': '/static/plugins/sampleui/sample_template.js:getTemplatePreview',
+            'source': '/static/plugins/sampleui/sample_preview.js:getTemplatePreview',
         }.items():
             self.assertEqual(data[k], v)
 
