@@ -76,6 +76,7 @@ export function usePluginPanels({
 
   // Cache the context data which is delivered to the plugins
   const inventreeContext = useInvenTreeContext();
+
   const contextData = useMemo<PluginPanelContext>(() => {
     return {
       model: model,
@@ -83,7 +84,7 @@ export function usePluginPanels({
       instance: instance,
       ...inventreeContext
     };
-  }, [model, id, instance]);
+  }, [model, id, instance, inventreeContext]);
 
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
