@@ -318,6 +318,7 @@ class PurchaseOrderSerializer(
             'supplier_name',
             'total_price',
             'order_currency',
+            'destination',
         ])
 
         read_only_fields = ['issue_date', 'complete_date', 'creation_date']
@@ -860,6 +861,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
         many=False,
+        required=False,
         allow_null=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
@@ -873,9 +875,10 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         """
         super().validate(data)
 
+        order = self.context['order']
         items = data.get('items', [])
 
-        location = data.get('location', None)
+        location = data.get('location', order.destination)
 
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
@@ -919,15 +922,17 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         order = self.context['order']
 
         items = data['items']
-        location = data.get('location', None)
+
+        # Location can be provided, or default to the order destination
+        location = data.get('location', order.destination)
 
         # Now we can actually receive the items into stock
         with transaction.atomic():
             for item in items:
                 # Select location (in descending order of priority)
                 loc = (
-                    location
-                    or item.get('location', None)
+                    item.get('location', None)
+                    or location
                     or item['line_item'].get_destination()
                 )
 

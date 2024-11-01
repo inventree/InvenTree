@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 275
+INVENTREE_API_VERSION = 276
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v274 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8396
+v276 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8403
+    - Adds 'destination' field to the PurchaseOrder model and API endpoints
+
+v275 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8396
     - Adds SKU and MPN fields to the StockItem serializer
     - Additional export options for the StockItem serializer
 

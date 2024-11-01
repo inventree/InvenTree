@@ -500,6 +500,15 @@ class BarcodePOReceive(BarcodeView):
         purchase_order = kwargs.get('purchase_order')
         location = kwargs.get('location')
 
+        # Extract location from PurchaseOrder, if available
+        if not location and purchase_order:
+            try:
+                po = order.models.PurchaseOrder.objects.get(pk=purchase_order)
+                if po.destination:
+                    location = po.destination.pk
+            except Exception:
+                pass
+
         plugins = registry.with_mixin('barcode')
 
         # Look for a barcode plugin which knows how to deal with this barcode

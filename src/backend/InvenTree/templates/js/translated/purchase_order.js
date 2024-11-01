@@ -111,6 +111,9 @@ function purchaseOrderFields(options={}) {
         target_date: {
             icon: 'fa-calendar-alt',
         },
+        destination: {
+            icon: 'fa-sitemap'
+        },
         link: {
             icon: 'fa-link',
         },
@@ -1361,6 +1364,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         method: 'POST',
         fields: {
             location: {
+                value: options.destination,
                 filters: {
                     structural: false,
                 },

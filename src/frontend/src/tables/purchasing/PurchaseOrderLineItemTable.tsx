@@ -113,6 +113,7 @@ export function PurchaseOrderLineItemTable({
   const receiveLineItems = useReceiveLineItems({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
+    destinationPk: order.destination,
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
       onClose: () => {
