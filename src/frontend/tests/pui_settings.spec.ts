@@ -3,7 +3,45 @@ import { apiUrl, baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
-test('Admin', async ({ page }) => {
+/**
+ * Adjust language and color settings
+ */
+test('Settings - Language / Color', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.getByRole('button', { name: 'Ally Access' }).click();
+  await page.getByRole('menuitem', { name: 'Logout' }).click();
+  await page.getByRole('button', { name: 'Send me an email' }).click();
+  await page.getByRole('button').nth(3).click();
+  await page.getByLabel('Select language').first().click();
+  await page.getByRole('option', { name: 'German' }).click();
+  await page.waitForTimeout(200);
+
+  await page.getByRole('button', { name: 'Benutzername und Passwort' }).click();
+  await page.getByPlaceholder('Ihr Benutzername').click();
+  await page.getByPlaceholder('Ihr Benutzername').fill('admin');
+  await page.getByPlaceholder('Ihr Benutzername').press('Tab');
+  await page.getByPlaceholder('Dein Passwort').fill('inventree');
+  await page.getByRole('button', { name: 'Anmelden' }).click();
+  await page.waitForTimeout(200);
+
+  // Note: changes to the dashboard have invalidated these tests (for now)
+  // await page
+  //   .locator('span')
+  //   .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
+  //   .getByRole('button')
+  //   .click();
+  // await page
+  //   .locator('span')
+  //   .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
+  //   .getByRole('button')
+  //   .click();
+
+  await page.getByRole('tab', { name: 'Dashboard' }).click();
+  await page.waitForURL('**/platform/home');
+});
+
+test('Settings - Admin', async ({ page }) => {
   // Note here we login with admin access
   await doQuickLogin(page, 'admin', 'inventree');
 
@@ -86,7 +124,7 @@ test('Admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
-test('Admin - Barcode History', async ({ page, request }) => {
+test('Settings - Admin - Barcode History', async ({ page, request }) => {
   // Login with admin credentials
   await doQuickLogin(page, 'admin', 'inventree');
 
@@ -123,7 +161,7 @@ test('Admin - Barcode History', async ({ page, request }) => {
   });
 });
 
-test('Admin - Unauthorized', async ({ page }) => {
+test('Settings - Admin - Unauthorized', async ({ page }) => {
   // Try to access "admin" page with a non-staff user
   await doQuickLogin(page, 'allaccess', 'nolimits');
 

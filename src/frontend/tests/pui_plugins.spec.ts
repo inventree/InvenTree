@@ -41,7 +41,7 @@ test('Plugins - Panels', async ({ page, request }) => {
 
   await page.getByText('Error occurred while loading plugin content').waitFor();
 
-  await page.getByRole('tab', { name: 'Dynamic Part Panel' }).click();
+  await page.getByRole('tab', { name: 'Dynamic Panel' }).click();
   await page.waitForTimeout(500);
 
   await page.getByText('Instance ID: 69');
