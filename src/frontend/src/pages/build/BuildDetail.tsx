@@ -188,6 +188,14 @@ export default function BuildDetail() {
         label: t`Completed`,
         icon: 'calendar',
         hidden: !build.completion_date
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
       }
     ];
 

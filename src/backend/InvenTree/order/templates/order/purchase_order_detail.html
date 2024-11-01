@@ -169,6 +169,9 @@ $('#new-po-line').click(function() {
             {{ order.id }},
             items,
             {
+                {% if order.destination %}
+                destination: {{ order.destination.pk }},
+                {% endif %}
                 success: function() {
                     $("#po-line-table").bootstrapTable('refresh');
                 }

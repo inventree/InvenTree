@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 276
+INVENTREE_API_VERSION = 277
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v276 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8278
+v277 - 2024-11-01 : https://github.com/inventree/InvenTree/pull/8278
     - Allow build order list to be filtered by "outstanding" (alias for "active")
+
+v276 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8403
+    - Adds 'destination' field to the PurchaseOrder model and API endpoints
 
 v275 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8396
     - Adds SKU and MPN fields to the StockItem serializer
