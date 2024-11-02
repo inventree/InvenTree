@@ -165,10 +165,7 @@ export default function PluginListTable() {
 
       return [
         {
-          hidden:
-            record.is_builtin != false ||
-            record.is_installed != true ||
-            record.active != true,
+          hidden: record.is_builtin != false || record.active != true,
           title: t`Deactivate`,
           color: 'red',
           icon: <IconCircleX />,
