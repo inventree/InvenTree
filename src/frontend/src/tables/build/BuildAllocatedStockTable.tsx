@@ -45,17 +45,30 @@ export default function BuildAllocatedStockTable({
   modelField?: string;
 }>) {
   const user = useUserState();
-  const table = useTable('buildallocatedstock');
+  const table = useTable(
+    !!partId ? 'buildallocatedstock-part' : 'buildallocatedstock'
+  );
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'tracked',
         label: t`Allocated to Output`,
         description: t`Show items allocated to a build output`
       }
     ];
-  }, []);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -83,6 +96,14 @@ export default function BuildAllocatedStockTable({
         sortable: true,
         switchable: false,
         render: (record: any) => PartColumn({ part: record.part_detail })
+      },
+      {
+        accessor: 'part_detail.IPN',
+        ordering: 'IPN',
+        hidden: !showPartInfo,
+        title: t`IPN`,
+        sortable: true,
+        switchable: true
       },
       {
         hidden: !showPartInfo,
@@ -140,8 +161,11 @@ export default function BuildAllocatedStockTable({
   const editItem = useEditApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Edit Build Item`,
+    title: t`Edit Stock Allocation`,
     fields: {
+      stock_item: {
+        disabled: true
+      },
       quantity: {}
     },
     table: table
@@ -150,7 +174,7 @@ export default function BuildAllocatedStockTable({
   const deleteItem = useDeleteApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Delete Build Item`,
+    title: t`Delete Stock Allocation`,
     table: table
   });
 

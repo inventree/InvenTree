@@ -15,6 +15,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CreationDateColumn,
+  DateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
@@ -25,6 +26,9 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
@@ -32,15 +36,21 @@ import {
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
-  const table = useTable('return-orders');
+export function ReturnOrderTable({
+  partId,
+  customerId
+}: Readonly<{
+  partId?: number;
+  customerId?: number;
+}>) {
+  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
   const user = useUserState();
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'status',
         label: t`Status`,
@@ -50,17 +60,15 @@ export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'assigned_to',
         label: t`Responsible`,
@@ -68,7 +76,18 @@ export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
         choices: responsibleFilters.choices
       }
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -98,6 +117,10 @@ export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
+      DateColumn({
+        accessor: 'complete_date',
+        title: t`Completion Date`
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',
@@ -142,7 +165,8 @@ export function ReturnOrderTable({ params }: Readonly<{ params?: any }>) {
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            part: partId,
+            customer: customerId,
             customer_detail: true
           },
           tableFilters: tableFilters,

@@ -1,6 +1,19 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
-import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
+import {
+  Alert,
+  Divider,
+  Drawer,
+  Group,
+  Paper,
+  Space,
+  Text
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -8,6 +21,7 @@ import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import { StylishText } from '../../components/items/StylishText';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -19,7 +33,6 @@ import {
 } from '../../forms/BuildForms';
 import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -32,11 +45,78 @@ import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
+import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {
   name: string;
   result: boolean;
 };
+
+/**
+ * Detail drawer view for allocating stock against a specific build output
+ */
+function OutputAllocationDrawer({
+  build,
+  output,
+  opened,
+  close
+}: {
+  build: any;
+  output: any;
+  opened: boolean;
+  close: () => void;
+}) {
+  return (
+    <>
+      <Drawer
+        position="bottom"
+        size="lg"
+        title={
+          <Group p="md" wrap="nowrap" justify="space-apart">
+            <StylishText size="lg">{t`Build Output Stock Allocation`}</StylishText>
+            <Space h="lg" />
+            <PartColumn part={build.part_detail} />
+            {output?.serial && (
+              <Text size="sm">
+                {t`Serial Number`}: {output.serial}
+              </Text>
+            )}
+            {output?.batch && (
+              <Text size="sm">
+                {t`Batch Code`}: {output.batch}
+              </Text>
+            )}
+            <Space h="lg" />
+          </Group>
+        }
+        opened={opened}
+        onClose={close}
+        withCloseButton
+        closeOnEscape
+        closeOnClickOutside
+        styles={{
+          header: {
+            width: '100%'
+          },
+          title: {
+            width: '100%'
+          }
+        }}
+      >
+        <Divider />
+        <Paper p="md">
+          <BuildLineTable
+            build={build}
+            output={output}
+            params={{
+              tracked: true
+            }}
+          />
+        </Paper>
+      </Drawer>
+    </>
+  );
+}
 
 export default function BuildOutputTable({
   build,
@@ -85,7 +165,7 @@ export default function BuildOutputTable({
   }, [partId, testTemplates]);
 
   // Fetch the "tracked" BOM items associated with the partId
-  const { data: trackedItems } = useQuery({
+  const { data: trackedItems, refetch: refetchTrackedItems } = useQuery({
     queryKey: ['trackeditems', buildId],
     queryFn: async () => {
       if (!buildId || buildId < 0) {
@@ -111,7 +191,7 @@ export default function BuildOutputTable({
   // Ensure base table data is updated correctly
   useEffect(() => {
     table.refreshTable();
-  }, [hasTrackedItems, hasRequiredTests]);
+  }, [testTemplates, trackedItems, hasTrackedItems, hasRequiredTests]);
 
   // Format table records
   const formatRecords = useCallback(
@@ -152,13 +232,11 @@ export default function BuildOutputTable({
           let allocated = 0;
 
           // Find all allocations which match the build output
-          let allocations = item.allocations.filter(
-            (allocation: any) => (allocation.install_into = record.pk)
-          );
-
-          allocations.forEach((allocation: any) => {
-            allocated += allocation.quantity;
-          });
+          item.allocations
+            ?.filter((allocation: any) => allocation.install_into == record.pk)
+            ?.forEach((allocation: any) => {
+              allocated += allocation.quantity;
+            });
 
           if (allocated >= item.bom_item_detail.quantity) {
             fullyAllocatedCount += 1;
@@ -218,8 +296,8 @@ export default function BuildOutputTable({
 
   const editStockItemFields = useStockFields({
     create: false,
-    item_detail: selectedOutputs[0],
-    part_detail: selectedOutputs[0]?.part_detail
+    partId: partId,
+    stockItem: selectedOutputs[0]
   });
 
   const editBuildOutput = useEditApiFormModal({
@@ -228,6 +306,32 @@ export default function BuildOutputTable({
     title: t`Edit Build Output`,
     fields: editStockItemFields,
     table: table
+  });
+
+  const deallocateBuildOutput = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_deallocate,
+    pk: build.pk,
+    title: t`Deallocate Stock`,
+    preFormContent: (
+      <Alert
+        color="yellow"
+        icon={<IconExclamationCircle />}
+        title={t`Deallocate Stock`}
+      >
+        {t`This action will deallocate all stock from the selected build output`}
+      </Alert>
+    ),
+    fields: {
+      output: {
+        hidden: true
+      }
+    },
+    initialData: {
+      output: selectedOutputs[0]?.pk
+    },
+    onFormSuccess: () => {
+      refetchTrackedItems();
+    }
   });
 
   const tableActions = useMemo(() => {
@@ -281,15 +385,23 @@ export default function BuildOutputTable({
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
+          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon="plus" />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedOutputs([record]);
+            openDrawer();
+          }
         },
         {
           title: t`Deallocate`,
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
+          hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
           icon: <InvenTreeIcon icon="minus" />,
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedOutputs([record]);
+            deallocateBuildOutput.open();
+          }
         },
         {
           title: t`Complete`,
@@ -330,7 +442,7 @@ export default function BuildOutputTable({
         }
       ];
     },
-    [user, partId]
+    [user, partId, hasTrackedItems]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -432,13 +544,23 @@ export default function BuildOutputTable({
     trackedItems
   ]);
 
+  const [drawerOpen, { open: openDrawer, close: closeDrawer }] =
+    useDisclosure(false);
+
   return (
     <>
       {addBuildOutput.modal}
       {completeBuildOutputsForm.modal}
       {scrapBuildOutputsForm.modal}
       {editBuildOutput.modal}
+      {deallocateBuildOutput.modal}
       {cancelBuildOutputsForm.modal}
+      <OutputAllocationDrawer
+        build={build}
+        output={selectedOutputs[0]}
+        opened={drawerOpen}
+        close={closeDrawer}
+      />
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.stock_item_list)}
@@ -452,11 +574,16 @@ export default function BuildOutputTable({
           },
           enableLabels: true,
           enableReports: true,
-          modelType: ModelType.stockitem,
           dataFormatter: formatRecords,
           tableActions: tableActions,
           rowActions: rowActions,
-          enableSelection: true
+          enableSelection: true,
+          onRowClick: (record: any) => {
+            if (hasTrackedItems && !!record.serial) {
+              setSelectedOutputs([record]);
+              openDrawer();
+            }
+          }
         }}
       />
     </>

@@ -307,21 +307,21 @@ mkdocs-get-deps==0.2.0 \
     --hash=sha256:162b3d129c7fad9b19abfdcb9c1458a651628e4b1dea628ac68790fb3061c60c \
     --hash=sha256:2bf11d0b133e77a0dd036abeeb06dec8775e46efa526dc70667d8863eefc6134
     # via mkdocs
-mkdocs-git-revision-date-localized-plugin==1.2.9 \
-    --hash=sha256:dea5c8067c23df30275702a1708885500fadf0abfb595b60e698bffc79c7a423 \
-    --hash=sha256:df9a50873fba3a42ce9123885f8c53d589e90ef6c2443fe3280ef1e8d33c8f65
+mkdocs-git-revision-date-localized-plugin==1.3.0 \
+    --hash=sha256:439e2f14582204050a664c258861c325064d97cdc848c541e48bb034a6c4d0cb \
+    --hash=sha256:c99377ee119372d57a9e47cff4e68f04cce634a74831c06bc89b33e456e840a1
     # via -r docs/requirements.in
-mkdocs-include-markdown-plugin==6.2.2 \
-    --hash=sha256:d293950f6499d2944291ca7b9bc4a60e652bbfd3e3a42b564f6cceee268694e7 \
-    --hash=sha256:f2bd5026650492a581d2fd44be6c22f90391910d76582b96a34c264f2d17875d
+mkdocs-include-markdown-plugin==7.0.0 \
+    --hash=sha256:a8eac8f2e6aa391d82d1d5e473b819b52393d91464060c02db5741834fe9008b \
+    --hash=sha256:bf8d19245ae3fb2eea395888e80c60bc91806a0d879279707d707896c24319c3
     # via -r docs/requirements.in
-mkdocs-macros-plugin==1.3.5 \
-    --hash=sha256:58bd47ea7097d1a2824dc9d0d912c211823c5e6e6fe8a19a3ecf33346f7d6547 \
-    --hash=sha256:5fd6969e2c43e23031ffb719bebe7421163ea26f4dc360af2343144ca979b04b
+mkdocs-macros-plugin==1.3.7 \
+    --hash=sha256:02432033a5b77fb247d6ec7924e72fc4ceec264165b1644ab8d0dc159c22ce59 \
+    --hash=sha256:17c7fd1a49b94defcdb502fd453d17a1e730f8836523379d21292eb2be4cb523
     # via -r docs/requirements.in
-mkdocs-material==9.5.40 \
-    --hash=sha256:8e7a16ada34e79a7b6459ff2602584222f522c738b6a023d1bea853d5049da6f \
-    --hash=sha256:b69d70e667ec51fc41f65e006a3184dd00d95b2439d982cb1586e4c018943156
+mkdocs-material==9.5.42 \
+    --hash=sha256:452a7c5d21284b373f36b981a2cbebfff59263feebeede1bc28652e9c5bbe316 \
+    --hash=sha256:92779b5e9b5934540c574c11647131d217dc540dce72b05feeda088c8eb1b8f2
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \

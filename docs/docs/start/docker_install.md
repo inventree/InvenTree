@@ -37,6 +37,9 @@ The following files required for this setup are provided with the InvenTree sour
 
 Download these files to a directory on your local machine.
 
+!!! warning "File Extensions"
+    If your computer adds *.txt* extensions to any of the downloaded files, rename the file and remove the added extension before continuing!
+
 !!! success "Working Directory"
     This tutorial assumes you are working from a directory where all of these files are located.
 
@@ -101,10 +104,11 @@ docker compose up -d
 
 This command launches the following containers:
 
-- `inventree-db` - PostgreSQL database
-- `inventree-server` - InvenTree web server
-- `inventree-worker` - Background worker
-- `inventree-proxy` - Caddy reverse proxy
+- `inventree-db` - [PostgreSQL database](./processes.md#database)
+- `inventree-server` - [InvenTree web server](./processes.md#web-server)
+- `inventree-worker` - [Background worker](./processes.md#background-worker)
+- `inventree-proxy` - [Caddy reverse proxy](./processes.md#proxy-server)
+- `inventree-cache` - [Redis cache](./processes.md#cache-server)
 
 !!! success "Up and Running!"
     You should now be able to view the InvenTree login screen at [http://inventree.localhost](http://inventree.localhost) (or whatever custom domain you have configured in the `.env` file).

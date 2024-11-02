@@ -543,6 +543,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed'),
     )
 
+    destination = TreeForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        related_name='purchase_orders',
+        blank=True,
+        null=True,
+        verbose_name=_('Destination'),
+        help_text=_('Destination for received items'),
+    )
+
     @transaction.atomic
     def add_line_item(
         self,
@@ -873,7 +883,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     deltas=tracking_info,
                     location=location,
                     purchaseorder=self,
-                    quantity=quantity,
+                    quantity=float(quantity),
                 )
 
         # Update the number of parts received against the particular line item
@@ -1544,7 +1554,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         related_name='po_lines',
         blank=True,
         null=True,
-        help_text=_('Where does the Purchaser want this item to be stored?'),
+        help_text=_('Destination for received items'),
     )
 
     def get_destination(self):
@@ -1919,6 +1929,7 @@ class SalesOrderShipment(
             order.tasks.complete_sales_order_shipment,
             shipment_id=self.pk,
             user_id=user.pk if user else None,
+            group='sales_order',
         )
 
         trigger_event('salesordershipment.completed', id=self.pk)

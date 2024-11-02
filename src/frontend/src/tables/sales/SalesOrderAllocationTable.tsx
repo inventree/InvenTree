@@ -16,6 +16,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  DateColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -47,17 +48,30 @@ export default function SalesOrderAllocationTable({
   modelField?: string;
 }>) {
   const user = useUserState();
-  const table = useTable('salesorderallocations');
+  const table = useTable(
+    !!partId ? 'salesorderallocations-part' : 'salesorderallocations'
+  );
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    let filters: TableFilter[] = [
       {
         name: 'outstanding',
         label: t`Outstanding`,
         description: t`Show outstanding allocations`
       }
     ];
-  }, []);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -123,6 +137,12 @@ export default function SalesOrderAllocationTable({
         switchable: true,
         sortable: false
       },
+      DateColumn({
+        accessor: 'shipment_detail.shipment_date',
+        title: t`Shipment Date`,
+        switchable: true,
+        sortable: false
+      }),
       {
         accessor: 'shipment_date',
         title: t`Shipped`,

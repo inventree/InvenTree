@@ -52,12 +52,15 @@ export default function PurchaseHistoryPanel({
             currency: record.purchase_price_currency
           });
 
-          let units = record.supplier_part_detail?.pack_quantity;
+          let packQuatity = record.supplier_part_detail?.pack_quantity;
+          let hasPackQuantity =
+            !!packQuatity &&
+            record.supplier_part_detail?.pack_quantity_native != 1;
 
           return (
             <Group justify="space-between" gap="xs">
               <Text>{price}</Text>
-              {units && <Text size="xs">[{units}]</Text>}
+              {hasPackQuantity && <Text size="xs">[{packQuatity}]</Text>}
             </Group>
           );
         }
@@ -74,11 +77,12 @@ export default function PurchaseHistoryPanel({
           });
 
           let units = record.part_detail?.units;
+          let hasUnits = !!units && units !== 1;
 
           return (
             <Group justify="space-between" gap="xs">
               <Text>{price}</Text>
-              {units && <Text size="xs">[{units}]</Text>}
+              {hasUnits && <Text size="xs">[{units}]</Text>}
             </Group>
           );
         }

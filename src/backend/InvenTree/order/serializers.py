@@ -14,11 +14,12 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-from sql_util.utils import SubqueryCount
+from sql_util.utils import SubqueryCount, SubquerySum
 
 import order.models
 import part.filters as part_filters
@@ -317,6 +318,7 @@ class PurchaseOrderSerializer(
             'supplier_name',
             'total_price',
             'order_currency',
+            'destination',
         ])
 
         read_only_fields = ['issue_date', 'complete_date', 'creation_date']
@@ -835,7 +837,10 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
             try:
                 # Pass the serial numbers through to the parent serializer once validated
                 data['serials'] = extract_serial_numbers(
-                    serial_numbers, base_quantity, base_part.get_latest_serial_number()
+                    serial_numbers,
+                    base_quantity,
+                    base_part.get_latest_serial_number(),
+                    part=base_part,
                 )
             except DjangoValidationError as e:
                 raise ValidationError({'serial_numbers': e.messages})
@@ -856,6 +861,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
         many=False,
+        required=False,
         allow_null=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
@@ -869,9 +875,10 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         """
         super().validate(data)
 
+        order = self.context['order']
         items = data.get('items', [])
 
-        location = data.get('location', None)
+        location = data.get('location', order.destination)
 
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
@@ -915,15 +922,17 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         order = self.context['order']
 
         items = data['items']
-        location = data.get('location', None)
+
+        # Location can be provided, or default to the order destination
+        location = data.get('location', order.destination)
 
         # Now we can actually receive the items into stock
         with transaction.atomic():
             for item in items:
                 # Select location (in descending order of priority)
                 loc = (
-                    location
-                    or item.get('location', None)
+                    item.get('location', None)
+                    or location
                     or item['line_item'].get_destination()
                 )
 
@@ -1162,6 +1171,15 @@ class SalesOrderLineItemSerializer(
             building=part_filters.annotate_in_production_quantity(reference='part__')
         )
 
+        # Annotate total 'allocated' stock quantity
+        queryset = queryset.annotate(
+            allocated=Coalesce(
+                SubquerySum('allocations__quantity'),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
@@ -1179,7 +1197,7 @@ class SalesOrderLineItemSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
+    allocated = serializers.FloatField(read_only=True)
 
     shipped = InvenTreeDecimalField(read_only=True)
 
@@ -1602,7 +1620,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         try:
             data['serials'] = extract_serial_numbers(
-                serial_numbers, quantity, part.get_latest_serial_number()
+                serial_numbers, quantity, part.get_latest_serial_number(), part=part
             )
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
@@ -1770,6 +1788,8 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
+            'issue_date',
+            'complete_date',
             'customer',
             'customer_detail',
             'customer_reference',

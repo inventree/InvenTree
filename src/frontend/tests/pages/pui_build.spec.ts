@@ -157,3 +157,103 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been completed').waitFor();
 });
+
+test('Pages - Build Order - Allocation', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/manufacturing/build-order/1/line-items`);
+
+  // Expand the R_10K_0805 line item
+  await page.getByText('R_10K_0805_1%').first().click();
+  await page.getByText('Reel Storage').waitFor();
+  await page.getByText('R_10K_0805_1%').first().click();
+
+  // The capacitor stock should be fully allocated
+  const cell = await page.getByRole('cell', { name: /C_1uF_0805/ });
+  const row = await cell.locator('xpath=ancestor::tr').first();
+
+  await row.getByText(/150 \/ 150/).waitFor();
+
+  // Expand this row
+  await cell.click();
+  await page.getByRole('cell', { name: '2022-4-27', exact: true }).waitFor();
+  await page.getByRole('cell', { name: 'Reel Storage', exact: true }).waitFor();
+
+  // Navigate to the "Incomplete Outputs" tab
+  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
+
+  // Find output #7
+  const output7 = await page
+    .getByRole('cell', { name: '# 7' })
+    .locator('xpath=ancestor::tr')
+    .first();
+
+  // Expecting 3/4 allocated outputs
+  await output7.getByText('3 / 4').waitFor();
+
+  // Expecting 0/3 completed tests
+  await output7.getByText('0 / 3').waitFor();
+
+  // Expand the output
+  await output7.click();
+
+  await page.getByText('Build Output Stock Allocation').waitFor();
+  await page.getByText('Serial Number: 7').waitFor();
+
+  // Data of expected rows
+  const data = [
+    {
+      name: 'Red Widget',
+      ipn: 'widget.red',
+      available: '123',
+      required: '3',
+      allocated: '3'
+    },
+    {
+      name: 'Blue Widget',
+      ipn: 'widget.blue',
+      available: '45',
+      required: '5',
+      allocated: '5'
+    },
+    {
+      name: 'Pink Widget',
+      ipn: 'widget.pink',
+      available: '4',
+      required: '4',
+      allocated: '0'
+    },
+    {
+      name: 'Green Widget',
+      ipn: 'widget.green',
+      available: '245',
+      required: '6',
+      allocated: '6'
+    }
+  ];
+
+  // Check for expected rows
+  for (let idx = 0; idx < data.length; idx++) {
+    let item = data[idx];
+
+    let cell = await page.getByRole('cell', { name: item.name });
+    let row = await cell.locator('xpath=ancestor::tr').first();
+    let progress = `${item.allocated} / ${item.required}`;
+
+    await row.getByRole('cell', { name: item.ipn }).first().waitFor();
+    await row.getByRole('cell', { name: item.available }).first().waitFor();
+    await row.getByRole('cell', { name: progress }).first().waitFor();
+  }
+
+  // Check for expected buttons on Red Widget
+  let redWidget = await page.getByRole('cell', { name: 'Red Widget' });
+  let redRow = await redWidget.locator('xpath=ancestor::tr').first();
+
+  await redRow.getByLabel(/row-action-menu-/i).click();
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .waitFor();
+  await page
+    .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
+    .waitFor();
+});

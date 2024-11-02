@@ -174,6 +174,9 @@ def offload_task(
     """
     from InvenTree.exceptions import log_error
 
+    # Extract group information from kwargs
+    group = kwargs.pop('group', 'inventree')
+
     try:
         import importlib
 
@@ -200,7 +203,7 @@ def offload_task(
     if force_async or (is_worker_running() and not force_sync):
         # Running as asynchronous task
         try:
-            task = AsyncTask(taskname, *args, **kwargs)
+            task = AsyncTask(taskname, *args, group=group, **kwargs)
             task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")

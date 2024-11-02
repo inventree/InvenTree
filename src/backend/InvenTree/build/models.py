@@ -270,8 +270,6 @@ class Build(
         related_name='builds',
         limit_choices_to={
             'assembly': True,
-            'active': True,
-            'virtual': False,
         },
         help_text=_('Select part to build'),
     )
@@ -647,7 +645,8 @@ class Build(
         if not InvenTree.tasks.offload_task(
             build.tasks.complete_build_allocations,
             self.pk,
-            user.pk if user else None
+            user.pk if user else None,
+            group='build'
         ):
             raise ValidationError(_("Failed to offload task to complete build allocations"))
 
@@ -774,7 +773,8 @@ class Build(
             if not InvenTree.tasks.offload_task(
                 build.tasks.complete_build_allocations,
                 self.pk,
-                user.pk if user else None
+                user.pk if user else None,
+                group='build',
             ):
                 raise ValidationError(_("Failed to offload task to complete build allocations"))
 
@@ -887,7 +887,6 @@ class Build(
 
                 # Auto-allocate stock based on serial number
                 if auto_allocate:
-                    allocations = []
 
                     for bom_item in trackable_parts:
                         valid_part_ids = valid_parts.get(bom_item.pk, [])
@@ -942,7 +941,7 @@ class Build(
                 StockHistoryCode.BUILD_OUTPUT_CREATED,
                 user,
                 deltas={
-                    'quantity': quantity,
+                    'quantity': float(quantity),
                     'buildorder': self.pk,
                     'batch': batch,
                     'location': location.pk if location else None
@@ -1443,7 +1442,11 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.create_build_line_items()
 
             # Run checks on required parts
-            InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+            InvenTree.tasks.offload_task(
+                build_tasks.check_build_stock,
+                instance,
+                group='build'
+            )
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)

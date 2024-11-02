@@ -922,7 +922,6 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         data.update(self.clean_data(request.data))
 
         quantity = data.get('quantity', None)
-        location = data.get('location', None)
 
         if quantity is None:
             raise ValidationError({'quantity': _('Quantity is required')})
@@ -932,12 +931,10 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({'part': _('Valid part must be supplied')})
 
-        # Set default location (if not provided)
-        if 'location' not in data:
-            location = part.get_default_location()
-
-            if location:
-                data['location'] = location.pk
+        location = data.get('location', None)
+        # Override location if not specified
+        if location is None and part.default_location:
+            data['location'] = part.default_location.pk
 
         expiry_date = data.get('expiry_date', None)
 
@@ -1000,7 +997,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(
-                    serial_numbers, quantity, part.get_latest_serial_number()
+                    serial_numbers, quantity, part.get_latest_serial_number(), part=part
                 )
 
                 # Determine if any of the specified serial numbers are invalid
@@ -1036,6 +1033,9 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         # De-serialize the provided data
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
+
+        # Extract location information
+        location = serializer.validated_data.get('location', None)
 
         with transaction.atomic():
             if serials:
@@ -1175,6 +1175,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_field_aliases = {
         'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
+        'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
     }
 
@@ -1191,6 +1192,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         'stock',
         'status',
         'SKU',
+        'MPN',
     ]
 
     ordering = ['part__name', 'quantity', 'location']
