@@ -62,7 +62,7 @@ export default function DateField({
       ref={field.ref}
       type={undefined}
       error={error?.message}
-      value={dateValue}
+      value={dateValue ?? null}
       clearable={!definition.required}
       onChange={onChange}
       valueFormat={valueFormat}
