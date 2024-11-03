@@ -973,7 +973,10 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
                     # Divide purchase price by pack size, to save correct price per stock item
-                    if data['purchase_price'] and supplier_part.pack_quantity_native:
+                    if (
+                        data.get('purchase_price')
+                        and supplier_part.pack_quantity_native
+                    ):
                         try:
                             data['purchase_price'] = float(
                                 data['purchase_price']
