@@ -687,6 +687,9 @@ def check_user_permission(user: User, model, permission):
         model: The model class to check (e.g. Part)
         permission: The permission to check (e.g. 'view' / 'delete')
     """
+    if user.is_superuser:
+        return True
+
     permission_name = f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
     return user.has_perm(permission_name)
 
