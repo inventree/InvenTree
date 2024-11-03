@@ -50,7 +50,7 @@ class OrderTest(TestCase):
             self.assertEqual(order.reference, f'PO-{pk:04d}')
 
         line = PurchaseOrderLineItem.objects.get(pk=1)
-        self.assertEqual(str(line), '100 x ACME0001 from ACME (for PO-0001 - ACME)')
+        self.assertEqual(str(line), '100 x ACME0001 - PO-0001 - ACME')
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved."""
