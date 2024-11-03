@@ -1,7 +1,6 @@
 """Order model definitions."""
 
 import logging
-import sys
 from datetime import datetime
 from decimal import Decimal
 
@@ -151,9 +150,6 @@ class TotalPriceMixin(models.Model):
             try:
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
-                # Record the error, try to press on
-                _1, _2, _3 = sys.exc_info()
-
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
 
