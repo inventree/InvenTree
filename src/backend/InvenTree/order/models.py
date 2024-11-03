@@ -1487,10 +1487,9 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
-        return '{n} x {part} from {supplier} (for {po})'.format(
+        return '{n} x {part} - {po}'.format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
-            supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
             po=self.order,
         )
 

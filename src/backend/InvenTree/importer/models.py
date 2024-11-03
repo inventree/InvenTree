@@ -124,6 +124,14 @@ class DataImportSession(models.Model):
         return mapping
 
     @property
+    def model_class(self):
+        """Return the model class for this importer."""
+        serializer = self.serializer_class
+
+        if serializer:
+            return serializer.Meta.model
+
+    @property
     def serializer_class(self):
         """Return the serializer class for this importer."""
         from importer.registry import supported_models
