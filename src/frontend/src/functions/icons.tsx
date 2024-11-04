@@ -35,6 +35,7 @@ import {
   IconEdit,
   IconExclamationCircle,
   IconExternalLink,
+  IconFileArrowLeft,
   IconFileDownload,
   IconFileUpload,
   IconFlag,
@@ -44,13 +45,18 @@ import {
   IconHandStop,
   IconHash,
   IconHierarchy,
+  IconHistory,
   IconInfoCircle,
   IconLayersLinked,
+  IconLayoutDashboard,
+  IconLicense,
   IconLink,
   IconList,
+  IconListDetails,
   IconListTree,
   IconLock,
   IconMail,
+  IconMap2,
   IconMapPin,
   IconMapPinHeart,
   IconMinusVertical,
@@ -71,6 +77,7 @@ import {
   IconQuestionMark,
   IconRefresh,
   IconRulerMeasure,
+  IconSettings,
   IconShoppingCart,
   IconShoppingCartHeart,
   IconShoppingCartPlus,
@@ -90,6 +97,7 @@ import {
   IconTruckReturn,
   IconUnlink,
   IconUser,
+  IconUserBolt,
   IconUserStar,
   IconUsersGroup,
   IconVersions,
@@ -124,6 +132,7 @@ const icons = {
   details: IconInfoCircle,
   parameters: IconList,
   list: IconList,
+  list_details: IconListDetails,
   stock: IconPackages,
   variants: IconVersions,
   allocations: IconBookmarks,
@@ -163,8 +172,13 @@ const icons = {
   issue: IconBrandTelegram,
   complete: IconCircleCheck,
   deliver: IconTruckDelivery,
+  address: IconMap2,
+  import: IconFileArrowLeft,
   bell: IconBell,
   notification: IconBell,
+  admin: IconUserBolt,
+  system: IconSettings,
+  license: IconLicense,
 
   // Part Icons
   active: IconCheck,
@@ -210,6 +224,7 @@ const icons = {
   arrow_down: IconArrowBigDownLineFilled,
   transfer: IconTransfer,
   actions: IconDots,
+  labels: IconTag,
   reports: IconPrinter,
   buy: IconShoppingCartPlus,
   add: IconCirclePlus,
@@ -236,7 +251,9 @@ const icons = {
   repeat_destination: IconFlagShare,
   unlink: IconUnlink,
   success: IconCircleCheck,
-  plugin: IconPlug
+  plugin: IconPlug,
+  history: IconHistory,
+  dashboard: IconLayoutDashboard
 };
 
 export type InvenTreeIconType = keyof typeof icons;
@@ -248,8 +265,8 @@ export type TablerIconType = React.ForwardRefExoticComponent<
  * Returns a Tabler Icon for the model field name supplied
  * @param field string defining field name
  */
-export function GetIcon(field: InvenTreeIconType) {
-  return icons[field];
+export function GetIcon(field: string): TablerIconType {
+  return icons[field as InvenTreeIconType];
 }
 
 // Aliasing the new type name to make it distinct

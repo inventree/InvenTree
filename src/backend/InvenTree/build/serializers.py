@@ -7,6 +7,7 @@ from django.db import models, transaction
 from django.db.models import (
     BooleanField,
     Case,
+    Count,
     ExpressionWrapper,
     F,
     FloatField,
@@ -179,6 +180,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
 
         return reference
 
+    @transaction.atomic
     def create(self, validated_data):
         """Save the Build object."""
 
@@ -191,7 +193,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             InvenTree.tasks.offload_task(
                 build.tasks.create_child_builds,
                 build_order.pk,
-                group='build',
+                group='build'
             )
 
         return build_order
@@ -1307,6 +1309,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'available_variant_stock',
             'external_stock',
 
+            # Related fields
+            'allocations',
+
             # Extra fields only for data export
             'part_description',
             'part_category_name',
@@ -1329,6 +1334,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part_description = serializers.CharField(source='bom_item.sub_part.description', label=_('Part Description'), read_only=True)
     part_category_id = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part.category', label=_('Part Category ID'), read_only=True)
     part_category_name = serializers.CharField(source='bom_item.sub_part.category.name', label=_('Part Category Name'), read_only=True)
+
+    allocations = BuildItemSerializer(many=True, read_only=True)
 
     # BOM item info fields
     reference = serializers.CharField(source='bom_item.reference', label=_('Reference'), read_only=True)
@@ -1357,6 +1364,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
 
     # Annotated (calculated) fields
+
+    # Total quantity of allocated stock
     allocated = serializers.FloatField(
         label=_('Allocated Stock'),
         read_only=True
@@ -1403,6 +1412,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
             'allocations',
+            'allocations__stock_item',
+            'allocations__stock_item__part',
+            'allocations__stock_item__location',
 
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
@@ -1468,7 +1480,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             allocated=Coalesce(
                 Sum('allocations__quantity'), 0,
                 output_field=models.DecimalField()
-            ),
+            )
         )
 
         ref = 'bom_item__sub_part__'

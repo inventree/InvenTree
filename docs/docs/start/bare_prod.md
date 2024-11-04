@@ -19,7 +19,7 @@ The InvenTree web server is hosted using [Gunicorn](https://gunicorn.org/). Guni
 
 ### Supervisor
 
-[Supervisor](http://supervisord.org/) is a process control system which monitors and controls multiple background processes. It is used in the InvenTree production setup to ensure that the server and background worker processes are always running.
+[Supervisor](http://supervisord.org/) is a process control system which monitors and controls multiple background processes. It is used in the InvenTree production setup to ensure that the [web server](./processes.md#web-server) and [background worker](./processes.md#background-worker) processes are always running.
 
 ## Gunicorn
 
@@ -98,11 +98,12 @@ The InvenTree server (and background task manager) should now be running!
 In addition to the InvenTree server, you will need a method of delivering static and media files (this is *not* handled by the InvenTree server in a production environment).
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 ### Next Steps
 
-You (or your system administrator) may wish to perform further steps such as placing the InvenTree server behind a reverse-proxy such as [caddy](https://caddyserver.com/), or [nginx](https://www.nginx.com/).
+You (or your system administrator) may wish to perform further steps such as placing the InvenTree server behind a [reverse proxy](./processes.md#proxy-server) such as [caddy](https://caddyserver.com/), or [nginx](https://www.nginx.com/).
+
 As production environment options are many and varied, such tasks are outside the scope of this documentation.
 
 There are many great online tutorials about running django applications in production!

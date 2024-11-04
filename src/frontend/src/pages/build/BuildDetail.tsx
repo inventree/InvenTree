@@ -188,6 +188,14 @@ export default function BuildDetail() {
         label: t`Completed`,
         icon: 'calendar',
         hidden: !build.completion_date
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
       }
     ];
 
@@ -251,11 +259,7 @@ export default function BuildDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconListNumbers />,
-        content: build?.pk ? (
-          <BuildLineTable build={build} buildId={build.pk} />
-        ) : (
-          <Skeleton />
-        )
+        content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
       },
       {
         name: 'incomplete-outputs',

@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -27,6 +27,7 @@ import {
 } from '../../components/plugins/PluginUIFeatureTypes';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { identifierString } from '../../functions/conversion';
 import { GetIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
@@ -94,7 +95,12 @@ export function TemplateDrawer({
     featureType: 'template_editor',
     context: { template_type: modelType, template_model: template?.model_type! }
   });
+
+  /**
+   * List of available editors for the template
+   */
   const editors = useMemo(() => {
+    // Always include the built-in code editor
     const editors = [CodeEditor];
 
     if (!template) {
@@ -102,15 +108,16 @@ export function TemplateDrawer({
     }
 
     editors.push(
-      ...(extraEditors?.map(
-        (editor) =>
-          ({
-            key: editor.options.key,
-            name: editor.options.title,
-            icon: GetIcon(editor.options.icon),
-            component: getPluginTemplateEditor(editor.func, template)
-          } as Editor)
-      ) || [])
+      ...(extraEditors?.map((editor) => {
+        return {
+          key: identifierString(
+            `${editor.options.plugin_name}-${editor.options.key}`
+          ),
+          name: editor.options.title,
+          icon: GetIcon(editor.options.icon || 'plugin'),
+          component: getPluginTemplateEditor(editor.func, template)
+        } as Editor;
+      }) || [])
     );
 
     return editors;
@@ -135,7 +142,7 @@ export function TemplateDrawer({
           ({
             key: preview.options.key,
             name: preview.options.title,
-            icon: GetIcon(preview.options.icon),
+            icon: GetIcon(preview.options.icon || 'plugin'),
             component: getPluginTemplatePreview(preview.func, template)
           } as PreviewArea)
       ) || [])

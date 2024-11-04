@@ -3,6 +3,7 @@ import { InvenTreeIconType } from '../../functions/icons';
 import { TemplateI } from '../../tables/settings/TemplateTable';
 import { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
 import { InvenTreeContext } from './PluginContext';
+import { PluginUIFeature } from './PluginUIFeature';
 
 // #region  Type Helpers
 export type BaseUIFeature = {
@@ -35,11 +36,7 @@ export type TemplateEditorUIFeature = {
     template_type: ModelType.labeltemplate | ModelType.reporttemplate;
     template_model: ModelType;
   };
-  responseOptions: {
-    key: string;
-    title: string;
-    icon: InvenTreeIconType;
-  };
+  responseOptions: PluginUIFeature;
   featureContext: {
     ref: HTMLDivElement;
     registerHandlers: (handlers: {

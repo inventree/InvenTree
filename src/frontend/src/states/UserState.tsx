@@ -11,6 +11,7 @@ import { UserProps } from './states';
 export interface UserStateProps {
   user: UserProps | undefined;
   token: string | undefined;
+  userId: () => number | undefined;
   username: () => string;
   setUser: (newUser: UserProps) => void;
   setToken: (newToken: string) => void;
@@ -49,6 +50,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   clearToken: () => {
     set({ token: undefined });
     setApiDefaults();
+  },
+  userId: () => {
+    const user: UserProps = get().user as UserProps;
+    return user.pk;
   },
   username: () => {
     const user: UserProps = get().user as UserProps;
