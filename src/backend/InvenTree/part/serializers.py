@@ -1708,6 +1708,10 @@ class BomItemSerializer(
             'sub_part__stock_items__sales_order_allocations',
         )
 
+        queryset = queryset.select_related(
+            'part__pricing_data', 'sub_part__pricing_data'
+        )
+
         queryset = queryset.prefetch_related(
             'substitutes', 'substitutes__part__stock_items'
         )

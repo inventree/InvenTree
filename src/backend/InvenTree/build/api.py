@@ -40,6 +40,9 @@ class BuildFilter(rest_filters.FilterSet):
 
     active = rest_filters.BooleanFilter(label='Build is active', method='filter_active')
 
+    # 'outstanding' is an alias for 'active' here
+    outstanding = rest_filters.BooleanFilter(label='Build is outstanding', method='filter_active')
+
     def filter_active(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are active."""
         if str2bool(value):

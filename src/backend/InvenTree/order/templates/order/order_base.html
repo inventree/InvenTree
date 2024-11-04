@@ -129,7 +129,15 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
-
+    {% if order.destination %}
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Destination" %}</td>
+        <td>
+            <a href='{% url "stock-location-detail" order.destination.id %}'>{{ order.destination.name }}</a>
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock details %}

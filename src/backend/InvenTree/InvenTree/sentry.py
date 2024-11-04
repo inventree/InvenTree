@@ -8,6 +8,7 @@ from django.http import Http404
 
 import rest_framework.exceptions
 import sentry_sdk
+from djmoney.contrib.exchange.exceptions import MissingRate
 from sentry_sdk.integrations.django import DjangoIntegration
 
 import InvenTree.version
@@ -27,6 +28,7 @@ def sentry_ignore_errors():
     """
     return [
         Http404,
+        MissingRate,
         ValidationError,
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,

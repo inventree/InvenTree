@@ -451,6 +451,10 @@ class BuildTest(BuildAPITest):
         # Now, let's delete each build output individually via the API
         outputs = bo.build_outputs.all()
 
+        # Assert that each output is currently in production
+        for output in outputs:
+            self.assertTrue(output.is_building)
+
         delete_url = reverse('api-build-output-delete', kwargs={'pk': 1})
 
         response = self.post(

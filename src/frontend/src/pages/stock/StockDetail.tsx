@@ -249,6 +249,15 @@ export default function StockDetail() {
       },
       {
         type: 'link',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        model: ModelType.purchaseorder,
+        hidden: !stockitem.purchase_order,
+        icon: 'purchase_orders',
+        model_field: 'reference'
+      },
+      {
+        type: 'link',
         name: 'sales_order',
         label: t`Sales Order`,
         model: ModelType.salesorder,

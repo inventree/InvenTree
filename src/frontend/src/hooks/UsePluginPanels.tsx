@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { api } from '../App';
 import { PanelType } from '../components/panels/Panel';
@@ -7,10 +7,11 @@ import {
   InvenTreeContext,
   useInvenTreeContext
 } from '../components/plugins/PluginContext';
-import PluginPanelContent, {
-  PluginPanelProps,
-  isPluginPanelHidden
-} from '../components/plugins/PluginPanel';
+import PluginPanelContent from '../components/plugins/PluginPanel';
+import {
+  PluginUIFeature,
+  PluginUIFeatureType
+} from '../components/plugins/PluginUIFeature';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
@@ -54,16 +55,20 @@ export function usePluginPanels({
         return Promise.resolve([]);
       }
 
+      const url = apiUrl(ApiEndpoints.plugin_ui_features_list, undefined, {
+        feature_type: PluginUIFeatureType.panel
+      });
+
       return api
-        .get(apiUrl(ApiEndpoints.plugin_panel_list), {
+        .get(url, {
           params: {
             target_model: model,
             target_id: id
           }
         })
         .then((response: any) => response.data)
-        .catch((error: any) => {
-          console.error('Failed to fetch plugin panels:', error);
+        .catch((_error: any) => {
+          console.error(`ERR: Failed to fetch plugin panels`);
           return [];
         });
     }
@@ -71,6 +76,7 @@ export function usePluginPanels({
 
   // Cache the context data which is delivered to the plugins
   const inventreeContext = useInvenTreeContext();
+
   const contextData = useMemo<PluginPanelContext>(() => {
     return {
       model: model,
@@ -78,34 +84,15 @@ export function usePluginPanels({
       instance: instance,
       ...inventreeContext
     };
-  }, [model, id, instance]);
-
-  // Track which panels are hidden: { panelName: true/false }
-  // We need to memoize this as the plugins can determine this dynamically
-  const [panelState, setPanelState] = useState<Record<string, boolean>>({});
-
-  // Clear the visibility cache when the plugin data changes
-  // This will force the plugin panels to re-calculate their visibility
-  useEffect(() => {
-    pluginData?.forEach((props: PluginPanelProps) => {
-      const identifier = identifierString(`${props.plugin}-${props.name}`);
-
-      // Check if the panel is hidden (defaults to true until we know otherwise)
-      isPluginPanelHidden({
-        pluginProps: props,
-        pluginContext: contextData
-      }).then((result) => {
-        setPanelState((prev) => ({ ...prev, [identifier]: result }));
-      });
-    });
-  }, [pluginData, contextData]);
+  }, [model, id, instance, inventreeContext]);
 
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
-      pluginData?.map((props: PluginPanelProps) => {
-        const iconName: string = props.icon || 'plugin';
-        const identifier = identifierString(`${props.plugin}-${props.name}`);
-        const isHidden: boolean = panelState[identifier] ?? true;
+      pluginData?.map((props: PluginUIFeature) => {
+        const iconName: string = props?.icon || 'plugin';
+        const identifier = identifierString(
+          `${props.plugin_name}-${props.key}`
+        );
 
         const pluginContext: any = {
           ...contextData,
@@ -114,19 +101,18 @@ export function usePluginPanels({
 
         return {
           name: identifier,
-          label: props.label,
+          label: props.title,
           icon: <InvenTreeIcon icon={iconName as InvenTreeIconType} />,
           content: (
             <PluginPanelContent
-              pluginProps={props}
+              pluginFeature={props}
               pluginContext={pluginContext}
             />
-          ),
-          hidden: isHidden
+          )
         };
       }) ?? []
     );
-  }, [panelState, pluginData, contextData]);
+  }, [pluginData, contextData]);
 
   return pluginPanels;
 }
