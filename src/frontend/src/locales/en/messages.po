@@ -110,8 +110,8 @@ msgstr "Remove this row"
 
 #: src/components/buttons/ScanButton.tsx:15
 #: src/components/nav/NavigationDrawer.tsx:117
-#: src/forms/PurchaseOrderForms.tsx:365
-#: src/forms/PurchaseOrderForms.tsx:461
+#: src/forms/PurchaseOrderForms.tsx:379
+#: src/forms/PurchaseOrderForms.tsx:473
 msgid "Scan Barcode"
 msgstr "Scan Barcode"
 
@@ -708,7 +708,7 @@ msgid "Errors exist for one or more form fields"
 msgstr "Errors exist for one or more form fields"
 
 #: src/components/forms/ApiForm.tsx:698
-#: src/tables/plugin/PluginListTable.tsx:198
+#: src/tables/plugin/PluginListTable.tsx:195
 msgid "Update"
 msgstr "Update"
 
@@ -718,7 +718,7 @@ msgstr "Update"
 #: src/pages/Index/Scan.tsx:357
 #: src/pages/Notifications.tsx:123
 #: src/tables/RowActions.tsx:49
-#: src/tables/plugin/PluginListTable.tsx:235
+#: src/tables/plugin/PluginListTable.tsx:232
 msgid "Delete"
 msgstr "Delete"
 
@@ -1208,7 +1208,7 @@ msgstr "Link a custom barcode to this item"
 
 #: src/components/items/ActionDropdown.tsx:183
 #: src/components/items/QRCode.tsx:193
-#: src/forms/PurchaseOrderForms.tsx:452
+#: src/forms/PurchaseOrderForms.tsx:464
 msgid "Unlink Barcode"
 msgstr "Unlink Barcode"
 
@@ -1681,7 +1681,7 @@ msgid "Navigation"
 msgstr "Navigation"
 
 #: src/components/nav/NavigationDrawer.tsx:183
-#: src/forms/PurchaseOrderForms.tsx:675
+#: src/forms/PurchaseOrderForms.tsx:689
 #: src/forms/StockForms.tsx:614
 #: src/forms/StockForms.tsx:651
 #: src/forms/StockForms.tsx:677
@@ -1841,7 +1841,7 @@ msgstr "Date"
 #: src/tables/part/PartTable.tsx:178
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:94
-#: src/tables/plugin/PluginListTable.tsx:404
+#: src/tables/plugin/PluginListTable.tsx:401
 #: src/tables/purchasing/SupplierPartTable.tsx:100
 #: src/tables/purchasing/SupplierPartTable.tsx:190
 #: src/tables/settings/UserTable.tsx:283
@@ -1860,7 +1860,7 @@ msgstr "Installation Path"
 #: src/components/plugins/PluginDrawer.tsx:117
 #: src/tables/machine/MachineTypeTable.tsx:152
 #: src/tables/machine/MachineTypeTable.tsx:276
-#: src/tables/plugin/PluginListTable.tsx:409
+#: src/tables/plugin/PluginListTable.tsx:406
 msgid "Builtin"
 msgstr "Builtin"
 
@@ -1940,7 +1940,7 @@ msgstr "Unknown model: {model}"
 #: src/forms/BuildForms.tsx:337
 #: src/forms/BuildForms.tsx:385
 #: src/forms/BuildForms.tsx:515
-#: src/forms/PurchaseOrderForms.tsx:675
+#: src/forms/PurchaseOrderForms.tsx:689
 #: src/forms/ReturnOrderForms.tsx:190
 #: src/forms/SalesOrderForms.tsx:248
 #: src/forms/StockForms.tsx:261
@@ -2344,7 +2344,7 @@ msgstr "Serial Number"
 #: src/components/render/Stock.tsx:63
 #: src/forms/BuildForms.tsx:206
 #: src/forms/BuildForms.tsx:515
-#: src/forms/PurchaseOrderForms.tsx:675
+#: src/forms/PurchaseOrderForms.tsx:689
 #: src/forms/SalesOrderForms.tsx:248
 #: src/pages/part/PartSchedulingDetail.tsx:80
 #: src/pages/part/PartStocktakeDetail.tsx:60
@@ -3239,7 +3239,7 @@ msgstr "Batch"
 #: src/forms/BuildForms.tsx:269
 #: src/forms/BuildForms.tsx:337
 #: src/forms/BuildForms.tsx:385
-#: src/forms/PurchaseOrderForms.tsx:589
+#: src/forms/PurchaseOrderForms.tsx:603
 #: src/pages/build/BuildDetail.tsx:104
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:142
 #: src/pages/sales/ReturnOrderDetail.tsx:113
@@ -3361,53 +3361,61 @@ msgstr "Parent part category"
 msgid "Subscribe to notifications for this category"
 msgstr "Subscribe to notifications for this category"
 
-#: src/forms/PurchaseOrderForms.tsx:322
+#: src/forms/PurchaseOrderForms.tsx:314
+msgid "Assign Batch Code and Serial Numbers"
+msgstr "Assign Batch Code and Serial Numbers"
+
+#: src/forms/PurchaseOrderForms.tsx:316
+msgid "Assign Batch Code"
+msgstr "Assign Batch Code"
+
+#: src/forms/PurchaseOrderForms.tsx:336
 msgid "Choose Location"
 msgstr "Choose Location"
 
-#: src/forms/PurchaseOrderForms.tsx:330
+#: src/forms/PurchaseOrderForms.tsx:344
 msgid "Item Destination selected"
 msgstr "Item Destination selected"
 
-#: src/forms/PurchaseOrderForms.tsx:339
+#: src/forms/PurchaseOrderForms.tsx:353
 msgid "Part category default location selected"
 msgstr "Part category default location selected"
 
-#: src/forms/PurchaseOrderForms.tsx:349
+#: src/forms/PurchaseOrderForms.tsx:363
 msgid "Received stock location selected"
 msgstr "Received stock location selected"
 
-#: src/forms/PurchaseOrderForms.tsx:354
+#: src/forms/PurchaseOrderForms.tsx:368
 msgid "Default location selected"
 msgstr "Default location selected"
 
-#: src/forms/PurchaseOrderForms.tsx:413
+#: src/forms/PurchaseOrderForms.tsx:421
+#~ msgid "Assign Batch Code{0}"
+#~ msgstr "Assign Batch Code{0}"
+
+#: src/forms/PurchaseOrderForms.tsx:427
 msgid "Set Location"
 msgstr "Set Location"
 
-#: src/forms/PurchaseOrderForms.tsx:421
-msgid "Assign Batch Code{0}"
-msgstr "Assign Batch Code{0}"
-
-#: src/forms/PurchaseOrderForms.tsx:430
+#: src/forms/PurchaseOrderForms.tsx:442
 #: src/forms/StockForms.tsx:539
 msgid "Adjust Packaging"
 msgstr "Adjust Packaging"
-
-#: src/forms/PurchaseOrderForms.tsx:438
-msgid "Change Status"
-msgstr "Change Status"
-
-#: src/forms/PurchaseOrderForms.tsx:444
-msgid "Add Note"
-msgstr "Add Note"
 
 #: src/forms/PurchaseOrderForms.tsx:444
 #: src/forms/StockForms.tsx:428
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:491
+#: src/forms/PurchaseOrderForms.tsx:450
+msgid "Change Status"
+msgstr "Change Status"
+
+#: src/forms/PurchaseOrderForms.tsx:456
+msgid "Add Note"
+msgstr "Add Note"
+
+#: src/forms/PurchaseOrderForms.tsx:503
 #: src/forms/StockForms.tsx:614
 #: src/forms/StockForms.tsx:651
 #: src/forms/StockForms.tsx:677
@@ -3422,19 +3430,19 @@ msgstr "Add Note"
 msgid "Location"
 msgstr "Location"
 
-#: src/forms/PurchaseOrderForms.tsx:506
+#: src/forms/PurchaseOrderForms.tsx:518
 msgid "Store at default location"
 msgstr "Store at default location"
 
-#: src/forms/PurchaseOrderForms.tsx:521
+#: src/forms/PurchaseOrderForms.tsx:533
 msgid "Store at line item destination"
 msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:533
+#: src/forms/PurchaseOrderForms.tsx:545
 msgid "Store with already received stock"
 msgstr "Store with already received stock"
 
-#: src/forms/PurchaseOrderForms.tsx:554
+#: src/forms/PurchaseOrderForms.tsx:566
 #: src/pages/build/BuildDetail.tsx:222
 #: src/pages/stock/StockDetail.tsx:185
 #: src/pages/stock/StockDetail.tsx:793
@@ -3446,10 +3454,23 @@ msgid "Batch Code"
 msgstr "Batch Code"
 
 #: src/forms/PurchaseOrderForms.tsx:566
-msgid "Serial numbers"
-msgstr "Serial numbers"
+#~ msgid "Serial numbers"
+#~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:576
+#: src/forms/PurchaseOrderForms.tsx:567
+msgid "Enter batch code for received items"
+msgstr "Enter batch code for received items"
+
+#: src/forms/PurchaseOrderForms.tsx:579
+#: src/forms/StockForms.tsx:152
+msgid "Serial Numbers"
+msgstr "Serial Numbers"
+
+#: src/forms/PurchaseOrderForms.tsx:580
+msgid "Enter serial numbers for received items"
+msgstr "Enter serial numbers for received items"
+
+#: src/forms/PurchaseOrderForms.tsx:590
 #: src/forms/StockForms.tsx:556
 #: src/pages/company/SupplierPartDetail.tsx:168
 #: src/pages/company/SupplierPartDetail.tsx:219
@@ -3458,7 +3479,7 @@ msgstr "Serial numbers"
 msgid "Packaging"
 msgstr "Packaging"
 
-#: src/forms/PurchaseOrderForms.tsx:598
+#: src/forms/PurchaseOrderForms.tsx:612
 #: src/pages/company/SupplierPartDetail.tsx:115
 #: src/tables/ColumnRenderers.tsx:143
 msgid "Note"
@@ -3468,13 +3489,13 @@ msgstr "Note"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:675
+#: src/forms/PurchaseOrderForms.tsx:689
 #: src/pages/company/SupplierPartDetail.tsx:133
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:675
+#: src/forms/PurchaseOrderForms.tsx:689
 #: src/tables/part/PartPurchaseOrdersTable.tsx:126
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:184
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:247
@@ -3482,7 +3503,7 @@ msgstr "SKU"
 msgid "Received"
 msgstr "Received"
 
-#: src/forms/PurchaseOrderForms.tsx:687
+#: src/forms/PurchaseOrderForms.tsx:701
 msgid "Receive Line Items"
 msgstr "Receive Line Items"
 
@@ -3510,10 +3531,6 @@ msgstr "Add given quantity as packs instead of individual items"
 #: src/forms/StockForms.tsx:145
 msgid "Enter initial quantity for this stock item"
 msgstr "Enter initial quantity for this stock item"
-
-#: src/forms/StockForms.tsx:152
-msgid "Serial Numbers"
-msgstr "Serial Numbers"
 
 #: src/forms/StockForms.tsx:154
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -6629,7 +6646,7 @@ msgid "Are you sure you want to delete the selected items?"
 msgstr "Are you sure you want to delete the selected items?"
 
 #: src/tables/InvenTreeTableHeader.tsx:104
-#: src/tables/plugin/PluginListTable.tsx:308
+#: src/tables/plugin/PluginListTable.tsx:305
 msgid "This action cannot be undone"
 msgstr "This action cannot be undone"
 
@@ -7350,7 +7367,7 @@ msgstr "Drag attachment file here to upload"
 
 #: src/tables/general/ExtraLineItemTable.tsx:86
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:263
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:358
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:362
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:72
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:168
 #: src/tables/sales/SalesOrderLineItemTable.tsx:206
@@ -8047,64 +8064,64 @@ msgstr "The selected plugin will be deactivated"
 #~ msgid "Package information"
 #~ msgstr "Package information"
 
-#: src/tables/plugin/PluginListTable.tsx:172
+#: src/tables/plugin/PluginListTable.tsx:169
 msgid "Deactivate"
 msgstr "Deactivate"
 
-#: src/tables/plugin/PluginListTable.tsx:186
+#: src/tables/plugin/PluginListTable.tsx:183
 msgid "Activate"
 msgstr "Activate"
 
-#: src/tables/plugin/PluginListTable.tsx:187
+#: src/tables/plugin/PluginListTable.tsx:184
 msgid "Activate selected plugin"
 msgstr "Activate selected plugin"
+
+#: src/tables/plugin/PluginListTable.tsx:196
+msgid "Update selected plugin"
+msgstr "Update selected plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:197
 #~ msgid "Plugin settings"
 #~ msgstr "Plugin settings"
 
-#: src/tables/plugin/PluginListTable.tsx:199
-msgid "Update selected plugin"
-msgstr "Update selected plugin"
-
-#: src/tables/plugin/PluginListTable.tsx:217
+#: src/tables/plugin/PluginListTable.tsx:214
 #: src/tables/stock/InstalledItemsTable.tsx:107
 msgid "Uninstall"
 msgstr "Uninstall"
 
-#: src/tables/plugin/PluginListTable.tsx:218
+#: src/tables/plugin/PluginListTable.tsx:215
 msgid "Uninstall selected plugin"
 msgstr "Uninstall selected plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:236
+#: src/tables/plugin/PluginListTable.tsx:233
 msgid "Delete selected plugin configuration"
 msgstr "Delete selected plugin configuration"
 
-#: src/tables/plugin/PluginListTable.tsx:252
+#: src/tables/plugin/PluginListTable.tsx:249
 msgid "Activate Plugin"
 msgstr "Activate Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:273
+#: src/tables/plugin/PluginListTable.tsx:270
 msgid "Install plugin"
 msgstr "Install plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:286
+#: src/tables/plugin/PluginListTable.tsx:283
 msgid "Install"
 msgstr "Install"
 
-#: src/tables/plugin/PluginListTable.tsx:287
+#: src/tables/plugin/PluginListTable.tsx:284
 msgid "Plugin installed successfully"
 msgstr "Plugin installed successfully"
 
-#: src/tables/plugin/PluginListTable.tsx:292
+#: src/tables/plugin/PluginListTable.tsx:289
 msgid "Uninstall Plugin"
 msgstr "Uninstall Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:304
+#: src/tables/plugin/PluginListTable.tsx:301
 msgid "Confirm plugin uninstall"
 msgstr "Confirm plugin uninstall"
 
-#: src/tables/plugin/PluginListTable.tsx:307
+#: src/tables/plugin/PluginListTable.tsx:304
 msgid "The selected plugin will be uninstalled."
 msgstr "The selected plugin will be uninstalled."
 
@@ -8112,23 +8129,23 @@ msgstr "The selected plugin will be uninstalled."
 #~ msgid "This action cannot be undone."
 #~ msgstr "This action cannot be undone."
 
-#: src/tables/plugin/PluginListTable.tsx:312
+#: src/tables/plugin/PluginListTable.tsx:309
 msgid "Plugin uninstalled successfully"
 msgstr "Plugin uninstalled successfully"
 
-#: src/tables/plugin/PluginListTable.tsx:320
+#: src/tables/plugin/PluginListTable.tsx:317
 msgid "Delete Plugin"
 msgstr "Delete Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:321
+#: src/tables/plugin/PluginListTable.tsx:318
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 
-#: src/tables/plugin/PluginListTable.tsx:334
+#: src/tables/plugin/PluginListTable.tsx:331
 msgid "Plugins reloaded"
 msgstr "Plugins reloaded"
 
-#: src/tables/plugin/PluginListTable.tsx:335
+#: src/tables/plugin/PluginListTable.tsx:332
 msgid "Plugins were reloaded successfully"
 msgstr "Plugins were reloaded successfully"
 
@@ -8136,7 +8153,7 @@ msgstr "Plugins were reloaded successfully"
 #~ msgid "Deactivate Plugin"
 #~ msgstr "Deactivate Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:353
+#: src/tables/plugin/PluginListTable.tsx:350
 msgid "Reload Plugins"
 msgstr "Reload Plugins"
 
@@ -8148,13 +8165,17 @@ msgstr "Reload Plugins"
 #~ msgid "The following plugin will be deactivated"
 #~ msgstr "The following plugin will be deactivated"
 
-#: src/tables/plugin/PluginListTable.tsx:360
+#: src/tables/plugin/PluginListTable.tsx:357
 msgid "Install Plugin"
 msgstr "Install Plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:366
 #~ msgid "Confirm"
 #~ msgstr "Confirm"
+
+#: src/tables/plugin/PluginListTable.tsx:374
+msgid "Plugin Detail"
+msgstr "Plugin Detail"
 
 #: src/tables/plugin/PluginListTable.tsx:376
 #~ msgid "Activating plugin"
@@ -8163,10 +8184,6 @@ msgstr "Install Plugin"
 #: src/tables/plugin/PluginListTable.tsx:376
 #~ msgid "Deactivating plugin"
 #~ msgstr "Deactivating plugin"
-
-#: src/tables/plugin/PluginListTable.tsx:377
-msgid "Plugin Detail"
-msgstr "Plugin Detail"
 
 #: src/tables/plugin/PluginListTable.tsx:392
 #~ msgid "Plugin updated"
@@ -8184,11 +8201,11 @@ msgstr "Plugin Detail"
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:414
+#: src/tables/plugin/PluginListTable.tsx:411
 msgid "Sample"
 msgstr "Sample"
 
-#: src/tables/plugin/PluginListTable.tsx:419
+#: src/tables/plugin/PluginListTable.tsx:416
 #: src/tables/stock/StockItemTable.tsx:344
 msgid "Installed"
 msgstr "Installed"
@@ -8239,7 +8256,7 @@ msgstr "Delete Parameter"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:103
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:352
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:356
 msgid "Import Line Items"
 msgstr "Import Line Items"
 
@@ -8259,7 +8276,7 @@ msgstr "Manufacturer Code"
 msgid "Show line items which have been received"
 msgstr "Show line items which have been received"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:312
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:316
 msgid "Receive line item"
 msgstr "Receive line item"
 
@@ -8269,7 +8286,7 @@ msgstr "Receive line item"
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:369
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:373
 msgid "Receive items"
 msgstr "Receive items"
 
