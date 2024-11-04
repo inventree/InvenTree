@@ -845,6 +845,20 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
             except DjangoValidationError as e:
                 raise ValidationError({'serial_numbers': e.messages})
 
+            invalid_serials = []
+
+            # Check the serial numbers are valid
+            for serial in data['serials']:
+                try:
+                    base_part.validate_serial_number(serial, raise_error=True)
+                except (ValidationError, DjangoValidationError):
+                    invalid_serials.append(serial)
+
+            if len(invalid_serials) > 0:
+                msg = _('The following serial numbers already exist or are invalid')
+                msg += ': ' + ', '.join(invalid_serials)
+                raise ValidationError({'serial_numbers': msg})
+
         return data
 
 
