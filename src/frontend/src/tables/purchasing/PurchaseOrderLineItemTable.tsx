@@ -113,6 +113,7 @@ export function PurchaseOrderLineItemTable({
   const receiveLineItems = useReceiveLineItems({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
+    destinationPk: order.destination,
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
       onClose: () => {
@@ -301,6 +302,10 @@ export function PurchaseOrderLineItemTable({
     );
   }, [order, poStatus]);
 
+  const orderPlaced: boolean = useMemo(() => {
+    return order.status == poStatus.PLACED;
+  }, [order, poStatus]);
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
@@ -369,10 +374,10 @@ export function PurchaseOrderLineItemTable({
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
-        hidden={!orderOpen || !user.hasChangeRole(UserRoles.purchase_order)}
+        hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table, orderOpen]);
+  }, [orderId, user, table, orderOpen, orderPlaced]);
 
   return (
     <>

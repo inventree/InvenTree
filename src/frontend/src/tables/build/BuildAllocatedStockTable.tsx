@@ -161,8 +161,11 @@ export default function BuildAllocatedStockTable({
   const editItem = useEditApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Edit Build Item`,
+    title: t`Edit Stock Allocation`,
     fields: {
+      stock_item: {
+        disabled: true
+      },
       quantity: {}
     },
     table: table
@@ -171,7 +174,7 @@ export default function BuildAllocatedStockTable({
   const deleteItem = useDeleteApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Delete Build Item`,
+    title: t`Delete Stock Allocation`,
     table: table
   });
 

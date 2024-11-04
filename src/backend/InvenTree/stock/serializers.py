@@ -340,7 +340,7 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['tracking_items']
+    export_exclude_fields = ['tags', 'tracking_items']
 
     export_only_fields = ['part_pricing_min', 'part_pricing_max']
 
@@ -351,7 +351,14 @@ class StockItemSerializer(
 
         model = StockItem
         fields = [
+            'pk',
+            'part',
+            'quantity',
+            'serial',
             'batch',
+            'location',
+            'location_name',
+            'location_path',
             'belongs_to',
             'build',
             'consumed_by',
@@ -361,32 +368,23 @@ class StockItemSerializer(
             'in_stock',
             'is_building',
             'link',
-            'location',
-            'location_name',
-            'location_detail',
-            'location_path',
             'notes',
             'owner',
             'packaging',
             'parent',
-            'part',
-            'part_detail',
             'purchase_order',
             'purchase_order_reference',
-            'pk',
-            'quantity',
             'sales_order',
             'sales_order_reference',
-            'serial',
             'status',
             'status_text',
             'status_custom_key',
-            'stocktake_date',
             'supplier_part',
-            'sku',
-            'supplier_part_detail',
+            'SKU',
+            'MPN',
             'barcode_hash',
             'updated',
+            'stocktake_date',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
@@ -399,6 +397,10 @@ class StockItemSerializer(
             'stale',
             'tracking_items',
             'tags',
+            # Detail fields (FK relationships)
+            'supplier_part_detail',
+            'part_detail',
+            'location_detail',
             # Export only fields
             'part_pricing_min',
             'part_pricing_max',
@@ -575,9 +577,19 @@ class StockItemSerializer(
 
         return queryset
 
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
+    status_text = serializers.CharField(
+        source='get_status_display', read_only=True, label=_('Status')
+    )
 
-    sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
+    SKU = serializers.CharField(
+        source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
+    )
+
+    MPN = serializers.CharField(
+        source='supplier_part.manufacturer_part.MPN',
+        read_only=True,
+        label=_('Manufacturer Part Number'),
+    )
 
     # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = company_serializers.SupplierPartSerializer(
@@ -588,6 +600,7 @@ class StockItemSerializer(
         many=False,
         read_only=True,
     )
+
     part_detail = part_serializers.PartBriefSerializer(
         source='part', many=False, read_only=True
     )

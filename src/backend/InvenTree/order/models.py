@@ -1,7 +1,6 @@
 """Order model definitions."""
 
 import logging
-import sys
 from datetime import datetime
 from decimal import Decimal
 
@@ -151,9 +150,6 @@ class TotalPriceMixin(models.Model):
             try:
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
-                # Record the error, try to press on
-                _1, _2, _3 = sys.exc_info()
-
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
 
@@ -541,6 +537,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed'),
+    )
+
+    destination = TreeForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        related_name='purchase_orders',
+        blank=True,
+        null=True,
+        verbose_name=_('Destination'),
+        help_text=_('Destination for received items'),
     )
 
     @transaction.atomic
@@ -1481,10 +1487,9 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
-        return '{n} x {part} from {supplier} (for {po})'.format(
+        return '{n} x {part} - {po}'.format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
-            supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
             po=self.order,
         )
 
@@ -1544,7 +1549,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         related_name='po_lines',
         blank=True,
         null=True,
-        help_text=_('Where does the Purchaser want this item to be stored?'),
+        help_text=_('Destination for received items'),
     )
 
     def get_destination(self):

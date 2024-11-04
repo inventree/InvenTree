@@ -1,41 +1,17 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Alert,
-  Box,
-  Group,
-  Indicator,
-  Space,
-  Stack,
-  Tooltip
-} from '@mantine/core';
-import {
-  IconBarcode,
-  IconFilter,
-  IconFilterCancel,
-  IconRefresh,
-  IconTrash
-} from '@tabler/icons-react';
+import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
   DataTableCellClickHandler,
+  DataTableRowExpansionProps,
   DataTableSortStatus
 } from 'mantine-datatable';
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
 import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
-import { PrintingActions } from '../components/buttons/PrintingActions';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
@@ -43,16 +19,12 @@ import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
-import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
-import { TableColumnSelect } from './ColumnSelect';
-import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
-import { FilterSelectDrawer } from './FilterSelectDrawer';
+import InvenTreeTableHeader from './InvenTreeTableHeader';
 import { RowAction, RowActions } from './RowActions';
-import { TableSearchInput } from './Search';
 
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
@@ -83,6 +55,7 @@ const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
+ * @param noHeader: boolean - Hide the table header
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
@@ -103,7 +76,7 @@ export type InvenTreeTableProps<T = any> = {
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
-  rowExpansion?: any;
+  rowExpansion?: DataTableRowExpansionProps<T>;
   idAccessor?: string;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
@@ -112,6 +85,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
+  noHeader?: boolean;
 };
 
 /**
@@ -160,9 +134,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
-
-  // Extract URL query parameters (e.g. ?active=true&overdue=false)
-  const [urlQueryParams, setUrlQueryParams] = useSearchParams();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -285,7 +256,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols = columns
+    let cols: TableColumn[] = columns
       .filter((col) => col?.hidden != true)
       .map((col) => {
         let hidden: boolean = col.hidden ?? false;
@@ -297,6 +268,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
         return {
           ...col,
           hidden: hidden,
+          noWrap: true,
           title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
         };
       });
@@ -343,85 +315,78 @@ export function InvenTreeTable<T extends Record<string, any>>({
     );
   }
 
-  // Filter list visibility
-  const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
-
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
   }, [tableState.searchTerm]);
-
-  /*
-   * Construct query filters for the current table
-   */
-  function getTableFilters(paginate: boolean = false) {
-    let queryParams = {
-      ...tableProps.params
-    };
-
-    // Add custom filters
-    if (tableState.activeFilters) {
-      tableState.activeFilters.forEach(
-        (flt) => (queryParams[flt.name] = flt.value)
-      );
-    }
-
-    // Allow override of filters based on URL query parameters
-    if (urlQueryParams) {
-      for (let [key, value] of urlQueryParams) {
-        queryParams[key] = value;
-      }
-    }
-
-    // Add custom search term
-    if (tableState.searchTerm) {
-      queryParams.search = tableState.searchTerm;
-    }
-
-    // Pagination
-    if (tableProps.enablePagination && paginate) {
-      let pageSize = tableState.pageSize ?? defaultPageSize;
-      if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
-      queryParams.limit = pageSize;
-      queryParams.offset = (tableState.page - 1) * pageSize;
-    }
-
-    // Ordering
-    let ordering = getOrderingTerm();
-
-    if (ordering) {
-      if (sortStatus.direction == 'asc') {
-        queryParams.ordering = ordering;
-      } else {
-        queryParams.ordering = `-${ordering}`;
-      }
-    }
-
-    return queryParams;
-  }
-
-  // Data download callback
-  function downloadData(fileFormat: string) {
-    // Download entire dataset (no pagination)
-    let queryParams = getTableFilters(false);
-
-    // Specify file format
-    queryParams.export = fileFormat;
-
-    let downloadUrl = api.getUri({
-      url: url,
-      params: queryParams
-    });
-
-    // Download file in a new window (to force download)
-    window.open(downloadUrl, '_blank');
-  }
 
   // Data Sorting
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
     columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
+
+  /*
+   * Construct query filters for the current table
+   */
+  const getTableFilters = useCallback(
+    (paginate: boolean = false) => {
+      let queryParams = {
+        ...tableProps.params
+      };
+
+      // Add custom filters
+      if (tableState.activeFilters) {
+        tableState.activeFilters.forEach(
+          (flt) => (queryParams[flt.name] = flt.value)
+        );
+      }
+
+      // Allow override of filters based on URL query parameters
+      if (tableState.queryFilters) {
+        for (let [key, value] of tableState.queryFilters) {
+          queryParams[key] = value;
+        }
+      }
+
+      // Add custom search term
+      if (tableState.searchTerm) {
+        queryParams.search = tableState.searchTerm;
+      }
+
+      // Pagination
+      if (tableProps.enablePagination && paginate) {
+        let pageSize = tableState.pageSize ?? defaultPageSize;
+        if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
+        queryParams.limit = pageSize;
+        queryParams.offset = (tableState.page - 1) * pageSize;
+      }
+
+      // Ordering
+      let ordering = getOrderingTerm();
+
+      if (ordering) {
+        if (sortStatus.direction == 'asc') {
+          queryParams.ordering = ordering;
+        } else {
+          queryParams.ordering = `-${ordering}`;
+        }
+      }
+
+      return queryParams;
+    },
+    [
+      tableProps.params,
+      tableProps.enablePagination,
+      tableState.activeFilters,
+      tableState.queryFilters,
+      tableState.searchTerm,
+      tableState.pageSize,
+      tableState.setPageSize,
+      sortStatus,
+      getOrderingTerm
+    ]
+  );
 
   useEffect(() => {
     const tableKey: string = tableState.tableKey.split('-')[0];
@@ -537,7 +502,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   // Refetch data when the query parameters change
   useEffect(() => {
     refetch();
-  }, [urlQueryParams]);
+  }, [tableState.queryFilters]);
 
   useEffect(() => {
     tableState.setIsLoading(
@@ -557,35 +522,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.setPageSize(data?.length ?? defaultPageSize);
     }
   }, [data]);
-
-  const deleteRecords = useDeleteApiFormModal({
-    url: url,
-    title: t`Delete Selected Items`,
-    preFormContent: (
-      <Alert
-        color="red"
-        title={t`Are you sure you want to delete the selected items?`}
-      >
-        {t`This action cannot be undone`}
-      </Alert>
-    ),
-    initialData: {
-      items: tableState.selectedIds
-    },
-    fields: {
-      items: {
-        hidden: true
-      }
-    },
-    onFormSuccess: () => {
-      tableState.clearSelectedRecords();
-      tableState.refreshTable();
-
-      if (props.afterBulkDelete) {
-        props.afterBulkDelete();
-      }
-    }
-  });
 
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
@@ -633,6 +569,33 @@ export function InvenTreeTable<T extends Record<string, any>>({
     tableState.refreshTable();
   }
 
+  /**
+   * Memoize row expansion options:
+   * - If rowExpansion is not provided, return undefined
+   * - Otherwise, return the rowExpansion object
+   * - Utilize the useTable hook to track expanded rows
+   */
+  const rowExpansion: DataTableRowExpansionProps<T> | undefined =
+    useMemo(() => {
+      if (!props.rowExpansion) {
+        return undefined;
+      }
+
+      return {
+        ...props.rowExpansion,
+        expanded: {
+          recordIds: tableState.expandedRecords,
+          onRecordIdsChange: (ids: any[]) => {
+            tableState.setExpandedRecords(ids);
+          }
+        }
+      };
+    }, [
+      tableState.expandedRecords,
+      tableState.setExpandedRecords,
+      props.rowExpansion
+    ]);
+
   const optionalParams = useMemo(() => {
     let optionalParamsa: Record<string, any> = {};
     if (tableProps.enablePagination) {
@@ -644,122 +607,24 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   return (
     <>
-      {deleteRecords.modal}
-      {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
-        <Boundary label="table-filter-drawer">
-          <FilterSelectDrawer
-            availableFilters={filters}
-            tableState={tableState}
-            opened={filtersVisible}
-            onClose={() => setFiltersVisible(false)}
-          />
-        </Boundary>
-      )}
-      <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
-        <Stack gap="sm">
-          <Group justify="apart" grow wrap="nowrap">
-            <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
-              <PrintingActions
-                items={tableState.selectedIds}
-                modelType={tableProps.modelType}
-                enableLabels={tableProps.enableLabels}
-                enableReports={tableProps.enableReports}
-              />
-              {(tableProps.barcodeActions?.length ?? 0) > 0 && (
-                <ButtonMenu
-                  key="barcode-actions"
-                  icon={<IconBarcode />}
-                  label={t`Barcode Actions`}
-                  tooltip={t`Barcode Actions`}
-                  actions={tableProps.barcodeActions ?? []}
-                />
-              )}
-              {tableProps.enableBulkDelete && (
-                <ActionButton
-                  disabled={!tableState.hasSelectedRecords}
-                  icon={<IconTrash />}
-                  color="red"
-                  tooltip={t`Delete selected records`}
-                  onClick={() => {
-                    deleteRecords.open();
-                  }}
-                />
-              )}
-              {tableProps.tableActions?.map((group, idx) => (
-                <Fragment key={idx}>{group}</Fragment>
-              ))}
-            </Group>
-            <Space />
-            <Group justify="right" gap={5} wrap="nowrap">
-              {tableProps.enableSearch && (
-                <TableSearchInput
-                  searchCallback={(term: string) =>
-                    tableState.setSearchTerm(term)
-                  }
-                />
-              )}
-              {tableProps.enableRefresh && (
-                <ActionIcon variant="transparent" aria-label="table-refresh">
-                  <Tooltip label={t`Refresh data`}>
-                    <IconRefresh
-                      onClick={() => {
-                        refetch();
-                        tableState.clearSelectedRecords();
-                      }}
-                    />
-                  </Tooltip>
-                </ActionIcon>
-              )}
-              {hasSwitchableColumns && (
-                <TableColumnSelect
-                  columns={dataColumns}
-                  onToggleColumn={toggleColumn}
-                />
-              )}
-              {urlQueryParams.size > 0 && (
-                <ActionIcon
-                  variant="transparent"
-                  color="red"
-                  aria-label="table-clear-query-filters"
-                >
-                  <Tooltip label={t`Clear custom query filters`}>
-                    <IconFilterCancel
-                      onClick={() => {
-                        setUrlQueryParams({});
-                      }}
-                    />
-                  </Tooltip>
-                </ActionIcon>
-              )}
-              {tableProps.enableFilters && filters.length > 0 && (
-                <Indicator
-                  size="xs"
-                  label={tableState.activeFilters?.length ?? 0}
-                  disabled={tableState.activeFilters?.length == 0}
-                >
-                  <ActionIcon
-                    variant="transparent"
-                    aria-label="table-select-filters"
-                  >
-                    <Tooltip label={t`Table Filters`}>
-                      <IconFilter
-                        onClick={() => setFiltersVisible(!filtersVisible)}
-                      />
-                    </Tooltip>
-                  </ActionIcon>
-                </Indicator>
-              )}
-              {tableProps.enableDownload && (
-                <DownloadAction
-                  key="download-action"
-                  downloadCallback={downloadData}
-                />
-              )}
-            </Group>
-          </Group>
+      <Stack gap="xs">
+        {!tableProps.noHeader && (
+          <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
+            <InvenTreeTableHeader
+              tableUrl={url}
+              tableState={tableState}
+              tableProps={tableProps}
+              hasSwitchableColumns={hasSwitchableColumns}
+              columns={dataColumns}
+              filters={filters}
+              toggleColumn={toggleColumn}
+            />
+          </Boundary>
+        )}
+        <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
           <Box pos="relative">
             <DataTable
-              withTableBorder
+              withTableBorder={!tableProps.noHeader}
               withColumnBorders
               striped
               highlightOnHover
@@ -779,13 +644,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
               onSelectedRecordsChange={
                 enableSelection ? onSelectedRecordsChange : undefined
               }
-              rowExpansion={tableProps.rowExpansion}
+              rowExpansion={rowExpansion}
               rowStyle={tableProps.rowStyle}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
               records={tableState.records}
               columns={dataColumns}
               onCellClick={handleCellClick}
+              noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
                 noWrap: true,
                 textAlign: 'left',
@@ -797,8 +663,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
               {...optionalParams}
             />
           </Box>
-        </Stack>
-      </Boundary>
+        </Boundary>
+      </Stack>
     </>
   );
 }

@@ -87,7 +87,7 @@ Plugins are supported natively when running under docker. There are two ways to 
 The production docker compose configuration outlined on this page uses [Caddy](https://caddyserver.com/) to serve static files and media files. If you change this configuration, you will need to ensure that static and media files are served correctly.
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 ### SSL Certificates
 
@@ -99,45 +99,11 @@ The example docker compose file launches the following containers:
 
 | Container | Description |
 | --- | --- |
-| inventree-db | PostgreSQL database |
-| inventree-server | Gunicorn web server |
-| inventree-worker | django-q background worker |
-| inventree-proxy | Caddy file server and reverse proxy |
-| *inventree-cache* | *redis cache (optional)* |
-
-#### PostgreSQL Database
-
-A PostgreSQL database container which requires a username:password combination (which can be changed). This uses the official [PostgreSQL image](https://hub.docker.com/_/postgres).
-
-#### Web Server
-
-Runs an InvenTree web server instance, powered by a Gunicorn web server.
-
-#### Background Worker
-
-Runs the InvenTree background worker process. This spins up a second instance of the *inventree* container, with a different entrypoint command.
-
-#### Proxy Server
-
-Caddy working as a reverse proxy, separating requests for static and media files, and directing everything else to Gunicorn.
-
-This container uses the official [caddy image](https://hub.docker.com/_/caddy).
-
-!!! info "Nginx Proxy"
-    An alternative is to run nginx as the reverse proxy. A sample configuration file is provided in the `./contrib/container/` source directory.
-
-#### Redis Cache
-
-Redis is used as cache storage for the InvenTree server. This provides a more performant caching system which can useful in larger installations.
-
-This container uses the official [redis image](https://hub.docker.com/_/redis).
-
-!!! info "Redis on Docker"
-    Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
-
-!!! tip "Enable Cache"
-    While a redis container is provided in the default configuration, by default it is not enabled in the Inventree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)
+| inventree-db | [PostgreSQL database](./processes.md#database) |
+| inventree-server | [InvenTree web server](./processes.md#web-server) |
+| inventree-worker | [django-q background worker](./processes.md#background-worker) |
+| inventree-proxy | [Caddy file server and reverse proxy](./processes.md#proxy-server) |
+| *inventree-cache* | [*redis cache (optional)*](./processes.md#cache-server) |
 
 ### Data Volume
 

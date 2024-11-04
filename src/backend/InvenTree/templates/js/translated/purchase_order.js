@@ -111,6 +111,9 @@ function purchaseOrderFields(options={}) {
         target_date: {
             icon: 'fa-calendar-alt',
         },
+        destination: {
+            icon: 'fa-sitemap'
+        },
         link: {
             icon: 'fa-link',
         },
@@ -256,6 +259,7 @@ function poLineItemFields(options={}) {
         part: {
             icon: 'fa-shapes',
             filters: {
+                active: true,
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
@@ -1361,6 +1365,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         method: 'POST',
         fields: {
             location: {
+                value: options.destination,
                 filters: {
                     structural: false,
                 },

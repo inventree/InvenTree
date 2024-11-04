@@ -973,7 +973,10 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
                     # Divide purchase price by pack size, to save correct price per stock item
-                    if data['purchase_price'] and supplier_part.pack_quantity_native:
+                    if (
+                        data.get('purchase_price')
+                        and supplier_part.pack_quantity_native
+                    ):
                         try:
                             data['purchase_price'] = float(
                                 data['purchase_price']
@@ -1175,6 +1178,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_field_aliases = {
         'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
+        'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
     }
 
@@ -1191,6 +1195,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         'stock',
         'status',
         'SKU',
+        'MPN',
     ]
 
     ordering = ['part__name', 'quantity', 'location']

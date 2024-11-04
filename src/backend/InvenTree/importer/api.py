@@ -5,6 +5,7 @@ from django.urls import include, path
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -20,6 +21,39 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
+from users.models import check_user_permission
+
+
+class DataImporterPermission(permissions.BasePermission):
+    """Mixin class for determining if the user has correct permissions."""
+
+    def has_permission(self, request, view):
+        """Class level permission checks are handled via permissions.IsAuthenticated."""
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        """Check if the user has permission to access the imported object."""
+        # For safe methods (GET, HEAD, OPTIONS), allow access
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if isinstance(obj, importer.models.DataImportSession):
+            session = obj
+        else:
+            session = getattr(obj, 'session', None)
+
+        if session:
+            if model_class := session.model_class:
+                return check_user_permission(request.user, model_class, 'change')
+
+        return True
+
+
+class DataImporterPermissionMixin:
+    """Mixin class for checking permissions on DataImporter objects."""
+
+    # Default permissions: User must be authenticated
+    permission_classes = [permissions.IsAuthenticated, DataImporterPermission]
 
 
 class DataImporterModelList(APIView):
@@ -44,10 +78,8 @@ class DataImporterModelList(APIView):
         return Response(models)
 
 
-class DataImportSessionList(BulkDeleteMixin, ListCreateAPI):
+class DataImportSessionList(DataImporterPermission, BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of DataImportSession objects."""
-
-    permission_classes = [permissions.IsAuthenticated]
 
     queryset = importer.models.DataImportSession.objects.all()
     serializer_class = importer.serializers.DataImportSessionSerializer
@@ -59,7 +91,7 @@ class DataImportSessionList(BulkDeleteMixin, ListCreateAPI):
     ordering_fields = ['timestamp', 'status', 'model_type']
 
 
-class DataImportSessionDetail(RetrieveUpdateDestroyAPI):
+class DataImportSessionDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportSession object."""
 
     queryset = importer.models.DataImportSession.objects.all()
@@ -78,13 +110,18 @@ class DataImportSessionAcceptFields(APIView):
         """Accept the field mapping for a DataImportSession."""
         session = get_object_or_404(importer.models.DataImportSession, pk=pk)
 
+        # Check that the user has permission to accept the field mapping
+        if model_class := session.model_class:
+            if not check_user_permission(request.user, model_class, 'change'):
+                raise PermissionDenied()
+
         # Attempt to accept the mapping (may raise an exception if the mapping is invalid)
         session.accept_mapping()
 
         return Response(importer.serializers.DataImportSessionSerializer(session).data)
 
 
-class DataImportSessionAcceptRows(CreateAPI):
+class DataImportSessionAcceptRows(DataImporterPermission, CreateAPI):
     """API endpoint to accept the rows for a DataImportSession."""
 
     queryset = importer.models.DataImportSession.objects.all()
@@ -105,7 +142,7 @@ class DataImportSessionAcceptRows(CreateAPI):
         return ctx
 
 
-class DataImportColumnMappingList(ListAPI):
+class DataImportColumnMappingList(DataImporterPermissionMixin, ListAPI):
     """API endpoint for accessing a list of DataImportColumnMap objects."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
@@ -116,14 +153,14 @@ class DataImportColumnMappingList(ListAPI):
     filterset_fields = ['session']
 
 
-class DataImportColumnMappingDetail(RetrieveUpdateAPI):
+class DataImportColumnMappingDetail(DataImporterPermissionMixin, RetrieveUpdateAPI):
     """Detail endpoint for a single DataImportColumnMap object."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
     serializer_class = importer.serializers.DataImportColumnMapSerializer
 
 
-class DataImportRowList(BulkDeleteMixin, ListAPI):
+class DataImportRowList(DataImporterPermission, BulkDeleteMixin, ListAPI):
     """API endpoint for accessing a list of DataImportRow objects."""
 
     queryset = importer.models.DataImportRow.objects.all()
@@ -138,7 +175,7 @@ class DataImportRowList(BulkDeleteMixin, ListAPI):
     ordering = 'row_index'
 
 
-class DataImportRowDetail(RetrieveUpdateDestroyAPI):
+class DataImportRowDetail(DataImporterPermission, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportRow object."""
 
     queryset = importer.models.DataImportRow.objects.all()

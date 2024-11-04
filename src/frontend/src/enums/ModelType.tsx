@@ -33,5 +33,6 @@ export enum ModelType {
   labeltemplate = 'labeltemplate',
   pluginconfig = 'pluginconfig',
   contenttype = 'contenttype',
-  selectionlist = 'selectionlist'
+  selectionlist = 'selectionlist',
+  error = 'error'
 }
