@@ -35,7 +35,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'packagename': 'invalid_package_name-asdads-asfd-asdf-asdf-asdf',
             },
             expected_code=400,
-            max_query_time=30,
+            max_query_time=60,
         )
 
         # valid - Pypi

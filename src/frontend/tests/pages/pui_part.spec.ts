@@ -2,7 +2,76 @@ import { test } from '../baseFixtures';
 import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
-test('Pages - Part - Locking', async ({ page }) => {
+/**
+ * CHeck each panel tab for the "Parts" page
+ */
+test('Parts - Tabs', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/home`);
+  await page.getByRole('tab', { name: 'Parts' }).click();
+
+  await page.waitForURL('**/platform/part/category/index/details');
+  await page.goto(`${baseUrl}/part/category/index/parts`);
+  await page.getByText('1551ABK').click();
+  await page.getByRole('tab', { name: 'Allocations' }).click();
+  await page.getByRole('tab', { name: 'Used In' }).click();
+  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await page.getByRole('tab', { name: 'Scheduling' }).click();
+  await page.getByRole('tab', { name: 'Stock History' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+  await page.getByRole('tab', { name: 'Related Parts' }).click();
+
+  // Related Parts
+  await page.getByText('1551ACLR').click();
+  await page.getByRole('tab', { name: 'Part Details' }).click();
+  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await page
+    .getByRole('tab', { name: 'Part Details' })
+    .locator('xpath=..')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
+  await page.getByRole('tab', { name: 'Allocations' }).click();
+  await page.getByRole('tab', { name: 'Used In' }).click();
+  await page.getByRole('tab', { name: 'Pricing' }).click();
+
+  await page.goto(`${baseUrl}/part/category/index/parts`);
+  await page.getByText('Blue Chair').click();
+  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await page.getByRole('tab', { name: 'Build Orders' }).click();
+});
+
+test('Parts - Manufacturer Parts', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/84/manufacturers`);
+
+  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByText('Hammond Manufacturing').click();
+  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByText('1551ACLR - 1551ACLR').waitFor();
+});
+
+test('Parts - Supplier Parts', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/15/suppliers`);
+
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
+  await page.getByRole('tab', { name: 'Received Stock' }).click(); //
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
+});
+
+test('Parts - Locking', async ({ page }) => {
   await doQuickLogin(page);
 
   // Navigate to a known assembly which is *not* locked
@@ -18,12 +87,46 @@ test('Pages - Part - Locking', async ({ page }) => {
   await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
+  // Check expected "badge" values
+  await page.getByText('In Stock: 13').waitFor();
+  await page.getByText('Required: 10').waitFor();
+  await page.getByText('In Production: 50').waitFor();
+
   // Check the "parameters" tab also
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByText('Part parameters cannot be').waitFor();
 });
 
-test('Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
+test('Parts - Allocations', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Let's look at the allocations for a single stock item
+  await page.goto(`${baseUrl}/stock/item/324/`);
+  await page.getByRole('tab', { name: 'Allocations' }).click();
+
+  await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
+  await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
+  await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
+
+  // Let's look at the allocations for the entire part
+  await page.getByRole('tab', { name: 'Details' }).click();
+  await page.getByRole('link', { name: 'Leg' }).click();
+
+  await page.getByRole('tab', { name: 'Part Details' }).click();
+  await page.getByText('660 / 760').waitFor();
+
+  await page.getByRole('tab', { name: 'Allocations' }).click();
+
+  // Number of table records
+  await page.getByText('1 - 4 / 4').waitFor();
+  await page.getByRole('cell', { name: 'Making red square tables' }).waitFor();
+
+  // Navigate through to the build order
+  await page.getByRole('cell', { name: 'BO0007' }).click();
+  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
+});
+
+test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part with no history
@@ -72,7 +175,7 @@ test('Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.waitForURL('**/part/98/**');
 });
 
-test('Pages - Part - Pricing (Supplier)', async ({ page }) => {
+test('Parts - Pricing (Supplier)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -98,7 +201,7 @@ test('Pages - Part - Pricing (Supplier)', async ({ page }) => {
   // await page.waitForURL('**/purchasing/supplier-part/697/');
 });
 
-test('Pages - Part - Pricing (Variant)', async ({ page }) => {
+test('Parts - Pricing (Variant)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -124,7 +227,7 @@ test('Pages - Part - Pricing (Variant)', async ({ page }) => {
   await page.waitForURL('**/part/109/**');
 });
 
-test('Pages - Part - Pricing (Internal)', async ({ page }) => {
+test('Parts - Pricing (Internal)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -149,7 +252,7 @@ test('Pages - Part - Pricing (Internal)', async ({ page }) => {
   await page.getByText('Part *M2x4 SHCSSocket head').click();
 });
 
-test('Pages - Part - Pricing (Purchase)', async ({ page }) => {
+test('Parts - Pricing (Purchase)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
@@ -171,7 +274,7 @@ test('Pages - Part - Pricing (Purchase)', async ({ page }) => {
   await page.getByText('2022-04-29').waitFor();
 });
 
-test('Pages - Part - Attachments', async ({ page }) => {
+test('Parts - Attachments', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/69/attachments`);
@@ -193,7 +296,7 @@ test('Pages - Part - Attachments', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Pages - Part - Parameters', async ({ page }) => {
+test('Parts - Parameters', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/69/parameters`);
@@ -220,7 +323,7 @@ test('Pages - Part - Parameters', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 
-test('Pages - Part - Notes', async ({ page }) => {
+test('Parts - Notes', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/69/notes`);
@@ -242,7 +345,7 @@ test('Pages - Part - Notes', async ({ page }) => {
   await page.getByLabel('Close Editor').waitFor();
 });
 
-test('Pages - Part - 404', async ({ page }) => {
+test('Parts - 404', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/99999/`);
@@ -252,7 +355,7 @@ test('Pages - Part - 404', async ({ page }) => {
   await page.evaluate(() => console.clear());
 });
 
-test('Pages - Part - Revision', async ({ page }) => {
+test('Parts - Revision', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/906/details`);
