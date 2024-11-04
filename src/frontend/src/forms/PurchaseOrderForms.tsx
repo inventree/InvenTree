@@ -237,6 +237,12 @@ function LineItemFormRow({
     onClose: () => props.changeFn(props.idx, 'location', undefined)
   });
 
+  // Is this a trackable part?
+  const trackable: boolean = useMemo(
+    () => record.part_detail?.trackable ?? false,
+    [record]
+  );
+
   useEffect(() => {
     if (!!record.destination) {
       props.changeFn(props.idx, 'location', record.destination);
@@ -302,6 +308,14 @@ function LineItemFormRow({
   useEffect(() => {
     props.changeFn(props.idx, 'barcode', barcode);
   }, [barcode]);
+
+  const batchToolTip: string = useMemo(() => {
+    if (trackable) {
+      return t`Assign Batch Code and Serial Numbers`;
+    } else {
+      return t`Assign Batch Code`;
+    }
+  }, [trackable]);
 
   // Update location field description on state change
   useEffect(() => {
@@ -418,9 +432,7 @@ function LineItemFormRow({
               size="sm"
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon="batch_code" />}
-              tooltip={t`Assign Batch Code${
-                record.trackable && ' and Serial Numbers'
-              }`}
+              tooltip={batchToolTip}
               tooltipAlignment="top"
               variant={batchOpen ? 'filled' : 'transparent'}
             />
@@ -552,18 +564,20 @@ function LineItemFormRow({
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
+          description: t`Enter batch code for received items`,
           value: props.item.batch_code
         }}
         error={props.rowErrors?.batch_code?.message}
       />
       <TableFieldExtraRow
-        visible={batchOpen && record.trackable}
+        visible={batchOpen && trackable}
         onValueChange={(value) =>
           props.changeFn(props.idx, 'serial_numbers', value)
         }
         fieldDefinition={{
           field_type: 'string',
-          label: t`Serial numbers`,
+          label: t`Serial Numbers`,
+          description: t`Enter serial numbers for received items`,
           value: props.item.serial_numbers
         }}
         error={props.rowErrors?.serial_numbers?.message}

@@ -259,6 +259,7 @@ function poLineItemFields(options={}) {
         part: {
             icon: 'fa-shapes',
             filters: {
+                active: true,
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
