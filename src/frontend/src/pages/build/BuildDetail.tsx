@@ -64,6 +64,8 @@ export default function BuildDetail() {
 
   const user = useUserState();
 
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
   const {
     instance: build,
     refreshInstance,
@@ -269,8 +271,10 @@ export default function BuildDetail() {
           <BuildOutputTable build={build} refreshBuild={refreshInstance} />
         ) : (
           <Skeleton />
-        )
-        // TODO: Hide if build is complete
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
       },
       {
         name: 'complete-outputs',
@@ -291,6 +295,9 @@ export default function BuildDetail() {
         name: 'allocated-stock',
         label: t`Allocated Stock`,
         icon: <IconList />,
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED,
         content: build.pk ? (
           <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
         ) : (
@@ -355,7 +362,7 @@ export default function BuildDetail() {
         model_id: build.pk
       })
     ];
-  }, [build, id, user]);
+  }, [build, id, user, buildStatus]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
@@ -378,8 +385,6 @@ export default function BuildDetail() {
     follow: true,
     modelType: ModelType.build
   });
-
-  const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
