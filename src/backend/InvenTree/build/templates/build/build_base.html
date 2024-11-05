@@ -3,6 +3,7 @@
 {% load static %}
 {% load i18n %}
 {% load generic %}
+{% load barcode %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -84,7 +85,7 @@ src="{% static 'img/blank_image.png' %}"
     </ul>
 </div>
 {% if build.can_issue %}
-<button id='build-issue' title='{% trans "Isueue Build" %}' class='btn btn-primary'>
+<button id='build-issue' title='{% trans "Issue Build" %}' class='btn btn-primary'>
     <span class='fas fa-paper-plane'></span> {% trans "Issue Build" %}
 </button>
 {% elif build.active %}
@@ -310,7 +311,7 @@ src="{% static 'img/blank_image.png' %}"
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Build Order QR Code" escape %}',
-            '{{ build.barcode }}'
+            `{% clean_barcode build.barcode %}`
         );
     });
 

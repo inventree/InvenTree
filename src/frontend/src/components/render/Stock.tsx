@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
@@ -66,7 +67,7 @@ export function RenderStockItem(
     <RenderInlineModel
       {...props}
       primary={instance.part_detail?.full_name}
-      suffix={quantity_string}
+      suffix={<Text size="sm">{quantity_string}</Text>}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined

@@ -2,6 +2,7 @@
 
 import datetime
 import hashlib
+import inspect
 import io
 import logging
 import os
@@ -9,17 +10,18 @@ import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import TypeVar, Union
+from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
 
-import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import Storage, default_storage
 from django.http import StreamingHttpResponse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+import bleach
 import pytz
 import regex
 from bleach import clean
@@ -97,10 +99,7 @@ def generateTestKey(test_name: str) -> str:
         if char.isidentifier():
             return True
 
-        if char.isalnum():
-            return True
-
-        return False
+        return bool(char.isalnum())
 
     # Remove any characters that cannot be used to represent a variable
     key = ''.join([c for c in key if valid_char(c)])
@@ -435,7 +434,7 @@ def DownloadFile(
     return response
 
 
-def increment_serial_number(serial):
+def increment_serial_number(serial, part=None):
     """Given a serial number, (attempt to) generate the *next* serial number.
 
     Note: This method is exposed to custom plugins.
@@ -446,6 +445,7 @@ def increment_serial_number(serial):
     Returns:
         incremented value, or None if incrementing could not be performed.
     """
+    from InvenTree.exceptions import log_error
     from plugin.registry import registry
 
     # Ensure we start with a string value
@@ -454,16 +454,30 @@ def increment_serial_number(serial):
 
     # First, let any plugins attempt to increment the serial number
     for plugin in registry.with_mixin('validation'):
-        result = plugin.increment_serial_number(serial)
-        if result is not None:
-            return str(result)
+        try:
+            if not hasattr(plugin, 'increment_serial_number'):
+                continue
+
+            signature = inspect.signature(plugin.increment_serial_number)
+
+            # Note: 2024-08-21 - The 'part' parameter has been added to the signature
+            if 'part' in signature.parameters:
+                result = plugin.increment_serial_number(serial, part=part)
+            else:
+                result = plugin.increment_serial_number(serial)
+            if result is not None:
+                return str(result)
+        except Exception:
+            log_error(f'{plugin.slug}.increment_serial_number')
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
     return increment(serial)
 
 
-def extract_serial_numbers(input_string, expected_quantity: int, starting_value=None):
+def extract_serial_numbers(
+    input_string, expected_quantity: int, starting_value=None, part=None
+):
     """Extract a list of serial numbers from a provided input string.
 
     The input string can be specified using the following concepts:
@@ -483,27 +497,29 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         starting_value: Provide a starting value for the sequence (or None)
     """
     if starting_value is None:
-        starting_value = increment_serial_number(None)
+        starting_value = increment_serial_number(None, part=part)
 
     try:
         expected_quantity = int(expected_quantity)
     except ValueError:
         raise ValidationError([_('Invalid quantity provided')])
 
-    if input_string:
-        input_string = str(input_string).strip()
-    else:
-        input_string = ''
+    if expected_quantity > 1000:
+        raise ValidationError({
+            'quantity': [_('Cannot serialize more than 1000 items at once')]
+        })
+
+    input_string = str(input_string).strip() if input_string else ''
 
     if len(input_string) == 0:
         raise ValidationError([_('Empty serial number string')])
 
-    next_value = increment_serial_number(starting_value)
+    next_value = increment_serial_number(starting_value, part=part)
 
     # Substitute ~ character with latest value
     while '~' in input_string and next_value:
         input_string = input_string.replace('~', str(next_value), 1)
-        next_value = increment_serial_number(next_value)
+        next_value = increment_serial_number(next_value, part=part)
 
     # Split input string by whitespace or comma (,) characters
     groups = re.split(r'[\s,]+', input_string)
@@ -557,7 +573,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_(f'Invalid group range: {group}'))
+                    add_error(_(f'Invalid group: {group}'))
                     continue
 
                 group_items = []
@@ -600,7 +616,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_(f'Invalid group range: {group}'))
+                    add_error(_(f'Invalid group: {group}'))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -618,14 +634,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_(f'Invalid group sequence: {group}'))
+                add_error(_(f'Invalid group: {group}'))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_(f'Invalid group sequence: {group}'))
+                    add_error(_(f'Invalid group: {group}'))
                     continue
 
             value = items[0]
@@ -644,7 +660,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_(f'Invalid group sequence: {group}'))
+                add_error(_(f'Invalid group: {group}'))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
@@ -800,12 +816,71 @@ def remove_non_printable_characters(
     if remove_unicode:
         # Remove Unicode control characters
         if remove_newline:
-            cleaned = regex.sub('[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub(r'[^\P{C}]+', '', cleaned)
         else:
             # Use 'negative-lookahead' to exclude newline character
-            cleaned = regex.sub('(?![\x0a])[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub('(?![\x0a])[^\\P{C}]+', '', cleaned)
 
     return cleaned
+
+
+def clean_markdown(value: str):
+    """Clean a markdown string.
+
+    This function will remove javascript and other potentially harmful content from the markdown string.
+    """
+    import markdown
+
+    try:
+        markdownify_settings = settings.MARKDOWNIFY['default']
+    except (AttributeError, KeyError):
+        markdownify_settings = {}
+
+    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
+    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
+
+    # Generate raw HTML from provided markdown (without sanitizing)
+    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
+    html = markdown.markdown(
+        value or '',
+        extensions=extensions,
+        extension_configs=extension_configs,
+        output_format='html',
+    )
+
+    # Bleach settings
+    whitelist_tags = markdownify_settings.get(
+        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
+    )
+    whitelist_attrs = markdownify_settings.get(
+        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
+    )
+    whitelist_styles = markdownify_settings.get(
+        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
+    )
+    whitelist_protocols = markdownify_settings.get(
+        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
+    )
+    strip = markdownify_settings.get('STRIP', True)
+
+    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
+        allowed_css_properties=whitelist_styles
+    )
+    cleaner = bleach.Cleaner(
+        tags=whitelist_tags,
+        attributes=whitelist_attrs,
+        css_sanitizer=css_sanitizer,
+        protocols=whitelist_protocols,
+        strip=strip,
+    )
+
+    # Clean the HTML content (for comparison). This must be the same as the original content
+    clean_html = cleaner.clean(html)
+
+    if html != clean_html:
+        raise ValidationError(_('Data contains prohibited markdown content'))
+
+    return value
 
 
 def hash_barcode(barcode_data):
@@ -827,7 +902,7 @@ def hash_barcode(barcode_data):
 def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
     """Return the MD5 hash of a file."""
     content = (
-        open(filename, 'rb').read()
+        open(filename, 'rb').read()  # noqa: SIM115
         if storage is None
         else storage.open(str(filename), 'rb').read()
     )
@@ -865,7 +940,7 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: str = None):
+def to_local_time(time, target_tz: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
@@ -947,7 +1022,14 @@ def get_objectreference(
     ret = {}
     if url_fnc:
         ret['link'] = url_fnc()
-    return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
+
+    return {
+        'name': str(item),
+        'model_name': str(model_cls._meta.verbose_name),
+        'model_type': str(model_cls._meta.model_name),
+        'model_id': getattr(item, 'pk', None),
+        **ret,
+    }
 
 
 Inheritors_T = TypeVar('Inheritors_T')

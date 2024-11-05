@@ -12,6 +12,15 @@ export type TableFilterChoice = {
 };
 
 /**
+ * Available filter types
+ *
+ * boolean: A simple true/false filter
+ * choice: A filter which allows selection from a list of (supplied)
+ * date: A filter which allows selection from a date input
+ */
+export type TableFilterType = 'boolean' | 'choice' | 'date';
+
+/**
  * Interface for the table filter type. Provides a number of options for selecting filter value:
  *
  * choices: A list of TableFilterChoice objects
@@ -22,7 +31,7 @@ export type TableFilter = {
   name: string;
   label: string;
   description?: string;
-  type?: string;
+  type?: TableFilterType;
   choices?: TableFilterChoice[];
   choiceFunction?: () => TableFilterChoice[];
   defaultValue?: any;
@@ -83,9 +92,12 @@ export function StatusFilterOptions(
   };
 }
 
+// Define some commonly used filters
+
 export function AssignedToMeFilter(): TableFilter {
   return {
     name: 'assigned_to_me',
+    type: 'boolean',
     label: t`Assigned to me`,
     description: t`Show orders assigned to me`
   };
@@ -95,7 +107,7 @@ export function OutstandingFilter(): TableFilter {
   return {
     name: 'outstanding',
     label: t`Outstanding`,
-    description: t`Show outstanding orders`
+    description: t`Show outstanding items`
   };
 }
 
@@ -103,6 +115,33 @@ export function OverdueFilter(): TableFilter {
   return {
     name: 'overdue',
     label: t`Overdue`,
-    description: t`Show overdue orders`
+    description: t`Show overdue items`
+  };
+}
+
+export function MinDateFilter(): TableFilter {
+  return {
+    name: 'min_date',
+    label: t`Minimum Date`,
+    description: t`Show items after this date`,
+    type: 'date'
+  };
+}
+
+export function MaxDateFilter(): TableFilter {
+  return {
+    name: 'max_date',
+    label: t`Maximum Date`,
+    description: t`Show items before this date`,
+    type: 'date'
+  };
+}
+
+export function HasProjectCodeFilter(): TableFilter {
+  return {
+    name: 'has_project_code',
+    type: 'boolean',
+    label: t`Has Project Code`,
+    description: t`Show orders with an assigned project code`
   };
 }

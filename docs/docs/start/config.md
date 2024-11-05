@@ -26,7 +26,7 @@ The InvenTree server tries to locate the `config.yaml` configuration file on sta
 
 The configuration file *template* can be found on [GitHub]({{ sourcefile("src/backend/InvenTree/config_template.yaml") }}), and is shown below:
 
-{{ includefile("src/backend/InvenTree/config_template.yaml", "Configuration File Template", format="yaml") }}
+{{ includefile("src/backend/InvenTree/config_template.yaml", "Configuration File Template", fmt="yaml") }}
 
 !!! info "Template File"
     The default configuration file (as defined by the template linked above) will be copied to the specified configuration file location on first run, if a configuration file is not found in that location.
@@ -107,7 +107,22 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
 | INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
-| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) for more information. | `None` |
+| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. | False |
+
+### Debug Mode
+
+Note that in [debug mode](./intro.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development:
+
+| Setting | Value in Debug Mode | Description |
+| --- | --- | --- |
+| `INVENTREE_ALLOWED_HOSTS` | `*` | Allow all host in debug mode |
+| `CSRF_TRUSTED_ORIGINS` | Value is appended to allow `http://*.localhost:*` | Allow all connections from localhost, for development purposes |
+| `INVENTREE_COOKIE_SAMESITE` | `False` | Disable all same-site cookie checks in debug mode |
+| `INVENTREE_SESSION_COOKIE_SECURE` | `False` | Disable secure session cookies in debug mode (allow non-https cookies) |
+
+### INVENTREE_COOKIE_SAMESITE vs INVENTREE_SESSION_COOKIE_SECURE
+
+Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_SESSION_COOKIE_SECURE` is automatically set to `True` to ensure that the session cookie is secure! This means that the session cookie will only be sent over secure (https) connections.
 
 ### Proxy Settings
 
@@ -264,12 +279,12 @@ InvenTree requires some external directories for storing files:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_STATIC_ROOT | static_root | [Static files](./serving_files.md#static-files) directory | *Not specified* |
-| INVENTREE_MEDIA_ROOT | media_root | [Media files](./serving_files.md#media-files) directory | *Not specified* |
+| INVENTREE_STATIC_ROOT | static_root | [Static files](./processes.md#static-files) directory | *Not specified* |
+| INVENTREE_MEDIA_ROOT | media_root | [Media files](./processes.md#media-files) directory | *Not specified* |
 | INVENTREE_BACKUP_DIR | backup_dir | Backup files directory | *Not specified* |
 
 !!! tip "Serving Files"
-    Read the [Serving Files](./serving_files.md) section for more information on hosting *static* and *media* files
+    Read the [proxy server documentation](./processes.md#proxy-server) for more information on hosting *static* and *media* files
 
 ### Static File Storage
 
@@ -353,6 +368,15 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.hide_pui_banner | Disable PUI banner | False |
+
+The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
+the wanted values. Example:
+
+```
+INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi","hide_pui_banner":"True"}
+```
+
+This example removes the PUI banner and sets a login message. Take care of the double quotes.
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 

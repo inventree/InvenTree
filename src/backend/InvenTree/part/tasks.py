@@ -14,7 +14,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
-import part.models
+import part.models as part_models
 import part.stocktake
 from common.settings import get_global_setting
 from InvenTree.tasks import (
@@ -27,7 +27,7 @@ from InvenTree.tasks import (
 logger = logging.getLogger('inventree')
 
 
-def notify_low_stock(part: part.models.Part):
+def notify_low_stock(part: part_models.Part):
     """Notify interested users that a part is 'low stock'.
 
     Rules:
@@ -51,20 +51,28 @@ def notify_low_stock(part: part.models.Part):
     )
 
 
-def notify_low_stock_if_required(part: part.models.Part):
+def notify_low_stock_if_required(part_id: int):
     """Check if the stock quantity has fallen below the minimum threshold of part.
 
     If true, notify the users who have subscribed to the part
     """
+    try:
+        part = part_models.Part.objects.get(pk=part_id)
+    except part_models.Part.DoesNotExist:
+        logger.warning(
+            'notify_low_stock_if_required: Part with ID %s does not exist', part_id
+        )
+        return
+
     # Run "up" the tree, to allow notification for "parent" parts
     parts = part.get_ancestors(include_self=True, ascending=True)
 
     for p in parts:
         if p.is_part_low_on_stock():
-            InvenTree.tasks.offload_task(notify_low_stock, p)
+            InvenTree.tasks.offload_task(notify_low_stock, p, group='notification')
 
 
-def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
+def update_part_pricing(pricing: part_models.PartPricing, counter: int = 0):
     """Update cached pricing data for the specified PartPricing instance.
 
     Arguments:
@@ -73,7 +81,11 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
     """
     logger.info('Updating part pricing for %s', pricing.part)
 
-    pricing.update_pricing(counter=counter)
+    pricing.update_pricing(
+        counter=counter,
+        previous_min=pricing.overall_min,
+        previous_max=pricing.overall_max,
+    )
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -89,7 +101,7 @@ def check_missing_pricing(limit=250):
         limit: Maximum number of parts to process at once
     """
     # Find parts for which pricing information has never been updated
-    results = part.models.PartPricing.objects.filter(updated=None)[:limit]
+    results = part_models.PartPricing.objects.filter(updated=None)[:limit]
 
     if results.count() > 0:
         logger.info('Found %s parts with empty pricing', results.count())
@@ -101,7 +113,7 @@ def check_missing_pricing(limit=250):
     days = int(get_global_setting('PRICING_UPDATE_DAYS', 30))
     stale_date = datetime.now().date() - timedelta(days=days)
 
-    results = part.models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
+    results = part_models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
 
     if results.count() > 0:
         logger.info('Found %s stale pricing entries', results.count())
@@ -111,7 +123,7 @@ def check_missing_pricing(limit=250):
 
     # Find any pricing data which is in the wrong currency
     currency = common.currency.currency_code_default()
-    results = part.models.PartPricing.objects.exclude(currency=currency)
+    results = part_models.PartPricing.objects.exclude(currency=currency)
 
     if results.count() > 0:
         logger.info('Found %s pricing entries in the wrong currency', results.count())
@@ -120,7 +132,7 @@ def check_missing_pricing(limit=250):
             pp.schedule_for_update()
 
     # Find any parts which do not have pricing information
-    results = part.models.Part.objects.filter(pricing_data=None)[:limit]
+    results = part_models.Part.objects.filter(pricing_data=None)[:limit]
 
     if results.count() > 0:
         logger.info('Found %s parts without pricing', results.count())
@@ -148,7 +160,7 @@ def scheduled_stocktake_reports():
         get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
     )
     threshold = datetime.now() - timedelta(days=delete_n_days)
-    old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
+    old_reports = part_models.PartStocktakeReport.objects.filter(date__lt=threshold)
 
     if old_reports.count() > 0:
         logger.info('Deleting %s stale stocktake reports', old_reports.count())
@@ -183,11 +195,11 @@ def rebuild_parameters(template_id):
     which may cause the base unit to be adjusted.
     """
     try:
-        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
-    except part.models.PartParameterTemplate.DoesNotExist:
+        template = part_models.PartParameterTemplate.objects.get(pk=template_id)
+    except part_models.PartParameterTemplate.DoesNotExist:
         return
 
-    parameters = part.models.PartParameter.objects.filter(template=template)
+    parameters = part_models.PartParameter.objects.filter(template=template)
 
     n = 0
 
@@ -212,8 +224,8 @@ def rebuild_supplier_parts(part_id):
     which may cause the native units of any supplier parts to be updated
     """
     try:
-        prt = part.models.Part.objects.get(pk=part_id)
-    except part.models.Part.DoesNotExist:
+        prt = part_models.Part.objects.get(pk=part_id)
+    except part_models.Part.DoesNotExist:
         return
 
     supplier_parts = company.models.SupplierPart.objects.filter(part=prt)

@@ -25,6 +25,9 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
@@ -38,10 +41,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({
   supplierId,
   supplierPartId
-}: {
+}: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
-}) {
+}>) {
   const table = useTable('purchase-order');
   const user = useUserState();
 
@@ -59,17 +62,15 @@ export function PurchaseOrderTable({
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'assigned_to',
         label: t`Responsible`,
@@ -121,7 +122,7 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
-  const purchaseOrderFields = usePurchaseOrderFields();
+  const purchaseOrderFields = usePurchaseOrderFields({});
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
@@ -137,6 +138,7 @@ export function PurchaseOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-purchase-order"
         tooltip={t`Add Purchase Order`}
         onClick={() => newPurchaseOrder.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}

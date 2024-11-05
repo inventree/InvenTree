@@ -234,12 +234,17 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                 request = self.context['request']
                 if request.user and request.user.is_staff:
                     meta = obj.target_object._meta
-                    target['link'] = construct_absolute_url(
-                        reverse(
-                            f'admin:{meta.db_table}_change',
-                            kwargs={'object_id': obj.target_object_id},
+
+                    try:
+                        target['link'] = construct_absolute_url(
+                            reverse(
+                                f'admin:{meta.db_table}_change',
+                                kwargs={'object_id': obj.target_object_id},
+                            )
                         )
-                    )
+                    except Exception:
+                        # Do not crash if the reverse lookup fails
+                        pass
 
         return target
 
@@ -380,6 +385,22 @@ class CustomUnitSerializer(DataImportExportSerializerMixin, InvenTreeModelSerial
 
         model = common_models.CustomUnit
         fields = ['pk', 'name', 'symbol', 'definition']
+
+
+class AllUnitListResponseSerializer(serializers.Serializer):
+    """Serializer for the AllUnitList."""
+
+    class Unit(serializers.Serializer):
+        """Serializer for the AllUnitListResponseSerializer."""
+
+        name = serializers.CharField()
+        is_alias = serializers.BooleanField()
+        compatible_units = serializers.ListField(child=serializers.CharField())
+        isdimensionless = serializers.BooleanField()
+
+    default_system = serializers.CharField()
+    available_systems = serializers.ListField(child=serializers.CharField())
+    available_units = Unit(many=True)
 
 
 class ErrorMessageSerializer(InvenTreeModelSerializer):
@@ -574,9 +595,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
 
         model_type = self.validated_data.get('model_type', None)
 
-        if model_type is None:
-            if self.instance:
-                model_type = self.instance.model_type
+        if model_type is None and self.instance:
+            model_type = self.instance.model_type
 
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user

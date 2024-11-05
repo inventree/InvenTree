@@ -12,14 +12,14 @@ export function InfoItem({
   value,
   link,
   detailDrawerLink
-}: {
+}: Readonly<{
   name: string;
   children?: React.ReactNode;
   type?: 'text' | 'boolean' | 'code';
   value?: any;
   link?: To;
   detailDrawerLink?: boolean;
-}) {
+}>) {
   function renderComponent() {
     if (value === undefined) return null;
 

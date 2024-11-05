@@ -2,11 +2,8 @@ import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
-  IconDots,
   IconInfoCircle,
   IconList,
-  IconNotes,
-  IconPaperclip,
   IconTools,
   IconTruckDelivery
 } from '@tabler/icons-react';
@@ -19,19 +16,21 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction
+  HoldItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -48,7 +47,6 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
@@ -102,6 +100,7 @@ export default function SalesOrderDetail() {
         name: 'customer_reference',
         label: t`Customer Reference`,
         copy: true,
+        icon: 'reference',
         hidden: !order.customer_reference
       },
       {
@@ -180,23 +179,46 @@ export default function SalesOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
       }
-      // TODO: Project code
     ];
 
     let br: DetailsField[] = [
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
+        label: t`Creation Date`,
+        copy: true,
+        hidden: !order.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
-        icon: 'calendar',
-        hidden: !order.target_date
+        hidden: !order.target_date,
+        copy: true
+      },
+      {
+        type: 'date',
+        name: 'shipment_date',
+        label: t`Completion Date`,
+        hidden: !order.shipment_date,
+        copy: true
       },
       {
         type: 'text',
@@ -231,7 +253,7 @@ export default function SalesOrderDetail() {
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
-  const salesOrderFields = useSalesOrderFields();
+  const salesOrderFields = useSalesOrderFields({});
 
   const editSalesOrder = useEditApiFormModal({
     url: ApiEndpoints.sales_order_list,
@@ -243,10 +265,14 @@ export default function SalesOrderDetail() {
     }
   });
 
+  const duplicateOrderFields = useSalesOrderFields({
+    duplicateOrderId: order.pk
+  });
+
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
-    fields: salesOrderFields,
+    fields: duplicateOrderFields,
     initialData: {
       ...order,
       reference: undefined
@@ -334,29 +360,14 @@ export default function SalesOrderDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.salesorder}
-            model_id={order.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.salesorder}
-            modelId={order.pk}
-            editable={user.hasChangeRole(UserRoles.sales_order)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.salesorder,
+        model_id: order.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.salesorder,
+        model_id: order.pk
+      })
     ];
   }, [order, id, user, soStatus]);
 
@@ -449,9 +460,8 @@ export default function SalesOrderDetail() {
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !canEdit,
@@ -511,7 +521,13 @@ export default function SalesOrderDetail() {
             editAction={editSalesOrder.open}
             editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
-          <PanelGroup pageKey="salesorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="salesorder"
+            panels={orderPanels}
+            model={ModelType.salesorder}
+            id={order.pk}
+            instance={order}
+          />
         </Stack>
       </InstanceDetail>
     </>

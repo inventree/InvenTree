@@ -5,7 +5,7 @@ import re
 from enum import Enum
 
 
-class BaseEnum(enum.IntEnum):
+class BaseEnum(enum.IntEnum):  # noqa: PLW1641
     """An `Enum` capabile of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
@@ -100,9 +100,7 @@ class StatusCode(BaseEnum):
             return False
         if callable(value):
             return False
-        if not isinstance(value.value, int):
-            return False
-        return True
+        return isinstance(value.value, int)
 
     @classmethod
     def values(cls, key=None):

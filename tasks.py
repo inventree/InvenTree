@@ -9,8 +9,9 @@ import subprocess
 import sys
 from pathlib import Path
 from platform import python_version
+from typing import Optional
 
-from invoke import task
+from invoke import Collection, task
 
 
 def checkPythonVersion():
@@ -25,10 +26,9 @@ def checkPythonVersion():
 
     valid = True
 
-    if sys.version_info.major < REQ_MAJOR:
-        valid = False
-
-    elif sys.version_info.major == REQ_MAJOR and sys.version_info.minor < REQ_MINOR:
+    if sys.version_info.major < REQ_MAJOR or (
+        sys.version_info.major == REQ_MAJOR and sys.version_info.minor < REQ_MINOR
+    ):
         valid = False
 
     if not valid:
@@ -136,7 +136,7 @@ def managePyPath():
     return managePyDir().joinpath('manage.py')
 
 
-def run(c, cmd, path: Path = None, pty=False, env=None):
+def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
     """Runs a given command a given path.
 
     Args:
@@ -367,7 +367,7 @@ def translate_stats(c):
     The file generated from this is needed for the UI.
     """
     # Recompile the translation files (.mo)
-    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    # We do not run 'invoke dev.translate' here, as that will touch the source (.po) files too!
     try:
         manage(c, 'compilemessages', pty=True)
     except Exception:
@@ -411,6 +411,11 @@ def backup(c, clean=False, path=None):
     cmd = '--noinput --compress -v 2'
 
     if path:
+        # Resolve the provided path
+        path = Path(path)
+        if not os.path.isabs(path):
+            path = localDir().joinpath(path).resolve()
+
         cmd += f' -O {path}'
 
     if clean:
@@ -442,6 +447,11 @@ def restore(
     base_cmd = '--noinput --uncompress -v 2'
 
     if path:
+        # Resolve the provided path
+        path = Path(path)
+        if not os.path.isabs(path):
+            path = localDir().joinpath(path).resolve()
+
         base_cmd += f' -I {path}'
 
     if ignore_database:
@@ -618,7 +628,7 @@ def export_records(
     print('Running data post-processing step...')
 
     # Post-process the file, to remove any "permissions" specified for a user or group
-    with open(tmpfile, 'r') as f_in:
+    with open(tmpfile, encoding='utf-8') as f_in:
         data = json.loads(f_in.read())
 
     data_out = []
@@ -641,7 +651,7 @@ def export_records(
             data_out.append(entry)
 
     # Write the processed data to file
-    with open(target, 'w') as f_out:
+    with open(target, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(data_out, indent=2))
 
     print('Data export completed')
@@ -684,7 +694,7 @@ def import_records(
     # Pre-process the data, to remove any "permissions" specified for a user or group
     datafile = f'{target}.data.json'
 
-    with open(target, 'r') as f_in:
+    with open(target, encoding='utf-8') as f_in:
         try:
             data = json.loads(f_in.read())
         except json.JSONDecodeError as exc:
@@ -714,11 +724,11 @@ def import_records(
             print(entry)
 
     # Write the auth file data
-    with open(authfile, 'w') as f_out:
+    with open(authfile, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(auth_data, indent=2))
 
     # Write the processed data to the tmp file
-    with open(datafile, 'w') as f_out:
+    with open(datafile, 'w', encoding='utf-8') as f_out:
         f_out.write(json.dumps(load_data, indent=2))
 
     excludes = content_excludes(allow_auth=False)
@@ -836,7 +846,7 @@ def server(c, address='127.0.0.1:8000'):
 
     Note: This is *not* sufficient for a production installation.
     """
-    manage(c, 'runserver {address}'.format(address=address), pty=True)
+    manage(c, f'runserver {address}', pty=True)
 
 
 @task(pre=[wait])
@@ -880,16 +890,16 @@ def test_translations(c):
 
     # compile regex
     reg = re.compile(
-        r'[a-zA-Z0-9]{1}'  # match any single letter and number  # noqa: W504
-        + r'(?![^{\(\<]*[}\)\>])'  # that is not inside curly brackets, brackets or a tag  # noqa: W504
-        + r'(?<![^\%][^\(][)][a-z])'  # that is not a specially formatted variable with singles  # noqa: W504
+        r'[a-zA-Z0-9]{1}'  # match any single letter and number
+        + r'(?![^{\(\<]*[}\)\>])'  # that is not inside curly brackets, brackets or a tag
+        + r'(?<![^\%][^\(][)][a-z])'  # that is not a specially formatted variable with singles
         + r'(?![^\\][\n])'  # that is not a newline
     )
     last_string = ''
 
     # loop through input file lines
-    with open(file_path, 'rt') as file_org:
-        with open(new_file_path, 'wt') as file_new:
+    with open(file_path, encoding='utf-8') as file_org:
+        with open(new_file_path, 'w', encoding='utf-8') as file_new:
             for line in file_org:
                 if line.startswith('msgstr "'):
                     # write output -> replace regex matches with x in the read in (multi)string
@@ -1184,7 +1194,7 @@ def frontend_build(c):
 
 
 @task
-def frontend_dev(c):
+def frontend_server(c):
     """Start frontend development server.
 
     Args:
@@ -1330,7 +1340,7 @@ def frontend_download(
             version_file = localDir().joinpath('VERSION')
             if not version_file.exists():
                 return
-            from dotenv import dotenv_values  # noqa: WPS433
+            from dotenv import dotenv_values
 
             content = dotenv_values(version_file)
             if (
@@ -1431,7 +1441,7 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
 
 @task
 def clear_generated(c):
-    """Clear generated files from `inv update`."""
+    """Clear generated files from `invoke update`."""
     # pyc/pyo files
     run(c, 'find . -name "*.pyc" -exec rm -f {} +')
     run(c, 'find . -name "*.pyo" -exec rm -f {} +')
@@ -1441,3 +1451,57 @@ def clear_generated(c):
     # Generated translations
     run(c, 'find . -name "django.mo" -exec rm -f {} +')
     run(c, 'find . -name "messages.mo" -exec rm -f {} +')
+
+
+# Collection sorting
+development = Collection(
+    delete_data,
+    docs_server,
+    frontend_server,
+    gunicorn,
+    import_fixtures,
+    schema,
+    server,
+    setup_dev,
+    setup_test,
+    test,
+    test_translations,
+    translate,
+)
+
+internal = Collection(
+    clean_settings,
+    clear_generated,
+    export_settings_definitions,
+    frontend_build,
+    frontend_check,
+    frontend_compile,
+    frontend_install,
+    frontend_trans,
+    render_js_files,
+    rebuild_models,
+    rebuild_thumbnails,
+    showmigrations,
+    translate_stats,
+)
+
+ns = Collection(
+    backup,
+    export_records,
+    frontend_download,
+    import_records,
+    install,
+    migrate,
+    plugins,
+    remove_mfa,
+    restore,
+    static,
+    superuser,
+    update,
+    version,
+    wait,
+    worker,
+)
+
+ns.add_collection(development, 'dev')
+ns.add_collection(internal, 'int')

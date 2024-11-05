@@ -94,20 +94,19 @@ for name, provider in providers.registry.provider_map.items():
     urls = []
     if len(adapters) == 1:
         urls = handle_oauth2(adapter=adapters[0])
+    elif provider.id in legacy:
+        logger.warning(
+            '`%s` is not supported on platform UI. Use `%s` instead.',
+            provider.id,
+            legacy[provider.id],
+        )
+        continue
     else:
-        if provider.id in legacy:
-            logger.warning(
-                '`%s` is not supported on platform UI. Use `%s` instead.',
-                provider.id,
-                legacy[provider.id],
-            )
-            continue
-        else:
-            logger.error(
-                'Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.',
-                provider.id,
-            )
-            continue
+        logger.error(
+            'Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.',
+            provider.id,
+        )
+        continue
     provider_urlpatterns += [path(f'{provider.id}/', include(urls))]
 
 

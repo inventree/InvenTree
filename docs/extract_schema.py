@@ -46,7 +46,7 @@ def top_level_path(path: str) -> str:
 
     key = path.split('/')[1]
 
-    if key in SPECIAL_PATHS.keys():
+    if key in SPECIAL_PATHS:
         return key
 
     return GENERAL_PATH
@@ -54,9 +54,7 @@ def top_level_path(path: str) -> str:
 
 def generate_schema_file(key: str) -> None:
     """Generate a schema file for the provided key."""
-    description = (
-        SPECIAL_PATHS[key] if key in SPECIAL_PATHS else 'General API Endpoints'
-    )
+    description = SPECIAL_PATHS.get(key, 'General API Endpoints')
 
     output = f"""
     ---
@@ -75,7 +73,7 @@ def generate_schema_file(key: str) -> None:
 
     print('Writing schema file to:', output_file)
 
-    with open(output_file, 'w') as f:
+    with open(output_file, 'w', encoding='utf-8') as f:
         f.write(output)
 
 
@@ -121,7 +119,7 @@ def generate_index_file(version: str):
 
     print('Writing index file to:', output_file)
 
-    with open(output_file, 'w') as f:
+    with open(output_file, 'w', encoding='utf-8') as f:
         f.write(output)
 
 
@@ -173,7 +171,7 @@ def parse_api_file(filename: str):
 
     The intent is to make the API schema easier to peruse on the documentation.
     """
-    with open(filename, 'r') as f:
+    with open(filename, encoding='utf-8') as f:
         data = yaml.safe_load(f)
 
     paths = data['paths']
@@ -213,7 +211,7 @@ def parse_api_file(filename: str):
 
         output_file = os.path.abspath(output_file)
 
-        with open(output_file, 'w') as f:
+        with open(output_file, 'w', encoding='utf-8') as f:
             yaml.dump(output, f)
 
         # Generate a markdown file for the schema

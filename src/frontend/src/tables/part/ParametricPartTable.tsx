@@ -34,11 +34,11 @@ function ParameterCell({
   record,
   template,
   canEdit
-}: {
+}: Readonly<{
   record: any;
   template: any;
   canEdit: boolean;
-}) {
+}>) {
   const { hovered, ref } = useHover();
 
   // Find matching template parameter
@@ -92,9 +92,9 @@ function ParameterCell({
 
 export default function ParametricPartTable({
   categoryId
-}: {
+}: Readonly<{
   categoryId?: any;
-}) {
+}>) {
   const table = useTable('parametric-parts');
   const user = useUserState();
   const navigate = useNavigate();
@@ -243,7 +243,7 @@ export default function ParametricPartTable({
         sortable: true,
         switchable: false,
         noWrap: true,
-        render: (record: any) => PartColumn(record)
+        render: (record: any) => PartColumn({ part: record })
       },
       DescriptionColumn({}),
       {

@@ -23,7 +23,12 @@ import PIL
 import common.validators
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from InvenTree.unit_test import (
+    AdminTestCase,
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    PluginMixin,
+)
 from part.models import Part
 from plugin import registry
 from plugin.models import NotificationUserSetting
@@ -228,9 +233,6 @@ class SettingsTest(InvenTreeTestCase):
         report_size_obj = InvenTreeSetting.get_setting_object(
             'REPORT_DEFAULT_PAGE_SIZE'
         )
-        report_test_obj = InvenTreeSetting.get_setting_object(
-            'REPORT_ENABLE_TEST_REPORT'
-        )
 
         # check settings base fields
         self.assertEqual(instance_obj.name, 'Server Instance Name')
@@ -260,7 +262,6 @@ class SettingsTest(InvenTreeTestCase):
 
         # check setting_type
         self.assertEqual(instance_obj.setting_type(), 'string')
-        self.assertEqual(report_test_obj.setting_type(), 'boolean')
         self.assertEqual(stale_days.setting_type(), 'integer')
 
         # check as_int
@@ -268,9 +269,6 @@ class SettingsTest(InvenTreeTestCase):
         self.assertEqual(
             instance_obj.as_int(), 'InvenTree'
         )  # not an int -> return default
-
-        # check as_bool
-        self.assertEqual(report_test_obj.as_bool(), True)
 
         # check to_native_value
         self.assertEqual(stale_days.to_native_value(), 0)
@@ -393,7 +391,7 @@ class SettingsTest(InvenTreeTestCase):
             'before_save',
         ]
 
-        for k in setting.keys():
+        for k in setting:
             self.assertIn(k, allowed_keys)
 
         # Check default value for boolean settings
@@ -431,7 +429,7 @@ class SettingsTest(InvenTreeTestCase):
     @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS:
             value = InvenTreeSetting.get_setting_default(key)
 
             try:
@@ -520,7 +518,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
 
         n_public_settings = len([
-            k for k in InvenTreeSetting.SETTINGS.keys() if not k.startswith('_')
+            k for k in InvenTreeSetting.SETTINGS if not k.startswith('_')
         ])
 
         # Number of results should match the number of settings
@@ -832,11 +830,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
     def test_invalid_setting_key(self):
         """Test that an invalid setting key returns a 404."""
-        ...
 
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
-        ...
 
 
 class ErrorReportTest(InvenTreeAPITestCase):
@@ -934,7 +930,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, **{'HTTP_TOKEN': '1234567fghj'}
+            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -957,7 +953,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -1005,7 +1001,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
+            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1020,7 +1016,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1504,6 +1500,14 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
 
+    def test_api(self):
+        """Test the CustomUnit API."""
+        response = self.get(reverse('api-all-unit-list'))
+        self.assertIn('default_system', response.data)
+        self.assertIn('available_systems', response.data)
+        self.assertIn('available_units', response.data)
+        self.assertEqual(len(response.data['available_units']) > 100, True)
+
 
 class ContentTypeAPITest(InvenTreeAPITestCase):
     """Unit tests for the ContentType API."""
@@ -1676,4 +1680,15 @@ class CustomStatusTest(TestCase):
         self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 1)
         self.assertEqual(
             instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
+        )
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(
+            model=Attachment,
+            model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
         )

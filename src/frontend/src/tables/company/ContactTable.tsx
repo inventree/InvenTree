@@ -20,10 +20,10 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export function ContactTable({
   companyId,
   params
-}: {
+}: Readonly<{
   companyId: number;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
 
   const table = useTable('contact');
@@ -126,6 +126,7 @@ export function ContactTable({
 
     return [
       <AddItemButton
+        key="add-contact"
         tooltip={t`Add contact`}
         onClick={() => newContact.open()}
         hidden={!can_add}

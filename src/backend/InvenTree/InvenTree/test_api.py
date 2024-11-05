@@ -70,11 +70,11 @@ class APITests(InvenTreeAPITestCase):
         """Helper function to use basic auth."""
         # Use basic authentication
 
-        authstring = bytes('{u}:{p}'.format(u=self.username, p=self.password), 'ascii')
+        authstring = bytes(f'{self.username}:{self.password}', 'ascii')
 
         # Use "basic" auth by default
         auth = b64encode(authstring).decode('ascii')
-        self.client.credentials(HTTP_AUTHORIZATION='Basic {auth}'.format(auth=auth))
+        self.client.credentials(HTTP_AUTHORIZATION=f'Basic {auth}')
 
     def tokenAuth(self):
         """Helper function to use token auth."""

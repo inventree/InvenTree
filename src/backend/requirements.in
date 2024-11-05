@@ -40,7 +40,7 @@ feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
-pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
+pint                                    # Unit conversion
 pip-licenses                            # License information for installed packages
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
@@ -62,3 +62,6 @@ opentelemetry-exporter-otlp
 opentelemetry-instrumentation-django
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-redis
+
+# pinned sub-deps
+pydyf==0.10.0  # Fixed 2024-08-22 see https://github.com/inventree/InvenTree/pull/7961/files

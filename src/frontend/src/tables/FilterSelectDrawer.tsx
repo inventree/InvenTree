@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { L } from '@lingui/react/dist/shared/react.e5f95de8';
 import {
   Badge,
   Button,
@@ -12,6 +13,8 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
+import { DateInput, DateValue } from '@mantine/dates';
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '../components/items/StylishText';
@@ -19,6 +22,7 @@ import { TableState } from '../hooks/UseTable';
 import {
   TableFilter,
   TableFilterChoice,
+  TableFilterType,
   getTableFilterOptions
 } from './Filter';
 
@@ -28,10 +32,10 @@ import {
 function FilterItem({
   flt,
   tableState
-}: {
+}: Readonly<{
   flt: TableFilter;
   tableState: TableState;
-}) {
+}>) {
   const removeFilter = useCallback(() => {
     let newFilters = tableState.activeFilters.filter(
       (f) => f.name !== flt.name
@@ -60,13 +64,18 @@ function FilterItem({
 function FilterAddGroup({
   tableState,
   availableFilters
-}: {
+}: Readonly<{
   tableState: TableState;
   availableFilters: TableFilter[];
-}) {
+}>) {
   const filterOptions: TableFilterChoice[] = useMemo(() => {
-    let activeFilterNames =
-      tableState.activeFilters?.map((flt) => flt.name) ?? [];
+    // List of filter names which are already active on this table
+    let activeFilterNames: string[] = [];
+
+    if (tableState.activeFilters && tableState.activeFilters.length > 0) {
+      activeFilterNames =
+        tableState.activeFilters?.map((flt) => flt.name) ?? [];
+    }
 
     return (
       availableFilters
@@ -83,7 +92,7 @@ function FilterAddGroup({
 
   const valueOptions: TableFilterChoice[] = useMemo(() => {
     // Find the matching filter
-    let filter: TableFilter | undefined = availableFilters.find(
+    let filter: TableFilter | undefined = availableFilters?.find(
       (flt) => flt.name === selectedFilter
     );
 
@@ -92,6 +101,14 @@ function FilterAddGroup({
     }
 
     return getTableFilterOptions(filter);
+  }, [selectedFilter]);
+
+  // Determine the "type" of filter (default = boolean)
+  const filterType: TableFilterType = useMemo(() => {
+    return (
+      availableFilters?.find((flt) => flt.name === selectedFilter)?.type ??
+      'boolean'
+    );
   }, [selectedFilter]);
 
   const setSelectedValue = useCallback(
@@ -121,6 +138,18 @@ function FilterAddGroup({
     [selectedFilter]
   );
 
+  const setDateValue = useCallback(
+    (value: DateValue) => {
+      if (value) {
+        let date = value.toString();
+        setSelectedValue(dayjs(date).format('YYYY-MM-DD'));
+      } else {
+        setSelectedValue('');
+      }
+    },
+    [setSelectedValue]
+  );
+
   return (
     <Stack gap="xs">
       <Divider />
@@ -132,16 +161,23 @@ function FilterAddGroup({
         onChange={(value: string | null) => setSelectedFilter(value)}
         maxDropdownHeight={800}
       />
-      {selectedFilter && (
-        <Select
-          data={valueOptions}
-          label={t`Value`}
-          searchable={true}
-          placeholder={t`Select filter value`}
-          onChange={(value: string | null) => setSelectedValue(value)}
-          maxDropdownHeight={800}
-        />
-      )}
+      {selectedFilter &&
+        (filterType === 'date' ? (
+          <DateInput
+            label={t`Value`}
+            placeholder={t`Select date value`}
+            onChange={setDateValue}
+          />
+        ) : (
+          <Select
+            data={valueOptions}
+            label={t`Value`}
+            searchable={true}
+            placeholder={t`Select filter value`}
+            onChange={(value: string | null) => setSelectedValue(value)}
+            maxDropdownHeight={800}
+          />
+        ))}
     </Stack>
   );
 }
@@ -151,12 +187,12 @@ export function FilterSelectDrawer({
   tableState,
   opened,
   onClose
-}: {
+}: Readonly<{
   availableFilters: TableFilter[];
   tableState: TableState;
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const [addFilter, setAddFilter] = useState<boolean>(false);
 
   // Hide the "add filter" selection whenever the selected filters change

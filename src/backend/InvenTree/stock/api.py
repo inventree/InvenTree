@@ -144,7 +144,7 @@ class StockDetail(RetrieveUpdateDestroyAPI):
                 params.get('supplier_part_detail', True)
             )
             kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         return self.serializer_class(*args, **kwargs)
@@ -164,7 +164,7 @@ class StockItemContextMixin:
 
         try:
             context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         return context
@@ -354,10 +354,9 @@ class StockLocationFilter(rest_filters.FilterSet):
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent or top_level:
-            if not value:
-                # If "cascade" is False, only return top-level location
-                queryset = queryset.filter(parent=None)
+        if (not parent or top_level) and not value:
+            # If "cascade" is False, only return top-level location
+            queryset = queryset.filter(parent=None)
 
         return queryset
 
@@ -527,7 +526,8 @@ class StockFilter(rest_filters.FilterSet):
     def filter_manufacturer(self, queryset, name, company):
         """Filter by manufacturer."""
         return queryset.filter(
-            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+            Q(supplier_part__manufacturer_part__manufacturer__is_manufacturer=True)
+            & Q(supplier_part__manufacturer_part__manufacturer=company)
         )
 
     supplier = rest_filters.ModelChoiceFilter(
@@ -892,7 +892,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 'tests',
             ]:
                 kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -927,17 +927,14 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             raise ValidationError({'quantity': _('Quantity is required')})
 
         try:
-            Part.objects.prefetch_related(None)
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({'part': _('Valid part must be supplied')})
 
-        # Set default location (if not provided)
-        if 'location' not in data:
-            location = part.get_default_location()
-
-            if location:
-                data['location'] = location.pk
+        location = data.get('location', None)
+        # Override location if not specified
+        if location is None and part.default_location:
+            data['location'] = part.default_location.pk
 
         expiry_date = data.get('expiry_date', None)
 
@@ -951,15 +948,13 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serials = None
 
         # Check if a set of serial numbers was provided
-        serial_numbers = data.get('serial_numbers', '')
+        serial_numbers = data.pop('serial_numbers', '')
 
         # Check if the supplier_part has a package size defined, which is not 1
-        if 'supplier_part' in data and data['supplier_part'] is not None:
+        if supplier_part_id := data.get('supplier_part', None):
             try:
-                supplier_part = SupplierPart.objects.get(
-                    pk=data.get('supplier_part', None)
-                )
-            except (ValueError, SupplierPart.DoesNotExist):
+                supplier_part = SupplierPart.objects.get(pk=supplier_part_id)
+            except Exception:
                 raise ValidationError({
                     'supplier_part': _('The given supplier part does not exist')
                 })
@@ -974,28 +969,24 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                             'The supplier part has a pack size defined, but flag use_pack_size not set'
                         )
                     })
-                else:
-                    if bool(data.get('use_pack_size')):
-                        quantity = data['quantity'] = supplier_part.base_quantity(
-                            quantity
-                        )
+                elif bool(data.get('use_pack_size')):
+                    quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
-                        # Divide purchase price by pack size, to save correct price per stock item
-                        if (
-                            data['purchase_price']
-                            and supplier_part.pack_quantity_native
-                        ):
-                            try:
-                                data['purchase_price'] = float(
-                                    data['purchase_price']
-                                ) / float(supplier_part.pack_quantity_native)
-                            except ValueError:
-                                pass
+                    # Divide purchase price by pack size, to save correct price per stock item
+                    if (
+                        data.get('purchase_price')
+                        and supplier_part.pack_quantity_native
+                    ):
+                        try:
+                            data['purchase_price'] = float(
+                                data['purchase_price']
+                            ) / float(supplier_part.pack_quantity_native)
+                        except ValueError:  # pragma: no cover
+                            pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
-        if 'use_pack_size' in data:
-            data.pop('use_pack_size')
+        data.pop('use_pack_size', None)
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
@@ -1009,7 +1000,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(
-                    serial_numbers, quantity, part.get_latest_serial_number()
+                    serial_numbers, quantity, part.get_latest_serial_number(), part=part
                 )
 
                 # Determine if any of the specified serial numbers are invalid
@@ -1017,22 +1008,20 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 invalid = []
                 errors = []
 
-                for serial in serials:
-                    try:
-                        part.validate_serial_number(serial, raise_error=True)
-                    except DjangoValidationError as exc:
-                        # Catch raised error to extract specific error information
-                        invalid.append(serial)
+                try:
+                    invalid = part.find_conflicting_serial_numbers(serials)
+                except DjangoValidationError as exc:
+                    errors.append(exc.message)
 
-                        if exc.message not in errors:
-                            errors.append(exc.message)
-
-                if len(errors) > 0:
+                if len(invalid) > 0:
                     msg = _('The following serial numbers already exist or are invalid')
                     msg += ' : '
                     msg += ','.join([str(e) for e in invalid])
 
-                    raise ValidationError({'serial_numbers': errors + [msg]})
+                    errors.append(msg)
+
+                if len(errors) > 0:
+                    raise ValidationError({'serial_numbers': errors})
 
             except DjangoValidationError as e:
                 raise ValidationError({
@@ -1048,35 +1037,47 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Extract location information
+        location = serializer.validated_data.get('location', None)
+
         with transaction.atomic():
-            # Create an initial StockItem object
-            item = serializer.save()
-
             if serials:
-                # Assign the first serial number to the "master" item
-                item.serial = serials[0]
+                # Create multiple serialized StockItem objects
+                items = StockItem._create_serial_numbers(
+                    serials, **serializer.validated_data
+                )
 
-            # Save the item (with user information)
-            item.save(user=user)
+                # Next, bulk-create stock tracking entries for the newly created items
+                tracking = []
 
-            if serials:
-                for serial in serials[1:]:
-                    # Create a duplicate stock item with the next serial number
-                    item.pk = None
-                    item.serial = serial
+                for item in items:
+                    if entry := item.add_tracking_entry(
+                        StockHistoryCode.CREATED,
+                        user,
+                        deltas={'status': item.status},
+                        location=location,
+                        quantity=float(item.quantity),
+                        commit=False,
+                    ):
+                        tracking.append(entry)
 
-                    item.save(user=user)
+                StockItemTracking.objects.bulk_create(tracking)
 
                 response_data = {'quantity': quantity, 'serial_numbers': serials}
 
             else:
+                # Create a single StockItem object
+                # Note: This automatically creates a tracking entry
+                item = serializer.save()
+                item.save(user=user)
+
                 response_data = serializer.data
 
-            return Response(
-                response_data,
-                status=status.HTTP_201_CREATED,
-                headers=self.get_success_headers(serializer.data),
-            )
+        return Response(
+            response_data,
+            status=status.HTTP_201_CREATED,
+            headers=self.get_success_headers(serializer.data),
+        )
 
     def get_queryset(self, *args, **kwargs):
         """Annotate queryset before returning."""
@@ -1103,7 +1104,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     pk__in=[it.pk for it in item.get_descendants(include_self=True)]
                 )
 
-            except (ValueError, StockItem.DoesNotExist):
+            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                 pass
 
         # Exclude StockItems which are already allocated to a particular SalesOrder
@@ -1121,7 +1122,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 # Exclude any stock item which is already allocated to the sales order
                 queryset = queryset.exclude(pk__in=[a.item.pk for a in allocations])
 
-            except (ValueError, SalesOrder.DoesNotExist):
+            except (ValueError, SalesOrder.DoesNotExist):  # pragma: no cover
                 pass
 
         # Does the client wish to filter by the Part ID?
@@ -1167,7 +1168,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     else:
                         queryset = queryset.filter(location=loc_id)
 
-                except (ValueError, StockLocation.DoesNotExist):
+                except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
                     pass
 
         return queryset
@@ -1177,6 +1178,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_field_aliases = {
         'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
+        'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
     }
 
@@ -1193,6 +1195,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         'stock',
         'status',
         'SKU',
+        'MPN',
     ]
 
     ordering = ['part__name', 'quantity', 'location']
@@ -1230,7 +1233,7 @@ class StockItemTestResultMixin:
             kwargs['template_detail'] = str2bool(
                 self.request.query_params.get('template_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1240,8 +1243,6 @@ class StockItemTestResultMixin:
 
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
-
-    pass
 
 
 class StockItemTestResultFilter(rest_filters.FilterSet):
@@ -1372,7 +1373,7 @@ class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView
 
                 queryset = queryset.filter(stock_item__in=items)
 
-            except (ValueError, StockItem.DoesNotExist):
+            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                 pass
 
         return queryset
@@ -1414,14 +1415,14 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
             kwargs['item_detail'] = str2bool(
                 self.request.query_params.get('item_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         try:
             kwargs['user_detail'] = str2bool(
                 self.request.query_params.get('user_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1460,17 +1461,17 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
         delta_models = self.get_delta_model_map()
 
         # Construct a set of related models we need to lookup for later
-        related_model_lookups = {key: set() for key in delta_models.keys()}
+        related_model_lookups = {key: set() for key in delta_models}
 
         # Run a first pass through the data to determine which related models we need to lookup
         for item in data:
             deltas = item['deltas'] or {}
 
-            for key in delta_models.keys():
+            for key in delta_models:
                 if key in deltas:
                     related_model_lookups[key].add(deltas[key])
 
-        for key in delta_models.keys():
+        for key in delta_models:
             model, serializer = delta_models[key]
 
             # Fetch all related models in one go

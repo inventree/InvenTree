@@ -7,13 +7,14 @@ from datetime import datetime
 from distutils.sysconfig import get_python_lib
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
+from typing import Optional
 
 from django.conf import settings
 from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import pui_url
+import InvenTree.helpers
 from plugin.helpers import get_git_log
 
 logger = logging.getLogger('inventree')
@@ -27,7 +28,7 @@ class MetaBase:
     SLUG = None
     TITLE = None
 
-    def get_meta_value(self, key: str, old_key: str = None, __default=None):
+    def get_meta_value(self, key: str, old_key: Optional[str] = None, __default=None):
         """Reference a meta item with a key.
 
         Args:
@@ -219,6 +220,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     WEBSITE = None
     LICENSE = None
 
+    # Optional path to a JavaScript file which will be loaded in the admin panel
+    # This file must provide a function called renderPluginSettings
+    ADMIN_SOURCE = None
+
     def __init__(self):
         """Init a plugin.
 
@@ -375,9 +380,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
             return f'{reverse("settings")}#select-plugin-{self.slug}'
         config = self.plugin_config()
         if config:
-            return pui_url(f'/settings/admin/plugin/{config.pk}/')
+            return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
         else:
-            return pui_url('/settings/admin/plugin/')
+            return InvenTree.helpers.pui_url('/settings/admin/plugin/')
 
     # region package info
     def _get_package_commit(self):
@@ -437,3 +442,33 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         self.package = package
 
     # endregion
+
+    def plugin_static_file(self, *args):
+        """Construct a path to a static file within the plugin directory."""
+        import os
+
+        from django.conf import settings
+
+        url = os.path.join(settings.STATIC_URL, 'plugins', self.SLUG, *args)
+
+        if not url.startswith('/'):
+            url = '/' + url
+
+        return url
+
+    def get_admin_source(self) -> str:
+        """Return a path to a JavaScript file which contains custom UI settings.
+
+        The frontend code expects that this file provides a function named 'renderPluginSettings'.
+        """
+        if not self.ADMIN_SOURCE:
+            return None
+
+        return self.plugin_static_file(self.ADMIN_SOURCE)
+
+    def get_admin_context(self) -> dict:
+        """Return a context dictionary for the admin panel settings.
+
+        This is an optional method which can be overridden by the plugin.
+        """
+        return None

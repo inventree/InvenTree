@@ -29,7 +29,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import increment_serial_number, isNull, str2bool
+from InvenTree.helpers import isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -167,10 +167,9 @@ class CategoryFilter(rest_filters.FilterSet):
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent or top_level:
-            if not value:
-                # If "cascade" is False, only return top-level categories
-                queryset = queryset.filter(parent=None)
+        if (not parent or top_level) and not value:
+            # If "cascade" is False, only return top-level categories
+            queryset = queryset.filter(parent=None)
 
         return queryset
 
@@ -271,7 +270,7 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
-            self.get_object().set_starred(request.user, starred)
+            self.get_object().set_starred(request.user, starred, include_parents=False)
 
         response = super().update(request, *args, **kwargs)
 
@@ -416,7 +415,7 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
 
     part = rest_filters.ModelChoiceFilter(
-        queryset=Part.objects.filter(trackable=True),
+        queryset=Part.objects.filter(testable=True),
         label='Part',
         field_name='part',
         method='filter_part',
@@ -465,8 +464,6 @@ class PartTestTemplateMixin:
 
 class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
-
-    pass
 
 
 class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreateAPI):
@@ -562,7 +559,7 @@ class PartScheduling(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
-    serializer_class = EmptySerializer
+    serializer_class = part_serializers.PartSchedulingSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance."""
@@ -570,23 +567,24 @@ class PartScheduling(RetrieveAPI):
 
         schedule = []
 
-        def add_schedule_entry(
-            date, quantity, title, label, url, speculative_quantity=0
-        ):
-            """Check if a scheduled entry should be added.
+        def add_schedule_entry(date, quantity, title, instance, speculative_quantity=0):
+            """Add a new entry to the schedule list.
 
-            Rules:
-            - date must be non-null
-            - date cannot be in the "past"
-            - quantity must not be zero
+            Arguments:
+                - date: The date of the scheduled event
+                - quantity: The quantity of stock to be added or removed
+                - title: The title of the scheduled event
+                - instance: The associated model instance (e.g. SalesOrder object)
+                - speculative_quantity: A speculative quantity to be added or removed
             """
             schedule.append({
                 'date': date,
                 'quantity': quantity,
                 'speculative_quantity': speculative_quantity,
                 'title': title,
-                'label': label,
-                'url': url,
+                'label': str(instance.reference),
+                'model': instance.__class__.__name__.lower(),
+                'model_id': instance.pk,
             })
 
         # Add purchase order (incoming stock) information
@@ -603,11 +601,7 @@ class PartScheduling(RetrieveAPI):
             quantity = line.part.base_quantity(line_quantity)
 
             add_schedule_entry(
-                target_date,
-                quantity,
-                _('Incoming Purchase Order'),
-                str(line.order),
-                line.order.get_absolute_url(),
+                target_date, quantity, _('Incoming Purchase Order'), line.order
             )
 
         # Add sales order (outgoing stock) information
@@ -621,11 +615,7 @@ class PartScheduling(RetrieveAPI):
             quantity = max(line.quantity - line.shipped, 0)
 
             add_schedule_entry(
-                target_date,
-                -quantity,
-                _('Outgoing Sales Order'),
-                str(line.order),
-                line.order.get_absolute_url(),
+                target_date, -quantity, _('Outgoing Sales Order'), line.order
             )
 
         # Add build orders (incoming stock) information
@@ -637,11 +627,7 @@ class PartScheduling(RetrieveAPI):
             quantity = max(build.quantity - build.completed, 0)
 
             add_schedule_entry(
-                build.target_date,
-                quantity,
-                _('Stock produced by Build Order'),
-                str(build),
-                build.get_absolute_url(),
+                build.target_date, quantity, _('Stock produced by Build Order'), build
             )
 
         """
@@ -724,8 +710,7 @@ class PartScheduling(RetrieveAPI):
                     build.target_date,
                     -part_allocated_quantity,
                     _('Stock required for Build Order'),
-                    str(build),
-                    build.get_absolute_url(),
+                    build,
                     speculative_quantity=speculative_quantity,
                 )
 
@@ -745,9 +730,13 @@ class PartScheduling(RetrieveAPI):
             return -1 if date_1 < date_2 else 1
 
         # Sort by incrementing date values
-        schedule = sorted(schedule, key=functools.cmp_to_key(compare))
+        schedules = sorted(schedule, key=functools.cmp_to_key(compare))
 
-        return Response(schedule)
+        serializers = part_serializers.PartSchedulingSerializer(
+            schedules, many=True, context={'request': request}
+        )
+
+        return Response(serializers.data)
 
 
 class PartRequirements(RetrieveAPI):
@@ -822,15 +811,10 @@ class PartSerialNumberDetail(RetrieveAPI):
         part = self.get_object()
 
         # Calculate the "latest" serial number
-        latest = part.get_latest_serial_number()
+        latest_serial = part.get_latest_serial_number()
+        next_serial = part.get_next_serial_number()
 
-        data = {'latest': latest}
-
-        if latest is not None:
-            next_serial = increment_serial_number(latest)
-
-            if next_serial != latest:
-                data['next'] = next_serial
+        data = {'latest': latest_serial, 'next': next_serial}
 
         return Response(data)
 
@@ -1434,7 +1418,9 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         if 'starred' in data:
             starred = str2bool(data.get('starred', False))
 
-            self.get_object().set_starred(request.user, starred)
+            self.get_object().set_starred(
+                request.user, starred, include_variants=False, include_categories=False
+            )
 
         response = super().update(request, *args, **kwargs)
 
@@ -1570,8 +1556,6 @@ class PartParameterTemplateList(
 class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
-    pass
-
 
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
@@ -1663,8 +1647,6 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
 
-    pass
-
 
 class PartStocktakeFilter(rest_filters.FilterSet):
     """Custom filter for the PartStocktakeList endpoint."""
@@ -1720,6 +1702,13 @@ class PartStocktakeReportList(ListAPI):
 
     # Newest first, by default
     ordering = '-pk'
+
+
+class PartStocktakeReportDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single PartStocktakeReport object."""
+
+    queryset = PartStocktakeReport.objects.all()
+    serializer_class = part_serializers.PartStocktakeReportSerializer
 
 
 class PartStocktakeReportGenerate(CreateAPI):
@@ -1921,8 +1910,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
-
-    pass
 
 
 class BomImportUpload(CreateAPI):
@@ -2192,6 +2179,11 @@ part_api_urls = [
                         'generate/',
                         PartStocktakeReportGenerate.as_view(),
                         name='api-part-stocktake-report-generate',
+                    ),
+                    path(
+                        '<int:pk>/',
+                        PartStocktakeReportDetail.as_view(),
+                        name='api-part-stocktake-report-detail',
                     ),
                     path(
                         '',

@@ -1,6 +1,12 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
-import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
+import {
+  IconCircleX,
+  IconCopy,
+  IconDots,
+  IconEdit,
+  IconTrash
+} from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { cancelEvent } from '../functions/events';
@@ -11,7 +17,7 @@ export type RowAction = {
   tooltip?: string;
   color?: string;
   icon?: ReactNode;
-  onClick: () => void;
+  onClick: (event: any) => void;
   hidden?: boolean;
   disabled?: boolean;
 };
@@ -43,6 +49,16 @@ export function RowDeleteAction(props: RowAction): RowAction {
     title: t`Delete`,
     color: 'red',
     icon: <IconTrash />
+  };
+}
+
+// Component for cancelling a row in a table
+export function RowCancelAction(props: RowAction): RowAction {
+  return {
+    ...props,
+    title: t`Cancel`,
+    color: 'red',
+    icon: <IconCircleX />
   };
 }
 
@@ -89,7 +105,7 @@ export function RowActions({
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);
-            action.onClick();
+            action.onClick(event);
             setOpened(false);
           }}
           disabled={action.disabled || false}

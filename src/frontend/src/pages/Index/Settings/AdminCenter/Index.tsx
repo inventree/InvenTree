@@ -9,6 +9,7 @@ import {
   Title
 } from '@mantine/core';
 import {
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -18,6 +19,7 @@ import {
   IconListDetails,
   IconPackages,
   IconPlugConnected,
+  IconQrcode,
   IconReport,
   IconScale,
   IconSitemap,
@@ -28,8 +30,9 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
+import { PanelType } from '../../../../components/panels/Panel';
+import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
@@ -48,6 +51,12 @@ const TaskManagementPanel = Loadable(
   lazy(() => import('./TaskManagementPanel'))
 );
 
+const CurrencyManagmentPanel = Loadable(
+  lazy(() => import('./CurrencyManagmentPanel'))
+);
+
+const UnitManagmentPanel = Loadable(lazy(() => import('./UnitManagmentPanel')));
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
@@ -58,6 +67,10 @@ const MachineManagementPanel = Loadable(
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
+);
+
+const BarcodeScanHistoryTable = Loadable(
+  lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
 );
 
 const ImportSesssionTable = Loadable(
@@ -72,10 +85,6 @@ const CustomStateTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomStateTable'))
 );
 
-const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
-);
-
 const PartParameterTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
@@ -88,9 +97,7 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
-const CurrencyTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CurrencyTable'))
-);
+const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
 
 export default function AdminCenter() {
   const user = useUserState();
@@ -110,6 +117,12 @@ export default function AdminCenter() {
         content: <ImportSesssionTable />
       },
       {
+        name: 'barcode-history',
+        label: t`Barcode Scans`,
+        icon: <IconQrcode />,
+        content: <BarcodeScanHistoryTable />
+      },
+      {
         name: 'background',
         label: t`Background Tasks`,
         icon: <IconCpu />,
@@ -125,7 +138,7 @@ export default function AdminCenter() {
         name: 'currencies',
         label: t`Currencies`,
         icon: <IconCoins />,
-        content: <CurrencyTable />
+        content: <CurrencyManagmentPanel />
       },
       {
         name: 'projectcodes',
@@ -149,7 +162,7 @@ export default function AdminCenter() {
         name: 'customunits',
         label: t`Custom Units`,
         icon: <IconScale />,
-        content: <CustomUnitsTable />
+        content: <UnitManagmentPanel />
       },
       {
         name: 'part-parameters',
@@ -162,6 +175,12 @@ export default function AdminCenter() {
         label: t`Category Parameters`,
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardCheck />,
+        content: <StocktakePanel />
       },
       {
         name: 'labels',
@@ -228,16 +247,17 @@ export default function AdminCenter() {
       {user.isStaff() ? (
         <Stack gap="xs">
           <SettingsHeader
+            label="admin"
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
-            switch_link="/settings/system"
-            switch_text="System Settings"
           />
           <QuickAction />
           <PanelGroup
             pageKey="admin-center"
             panels={adminCenterPanels}
             collapsible={true}
+            model="admincenter"
+            id={null}
           />
         </Stack>
       ) : (

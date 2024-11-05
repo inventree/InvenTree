@@ -8,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
@@ -17,16 +16,16 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartPurchaseOrdersTable({
   partId
-}: {
+}: Readonly<{
   partId: number;
-}) {
+}>) {
   const table = useTable('partpurchaseorders');
-  const user = useUserState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       ReferenceColumn({
         accessor: 'order_detail.reference',
+        ordering: 'order',
         sortable: true,
         switchable: false,
         title: t`Purchase Order`
@@ -34,6 +33,7 @@ export default function PartPurchaseOrdersTable({
       StatusColumn({
         accessor: 'order_detail.status',
         sortable: true,
+        ordering: 'status',
         title: t`Status`,
         model: ModelType.purchaseorder
       }),
@@ -57,6 +57,7 @@ export default function PartPurchaseOrdersTable({
       },
       {
         accessor: 'quantity',
+        sortable: true,
         switchable: false,
         render: (record: any) => {
           let supplier_part = record?.supplier_part_detail ?? {};
@@ -98,6 +99,11 @@ export default function PartPurchaseOrdersTable({
         accessor: 'target_date',
         title: t`Target Date`
       }),
+      DateColumn({
+        accessor: 'order_detail.complete_date',
+        ordering: 'complete_date',
+        title: t`Completion Date`
+      }),
       {
         accessor: 'purchase_price',
         render: (record: any) =>
@@ -125,28 +131,32 @@ export default function PartPurchaseOrdersTable({
         label: t`Order Status`,
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
+      },
+      {
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
       }
     ];
   }, []);
 
   return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.purchase_order_line_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            base_part: partId,
-            part_detail: true,
-            order_detail: true,
-            supplier_detail: true
-          },
-          modelField: 'order',
-          modelType: ModelType.purchaseorder,
-          tableFilters: tableFilters
-        }}
-      />
-    </>
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.purchase_order_line_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        params: {
+          base_part: partId,
+          part_detail: true,
+          order_detail: true,
+          supplier_detail: true
+        },
+        modelField: 'order',
+        modelType: ModelType.purchaseorder,
+        tableFilters: tableFilters
+      }}
+    />
   );
 }

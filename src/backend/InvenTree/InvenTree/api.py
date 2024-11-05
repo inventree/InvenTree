@@ -26,7 +26,7 @@ from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
-from .email import is_email_configured
+from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
@@ -77,7 +77,7 @@ class LicenseView(APIView):
         # Ensure we do not have any duplicate 'name' values in the list
         for entry in data:
             name = None
-            for key in entry.keys():
+            for key in entry:
                 if key.lower() == 'name':
                     name = entry[key]
                     break
@@ -221,6 +221,7 @@ class InfoView(AjaxView):
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
+            'worker_count': settings.BACKGROUND_WORKER_COUNT,
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
@@ -321,7 +322,6 @@ class BulkDeleteMixin:
         Raises:
             ValidationError: If the deletion should not proceed
         """
-        pass
 
     def filter_delete_queryset(self, queryset, request):
         """Provide custom filtering for the queryset *before* it is deleted.
@@ -380,11 +380,26 @@ class BulkDeleteMixin:
 
             # Filter by provided item ID values
             if items:
-                queryset = queryset.filter(id__in=items)
+                try:
+                    queryset = queryset.filter(id__in=items)
+                except Exception:
+                    raise ValidationError({
+                        'non_field_errors': _('Invalid items list provided')
+                    })
 
             # Filter by provided filters
             if filters:
-                queryset = queryset.filter(**filters)
+                try:
+                    queryset = queryset.filter(**filters)
+                except Exception:
+                    raise ValidationError({
+                        'non_field_errors': _('Invalid filters provided')
+                    })
+
+            if queryset.count() == 0:
+                raise ValidationError({
+                    'non_field_errors': _('No items found to delete')
+                })
 
             # Run a final validation step (should raise an error if the deletion should not proceed)
             self.validate_delete(queryset, request)
@@ -397,8 +412,6 @@ class BulkDeleteMixin:
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create."""
-
-    ...
 
 
 class APISearchViewSerializer(serializers.Serializer):

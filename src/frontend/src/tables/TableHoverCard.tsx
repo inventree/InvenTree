@@ -16,13 +16,13 @@ export function TableHoverCard({
   title, // The title of the hovercard
   icon, // The icon to display
   iconColor // The icon color
-}: {
+}: Readonly<{
   value: any;
   extra?: ReactNode;
   title?: string;
   icon?: InvenTreeIconType;
   iconColor?: string;
-}) {
+}>) {
   const extraItems: ReactNode = useMemo(() => {
     if (Array.isArray(extra)) {
       if (extra.length == 0) {
@@ -32,7 +32,7 @@ export function TableHoverCard({
       return (
         <Stack gap="xs">
           {extra.map((item, idx) => (
-            <div key={t`item-${idx}`}>{item}</div>
+            <div key={`item-${idx}`}>{item}</div>
           ))}
         </Stack>
       );

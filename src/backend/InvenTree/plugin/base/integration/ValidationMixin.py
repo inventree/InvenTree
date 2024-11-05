@@ -1,5 +1,7 @@
 """Validation mixin class definition."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.db.models import Model
 
@@ -67,7 +69,9 @@ class ValidationMixin:
         """
         return None
 
-    def validate_model_instance(self, instance: Model, deltas: dict = None) -> None:
+    def validate_model_instance(
+        self, instance: Model, deltas: Optional[dict] = None
+    ) -> None:
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -187,7 +191,25 @@ class ValidationMixin:
         """
         return None
 
-    def increment_serial_number(self, serial: str) -> str:
+    def get_latest_serial_number(self, part, **kwargs):
+        """Return the 'latest' serial number for a given Part instance.
+
+        A plugin which implements this method can either return:
+        - A string which represents the "latest" serial number
+        - None (null value) if the latest value could not be determined
+
+        Arguments:
+            part: The Part instance for which the latest serial number is being requested
+
+        Returns:
+            The latest serial number (string), or None
+        """
+        # Default implementation returns None
+        return None
+
+    def increment_serial_number(
+        self, serial: str, part: part.models.Part = None, **kwargs
+    ) -> str:
         """Return the next sequential serial based on the provided value.
 
         A plugin which implements this method can either return:
@@ -197,6 +219,7 @@ class ValidationMixin:
 
         Arguments:
             serial: Current serial value (string)
+            part: The Part instance for which this serial number is being incremented
 
         Returns:
             The next serial number in the sequence (string), or None
@@ -218,4 +241,3 @@ class ValidationMixin:
         Raises:
             ValidationError: If the proposed parameter value is objectionable
         """
-        pass

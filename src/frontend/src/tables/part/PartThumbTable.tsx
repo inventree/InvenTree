@@ -127,7 +127,7 @@ export function PartThumbTable({
   search = '',
   pk,
   setImage
-}: ThumbTableProps) {
+}: Readonly<ThumbTableProps>) {
   const [thumbImage, setThumbImage] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
   const [filterQuery, setFilterQuery] = useState<string>(search);

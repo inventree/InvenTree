@@ -12,6 +12,7 @@ import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
@@ -41,6 +42,8 @@ export function Header() {
   const { isLoggedIn } = useUserState();
 
   const [notificationCount, setNotificationCount] = useState<number>(0);
+
+  const globalSettings = useGlobalSettingsState();
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
@@ -103,11 +106,15 @@ export function Header() {
             <NavTabs />
           </Group>
           <Group>
-            <ActionIcon onClick={openSearchDrawer} variant="transparent">
+            <ActionIcon
+              onClick={openSearchDrawer}
+              variant="transparent"
+              aria-label="open-search"
+            >
               <IconSearch />
             </ActionIcon>
             <SpotlightButton />
-            <ScanButton />
+            {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
             <Indicator
               radius="lg"
               size="18"
@@ -119,6 +126,7 @@ export function Header() {
               <ActionIcon
                 onClick={openNotificationDrawer}
                 variant="transparent"
+                aria-label="open-notifications"
               >
                 <IconBell />
               </ActionIcon>

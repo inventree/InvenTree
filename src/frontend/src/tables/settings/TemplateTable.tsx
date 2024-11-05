@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -10,11 +10,25 @@ import {
   PdfPreview,
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
+import {
+  Editor,
+  PreviewArea
+} from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
+import {
+  getPluginTemplateEditor,
+  getPluginTemplatePreview
+} from '../../components/plugins/PluginUIFeature';
+import {
+  TemplateEditorUIFeature,
+  TemplatePreviewUIFeature
+} from '../../components/plugins/PluginUIFeatureTypes';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { identifierString } from '../../functions/conversion';
+import { GetIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { useFilters } from '../../hooks/UseFilter';
 import {
@@ -23,6 +37,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -49,7 +64,7 @@ export type TemplateI = {
 };
 
 export interface TemplateProps {
-  modelType: ModelType;
+  modelType: ModelType.labeltemplate | ModelType.reporttemplate;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
   additionalFormFields?: ApiFormFieldSet;
@@ -58,11 +73,11 @@ export interface TemplateProps {
 export function TemplateDrawer({
   id,
   templateProps
-}: {
+}: Readonly<{
   id: string | number;
   templateProps: TemplateProps;
-}) {
-  const { templateEndpoint, printingEndpoint } = templateProps;
+}>) {
+  const { modelType, templateEndpoint, printingEndpoint } = templateProps;
 
   const {
     instance: template,
@@ -73,6 +88,68 @@ export function TemplateDrawer({
     pk: id,
     throwError: true
   });
+
+  // Editors
+  const extraEditors = usePluginUIFeature<TemplateEditorUIFeature>({
+    enabled: template?.model_type !== undefined,
+    featureType: 'template_editor',
+    context: { template_type: modelType, template_model: template?.model_type! }
+  });
+
+  /**
+   * List of available editors for the template
+   */
+  const editors = useMemo(() => {
+    // Always include the built-in code editor
+    const editors = [CodeEditor];
+
+    if (!template) {
+      return editors;
+    }
+
+    editors.push(
+      ...(extraEditors?.map((editor) => {
+        return {
+          key: identifierString(
+            `${editor.options.plugin_name}-${editor.options.key}`
+          ),
+          name: editor.options.title,
+          icon: GetIcon(editor.options.icon || 'plugin'),
+          component: getPluginTemplateEditor(editor.func, template)
+        } as Editor;
+      }) || [])
+    );
+
+    return editors;
+  }, [extraEditors, template]);
+
+  // Previews
+  const extraPreviews = usePluginUIFeature<TemplatePreviewUIFeature>({
+    enabled: template?.model_type !== undefined,
+    featureType: 'template_preview',
+    context: { template_type: modelType, template_model: template?.model_type! }
+  });
+  const previews = useMemo(() => {
+    const previews = [PdfPreview];
+
+    if (!template) {
+      return previews;
+    }
+
+    previews.push(
+      ...(extraPreviews?.map(
+        (preview) =>
+          ({
+            key: preview.options.key,
+            name: preview.options.title,
+            icon: GetIcon(preview.options.icon || 'plugin'),
+            component: getPluginTemplatePreview(preview.func, template)
+          } as PreviewArea)
+      ) || [])
+    );
+
+    return previews;
+  }, [extraPreviews, template]);
 
   if (isFetching) {
     return <LoadingOverlay visible={true} />;
@@ -100,8 +177,8 @@ export function TemplateDrawer({
         templateUrl={apiUrl(templateEndpoint, id)}
         printingUrl={apiUrl(printingEndpoint)}
         template={template}
-        editors={[CodeEditor]}
-        previewAreas={[PdfPreview]}
+        editors={editors}
+        previewAreas={previews}
       />
     </Stack>
   );
@@ -109,9 +186,9 @@ export function TemplateDrawer({
 
 export function TemplateTable({
   templateProps
-}: {
+}: Readonly<{
   templateProps: TemplateProps;
-}) {
+}>) {
   const { templateEndpoint, additionalFormFields } = templateProps;
 
   const table = useTable(`${templateEndpoint}-template`);
@@ -161,8 +238,11 @@ export function TemplateTable({
       },
       ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
         accessor: key,
+        ...field,
+        title: field.label,
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
     ];
@@ -282,7 +362,7 @@ export function TemplateTable({
         name: 'enabled',
         label: t`Enabled`,
         description: t`Filter by enabled status`,
-        type: 'checkbox'
+        type: 'boolean'
       },
       {
         name: 'model_type',

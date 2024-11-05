@@ -1,16 +1,14 @@
 """Provides system status functionality checks."""
-# -*- coding: utf-8 -*-
 
 import logging
 from datetime import timedelta
 
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 
 from django_q.models import Success
 from django_q.status import Stat
 
-import InvenTree.email
+import InvenTree.helpers_email
 import InvenTree.ready
 
 logger = logging.getLogger('inventree')
@@ -63,13 +61,13 @@ def check_system_health(**kwargs):
 
     if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
-        logger.warning(_('Background worker check failed'))
+        logger.warning('Background worker check failed')
 
-    if not InvenTree.email.is_email_configured():  # pragma: no cover
+    if not InvenTree.helpers_email.is_email_configured():  # pragma: no cover
         result = False
-        logger.warning(_('Email backend not configured'))
+        logger.warning('Email backend not configured')
 
     if not result:  # pragma: no cover
-        logger.warning(_('InvenTree system health checks failed'))
+        logger.warning('InvenTree system health checks failed')
 
     return result

@@ -28,12 +28,12 @@ export function RelatedModelField({
   fieldName,
   definition,
   limit = 10
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
   limit?: number;
-}) {
+}>) {
   const fieldId = useId();
   const {
     field,
@@ -207,7 +207,7 @@ export function RelatedModelField({
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.(_pk, value.data ?? {});
+      definition.onValueChange?.(_pk, value?.data ?? {});
     },
     [field.onChange, definition]
   );
@@ -220,6 +220,7 @@ export function RelatedModelField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      exclude: undefined,
       read_only: undefined
     };
   }, [definition]);

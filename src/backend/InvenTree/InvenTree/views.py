@@ -180,7 +180,7 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             AjaxUpdateView: 'change',
         }
 
-        for view_class in permission_map.keys():
+        for view_class in permission_map:
             if issubclass(type(self), view_class):
                 return permission_map[view_class]
 
@@ -238,7 +238,6 @@ class AjaxMixin(InvenTreeRoleMixin):
         Ref: https://docs.djangoproject.com/en/dev/topics/forms/
         """
         # Do nothing by default
-        pass
 
     def renderJsonResponse(self, request, form=None, data=None, context=None):
         """Render a JSON response based on specific class context.
@@ -286,7 +285,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         # Custom feedback`data
         fb = self.get_data()
 
-        for key in fb.keys():
+        for key in fb:
             data[key] = fb[key]
 
         return JsonResponse(data, safe=False)
@@ -329,11 +328,11 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             request, self.get_form(), context=self.get_context_data()
         )
 
-    def save(self, object, form, **kwargs):
+    def save(self, obj, form, **kwargs):
         """Method for updating the object in the database. Default implementation is very simple, but can be overridden if required.
 
         Args:
-            object: The current object, to be updated
+            obj: The current object, to be updated
             form: The validated form
 
         Returns:
@@ -578,13 +577,9 @@ class UserSessionOverride:
 class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
     """Revert to settings after session delete."""
 
-    pass
-
 
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
     """Revert to settings after session delete."""
-
-    pass
 
 
 class CustomLoginView(LoginView):

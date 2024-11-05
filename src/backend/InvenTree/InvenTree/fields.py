@@ -93,9 +93,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         allow_negative = kwargs.pop('allow_negative', False)
 
         # If no validators are provided, add some "standard" ones
-        if len(validators) == 0:
-            if not allow_negative:
-                validators.append(MinMoneyValidator(0))
+        if len(validators) == 0 and not allow_negative:
+            validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
 
@@ -134,9 +133,9 @@ class DatePickerFormField(forms.DateField):
     def __init__(self, **kwargs):
         """Set up custom values."""
         help_text = kwargs.get('help_text', _('Enter date'))
-        label = kwargs.get('label', None)
+        label = kwargs.get('label')
         required = kwargs.get('required', False)
-        initial = kwargs.get('initial', None)
+        initial = kwargs.get('initial')
 
         widget = forms.DateInput(attrs={'type': 'date'})
 

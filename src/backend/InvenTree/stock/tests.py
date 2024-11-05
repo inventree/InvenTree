@@ -10,7 +10,7 @@ from django.test import override_settings
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode
@@ -1229,14 +1229,20 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item2.test_results.count(), 4)
 
         # Test StockItem serialization
-        item2.serializeStock(1, [100], self.user)
+        # Note: This will create a new StockItem with a new serial number
+
+        with self.assertRaises(ValidationError):
+            # Serial number #100 will be rejected by the sample plugin
+            item2.serializeStock(1, [100], self.user)
+
+        item2.serializeStock(1, [101], self.user)
 
         # Add a test result to the parent *after* serialization
         item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
-        item3 = StockItem.objects.get(serial=100, part=item2.part)
+        item3 = StockItem.objects.get(serial=101, part=item2.part)
 
         self.assertEqual(item3.test_results.count(), 4)
 
@@ -1347,3 +1353,11 @@ class StockLocationTest(InvenTreeTestCase):
         loc.location_type = None
         loc.save()
         self.assertEqual(loc.icon, '')
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=StockLocationType)

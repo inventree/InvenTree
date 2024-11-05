@@ -84,13 +84,11 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             machine_type,
             {
                 **machine_type,
-                **{
-                    'slug': 'label-printer',
-                    'name': 'Label Printer',
-                    'description': 'Directly print labels for various items.',
-                    'provider_plugin': None,
-                    'is_builtin': True,
-                },
+                'slug': 'label-printer',
+                'name': 'Label Printer',
+                'description': 'Directly print labels for various items.',
+                'provider_plugin': None,
+                'is_builtin': True,
             },
         )
         self.assertTrue(
@@ -109,15 +107,13 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             driver,
             {
                 **driver,
-                **{
-                    'slug': 'test-label-printer-api',
-                    'name': 'Test label printer',
-                    'description': 'This is a test label printer driver for testing.',
-                    'provider_plugin': None,
-                    'is_builtin': True,
-                    'machine_type': 'label-printer',
-                    'driver_errors': [],
-                },
+                'slug': 'test-label-printer-api',
+                'name': 'Test label printer',
+                'description': 'This is a test label printer driver for testing.',
+                'provider_plugin': None,
+                'is_builtin': True,
+                'machine_type': 'label-printer',
+                'driver_errors': [],
             },
         )
         self.assertEqual(driver['provider_file'], __file__)
@@ -173,17 +169,15 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             response.data[0],
             {
                 **response.data[0],
-                **{
-                    'name': 'Test Machine',
-                    'machine_type': 'label-printer',
-                    'driver': 'test-label-printer-api',
-                    'initialized': True,
-                    'active': True,
-                    'status': 101,
-                    'status_model': 'LabelPrinterStatus',
-                    'status_text': '',
-                    'is_driver_available': True,
-                },
+                'name': 'Test Machine',
+                'machine_type': 'label-printer',
+                'driver': 'test-label-printer-api',
+                'initialized': True,
+                'active': True,
+                'status': 101,
+                'status_model': 'LabelPrinterStatus',
+                'status_text': '',
+                'is_driver_available': True,
             },
         )
 
@@ -216,9 +210,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             reverse('api-machine-detail', kwargs={'pk': pk}),
             {'name': 'Updated Machine'},
         )
-        self.assertEqual(
-            response.data, {**response.data, **{'name': 'Updated Machine'}}
-        )
+        self.assertEqual(response.data, {**response.data, 'name': 'Updated Machine'})
         self.assertEqual(MachineConfig.objects.get(pk=pk).name, 'Updated Machine')
 
         # Delete the machine

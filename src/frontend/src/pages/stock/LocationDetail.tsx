@@ -1,11 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import {
-  IconDots,
-  IconInfoCircle,
-  IconPackages,
-  IconSitemap
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -18,13 +13,15 @@ import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -314,11 +311,11 @@ export default function Stock() {
         icon={<InvenTreeIcon icon="stock" />}
         actions={[
           {
-            name: 'Count Stock',
+            name: t`Count Stock`,
             icon: (
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
-            tooltip: 'Count Stock',
+            tooltip: t`Count Stock`,
             onClick: () => countStockItems.open()
           },
           {
@@ -331,9 +328,8 @@ export default function Stock() {
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Location Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
@@ -392,7 +388,13 @@ export default function Stock() {
               setTreeOpen(true);
             }}
           />
-          <PanelGroup pageKey="stocklocation" panels={locationPanels} />
+          <PanelGroup
+            pageKey="stocklocation"
+            panels={locationPanels}
+            model={ModelType.stocklocation}
+            id={location.pk ?? null}
+            instance={location}
+          />
           {transferStockItems.modal}
           {countStockItems.modal}
         </Stack>

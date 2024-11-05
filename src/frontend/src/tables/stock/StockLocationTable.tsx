@@ -25,7 +25,7 @@ import { RowAction, RowEditAction } from '../RowActions';
 /**
  * Stock location table
  */
-export function StockLocationTable({ parentId }: { parentId?: any }) {
+export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('stocklocation');
   const user = useUserState();
 
@@ -130,6 +130,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
 
     return [
       <AddItemButton
+        key="add-stock-location"
         tooltip={t`Add Stock Location`}
         onClick={() => newLocation.open()}
         hidden={!can_add}
