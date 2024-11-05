@@ -230,22 +230,16 @@ class InfoView(AjaxView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
-        }
-
-        if is_staff:
             # Following fields are only available to staff users
-            data.update({
-                'system_health': check_system_health() if is_staff else None,
-                'database': InvenTree.version.inventreeDatabase() if is_staff else None,
-                'platform': InvenTree.version.inventreePlatform() if is_staff else None,
-                'installer': InvenTree.version.inventreeInstaller()
-                if is_staff
-                else None,
-                'target': InvenTree.version.inventreeTarget() if is_staff else None,
-                'django_admin': settings.INVENTREE_ADMIN_URL
-                if settings.INVENTREE_ADMIN_ENABLED
-                else None,
-            })
+            'system_health': check_system_health() if is_staff else None,
+            'database': InvenTree.version.inventreeDatabase() if is_staff else None,
+            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
+            'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
+            'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'django_admin': settings.INVENTREE_ADMIN_URL
+            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+            else None,
+        }
 
         return JsonResponse(data)
 
