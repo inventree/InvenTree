@@ -5,7 +5,7 @@ import { ModelType } from '../../enums/ModelType';
 import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
-interface StatusCodeInterface {
+export interface StatusCodeInterface {
   key: string;
   label: string;
   name: string;
@@ -13,7 +13,10 @@ interface StatusCodeInterface {
 }
 
 export interface StatusCodeListInterface {
-  [key: string]: StatusCodeInterface;
+  statusClass: string;
+  values: {
+    [key: string]: StatusCodeInterface;
+  };
 }
 
 interface RenderStatusLabelOptionsInterface {
@@ -33,10 +36,10 @@ function renderStatusLabel(
   let color = null;
 
   // Find the entry which matches the provided key
-  for (let name in codes) {
-    let entry = codes[name];
+  for (let name in codes.values) {
+    let entry: StatusCodeInterface = codes.values[name];
 
-    if (entry.key == key) {
+    if (entry?.key == key) {
       text = entry.label;
       color = entry.color;
       break;
@@ -97,7 +100,7 @@ export function getStatusCodeName(
   }
 
   for (let name in statusCodes) {
-    let entry = statusCodes[name];
+    let entry: StatusCodeInterface = statusCodes.values[name];
 
     if (entry.key == key) {
       return entry.name;

@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { customStateFields } from '../../forms/CommonForms';
+import { useCustomStateFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -60,10 +60,13 @@ export default function CustomStateTable() {
     ];
   }, []);
 
+  const newCustomStateFields = useCustomStateFields();
+  const editCustomStateFields = useCustomStateFields();
+
   const newCustomState = useCreateApiFormModal({
     url: ApiEndpoints.custom_state_list,
     title: t`Add State`,
-    fields: customStateFields(),
+    fields: newCustomStateFields,
     table: table
   });
 
@@ -75,7 +78,7 @@ export default function CustomStateTable() {
     url: ApiEndpoints.custom_state_list,
     pk: selectedCustomState,
     title: t`Edit State`,
-    fields: customStateFields(),
+    fields: editCustomStateFields,
     table: table
   });
 

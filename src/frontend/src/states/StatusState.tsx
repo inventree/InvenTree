@@ -35,8 +35,10 @@ export const useGlobalStatusState = create<ServerStateProps>()(
           .then((response) => {
             const newStatusLookup: StatusLookup = {} as StatusLookup;
             for (const key in response.data) {
-              newStatusLookup[statusCodeList[key] || key] =
-                response.data[key].values;
+              newStatusLookup[statusCodeList[key] || key] = {
+                statusClass: key,
+                values: response.data[key].values
+              };
             }
             set({ status: newStatusLookup });
           })

@@ -3406,17 +3406,20 @@ class InvenTreeCustomUserStateModel(models.Model):
     """Custom model to extends any registered state with extra custom, user defined states."""
 
     key = models.IntegerField(
-        verbose_name=_('Key'),
-        help_text=_('Value that will be saved in the models database'),
+        verbose_name=_('Value'),
+        help_text=_('Numerical value that will be saved in the models database'),
     )
+
     name = models.CharField(
         max_length=250, verbose_name=_('Name'), help_text=_('Name of the state')
     )
+
     label = models.CharField(
         max_length=250,
         verbose_name=_('Label'),
         help_text=_('Label that will be displayed in the frontend'),
     )
+
     color = models.CharField(
         max_length=10,
         choices=state_color_mappings(),
@@ -3424,12 +3427,14 @@ class InvenTreeCustomUserStateModel(models.Model):
         verbose_name=_('Color'),
         help_text=_('Color that will be displayed in the frontend'),
     )
+
     logical_key = models.IntegerField(
         verbose_name=_('Logical Key'),
         help_text=_(
             'State logical key that is equal to this custom state in business logic'
         ),
     )
+
     model = models.ForeignKey(
         ContentType,
         on_delete=models.SET_NULL,
@@ -3438,6 +3443,7 @@ class InvenTreeCustomUserStateModel(models.Model):
         verbose_name=_('Model'),
         help_text=_('Model this state is associated with'),
     )
+
     reference_status = models.CharField(
         max_length=250,
         verbose_name=_('Reference Status Set'),
