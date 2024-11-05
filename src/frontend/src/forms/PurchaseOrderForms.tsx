@@ -348,7 +348,8 @@ function LineItemFormRow({
     if (
       !record.destination &&
       !record.destination_detail &&
-      location === record.part_detail.category_default_location
+      record.part_detail &&
+      location === record.part_detail?.category_default_location
     ) {
       return t`Part category default location selected`;
     }
@@ -511,8 +512,8 @@ function LineItemFormRow({
                 }
               />
               <Flex style={{ marginBottom: '7px' }}>
-                {(record.part_detail.default_location ||
-                  record.part_detail.category_default_location) && (
+                {(record.part_detail?.default_location ||
+                  record.part_detail?.category_default_location) && (
                   <ActionButton
                     icon={<InvenTreeIcon icon="default_location" />}
                     tooltip={t`Store at default location`}
@@ -520,8 +521,8 @@ function LineItemFormRow({
                       props.changeFn(
                         props.idx,
                         'location',
-                        record.part_detail.default_location ??
-                          record.part_detail.category_default_location
+                        record.part_detail?.default_location ??
+                          record.part_detail?.category_default_location
                       )
                     }
                     tooltipAlignment="top"
