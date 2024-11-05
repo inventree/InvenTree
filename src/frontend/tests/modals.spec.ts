@@ -12,7 +12,7 @@ test('Modals as admin', async ({ page }) => {
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
-  await page.getByRole('button', { name: 'Dismiss' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
 
   await page.waitForURL('**/platform/home');
 
