@@ -23,6 +23,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
+import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
@@ -66,7 +67,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link}
+              href={link ? `/${base_url}${link}` : '#'}
               underline="hover"
               target="_blank"
               onClick={(event: any) => {
