@@ -110,3 +110,18 @@ test('Company', async ({ page }) => {
   await page.getByText('Enter a valid URL.').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
+
+/**
+ * Test for integration of django admin button
+ */
+test('Admin Button', async ({ page }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+  await page.goto(`${baseUrl}/company/1/details`);
+
+  // Click on the admin button
+  await page.getByLabel(/action-button-open-in-admin/).click();
+
+  await page.waitForURL('**/test-admin/company/company/1/change/**');
+  await page.getByRole('heading', { name: 'Change Company' }).waitFor();
+  await page.getByRole('link', { name: 'View on site' }).waitFor();
+});
