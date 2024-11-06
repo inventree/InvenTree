@@ -1,11 +1,9 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
   useDeleteApiFormModal,
@@ -160,8 +158,10 @@ export default function SalesOrderAllocationTable({
 
   const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
 
+  const [selectedShipment, setSelectedShipment] = useState<any | null>(null);
+
   const editAllocationFields = useSalesOrderAllocationFields({
-    shipmentId: shipmentId
+    shipment: selectedShipment
   });
 
   const editAllocation = useEditApiFormModal({
@@ -169,14 +169,14 @@ export default function SalesOrderAllocationTable({
     pk: selectedAllocation,
     fields: editAllocationFields,
     title: t`Edit Allocation`,
-    table: table
+    onFormSuccess: () => table.refreshTable()
   });
 
   const deleteAllocation = useDeleteApiFormModal({
     url: ApiEndpoints.sales_order_allocation_list,
     pk: selectedAllocation,
     title: t`Delete Allocation`,
-    table: table
+    onFormSuccess: () => table.refreshTable()
   });
 
   const rowActions = useCallback(
@@ -193,6 +193,7 @@ export default function SalesOrderAllocationTable({
           tooltip: t`Edit Allocation`,
           onClick: () => {
             setSelectedAllocation(record.pk);
+            setSelectedShipment(record.shipment);
             editAllocation.open();
           }
         }),
