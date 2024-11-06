@@ -1049,9 +1049,12 @@ class SalesOrderAllocationMixin:
             'item',
             'item__sales_order',
             'item__part',
+            'line__part',
             'item__location',
             'line__order',
-            'line__part',
+            'line__order__responsible',
+            'line__order__project_code',
+            'line__order__project_code__responsible',
             'shipment',
             'shipment__order',
         )
