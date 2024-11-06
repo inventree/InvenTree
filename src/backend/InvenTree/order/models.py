@@ -2030,7 +2030,7 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and self.quantity != 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
-        if self.line.order != self.shipment.order:
+        if self.shipment and self.line.order != self.shipment.order:
             errors['line'] = _('Sales order does not match shipment')
             errors['shipment'] = _('Shipment does not match sales order')
 
@@ -2047,6 +2047,8 @@ class SalesOrderAllocation(models.Model):
     shipment = models.ForeignKey(
         SalesOrderShipment,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name='allocations',
         verbose_name=_('Shipment'),
         help_text=_('Sales order shipment reference'),

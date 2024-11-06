@@ -1596,8 +1596,8 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
         many=False,
-        allow_null=False,
-        required=True,
+        required=False,
+        allow_null=True,
         label=_('Shipment'),
     )
 
@@ -1609,10 +1609,10 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         """
         order = self.context['order']
 
-        if shipment.shipment_date is not None:
+        if shipment and shipment.shipment_date is not None:
             raise ValidationError(_('Shipment has already been shipped'))
 
-        if shipment.order != order:
+        if shipment and shipment.order != order:
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
@@ -1720,8 +1720,8 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
         many=False,
-        allow_null=False,
-        required=True,
+        required=False,
+        allow_null=True,
         label=_('Shipment'),
     )
 
@@ -1756,7 +1756,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data['items']
-        shipment = data['shipment']
+        shipment = data.get('shipment')
 
         with transaction.atomic():
             for entry in items:
