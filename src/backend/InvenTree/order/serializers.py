@@ -1246,6 +1246,15 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'notes',
         ]
 
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer."""
+        order_detail = kwargs.pop('order_detail', True)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail', None)
+
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
@@ -1341,7 +1350,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
-        source='shipment', many=False, read_only=True
+        source='shipment', order_detail=False, many=False, read_only=True
     )
 
 

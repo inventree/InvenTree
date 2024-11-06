@@ -1057,6 +1057,7 @@ class SalesOrderAllocationMixin:
             'line__order__project_code__responsible',
             'shipment',
             'shipment__order',
+            'shipment__checked_by',
         )
 
         return queryset
