@@ -53,27 +53,6 @@ test('Sales', async ({ page }) => {
   await page.getByRole('tab', { name: 'Notes' }).click();
 });
 
-test('Scanning', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.getByLabel('navigation-menu').click();
-  await page.getByRole('button', { name: 'System Information' }).click();
-  await page.locator('button').filter({ hasText: 'Dismiss' }).click();
-
-  await page.getByLabel('navigation-menu').click();
-  await page.getByRole('button', { name: 'Scan Barcode' }).click();
-
-  await page.getByPlaceholder('Select input method').click();
-  await page.getByRole('option', { name: 'Manual input' }).click();
-  await page.getByPlaceholder('Enter item serial or data').click();
-  await page.getByPlaceholder('Enter item serial or data').fill('123');
-  await page.getByPlaceholder('Enter item serial or data').press('Enter');
-  await page.getByRole('cell', { name: 'manually' }).click();
-  await page.getByRole('button', { name: 'Lookup part' }).click();
-  await page.getByPlaceholder('Select input method').click();
-  await page.getByRole('option', { name: 'Manual input' }).click();
-});
-
 test('Company', async ({ page }) => {
   await doQuickLogin(page);
 

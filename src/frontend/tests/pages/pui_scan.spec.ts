@@ -24,7 +24,28 @@ async function defaultScanTest(page, search_text) {
   await page.getByRole('button', { name: 'Lookup part' }).click();
 }
 
-test('Pages - Index - Scan (Part)', async ({ page }) => {
+test('Scanning', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.getByLabel('navigation-menu').click();
+  await page.getByRole('button', { name: 'System Information' }).click();
+  await page.locator('button').filter({ hasText: 'Close' }).click();
+
+  await page.getByLabel('navigation-menu').click();
+  await page.getByRole('button', { name: 'Scan Barcode' }).click();
+
+  await page.getByPlaceholder('Select input method').click();
+  await page.getByRole('option', { name: 'Manual input' }).click();
+  await page.getByPlaceholder('Enter item serial or data').click();
+  await page.getByPlaceholder('Enter item serial or data').fill('123');
+  await page.getByPlaceholder('Enter item serial or data').press('Enter');
+  await page.getByRole('cell', { name: 'manually' }).click();
+  await page.getByRole('button', { name: 'Lookup part' }).click();
+  await page.getByPlaceholder('Select input method').click();
+  await page.getByRole('option', { name: 'Manual input' }).click();
+});
+
+test('Scanning (Part)', async ({ page }) => {
   await defaultScanTest(page, '{"part": 1}');
 
   // part: 1
@@ -33,7 +54,7 @@ test('Pages - Index - Scan (Part)', async ({ page }) => {
   await page.getByRole('cell', { name: 'part' }).waitFor();
 });
 
-test('Pages - Index - Scan (Stockitem)', async ({ page }) => {
+test('Scanning (Stockitem)', async ({ page }) => {
   await defaultScanTest(page, '{"stockitem": 408}');
 
   // stockitem: 408
@@ -42,7 +63,7 @@ test('Pages - Index - Scan (Stockitem)', async ({ page }) => {
   await page.getByRole('cell', { name: 'Quantity: 100' }).waitFor();
 });
 
-test('Pages - Index - Scan (StockLocation)', async ({ page }) => {
+test('Scanning (StockLocation)', async ({ page }) => {
   await defaultScanTest(page, '{"stocklocation": 3}');
 
   // stocklocation: 3
@@ -51,7 +72,7 @@ test('Pages - Index - Scan (StockLocation)', async ({ page }) => {
   await page.getByRole('cell', { name: 'stocklocation' }).waitFor();
 });
 
-test('Pages - Index - Scan (SupplierPart)', async ({ page }) => {
+test('Scanning (SupplierPart)', async ({ page }) => {
   await defaultScanTest(page, '{"supplierpart": 204}');
 
   // supplierpart: 204
@@ -60,7 +81,7 @@ test('Pages - Index - Scan (SupplierPart)', async ({ page }) => {
   await page.getByRole('cell', { name: 'supplierpart' }).waitFor();
 });
 
-test('Pages - Index - Scan (PurchaseOrder)', async ({ page }) => {
+test('Scanning (PurchaseOrder)', async ({ page }) => {
   await defaultScanTest(page, '{"purchaseorder": 12}');
 
   // purchaseorder: 12
@@ -69,7 +90,7 @@ test('Pages - Index - Scan (PurchaseOrder)', async ({ page }) => {
   await page.getByRole('cell', { name: 'purchaseorder' }).waitFor();
 });
 
-test('Pages - Index - Scan (SalesOrder)', async ({ page }) => {
+test('Scanning (SalesOrder)', async ({ page }) => {
   await defaultScanTest(page, '{"salesorder": 6}');
 
   // salesorder: 6
@@ -78,7 +99,7 @@ test('Pages - Index - Scan (SalesOrder)', async ({ page }) => {
   await page.getByRole('cell', { name: 'salesorder' }).waitFor();
 });
 
-test('Pages - Index - Scan (Build)', async ({ page }) => {
+test('Scanning (Build)', async ({ page }) => {
   await defaultScanTest(page, '{"build": 8}');
 
   // build: 8
@@ -87,7 +108,7 @@ test('Pages - Index - Scan (Build)', async ({ page }) => {
   await page.getByRole('cell', { name: 'build', exact: true }).waitFor();
 });
 
-test('Pages - Index - Scan (General)', async ({ page }) => {
+test('Scanning (General)', async ({ page }) => {
   await defaultScanTest(page, '{"unknown": 312}');
   await page.getByText('"unknown": 312').waitFor();
 
