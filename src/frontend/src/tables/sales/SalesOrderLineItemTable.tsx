@@ -1,12 +1,15 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { ActionIcon, Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconChevronDown,
+  IconChevronRight,
   IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
   IconTools
 } from '@tabler/icons-react';
+import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -63,7 +66,24 @@ export default function SalesOrderLineItemTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
+        render: (record: any) => {
+          return (
+            <Group wrap="nowrap">
+              <ActionIcon
+                size="sm"
+                variant="transparent"
+                disabled={!record.allocated}
+              >
+                {table.isRowExpanded(record.pk) ? (
+                  <IconChevronDown />
+                ) : (
+                  <IconChevronRight />
+                )}
+              </ActionIcon>
+              <PartColumn part={record.part_detail} />
+            </Group>
+          );
+        }
       },
       {
         accessor: 'part_detail.IPN',
@@ -163,13 +183,15 @@ export default function SalesOrderLineItemTable({
       {
         accessor: 'allocated',
         sortable: true,
-        render: (record: any) => (
-          <ProgressBar
-            progressLabel={true}
-            value={record.allocated}
-            maximum={record.quantity}
-          />
-        )
+        render: (record: any) => {
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.allocated}
+              maximum={record.quantity}
+            />
+          );
+        }
       },
       {
         accessor: 'shipped',
@@ -189,7 +211,7 @@ export default function SalesOrderLineItemTable({
         accessor: 'link'
       })
     ];
-  }, []);
+  }, [table.isRowExpanded]);
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
@@ -401,6 +423,19 @@ export default function SalesOrderLineItemTable({
     [user, editable]
   );
 
+  // Control row expansion
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        return table.isRowExpanded(record.pk) || record.allocated > 0;
+      },
+      content: ({ record }: { record: any }) => {
+        return 'hello world';
+      }
+    };
+  }, [table.isRowExpanded]);
+
   return (
     <>
       {editLine.modal}
@@ -423,8 +458,9 @@ export default function SalesOrderLineItemTable({
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,
-          modelType: ModelType.part,
-          modelField: 'part'
+          rowExpansion: rowExpansion
+          // modelType: ModelType.part,
+          // modelField: 'part'
         }}
       />
     </>

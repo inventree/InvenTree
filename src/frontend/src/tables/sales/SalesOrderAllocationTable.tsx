@@ -135,7 +135,10 @@ export default function SalesOrderAllocationTable({
         accessor: 'shipment_detail.reference',
         title: t`Shipment`,
         switchable: true,
-        sortable: false
+        sortable: false,
+        render: (record: any) => {
+          return record.shipment_detail?.reference ?? t`No shipment`;
+        }
       },
       DateColumn({
         accessor: 'shipment_detail.shipment_date',

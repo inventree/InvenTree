@@ -362,7 +362,13 @@ export function useSalesOrderAllocationFields({
 }): ApiFormFieldSet {
   return useMemo(() => {
     return {
-      quantity: {}
+      item: {
+        disabled: true
+      },
+      quantity: {},
+      shipment: {
+        disabled: !!shipmentId
+      }
     };
   }, [shipmentId]);
 }
