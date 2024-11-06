@@ -1285,21 +1285,25 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
-            'line',
-            'customer_detail',
-            'serial',
-            'quantity',
-            'location',
-            'location_detail',
             'item',
-            'item_detail',
-            'order',
-            'order_detail',
-            'part',
-            'part_detail',
+            'quantity',
             'shipment',
+            # Annotated read-only fields
+            'line',
+            'part',
+            'order',
+            'serial',
+            'location',
+            # Extra detail fields
+            'item_detail',
+            'part_detail',
+            'order_detail',
+            'customer_detail',
+            'location_detail',
             'shipment_detail',
         ]
+
+        read_only_fields = ['line', '']
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
