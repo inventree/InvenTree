@@ -161,6 +161,7 @@ export default function SalesOrderAllocationTable({
   const [selectedShipment, setSelectedShipment] = useState<any | null>(null);
 
   const editAllocationFields = useSalesOrderAllocationFields({
+    orderId: orderId,
     shipment: selectedShipment
   });
 
