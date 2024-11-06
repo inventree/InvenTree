@@ -1,7 +1,13 @@
 import { t } from '@lingui/macro';
+import { Badge, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import {
+  StatusCodeInterface,
+  StatusCodeListInterface
+} from '../../components/render/StatusRenderer';
+import { statusColorMap } from '../../defaults/backendMappings';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { useCustomStateFields } from '../../forms/CommonForms';
@@ -12,6 +18,7 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalStatusState } from '../../states/StatusState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -23,12 +30,48 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 export default function CustomStateTable() {
   const table = useTable('customstates');
 
+  const statusCodes = useGlobalStatusState();
+
+  // Find the associated logical state key
+  const getLogicalState = useCallback(
+    (group: string, key: number) => {
+      const valuesList = Object.values(statusCodes.status ?? {}).find(
+        (value: StatusCodeListInterface) => value.statusClass === group
+      );
+
+      const value = Object.values(valuesList?.values ?? {}).find(
+        (value: StatusCodeInterface) => value.key === key
+      );
+
+      return value?.label ?? '';
+    },
+    [statusCodes]
+  );
+
   const user = useUserState();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'reference_status',
+        title: t`Status`,
+        sortable: true
+      },
+      {
+        accessor: 'logical_key',
+        title: t`Logical State`,
+        sortable: true,
+        render: (record: any) => {
+          let stateText = getLogicalState(
+            record.reference_status,
+            record.logical_key
+          );
+          return stateText ? stateText : record.logical_key;
+        }
+      },
+      {
         accessor: 'name',
+        title: t`Identifier`,
         sortable: true
       },
       {
@@ -37,28 +80,25 @@ export default function CustomStateTable() {
         sortable: true
       },
       {
-        accessor: 'color'
-      },
-      {
         accessor: 'key',
         sortable: true
       },
       {
-        accessor: 'logical_key',
-        sortable: true
-      },
-      {
-        accessor: 'model_name',
-        title: t`Model`,
-        sortable: true
-      },
-      {
-        accessor: 'reference_status',
-        title: t`Status`,
-        sortable: true
+        accessor: 'color',
+        render: (record: any) => {
+          return (
+            <Badge
+              color={statusColorMap[record.color] || statusColorMap['default']}
+              variant="filled"
+              size="xs"
+            >
+              {record.color}
+            </Badge>
+          );
+        }
       }
     ];
-  }, []);
+  }, [getLogicalState]);
 
   const newCustomStateFields = useCustomStateFields();
   const editCustomStateFields = useCustomStateFields();

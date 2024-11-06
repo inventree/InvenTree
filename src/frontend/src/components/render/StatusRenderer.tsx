@@ -1,12 +1,12 @@
 import { Badge, Center, MantineSize } from '@mantine/core';
 
-import { colorMap } from '../../defaults/backendMappings';
+import { statusColorMap } from '../../defaults/backendMappings';
 import { ModelType } from '../../enums/ModelType';
 import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
 export interface StatusCodeInterface {
-  key: string;
+  key: number;
   label: string;
   name: string;
   color: string;
@@ -54,7 +54,7 @@ function renderStatusLabel(
 
   // Fallbacks
   if (color == null) color = 'default';
-  color = colorMap[color] || colorMap['default'];
+  color = statusColorMap[color] || statusColorMap['default'];
   const size = options.size || 'xs';
 
   if (!text) {
