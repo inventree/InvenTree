@@ -3403,7 +3403,30 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
 
 class InvenTreeCustomUserStateModel(models.Model):
-    """Custom model to extends any registered state with extra custom, user defined states."""
+    """Custom model to extends any registered state with extra custom, user defined states.
+
+    Fields:
+        reference_status: Status set that is extended with this custom state
+        logical_key: State logical key that is equal to this custom state in business logic
+        key: Numerical value that will be saved in the models database
+        name: Name of the state (must be uppercase and a valid variable identifier)
+        label: Label that will be displayed in the frontend (human readable)
+        color: Color that will be displayed in the frontend
+
+    """
+
+    reference_status = models.CharField(
+        max_length=250,
+        verbose_name=_('Reference Status Set'),
+        help_text=_('Status set that is extended with this custom state'),
+    )
+
+    logical_key = models.IntegerField(
+        verbose_name=_('Logical Key'),
+        help_text=_(
+            'State logical key that is equal to this custom state in business logic'
+        ),
+    )
 
     key = models.IntegerField(
         verbose_name=_('Value'),
@@ -3411,7 +3434,13 @@ class InvenTreeCustomUserStateModel(models.Model):
     )
 
     name = models.CharField(
-        max_length=250, verbose_name=_('Name'), help_text=_('Name of the state')
+        max_length=250,
+        verbose_name=_('Name'),
+        help_text=_('Name of the state'),
+        validators=[
+            common.validators.validate_uppercase,
+            common.validators.validate_variable_string,
+        ],
     )
 
     label = models.CharField(
@@ -3428,13 +3457,6 @@ class InvenTreeCustomUserStateModel(models.Model):
         help_text=_('Color that will be displayed in the frontend'),
     )
 
-    logical_key = models.IntegerField(
-        verbose_name=_('Logical Key'),
-        help_text=_(
-            'State logical key that is equal to this custom state in business logic'
-        ),
-    )
-
     model = models.ForeignKey(
         ContentType,
         on_delete=models.SET_NULL,
@@ -3442,12 +3464,6 @@ class InvenTreeCustomUserStateModel(models.Model):
         blank=True,
         verbose_name=_('Model'),
         help_text=_('Model this state is associated with'),
-    )
-
-    reference_status = models.CharField(
-        max_length=250,
-        verbose_name=_('Reference Status Set'),
-        help_text=_('Status set that is extended with this custom state'),
     )
 
     class Meta:
@@ -3493,17 +3509,21 @@ class InvenTreeCustomUserStateModel(models.Model):
                 get_custom_classes(include_custom=False),
             )
         )
+
         if len(ref_set) == 0:
             raise ValidationError({
                 'reference_status': _('Reference status set not found')
             })
+
         ref_set = ref_set[0]
+
         if self.key in ref_set.keys():  # noqa: SIM118
             raise ValidationError({
                 'key': _(
                     'Key must be different from the logical keys of the reference status'
                 )
             })
+
         if self.logical_key not in ref_set.keys():  # noqa: SIM118
             raise ValidationError({
                 'logical_key': _(

@@ -335,6 +335,7 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         ]
 
     model_name = serializers.CharField(read_only=True, source='model.name')
+
     reference_status = serializers.ChoiceField(
         choices=generic.states.custom.state_reference_mappings()
     )
