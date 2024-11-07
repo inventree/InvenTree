@@ -1297,6 +1297,23 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return a queryset of the pending shipments for this order."""
         return self.shipments.filter(shipment_date=None)
 
+    def allocations(self):
+        """Return a queryset of all allocations for this order."""
+        return SalesOrderAllocation.objects.filter(line__order=self)
+
+    def pending_allocations(self):
+        """Return a queryset of any pending allocations for this order.
+
+        Allocations are pending if:
+
+        a) They are not associated with a SalesOrderShipment
+        b) The linked SalesOrderShipment has not been shipped
+        """
+        Q1 = Q(shipment=None)
+        Q2 = Q(shipment__shipment_date=None)
+
+        return self.allocations().filter(Q1 | Q2).distinct()
+
     @property
     def shipment_count(self):
         """Return the total number of shipments associated with this order."""
