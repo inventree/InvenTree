@@ -87,6 +87,11 @@ class AuthRequiredMiddleware:
 
         assert hasattr(request, 'user')
 
+        # API requests are handled by the DRF library
+        if request.path_info.startswith('/api/'):
+            response = self.get_response(request)
+            return response
+
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
 
