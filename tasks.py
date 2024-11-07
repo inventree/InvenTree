@@ -1443,14 +1443,14 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
 def clear_generated(c):
     """Clear generated files from `invoke update`."""
     # pyc/pyo files
-    run(c, 'find . -name "*.pyc" -exec rm -f {} +')
-    run(c, 'find . -name "*.pyo" -exec rm -f {} +')
+    run(c, 'find src -name "*.pyc" -exec rm -f {} +')
+    run(c, 'find src -name "*.pyo" -exec rm -f {} +')
     # cache folders
-    run(c, 'find . -name "__pycache__" -exec rm -rf {} +')
+    run(c, 'find src -name "__pycache__" -exec rm -rf {} +')
 
     # Generated translations
-    run(c, 'find . -name "django.mo" -exec rm -f {} +')
-    run(c, 'find . -name "messages.mo" -exec rm -f {} +')
+    run(c, 'find src -name "django.mo" -exec rm -f {} +')
+    run(c, 'find src -name "messages.mo" -exec rm -f {} +')
 
 
 # Collection sorting
