@@ -89,7 +89,7 @@ tracing:
   enabled: false
 
 # Set this variable to True to enable InvenTree Plugins, or use the environment variable INVENTREE_PLUGINS_ENABLED
-plugins_enabled: True
+plugins_enabled: False
 #plugin_noinstall: True
 #plugin_file: '/path/to/plugins.txt'
 #plugin_dir: '/path/to/plugins/'
