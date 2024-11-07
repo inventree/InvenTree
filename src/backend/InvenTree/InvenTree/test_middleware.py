@@ -38,7 +38,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def test_token_auth(self):
         """Test auth with token auth."""
-        target = reverse('api-license')
+        target = reverse('settings.js')  # for PUI only use 'api-license'
 
         # get token
         response = self.client.get(reverse('api-token'), format='json', data={})
