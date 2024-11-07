@@ -179,8 +179,15 @@ export default function SalesOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
       }
-      // TODO: Project code
     ];
 
     let br: DetailsField[] = [

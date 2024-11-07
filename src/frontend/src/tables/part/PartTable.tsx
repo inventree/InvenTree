@@ -359,6 +359,9 @@ export function PartListTable({
           modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
+          enableSelection: true,
+          enableReports: true,
+          enableLabels: true,
           params: {
             ...props.params,
             category_detail: true,
