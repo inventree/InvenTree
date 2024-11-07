@@ -1105,6 +1105,11 @@ class SalesOrder(TotalPriceMixin, Order):
                     _('Order cannot be completed as there are incomplete shipments')
                 )
 
+            if self.pending_allocation_count > 0:
+                raise ValidationError(
+                    _('Order cannot be completed as there are incomplete allocations')
+                )
+
             if not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete line items')
@@ -1328,6 +1333,11 @@ class SalesOrder(TotalPriceMixin, Order):
     def pending_shipment_count(self):
         """Return the number of pending shipments associated with this order."""
         return self.pending_shipments().count()
+
+    @property
+    def pending_allocation_count(self):
+        """Return the number of pending (non-shipped) allocations."""
+        return self.pending_allocations().count()
 
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='sales_order_post_save')
