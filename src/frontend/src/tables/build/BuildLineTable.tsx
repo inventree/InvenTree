@@ -22,9 +22,7 @@ import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
 } from '../../forms/BuildForms';
-import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -42,7 +40,8 @@ import {
   RowAction,
   RowActions,
   RowDeleteAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -605,20 +604,15 @@ export default function BuildLineTable({
             newBuildOrder.open();
           }
         },
-        {
-          icon: <IconArrowRight />,
+        RowViewAction({
           title: t`View Part`,
-          onClick: (event: any) => {
-            navigateToLink(
-              getDetailUrl(ModelType.part, record.part),
-              navigate,
-              event
-            );
-          }
-        }
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate
+        })
       ];
     },
-    [user, output, build, buildStatus]
+    [user, navigate, output, build, buildStatus]
   );
 
   const tableActions = useMemo(() => {

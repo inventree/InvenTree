@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -42,9 +43,11 @@ import {
   RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
+import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
@@ -57,6 +60,7 @@ export default function SalesOrderLineItemTable({
   customerId: number;
   editable: boolean;
 }>) {
+  const navigate = useNavigate();
   const user = useUserState();
   const table = useTable('sales-order-line-item');
 
@@ -340,6 +344,13 @@ export default function SalesOrderLineItemTable({
       const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
 
       return [
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
+        }),
         {
           hidden:
             allocated ||
@@ -420,7 +431,7 @@ export default function SalesOrderLineItemTable({
         })
       ];
     },
-    [user, editable]
+    [navigate, user, editable]
   );
 
   // Control row expansion
@@ -431,10 +442,20 @@ export default function SalesOrderLineItemTable({
         return table.isRowExpanded(record.pk) || record.allocated > 0;
       },
       content: ({ record }: { record: any }) => {
-        return 'hello world';
+        return (
+          <SalesOrderAllocationTable
+            showOrderInfo={false}
+            showPartInfo={false}
+            orderId={orderId}
+            lineItemId={record.pk}
+            partId={record.part}
+            allowEdit
+            isSubTable
+          />
+        );
       }
     };
-  }, [table.isRowExpanded]);
+  }, [orderId, table.isRowExpanded]);
 
   return (
     <>
@@ -459,8 +480,6 @@ export default function SalesOrderLineItemTable({
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowExpansion: rowExpansion
-          // modelType: ModelType.part,
-          // modelField: 'part'
         }}
       />
     </>

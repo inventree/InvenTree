@@ -978,7 +978,7 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = models.SalesOrderAllocation
-        fields = ['shipment', 'item']
+        fields = ['shipment', 'line', 'item']
 
     order = rest_filters.ModelChoiceFilter(
         queryset=models.SalesOrder.objects.all(),
@@ -1058,7 +1058,7 @@ class SalesOrderAllocationMixin:
             'shipment',
             'shipment__order',
             'shipment__checked_by',
-        )
+        ).select_related('line__part__pricing_data', 'item__part__pricing_data')
 
         return queryset
 
@@ -1069,7 +1069,15 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['quantity', 'part', 'serial', 'batch', 'location', 'order']
+    ordering_fields = [
+        'quantity',
+        'part',
+        'serial',
+        'batch',
+        'location',
+        'order',
+        'shipment_date',
+    ]
 
     ordering_field_aliases = {
         'part': 'item__part__name',
@@ -1077,6 +1085,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
         'batch': 'item__batch',
         'location': 'item__location__name',
         'order': 'line__order__reference',
+        'shipment_date': 'shipment__shipment_date',
     }
 
     search_fields = {'item__part__name', 'item__serial', 'item__batch'}
