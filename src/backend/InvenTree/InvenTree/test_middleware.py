@@ -32,9 +32,6 @@ class MiddlewareTests(InvenTreeTestCase):
         # check that account things go through
         self.check_path(reverse('account_login'))
 
-        # check that account things are rereouted
-        self.check_path(reverse('account_login'), 302)
-
         # check that frontend code is redirected to login
         response = self.check_path(reverse('index'), 302)
         self.assertEqual(response.url, '/accounts/login/?next=/')
