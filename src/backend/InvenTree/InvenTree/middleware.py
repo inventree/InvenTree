@@ -69,11 +69,6 @@ class AuthRequiredMiddleware:
 
         assert hasattr(request, 'user')
 
-        # API requests are handled by the DRF library
-        if request.path_info.startswith('/api/'):
-            response = self.get_response(request)
-            return response
-
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
 
@@ -108,7 +103,7 @@ class AuthRequiredMiddleware:
             if not authorized:
                 path = request.path_info
 
-                # List of URL endpoints we *do not* want to redirect to
+                # List of target URL endpoints where *do not* want to redirect to
                 urls = [
                     reverse_lazy('account_login'),
                     reverse_lazy('account_logout'),
@@ -120,7 +115,7 @@ class AuthRequiredMiddleware:
                 paths_ignore = [
                     '/api/',
                     '/auth/',
-                    '/js/',
+                    '/js/',  # TODO - remove when CUI is removed
                     settings.MEDIA_URL,
                     settings.STATIC_URL,
                 ]
