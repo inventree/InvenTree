@@ -236,6 +236,9 @@ class InfoView(AjaxView):
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'django_admin': settings.INVENTREE_ADMIN_URL
+            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+            else None,
         }
 
         return JsonResponse(data)
