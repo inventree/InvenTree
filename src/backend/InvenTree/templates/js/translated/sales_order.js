@@ -1569,9 +1569,7 @@ function showAllocationSubTable(index, row, element, options) {
                 `/api/order/so-allocation/${pk}/`,
                 {
                     fields: {
-                        item: {
-                            readonly: true,
-                        },
+                        item: {},
                         quantity: {},
                         shipment: {
                             filters: {
