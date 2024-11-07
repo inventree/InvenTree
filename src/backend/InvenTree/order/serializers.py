@@ -990,6 +990,8 @@ class SalesOrderSerializer(
             'shipment_date',
             'total_price',
             'order_currency',
+            'shipments_count',
+            'completed_shipments_count',
         ])
 
         read_only_fields = ['status', 'creation_date', 'shipment_date']
@@ -1035,10 +1037,24 @@ class SalesOrderSerializer(
             )
         )
 
+        # Annotate shipment details
+        queryset = queryset.annotate(
+            shipments_count=SubqueryCount('shipments'),
+            completed_shipments_count=SubqueryCount(
+                'shipments', filter=Q(shipment_date__isnull=False)
+            ),
+        )
+
         return queryset
 
     customer_detail = CompanyBriefSerializer(
         source='customer', many=False, read_only=True
+    )
+
+    shipments_count = serializers.IntegerField(read_only=True, label=_('Shipments'))
+
+    completed_shipments_count = serializers.IntegerField(
+        read_only=True, label=_('Completed Shipments')
     )
 
 
