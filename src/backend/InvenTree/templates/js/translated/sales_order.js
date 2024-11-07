@@ -1614,7 +1614,11 @@ function showAllocationSubTable(index, row, element, options) {
                 field: 'shipment',
                 title: '{% trans "Shipment" %}',
                 formatter: function(value, row) {
-                    return row.shipment_detail.reference;
+                    if (row.shipment_detail) {
+                        return row.shipment_detail.reference;
+                    } else {
+                        return '{% trans "No shipment" %}';
+                    }
                 }
             },
             {
