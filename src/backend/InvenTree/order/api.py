@@ -1034,6 +1034,16 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
             line__order__status__in=SalesOrderStatusGroups.OPEN,
         )
 
+    assigned_to_shipment = rest_filters.BooleanFilter(
+        label=_('Has Shipment'), method='filter_assigned_to_shipment'
+    )
+
+    def filter_assigned_to_shipment(self, queryset, name, value):
+        """Filter by whether or not the allocation has been assigned to a shipment."""
+        if str2bool(value):
+            return queryset.exclude(shipment=None)
+        return queryset.filter(shipment=None)
+
 
 class SalesOrderAllocationMixin:
     """Mixin class for SalesOrderAllocation endpoints."""

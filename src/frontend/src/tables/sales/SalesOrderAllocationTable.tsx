@@ -72,6 +72,11 @@ export default function SalesOrderAllocationTable({
         name: 'outstanding',
         label: t`Outstanding`,
         description: t`Show outstanding allocations`
+      },
+      {
+        name: 'assigned_to_shipment',
+        label: t`Assigned to Shipment`,
+        description: t`Show allocations assigned to a shipment`
       }
     ];
 
