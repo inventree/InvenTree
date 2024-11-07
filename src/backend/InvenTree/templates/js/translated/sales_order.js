@@ -1559,17 +1559,37 @@ function showAllocationSubTable(index, row, element, options) {
         // Add callbacks for 'edit' buttons
         table.find('.button-allocation-edit').click(function() {
 
-            var pk = $(this).attr('pk');
+            let pk = $(this).attr('pk');
+            let allocation = table.bootstrapTable('getRowByUniqueId', pk);
+
+            let disableShipment = allocation && allocation.shipment_detail?.shipment_date;
 
             // Edit the sales order allocation
             constructForm(
                 `/api/order/so-allocation/${pk}/`,
                 {
                     fields: {
+                        item: {
+                            readonly: true,
+                        },
                         quantity: {},
+                        shipment: {
+                            filters: {
+                                order: allocation.order,
+                                shipped: false,
+                            }
+                        }
                     },
                     title: '{% trans "Edit Stock Allocation" %}',
                     refreshTable: options.table,
+                    afterRender: function(fields, opts) {
+                        disableFormInput('item', opts);
+                        if (disableShipment) {
+                            disableFormInput('shipment', opts);
+                        } else {
+                            enableFormInput('shipment', opts);
+                        }
+                    }
                 },
             );
         });
@@ -1593,6 +1613,8 @@ function showAllocationSubTable(index, row, element, options) {
     table.bootstrapTable({
         url: '{% url "api-so-allocation-list" %}',
         onPostBody: setupCallbacks,
+        uniqueId: 'pk',
+        idField: 'pk',
         queryParams: {
             ...options.queryParams,
             part_detail: true,
