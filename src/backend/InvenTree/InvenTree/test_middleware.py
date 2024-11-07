@@ -38,6 +38,8 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def test_token_auth(self):
         """Test auth with token auth."""
+        target = reverse('api-license')
+
         # get token
         response = self.client.get(reverse('api-token'), format='json', data={})
         token = response.data['token']
@@ -45,16 +47,17 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
         # this should raise a 401
-        self.check_path(reverse('api-license'), 401)
+
+        self.check_path(target, 401)
 
         # Request with broken token
-        self.check_path(reverse('api-license'), 401, HTTP_Authorization='Token abcd123')
+        self.check_path(target, 401, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
-        self.check_path(reverse('api-license'), 401)
+        self.check_path(target, 401)
 
         # request with token
-        self.check_path(reverse('api-license'), HTTP_Authorization=f'Token {token}')
+        self.check_path(target, HTTP_Authorization=f'Token {token}')
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
