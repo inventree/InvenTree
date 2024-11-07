@@ -354,6 +354,7 @@ export default function SalesOrderDetail() {
         name: 'build-orders',
         label: t`Build Orders`,
         icon: <IconTools />,
+        hidden: !user.hasViewRole(UserRoles.build),
         content: order?.pk ? (
           <BuildOrderTable salesOrderId={order.pk} />
         ) : (
@@ -369,7 +370,7 @@ export default function SalesOrderDetail() {
         model_id: order.pk
       })
     ];
-  }, [order, id, user, soStatus]);
+  }, [order, id, user, soStatus, user]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
