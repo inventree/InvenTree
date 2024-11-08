@@ -1,4 +1,4 @@
-import { Accordion, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 
 import * as classes from '../../main.css';
 
