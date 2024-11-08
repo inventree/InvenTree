@@ -477,7 +477,9 @@ if settings.ENABLE_PLATFORM_FRONTEND:
         frontendpatterns += [
             path(
                 'accounts/login/',
-                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                RedirectView.as_view(
+                    url=f'/{settings.FRONTEND_URL_BASE}', permanent=False
+                ),
                 name='account_login',
             )
         ]
