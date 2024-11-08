@@ -17,7 +17,6 @@ test('Parts - Tabs', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('tab', { name: 'Scheduling' }).click();
@@ -48,9 +47,9 @@ test('Parts - Tabs', async ({ page }) => {
 test('Parts - Manufacturer Parts', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/84/manufacturers`);
+  await page.goto(`${baseUrl}/part/84/suppliers`);
 
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByText('Hammond Manufacturing').click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
