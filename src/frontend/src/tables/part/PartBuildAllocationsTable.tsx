@@ -12,7 +12,11 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { StatusColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  ProjectCodeColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
@@ -46,6 +50,12 @@ export default function PartBuildAllocationsTable({
           </Group>
         )
       },
+      DescriptionColumn({
+        accessor: 'build_detail.title'
+      }),
+      ProjectCodeColumn({
+        accessor: 'build_detail.project_code_detail'
+      }),
       StatusColumn({
         accessor: 'build_detail.status',
         model: ModelType.build,

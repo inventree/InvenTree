@@ -12,7 +12,11 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { StatusColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  ProjectCodeColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
@@ -42,6 +46,12 @@ export default function PartSalesAllocationsTable({
           </Group>
         )
       },
+      DescriptionColumn({
+        accessor: 'order_detail.description'
+      }),
+      ProjectCodeColumn({
+        accessor: 'order_detail.project_code_detail'
+      }),
       StatusColumn({
         accessor: 'order_detail.status',
         model: ModelType.salesorder,
