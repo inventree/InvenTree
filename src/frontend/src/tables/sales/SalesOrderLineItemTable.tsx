@@ -187,15 +187,13 @@ export default function SalesOrderLineItemTable({
       {
         accessor: 'allocated',
         sortable: true,
-        render: (record: any) => {
-          return (
-            <ProgressBar
-              progressLabel={true}
-              value={record.allocated}
-              maximum={record.quantity}
-            />
-          );
-        }
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel={true}
+            value={record.allocated}
+            maximum={record.quantity}
+          />
+        )
       },
       {
         accessor: 'shipped',
