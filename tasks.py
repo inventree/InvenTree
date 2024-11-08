@@ -12,6 +12,7 @@ from platform import python_version
 from typing import Optional
 
 from invoke import Collection, task
+from invoke.exceptions import UnexpectedExit
 
 
 def checkPythonVersion():
@@ -147,7 +148,13 @@ def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
     """
     env = env or {}
     path = path or localDir()
-    c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+
+    try:
+        c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+    except UnexpectedExit as e:
+        print(f"ERROR: InvenTree command failed: '{cmd}'")
+        print('- Refer to the error messages in the log above for more information')
+        raise e
 
 
 def manage(c, cmd, pty: bool = False, env=None):
