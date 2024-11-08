@@ -546,8 +546,6 @@ def update(
     - clean_settings
     - translate_stats
     """
-    run(c, 'abcde')
-
     # Ensure required components are installed
     install(c, uv=uv)
 
