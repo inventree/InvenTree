@@ -1209,10 +1209,10 @@ def frontend_compile(c):
         c: Context variable
     """
     info('Compiling frontend code...')
-
     frontend_install(c)
     frontend_trans(c)
     frontend_build(c)
+    success('Frontend compilation complete')
 
 
 @task
@@ -1501,6 +1501,7 @@ def clear_generated(c):
     # pyc/pyo files
     run(c, 'find src -name "*.pyc" -exec rm -f {} +')
     run(c, 'find src -name "*.pyo" -exec rm -f {} +')
+
     # cache folders
     run(c, 'find src -name "__pycache__" -exec rm -rf {} +')
 
