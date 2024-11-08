@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-04 03:11+0000\n"
-"PO-Revision-Date: 2024-11-04 03:14\n"
+"POT-Creation-Date: 2024-11-05 22:28+0000\n"
+"PO-Revision-Date: 2024-11-07 00:24\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:270
+#: InvenTree/api.py:273
 msgid "API endpoint not found"
 msgstr "API-slutpunkt hittades inte"
 
-#: InvenTree/api.py:387
+#: InvenTree/api.py:390
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:396
+#: InvenTree/api.py:399
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:401
+#: InvenTree/api.py:404
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:515
+#: InvenTree/api.py:518
 msgid "User does not have permission to view this model"
 msgstr "Användaren har inte behörighet att se denna modell"
 
@@ -373,7 +373,7 @@ msgstr "Kinesiska (Traditionell)"
 
 #: InvenTree/magic_login.py:28
 msgid "Log in to the app"
-msgstr ""
+msgstr "Logga in på appen"
 
 #: InvenTree/magic_login.py:38 InvenTree/serializers.py:416
 #: company/models.py:133 company/templates/company/company_base.html:138
