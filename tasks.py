@@ -1122,6 +1122,10 @@ def version(c):
 InvenTree - inventree.org
 The Open-Source Inventory Management System\n
 
+Python paths:
+Executable  {sys.executable}
+Environment {sys.prefix}
+
 Installation paths:
 Base        {localDir()}
 Config      {get_config_file()}
