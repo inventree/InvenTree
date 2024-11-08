@@ -152,8 +152,10 @@ def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
     try:
         c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
     except UnexpectedExit as e:
-        print(f"ERROR: InvenTree command failed: '{cmd}'")
-        print('- Refer to the error messages in the log above for more information')
+        print(f"\033[91mERROR: InvenTree command failed: '{cmd}'")
+        print(
+            '\033[93mRefer to the error messages in the log above for more information'
+        )
         raise e
 
 
@@ -544,6 +546,8 @@ def update(
     - clean_settings
     - translate_stats
     """
+    run(c, 'abcde')
+
     # Ensure required components are installed
     install(c, uv=uv)
 
