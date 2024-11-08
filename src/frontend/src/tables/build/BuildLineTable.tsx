@@ -58,8 +58,8 @@ export function BuildLineSubTable({
   onDeleteAllocation
 }: {
   lineItem: any;
-  onEditAllocation: (pk: number) => void;
-  onDeleteAllocation: (pk: number) => void;
+  onEditAllocation?: (pk: number) => void;
+  onDeleteAllocation?: (pk: number) => void;
 }) {
   const user = useUserState();
   const navigate = useNavigate();
@@ -107,15 +107,17 @@ export function BuildLineSubTable({
                   navigate: navigate
                 }),
                 RowEditAction({
-                  hidden: !user.hasChangeRole(UserRoles.build),
+                  hidden:
+                    !onEditAllocation || !user.hasChangeRole(UserRoles.build),
                   onClick: () => {
-                    onEditAllocation(record.pk);
+                    onEditAllocation?.(record.pk);
                   }
                 }),
                 RowDeleteAction({
-                  hidden: !user.hasDeleteRole(UserRoles.build),
+                  hidden:
+                    !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
                   onClick: () => {
-                    onDeleteAllocation(record.pk);
+                    onDeleteAllocation?.(record.pk);
                   }
                 })
               ]}

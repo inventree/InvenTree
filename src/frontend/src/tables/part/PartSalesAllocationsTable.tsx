@@ -16,44 +16,39 @@ import { StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowViewAction } from '../RowActions';
 import RowExpansionIcon from '../RowExpansionIcon';
-import { BuildLineSubTable } from '../build/BuildLineTable';
+import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 
-/**
- * A "simplified" BuildOrderLineItem table showing all outstanding build order allocations for a given part.
- */
-export default function PartBuildAllocationsTable({
+export default function PartSalesAllocationsTable({
   partId
 }: {
   partId: number;
 }) {
   const user = useUserState();
   const navigate = useNavigate();
-  const table = useTable('part-build-allocations');
+  const table = useTable('part-sales-allocations');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'build',
-        title: t`Build Order`,
-        sortable: true,
+        accessor: 'order',
+        title: t`Sales Order`,
         render: (record: any) => (
           <Group wrap="nowrap" gap="xs">
             <RowExpansionIcon
               enabled={record.allocated > 0}
               expanded={table.isRowExpanded(record.pk)}
             />
-            <Text>{record.build_detail?.reference}</Text>
+            <Text>{record.order_detail?.reference}</Text>
           </Group>
         )
       },
       StatusColumn({
-        accessor: 'build_detail.status',
-        model: ModelType.build,
+        accessor: 'order_detail.status',
+        model: ModelType.salesorder,
         title: t`Order Status`
       }),
       {
         accessor: 'allocated',
-        sortable: true,
         title: t`Required Stock`,
         render: (record: any) => (
           <ProgressBar
@@ -70,10 +65,10 @@ export default function PartBuildAllocationsTable({
     (record: any) => {
       return [
         RowViewAction({
-          title: t`View Build Order`,
-          modelType: ModelType.build,
-          modelId: record.build,
-          hidden: !user.hasViewRole(UserRoles.build),
+          title: t`View Sales Order`,
+          modelType: ModelType.salesorder,
+          modelId: record.order,
+          hidden: !user.hasViewRole(UserRoles.sales_order),
           navigate: navigate
         })
       ];
@@ -86,11 +81,19 @@ export default function PartBuildAllocationsTable({
     return {
       allowMultiple: true,
       expandable: ({ record }: { record: any }) => {
-        // Only items with allocated stock can be expanded
         return table.isRowExpanded(record.pk) || record.allocated > 0;
       },
       content: ({ record }: { record: any }) => {
-        return <BuildLineSubTable lineItem={record} />;
+        return (
+          <SalesOrderAllocationTable
+            showOrderInfo={false}
+            showPartInfo={false}
+            lineItemId={record.pk}
+            partId={record.part}
+            allowEdit
+            isSubTable
+          />
+        );
       }
     };
   }, [table.isRowExpanded]);
@@ -98,20 +101,19 @@ export default function PartBuildAllocationsTable({
   return (
     <>
       <InvenTreeTable
-        url={apiUrl(ApiEndpoints.build_line_list)}
+        url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           minHeight: 200,
           params: {
             part: partId,
-            consumable: false,
-            build_detail: true,
+            order_detail: true,
             order_outstanding: true
           },
-          enableSearch: false,
+          rowExpansion: rowExpansion,
           rowActions: rowActions,
-          rowExpansion: rowExpansion
+          enableSearch: false
         }}
       />
     </>
