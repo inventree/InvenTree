@@ -111,9 +111,10 @@ export default function PartSalesAllocationsTable({
             order_detail: true,
             order_outstanding: true
           },
+          enableSearch: false,
+          enableColumnSwitching: false,
           rowExpansion: rowExpansion,
-          rowActions: rowActions,
-          enableSearch: false
+          rowActions: rowActions
         }}
       />
     </>

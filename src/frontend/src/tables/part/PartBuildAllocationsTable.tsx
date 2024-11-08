@@ -109,6 +109,7 @@ export default function PartBuildAllocationsTable({
             build_detail: true,
             order_outstanding: true
           },
+          enableColumnSwitching: false,
           enableSearch: false,
           rowActions: rowActions,
           rowExpansion: rowExpansion
