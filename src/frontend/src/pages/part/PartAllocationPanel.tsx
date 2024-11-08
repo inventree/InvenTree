@@ -6,6 +6,8 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
+import BuildLineTable from '../../tables/build/BuildLineTable';
+import PartBuildAllocationsTable from '../../tables/part/PartBuildAllocationsTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 
 export default function PartAllocationPanel({ part }: { part: any }) {
@@ -23,14 +25,7 @@ export default function PartAllocationPanel({ part }: { part: any }) {
               <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <BuildAllocatedStockTable
-                partId={part.pk}
-                modelField="build"
-                modelTarget={ModelType.build}
-                showBuildInfo
-                showPartInfo
-                allowEdit
-              />
+              <PartBuildAllocationsTable partId={part.pk} />
             </Accordion.Panel>
           </Accordion.Item>
         )}

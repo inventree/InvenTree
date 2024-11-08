@@ -1,9 +1,7 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
-  IconChevronDown,
-  IconChevronRight,
   IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
@@ -46,6 +44,7 @@ import {
   RowEditAction,
   RowViewAction
 } from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
@@ -73,17 +72,10 @@ export default function SalesOrderLineItemTable({
         render: (record: any) => {
           return (
             <Group wrap="nowrap">
-              <ActionIcon
-                size="sm"
-                variant="transparent"
-                disabled={!record.allocated}
-              >
-                {table.isRowExpanded(record.pk) ? (
-                  <IconChevronDown />
-                ) : (
-                  <IconChevronRight />
-                )}
-              </ActionIcon>
+              <RowExpansionIcon
+                enabled={record.allocated}
+                expanded={table.isRowExpanded(record.pk)}
+              />
               <PartColumn part={record.part_detail} />
             </Group>
           );
