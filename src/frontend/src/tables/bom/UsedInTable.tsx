@@ -51,6 +51,7 @@ export function UsedInTable({
       },
       {
         accessor: 'quantity',
+        switchable: false,
         render: (record: any) => {
           let quantity = formatDecimal(record.quantity);
           let units = record.sub_part_detail?.units;
