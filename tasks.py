@@ -247,7 +247,7 @@ def plugins(c, uv=False):
     if not uv:
         run(c, f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
     else:
-        c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
+        run(c, 'pip3 install --no-cache-dir --disable-pip-version-check uv')
         run(c, f"uv pip install -r '{plugin_file}'")
 
     # Collect plugin static files
@@ -266,16 +266,18 @@ def install(c, uv=False):
 
     # Install required Python packages with PIP
     if not uv:
-        c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
+        run(
+            c,
+            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
         )
         run(
             c,
             f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
         )
     else:
-        c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
+        run(
+            c,
+            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
         )
         run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
@@ -381,7 +383,7 @@ def translate_stats(c):
         print('WARNING: Translation files could not be compiled:')
 
     path = managePyDir().joinpath('script', 'translation_stats.py')
-    c.run(f'python3 {path}')
+    run(c, f'python3 {path}')
 
 
 @task(post=[translate_stats])
@@ -844,7 +846,7 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
     print('Starting Gunicorn Server:')
     print(cmd)
 
-    c.run(cmd, pty=True)
+    run(c, cmd, pty=True)
 
 
 @task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
@@ -998,8 +1000,8 @@ def test(
 
     if coverage:
         # Run tests within coverage environment, and generate report
-        c.run(f'coverage run {managePyPath()} {cmd}')
-        c.run('coverage xml -i')
+        run(c, f'coverage run {managePyPath()} {cmd}')
+        run(c, 'coverage xml -i')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
@@ -1018,12 +1020,13 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     # Remove old data directory
     if template_dir.exists():
         print('Removing old data ...')
-        c.run(f'rm {template_dir} -r')
+        run(c, f'rm {template_dir} -r')
 
     # Get test data
     print('Cloning demo dataset ...')
-    c.run(
-        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1'
+    run(
+        c,
+        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1',
     )
     print('========================================')
 
