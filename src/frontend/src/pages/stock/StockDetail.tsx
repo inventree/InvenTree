@@ -536,6 +536,7 @@ export default function StockDetail() {
 
   const editStockItemFields = useStockFields({
     create: false,
+    stockItem: stockitem,
     partId: stockitem.part
   });
 
