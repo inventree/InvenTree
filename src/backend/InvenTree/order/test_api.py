@@ -1877,7 +1877,6 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.post(self.url, {}, expected_code=400)
 
         self.assertIn('This field is required', str(response.data['items']))
-        self.assertIn('This field is required', str(response.data['shipment']))
 
         # Test with a single line items
         line = self.order.lines.first()

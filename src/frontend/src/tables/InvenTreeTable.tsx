@@ -55,6 +55,7 @@ const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
+ * @param minHeight: number - Minimum height of the table (default 300px)
  * @param noHeader: boolean - Hide the table header
  */
 export type InvenTreeTableProps<T = any> = {
@@ -85,6 +86,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
+  minHeight?: number;
   noHeader?: boolean;
 };
 
@@ -631,7 +633,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
-              minHeight={300}
+              minHeight={tableProps.minHeight ?? 300}
               totalRecords={tableState.recordCount}
               recordsPerPage={tableState.pageSize}
               page={tableState.page}

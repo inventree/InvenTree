@@ -978,7 +978,7 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = models.SalesOrderAllocation
-        fields = ['shipment', 'item']
+        fields = ['shipment', 'line', 'item']
 
     order = rest_filters.ModelChoiceFilter(
         queryset=models.SalesOrder.objects.all(),
@@ -1034,6 +1034,16 @@ class SalesOrderAllocationFilter(rest_filters.FilterSet):
             line__order__status__in=SalesOrderStatusGroups.OPEN,
         )
 
+    assigned_to_shipment = rest_filters.BooleanFilter(
+        label=_('Has Shipment'), method='filter_assigned_to_shipment'
+    )
+
+    def filter_assigned_to_shipment(self, queryset, name, value):
+        """Filter by whether or not the allocation has been assigned to a shipment."""
+        if str2bool(value):
+            return queryset.exclude(shipment=None)
+        return queryset.filter(shipment=None)
+
 
 class SalesOrderAllocationMixin:
     """Mixin class for SalesOrderAllocation endpoints."""
@@ -1049,12 +1059,16 @@ class SalesOrderAllocationMixin:
             'item',
             'item__sales_order',
             'item__part',
+            'line__part',
             'item__location',
             'line__order',
-            'line__part',
+            'line__order__responsible',
+            'line__order__project_code',
+            'line__order__project_code__responsible',
             'shipment',
             'shipment__order',
-        )
+            'shipment__checked_by',
+        ).select_related('line__part__pricing_data', 'item__part__pricing_data')
 
         return queryset
 
@@ -1065,7 +1079,15 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['quantity', 'part', 'serial', 'batch', 'location', 'order']
+    ordering_fields = [
+        'quantity',
+        'part',
+        'serial',
+        'batch',
+        'location',
+        'order',
+        'shipment_date',
+    ]
 
     ordering_field_aliases = {
         'part': 'item__part__name',
@@ -1073,6 +1095,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
         'batch': 'item__batch',
         'location': 'item__location__name',
         'order': 'line__order__reference',
+        'shipment_date': 'shipment__shipment_date',
     }
 
     search_fields = {'item__part__name', 'item__serial', 'item__batch'}
