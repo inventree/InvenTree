@@ -9,6 +9,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
+import { navigateToLink } from '../../functions/navigation';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -157,16 +158,17 @@ export function CompanyTable({
           params: {
             ...params
           },
+          onRowClick: (record: any, index: number, event: any) => {
+            if (record.pk) {
+              let base = path ?? 'company';
+              navigateToLink(`/${base}/${record.pk}`, navigate, event);
+            }
+          },
+          modelType: ModelType.company,
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
-          rowActions: rowActions,
-          onRowClick: (row: any) => {
-            if (row.pk) {
-              let base = path ?? 'company';
-              navigate(`/${base}/${row.pk}`);
-            }
-          }
+          rowActions: rowActions
         }}
       />
     </>

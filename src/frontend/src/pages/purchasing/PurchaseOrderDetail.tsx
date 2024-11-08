@@ -154,11 +154,18 @@ export default function PurchaseOrderDetail() {
         progress: order.completed_lines
       },
       {
+        type: 'link',
+        model: ModelType.stocklocation,
+        link: true,
+        name: 'destination',
+        label: t`Destination`,
+        hidden: !order.destination
+      },
+      {
         type: 'text',
         name: 'currency',
         label: t`Order Currency`,
-        value_formatter: () =>
-          order?.order_currency ?? order?.supplier_detail?.currency
+        value_formatter: () => orderCurrency
       },
       {
         type: 'text',
@@ -190,23 +197,46 @@ export default function PurchaseOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
       }
-      // TODO: Project code
     ];
 
     let br: DetailsField[] = [
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
-        label: t`Created On`,
+        label: t`Creation Date`,
         icon: 'calendar'
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
         hidden: !order.target_date
+      },
+      {
+        type: 'date',
+        name: 'complete_date',
+        icon: 'calendar_check',
+        label: t`Completion Date`,
+        copy: true,
+        hidden: !order.complete_date
       },
       {
         type: 'text',
@@ -237,7 +267,7 @@ export default function PurchaseOrderDetail() {
         <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
-  }, [order, instanceQuery]);
+  }, [order, orderCurrency, instanceQuery]);
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [

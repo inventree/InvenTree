@@ -165,10 +165,7 @@ export default function PluginListTable() {
 
       return [
         {
-          hidden:
-            record.is_builtin != false ||
-            record.is_installed != true ||
-            record.active != true,
+          hidden: record.is_builtin != false || record.active != true,
           title: t`Deactivate`,
           color: 'red',
           icon: <IconCircleX />,
@@ -374,7 +371,7 @@ export default function PluginListTable() {
       {deletePluginModal.modal}
       {activatePluginModal.modal}
       <DetailDrawer
-        title={t`Plugin Detail`}
+        title={t`Plugin Detail` + ' - ' + selectedPlugin?.name}
         size={'65%'}
         renderContent={(pluginKey) => {
           if (!pluginKey) return;

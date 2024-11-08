@@ -86,4 +86,5 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         recipients,
         fail_silently=False,
         html_message=html_message,
+        group='notification',
     )

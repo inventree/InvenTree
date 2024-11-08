@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Text } from '@mantine/core';
+import { ActionIcon, Alert, Group, Paper, Stack, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconChevronDown,
+  IconChevronRight,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
   IconWand
 } from '@tabler/icons-react';
+import { DataTable, DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
@@ -19,32 +23,140 @@ import {
   useBuildOrderFields
 } from '../../forms/BuildForms';
 import { notYetImplemented } from '../../functions/notifications';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn, PartColumn } from '../ColumnRenderers';
+import { BooleanColumn, LocationColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import {
+  RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
+/**
+ * Render a sub-table of allocated stock against a particular build line.
+ *
+ * - Renders a simplified table of stock allocated against the build line
+ * - Provides "edit" and "delete" actions for each allocation
+ *
+ * Note: We expect that the "lineItem" object contains an allocations[] list
+ */
+function BuildLineSubTable({
+  lineItem,
+  onEditAllocation,
+  onDeleteAllocation
+}: {
+  lineItem: any;
+  onEditAllocation: (pk: number) => void;
+  onDeleteAllocation: (pk: number) => void;
+}) {
+  const user = useUserState();
+
+  const tableColumns: any[] = useMemo(() => {
+    return [
+      {
+        accessor: 'part',
+        title: t`Part`,
+        render: (record: any) => {
+          return <PartColumn part={record.part_detail} />;
+        }
+      },
+      {
+        accessor: 'quantity',
+        title: t`Quantity`,
+        render: (record: any) => {
+          if (!!record.stock_item_detail?.serial) {
+            return `# ${record.stock_item_detail.serial}`;
+          }
+          return record.quantity;
+        }
+      },
+      {
+        accessor: 'stock_item_detail.batch',
+        title: t`Batch`
+      },
+      LocationColumn({
+        accessor: 'location_detail'
+      }),
+      {
+        accessor: '---actions---',
+        title: ' ',
+        width: 50,
+        render: (record: any) => {
+          return (
+            <RowActions
+              title={t`Actions`}
+              index={record.pk}
+              actions={[
+                RowEditAction({
+                  hidden: !user.hasChangeRole(UserRoles.build),
+                  onClick: () => {
+                    onEditAllocation(record.pk);
+                  }
+                }),
+                RowDeleteAction({
+                  hidden: !user.hasDeleteRole(UserRoles.build),
+                  onClick: () => {
+                    onDeleteAllocation(record.pk);
+                  }
+                })
+              ]}
+            />
+          );
+        }
+      }
+    ];
+  }, [user, onEditAllocation, onDeleteAllocation]);
+
+  return (
+    <Paper p="md">
+      <Stack gap="xs">
+        <DataTable
+          minHeight={50}
+          withTableBorder
+          withColumnBorders
+          striped
+          pinLastColumn
+          idAccessor="pk"
+          columns={tableColumns}
+          records={lineItem.filteredAllocations}
+        />
+      </Stack>
+    </Paper>
+  );
+}
+
+/**
+ * Render a table of build lines for a particular build.
+ */
 export default function BuildLineTable({
-  buildId,
   build,
-  outputId,
+  output,
   params = {}
 }: Readonly<{
-  buildId: number;
   build: any;
-  outputId?: number;
+  output?: any;
   params?: any;
 }>) {
-  const table = useTable('buildline');
   const user = useUserState();
+  const navigate = useNavigate();
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
+  const hasOutput: boolean = useMemo(() => !!output?.pk, [output]);
+
+  const table = useTable(hasOutput ? 'buildline-output' : 'buildline');
 
   const isActive: boolean = useMemo(() => {
     return (
@@ -180,10 +292,30 @@ export default function BuildLineTable({
     return [
       {
         accessor: 'bom_item',
+        title: t`Component`,
         ordering: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn({ part: record.part_detail })
+        render: (record: any) => {
+          const hasAllocatedItems = record.allocatedQuantity > 0;
+
+          return (
+            <Group wrap="nowrap">
+              <ActionIcon
+                size="sm"
+                variant="transparent"
+                disabled={!hasAllocatedItems}
+              >
+                {table.isRowExpanded(record.pk) ? (
+                  <IconChevronDown />
+                ) : (
+                  <IconChevronRight />
+                )}
+              </ActionIcon>
+              <PartColumn part={record.part_detail} />
+            </Group>
+          );
+        }
       },
       {
         accessor: 'part_detail.IPN',
@@ -203,24 +335,29 @@ export default function BuildLineTable({
       },
       BooleanColumn({
         accessor: 'bom_item_detail.optional',
-        ordering: 'optional'
+        ordering: 'optional',
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.consumable',
-        ordering: 'consumable'
+        ordering: 'consumable',
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.allow_variants',
-        ordering: 'allow_variants'
+        ordering: 'allow_variants',
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'bom_item_detail.inherited',
         ordering: 'inherited',
-        title: t`Gets Inherited`
+        title: t`Gets Inherited`,
+        hidden: hasOutput
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
-        ordering: 'trackable'
+        ordering: 'trackable',
+        hidden: hasOutput
       }),
       {
         accessor: 'bom_item_detail.quantity',
@@ -240,12 +377,14 @@ export default function BuildLineTable({
       },
       {
         accessor: 'quantity',
+        title: t`Required Quantity`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
+          // If a build output is specified, use the provided quantity
           return (
             <Group justify="space-between" wrap="nowrap">
-              <Text>{record.quantity}</Text>
+              <Text>{record.requiredQuantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
               )}
@@ -262,6 +401,7 @@ export default function BuildLineTable({
       {
         accessor: 'allocated',
         switchable: false,
+        sortable: true,
         hidden: !isActive,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
@@ -269,14 +409,14 @@ export default function BuildLineTable({
           ) : (
             <ProgressBar
               progressLabel={true}
-              value={record.allocated}
-              maximum={record.quantity}
+              value={record.allocatedQuantity}
+              maximum={record.requiredQuantity}
             />
           );
         }
       }
     ];
-  }, [isActive]);
+  }, [hasOutput, isActive, table, output]);
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
@@ -327,7 +467,7 @@ export default function BuildLineTable({
 
   const allocateStock = useAllocateStockToBuildForm({
     build: build,
-    outputId: null,
+    outputId: output?.pk ?? null,
     buildId: build.pk,
     lineItems: selectedRows,
     onFormSuccess: () => {
@@ -344,12 +484,12 @@ export default function BuildLineTable({
         hidden: true
       },
       output: {
-        hidden: true,
-        value: null
+        hidden: true
       }
     },
     initialData: {
-      build_line: selectedLine
+      build_line: selectedLine,
+      output: output?.pk ?? null
     },
     preFormContent: (
       <Alert color="red" title={t`Deallocate Stock`}>
@@ -364,37 +504,63 @@ export default function BuildLineTable({
     table: table
   });
 
+  const [selectedAllocation, setSelectedAllocation] = useState<number>(0);
+
+  const editAllocation = useEditApiFormModal({
+    url: ApiEndpoints.build_item_list,
+    pk: selectedAllocation,
+    title: t`Edit Stock Allocation`,
+    fields: {
+      stock_item: {
+        disabled: true
+      },
+      quantity: {}
+    },
+    table: table
+  });
+
+  const deleteAllocation = useDeleteApiFormModal({
+    url: ApiEndpoints.build_item_list,
+    pk: selectedAllocation,
+    title: t`Delete Stock Allocation`,
+    table: table
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       let part = record.part_detail ?? {};
+      const in_production = build.status == buildStatus.PRODUCTION;
+      const consumable = record.bom_item_detail?.consumable ?? false;
 
-      // Consumable items have no appropriate actions
-      if (record?.bom_item_detail?.consumable) {
-        return [];
-      }
-
-      // Only allow actions when build is in production
-      if (!build?.status || build.status != buildStatus.PRODUCTION) {
-        return [];
-      }
-
-      const hasOutput = !!outputId;
+      const hasOutput = !!output?.pk;
 
       // Can allocate
       let canAllocate =
+        in_production &&
+        !consumable &&
         user.hasChangeRole(UserRoles.build) &&
         record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
       // Can de-allocate
       let canDeallocate =
+        in_production &&
+        !consumable &&
         user.hasChangeRole(UserRoles.build) &&
         record.allocated > 0 &&
         record.trackable == hasOutput;
 
       let canOrder =
-        user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
-      let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
+        in_production &&
+        !consumable &&
+        user.hasAddRole(UserRoles.purchase_order) &&
+        part.purchaseable;
+
+      let canBuild =
+        in_production &&
+        !consumable &&
+        user.hasAddRole(UserRoles.build) &&
+        part.assembly;
 
       return [
         {
@@ -432,15 +598,21 @@ export default function BuildLineTable({
           onClick: () => {
             setInitialData({
               part: record.part,
-              parent: buildId,
+              parent: build.pk,
               quantity: record.quantity - record.allocated
             });
             newBuildOrder.open();
           }
-        }
+        },
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate
+        })
       ];
     },
-    [user, outputId, build, buildStatus]
+    [user, navigate, output, build, buildStatus]
   );
 
   const tableActions = useMemo(() => {
@@ -452,7 +624,7 @@ export default function BuildLineTable({
         key="auto-allocate"
         icon={<IconWand />}
         tooltip={t`Auto Allocate Stock`}
-        hidden={!visible}
+        hidden={!visible || hasOutput}
         color="blue"
         onClick={() => {
           autoAllocateStock.open();
@@ -466,14 +638,17 @@ export default function BuildLineTable({
         disabled={!table.hasSelectedRecords}
         color="green"
         onClick={() => {
-          setSelectedRows(
-            table.selectedRecords.filter(
-              (r) =>
-                r.allocated < r.quantity &&
-                !r.trackable &&
-                !r.bom_item_detail.consumable
-            )
-          );
+          let rows = table.selectedRecords
+            .filter((r) => r.allocatedQuantity < r.requiredQuantity)
+            .filter((r) => !r.bom_item_detail?.consumable);
+
+          if (hasOutput) {
+            rows = rows.filter((r) => r.trackable);
+          } else {
+            rows = rows.filter((r) => !r.trackable);
+          }
+
+          setSelectedRows(rows);
           allocateStock.open();
         }}
       />,
@@ -481,7 +656,7 @@ export default function BuildLineTable({
         key="deallocate-stock"
         icon={<IconCircleMinus />}
         tooltip={t`Deallocate Stock`}
-        hidden={!visible}
+        hidden={!visible || hasOutput}
         disabled={table.hasSelectedRecords}
         color="red"
         onClick={() => {
@@ -494,9 +669,76 @@ export default function BuildLineTable({
     user,
     build,
     buildStatus,
+    hasOutput,
     table.hasSelectedRecords,
     table.selectedRecords
   ]);
+
+  /**
+   * Format the records for the table, before rendering
+   *
+   * - Filter the "allocations" field to only show allocations for the selected output
+   * - Pre-calculate the "requiredQuantity" and "allocatedQuantity" fields
+   */
+  const formatRecords = useCallback(
+    (records: any[]): any[] => {
+      return records.map((record) => {
+        let allocations = [...record.allocations];
+
+        // If an output is specified, filter the allocations to only show those for the selected output
+        if (output?.pk) {
+          allocations = allocations.filter((a) => a.install_into == output.pk);
+        }
+
+        let allocatedQuantity = 0;
+        let requiredQuantity = record.quantity;
+
+        // Calculate the total allocated quantity
+        allocations.forEach((a) => {
+          allocatedQuantity += a.quantity;
+        });
+
+        // Calculate the required quantity (based on the build output)
+        if (output?.quantity && record.bom_item_detail) {
+          requiredQuantity = output.quantity * record.bom_item_detail.quantity;
+        }
+
+        return {
+          ...record,
+          filteredAllocations: allocations,
+          requiredQuantity: requiredQuantity,
+          allocatedQuantity: allocatedQuantity
+        };
+      });
+    },
+    [output]
+  );
+
+  // Control row expansion
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        // Only items with allocated stock can be expanded
+        return table.isRowExpanded(record.pk) || record.allocatedQuantity > 0;
+      },
+      content: ({ record }: { record: any }) => {
+        return (
+          <BuildLineSubTable
+            lineItem={record}
+            onEditAllocation={(pk: number) => {
+              setSelectedAllocation(pk);
+              editAllocation.open();
+            }}
+            onDeleteAllocation={(pk: number) => {
+              setSelectedAllocation(pk);
+              deleteAllocation.open();
+            }}
+          />
+        );
+      }
+    };
+  }, [table.isRowExpanded, output]);
 
   return (
     <>
@@ -504,6 +746,8 @@ export default function BuildLineTable({
       {newBuildOrder.modal}
       {allocateStock.modal}
       {deallocateStock.modal}
+      {editAllocation.modal}
+      {deleteAllocation.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}
         tableState={table}
@@ -511,14 +755,16 @@ export default function BuildLineTable({
         props={{
           params: {
             ...params,
-            build: buildId,
+            build: build.pk,
             part_detail: true
           },
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,
+          dataFormatter: formatRecords,
           enableDownload: true,
-          enableSelection: true
+          enableSelection: true,
+          rowExpansion: rowExpansion
         }}
       />
     </>

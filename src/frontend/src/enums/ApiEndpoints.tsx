@@ -81,6 +81,7 @@ export enum ApiEndpoints {
   build_order_auto_allocate = 'build/:id/auto-allocate/',
   build_order_allocate = 'build/:id/allocate/',
   build_order_deallocate = 'build/:id/unallocate/',
+
   build_line_list = 'build/line/',
   build_item_list = 'build/item/',
 
@@ -160,11 +161,12 @@ export enum ApiEndpoints {
   sales_order_cancel = 'order/so/:id/cancel/',
   sales_order_ship = 'order/so/:id/ship/',
   sales_order_complete = 'order/so/:id/complete/',
+  sales_order_allocate = 'order/so/:id/allocate/',
+  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
-  sales_order_allocate = 'order/so/:id/allocate/',
-  sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
 
   sales_order_shipment_list = 'order/so/shipment/',
   sales_order_shipment_complete = 'order/so/shipment/:id/ship/',
@@ -199,7 +201,6 @@ export enum ApiEndpoints {
   plugin_admin = 'plugins/:key/admin/',
 
   // User interface plugin endpoints
-  plugin_panel_list = 'plugins/ui/panels/',
   plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
   // Machine API endpoints

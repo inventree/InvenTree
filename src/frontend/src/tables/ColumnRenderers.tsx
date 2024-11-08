@@ -174,6 +174,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
+  ordering,
   accessor,
   title,
   hidden
@@ -181,12 +182,14 @@ export function StatusColumn({
   model: ModelType;
   sortable?: boolean;
   accessor?: string;
+  ordering?: string;
   hidden?: boolean;
   title?: string;
 }) {
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
+    ordering: ordering,
     title: title,
     hidden: hidden,
     render: TableStatusRenderer(model, accessor ?? 'status_custom_key')

@@ -166,6 +166,11 @@ export function usePurchaseOrderFields({
       target_date: {
         icon: <IconCalendar />
       },
+      destination: {
+        filters: {
+          structural: false
+        }
+      },
       link: {},
       contact: {
         icon: <IconUser />,
@@ -232,6 +237,19 @@ function LineItemFormRow({
     onClose: () => props.changeFn(props.idx, 'location', undefined)
   });
 
+  // Is this a trackable part?
+  const trackable: boolean = useMemo(
+    () => record.part_detail?.trackable ?? false,
+    [record]
+  );
+
+  useEffect(() => {
+    if (!!record.destination) {
+      props.changeFn(props.idx, 'location', record.destination);
+      locationHandlers.open();
+    }
+  }, [record.destination]);
+
   // Batch code generator
   const batchCodeGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
@@ -239,7 +257,7 @@ function LineItemFormRow({
     }
   });
 
-  // Serial numbebr generator
+  // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator((value: any) => {
     if (value) {
       props.changeFn(props.idx, 'serial_numbers', value);
@@ -291,6 +309,14 @@ function LineItemFormRow({
     props.changeFn(props.idx, 'barcode', barcode);
   }, [barcode]);
 
+  const batchToolTip: string = useMemo(() => {
+    if (trackable) {
+      return t`Assign Batch Code and Serial Numbers`;
+    } else {
+      return t`Assign Batch Code`;
+    }
+  }, [trackable]);
+
   // Update location field description on state change
   useEffect(() => {
     if (!opened) {
@@ -322,7 +348,8 @@ function LineItemFormRow({
     if (
       !record.destination &&
       !record.destination_detail &&
-      location === record.part_detail.category_default_location
+      record.part_detail &&
+      location === record.part_detail?.category_default_location
     ) {
       return t`Part category default location selected`;
     }
@@ -406,9 +433,7 @@ function LineItemFormRow({
               size="sm"
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon="batch_code" />}
-              tooltip={t`Assign Batch Code${
-                record.trackable && ' and Serial Numbers'
-              }`}
+              tooltip={batchToolTip}
               tooltipAlignment="top"
               variant={batchOpen ? 'filled' : 'transparent'}
             />
@@ -475,7 +500,7 @@ function LineItemFormRow({
                     props.changeFn(props.idx, 'location', value);
                   },
                   description: locationDescription,
-                  value: location,
+                  value: props.item.location,
                   label: t`Location`,
                   icon: <InvenTreeIcon icon="location" />
                 }}
@@ -487,8 +512,8 @@ function LineItemFormRow({
                 }
               />
               <Flex style={{ marginBottom: '7px' }}>
-                {(record.part_detail.default_location ||
-                  record.part_detail.category_default_location) && (
+                {(record.part_detail?.default_location ||
+                  record.part_detail?.category_default_location) && (
                   <ActionButton
                     icon={<InvenTreeIcon icon="default_location" />}
                     tooltip={t`Store at default location`}
@@ -496,8 +521,8 @@ function LineItemFormRow({
                       props.changeFn(
                         props.idx,
                         'location',
-                        record.part_detail.default_location ??
-                          record.part_detail.category_default_location
+                        record.part_detail?.default_location ??
+                          record.part_detail?.category_default_location
                       )
                     }
                     tooltipAlignment="top"
@@ -540,18 +565,20 @@ function LineItemFormRow({
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
+          description: t`Enter batch code for received items`,
           value: props.item.batch_code
         }}
         error={props.rowErrors?.batch_code?.message}
       />
       <TableFieldExtraRow
-        visible={batchOpen && record.trackable}
+        visible={batchOpen && trackable}
         onValueChange={(value) =>
           props.changeFn(props.idx, 'serial_numbers', value)
         }
         fieldDefinition={{
           field_type: 'string',
-          label: t`Serial numbers`,
+          label: t`Serial Numbers`,
+          description: t`Enter serial numbers for received items`,
           value: props.item.serial_numbers
         }}
         error={props.rowErrors?.serial_numbers?.message}
@@ -599,6 +626,7 @@ type LineFormHandlers = {
 type LineItemsForm = {
   items: any[];
   orderPk: number;
+  destinationPk?: number;
   formProps?: LineFormHandlers;
 };
 
@@ -674,7 +702,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
     title: t`Receive Line Items`,
     fields: fields,
     initialData: {
-      location: null
+      location: props.destinationPk
     },
     size: '80%'
   });

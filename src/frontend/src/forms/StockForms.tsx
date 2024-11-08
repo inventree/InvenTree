@@ -40,6 +40,7 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
+import { useInstance } from '../hooks/UseInstance';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
@@ -48,65 +49,66 @@ import { useGlobalSettingsState } from '../states/SettingsState';
  * Construct a set of fields for creating / editing a StockItem instance
  */
 export function useStockFields({
-  item_detail,
-  part_detail,
   partId,
+  stockItem,
   create = false
 }: {
   partId?: number;
-  item_detail?: any;
-  part_detail?: any;
+  stockItem?: any;
   create: boolean;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
-  const [part, setPart] = useState<number | null>(null);
+  // Keep track of the "part" instance
+  const [partInstance, setPartInstance] = useState<any>({});
+
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
-  const [batchCode, setBatchCode] = useState<string>('');
-  const [serialNumbers, setSerialNumbers] = useState<string>('');
-
-  const [trackable, setTrackable] = useState<boolean>(false);
+  const [nextBatchCode, setNextBatchCode] = useState<string>('');
+  const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
 
   const batchGenerator = useBatchCodeGenerator((value: any) => {
-    if (!batchCode) {
-      setBatchCode(value);
+    if (value) {
+      setNextBatchCode(`Next batch code` + `: ${value}`);
+    } else {
+      setNextBatchCode('');
     }
   });
 
   const serialGenerator = useSerialNumberGenerator((value: any) => {
-    if (!serialNumbers && create && trackable) {
-      setSerialNumbers(value);
+    if (value) {
+      setNextSerialNumber(t`Next serial number` + `: ${value}`);
+    } else {
+      setNextSerialNumber('');
     }
   });
+
+  useEffect(() => {
+    if (partInstance?.pk) {
+      // Update the generators whenever the part ID changes
+      batchGenerator.update({ part: partInstance.pk });
+      serialGenerator.update({ part: partInstance.pk });
+    }
+  }, [partInstance.pk]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        value: partId,
+        value: partInstance.pk,
         disabled: !create,
         filters: {
           active: create ? true : undefined
         },
         onValueChange: (value, record) => {
-          setPart(value);
-          // TODO: implement remaining functionality from old stock.py
-
-          setTrackable(record.trackable ?? false);
-
-          batchGenerator.update({ part: value });
-          serialGenerator.update({ part: value });
-
-          if (!record.trackable) {
-            setSerialNumbers('');
-          }
+          // Update the tracked part instance
+          setPartInstance(record);
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
         }
       },
       supplier_part: {
-        hidden: part_detail?.purchaseable == false,
+        hidden: partInstance?.purchaseable == false,
         value: supplierPart,
         onValueChange: (value) => {
           setSupplierPart(value);
@@ -114,7 +116,7 @@ export function useStockFields({
         filters: {
           part_detail: true,
           supplier_detail: true,
-          ...(part ? { part } : {})
+          part: partId
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
           if (adjust.data.part) {
@@ -148,22 +150,20 @@ export function useStockFields({
       serial_numbers: {
         field_type: 'string',
         label: t`Serial Numbers`,
+        disabled: partInstance?.trackable == false,
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
-        disabled: !trackable,
         hidden: !create,
-        value: serialNumbers,
-        onValueChange: (value) => setSerialNumbers(value)
+        placeholder: nextSerialNumber
       },
       serial: {
         hidden:
           create ||
-          part_detail?.trackable == false ||
-          (!item_detail?.quantity != undefined && item_detail?.quantity != 1)
+          partInstance.trackable == false ||
+          (!stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
-        value: batchCode,
-        onValueChange: (value) => setBatchCode(value)
+        placeholder: nextBatchCode
       },
       status_custom_key: {
         label: t`Stock Status`
@@ -195,16 +195,14 @@ export function useStockFields({
 
     return fields;
   }, [
-    item_detail,
-    part_detail,
-    part,
+    stockItem,
+    partInstance,
+    partId,
     globalSettings,
     supplierPart,
-    batchCode,
-    serialNumbers,
-    trackable,
-    create,
-    partId
+    nextSerialNumber,
+    nextBatchCode,
+    create
   ]);
 }
 
@@ -327,14 +325,14 @@ function StockItemDefaultMove({
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
-      stockItem.part_detail.default_location ??
-        stockItem.part_detail.category_default_location
+      stockItem.part_detail?.default_location ??
+        stockItem.part_detail?.category_default_location
     ],
     queryFn: async () => {
       const url = apiUrl(
         ApiEndpoints.stock_location_list,
-        stockItem.part_detail.default_location ??
-          stockItem.part_detail.category_default_location
+        stockItem.part_detail?.default_location ??
+          stockItem.part_detail?.category_default_location
       );
 
       return api
@@ -386,8 +384,8 @@ function moveToDefault(
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
       if (
-        stockItem.location === stockItem.part_detail.default_location ||
-        stockItem.location === stockItem.part_detail.category_default_location
+        stockItem.location === stockItem.part_detail?.default_location ||
+        stockItem.location === stockItem.part_detail?.category_default_location
       ) {
         return;
       }
@@ -402,8 +400,8 @@ function moveToDefault(
             }
           ],
           location:
-            stockItem.part_detail.default_location ??
-            stockItem.part_detail.category_default_location
+            stockItem.part_detail?.default_location ??
+            stockItem.part_detail?.category_default_location
         })
         .then((response) => {
           refresh();

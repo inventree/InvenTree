@@ -1316,6 +1316,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             exclude_external=data.get('exclude_external', True),
             generate_report=data.get('generate_report', True),
             update_parts=data.get('update_parts', True),
+            group='report',
         )
 
 
@@ -1598,6 +1599,7 @@ class BomItemSerializer(
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
+        substitutes = kwargs.pop('substitutes', True)
 
         super().__init__(*args, **kwargs)
 
@@ -1606,6 +1608,9 @@ class BomItemSerializer(
 
         if not sub_part_detail:
             self.fields.pop('sub_part_detail', None)
+
+        if not substitutes:
+            self.fields.pop('substitutes', None)
 
         if not pricing:
             self.fields.pop('pricing_min', None)
@@ -1701,6 +1706,10 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
+        )
+
+        queryset = queryset.select_related(
+            'part__pricing_data', 'sub_part__pricing_data'
         )
 
         queryset = queryset.prefetch_related(

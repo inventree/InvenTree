@@ -95,7 +95,9 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
         if driver.USE_BACKGROUND_WORKER is False:
             return driver.print_labels(machine, label, items, **print_kwargs)
 
-        offload_task(driver.print_labels, machine, label, items, **print_kwargs)
+        offload_task(
+            driver.print_labels, machine, label, items, group='plugin', **print_kwargs
+        )
 
         return JsonResponse({
             'success': True,

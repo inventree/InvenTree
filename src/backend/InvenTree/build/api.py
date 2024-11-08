@@ -6,9 +6,8 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
-from rest_framework.exceptions import ValidationError
-
 from django_filters import rest_framework as rest_filters
+from rest_framework.exceptions import ValidationError
 
 from importer.mixins import DataExportViewMixin
 
@@ -40,6 +39,9 @@ class BuildFilter(rest_filters.FilterSet):
     status = rest_filters.NumberFilter(label='Status')
 
     active = rest_filters.BooleanFilter(label='Build is active', method='filter_active')
+
+    # 'outstanding' is an alias for 'active' here
+    outstanding = rest_filters.BooleanFilter(label='Build is outstanding', method='filter_active')
 
     def filter_active(self, queryset, name, value):
         """Filter the queryset to either include or exclude orders which are active."""
@@ -149,7 +151,7 @@ class BuildFilter(rest_filters.FilterSet):
     def filter_responsible(self, queryset, name, owner):
         """Filter by orders which are assigned to the specified owner."""
 
-        owners = list(Owner.objects.filter(pk=value))
+        owners = list(Owner.objects.filter(pk=owner))
 
         # if we query by a user, also find all ownerships through group memberships
         if len(owners) > 0 and owners[0].label() == 'user':
@@ -371,10 +373,10 @@ class BuildLineFilter(rest_filters.FilterSet):
         To determine this, we need to know:
 
         - The quantity required for each BuildLine
-        - The quantity available for each BuildLine
+        - The quantity available for each BuildLine (including variants and substitutes)
         - The quantity allocated for each BuildLine
         """
-        flt = Q(quantity__lte=F('total_available_stock') + F('allocated'))
+        flt = Q(quantity__lte=F('allocated') + F('available_stock') + F('available_substitute_stock') + F('available_variant_stock'))
 
         if str2bool(value):
             return queryset.filter(flt)
@@ -400,10 +402,13 @@ class BuildLineEndpoint:
     def get_queryset(self):
         """Override queryset to select-related and annotate"""
         queryset = super().get_queryset()
-        source_build = self.get_source_build()
-        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
-        return queryset
+        if not hasattr(self, 'source_build'):
+            self.source_build = self.get_source_build()
+
+        source_build = self.source_build
+
+        return build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
 
 class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
@@ -447,15 +452,17 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
     def get_source_build(self) -> Build | None:
         """Return the target build for the BuildLine queryset."""
 
+        source_build = None
+
         try:
             build_id = self.request.query_params.get('build', None)
             if build_id:
-                build = Build.objects.get(pk=build_id)
-                return build
+                source_build = Build.objects.filter(pk=build_id).first()
         except (Build.DoesNotExist, AttributeError, ValueError):
             pass
 
-        return None
+        return source_build
+
 
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
@@ -738,10 +745,12 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         'quantity',
         'location',
         'reference',
+        'IPN',
     ]
 
     ordering_field_aliases = {
         'part': 'stock_item__part__name',
+        'IPN': 'stock_item__part__IPN',
         'sku': 'stock_item__supplier_part__SKU',
         'location': 'stock_item__location__name',
         'reference': 'build_line__bom_item__reference',

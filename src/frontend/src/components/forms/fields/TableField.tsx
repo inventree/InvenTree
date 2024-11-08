@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, Container, Group, Table } from '@mantine/core';
+import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { identifierString } from '../../../functions/conversion';
@@ -16,6 +16,69 @@ export interface TableFieldRowProps {
   control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number, key: string, value: any) => void;
   removeFn: (idx: number) => void;
+}
+
+function TableFieldRow({
+  item,
+  idx,
+  errors,
+  definition,
+  control,
+  changeFn,
+  removeFn
+}: {
+  item: any;
+  idx: number;
+  errors: any;
+  definition: ApiFormFieldType;
+  control: UseControllerReturn<FieldValues, any>;
+  changeFn: (idx: number, key: string, value: any) => void;
+  removeFn: (idx: number) => void;
+}) {
+  // Table fields require render function
+  if (!definition.modelRenderer) {
+    return (
+      <Table.Tr key="table-row-no-renderer">
+        <Table.Td colSpan={definition.headers?.length}>
+          <Alert color="red" title={t`Error`} icon={<IconExclamationCircle />}>
+            {`modelRenderer entry required for tables`}
+          </Alert>
+        </Table.Td>
+      </Table.Tr>
+    );
+  }
+
+  return definition.modelRenderer({
+    item: item,
+    idx: idx,
+    rowErrors: errors,
+    control: control,
+    changeFn: changeFn,
+    removeFn: removeFn
+  });
+}
+
+export function TableFieldErrorWrapper({
+  props,
+  errorKey,
+  children
+}: {
+  props: TableFieldRowProps;
+  errorKey: string;
+  children: ReactNode;
+}) {
+  const msg = props?.rowErrors && props.rowErrors[errorKey];
+
+  return (
+    <Stack gap="xs">
+      {children}
+      {msg && (
+        <Text size="xs" c="red">
+          {msg.message}
+        </Text>
+      )}
+    </Stack>
+  );
 }
 
 export function TableField({
@@ -47,7 +110,7 @@ export function TableField({
   };
 
   // Extract errors associated with the current row
-  const rowErrors = useCallback(
+  const rowErrors: any = useCallback(
     (idx: number) => {
       if (Array.isArray(error)) {
         return error[idx];
@@ -74,31 +137,18 @@ export function TableField({
       <Table.Tbody>
         {value.length > 0 ? (
           value.map((item: any, idx: number) => {
-            // Table fields require render function
-            if (!definition.modelRenderer) {
-              return (
-                <Table.Tr key="table-row-no-renderer">
-                  <Table.Td colSpan={definition.headers?.length}>
-                    <Alert
-                      color="red"
-                      title={t`Error`}
-                      icon={<IconExclamationCircle />}
-                    >
-                      {`modelRenderer entry required for tables`}
-                    </Alert>
-                  </Table.Td>
-                </Table.Tr>
-              );
-            }
-
-            return definition.modelRenderer({
-              item: item,
-              idx: idx,
-              rowErrors: rowErrors(idx),
-              control: control,
-              changeFn: onRowFieldChange,
-              removeFn: removeRow
-            });
+            return (
+              <TableFieldRow
+                key={`table-row-${idx}`}
+                item={item}
+                idx={idx}
+                errors={rowErrors(idx)}
+                control={control}
+                definition={definition}
+                changeFn={onRowFieldChange}
+                removeFn={removeRow}
+              />
+            );
           })
         ) : (
           <Table.Tr key="table-row-no-entries">

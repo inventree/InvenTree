@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import {
-  Accordion,
   Alert,
   Center,
   Grid,
@@ -13,7 +12,6 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
-  IconBuildingFactory2,
   IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
@@ -54,7 +52,6 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -89,23 +86,21 @@ import {
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
-import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
-import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
-import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
-import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
+import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
+import PartSupplierDetail from './PartSupplierDetail';
 
 /**
  * Detail view for a single Part instance
@@ -121,6 +116,14 @@ export default function PartDetail() {
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
 
+  const { instance: serials } = useInstance({
+    endpoint: ApiEndpoints.part_serial_numbers,
+    pk: id,
+    hasPrimaryKey: true,
+    refetchOnMount: false,
+    defaultValue: {}
+  });
+
   const {
     instance: part,
     refreshInstance,
@@ -135,13 +138,20 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  part.required =
-    (part?.required_for_build_orders ?? 0) +
-    (part?.required_for_sales_orders ?? 0);
-
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
+    }
+
+    let data = { ...part };
+
+    data.required =
+      (data?.required_for_build_orders ?? 0) +
+      (data?.required_for_sales_orders ?? 0);
+
+    // Provide latest serial number info
+    if (!!serials.latest) {
+      data.latest_serial_number = serials.latest;
     }
 
     // Construct the details tables
@@ -280,7 +290,10 @@ export default function PartDetail() {
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
-        hidden: !part.component || part.required_for_build_orders <= 0
+        hidden:
+          !part.component ||
+          (part.required_for_build_orders <= 0 &&
+            part.allocated_to_build_orders <= 0)
       },
       {
         type: 'progressbar',
@@ -288,7 +301,10 @@ export default function PartDetail() {
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
-        hidden: !part.salable || part.required_for_sales_orders <= 0
+        hidden:
+          !part.salable ||
+          (part.required_for_sales_orders <= 0 &&
+            part.allocated_to_sales_orders <= 0)
       },
       {
         type: 'string',
@@ -351,7 +367,8 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'saleable',
+        name: 'salable',
+        icon: 'saleable',
         label: t`Saleable Part`
       },
       {
@@ -436,6 +453,14 @@ export default function PartDetail() {
         }
       });
     }
+
+    br.push({
+      type: 'string',
+      name: 'latest_serial_number',
+      label: t`Latest Serial Number`,
+      hidden: !part.trackable || !data.latest_serial_number,
+      icon: 'serial'
+    });
 
     // Add in stocktake information
     if (id && part.last_stocktake) {
@@ -529,17 +554,17 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={part} />
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={part} />
-        <DetailsTable fields={bl} item={part} />
-        <DetailsTable fields={br} item={part} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     ) : (
       <Skeleton />
     );
-  }, [globalSettings, part, instanceQuery]);
+  }, [globalSettings, part, serials, instanceQuery]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -591,61 +616,25 @@ export default function PartDetail() {
         label: t`Allocations`,
         icon: <IconBookmarks />,
         hidden: !part.component && !part.salable,
-        content: (
-          <Accordion
-            multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
-          >
-            {part.component && (
-              <Accordion.Item value="buildallocations" key="buildallocations">
-                <Accordion.Control>
-                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <BuildAllocatedStockTable
-                    partId={part.pk}
-                    modelField="build"
-                    modelTarget={ModelType.build}
-                    showBuildInfo
-                    showPartInfo
-                    allowEdit
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
-            )}
-            {part.salable && (
-              <Accordion.Item value="salesallocations" key="salesallocations">
-                <Accordion.Control>
-                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <SalesOrderAllocationTable
-                    partId={part.pk}
-                    modelField="order"
-                    modelTarget={ModelType.salesorder}
-                    showOrderInfo
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
-            )}
-          </Accordion>
-        )
+        content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
         name: 'bom',
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: (
+        content: part?.pk ? (
           <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        ) : (
+          <Skeleton />
         )
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly || !part.active,
-        content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
+        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',
@@ -661,50 +650,45 @@ export default function PartDetail() {
         content: part ? <PartPricingPanel part={part} /> : <Skeleton />
       },
       {
-        name: 'manufacturers',
-        label: t`Manufacturers`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !part.purchaseable,
-        content: part.pk && (
-          <ManufacturerPartTable
-            params={{
-              part: part.pk
-            }}
-          />
-        )
-      },
-      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
-        hidden: !part.purchaseable,
-        content: part.pk && (
-          <SupplierPartTable
-            params={{
-              part: part.pk
-            }}
-          />
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+
+        content: part.pk ? (
+          <PartSupplierDetail partId={part.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !part.purchaseable,
-        content: <PartPurchaseOrdersTable partId={part.pk} />
+        hidden:
+          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+        content: part.pk ? (
+          <PartPurchaseOrdersTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable,
+        hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'return_orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !part.salable || !globalSettings.isSet('RETURNORDER_ENABLED'),
+        hidden:
+          !part.salable ||
+          !user.hasViewRole(UserRoles.return_order) ||
+          !globalSettings.isSet('RETURNORDER_ENABLED'),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {

@@ -35,6 +35,7 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
@@ -112,6 +113,7 @@ export function PurchaseOrderLineItemTable({
   const receiveLineItems = useReceiveLineItems({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
+    destinationPk: order.destination,
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
       onClose: () => {
@@ -149,7 +151,10 @@ export function PurchaseOrderLineItemTable({
           let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
           let extra = [];
 
-          if (supplier_part.pack_quantity_native != 1) {
+          if (
+            supplier_part?.pack_quantity_native != undefined &&
+            supplier_part.pack_quantity_native != 1
+          ) {
             let total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
@@ -198,7 +203,7 @@ export function PurchaseOrderLineItemTable({
         title: t`Pack Quantity`
       },
       {
-        accessor: 'supplier_part_detail.SKU',
+        accessor: 'sku',
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
@@ -210,12 +215,10 @@ export function PurchaseOrderLineItemTable({
         sortable: false
       }),
       {
-        accessor: 'MPN',
+        accessor: 'mpn',
+        ordering: 'MPN',
         title: t`Manufacturer Code`,
-        sortable: true,
-
-        render: (record: any) =>
-          record?.supplier_part_detail?.manufacturer_part_detail?.MPN
+        sortable: true
       },
       CurrencyColumn({
         accessor: 'purchase_price',
@@ -236,6 +239,16 @@ export function PurchaseOrderLineItemTable({
       LinkColumn({})
     ];
   }, [orderId, user]);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'received',
+        label: t`Received`,
+        description: t`Show line items which have been received`
+      }
+    ];
+  }, []);
 
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
@@ -287,6 +300,10 @@ export function PurchaseOrderLineItemTable({
       order.status == poStatus.PLACED ||
       order.status == poStatus.ON_HOLD
     );
+  }, [order, poStatus]);
+
+  const orderPlaced: boolean = useMemo(() => {
+    return order.status == poStatus.PLACED;
   }, [order, poStatus]);
 
   const rowActions = useCallback(
@@ -357,10 +374,10 @@ export function PurchaseOrderLineItemTable({
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
-        hidden={!orderOpen || !user.hasChangeRole(UserRoles.purchase_order)}
+        hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table, orderOpen]);
+  }, [orderId, user, table, orderOpen, orderPlaced]);
 
   return (
     <>
@@ -383,6 +400,7 @@ export function PurchaseOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.supplierpart,
           modelField: 'part'
         }}
