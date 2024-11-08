@@ -15,23 +15,27 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
-def success(msg: str):
+def success(*args):
     """Print a success message to the console."""
+    msg = ' '.join(map(str, args))
     print(f'\033[92m{msg}\033[0m')
 
 
-def error(msg: str):
+def error(*args):
     """Print an error message to the console."""
+    msg = ' '.join(map(str, args))
     print(f'\033[91m{msg}\033[0m')
 
 
-def warning(msg: str):
+def warning(*args):
     """Print a warning message to the console."""
+    msg = ' '.join(map(str, args))
     print(f'\033[93m{msg}\033[0m')
 
 
-def info(msg: str):
+def info(*args):
     """Print an informational message to the console."""
+    msg = ' '.join(map(str, args))
     print(f'\033[94m{msg}\033[0m')
 
 
@@ -1133,7 +1137,7 @@ def schema(
 
     assert filename.exists()
 
-    info('Schema export completed:', filename)
+    success(f'Schema export completed: {filename}')
 
 
 @task
