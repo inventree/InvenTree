@@ -212,7 +212,7 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '45',
+      available: '39',
       required: '5',
       allocated: '5'
     },
