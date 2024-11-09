@@ -816,6 +816,17 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
         return queryset.exclude(order__status__in=SalesOrderStatusGroups.COMPLETE)
 
+    order_outstanding = rest_filters.BooleanFilter(
+        label=_('Order Outstanding'), method='filter_order_outstanding'
+    )
+
+    def filter_order_outstanding(self, queryset, name, value):
+        """Filter by whether the order is 'outstanding' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=SalesOrderStatusGroups.OPEN)
+
+        return queryset.exclude(order__status__in=SalesOrderStatusGroups.OPEN)
+
 
 class SalesOrderLineItemMixin:
     """Mixin class for SalesOrderLineItem endpoints."""

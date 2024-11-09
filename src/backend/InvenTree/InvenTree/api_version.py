@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 278
+INVENTREE_API_VERSION = 279
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v279 - 2024-11-09 : https://github.com/inventree/InvenTree/pull/8458
+    - Adds "order_outstanding" and "part" filters to the BuildLine API endpoint
+    - Adds "order_outstanding" filter to the SalesOrderLineItem API endpoint
 
 v278 - 2024-11-07 : https://github.com/inventree/InvenTree/pull/8445
     - Updates to the SalesOrder API endpoints
