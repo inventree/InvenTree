@@ -840,13 +840,20 @@ _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
 )
 
+
+# Prevent running multiple background workers if global cache is disabled
+# This is to prevent scheduling conflicts due to the lack of a shared cache
+BACKGROUND_WORKER_COUNT = (
+    int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4))
+    if GLOBAL_CACHE_ENABLED
+    else 1
+)
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
-    'workers': int(
-        get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)
-    ),
+    'workers': BACKGROUND_WORKER_COUNT,
     'timeout': _q_worker_timeout,
     'retry': max(120, _q_worker_timeout + 30),
     'max_attempts': int(

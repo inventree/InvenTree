@@ -18,6 +18,7 @@ import {
 } from './Company';
 import {
   RenderContentType,
+  RenderError,
   RenderImportSession,
   RenderProjectCode
 } from './Generic';
@@ -92,7 +93,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin,
-  [ModelType.contenttype]: RenderContentType
+  [ModelType.contenttype]: RenderContentType,
+  [ModelType.error]: RenderError
 };
 
 export type RenderInstanceProps = {
@@ -104,7 +106,6 @@ export type RenderInstanceProps = {
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
   if (props.model === undefined) {
-    console.error('RenderInstance: No model provided');
     return <UnknownRenderer model={props.model} />;
   }
 
@@ -113,7 +114,6 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   const RenderComponent = RendererLookup[model_name];
 
   if (!RenderComponent) {
-    console.error(`RenderInstance: No renderer for model ${props.model}`);
     return <UnknownRenderer model={props.model} />;
   }
 

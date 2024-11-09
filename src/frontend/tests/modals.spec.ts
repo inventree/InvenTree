@@ -12,7 +12,7 @@ test('Modals as admin', async ({ page }) => {
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
-  await page.getByRole('button', { name: 'Dismiss' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
 
   await page.waitForURL('**/platform/home');
 
@@ -52,12 +52,12 @@ test('Modals as admin', async ({ page }) => {
 
   await page.goto('./platform/');
 
-  // qr code modal
-  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  // Barcode scanning window
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByRole('banner').getByRole('button').click();
-  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByRole('button', { name: 'Close modal' }).click();
-  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.waitForTimeout(500);
   await page.getByRole('banner').getByRole('button').click();
 });

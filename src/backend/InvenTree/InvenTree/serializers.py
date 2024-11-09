@@ -510,6 +510,7 @@ class UserCreateSerializer(ExtendedUserSerializer):
     def create(self, validated_data):
         """Send an e email to the user after creation."""
         from InvenTree.helpers_model import get_base_url
+        from InvenTree.tasks import email_user, offload_task
 
         base_url = get_base_url()
 
@@ -527,8 +528,12 @@ class UserCreateSerializer(ExtendedUserSerializer):
         if base_url:
             message += f'\n\nURL: {base_url}'
 
+        subject = _('Welcome to InvenTree')
+
         # Send the user an onboarding email (from current site)
-        instance.email_user(subject=_('Welcome to InvenTree'), message=message)
+        offload_task(
+            email_user, instance.pk, str(subject), str(message), force_async=True
+        )
 
         return instance
 

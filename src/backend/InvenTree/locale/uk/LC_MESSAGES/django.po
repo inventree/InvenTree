@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:269
+#: InvenTree/api.py:273
 msgid "API endpoint not found"
 msgstr "Кінцева точка API не знайдена"
 
-#: InvenTree/api.py:386
+#: InvenTree/api.py:390
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:395
+#: InvenTree/api.py:399
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:400
+#: InvenTree/api.py:404
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:514
+#: InvenTree/api.py:518
 msgid "User does not have permission to view this model"
 msgstr "У користувача немає дозволу на перегляд цієї моделі"
 
@@ -344,51 +344,51 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: InvenTree/models.py:103
+#: InvenTree/models.py:105
 msgid "Error running plugin validation"
 msgstr ""
 
-#: InvenTree/models.py:172
+#: InvenTree/models.py:174
 msgid "Metadata must be a python dict object"
 msgstr ""
 
-#: InvenTree/models.py:178
+#: InvenTree/models.py:180
 msgid "Plugin Metadata"
 msgstr ""
 
-#: InvenTree/models.py:179
+#: InvenTree/models.py:181
 msgid "JSON metadata field, for use by external plugins"
 msgstr ""
 
-#: InvenTree/models.py:406
+#: InvenTree/models.py:408
 msgid "Improperly formatted pattern"
 msgstr ""
 
-#: InvenTree/models.py:413
+#: InvenTree/models.py:415
 msgid "Unknown format key specified"
 msgstr ""
 
-#: InvenTree/models.py:419
+#: InvenTree/models.py:421
 msgid "Missing required format key"
 msgstr ""
 
-#: InvenTree/models.py:430
+#: InvenTree/models.py:432
 msgid "Reference field cannot be empty"
 msgstr ""
 
-#: InvenTree/models.py:438
+#: InvenTree/models.py:440
 msgid "Reference must match required pattern"
 msgstr ""
 
-#: InvenTree/models.py:469
+#: InvenTree/models.py:471
 msgid "Reference number is too large"
 msgstr ""
 
-#: InvenTree/models.py:720
+#: InvenTree/models.py:722
 msgid "Duplicate names cannot exist under the same parent"
 msgstr ""
 
-#: InvenTree/models.py:737
+#: InvenTree/models.py:739
 msgid "Invalid choice"
 msgstr ""
 
@@ -409,7 +409,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: InvenTree/models.py:774 stock/models.py:90
+#: InvenTree/models.py:776 stock/models.py:90
 msgid "Description (optional)"
 msgstr ""
 
@@ -417,35 +417,44 @@ msgstr ""
 msgid "Path"
 msgstr "Шлях"
 
-#: InvenTree/models.py:926
+#: InvenTree/models.py:928
 msgid "Markdown notes (optional)"
 msgstr ""
 
-#: InvenTree/models.py:957
+#: InvenTree/models.py:959
 msgid "Barcode Data"
 msgstr ""
 
-#: InvenTree/models.py:958
+#: InvenTree/models.py:960
 msgid "Third party barcode data"
 msgstr ""
 
-#: InvenTree/models.py:964
+#: InvenTree/models.py:966
 msgid "Barcode Hash"
 msgstr ""
 
-#: InvenTree/models.py:965
+#: InvenTree/models.py:967
 msgid "Unique hash of barcode data"
 msgstr ""
 
-#: InvenTree/models.py:1032
+#: InvenTree/models.py:1034
 msgid "Existing barcode found"
 msgstr ""
 
-#: InvenTree/models.py:1075
+#: InvenTree/models.py:1112
+msgid "Task Failure"
+msgstr ""
+
+#: InvenTree/models.py:1114
+#, python-brace-format
+msgid "Background worker task '{instance.func}' failed after {n} attempts"
+msgstr ""
+
+#: InvenTree/models.py:1142
 msgid "Server Error"
 msgstr ""
 
-#: InvenTree/models.py:1076
+#: InvenTree/models.py:1143
 msgid "An error has been logged by the server."
 msgstr ""
 
@@ -519,11 +528,11 @@ msgstr ""
 msgid "Only superusers can create new users"
 msgstr ""
 
-#: InvenTree/serializers.py:522
+#: InvenTree/serializers.py:523
 msgid "Your account has been created."
 msgstr ""
 
-#: InvenTree/serializers.py:524
+#: InvenTree/serializers.py:525
 msgid "Please use the password reset function to login"
 msgstr ""
 
@@ -535,61 +544,61 @@ msgstr ""
 msgid "Invalid value"
 msgstr ""
 
-#: InvenTree/serializers.py:609 importer/models.py:64
+#: InvenTree/serializers.py:614 importer/models.py:64
 msgid "Data File"
 msgstr ""
 
-#: InvenTree/serializers.py:610
+#: InvenTree/serializers.py:615
 msgid "Select data file for upload"
 msgstr ""
 
-#: InvenTree/serializers.py:627 common/files.py:63
+#: InvenTree/serializers.py:632 common/files.py:63
 msgid "Unsupported file format"
 msgstr ""
 
-#: InvenTree/serializers.py:633
+#: InvenTree/serializers.py:638
 msgid "File is too large"
 msgstr ""
 
-#: InvenTree/serializers.py:654
+#: InvenTree/serializers.py:659
 msgid "No columns found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:657
+#: InvenTree/serializers.py:662
 msgid "No data rows found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:769
+#: InvenTree/serializers.py:774
 msgid "No data rows provided"
 msgstr ""
 
-#: InvenTree/serializers.py:772
+#: InvenTree/serializers.py:777
 msgid "No data columns supplied"
 msgstr ""
 
-#: InvenTree/serializers.py:838
+#: InvenTree/serializers.py:843
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr ""
 
-#: InvenTree/serializers.py:847
+#: InvenTree/serializers.py:852
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr ""
 
-#: InvenTree/serializers.py:886
+#: InvenTree/serializers.py:891
 msgid "Remote Image"
 msgstr ""
 
-#: InvenTree/serializers.py:887
+#: InvenTree/serializers.py:892
 msgid "URL of remote image file"
 msgstr ""
 
-#: InvenTree/serializers.py:905
+#: InvenTree/serializers.py:910
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/serializers.py:912
+#: InvenTree/serializers.py:917
 msgid "Failed to download image from remote URL"
 msgstr ""
 
@@ -622,7 +631,7 @@ msgstr ""
 msgid "Include Variants"
 msgstr ""
 
-#: build/api.py:90
+#: build/api.py:93
 msgid "Ancestor Build"
 msgstr ""
 
@@ -635,11 +644,11 @@ msgstr ""
 msgid "Issued By"
 msgstr ""
 
-#: build/api.py:145
+#: build/api.py:148
 msgid "Assigned To"
 msgstr ""
 
-#: build/api.py:307
+#: build/api.py:310
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
@@ -1003,7 +1012,7 @@ msgstr ""
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:107
+#: build/serializers.py:108
 msgid "Build Level"
 msgstr ""
 
@@ -1013,15 +1022,15 @@ msgstr ""
 msgid "Part Name"
 msgstr ""
 
-#: build/serializers.py:127
+#: build/serializers.py:128
 msgid "Project Code Label"
 msgstr ""
 
-#: build/serializers.py:133
+#: build/serializers.py:134
 msgid "Create Child Builds"
 msgstr ""
 
-#: build/serializers.py:134
+#: build/serializers.py:135
 msgid "Automatically generate child build orders"
 msgstr ""
 
@@ -1433,13 +1442,13 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:510
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:518
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:83 report/models.py:451
 msgid "Complete"
 msgstr ""
 
-#: build/tasks.py:180
+#: build/tasks.py:184
 msgid "Stock required for build order"
 msgstr ""
 
@@ -3391,109 +3400,109 @@ msgstr ""
 msgid "Was the barcode scan successful?"
 msgstr ""
 
-#: common/notifications.py:310
+#: common/notifications.py:328
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr ""
 
-#: common/notifications.py:312
+#: common/notifications.py:330
 msgid "A new order has been created and assigned to you"
 msgstr ""
 
-#: common/notifications.py:318
+#: common/notifications.py:336
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr ""
 
-#: common/notifications.py:320
+#: common/notifications.py:338
 msgid "A order that is assigned to you was canceled"
 msgstr ""
 
-#: common/notifications.py:326 common/notifications.py:333 order/api.py:438
+#: common/notifications.py:344 common/notifications.py:351 order/api.py:440
 msgid "Items Received"
 msgstr ""
 
-#: common/notifications.py:328
+#: common/notifications.py:346
 msgid "Items have been received against a purchase order"
 msgstr ""
 
-#: common/notifications.py:335
+#: common/notifications.py:353
 msgid "Items have been received against a return order"
 msgstr ""
 
-#: common/notifications.py:453
+#: common/notifications.py:475
 msgid "Error raised by plugin"
 msgstr ""
 
-#: common/serializers.py:418
+#: common/serializers.py:423
 msgid "Is Running"
 msgstr ""
 
-#: common/serializers.py:424
+#: common/serializers.py:429
 msgid "Pending Tasks"
 msgstr ""
 
-#: common/serializers.py:430
+#: common/serializers.py:435
 msgid "Scheduled Tasks"
 msgstr ""
 
-#: common/serializers.py:436
+#: common/serializers.py:441
 msgid "Failed Tasks"
 msgstr ""
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Task ID"
 msgstr ""
 
-#: common/serializers.py:451
+#: common/serializers.py:456
 msgid "Unique task ID"
 msgstr ""
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock"
 msgstr ""
 
-#: common/serializers.py:453
+#: common/serializers.py:458
 msgid "Lock time"
 msgstr ""
 
-#: common/serializers.py:455
+#: common/serializers.py:460
 msgid "Task name"
 msgstr ""
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function"
 msgstr ""
 
-#: common/serializers.py:457
+#: common/serializers.py:462
 msgid "Function name"
 msgstr ""
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Arguments"
 msgstr ""
 
-#: common/serializers.py:459
+#: common/serializers.py:464
 msgid "Task arguments"
 msgstr ""
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Keyword Arguments"
 msgstr ""
 
-#: common/serializers.py:462
+#: common/serializers.py:467
 msgid "Task keyword arguments"
 msgstr ""
 
-#: common/serializers.py:572
+#: common/serializers.py:577
 msgid "Filename"
 msgstr ""
 
-#: common/serializers.py:579 report/api.py:100 report/serializers.py:54
+#: common/serializers.py:584 report/api.py:100 report/serializers.py:54
 msgid "Model Type"
 msgstr ""
 
-#: common/serializers.py:607
+#: common/serializers.py:612
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 
@@ -3930,59 +3939,59 @@ msgstr ""
 msgid "Field Filters"
 msgstr ""
 
-#: importer/models.py:231
+#: importer/models.py:239
 msgid "Some required fields have not been mapped"
 msgstr ""
 
-#: importer/models.py:388
+#: importer/models.py:396
 msgid "Column is already mapped to a database field"
 msgstr ""
 
-#: importer/models.py:393
+#: importer/models.py:401
 msgid "Field is already mapped to a data column"
 msgstr ""
 
-#: importer/models.py:402
+#: importer/models.py:410
 msgid "Column mapping must be linked to a valid import session"
 msgstr ""
 
-#: importer/models.py:407
+#: importer/models.py:415
 msgid "Column does not exist in the data file"
 msgstr ""
 
-#: importer/models.py:414
+#: importer/models.py:422
 msgid "Field does not exist in the target model"
 msgstr ""
 
-#: importer/models.py:418
+#: importer/models.py:426
 msgid "Selected field is read-only"
 msgstr ""
 
-#: importer/models.py:423 importer/models.py:494
+#: importer/models.py:431 importer/models.py:502
 msgid "Import Session"
 msgstr ""
 
-#: importer/models.py:427
+#: importer/models.py:435
 msgid "Field"
 msgstr ""
 
-#: importer/models.py:429
+#: importer/models.py:437
 msgid "Column"
 msgstr ""
 
-#: importer/models.py:498
+#: importer/models.py:506
 msgid "Row Index"
 msgstr ""
 
-#: importer/models.py:501
+#: importer/models.py:509
 msgid "Original row data"
 msgstr ""
 
-#: importer/models.py:506 machine/models.py:110
+#: importer/models.py:514 machine/models.py:110
 msgid "Errors"
 msgstr ""
 
-#: importer/models.py:508 part/api.py:857
+#: importer/models.py:516 part/api.py:857
 msgid "Valid"
 msgstr ""
 
@@ -5925,7 +5934,7 @@ msgstr ""
 msgid "Number of results recorded against this template"
 msgstr ""
 
-#: part/serializers.py:225 part/serializers.py:243 stock/serializers.py:630
+#: part/serializers.py:225 part/serializers.py:243 stock/serializers.py:643
 msgid "Purchase currency of this stock item"
 msgstr ""
 
@@ -6344,7 +6353,7 @@ msgstr ""
 msgid "Multiple matching supplier parts found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:450 plugin/base/barcodes/api.py:655
+#: plugin/base/barcodes/api.py:450 plugin/base/barcodes/api.py:664
 msgid "No matching plugin found for barcode data"
 msgstr ""
 
@@ -6352,31 +6361,31 @@ msgstr ""
 msgid "Matched supplier part"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:516
+#: plugin/base/barcodes/api.py:525
 msgid "Item has already been received"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:554
+#: plugin/base/barcodes/api.py:563
 msgid "No match for supplier barcode"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:603
+#: plugin/base/barcodes/api.py:612
 msgid "Multiple matching line items found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:606
+#: plugin/base/barcodes/api.py:615
 msgid "No matching line item found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:652
+#: plugin/base/barcodes/api.py:661
 msgid "No sales order provided"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:661
+#: plugin/base/barcodes/api.py:670
 msgid "Barcode does not match an existing stock item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:677
+#: plugin/base/barcodes/api.py:686
 msgid "Stock item does not match line item"
 msgstr ""
 
@@ -6384,11 +6393,11 @@ msgstr ""
 msgid "Insufficient stock available"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:720
+#: plugin/base/barcodes/api.py:729
 msgid "Stock item allocated to sales order"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:723
+#: plugin/base/barcodes/api.py:732
 msgid "Not enough information"
 msgstr ""
 
@@ -6498,43 +6507,39 @@ msgstr ""
 msgid "No items provided to print"
 msgstr ""
 
-#: plugin/base/ui/serializers.py:27
-msgid "Plugin Key"
+#: plugin/base/ui/serializers.py:30
+msgid "Plugin Name"
 msgstr ""
 
-#: plugin/base/ui/serializers.py:31
-msgid "Panel Name"
-msgstr ""
-
-#: plugin/base/ui/serializers.py:35
-msgid "Panel Title"
-msgstr ""
-
-#: plugin/base/ui/serializers.py:40
-msgid "Panel Icon"
-msgstr ""
-
-#: plugin/base/ui/serializers.py:44
-msgid "Panel Content (HTML)"
-msgstr ""
-
-#: plugin/base/ui/serializers.py:48
-msgid "Panel Context (JSON)"
-msgstr ""
-
-#: plugin/base/ui/serializers.py:52
-msgid "Panel Source (javascript)"
-msgstr ""
-
-#: plugin/base/ui/serializers.py:66
+#: plugin/base/ui/serializers.py:34
 msgid "Feature Type"
 msgstr ""
 
-#: plugin/base/ui/serializers.py:69
+#: plugin/base/ui/serializers.py:39
+msgid "Feature Label"
+msgstr ""
+
+#: plugin/base/ui/serializers.py:44
+msgid "Feature Title"
+msgstr ""
+
+#: plugin/base/ui/serializers.py:49
+msgid "Feature Description"
+msgstr ""
+
+#: plugin/base/ui/serializers.py:54
+msgid "Feature Icon"
+msgstr ""
+
+#: plugin/base/ui/serializers.py:58
 msgid "Feature Options"
 msgstr ""
 
-#: plugin/base/ui/serializers.py:72
+#: plugin/base/ui/serializers.py:61
+msgid "Feature Context"
+msgstr ""
+
+#: plugin/base/ui/serializers.py:64
 msgid "Feature Source (javascript)"
 msgstr ""
 
@@ -6905,36 +6910,68 @@ msgstr ""
 msgid "InvenTree Contributors"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:28
+#: plugin/samples/integration/user_interface_sample.py:27
 msgid "Enable Part Panels"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:29
+#: plugin/samples/integration/user_interface_sample.py:28
 msgid "Enable custom panels for Part views"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:34
+#: plugin/samples/integration/user_interface_sample.py:33
 msgid "Enable Purchase Order Panels"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:35
+#: plugin/samples/integration/user_interface_sample.py:34
 msgid "Enable custom panels for Purchase Order views"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:40
+#: plugin/samples/integration/user_interface_sample.py:39
 msgid "Enable Broken Panels"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:41
+#: plugin/samples/integration/user_interface_sample.py:40
 msgid "Enable broken panels for testing"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:46
+#: plugin/samples/integration/user_interface_sample.py:45
 msgid "Enable Dynamic Panel"
 msgstr ""
 
-#: plugin/samples/integration/user_interface_sample.py:47
+#: plugin/samples/integration/user_interface_sample.py:46
 msgid "Enable dynamic panels for testing"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:98
+msgid "Part Panel"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:131
+msgid "Broken Dashboard Item"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:133
+msgid "This is a broken dashboard item - it will not render!"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:139
+msgid "Sample Dashboard Item"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:141
+msgid "This is a sample dashboard item. It renders a simple string of HTML content."
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:147
+msgid "Context Dashboard Item"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:161
+msgid "Admin Dashboard Item"
+msgstr ""
+
+#: plugin/samples/integration/user_interface_sample.py:162
+msgid "This is an admin-only dashboard item."
 msgstr ""
 
 #: plugin/serializers.py:82
@@ -7441,7 +7478,7 @@ msgstr ""
 msgid "Include sub-locations in filtered results"
 msgstr ""
 
-#: stock/api.py:366 stock/serializers.py:1204
+#: stock/api.py:366 stock/serializers.py:1217
 msgid "Parent Location"
 msgstr ""
 
@@ -7485,7 +7522,7 @@ msgstr ""
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:993
+#: stock/api.py:996
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -7855,11 +7892,11 @@ msgstr ""
 msgid "Parent Item"
 msgstr ""
 
-#: stock/serializers.py:461
+#: stock/serializers.py:463
 msgid "Parent stock item"
 msgstr ""
 
-#: stock/serializers.py:482
+#: stock/serializers.py:484
 msgid "Use pack size when adding: the quantity defined is the number of packs"
 msgstr ""
 
@@ -7871,113 +7908,113 @@ msgstr ""
 msgid "Child Items"
 msgstr ""
 
-#: stock/serializers.py:620
+#: stock/serializers.py:633
 msgid "Tracking Items"
 msgstr ""
 
-#: stock/serializers.py:626
+#: stock/serializers.py:639
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr ""
 
-#: stock/serializers.py:645
+#: stock/serializers.py:658
 msgid "Minimum Pricing"
 msgstr ""
 
-#: stock/serializers.py:651
+#: stock/serializers.py:664
 msgid "Maximum Pricing"
 msgstr ""
 
-#: stock/serializers.py:675
+#: stock/serializers.py:688
 msgid "Enter number of stock items to serialize"
 msgstr ""
 
-#: stock/serializers.py:688
+#: stock/serializers.py:701
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr ""
 
-#: stock/serializers.py:695
+#: stock/serializers.py:708
 msgid "Enter serial numbers for new items"
 msgstr ""
 
-#: stock/serializers.py:706 stock/serializers.py:1444 stock/serializers.py:1700
+#: stock/serializers.py:719 stock/serializers.py:1457 stock/serializers.py:1713
 msgid "Destination stock location"
 msgstr ""
 
-#: stock/serializers.py:713
+#: stock/serializers.py:726
 msgid "Optional note field"
 msgstr ""
 
-#: stock/serializers.py:723
+#: stock/serializers.py:736
 msgid "Serial numbers cannot be assigned to this part"
 msgstr ""
 
-#: stock/serializers.py:743
+#: stock/serializers.py:756
 msgid "Serial numbers already exist"
 msgstr ""
 
-#: stock/serializers.py:782
+#: stock/serializers.py:795
 msgid "Select stock item to install"
 msgstr ""
 
-#: stock/serializers.py:789
+#: stock/serializers.py:802
 msgid "Quantity to Install"
 msgstr ""
 
-#: stock/serializers.py:790
+#: stock/serializers.py:803
 msgid "Enter the quantity of items to install"
 msgstr ""
 
-#: stock/serializers.py:795 stock/serializers.py:875 stock/serializers.py:1001
-#: stock/serializers.py:1051
+#: stock/serializers.py:808 stock/serializers.py:888 stock/serializers.py:1014
+#: stock/serializers.py:1064
 msgid "Add transaction note (optional)"
 msgstr ""
 
-#: stock/serializers.py:803
+#: stock/serializers.py:816
 msgid "Quantity to install must be at least 1"
 msgstr ""
 
-#: stock/serializers.py:811
+#: stock/serializers.py:824
 msgid "Stock item is unavailable"
 msgstr ""
 
-#: stock/serializers.py:822
+#: stock/serializers.py:835
 msgid "Selected part is not in the Bill of Materials"
 msgstr ""
 
-#: stock/serializers.py:835
+#: stock/serializers.py:848
 msgid "Quantity to install must not exceed available quantity"
 msgstr ""
 
-#: stock/serializers.py:870
+#: stock/serializers.py:883
 msgid "Destination location for uninstalled item"
 msgstr ""
 
-#: stock/serializers.py:921
+#: stock/serializers.py:934
 msgid "Unsupported statistic type: "
 msgstr ""
 
-#: stock/serializers.py:935
+#: stock/serializers.py:948
 msgid "Select part to convert stock item into"
 msgstr ""
 
-#: stock/serializers.py:948
+#: stock/serializers.py:961
 msgid "Selected part is not a valid option for conversion"
 msgstr ""
 
-#: stock/serializers.py:965
+#: stock/serializers.py:978
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr ""
 
-#: stock/serializers.py:996
+#: stock/serializers.py:1009
 msgid "Destination location for returned item"
 msgstr ""
 
-#: stock/serializers.py:1033
+#: stock/serializers.py:1046
 msgid "Select stock items to change status"
 msgstr ""
 
-#: stock/serializers.py:1039
+#: stock/serializers.py:1052
 msgid "No stock items selected"
 msgstr ""
 
@@ -7989,71 +8026,71 @@ msgstr ""
 msgid "Parent stock location"
 msgstr ""
 
-#: stock/serializers.py:1316
+#: stock/serializers.py:1329
 msgid "Part must be salable"
 msgstr ""
 
-#: stock/serializers.py:1320
+#: stock/serializers.py:1333
 msgid "Item is allocated to a sales order"
 msgstr ""
 
-#: stock/serializers.py:1324
+#: stock/serializers.py:1337
 msgid "Item is allocated to a build order"
 msgstr ""
 
-#: stock/serializers.py:1348
+#: stock/serializers.py:1361
 msgid "Customer to assign stock items"
 msgstr ""
 
-#: stock/serializers.py:1354
+#: stock/serializers.py:1367
 msgid "Selected company is not a customer"
 msgstr ""
 
-#: stock/serializers.py:1362
+#: stock/serializers.py:1375
 msgid "Stock assignment notes"
 msgstr ""
 
-#: stock/serializers.py:1372 stock/serializers.py:1626
+#: stock/serializers.py:1385 stock/serializers.py:1639
 msgid "A list of stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1451
+#: stock/serializers.py:1464
 msgid "Stock merging notes"
 msgstr ""
 
-#: stock/serializers.py:1456
+#: stock/serializers.py:1469
 msgid "Allow mismatched suppliers"
 msgstr ""
 
-#: stock/serializers.py:1457
+#: stock/serializers.py:1470
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr ""
 
-#: stock/serializers.py:1462
+#: stock/serializers.py:1475
 msgid "Allow mismatched status"
 msgstr ""
 
-#: stock/serializers.py:1463
+#: stock/serializers.py:1476
 msgid "Allow stock items with different status codes to be merged"
 msgstr ""
 
-#: stock/serializers.py:1473
+#: stock/serializers.py:1486
 msgid "At least two stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:1540
+#: stock/serializers.py:1553
 msgid "No Change"
 msgstr ""
 
-#: stock/serializers.py:1569
+#: stock/serializers.py:1582
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:1588
+#: stock/serializers.py:1601
 msgid "Stock item status code"
 msgstr ""
 
-#: stock/serializers.py:1616
+#: stock/serializers.py:1629
 msgid "Stock transaction notes"
 msgstr ""
 

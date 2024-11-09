@@ -40,7 +40,7 @@ To enable access to the InvenTree server from other computers on a local network
 
 ## Background Worker
 
-The background task manager must also be started. The InvenTree server is already running in the foreground, so open a *new shell window* to start the server.
+The [background task manager](./processes.md#background-worker) must also be started. The InvenTree server is already running in the foreground, so open a *new shell window* to start the server.
 
 ### Activate Virtual Environment
 
@@ -55,4 +55,4 @@ source ./env/bin/activate
 (env) invoke worker
 ```
 
-This will start the background process manager in the current shell.
+This will start an instance of the background worker in the current shell.

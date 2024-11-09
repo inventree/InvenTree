@@ -1886,6 +1886,7 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
         'inherited',
         'optional',
         'consumable',
+        'reference',
         'validated',
         'pricing_min',
         'pricing_max',

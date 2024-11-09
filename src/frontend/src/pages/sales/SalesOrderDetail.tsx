@@ -131,23 +131,23 @@ export default function SalesOrderDetail() {
         icon: 'progress',
         label: t`Completed Line Items`,
         total: order.line_items,
-        progress: order.completed_lines
+        progress: order.completed_lines,
+        hidden: !order.line_items
       },
       {
         type: 'progressbar',
         name: 'shipments',
         icon: 'shipment',
         label: t`Completed Shipments`,
-        total: order.shipments,
-        progress: order.completed_shipments,
-        hidden: !order.shipments
+        total: order.shipments_count,
+        progress: order.completed_shipments_count,
+        hidden: !order.shipments_count
       },
       {
         type: 'text',
         name: 'currency',
         label: t`Order Currency`,
-        value_formatter: () =>
-          order?.order_currency ?? order?.customer_detail.currency
+        value_formatter: () => orderCurrency
       },
       {
         type: 'text',
@@ -155,7 +155,7 @@ export default function SalesOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.customer_detail?.currency
+            currency: orderCurrency
           });
         }
       }
@@ -179,8 +179,15 @@ export default function SalesOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
       }
-      // TODO: Project code
     ];
 
     let br: DetailsField[] = [
@@ -242,7 +249,7 @@ export default function SalesOrderDetail() {
         <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
-  }, [order, instanceQuery]);
+  }, [order, orderCurrency, instanceQuery]);
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
@@ -347,6 +354,7 @@ export default function SalesOrderDetail() {
         name: 'build-orders',
         label: t`Build Orders`,
         icon: <IconTools />,
+        hidden: !user.hasViewRole(UserRoles.build),
         content: order?.pk ? (
           <BuildOrderTable salesOrderId={order.pk} />
         ) : (
@@ -362,7 +370,7 @@ export default function SalesOrderDetail() {
         model_id: order.pk
       })
     ];
-  }, [order, id, user, soStatus]);
+  }, [order, id, user, soStatus, user]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),

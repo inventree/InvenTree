@@ -2,11 +2,10 @@ import { t } from '@lingui/macro';
 import { Accordion } from '@mantine/core';
 
 import { StylishText } from '../../components/items/StylishText';
-import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
-import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
-import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
+import PartBuildAllocationsTable from '../../tables/part/PartBuildAllocationsTable';
+import PartSalesAllocationsTable from '../../tables/part/PartSalesAllocationsTable';
 
 export default function PartAllocationPanel({ part }: { part: any }) {
   const user = useUserState();
@@ -23,14 +22,7 @@ export default function PartAllocationPanel({ part }: { part: any }) {
               <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <BuildAllocatedStockTable
-                partId={part.pk}
-                modelField="build"
-                modelTarget={ModelType.build}
-                showBuildInfo
-                showPartInfo
-                allowEdit
-              />
+              <PartBuildAllocationsTable partId={part.pk} />
             </Accordion.Panel>
           </Accordion.Item>
         )}
@@ -40,12 +32,7 @@ export default function PartAllocationPanel({ part }: { part: any }) {
               <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
-              <SalesOrderAllocationTable
-                partId={part.pk}
-                modelField="order"
-                modelTarget={ModelType.salesorder}
-                showOrderInfo
-              />
+              <PartSalesAllocationsTable partId={part.pk} />
             </Accordion.Panel>
           </Accordion.Item>
         )}

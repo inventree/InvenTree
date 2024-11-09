@@ -851,8 +851,13 @@ class Build(
         if location is None:
             location = self.destination or self.part.get_default_location()
 
+        if self.part.has_trackable_parts and not serials:
+            raise ValidationError({
+                'serials': _("Serial numbers must be provided for trackable parts")
+            })
+
         # We are generating multiple serialized outputs
-        if serials or self.part.has_trackable_parts:
+        if serials:
             """Create multiple build outputs with a single quantity of 1."""
 
             # Create tracking entries for each item

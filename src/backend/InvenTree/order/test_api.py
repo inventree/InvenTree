@@ -882,7 +882,6 @@ class PurchaseOrderReceiveTest(OrderTest):
         data = self.post(self.url, {}, expected_code=400).data
 
         self.assertIn('This field is required', str(data['items']))
-        self.assertIn('This field is required', str(data['location']))
 
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
@@ -1060,9 +1059,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(stock_1.count(), 1)
         self.assertEqual(stock_2.count(), 1)
 
-        # Same location for each received item, as overall 'location' field is provided
+        # Check received locations
         self.assertEqual(stock_1.last().location.pk, 1)
-        self.assertEqual(stock_2.last().location.pk, 1)
+        self.assertEqual(stock_2.last().location.pk, 2)
 
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
@@ -1878,7 +1877,6 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.post(self.url, {}, expected_code=400)
 
         self.assertIn('This field is required', str(response.data['items']))
-        self.assertIn('This field is required', str(response.data['shipment']))
 
         # Test with a single line items
         line = self.order.lines.first()
