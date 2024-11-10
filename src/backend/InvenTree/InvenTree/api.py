@@ -196,28 +196,30 @@ class VersionTextView(ListAPI):
 
 
 class InfoApiSerializer(serializers.Serializer):
-    """Serializer for InvenTree server information api endpoint."""
+    """InvenTree server information - some information might be blanked if called without elevated credentials."""
 
-    server = serializers.CharField()
-    version = serializers.CharField()
-    instance = serializers.CharField()
-    apiVersion = serializers.IntegerField()  # noqa: N815
-    worker_running = serializers.BooleanField()
-    worker_count = serializers.IntegerField()
-    worker_pending_tasks = serializers.IntegerField()
-    plugins_enabled = serializers.BooleanField()
-    plugins_install_disabled = serializers.BooleanField()
-    active_plugins = serializers.JSONField()
-    email_configured = serializers.BooleanField()
-    debug_mode = serializers.BooleanField()
-    docker_mode = serializers.BooleanField()
-    default_locale = serializers.ChoiceField(choices=settings.LOCALE_CODES)
-    system_health = serializers.BooleanField()
-    database = serializers.CharField()
-    platform = serializers.CharField()
-    installer = serializers.CharField()
-    target = serializers.CharField()
-    django_admin = serializers.CharField()
+    server = serializers.CharField(read_only=True)
+    version = serializers.CharField(read_only=True)
+    instance = serializers.CharField(read_only=True)
+    apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
+    worker_running = serializers.BooleanField(read_only=True)
+    worker_count = serializers.IntegerField(read_only=True)
+    worker_pending_tasks = serializers.IntegerField(read_only=True)
+    plugins_enabled = serializers.BooleanField(read_only=True)
+    plugins_install_disabled = serializers.BooleanField(read_only=True)
+    active_plugins = serializers.JSONField(read_only=True)
+    email_configured = serializers.BooleanField(read_only=True)
+    debug_mode = serializers.BooleanField(read_only=True)
+    docker_mode = serializers.BooleanField(read_only=True)
+    default_locale = serializers.ChoiceField(
+        choices=settings.LOCALE_CODES, read_only=True
+    )
+    system_health = serializers.BooleanField(read_only=True)
+    database = serializers.CharField(read_only=True)
+    platform = serializers.CharField(read_only=True)
+    installer = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True)
+    django_admin = serializers.CharField(read_only=True)
 
 
 class InfoView(APIView):
@@ -232,7 +234,13 @@ class InfoView(APIView):
         """Return the current number of outstanding background tasks."""
         return OrmQ.objects.count()
 
-    @extend_schema(responses={200: OpenApiResponse(response=InfoApiSerializer)})
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=InfoApiSerializer, description='InvenTree server information'
+            )
+        }
+    )
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
         is_staff = request.user.is_staff
