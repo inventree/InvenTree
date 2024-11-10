@@ -44,7 +44,8 @@ def top_level_path(path: str) -> str:
 
     path = path.strip()
 
-    key = path.split('/')[1]
+    parts = path.split('/')
+    key = parts[1] if len(parts) > 1 else parts[0]
 
     if key in SPECIAL_PATHS:
         return key
