@@ -313,22 +313,27 @@ class NotFoundView(APIView):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def get(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def post(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def patch(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def put(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def delete(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
