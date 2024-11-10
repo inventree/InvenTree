@@ -18,7 +18,6 @@
 		},
 
 		"style": {
-			"useSelfClosingElements": "off",
 			"noUselessElse": "off",
 			"useTemplate": "off",
 			"noNonNullAssertion": "off",

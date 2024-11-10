@@ -85,7 +85,7 @@ function PartThumbComponent({
     >
       <Stack justify='space-between'>
         <AspectRatio ratio={1}>
-          <Thumbnail size={120} src={src} align='center'></Thumbnail>
+          <Thumbnail size={120} src={src} align='center' />
         </AspectRatio>
         <Text size='xs'>
           {element.image.split('/')[1]} ({element.count})

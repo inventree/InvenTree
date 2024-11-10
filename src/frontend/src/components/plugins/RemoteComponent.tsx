@@ -97,7 +97,7 @@ export default function RemoteComponent({
               </Text>
             </Alert>
           )}
-          <div ref={componentRef as any}></div>
+          <div ref={componentRef as any} />
         </Stack>
       </Boundary>
     </>

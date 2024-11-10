@@ -105,7 +105,7 @@ export default function DashboardWidgetDrawer({
                         onAddWidget(widget.label);
                       }}
                     >
-                      <IconLayoutGridAdd></IconLayoutGridAdd>
+                      <IconLayoutGridAdd />
                     </ActionIcon>
                   </Tooltip>
                 </Table.Td>

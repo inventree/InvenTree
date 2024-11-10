@@ -139,7 +139,7 @@ export default function InvenTreeTableHeader({
           withCloseButton
           title={t`Custom table filters are active`}
           onClose={() => tableState.clearQueryFilters()}
-        ></Alert>
+        />
       )}
 
       <Group justify='apart' grow wrap='nowrap'>

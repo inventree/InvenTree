@@ -126,7 +126,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
                 <ColorToggle />
               </Group>
             </Table.Td>
-            <Table.Td></Table.Td>
+            <Table.Td />
           </Table.Tr>
           <Table.Tr>
             <Table.Td>

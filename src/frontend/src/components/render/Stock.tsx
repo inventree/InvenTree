@@ -21,7 +21,7 @@ export function RenderStockLocation(
       tooltip={instance.pathstring}
       prefix={
         <>
-          <div style={{ width: 10 * (instance.level || 0) }}></div>
+          <div style={{ width: 10 * (instance.level || 0) }} />
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
