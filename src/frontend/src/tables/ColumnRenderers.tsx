@@ -163,10 +163,16 @@ export function LineItemsProgressColumn(): TableColumn {
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'project_code',
+    ordering: 'project_code',
     sortable: true,
-    render: (record: any) => (
-      <ProjectCodeHoverCard projectCode={record.project_code_detail} />
-    ),
+    title: t`Project Code`,
+    render: (record: any) => {
+      let project_code = resolveItem(
+        record,
+        props.accessor ?? 'project_code_detail'
+      );
+      return <ProjectCodeHoverCard projectCode={project_code} />;
+    },
     ...props
   };
 }

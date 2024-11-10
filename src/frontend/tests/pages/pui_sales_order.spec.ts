@@ -122,8 +122,6 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByLabel('number-field-quantity').fill('123');
   await page.getByLabel('related-field-stock_item').click();
   await page.getByText('Quantity: 42').click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('This field is required.').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 

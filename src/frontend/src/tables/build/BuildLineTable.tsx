@@ -1,9 +1,7 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Alert, Group, Paper, Stack, Text } from '@mantine/core';
+import { Alert, Group, Paper, Stack, Text } from '@mantine/core';
 import {
   IconArrowRight,
-  IconChevronDown,
-  IconChevronRight,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
@@ -22,9 +20,7 @@ import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
 } from '../../forms/BuildForms';
-import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -42,8 +38,10 @@ import {
   RowAction,
   RowActions,
   RowDeleteAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -54,16 +52,17 @@ import { TableHoverCard } from '../TableHoverCard';
  *
  * Note: We expect that the "lineItem" object contains an allocations[] list
  */
-function BuildLineSubTable({
+export function BuildLineSubTable({
   lineItem,
   onEditAllocation,
   onDeleteAllocation
 }: {
   lineItem: any;
-  onEditAllocation: (pk: number) => void;
-  onDeleteAllocation: (pk: number) => void;
+  onEditAllocation?: (pk: number) => void;
+  onDeleteAllocation?: (pk: number) => void;
 }) {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const tableColumns: any[] = useMemo(() => {
     return [
@@ -101,16 +100,24 @@ function BuildLineSubTable({
               title={t`Actions`}
               index={record.pk}
               actions={[
+                RowViewAction({
+                  title: t`View Stock Item`,
+                  modelType: ModelType.stockitem,
+                  modelId: record.stock_item,
+                  navigate: navigate
+                }),
                 RowEditAction({
-                  hidden: !user.hasChangeRole(UserRoles.build),
+                  hidden:
+                    !onEditAllocation || !user.hasChangeRole(UserRoles.build),
                   onClick: () => {
-                    onEditAllocation(record.pk);
+                    onEditAllocation?.(record.pk);
                   }
                 }),
                 RowDeleteAction({
-                  hidden: !user.hasDeleteRole(UserRoles.build),
+                  hidden:
+                    !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
                   onClick: () => {
-                    onDeleteAllocation(record.pk);
+                    onDeleteAllocation?.(record.pk);
                   }
                 })
               ]}
@@ -132,7 +139,7 @@ function BuildLineSubTable({
           pinLastColumn
           idAccessor="pk"
           columns={tableColumns}
-          records={lineItem.filteredAllocations}
+          records={lineItem.filteredAllocations ?? lineItem.allocations}
         />
       </Stack>
     </Paper>
@@ -302,17 +309,10 @@ export default function BuildLineTable({
 
           return (
             <Group wrap="nowrap">
-              <ActionIcon
-                size="sm"
-                variant="transparent"
-                disabled={!hasAllocatedItems}
-              >
-                {table.isRowExpanded(record.pk) ? (
-                  <IconChevronDown />
-                ) : (
-                  <IconChevronRight />
-                )}
-              </ActionIcon>
+              <RowExpansionIcon
+                enabled={hasAllocatedItems}
+                expanded={table.isRowExpanded(record.pk)}
+              />
               <PartColumn part={record.part_detail} />
             </Group>
           );
@@ -605,20 +605,15 @@ export default function BuildLineTable({
             newBuildOrder.open();
           }
         },
-        {
-          icon: <IconArrowRight />,
+        RowViewAction({
           title: t`View Part`,
-          onClick: (event: any) => {
-            navigateToLink(
-              getDetailUrl(ModelType.part, record.part),
-              navigate,
-              event
-            );
-          }
-        }
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate
+        })
       ];
     },
-    [user, output, build, buildStatus]
+    [user, navigate, output, build, buildStatus]
   );
 
   const tableActions = useMemo(() => {
