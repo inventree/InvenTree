@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 277
+INVENTREE_API_VERSION = 278
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v278 - 2024-11-10 : https://github.com/inventree/InvenTree/pull/8461
+    - Makes schema for API information endpoint more informing
+    - Removes general not found endpoint
 
 v277 - 2024-11-01 : https://github.com/inventree/InvenTree/pull/8278
     - Allow build order list to be filtered by "outstanding" (alias for "active")
