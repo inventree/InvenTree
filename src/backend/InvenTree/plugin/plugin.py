@@ -14,6 +14,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 import InvenTree.helpers
+import InvenTree.ready
 from plugin.helpers import get_git_log
 
 logger = logging.getLogger('inventree')
@@ -375,11 +376,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
-        # TODO @matmair fix before MErge
-        return ''
-
-        config = self.plugin_config()
-        if config:
+        if not InvenTree.ready.isRunningMigrations() and (
+            config := self.plugin_config()
+        ):
             return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
         else:
             return InvenTree.helpers.pui_url('/settings/admin/plugin/')
