@@ -897,13 +897,13 @@ export default function PartDetail() {
       <DetailsBadge
         label={t`Locked`}
         color='black'
-        visible={part.locked == true}
+        visible={part.locked}
         key='locked'
       />,
       <DetailsBadge
         label={t`Inactive`}
         color='red'
-        visible={part.active == false}
+        visible={!part.active}
         key='inactive'
       />
     ];

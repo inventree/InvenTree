@@ -202,7 +202,7 @@ function TableStringValue(props: Readonly<FieldProps>) {
     <Group wrap='nowrap' gap='xs' justify='space-apart'>
       <Group wrap='nowrap' gap='xs' justify='left'>
         {renderedValue}
-        {props.field_data.unit == true && <Text size='xs'>{props.unit}</Text>}
+        {props.field_data.unit && <Text size='xs'>{props.unit}</Text>}
       </Group>
       {props.field_data.user && (
         <NameBadge pk={props.field_data?.user} type='user' />
