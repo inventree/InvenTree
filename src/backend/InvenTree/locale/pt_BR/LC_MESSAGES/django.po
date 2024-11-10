@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-04 03:11+0000\n"
-"PO-Revision-Date: 2024-11-04 03:14\n"
+"POT-Creation-Date: 2024-11-05 22:28+0000\n"
+"PO-Revision-Date: 2024-11-05 22:31\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:270
+#: InvenTree/api.py:273
 msgid "API endpoint not found"
 msgstr "API endpoint não encontrado"
 
-#: InvenTree/api.py:387
+#: InvenTree/api.py:390
 msgid "Invalid items list provided"
-msgstr ""
+msgstr "Lista de itens inválida fornecida"
 
-#: InvenTree/api.py:396
+#: InvenTree/api.py:399
 msgid "Invalid filters provided"
-msgstr ""
+msgstr "Filtros inválidos fornecidos"
 
-#: InvenTree/api.py:401
+#: InvenTree/api.py:404
 msgid "No items found to delete"
-msgstr ""
+msgstr "Nenhum item encontrado para excluir"
 
-#: InvenTree/api.py:515
+#: InvenTree/api.py:518
 msgid "User does not have permission to view this model"
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:509
 msgid "Cannot serialize more than 1000 items at once"
-msgstr ""
+msgstr "Não é possível serializar mais de 1000 itens de uma vez"
 
 #: InvenTree/helpers.py:515
 msgid "Empty serial number string"
@@ -164,7 +164,7 @@ msgstr ""
 #: InvenTree/helpers.py:644 InvenTree/helpers.py:663
 #, python-brace-format
 msgid "Invalid group: {group}"
-msgstr ""
+msgstr "Grupo invalido:{group}"
 
 #: InvenTree/helpers.py:607
 #, python-brace-format
@@ -373,7 +373,7 @@ msgstr "Chinês (tradicional)"
 
 #: InvenTree/magic_login.py:28
 msgid "Log in to the app"
-msgstr ""
+msgstr "Entrar no aplicativo"
 
 #: InvenTree/magic_login.py:38 InvenTree/serializers.py:416
 #: company/models.py:133 company/templates/company/company_base.html:138
@@ -522,7 +522,7 @@ msgstr ""
 
 #: InvenTree/models.py:1112
 msgid "Task Failure"
-msgstr ""
+msgstr "Falha na Tarefa"
 
 #: InvenTree/models.py:1114
 #, python-brace-format
@@ -643,7 +643,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:632 common/files.py:63
 msgid "Unsupported file format"
-msgstr ""
+msgstr "Formato de arquivo não suportado"
 
 #: InvenTree/serializers.py:638
 msgid "File is too large"
@@ -689,7 +689,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:917
 msgid "Failed to download image from remote URL"
-msgstr ""
+msgstr "Falha ao baixar a imagem da URL remota"
 
 #: InvenTree/templatetags/inventree_extras.py:184
 msgid "Unknown database"
@@ -6136,7 +6136,7 @@ msgstr ""
 
 #: order/serializers.py:1260
 msgid "Allocated Items"
-msgstr ""
+msgstr "Itens Alocados"
 
 #: order/serializers.py:1374
 msgid "No shipment details provided"
@@ -6168,7 +6168,7 @@ msgstr ""
 
 #: order/serializers.py:1678
 msgid "The following serial numbers are unavailable"
-msgstr ""
+msgstr "Os seguintes números de série não estão disponíveis"
 
 #: order/serializers.py:1904
 msgid "Return order line item"
@@ -7346,7 +7346,7 @@ msgstr ""
 
 #: part/models.py:3626
 msgid "Test templates can only be created for testable parts"
-msgstr ""
+msgstr "Modelos de teste só podem ser criados para partes testáveis"
 
 #: part/models.py:3637
 msgid "Test template with the same key already exists for part"
@@ -7668,11 +7668,11 @@ msgstr ""
 
 #: part/serializers.py:268
 msgid "Speculative Quantity"
-msgstr ""
+msgstr "Quantidade Especulativa"
 
 #: part/serializers.py:277
 msgid "Model ID"
-msgstr ""
+msgstr "ID do modelo"
 
 #: part/serializers.py:324
 msgid "Number of parts using this template"

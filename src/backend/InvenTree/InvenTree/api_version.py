@@ -1,12 +1,26 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 277
+INVENTREE_API_VERSION = 280
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v280 - 2024-11-10 : https://github.com/inventree/InvenTree/pull/8461
+    - Makes schema for API information endpoint more informing
+    - Removes general not found endpoint
+
+v279 - 2024-11-09 : https://github.com/inventree/InvenTree/pull/8458
+    - Adds "order_outstanding" and "part" filters to the BuildLine API endpoint
+    - Adds "order_outstanding" filter to the SalesOrderLineItem API endpoint
+
+v278 - 2024-11-07 : https://github.com/inventree/InvenTree/pull/8445
+    - Updates to the SalesOrder API endpoints
+    - Add "shipment count" information to the SalesOrder API endpoints
+    - Allow null value for SalesOrderAllocation.shipment field
+    - Additional filtering options for allocation endpoints
 
 v277 - 2024-11-01 : https://github.com/inventree/InvenTree/pull/8278
     - Allow build order list to be filtered by "outstanding" (alias for "active")
