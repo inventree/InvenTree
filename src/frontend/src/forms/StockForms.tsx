@@ -325,14 +325,14 @@ function StockItemDefaultMove({
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
-      stockItem.part_detail.default_location ??
-        stockItem.part_detail.category_default_location
+      stockItem.part_detail?.default_location ??
+        stockItem.part_detail?.category_default_location
     ],
     queryFn: async () => {
       const url = apiUrl(
         ApiEndpoints.stock_location_list,
-        stockItem.part_detail.default_location ??
-          stockItem.part_detail.category_default_location
+        stockItem.part_detail?.default_location ??
+          stockItem.part_detail?.category_default_location
       );
 
       return api
@@ -384,8 +384,8 @@ function moveToDefault(
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
       if (
-        stockItem.location === stockItem.part_detail.default_location ||
-        stockItem.location === stockItem.part_detail.category_default_location
+        stockItem.location === stockItem.part_detail?.default_location ||
+        stockItem.location === stockItem.part_detail?.category_default_location
       ) {
         return;
       }
@@ -400,8 +400,8 @@ function moveToDefault(
             }
           ],
           location:
-            stockItem.part_detail.default_location ??
-            stockItem.part_detail.category_default_location
+            stockItem.part_detail?.default_location ??
+            stockItem.part_detail?.category_default_location
         })
         .then((response) => {
           refresh();

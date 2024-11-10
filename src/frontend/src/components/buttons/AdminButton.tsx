@@ -3,6 +3,7 @@ import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { ModelInformationDict } from '../render/ModelType';
@@ -24,6 +25,7 @@ export type AdminButtonProps = {
  */
 export default function AdminButton(props: Readonly<AdminButtonProps>) {
   const user = useUserState();
+  const server = useServerApiState();
 
   const enabled: boolean = useMemo(() => {
     // Only users with superuser permission will see this button
@@ -31,9 +33,12 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
       return false;
     }
 
-    // TODO: Check if the server has the admin interface enabled
-
     const modelDef = ModelInformationDict[props.model];
+
+    // Check if the server has the admin interface enabled
+    if (!server.server.django_admin) {
+      return false;
+    }
 
     // No admin URL associated with the model
     if (!modelDef.admin_url) {
@@ -57,8 +62,8 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
         return;
       }
 
-      // TODO: Check the actual "admin" URL (it may be custom)
-      const url = `${host}/admin${modelDef.admin_url}${props.pk}/`;
+      // Generate the URL for the admin interface
+      const url = `${host}/${server.server.django_admin}${modelDef.admin_url}${props.pk}/`;
 
       if (event?.ctrlKey || event?.shiftKey) {
         // Open the link in a new tab

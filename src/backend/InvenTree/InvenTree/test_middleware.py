@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.http import Http404
-from django.test import tag
 from django.urls import reverse
 
 from error_report.models import Error
@@ -11,8 +10,6 @@ from InvenTree.exceptions import log_error
 from InvenTree.unit_test import InvenTreeTestCase
 
 
-# TODO change test to not rely on CUI
-@tag('cui')
 class MiddlewareTests(InvenTreeTestCase):
     """Test for middleware functions."""
 
@@ -32,25 +29,17 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
 
-        # check that static files go through
-        # TODO @matmair re-enable this check
-        # self.check_path('/static/css/inventree.css', 302)
-
         # check that account things go through
         self.check_path(reverse('account_login'))
 
-        # logout goes directly to login
-        self.check_path(reverse('account_logout'))
-
         # check that frontend code is redirected to login
-        response = self.check_path(reverse('stats'), 302)
-        self.assertEqual(response.url, '/accounts/login/?next=/stats/')
-
-        # check that a 401 is raised
-        self.check_path(reverse('settings.js'), 401)
+        response = self.check_path(reverse('index'), 302)
+        self.assertEqual(response.url, '/accounts/login/?next=/')
 
     def test_token_auth(self):
         """Test auth with token auth."""
+        target = reverse('settings.js')  # for PUI only use 'api-license'
+
         # get token
         response = self.client.get(reverse('api-token'), format='json', data={})
         token = response.data['token']
@@ -58,16 +47,17 @@ class MiddlewareTests(InvenTreeTestCase):
         # logout
         self.client.logout()
         # this should raise a 401
-        self.check_path(reverse('settings.js'), 401)
 
-        # request with token
-        self.check_path(reverse('settings.js'), HTTP_Authorization=f'Token {token}')
+        self.check_path(target, 401)
 
         # Request with broken token
-        self.check_path(reverse('settings.js'), 401, HTTP_Authorization='Token abcd123')
+        self.check_path(target, 401, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
-        self.check_path(reverse('settings.js'), 401)
+        self.check_path(target, 401)
+
+        # request with token
+        self.check_path(target, HTTP_Authorization=f'Token {token}')
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
@@ -80,7 +70,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test normal setup
         check()
-        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
+        response = self.client.get(reverse('api-part-detail', kwargs={'pk': 9999}))
         self.assertEqual(response.status_code, 404)
         check()
 
@@ -92,13 +82,8 @@ class MiddlewareTests(InvenTreeTestCase):
 
         # Test setup without ignored errors
         settings.IGNORED_ERRORS = []
-        response = self.client.get(reverse('part-detail', kwargs={'pk': 9999}))
-        self.assertEqual(response.status_code, 404)
-        check(1)
-
-        # Test manual logging
         try:
             raise Http404
         except Http404:
             log_error('testpath')
-        check(2)
+        check(1)

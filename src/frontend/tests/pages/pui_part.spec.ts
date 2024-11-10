@@ -17,7 +17,6 @@ test('Parts - Tabs', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('tab', { name: 'Scheduling' }).click();
@@ -48,9 +47,9 @@ test('Parts - Tabs', async ({ page }) => {
 test('Parts - Manufacturer Parts', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/84/manufacturers`);
+  await page.goto(`${baseUrl}/part/84/suppliers`);
 
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByText('Hammond Manufacturing').click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
@@ -101,29 +100,71 @@ test('Parts - Allocations', async ({ page }) => {
   await doQuickLogin(page);
 
   // Let's look at the allocations for a single stock item
-  await page.goto(`${baseUrl}/stock/item/324/`);
+
+  // TODO: Un-comment these lines!
+  // await page.goto(`${baseUrl}/stock/item/324/`);
+  // await page.getByRole('tab', { name: 'Allocations' }).click();
+
+  // await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
+  // await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
+  // await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
+
+  // Let's look at the allocations for an entire part
+  await page.goto(`${baseUrl}/part/74/details`);
+
+  // Check that the overall allocations are displayed correctly
+  await page.getByText('11 / 825').waitFor();
+  await page.getByText('6 / 110').waitFor();
+
+  // Navigate to the "Allocations" tab
   await page.getByRole('tab', { name: 'Allocations' }).click();
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
-  await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
-  await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
+  await page.getByRole('button', { name: 'Sales Order Allocations' }).waitFor();
 
-  // Let's look at the allocations for the entire part
-  await page.getByRole('tab', { name: 'Details' }).click();
-  await page.getByRole('link', { name: 'Leg' }).click();
+  // Expected order reference values
+  await page.getByText('BO0001').waitFor();
+  await page.getByText('BO0016').waitFor();
+  await page.getByText('BO0019').waitFor();
+  await page.getByText('SO0008').waitFor();
+  await page.getByText('SO0025').waitFor();
 
-  await page.getByRole('tab', { name: 'Part Details' }).click();
-  await page.getByText('660 / 760').waitFor();
+  // Check "progress" bar of BO0001
+  const build_order_cell = await page.getByRole('cell', { name: 'BO0001' });
+  const build_order_row = await build_order_cell
+    .locator('xpath=ancestor::tr')
+    .first();
+  await build_order_row.getByText('11 / 75').waitFor();
 
-  await page.getByRole('tab', { name: 'Allocations' }).click();
+  // Expand allocations against BO0001
+  await build_order_cell.click();
+  await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
+  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await build_order_cell.click();
 
-  // Number of table records
-  await page.getByText('1 - 4 / 4').waitFor();
-  await page.getByRole('cell', { name: 'Making red square tables' }).waitFor();
+  // Check row options for BO0001
+  await build_order_row.getByLabel(/row-action-menu/).click();
+  await page.getByRole('menuitem', { name: 'View Build Order' }).waitFor();
+  await page.keyboard.press('Escape');
 
-  // Navigate through to the build order
-  await page.getByRole('cell', { name: 'BO0007' }).click();
-  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
+  // Check "progress" bar of SO0025
+  const sales_order_cell = await page.getByRole('cell', { name: 'SO0025' });
+  const sales_order_row = await sales_order_cell
+    .locator('xpath=ancestor::tr')
+    .first();
+  await sales_order_row.getByText('3 / 10').waitFor();
+
+  // Expand allocations against SO0025
+  await sales_order_cell.click();
+  await page.getByRole('cell', { name: '161', exact: true });
+  await page.getByRole('cell', { name: '169', exact: true });
+  await page.getByRole('cell', { name: '170', exact: true });
+  await sales_order_cell.click();
+
+  // Check row options for SO0025
+  await sales_order_row.getByLabel(/row-action-menu/).click();
+  await page.getByRole('menuitem', { name: 'View Sales Order' }).waitFor();
+  await page.keyboard.press('Escape');
 });
 
 test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {

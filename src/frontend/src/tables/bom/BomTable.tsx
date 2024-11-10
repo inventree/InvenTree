@@ -23,6 +23,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
 import {
   useApiFormModal,
@@ -461,7 +462,9 @@ export function BomTable({
         return [
           {
             title: t`View BOM`,
-            onClick: () => navigate(`/part/${record.part}/`),
+            onClick: (event: any) => {
+              navigateToLink(`/part/${record.part}/bom/`, navigate, event);
+            },
             icon: <IconArrowRight />
           }
         ];

@@ -47,6 +47,8 @@ class BuildTestSimple(InvenTreeTestCase):
         b1 = Build.objects.get(pk=1)
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(b1.get_absolute_url(), '/build/1/')
+        else:
+            self.assertEqual(b1.get_absolute_url(), '/platform/manufacturing/build-order/1')
 
     def test_is_complete(self):
         """Test build completion status"""
