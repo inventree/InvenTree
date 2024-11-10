@@ -30,7 +30,6 @@ from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
-from .views import AjaxView
 
 logger = logging.getLogger('inventree')
 
@@ -196,7 +195,7 @@ class VersionTextView(ListAPI):
         return JsonResponse(inventreeApiText())
 
 
-class InfoView(AjaxView):
+class InfoView(APIView):
     """Simple JSON endpoint for InvenTree information.
 
     Use to confirm that the server is running, etc.
@@ -261,7 +260,7 @@ class InfoView(AjaxView):
         return False
 
 
-class NotFoundView(AjaxView):
+class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
     permission_classes = [permissions.AllowAny]
