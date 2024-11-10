@@ -9,7 +9,7 @@ export default function RowExpansionIcon({
   expanded: boolean;
 }) {
   return (
-    <ActionIcon size="sm" variant="transparent" disabled={!enabled}>
+    <ActionIcon size='sm' variant='transparent' disabled={!enabled}>
       {expanded ? <IconChevronDown /> : <IconChevronRight />}
     </ActionIcon>
   );

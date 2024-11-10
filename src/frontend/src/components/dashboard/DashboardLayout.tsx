@@ -3,12 +3,12 @@ import { Alert, Card, Center, Divider, Loader, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Layout, Responsive, WidthProvider } from 'react-grid-layout';
+import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useUserState } from '../../states/UserState';
 import DashboardMenu from './DashboardMenu';
-import DashboardWidget, { DashboardWidgetProps } from './DashboardWidget';
+import DashboardWidget, { type DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
 
 const ReactGridLayout = WidthProvider(Responsive);
@@ -17,7 +17,7 @@ const ReactGridLayout = WidthProvider(Responsive);
  * Save the dashboard layout to local storage
  */
 function saveDashboardLayout(layouts: any, userId: number | undefined): void {
-  let reducedLayouts: any = {};
+  const reducedLayouts: any = {};
 
   // Reduce the layouts to exclude default attributes from the dataset
   Object.keys(layouts).forEach((key) => {
@@ -93,7 +93,7 @@ function loadDashboardWidgets(userId: number | undefined): string[] {
   }
 }
 
-export default function DashboardLayout({}: {}) {
+export default function DashboardLayout() {
   const user = useUserState();
 
   // Dashboard layout definition
@@ -141,7 +141,7 @@ export default function DashboardLayout({}: {}) {
    */
   const addWidget = useCallback(
     (widget: string) => {
-      let newWidget = availableWidgets.items.find(
+      const newWidget = availableWidgets.items.find(
         (wid) => wid.label === widget
       );
 
@@ -150,7 +150,7 @@ export default function DashboardLayout({}: {}) {
       }
 
       // Update the layouts to include the new widget (and enforce initial size)
-      let _layouts: any = { ...layouts };
+      const _layouts: any = { ...layouts };
 
       Object.keys(_layouts).forEach((key) => {
         _layouts[key] = updateLayoutForWidget(_layouts[key], widgets, true);
@@ -170,7 +170,7 @@ export default function DashboardLayout({}: {}) {
       setWidgets(widgets.filter((item) => item.label !== widget));
 
       // Remove the widget from the layout
-      let _layouts: any = { ...layouts };
+      const _layouts: any = { ...layouts };
 
       Object.keys(_layouts).forEach((key) => {
         _layouts[key] = _layouts[key].filter(
@@ -188,7 +188,7 @@ export default function DashboardLayout({}: {}) {
     (layout: any[], widgets: any[], overrideSize: boolean) => {
       return layout.map((item: Layout): Layout => {
         // Find the matching widget
-        let widget = widgets.find(
+        const widget = widgets.find(
           (widget: DashboardWidgetProps) => widget.label === item.i
         );
 
@@ -275,14 +275,14 @@ export default function DashboardLayout({}: {}) {
         editing={editing}
         removing={removing}
       />
-      <Divider p="xs" />
+      <Divider p='xs' />
       {layouts && loaded && availableWidgets.loaded ? (
         <>
           {widgetLabels.length == 0 ? (
             <Center>
-              <Card shadow="xs" padding="xl" style={{ width: '100%' }}>
+              <Card shadow='xs' padding='xl' style={{ width: '100%' }}>
                 <Alert
-                  color="blue"
+                  color='blue'
                   title={t`No Widgets Selected`}
                   icon={<IconInfoCircle />}
                 >
@@ -292,7 +292,7 @@ export default function DashboardLayout({}: {}) {
             </Center>
           ) : (
             <ReactGridLayout
-              className="dashboard-layout"
+              className='dashboard-layout'
               breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
               cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
               rowHeight={64}
@@ -320,7 +320,7 @@ export default function DashboardLayout({}: {}) {
         </>
       ) : (
         <Center>
-          <Loader size="xl" />
+          <Loader size='xl' />
         </Center>
       )}
     </>

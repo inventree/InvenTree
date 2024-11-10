@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
-import { InvenTreeContext } from './PluginContext';
+import type { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 /**
@@ -84,10 +84,10 @@ export default function RemoteComponent({
           `RemoteComponent-${sourceFile}-${functionName}`
         )}
       >
-        <Stack gap="xs">
+        <Stack gap='xs'>
           {renderingError && (
             <Alert
-              color="red"
+              color='red'
               title={t`Error Loading Content`}
               icon={<IconExclamationCircle />}
             >

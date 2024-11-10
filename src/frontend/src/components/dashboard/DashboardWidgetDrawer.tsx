@@ -49,7 +49,7 @@ export default function DashboardWidgetDrawer({
 
   // Filter widgets based on search text
   const filteredWidgets = useMemo(() => {
-    let words = filterText.trim().toLowerCase().split(' ');
+    const words = filterText.trim().toLowerCase().split(' ');
 
     return unusedWidgets.filter((widget) => {
       return words.every((word) =>
@@ -60,28 +60,28 @@ export default function DashboardWidgetDrawer({
 
   return (
     <Drawer
-      position="right"
-      size="50%"
+      position='right'
+      size='50%'
       opened={opened}
       onClose={onClose}
       title={
-        <Group justify="space-between" wrap="nowrap">
-          <StylishText size="lg">Add Dashboard Widgets</StylishText>
+        <Group justify='space-between' wrap='nowrap'>
+          <StylishText size='lg'>Add Dashboard Widgets</StylishText>
         </Group>
       }
     >
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Divider />
         <TextInput
-          aria-label="dashboard-widgets-filter-input"
+          aria-label='dashboard-widgets-filter-input'
           placeholder={t`Filter dashboard widgets`}
           value={filter}
           onChange={(event) => setFilter(event.currentTarget.value)}
           rightSection={
             filter && (
               <IconBackspace
-                aria-label="dashboard-widgets-filter-clear"
-                color="red"
+                aria-label='dashboard-widgets-filter-clear'
+                color='red'
                 onClick={() => setFilter('')}
               />
             )
@@ -94,13 +94,13 @@ export default function DashboardWidgetDrawer({
               <Table.Tr key={widget.label}>
                 <Table.Td>
                   <Tooltip
-                    position="left"
+                    position='left'
                     label={t`Add this widget to the dashboard`}
                   >
                     <ActionIcon
                       aria-label={`add-widget-${widget.label}`}
-                      variant="transparent"
-                      color="green"
+                      variant='transparent'
+                      color='green'
                       onClick={() => {
                         onAddWidget(widget.label);
                       }}
@@ -113,14 +113,14 @@ export default function DashboardWidgetDrawer({
                   <Text>{widget.title}</Text>
                 </Table.Td>
                 <Table.Td>
-                  <Text size="sm">{widget.description}</Text>
+                  <Text size='sm'>{widget.description}</Text>
                 </Table.Td>
               </Table.Tr>
             ))}
           </Table.Tbody>
         </Table>
         {unusedWidgets.length === 0 && (
-          <Alert color="blue" title={t`No Widgets Available`}>
+          <Alert color='blue' title={t`No Widgets Available`}>
             <Text>{t`There are no more widgets available for the dashboard`}</Text>
           </Alert>
         )}

@@ -28,13 +28,13 @@ import { StylishText } from '../../items/StylishText';
 function NewsLink({ item }: { item: any }) {
   let link: string = item.link;
 
-  if (link && link.startsWith('/')) {
+  if (link?.startsWith('/')) {
     link = 'https://inventree.org' + link;
   }
 
   if (link) {
     return (
-      <Anchor href={link} target="_blank">
+      <Anchor href={link} target='_blank'>
         {item.title}
       </Anchor>
     );
@@ -60,9 +60,9 @@ function NewsItem({
       <Table.Td>
         <Tooltip label={t`Mark as read`}>
           <ActionIcon
-            size="sm"
-            color="green"
-            variant="transparent"
+            size='sm'
+            color='green'
+            variant='transparent'
             onClick={() => onMarkRead(item.pk)}
           >
             <IconMailCheck />
@@ -112,7 +112,7 @@ export default function NewsWidget() {
 
   if (!user.isSuperuser()) {
     return (
-      <Alert color="red" title={t`Requires Superuser`}>
+      <Alert color='red' title={t`Requires Superuser`}>
         <Text>{t`This widget requires superuser permissions`}</Text>
       </Alert>
     );
@@ -120,7 +120,7 @@ export default function NewsWidget() {
 
   return (
     <Stack>
-      <StylishText size="xl">{t`News Updates`}</StylishText>
+      <StylishText size='xl'>{t`News Updates`}</StylishText>
       <ScrollArea h={400}>
         <Container>
           <Table>
@@ -130,7 +130,7 @@ export default function NewsWidget() {
                   <NewsItem key={item.pk} item={item} onMarkRead={markRead} />
                 ))
               ) : (
-                <Alert color="green" title={t`No News`}>
+                <Alert color='green' title={t`No News`}>
                   <Text>{t`There are no unread news items`}</Text>
                 </Alert>
               )}
