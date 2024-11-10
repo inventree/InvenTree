@@ -497,9 +497,9 @@ export function useAllocateStockToBuildForm({
   lineItems,
   onFormSuccess
 }: {
-  buildId: number;
+  buildId?: number;
   outputId?: number | null;
-  build: any;
+  build?: any;
   lineItems: any[];
   onFormSuccess: (response: any) => void;
 }) {
@@ -533,8 +533,8 @@ export function useAllocateStockToBuildForm({
   }, [lineItems, sourceLocation]);
 
   useEffect(() => {
-    setSourceLocation(build.take_from);
-  }, [build.take_from]);
+    setSourceLocation(build?.take_from);
+  }, [build?.take_from]);
 
   const sourceLocationField: ApiFormFieldType = useMemo(() => {
     return {
@@ -545,7 +545,7 @@ export function useAllocateStockToBuildForm({
       label: t`Source Location`,
       description: t`Select the source location for the stock allocation`,
       name: 'source_location',
-      value: build.take_from,
+      value: build?.take_from,
       onValueChange: (value: any) => {
         setSourceLocation(value);
       }

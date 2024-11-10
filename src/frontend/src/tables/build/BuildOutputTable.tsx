@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -43,7 +44,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowEditAction } from '../RowActions';
+import { RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
@@ -123,6 +124,7 @@ export default function BuildOutputTable({
   refreshBuild
 }: Readonly<{ build: any; refreshBuild: () => void }>) {
   const user = useUserState();
+  const navigate = useNavigate();
   const table = useTable('build-outputs');
 
   const buildId: number = useMemo(() => {
@@ -381,6 +383,12 @@ export default function BuildOutputTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
+        RowViewAction({
+          title: t`View Build Output`,
+          modelId: record.pk,
+          modelType: ModelType.stockitem,
+          navigate: navigate
+        }),
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,

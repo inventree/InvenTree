@@ -12,7 +12,6 @@ import {
 import {
   IconBookmarks,
   IconBuilding,
-  IconBuildingFactory2,
   IconCalendarStats,
   IconClipboardList,
   IconCurrencyDollar,
@@ -93,8 +92,6 @@ import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
-import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
-import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -103,6 +100,7 @@ import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
 import PartStocktakeDetail from './PartStocktakeDetail';
+import PartSupplierDetail from './PartSupplierDetail';
 
 /**
  * Detail view for a single Part instance
@@ -652,30 +650,16 @@ export default function PartDetail() {
         content: part ? <PartPricingPanel part={part} /> : <Skeleton />
       },
       {
-        name: 'manufacturers',
-        label: t`Manufacturers`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !part.purchaseable,
-        content: part.pk && (
-          <ManufacturerPartTable
-            params={{
-              part: part.pk
-            }}
-          />
-        )
-      },
-      {
         name: 'suppliers',
         label: t`Suppliers`,
         icon: <IconBuilding />,
         hidden:
           !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
-        content: part.pk && (
-          <SupplierPartTable
-            params={{
-              part: part.pk
-            }}
-          />
+
+        content: part.pk ? (
+          <PartSupplierDetail partId={part.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {

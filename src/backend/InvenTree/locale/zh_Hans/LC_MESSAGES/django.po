@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-04 03:11+0000\n"
-"PO-Revision-Date: 2024-11-04 10:27\n"
+"POT-Creation-Date: 2024-11-05 22:28+0000\n"
+"PO-Revision-Date: 2024-11-07 23:53\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:270
+#: InvenTree/api.py:273
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:387
+#: InvenTree/api.py:390
 msgid "Invalid items list provided"
 msgstr "提供了无效的单位"
 
-#: InvenTree/api.py:396
+#: InvenTree/api.py:399
 msgid "Invalid filters provided"
 msgstr "提供了无效的过滤器"
 
-#: InvenTree/api.py:401
+#: InvenTree/api.py:404
 msgid "No items found to delete"
 msgstr "未找到要删除的项目"
 
-#: InvenTree/api.py:515
+#: InvenTree/api.py:518
 msgid "User does not have permission to view this model"
 msgstr "用户没有权限查阅当前模型。"
 
@@ -905,7 +905,7 @@ msgstr "生产订单"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:207
 msgid "Build Orders"
-msgstr "生產工單"
+msgstr "生产订单"
 
 #: build/models.py:136
 msgid "Assembly BOM has not been validated"
@@ -4926,7 +4926,7 @@ msgstr "新建采购订单"
 #: templates/js/translated/search.js:219 templates/navbar.html:62
 #: users/models.py:209
 msgid "Sales Orders"
-msgstr "銷售訂單"
+msgstr "销售订单"
 
 #: company/templates/company/detail.html:105
 #: order/templates/order/sales_orders.html:20

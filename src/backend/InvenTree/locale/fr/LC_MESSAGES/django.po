@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-04 03:11+0000\n"
-"PO-Revision-Date: 2024-11-04 10:27\n"
+"POT-Creation-Date: 2024-11-05 22:28+0000\n"
+"PO-Revision-Date: 2024-11-05 22:31\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:270
+#: InvenTree/api.py:273
 msgid "API endpoint not found"
 msgstr "Point de terminaison de l'API introuvable"
 
-#: InvenTree/api.py:387
+#: InvenTree/api.py:390
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:396
+#: InvenTree/api.py:399
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:401
+#: InvenTree/api.py:404
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:515
+#: InvenTree/api.py:518
 msgid "User does not have permission to view this model"
 msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
 
@@ -2249,7 +2249,7 @@ msgstr "Utilisateur ou groupe responsable de ce projet"
 
 #: common/models.py:783 common/models.py:2236 common/models.py:2613
 msgid "Settings key"
-msgstr ""
+msgstr "Paramétrés des touches"
 
 #: common/models.py:787
 msgid "Settings value"
@@ -5979,7 +5979,7 @@ msgstr ""
 
 #: order/serializers.py:93
 msgid "Copy Lines"
-msgstr ""
+msgstr "Copier des lignes"
 
 #: order/serializers.py:94
 msgid "Copy line items from the original order"
@@ -5987,7 +5987,7 @@ msgstr ""
 
 #: order/serializers.py:100
 msgid "Copy Extra Lines"
-msgstr ""
+msgstr "Copier les lignes supplémentaires"
 
 #: order/serializers.py:101
 msgid "Copy extra line items from the original order"
@@ -6168,7 +6168,7 @@ msgstr "Aucune correspondance trouvée pour les numéros de série suivants"
 
 #: order/serializers.py:1678
 msgid "The following serial numbers are unavailable"
-msgstr "Les numéros de série suivants ne sont pas disponibles"
+msgstr "Les numéros de série suivants sont indisponibles"
 
 #: order/serializers.py:1904
 msgid "Return order line item"
@@ -7672,7 +7672,7 @@ msgstr ""
 
 #: part/serializers.py:277
 msgid "Model ID"
-msgstr ""
+msgstr "Identifiant du Modèle"
 
 #: part/serializers.py:324
 msgid "Number of parts using this template"
@@ -8917,11 +8917,11 @@ msgstr ""
 
 #: plugin/base/ui/serializers.py:30
 msgid "Plugin Name"
-msgstr ""
+msgstr "Nom de l'extension"
 
 #: plugin/base/ui/serializers.py:34
 msgid "Feature Type"
-msgstr ""
+msgstr "Type de fonctionnalité"
 
 #: plugin/base/ui/serializers.py:39
 msgid "Feature Label"
@@ -8929,27 +8929,27 @@ msgstr ""
 
 #: plugin/base/ui/serializers.py:44
 msgid "Feature Title"
-msgstr ""
+msgstr "Titre de la fonctionnalité"
 
 #: plugin/base/ui/serializers.py:49
 msgid "Feature Description"
-msgstr ""
+msgstr "Description de la fonctionnalité"
 
 #: plugin/base/ui/serializers.py:54
 msgid "Feature Icon"
-msgstr ""
+msgstr "Icône de fonctionnalité"
 
 #: plugin/base/ui/serializers.py:58
 msgid "Feature Options"
-msgstr ""
+msgstr "Options de fonctionnalité"
 
 #: plugin/base/ui/serializers.py:61
 msgid "Feature Context"
-msgstr ""
+msgstr "Contexte de la fonctionnalité"
 
 #: plugin/base/ui/serializers.py:64
 msgid "Feature Source (javascript)"
-msgstr ""
+msgstr "Source de la fonctionnalité (javascript)"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "InvenTree Barcodes"
@@ -9331,7 +9331,7 @@ msgstr ""
 
 #: plugin/samples/integration/user_interface_sample.py:33
 msgid "Enable Purchase Order Panels"
-msgstr ""
+msgstr "Activer les panneaux de commande"
 
 #: plugin/samples/integration/user_interface_sample.py:34
 msgid "Enable custom panels for Purchase Order views"

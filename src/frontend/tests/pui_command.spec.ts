@@ -53,7 +53,7 @@ test('Quick Command - No Keys', async ({ page }) => {
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
-  await page.getByRole('button', { name: 'Dismiss' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
 
   await page.waitForURL('**/platform/home');
 
@@ -66,8 +66,9 @@ test('Quick Command - No Keys', async ({ page }) => {
     .click();
   await page.getByText('License Information').first().waitFor();
   await page.getByRole('tab', { name: 'backend Packages' }).waitFor();
+  await page.getByRole('button', { name: 'Django BSD License' }).click();
 
-  await page.getByLabel('License Information').getByRole('button').click();
+  await page.keyboard.press('Escape');
 
   // use about
   await page.getByLabel('open-spotlight').click();

@@ -414,12 +414,15 @@ export function StockItemTable({
     };
   }, [table]);
 
-  const stockItemFields = useStockFields({ create: true, partId: params.part });
+  const newStockItemFields = useStockFields({
+    create: true,
+    partId: params.part
+  });
 
   const newStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     title: t`Add Stock Item`,
-    fields: stockItemFields,
+    fields: newStockItemFields,
     initialData: {
       part: params.part,
       location: params.location
