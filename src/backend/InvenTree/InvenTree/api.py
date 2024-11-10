@@ -195,8 +195,33 @@ class VersionTextView(ListAPI):
         return JsonResponse(inventreeApiText())
 
 
+class InfoApiSerializer(serializers.Serializer):
+    """Serializer for InvenTree server information api endpoint."""
+
+    server = serializers.CharField()
+    version = serializers.CharField()
+    instance = serializers.CharField()
+    apiVersion = serializers.IntegerField()  # noqa: N815
+    worker_running = serializers.BooleanField()
+    worker_count = serializers.IntegerField()
+    worker_pending_tasks = serializers.IntegerField()
+    plugins_enabled = serializers.BooleanField()
+    plugins_install_disabled = serializers.BooleanField()
+    active_plugins = serializers.JSONField()
+    email_configured = serializers.BooleanField()
+    debug_mode = serializers.BooleanField()
+    docker_mode = serializers.BooleanField()
+    default_locale = serializers.ChoiceField(choices=settings.LOCALE_CODES)
+    system_health = serializers.BooleanField()
+    database = serializers.CharField()
+    platform = serializers.CharField()
+    installer = serializers.CharField()
+    target = serializers.CharField()
+    django_admin = serializers.CharField()
+
+
 class InfoView(APIView):
-    """Simple JSON endpoint for InvenTree information.
+    """JSON endpoint for InvenTree server information.
 
     Use to confirm that the server is running, etc.
     """
@@ -207,6 +232,7 @@ class InfoView(APIView):
         """Return the current number of outstanding background tasks."""
         return OrmQ.objects.count()
 
+    @extend_schema(responses={200: OpenApiResponse(response=InfoApiSerializer)})
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
         is_staff = request.user.is_staff
