@@ -1,13 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';

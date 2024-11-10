@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,

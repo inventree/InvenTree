@@ -8,8 +8,7 @@ import {
   Space,
   Stack,
   Table,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';

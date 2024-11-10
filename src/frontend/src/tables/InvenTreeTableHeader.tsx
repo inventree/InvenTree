@@ -10,12 +10,10 @@ import {
 import {
   IconBarcode,
   IconFilter,
-  IconFilterCancel,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { api } from '../App';

@@ -1,15 +1,7 @@
 import { t } from '@lingui/macro';
-import {
-  Anchor,
-  Group,
-  SegmentedControl,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
-import { IconSwitch } from '@tabler/icons-react';
+import { Group, SegmentedControl, Stack, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';

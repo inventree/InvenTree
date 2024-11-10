@@ -1,13 +1,5 @@
 import { Trans } from '@lingui/macro';
-import {
-  Badge,
-  Button,
-  Divider,
-  Group,
-  Stack,
-  Table,
-  Title
-} from '@mantine/core';
+import { Badge, Button, Divider, Group, Stack, Table } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 
 import { useServerApiState } from '../../states/ApiState';

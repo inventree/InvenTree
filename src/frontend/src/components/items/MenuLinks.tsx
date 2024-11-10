@@ -8,7 +8,6 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import { IconLink } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import { Navigate, type NavigateFunction } from 'react-router-dom';
+import type { NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';

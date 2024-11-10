@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
-import { useMemo } from 'react';
 
 import type { ModelType } from '../../enums/ModelType';
 import { useUserState } from '../../states/UserState';

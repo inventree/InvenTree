@@ -40,7 +40,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useInstance } from '../hooks/UseInstance';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';

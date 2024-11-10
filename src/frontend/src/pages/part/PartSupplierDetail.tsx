@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Accordion, Skeleton } from '@mantine/core';
+import { Accordion } from '@mantine/core';
 
 import { StylishText } from '../../components/items/StylishText';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';

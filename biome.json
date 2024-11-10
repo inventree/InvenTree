@@ -27,7 +27,8 @@
 			"useExhaustiveDependencies": "off",
 			"useJsxKeyInIterable": "off",
 			"noUnsafeOptionalChaining": "off",
-			"noSwitchDeclarations": "off"
+			"noSwitchDeclarations": "off",
+			"noUnusedImports":"error"
 		}, "complexity": {
 			"noBannedTypes": "off",
 			"noExtraBooleanCast": "off",

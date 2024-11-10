@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { L } from '@lingui/react/dist/shared/react.e5f95de8';
 import {
   Badge,
   Button,

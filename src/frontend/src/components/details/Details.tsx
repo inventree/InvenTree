@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
