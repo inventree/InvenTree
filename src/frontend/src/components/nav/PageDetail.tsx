@@ -63,7 +63,7 @@ export function PageDetail({
           <Group justify='space-between' wrap='nowrap'>
             <Group justify='left' wrap='nowrap'>
               {imageUrl && (
-                <ApiImage src={imageUrl} radius='sm' h={64} w={64} />
+                <ApiImage src={imageUrl} radius='sm' mah={42} maw={42} />
               )}
               <Stack gap='xs'>
                 {title && <StylishText size='lg'>{title}</StylishText>}

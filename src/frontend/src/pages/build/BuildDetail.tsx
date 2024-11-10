@@ -67,6 +67,8 @@ export default function BuildDetail() {
 
   const user = useUserState();
 
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
   const {
     instance: build,
     refreshInstance,
@@ -191,6 +193,14 @@ export default function BuildDetail() {
         label: t`Completed`,
         icon: 'calendar',
         hidden: !build.completion_date
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
       }
     ];
 
@@ -254,11 +264,7 @@ export default function BuildDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconListNumbers />,
-        content: build?.pk ? (
-          <BuildLineTable build={build} buildId={build.pk} />
-        ) : (
-          <Skeleton />
-        )
+        content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
       },
       {
         name: 'incomplete-outputs',
@@ -268,8 +274,10 @@ export default function BuildDetail() {
           <BuildOutputTable build={build} refreshBuild={refreshInstance} />
         ) : (
           <Skeleton />
-        )
-        // TODO: Hide if build is complete
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
       },
       {
         name: 'complete-outputs',
@@ -290,6 +298,9 @@ export default function BuildDetail() {
         name: 'allocated-stock',
         label: t`Allocated Stock`,
         icon: <IconList />,
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED,
         content: build.pk ? (
           <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
         ) : (
@@ -354,7 +365,7 @@ export default function BuildDetail() {
         model_id: build.pk
       })
     ];
-  }, [build, id, user]);
+  }, [build, id, user, buildStatus]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
@@ -377,8 +388,6 @@ export default function BuildDetail() {
     follow: true,
     modelType: ModelType.build
   });
-
-  const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),

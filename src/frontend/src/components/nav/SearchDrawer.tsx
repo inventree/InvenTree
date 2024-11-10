@@ -14,7 +14,8 @@ import {
   Space,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
@@ -69,8 +70,8 @@ function QueryResultGroup({
 
   return (
     <Paper
+      withBorder
       shadow='sm'
-      radius='xs'
       p='md'
       key={`paper-${query.model}`}
       aria-label={`search-group-${query.model}`}
@@ -100,10 +101,11 @@ function QueryResultGroup({
         <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
+              underline='never'
               onClick={(event: any) =>
                 onResultClick(query.model, result.pk, event)
               }
-              key={result.pk}
+              key={`result-${query.model}-${result.pk}`}
             >
               <RenderInstance instance={result} model={query.model} />
             </Anchor>
@@ -374,7 +376,6 @@ export function SearchDrawer({
           <TextInput
             aria-label='global-search-input'
             placeholder={t`Enter search text`}
-            radius='xs'
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
             leftSection={<IconSearch size='0.8rem' />}
@@ -385,19 +386,22 @@ export function SearchDrawer({
             }
             styles={{ root: { width: '100%' } }}
           />
-          <ActionIcon
-            size='lg'
-            variant='outline'
-            radius='xs'
-            onClick={() => searchQuery.refetch()}
-          >
-            <IconRefresh />
-          </ActionIcon>
+          <Tooltip label={t`Refresh search results`} position='bottom-end'>
+            <ActionIcon
+              size='lg'
+              variant='transparent'
+              onClick={() => searchQuery.refetch()}
+            >
+              <IconRefresh />
+            </ActionIcon>
+          </Tooltip>
           <Menu>
             <Menu.Target>
-              <ActionIcon size='lg' variant='outline' radius='xs'>
-                <IconSettings />
-              </ActionIcon>
+              <Tooltip label={t`Search Options`} position='bottom-end'>
+                <ActionIcon size='lg' variant='transparent'>
+                  <IconSettings />
+                </ActionIcon>
+              </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>{t`Search Options`}</Menu.Label>
@@ -408,7 +412,6 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchRegex(event.currentTarget.checked)
                   }
-                  radius='sm'
                 />
               </Menu.Item>
               <Menu.Item>
@@ -418,7 +421,6 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchWhole(event.currentTarget.checked)
                   }
-                  radius='sm'
                 />
               </Menu.Item>
             </Menu.Dropdown>

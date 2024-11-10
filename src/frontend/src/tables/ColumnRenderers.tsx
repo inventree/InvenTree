@@ -163,10 +163,16 @@ export function LineItemsProgressColumn(): TableColumn {
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'project_code',
+    ordering: 'project_code',
     sortable: true,
-    render: (record: any) => (
-      <ProjectCodeHoverCard projectCode={record.project_code_detail} />
-    ),
+    title: t`Project Code`,
+    render: (record: any) => {
+      const project_code = resolveItem(
+        record,
+        props.accessor ?? 'project_code_detail'
+      );
+      return <ProjectCodeHoverCard projectCode={project_code} />;
+    },
     ...props
   };
 }
@@ -174,6 +180,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
+  ordering,
   accessor,
   title,
   hidden
@@ -181,12 +188,14 @@ export function StatusColumn({
   model: ModelType;
   sortable?: boolean;
   accessor?: string;
+  ordering?: string;
   hidden?: boolean;
   title?: string;
 }) {
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
+    ordering: ordering,
     title: title,
     hidden: hidden,
     render: TableStatusRenderer(model, accessor ?? 'status_custom_key')

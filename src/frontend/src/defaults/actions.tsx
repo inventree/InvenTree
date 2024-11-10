@@ -6,7 +6,6 @@ import type { NavigateFunction } from 'react-router-dom';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
-import { menuItems } from './menuItems';
 
 export function getActions(navigate: NavigateFunction) {
   const setNavigationOpen = useLocalState((state) => state.setNavigationOpen);
@@ -14,17 +13,10 @@ export function getActions(navigate: NavigateFunction) {
 
   const actions: SpotlightActionData[] = [
     {
-      id: 'home',
-      label: t`Home`,
-      description: t`Go to the home page`,
-      onClick: () => navigate(menuItems.home.link),
-      leftSection: <IconHome size='1.2rem' />
-    },
-    {
       id: 'dashboard',
       label: t`Dashboard`,
       description: t`Go to the InvenTree dashboard`,
-      onClick: () => navigate(menuItems.dashboard.link),
+      onClick: () => {}, // navigate(menuItems.dashboard.link),
       leftSection: <IconLink size='1.2rem' />
     },
     {
@@ -72,7 +64,7 @@ export function getActions(navigate: NavigateFunction) {
       id: 'admin-center',
       label: t`Admin Center`,
       description: t`Go to the Admin Center`,
-      onClick: () => navigate(menuItems['settings-admin'].link),
+      onClick: () => {}, /// navigate(menuItems['settings-admin'].link),}
       leftSection: <IconLink size='1.2rem' />
     });
 

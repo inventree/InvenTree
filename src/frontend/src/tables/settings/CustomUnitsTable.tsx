@@ -95,15 +95,15 @@ export default function CustomUnitsTable() {
     const actions = [];
 
     actions.push(
-      // TODO: Adjust actions based on user permissions
       <AddItemButton
         tooltip={t`Add custom unit`}
         onClick={() => newUnit.open()}
+        hidden={!user.isStaff() || !user.hasChangeRole(UserRoles.admin)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>

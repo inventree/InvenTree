@@ -39,11 +39,18 @@ export default function DateField({
     [field.onChange, definition]
   );
 
-  const dateValue = useMemo(() => {
+  const dateValue: Date | null = useMemo(() => {
+    let dv: Date | null = null;
+
     if (field.value) {
-      return new Date(field.value);
+      dv = new Date(field.value) ?? null;
+    }
+
+    // Ensure that the date is valid
+    if (dv instanceof Date && !Number.isNaN(dv.getTime())) {
+      return dv;
     } else {
-      return undefined;
+      return null;
     }
   }, [field.value]);
 
@@ -55,7 +62,7 @@ export default function DateField({
       ref={field.ref}
       type={undefined}
       error={error?.message}
-      value={dateValue}
+      value={dateValue ?? null}
       clearable={!definition.required}
       onChange={onChange}
       valueFormat={valueFormat}

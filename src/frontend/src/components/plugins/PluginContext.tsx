@@ -28,6 +28,7 @@ import { type UserStateProps, useUserState } from '../../states/UserState';
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
+ * @param context - Any additional context data which may be passed to the plugin
  */
 export type InvenTreeContext = {
   api: AxiosInstance;
@@ -38,6 +39,7 @@ export type InvenTreeContext = {
   navigate: NavigateFunction;
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
+  context?: any;
 };
 
 export const useInvenTreeContext = () => {

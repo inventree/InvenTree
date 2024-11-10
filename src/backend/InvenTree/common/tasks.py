@@ -70,6 +70,10 @@ def update_news_feed():
         if entry.id in id_list:
             continue
 
+        # Enforce proper links for the entries
+        if entry.link and str(entry.link).startswith('/'):
+            entry.link = settings.INVENTREE_BASE_URL + str(entry.link)
+
         # Create entry
         try:
             NewsFeedEntry.objects.create(

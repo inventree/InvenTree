@@ -1,12 +1,13 @@
 import { t } from '@lingui/macro';
-import { Drawer, Group, Stack, Table, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Group, Loader, Stack, Table, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { CopyButton } from '../../components/buttons/CopyButton';
-import { StylishText } from '../../components/items/StylishText';
+import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -14,7 +15,33 @@ import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 
-function ErrorDetail({ error }: { error: any }) {
+function ErrorDetail({ errorId }: { errorId?: number }) {
+  const { id } = useParams();
+
+  const errorPrimaryKey = useMemo(() => {
+    return errorId ?? id;
+  }, [errorId, id]);
+
+  const errorInstance = useInstance({
+    endpoint: ApiEndpoints.error_report_list,
+    pk: errorPrimaryKey,
+    defaultValue: {},
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
+
+  const error = useMemo(
+    () => errorInstance.instance || {},
+    [errorInstance.instance]
+  );
+
+  if (
+    errorInstance.instanceQuery.isFetching ||
+    errorInstance.instanceQuery.isLoading
+  ) {
+    return <Loader />;
+  }
+
   return (
     <Stack gap='xs'>
       <Table>
@@ -47,8 +74,8 @@ function ErrorDetail({ error }: { error: any }) {
           <Table.Tr>
             <Table.Td colSpan={2}>
               <Stack gap={3}>
-                {error.data.split('\n').map((line: string, index: number) => (
-                  <Text size='xs' key={`error-line-${index}-${line}`}>
+                {error.data?.split('\n').map((line: string, index: number) => (
+                  <Text size='xs' key={`error-line-${index}`}>
                     {line}
                   </Text>
                 ))}
@@ -67,8 +94,7 @@ function ErrorDetail({ error }: { error: any }) {
 export default function ErrorReportTable() {
   const table = useTable('error-report');
   const user = useUserState();
-
-  const [opened, { open, close }] = useDisclosure(false);
+  const navigate = useNavigate();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -116,15 +142,15 @@ export default function ErrorReportTable() {
   return (
     <>
       {deleteErrorModal.modal}
-      <Drawer
-        opened={opened}
-        size='xl'
-        position='right'
-        title={<StylishText>{t`Error Details`}</StylishText>}
-        onClose={close}
-      >
-        <ErrorDetail error={selectedError} />
-      </Drawer>
+      <DetailDrawer
+        title={t`Error Details`}
+        size={'xl'}
+        renderContent={(pk) => {
+          if (!pk) return;
+
+          return <ErrorDetail errorId={selectedError.pk} />;
+        }}
+      />
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.error_report_list)}
         tableState={table}
@@ -135,7 +161,7 @@ export default function ErrorReportTable() {
           rowActions: rowActions,
           onRowClick: (row) => {
             setSelectedError(row);
-            open();
+            navigate(`${row.pk}/`);
           }
         }}
       />

@@ -331,7 +331,7 @@ export default function CategoryDetail() {
             panels={panels}
             model={ModelType.partcategory}
             instance={category}
-            id={category.pk}
+            id={category.pk ?? null}
           />
         </Stack>
       </InstanceDetail>

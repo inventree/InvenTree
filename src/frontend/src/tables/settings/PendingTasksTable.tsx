@@ -8,7 +8,11 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export default function PendingTasksTable() {
+export default function PendingTasksTable({
+  onRecordsUpdated
+}: {
+  onRecordsUpdated: () => void;
+}) {
   const table = useTable('tasks-pending');
   const user = useUserState();
 
@@ -50,6 +54,7 @@ export default function PendingTasksTable() {
       tableState={table}
       columns={columns}
       props={{
+        afterBulkDelete: onRecordsUpdated,
         enableBulkDelete: user.isStaff(),
         enableSelection: true
       }}

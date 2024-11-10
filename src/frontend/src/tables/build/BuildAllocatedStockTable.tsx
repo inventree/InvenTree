@@ -98,6 +98,14 @@ export default function BuildAllocatedStockTable({
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
+        accessor: 'part_detail.IPN',
+        ordering: 'IPN',
+        hidden: !showPartInfo,
+        title: t`IPN`,
+        sortable: true,
+        switchable: true
+      },
+      {
         hidden: !showPartInfo,
         accessor: 'bom_reference',
         title: t`Reference`,
@@ -153,8 +161,11 @@ export default function BuildAllocatedStockTable({
   const editItem = useEditApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Edit Build Item`,
+    title: t`Edit Stock Allocation`,
     fields: {
+      stock_item: {
+        disabled: true
+      },
       quantity: {}
     },
     table: table
@@ -163,7 +174,7 @@ export default function BuildAllocatedStockTable({
   const deleteItem = useDeleteApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Delete Build Item`,
+    title: t`Delete Stock Allocation`,
     table: table
   });
 

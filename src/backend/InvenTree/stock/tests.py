@@ -266,6 +266,9 @@ class StockTest(StockTestBase):
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
             self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
+        else:
+            self.assertEqual(it.get_absolute_url(), '/platform/stock/item/2')
+            self.assertEqual(self.home.get_absolute_url(), '/platform/stock/location/1')
 
     def test_strings(self):
         """Test str function."""

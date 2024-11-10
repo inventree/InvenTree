@@ -17,7 +17,10 @@ import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import type { TableFieldRowProps } from '../components/forms/fields/TableField';
+import {
+  TableFieldErrorWrapper,
+  type TableFieldRowProps
+} from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -210,7 +213,11 @@ function BuildOutputFormRow({
         <Table.Td>
           <PartColumn part={record.part_detail} />
         </Table.Td>
-        <Table.Td>{serial}</Table.Td>
+        <Table.Td>
+          <TableFieldErrorWrapper props={props} errorKey='output'>
+            {serial}
+          </TableFieldErrorWrapper>
+        </Table.Td>
         <Table.Td>{record.batch}</Table.Td>
         <Table.Td>
           <StatusRenderer
@@ -262,7 +269,7 @@ export function useCompleteBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
+        headers: [t`Part`, t`Build Output`, t`Batch`, t`Status`]
       },
       status_custom_key: {},
       location: {
@@ -457,8 +464,8 @@ function BuildAllocateLineRow({
       </Table.Td>
       <Table.Td>
         <ProgressBar
-          value={record.allocated}
-          maximum={record.quantity}
+          value={record.allocatedQuantity}
+          maximum={record.requiredQuantity}
           progressLabel
         />
       </Table.Td>
@@ -493,9 +500,9 @@ export function useAllocateStockToBuildForm({
   lineItems,
   onFormSuccess
 }: {
-  buildId: number;
+  buildId?: number;
   outputId?: number | null;
-  build: any;
+  build?: any;
   lineItems: any[];
   onFormSuccess: (response: any) => void;
 }) {
@@ -515,6 +522,7 @@ export function useAllocateStockToBuildForm({
             lineItems.find((item) => item.pk == row.item.build_line) ?? {};
           return (
             <BuildAllocateLineRow
+              key={row.idx}
               props={row}
               record={record}
               sourceLocation={sourceLocation}
@@ -528,8 +536,8 @@ export function useAllocateStockToBuildForm({
   }, [lineItems, sourceLocation]);
 
   useEffect(() => {
-    setSourceLocation(build.take_from);
-  }, [build.take_from]);
+    setSourceLocation(build?.take_from);
+  }, [build?.take_from]);
 
   const sourceLocationField: ApiFormFieldType = useMemo(() => {
     return {
@@ -540,7 +548,7 @@ export function useAllocateStockToBuildForm({
       label: t`Source Location`,
       description: t`Select the source location for the stock allocation`,
       name: 'source_location',
-      value: build.take_from,
+      value: build?.take_from,
       onValueChange: (value: any) => {
         setSourceLocation(value);
       }
@@ -568,8 +576,8 @@ export function useAllocateStockToBuildForm({
         return {
           build_line: item.pk,
           stock_item: undefined,
-          quantity: Math.max(0, item.quantity - item.allocated),
-          output: null
+          quantity: Math.max(0, item.requiredQuantity - item.allocatedQuantity),
+          output: outputId
         };
       })
     },

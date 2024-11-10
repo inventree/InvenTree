@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -138,6 +139,17 @@ export function SalesOrderTable({
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
+      {
+        accessor: 'shipments_count',
+        title: t`Shipments`,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel
+            value={record.completed_shipments_count}
+            maximum={record.shipments_count}
+          />
+        )
+      },
       StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),

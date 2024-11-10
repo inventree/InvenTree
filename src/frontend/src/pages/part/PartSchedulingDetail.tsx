@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
-  Anchor,
+  Alert,
   Center,
   Divider,
   Loader,
@@ -65,23 +65,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
       {
         accessor: 'label',
         switchable: false,
-        title: t`Order`,
-        render: (record: any) => {
-          const url = getDetailUrl(record.model, record.model_id);
-
-          if (url) {
-            return (
-              <Anchor
-                href='#'
-                onClick={(event: any) => navigateToLink(url, navigate, event)}
-              >
-                {record.label}
-              </Anchor>
-            );
-          } else {
-            return record.label;
-          }
-        }
+        title: t`Order`
       },
       DescriptionColumn({
         accessor: 'title',
@@ -245,15 +229,32 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
     return [min_date.valueOf(), max_date.valueOf()];
   }, [chartData]);
 
+  const hasSchedulingInfo: boolean = useMemo(
+    () => table.recordCount > 0,
+    [table.recordCount]
+  );
+
   return (
     <>
+      {!table.isLoading && !hasSchedulingInfo && (
+        <Alert color='blue' title={t`No information available`}>
+          <Text>{t`There is no scheduling information available for the selected part`}</Text>
+        </Alert>
+      )}
       <SimpleGrid cols={2}>
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.part_scheduling, part.pk)}
           tableState={table}
           columns={tableColumns}
           props={{
-            enableSearch: false
+            enableSearch: false,
+            onRowClick: (record: any, index: number, event: any) => {
+              const url = getDetailUrl(record.model, record.model_id);
+
+              if (url) {
+                navigateToLink(url, navigate, event);
+              }
+            }
           }}
         />
         {table.isLoading ? (

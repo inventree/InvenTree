@@ -1,23 +1,16 @@
 import { Trans } from '@lingui/macro';
 import { Carousel } from '@mantine/carousel';
-import { Anchor, Button, Paper, Text, Title } from '@mantine/core';
+import { Anchor, Button, Paper, Text } from '@mantine/core';
 
-import type { DocumentationLinkItem } from './DocumentationLinks';
 import * as classes from './GettingStartedCarousel.css';
-import { PlaceholderPill } from './Placeholder';
+import type { MenuLinkItem } from './MenuLinks';
+import { StylishText } from './StylishText';
 
-function StartedCard({
-  title,
-  description,
-  link,
-  placeholder
-}: DocumentationLinkItem) {
+function StartedCard({ title, description, link }: MenuLinkItem) {
   return (
     <Paper shadow='md' p='xl' radius='md' className={classes.card}>
       <div>
-        <Title order={3} className={classes.title}>
-          {title} {placeholder && <PlaceholderPill />}
-        </Title>
+        <StylishText size='md'>{title}</StylishText>
         <Text size='sm' className={classes.category} lineClamp={2}>
           {description}
         </Text>
@@ -34,7 +27,7 @@ function StartedCard({
 export function GettingStartedCarousel({
   items
 }: Readonly<{
-  items: DocumentationLinkItem[];
+  items: MenuLinkItem[];
 }>) {
   const slides = items.map((item) => (
     <Carousel.Slide key={item.id}>

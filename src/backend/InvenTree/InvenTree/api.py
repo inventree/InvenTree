@@ -221,6 +221,7 @@ class InfoView(AjaxView):
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
+            'worker_count': settings.BACKGROUND_WORKER_COUNT,
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
@@ -235,6 +236,9 @@ class InfoView(AjaxView):
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'django_admin': settings.INVENTREE_ADMIN_URL
+            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+            else None,
         }
 
         return JsonResponse(data)

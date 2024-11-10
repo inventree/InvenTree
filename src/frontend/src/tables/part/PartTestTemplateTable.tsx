@@ -1,6 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
-import { IconArrowRight, IconLock } from '@tabler/icons-react';
+import { IconLock } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +22,12 @@ import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartTestTemplateTable({
@@ -199,13 +204,12 @@ export default function PartTestTemplateTable({
       if (record.part != partId) {
         // This test is defined for a parent part
         return [
-          {
-            icon: <IconArrowRight />,
+          RowViewAction({
             title: t`View Parent Part`,
-            onClick: () => {
-              navigate(getDetailUrl(ModelType.part, record.part));
-            }
-          }
+            modelType: ModelType.part,
+            modelId: record.part,
+            navigate: navigate
+          })
         ];
       }
 

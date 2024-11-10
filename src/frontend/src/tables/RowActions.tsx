@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import {
+  IconArrowRight,
   IconCircleX,
   IconCopy,
   IconDots,
@@ -8,8 +9,12 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
+import type { NavigateFunction } from 'react-router-dom';
 
+import type { ModelType } from '../enums/ModelType';
 import { cancelEvent } from '../functions/events';
+import { navigateToLink } from '../functions/navigation';
+import { getDetailUrl } from '../functions/urls';
 
 // Type definition for a table row action
 export type RowAction = {
@@ -17,10 +22,31 @@ export type RowAction = {
   tooltip?: string;
   color?: string;
   icon?: ReactNode;
-  onClick: (event: any) => void;
+  onClick?: (event: any) => void;
   hidden?: boolean;
   disabled?: boolean;
 };
+
+type RowModelProps = {
+  modelType: ModelType;
+  modelId: number;
+  navigate: NavigateFunction;
+};
+
+export type RowViewProps = RowAction & RowModelProps;
+
+// Component for viewing a row in a table
+export function RowViewAction(props: RowViewProps): RowAction {
+  return {
+    ...props,
+    color: undefined,
+    icon: <IconArrowRight />,
+    onClick: (event: any) => {
+      const url = getDetailUrl(props.modelType, props.modelId);
+      navigateToLink(url, props.navigate, event);
+    }
+  };
+}
 
 // Component for duplicating a row in a table
 export function RowDuplicateAction(props: RowAction): RowAction {
@@ -105,7 +131,7 @@ export function RowActions({
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);
-            action.onClick(event);
+            action.onClick?.(event);
             setOpened(false);
           }}
           disabled={action.disabled || false}

@@ -40,6 +40,9 @@ invoke dev.setup-dev --tests
 
 Read the [InvenTree setup documentation](../start/intro.md) for a complete installation reference guide.
 
+!!! note "Required Packages"
+    Depending on your system, you may need to install additional software packages as required.
+
 ### Setup Devtools
 
 Run the following command to set up all toolsets for development.
@@ -169,6 +172,7 @@ The various github actions can be found in the `./github/workflows` directory
 ### Run tests locally
 
 To run test locally, use:
+
 ```
 invoke dev.test
 ```

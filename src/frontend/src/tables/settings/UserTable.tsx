@@ -140,7 +140,7 @@ export function UserDrawer({
           <Text ml={'md'}>
             {userDetail?.groups && userDetail?.groups?.length > 0 ? (
               <List>
-                {userDetail?.groups?.map((group) => (
+                {userDetail?.groups?.map((group: any) => (
                   <List.Item key={group.pk}>
                     <DetailDrawerLink
                       to={`../group-${group.pk}`}

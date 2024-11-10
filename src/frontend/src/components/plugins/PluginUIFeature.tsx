@@ -21,6 +21,42 @@ import type {
   TemplatePreviewUIFeature
 } from './PluginUIFeatureTypes';
 
+/**
+ * Enumeration for available plugin UI feature types.
+ */
+export enum PluginUIFeatureType {
+  dashboard = 'dashboard',
+  panel = 'panel',
+  template_editor = 'template_editor',
+  template_preview = 'template_preview'
+}
+
+/**
+ * Type definition for a UI component which can be loaded via plugin.
+ * Ref: src/backend/InvenTree/plugin/base/ui/serializers.py:PluginUIFeatureSerializer
+ *
+ * @param plugin_name: The name of the plugin
+ * @param feature_type: The type of the UI feature (see PluginUIFeatureType)
+ * @param key: The unique key for the feature (used to identify the feature in the DOM)
+ * @param title: The title of the feature (human readable)
+ * @param description: A description of the feature (human readable, optional)
+ * @param options: Additional options for the feature (optional, depends on the feature type)
+ * @param context: Additional context data passed to the rendering function (optional)
+ * @param source: The source of the feature (must point to an accessible javascript module)
+ *
+ */
+export interface PluginUIFeature {
+  plugin_name: string;
+  feature_type: PluginUIFeatureType;
+  key: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  options?: any;
+  context?: any;
+  source: string;
+}
+
 export const getPluginTemplateEditor = (
   func: PluginUIFuncWithoutInvenTreeContextType<TemplateEditorUIFeature>,
   template: TemplateI

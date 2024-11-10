@@ -314,6 +314,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
 }
 
 function ProgressBarValue(props: Readonly<FieldProps>) {
+  if (props.field_data.total <= 0) {
+    return <Text size='sm'>{props.field_data.progress}</Text>;
+  }
+
   return (
     <ProgressBar
       value={props.field_data.progress}

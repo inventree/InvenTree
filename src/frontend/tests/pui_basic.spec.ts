@@ -14,9 +14,7 @@ test('Basic Login Test', async ({ page }) => {
   await page.goto(baseUrl);
   await page.waitForURL('**/platform');
 
-  await page
-    .getByRole('heading', { name: `Welcome to your Dashboard, ${user.name}` })
-    .click();
+  await page.getByText('InvenTree Demo Server').waitFor();
 
   // Check that the username is provided
   await page.getByText(user.username);
@@ -47,9 +45,7 @@ test('Quick Login Test', async ({ page }) => {
   await page.goto(baseUrl);
   await page.waitForURL('**/platform');
 
-  await page
-    .getByRole('heading', { name: `Welcome to your Dashboard, ${user.name}` })
-    .click();
+  await page.getByText('InvenTree Demo Server').waitFor();
 
   // Logout (via URL)
   await page.goto(`${baseUrl}/logout/`);

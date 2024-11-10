@@ -5,7 +5,7 @@ import {
   IconBellCheck,
   IconBellExclamation,
   IconCircleCheck,
-  IconCircleX,
+  IconMail,
   IconMailOpened,
   IconTrash
 } from '@tabler/icons-react';
@@ -109,7 +109,7 @@ export default function NotificationsPage() {
             actions={(record) => [
               {
                 title: t`Mark as unread`,
-                icon: <IconCircleX />,
+                icon: <IconMail />,
                 onClick: () => {
                   const url = apiUrl(
                     ApiEndpoints.notifications_list,

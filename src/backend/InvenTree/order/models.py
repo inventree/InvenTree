@@ -1,7 +1,6 @@
 """Order model definitions."""
 
 import logging
-import sys
 from datetime import datetime
 from decimal import Decimal
 
@@ -151,9 +150,6 @@ class TotalPriceMixin(models.Model):
             try:
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
-                # Record the error, try to press on
-                _1, _2, _3 = sys.exc_info()
-
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
 
@@ -541,6 +537,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         verbose_name=_('Completion Date'),
         help_text=_('Date order was completed'),
+    )
+
+    destination = TreeForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        related_name='purchase_orders',
+        blank=True,
+        null=True,
+        verbose_name=_('Destination'),
+        help_text=_('Destination for received items'),
     )
 
     @transaction.atomic
@@ -1099,6 +1105,11 @@ class SalesOrder(TotalPriceMixin, Order):
                     _('Order cannot be completed as there are incomplete shipments')
                 )
 
+            if self.pending_allocation_count > 0:
+                raise ValidationError(
+                    _('Order cannot be completed as there are incomplete allocations')
+                )
+
             if not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete line items')
@@ -1291,6 +1302,23 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return a queryset of the pending shipments for this order."""
         return self.shipments.filter(shipment_date=None)
 
+    def allocations(self):
+        """Return a queryset of all allocations for this order."""
+        return SalesOrderAllocation.objects.filter(line__order=self)
+
+    def pending_allocations(self):
+        """Return a queryset of any pending allocations for this order.
+
+        Allocations are pending if:
+
+        a) They are not associated with a SalesOrderShipment
+        b) The linked SalesOrderShipment has not been shipped
+        """
+        Q1 = Q(shipment=None)
+        Q2 = Q(shipment__shipment_date=None)
+
+        return self.allocations().filter(Q1 | Q2).distinct()
+
     @property
     def shipment_count(self):
         """Return the total number of shipments associated with this order."""
@@ -1305,6 +1333,11 @@ class SalesOrder(TotalPriceMixin, Order):
     def pending_shipment_count(self):
         """Return the number of pending shipments associated with this order."""
         return self.pending_shipments().count()
+
+    @property
+    def pending_allocation_count(self):
+        """Return the number of pending (non-shipped) allocations."""
+        return self.pending_allocations().count()
 
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='sales_order_post_save')
@@ -1481,10 +1514,9 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
-        return '{n} x {part} from {supplier} (for {po})'.format(
+        return '{n} x {part} - {po}'.format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
-            supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
             po=self.order,
         )
 
@@ -1544,7 +1576,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         related_name='po_lines',
         blank=True,
         null=True,
-        help_text=_('Where does the Purchaser want this item to be stored?'),
+        help_text=_('Destination for received items'),
     )
 
     def get_destination(self):
@@ -1919,6 +1951,7 @@ class SalesOrderShipment(
             order.tasks.complete_sales_order_shipment,
             shipment_id=self.pk,
             user_id=user.pk if user else None,
+            group='sales_order',
         )
 
         trigger_event('salesordershipment.completed', id=self.pk)
@@ -2024,7 +2057,7 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and self.quantity != 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
-        if self.line.order != self.shipment.order:
+        if self.shipment and self.line.order != self.shipment.order:
             errors['line'] = _('Sales order does not match shipment')
             errors['shipment'] = _('Shipment does not match sales order')
 
@@ -2041,6 +2074,8 @@ class SalesOrderAllocation(models.Model):
     shipment = models.ForeignKey(
         SalesOrderShipment,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name='allocations',
         verbose_name=_('Shipment'),
         help_text=_('Sales order shipment reference'),
