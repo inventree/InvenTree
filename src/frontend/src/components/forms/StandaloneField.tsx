@@ -9,13 +9,13 @@ export function StandaloneField({
   defaultValue,
   hideLabels,
   error
-}: {
+}: Readonly<{
   fieldDefinition: ApiFormFieldType;
   fieldName?: string;
   defaultValue?: any;
   hideLabels?: boolean;
   error?: string;
-}) {
+}>) {
   // Field must have a defined name
   const name = useMemo(() => fieldName ?? 'field', [fieldName]);
 

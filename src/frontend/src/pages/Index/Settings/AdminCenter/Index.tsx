@@ -9,6 +9,7 @@ import {
   Title
 } from '@mantine/core';
 import {
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -18,6 +19,7 @@ import {
   IconListDetails,
   IconPackages,
   IconPlugConnected,
+  IconQrcode,
   IconReport,
   IconScale,
   IconSitemap,
@@ -28,9 +30,9 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { PanelType } from '../../../../components/nav/Panel';
-import { PanelGroup } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
+import { PanelType } from '../../../../components/panels/Panel';
+import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
@@ -67,6 +69,10 @@ const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
+const BarcodeScanHistoryTable = Loadable(
+  lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
+);
+
 const ImportSesssionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
@@ -91,6 +97,8 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
+const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
+
 export default function AdminCenter() {
   const user = useUserState();
 
@@ -107,6 +115,12 @@ export default function AdminCenter() {
         label: t`Data Import`,
         icon: <IconFileUpload />,
         content: <ImportSesssionTable />
+      },
+      {
+        name: 'barcode-history',
+        label: t`Barcode Scans`,
+        icon: <IconQrcode />,
+        content: <BarcodeScanHistoryTable />
       },
       {
         name: 'background',
@@ -161,6 +175,12 @@ export default function AdminCenter() {
         label: t`Category Parameters`,
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardCheck />,
+        content: <StocktakePanel />
       },
       {
         name: 'labels',
@@ -227,16 +247,17 @@ export default function AdminCenter() {
       {user.isStaff() ? (
         <Stack gap="xs">
           <SettingsHeader
+            label="admin"
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
-            switch_link="/settings/system"
-            switch_text="System Settings"
           />
           <QuickAction />
           <PanelGroup
             pageKey="admin-center"
             panels={adminCenterPanels}
             collapsible={true}
+            model="admincenter"
+            id={null}
           />
         </Stack>
       ) : (

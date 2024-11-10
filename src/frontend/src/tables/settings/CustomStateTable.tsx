@@ -112,7 +112,7 @@ export default function CustomStateTable() {
     return [
       <AddItemButton
         onClick={() => newCustomState.open()}
-        tooltip={t`Add state`}
+        tooltip={t`Add State`}
       />
     ];
   }, []);

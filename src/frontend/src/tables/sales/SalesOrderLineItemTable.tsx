@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import {
+  IconArrowRight,
   IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
   IconTools
 } from '@tabler/icons-react';
+import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
@@ -16,6 +20,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
+  useAllocateToSalesOrderForm,
   useSalesOrderAllocateSerialsFields,
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
@@ -30,26 +35,31 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
   currency,
   customerId,
   editable
-}: {
+}: Readonly<{
   orderId: number;
   currency: string;
   customerId: number;
   editable: boolean;
-}) {
+}>) {
+  const navigate = useNavigate();
   const user = useUserState();
   const table = useTable('sales-order-line-item');
 
@@ -59,7 +69,17 @@ export default function SalesOrderLineItemTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => {
+          return (
+            <Group wrap="nowrap">
+              <RowExpansionIcon
+                enabled={record.allocated}
+                expanded={table.isRowExpanded(record.pk)}
+              />
+              <PartColumn part={record.part_detail} />
+            </Group>
+          );
+        }
       },
       {
         accessor: 'part_detail.IPN',
@@ -149,7 +169,7 @@ export default function SalesOrderLineItemTable({
 
           return (
             <TableHoverCard
-              value={<Text color={color}>{text}</Text>}
+              value={<Text c={color}>{text}</Text>}
               extra={extra}
               title={t`Stock Information`}
             />
@@ -158,6 +178,7 @@ export default function SalesOrderLineItemTable({
       },
       {
         accessor: 'allocated',
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
@@ -168,6 +189,7 @@ export default function SalesOrderLineItemTable({
       },
       {
         accessor: 'shipped',
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
@@ -183,7 +205,7 @@ export default function SalesOrderLineItemTable({
         accessor: 'link'
       })
     ];
-  }, []);
+  }, [table.isRowExpanded]);
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
@@ -236,6 +258,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_allocate_serials,
     pk: orderId,
     title: t`Allocate Serial Numbers`,
+    initialData: initialData,
     fields: allocateSerialFields,
     table: table
   });
@@ -251,10 +274,37 @@ export default function SalesOrderLineItemTable({
     modelType: ModelType.build
   });
 
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const allocateStock = useAllocateToSalesOrderForm({
+    orderId: orderId,
+    lineItems: selectedItems,
+    onFormSuccess: () => {
+      table.refreshTable();
+      table.clearSelectedRecords();
+    }
+  });
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'allocated',
+        label: t`Allocated`,
+        description: t`Show lines which are fully allocated`
+      },
+      {
+        name: 'completed',
+        label: t`Completed`,
+        description: t`Show lines which are completed`
+      }
+    ];
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        tooltip={t`Add line item`}
+        key="add-line-item"
+        tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
             order: orderId
@@ -262,24 +312,47 @@ export default function SalesOrderLineItemTable({
           newLine.open();
         }}
         hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
+      />,
+      <ActionButton
+        key="allocate-stock"
+        tooltip={t`Allocate Stock`}
+        icon={<IconArrowRight />}
+        disabled={!table.hasSelectedRecords}
+        color="green"
+        onClick={() => {
+          setSelectedItems(
+            table.selectedRecords.filter((r) => r.allocated < r.quantity)
+          );
+          allocateStock.open();
+        }}
       />
     ];
-  }, [user, orderId]);
+  }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
 
       return [
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
+        }),
         {
           hidden:
             allocated ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
-          title: t`Allocate stock`,
+          title: t`Allocate Stock`,
           icon: <IconSquareArrowRight />,
           color: 'green',
-          onClick: notYetImplemented
+          onClick: () => {
+            setSelectedItems([record]);
+            allocateStock.open();
+          }
         },
         {
           hidden:
@@ -287,11 +360,14 @@ export default function SalesOrderLineItemTable({
             allocated ||
             !editable ||
             !user.hasChangeRole(UserRoles.sales_order),
-          title: t`Allocate Serials`,
+          title: t`Allocate serials`,
           icon: <IconHash />,
           color: 'green',
           onClick: () => {
             setSelectedLine(record.pk);
+            setInitialData({
+              quantity: record.quantity - record.allocated
+            });
             allocateBySerials.open();
           }
         },
@@ -345,8 +421,31 @@ export default function SalesOrderLineItemTable({
         })
       ];
     },
-    [user, editable]
+    [navigate, user, editable]
   );
+
+  // Control row expansion
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        return table.isRowExpanded(record.pk) || record.allocated > 0;
+      },
+      content: ({ record }: { record: any }) => {
+        return (
+          <SalesOrderAllocationTable
+            showOrderInfo={false}
+            showPartInfo={false}
+            orderId={orderId}
+            lineItemId={record.pk}
+            partId={record.part}
+            allowEdit
+            isSubTable
+          />
+        );
+      }
+    };
+  }, [orderId, table.isRowExpanded]);
 
   return (
     <>
@@ -355,6 +454,7 @@ export default function SalesOrderLineItemTable({
       {newLine.modal}
       {newBuildOrder.modal}
       {allocateBySerials.modal}
+      {allocateStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}
@@ -368,8 +468,8 @@ export default function SalesOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          modelType: ModelType.part,
-          modelField: 'part'
+          tableFilters: tableFilters,
+          rowExpansion: rowExpansion
         }}
       />
     </>

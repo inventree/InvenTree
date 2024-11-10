@@ -415,11 +415,11 @@ function HistoryTable({
   data,
   selection,
   setSelection
-}: {
+}: Readonly<{
   data: ScanItem[];
   selection: string[];
   setSelection: React.Dispatch<React.SetStateAction<string[]>>;
-}) {
+}>) {
   const toggleRow = (id: string) =>
     setSelection((current) =>
       current.includes(id)

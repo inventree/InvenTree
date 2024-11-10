@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from typing import Callable, Optional
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -174,6 +175,9 @@ def offload_task(
     """
     from InvenTree.exceptions import log_error
 
+    # Extract group information from kwargs
+    group = kwargs.pop('group', 'inventree')
+
     try:
         import importlib
 
@@ -200,7 +204,7 @@ def offload_task(
     if force_async or (is_worker_running() and not force_sync):
         # Running as asynchronous task
         try:
-            task = AsyncTask(taskname, *args, **kwargs)
+            task = AsyncTask(taskname, *args, group=group, **kwargs)
             task.run()
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
@@ -690,3 +694,14 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True):
         # We should be current now - triggering full reload to make sure all models
         # are loaded fully in their new state.
         registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+
+def email_user(user_id: int, subject: str, message: str) -> None:
+    """Send a message to a user."""
+    try:
+        user = get_user_model().objects.get(pk=user_id)
+    except Exception:
+        logger.warning('User <%s> not found - cannot send welcome message', user_id)
+        return
+
+    user.email_user(subject=subject, message=message)

@@ -125,12 +125,14 @@ class ReportConfig(AppConfig):
             # Read the existing template file
             data = template_file.open('r').read()
 
-            logger.info("Creating new label template: '%s'", template['name'])
-
-            # Create a new entry
-            report.models.LabelTemplate.objects.create(
-                **template, template=ContentFile(data, os.path.basename(filename))
-            )
+            try:
+                # Create a new entry
+                report.models.LabelTemplate.objects.create(
+                    **template, template=ContentFile(data, os.path.basename(filename))
+                )
+                logger.info("Creating new label template: '%s'", template['name'])
+            except Exception:
+                pass
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -170,6 +172,13 @@ class ReportConfig(AppConfig):
                 'description': 'Sample sales order report',
                 'model_type': 'salesorder',
                 'filename_pattern': 'SalesOrder-{{ reference }}.pdf',
+            },
+            {
+                'file': 'inventree_sales_order_shipment_report.html',
+                'name': 'InvenTree Sales Order Shipment',
+                'description': 'Sample sales order shipment report',
+                'model_type': 'salesordershipment',
+                'filename_pattern': 'SalesOrderShipment-{{ reference }}.pdf',
             },
             {
                 'file': 'inventree_return_order_report.html',
@@ -212,9 +221,11 @@ class ReportConfig(AppConfig):
             # Read the existing template file
             data = template_file.open('r').read()
 
-            logger.info("Creating new report template: '%s'", template['name'])
-
             # Create a new entry
-            report.models.ReportTemplate.objects.create(
-                **template, template=ContentFile(data, os.path.basename(filename))
-            )
+            try:
+                report.models.ReportTemplate.objects.create(
+                    **template, template=ContentFile(data, os.path.basename(filename))
+                )
+                logger.info("Created new report template: '%s'", template['name'])
+            except Exception:
+                pass

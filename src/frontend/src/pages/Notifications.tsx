@@ -5,7 +5,7 @@ import {
   IconBellCheck,
   IconBellExclamation,
   IconCircleCheck,
-  IconCircleX,
+  IconMail,
   IconMailOpened,
   IconTrash
 } from '@tabler/icons-react';
@@ -14,7 +14,7 @@ import { useCallback, useMemo } from 'react';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { PageDetail } from '../components/nav/PageDetail';
-import { PanelGroup } from '../components/nav/PanelGroup';
+import { PanelGroup } from '../components/panels/PanelGroup';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
@@ -106,7 +106,7 @@ export default function NotificationsPage() {
             actions={(record) => [
               {
                 title: t`Mark as unread`,
-                icon: <IconCircleX />,
+                icon: <IconMail />,
                 onClick: () => {
                   let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
 

@@ -55,10 +55,10 @@ export function attachmentIcon(attachment: string): ReactNode {
 export function AttachmentLink({
   attachment,
   external
-}: {
+}: Readonly<{
   attachment: string;
   external?: boolean;
-}): ReactNode {
+}>): ReactNode {
   let text = external ? attachment : attachment.split('/').pop();
 
   const host = useLocalState((s) => s.host);

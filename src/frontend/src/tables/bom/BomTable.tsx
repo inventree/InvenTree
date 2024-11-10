@@ -23,6 +23,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { navigateToLink } from '../../functions/navigation';
 import { notYetImplemented } from '../../functions/notifications';
 import {
   useApiFormModal,
@@ -65,11 +66,11 @@ export function BomTable({
   partId,
   partLocked,
   params = {}
-}: {
+}: Readonly<{
   partId: number;
   partLocked?: boolean;
   params?: any;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ export function BomTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'part',
+        accessor: 'sub_part',
         switchable: false,
         sortable: true,
         render: (record) => {
@@ -461,7 +462,9 @@ export function BomTable({
         return [
           {
             title: t`View BOM`,
-            onClick: () => navigate(`/part/${record.part}/`),
+            onClick: (event: any) => {
+              navigateToLink(`/part/${record.part}/bom/`, navigate, event);
+            },
             icon: <IconArrowRight />
           }
         ];
@@ -507,18 +510,21 @@ export function BomTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
+        key="import-bom"
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Import BOM Data`}
         icon={<IconFileArrowLeft />}
         onClick={() => importBomItem.open()}
       />,
       <ActionButton
+        key="validate-bom"
         hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
         tooltip={t`Validate BOM`}
         icon={<IconCircleCheck />}
         onClick={() => validateBom.open()}
       />,
       <AddItemButton
+        key="add-bom-item"
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}

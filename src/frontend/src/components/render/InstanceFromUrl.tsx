@@ -14,10 +14,10 @@ import { RenderInstance } from './Instance';
 export function InstanceFromUrl({
   model,
   url
-}: {
+}: Readonly<{
   model: ModelType;
   url: string;
-}) {
+}>) {
   const [data, setData] = useState<any>(null);
   useMemo(
     () =>

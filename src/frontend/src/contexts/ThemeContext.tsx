@@ -11,7 +11,9 @@ import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
-export function ThemeContext({ children }: { children: JSX.Element }) {
+export function ThemeContext({
+  children
+}: Readonly<{ children: JSX.Element }>) {
   const [primaryColor, whiteColor, blackColor, radius] = useLocalState(
     (state) => [
       state.primaryColor,

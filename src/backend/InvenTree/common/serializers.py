@@ -234,12 +234,17 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                 request = self.context['request']
                 if request.user and request.user.is_staff:
                     meta = obj.target_object._meta
-                    target['link'] = construct_absolute_url(
-                        reverse(
-                            f'admin:{meta.db_table}_change',
-                            kwargs={'object_id': obj.target_object_id},
+
+                    try:
+                        target['link'] = construct_absolute_url(
+                            reverse(
+                                f'admin:{meta.db_table}_change',
+                                kwargs={'object_id': obj.target_object_id},
+                            )
                         )
-                    )
+                    except Exception:
+                        # Do not crash if the reverse lookup fails
+                        pass
 
         return target
 

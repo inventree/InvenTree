@@ -67,6 +67,31 @@ class PluginConfigSerializer(serializers.ModelSerializer):
     mixins = serializers.DictField(read_only=True)
 
 
+class PluginAdminDetailSerializer(serializers.ModelSerializer):
+    """Serializer for a PluginConfig with admin details."""
+
+    class Meta:
+        """Metaclass options for serializer."""
+
+        model = PluginConfig
+
+        fields = ['source', 'context']
+
+    source = serializers.CharField(
+        allow_null=True,
+        label=_('Source File'),
+        help_text=_('Path to the source file for admin integration'),
+        source='admin_source',
+    )
+
+    context = serializers.JSONField(
+        allow_null=True,
+        label=_('Context'),
+        help_text=_('Optional context data for the admin integration'),
+        source='admin_context',
+    )
+
+
 class PluginConfigInstallSerializer(serializers.Serializer):
     """Serializer for installing a new plugin."""
 
@@ -301,46 +326,3 @@ class PluginRelationSerializer(serializers.PrimaryKeyRelatedField):
     def to_representation(self, value):
         """Return the 'key' of the PluginConfig object."""
         return value.key
-
-
-class PluginPanelSerializer(serializers.Serializer):
-    """Serializer for a plugin panel."""
-
-    class Meta:
-        """Meta for serializer."""
-
-        fields = [
-            'plugin',
-            'name',
-            'label',
-            # Following fields are optional
-            'icon',
-            'content',
-            'source',
-        ]
-
-    # Required fields
-    plugin = serializers.CharField(
-        label=_('Plugin Key'), required=True, allow_blank=False
-    )
-
-    name = serializers.CharField(
-        label=_('Panel Name'), required=True, allow_blank=False
-    )
-
-    label = serializers.CharField(
-        label=_('Panel Title'), required=True, allow_blank=False
-    )
-
-    # Optional fields
-    icon = serializers.CharField(
-        label=_('Panel Icon'), required=False, allow_blank=True
-    )
-
-    content = serializers.CharField(
-        label=_('Panel Content (HTML)'), required=False, allow_blank=True
-    )
-
-    source = serializers.CharField(
-        label=_('Panel Source (javascript)'), required=False, allow_blank=True
-    )

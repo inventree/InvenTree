@@ -32,7 +32,8 @@ from . import config, locales
 
 checkMinPythonVersion()
 
-INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
+INVENTREE_BASE_URL = 'https://inventree.org'
+INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv or 'TESTING' in os.environ
@@ -203,10 +204,11 @@ DBBACKUP_STORAGE = get_setting(
 
 # Default backup configuration
 DBBACKUP_STORAGE_OPTIONS = get_setting(
-    'INVENTREE_BACKUP_OPTIONS', 'backup_options', None
+    'INVENTREE_BACKUP_OPTIONS',
+    'backup_options',
+    default_value={'location': config.get_backup_dir()},
+    typecast=dict,
 )
-if DBBACKUP_STORAGE_OPTIONS is None:
-    DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
 
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
     'INVENTREE_ADMIN_ENABLED', config_key='admin_enabled', default_value=True
@@ -589,6 +591,9 @@ for key in db_keys:
 # Check that required database configuration options are specified
 required_keys = ['ENGINE', 'NAME']
 
+# Ensure all database keys are upper case
+db_config = {key.upper(): value for key, value in db_config.items()}
+
 for key in required_keys:
     if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
@@ -846,13 +851,20 @@ _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
 )
 
+
+# Prevent running multiple background workers if global cache is disabled
+# This is to prevent scheduling conflicts due to the lack of a shared cache
+BACKGROUND_WORKER_COUNT = (
+    int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4))
+    if GLOBAL_CACHE_ENABLED
+    else 1
+)
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
-    'workers': int(
-        get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)
-    ),
+    'workers': BACKGROUND_WORKER_COUNT,
     'timeout': _q_worker_timeout,
     'retry': max(120, _q_worker_timeout + 30),
     'max_attempts': int(
@@ -1089,26 +1101,40 @@ if (
     sys.exit(-1)
 
 COOKIE_MODE = (
-    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'None'))
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'False'))
     .lower()
     .strip()
 )
 
-valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+# Valid modes (as per the django settings documentation)
+valid_cookie_modes = ['lax', 'strict', 'none']
 
-if COOKIE_MODE not in valid_cookie_modes:
-    logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
-    sys.exit(-1)
-
-COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
+if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
+    # Set the cookie mode (in production mode only)
+    COOKIE_MODE = COOKIE_MODE.capitalize()
+else:
+    # Default to False, as per the Django settings
+    COOKIE_MODE = False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
+
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
-SESSION_COOKIE_SECURE = get_boolean_setting(
-    'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+
+"""Set the SESSION_COOKIE_SECURE value based on the following rules:
+- False if the server is running in DEBUG mode
+- True if samesite cookie setting is set to 'None'
+- Otherwise, use the value specified in the configuration file (or env var)
+"""
+SESSION_COOKIE_SECURE = (
+    False
+    if DEBUG
+    else (
+        SESSION_COOKIE_SAMESITE == 'None'
+        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+    )
 )
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
@@ -1260,23 +1286,29 @@ MARKDOWNIFY = {
             'abbr',
             'b',
             'blockquote',
+            'code',
             'em',
             'h1',
             'h2',
             'h3',
+            'h4',
+            'h5',
+            'hr',
             'i',
             'img',
             'li',
             'ol',
             'p',
+            'pre',
+            's',
             'strong',
-            'ul',
             'table',
             'thead',
             'tbody',
             'th',
             'tr',
             'td',
+            'ul',
         ],
     }
 }

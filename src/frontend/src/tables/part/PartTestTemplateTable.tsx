@@ -1,6 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
-import { IconArrowRight, IconLock } from '@tabler/icons-react';
+import { IconLock } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,16 +22,21 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  RowAction,
+  RowDeleteAction,
+  RowEditAction,
+  RowViewAction
+} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartTestTemplateTable({
   partId,
   partLocked
-}: {
+}: Readonly<{
   partId: number;
   partLocked?: boolean;
-}) {
+}>) {
   const table = useTable('part-test-template');
   const user = useUserState();
   const navigate = useNavigate();
@@ -199,13 +204,12 @@ export default function PartTestTemplateTable({
       if (record.part != partId) {
         // This test is defined for a parent part
         return [
-          {
-            icon: <IconArrowRight />,
+          RowViewAction({
             title: t`View Parent Part`,
-            onClick: () => {
-              navigate(getDetailUrl(ModelType.part, record.part));
-            }
-          }
+            modelType: ModelType.part,
+            modelId: record.part,
+            navigate: navigate
+          })
         ];
       }
 
@@ -234,6 +238,7 @@ export default function PartTestTemplateTable({
 
     return [
       <AddItemButton
+        key="add-test-template"
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
         hidden={partLocked || !can_add}

@@ -17,6 +17,9 @@
         },
         {
             "pattern": "https://www.reddit.com/r/InvenTree/"
+        },
+        {
+            "pattern": "https://opensource.org/license/MIT"
         }
     ]
 }

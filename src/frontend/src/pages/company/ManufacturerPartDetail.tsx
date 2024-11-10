@@ -3,9 +3,7 @@ import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList,
-  IconNotes,
-  IconPaperclip
+  IconList
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,7 +12,6 @@ import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   DeleteItemAction,
   DuplicateItemAction,
@@ -23,8 +20,10 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelType } from '../../components/nav/Panel';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -38,7 +37,6 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
@@ -79,18 +77,19 @@ export default function ManufacturerPartDetail() {
       },
       {
         type: 'string',
-        name: 'description',
-        label: t`Description`,
+        name: 'part_detail.IPN',
+        label: t`IPN`,
         copy: true,
-        hidden: !manufacturerPart.description
+        icon: 'serial',
+        hidden: !data.part_detail?.IPN
       },
       {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`External Link`,
+        type: 'string',
+        name: 'part_detail.description',
+        label: t`Description`,
         copy: true,
-        hidden: !manufacturerPart.link
+        icon: 'info',
+        hidden: !manufacturerPart.description
       }
     ];
 
@@ -110,6 +109,22 @@ export default function ManufacturerPartDetail() {
         copy: true,
         hidden: !manufacturerPart.MPN,
         icon: 'reference'
+      },
+      {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !manufacturerPart.description,
+        icon: 'info'
+      },
+      {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`External Link`,
+        copy: true,
+        hidden: !manufacturerPart.link
       }
     ];
 
@@ -128,11 +143,7 @@ export default function ManufacturerPartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable
-              title={t`Manufacturer Part`}
-              fields={tl}
-              item={data}
-            />
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
         <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
@@ -174,29 +185,14 @@ export default function ManufacturerPartDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.manufacturerpart}
-            model_id={manufacturerPart?.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.manufacturerpart}
-            modelId={manufacturerPart.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk
+      })
     ];
   }, [manufacturerPart]);
 

@@ -92,7 +92,7 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         """Check if item exists else return to stock index."""
-        stock_pk = kwargs.get('pk', None)
+        stock_pk = kwargs.get('pk')
 
         if stock_pk:
             try:

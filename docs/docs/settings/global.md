@@ -90,6 +90,8 @@ Configuration of barcode functionality:
 {{ globalsetting("BARCODE_WEBCAM_SUPPORT") }}
 {{ globalsetting("BARCODE_SHOW_TEXT") }}
 {{ globalsetting("BARCODE_GENERATION_PLUGIN") }}
+{{ globalsetting("BARCODE_STORE_RESULTS") }}
+{{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
 
 ### Pricing and Currency
 
@@ -121,8 +123,6 @@ Configuration of report generation:
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
-{{ globalsetting("REPORT_ENABLE_TEST_REPORT") }}
-{{ globalsetting("REPORT_ATTACH_TEST_REPORT") }}
 
 ### Parts
 

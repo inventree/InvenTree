@@ -11,27 +11,27 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
-from common.settings import get_global_setting
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
+    RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
-    RetrieveUpdateDestroyAPI,
     UpdateAPI,
 )
-from InvenTree.permissions import IsSuperuser
+from InvenTree.permissions import IsSuperuser, IsSuperuserOrReadOnly
 from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
 
@@ -144,7 +144,7 @@ class PluginList(ListAPI):
     search_fields = ['key', 'name']
 
 
-class PluginDetail(RetrieveUpdateDestroyAPI):
+class PluginDetail(RetrieveDestroyAPI):
     """API detail endpoint for PluginConfig object.
 
     get:
@@ -159,6 +159,7 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
+    permission_classes = [IsSuperuserOrReadOnly]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -175,6 +176,18 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
             })
 
         return super().delete(request, *args, **kwargs)
+
+
+class PluginAdminDetail(RetrieveAPI):
+    """Endpoint for viewing admin integration plugin details.
+
+    This endpoint is used to view the available admin integration options for a plugin.
+    """
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginAdminDetailSerializer
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
 
 class PluginInstall(CreateAPI):
@@ -416,38 +429,6 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
-class PluginPanelList(APIView):
-    """API endpoint for listing all available plugin panels."""
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = PluginSerializers.PluginPanelSerializer
-
-    @extend_schema(responses={200: PluginSerializers.PluginPanelSerializer(many=True)})
-    def get(self, request):
-        """Show available plugin panels."""
-        target_model = request.query_params.get('target_model', None)
-        target_id = request.query_params.get('target_id', None)
-
-        panels = []
-
-        if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
-            # Extract all plugins from the registry which provide custom panels
-            for _plugin in registry.with_mixin('ui', active=True):
-                # Allow plugins to fill this data out
-                plugin_panels = _plugin.get_custom_panels(
-                    target_model, target_id, request
-                )
-
-                if plugin_panels and type(plugin_panels) is list:
-                    for panel in plugin_panels:
-                        panel['plugin'] = _plugin.slug
-
-                        # TODO: Validate each panel before inserting
-                        panels.append(panel)
-
-        return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
-
-
 class PluginMetadataView(MetadataView):
     """Metadata API endpoint for the PluginConfig model."""
 
@@ -462,21 +443,8 @@ plugin_api_urls = [
     path(
         'plugins/',
         include([
-            path(
-                'ui/',
-                include([
-                    path(
-                        'panels/',
-                        include([
-                            path(
-                                '',
-                                PluginPanelList.as_view(),
-                                name='api-plugin-panel-list',
-                            )
-                        ]),
-                    )
-                ]),
-            ),
+            # UI plugins
+            path('ui/', include(ui_plugins_api_urls)),
             # Plugin management
             path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
             path('install/', PluginInstall.as_view(), name='api-plugin-install'),
@@ -528,6 +496,9 @@ plugin_api_urls = [
                         'uninstall/',
                         PluginUninstall.as_view(),
                         name='api-plugin-uninstall',
+                    ),
+                    path(
+                        'admin/', PluginAdminDetail.as_view(), name='api-plugin-admin'
                     ),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),

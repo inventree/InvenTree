@@ -244,6 +244,39 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     )
 
 
+class PartSchedulingSerializer(serializers.Serializer):
+    """Serializer class for a PartScheduling entry."""
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = [
+            'date',
+            'quantity',
+            'speculative_quantity',
+            'title',
+            'label',
+            'model',
+            'model_id',
+        ]
+
+    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
+
+    quantity = serializers.FloatField(label=_('Quantity'), required=True)
+
+    speculative_quantity = serializers.FloatField(
+        label=_('Speculative Quantity'), required=False
+    )
+
+    title = serializers.CharField(label=_('Title'), required=True)
+
+    label = serializers.CharField(label=_('Label'), required=True)
+
+    model = serializers.CharField(label=_('Model'), required=True)
+
+    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
+
+
 class PartThumbSerializer(serializers.Serializer):
     """Serializer for the 'image' field of the Part model.
 
@@ -1193,6 +1226,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
         model = PartStocktakeReport
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
+        read_only_fields = ['date', 'report', 'part_count', 'user']
 
     user_detail = InvenTree.serializers.UserSerializer(
         source='user', read_only=True, many=False
@@ -1282,6 +1316,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             exclude_external=data.get('exclude_external', True),
             generate_report=data.get('generate_report', True),
             update_parts=data.get('update_parts', True),
+            group='report',
         )
 
 
@@ -1564,6 +1599,7 @@ class BomItemSerializer(
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
+        substitutes = kwargs.pop('substitutes', True)
 
         super().__init__(*args, **kwargs)
 
@@ -1572,6 +1608,9 @@ class BomItemSerializer(
 
         if not sub_part_detail:
             self.fields.pop('sub_part_detail', None)
+
+        if not substitutes:
+            self.fields.pop('substitutes', None)
 
         if not pricing:
             self.fields.pop('pricing_min', None)
@@ -1667,6 +1706,10 @@ class BomItemSerializer(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
+        )
+
+        queryset = queryset.select_related(
+            'part__pricing_data', 'sub_part__pricing_data'
         )
 
         queryset = queryset.prefetch_related(

@@ -1,12 +1,101 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 254
+INVENTREE_API_VERSION = 280
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v280 - 2024-11-10 : https://github.com/inventree/InvenTree/pull/8461
+    - Makes schema for API information endpoint more informing
+    - Removes general not found endpoint
+
+v279 - 2024-11-09 : https://github.com/inventree/InvenTree/pull/8458
+    - Adds "order_outstanding" and "part" filters to the BuildLine API endpoint
+    - Adds "order_outstanding" filter to the SalesOrderLineItem API endpoint
+
+v278 - 2024-11-07 : https://github.com/inventree/InvenTree/pull/8445
+    - Updates to the SalesOrder API endpoints
+    - Add "shipment count" information to the SalesOrder API endpoints
+    - Allow null value for SalesOrderAllocation.shipment field
+    - Additional filtering options for allocation endpoints
+
+v277 - 2024-11-01 : https://github.com/inventree/InvenTree/pull/8278
+    - Allow build order list to be filtered by "outstanding" (alias for "active")
+
+v276 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8403
+    - Adds 'destination' field to the PurchaseOrder model and API endpoints
+
+v275 - 2024-10-31 : https://github.com/inventree/InvenTree/pull/8396
+    - Adds SKU and MPN fields to the StockItem serializer
+    - Additional export options for the StockItem serializer
+
+v274 - 2024-10-29 : https://github.com/inventree/InvenTree/pull/8392
+    - Add more detailed information to NotificationEntry API serializer
+
+v273 - 2024-10-28 : https://github.com/inventree/InvenTree/pull/8376
+    - Fixes for the BuildLine API endpoint
+
+v272 - 2024-10-25 : https://github.com/inventree/InvenTree/pull/8343
+    - Adjustments to BuildLine API serializers
+
+v271 - 2024-10-22 : https://github.com/inventree/InvenTree/pull/8331
+    - Fixes for SalesOrderLineItem endpoints
+
+v270 - 2024-10-19 : https://github.com/inventree/InvenTree/pull/8307
+    - Adds missing date fields from order API endpoint(s)
+
+v269 - 2024-10-16 : https://github.com/inventree/InvenTree/pull/8295
+    - Adds "include_variants" filter to the BuildOrder API endpoint
+    - Adds "include_variants" filter to the SalesOrder API endpoint
+    - Adds "include_variants" filter to the PurchaseOrderLineItem API endpoint
+    - Adds "include_variants" filter to the ReturnOrder API endpoint
+
+268 - 2024-10-11 : https://github.com/inventree/InvenTree/pull/8274
+    - Adds "in_stock" attribute to the StockItem serializer
+
+267 - 2024-10-8 : https://github.com/inventree/InvenTree/pull/8250
+    - Remove "allocations" field from the SalesOrderShipment API endpoint(s)
+    - Add "allocated_items" field to the SalesOrderShipment API endpoint(s)
+
+266 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8249
+    - Tweak SalesOrderShipment API for more efficient data retrieval
+
+265 - 2024-10-07 : https://github.com/inventree/InvenTree/pull/8228
+    - Adds API endpoint for providing custom admin integration details for plugins
+
+264 - 2024-10-03 : https://github.com/inventree/InvenTree/pull/8231
+    - Adds Sales Order Shipment attachment model type
+
+263 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8194
+    - Adds Sales Order Shipment report
+
+262 - 2024-09-30 : https://github.com/inventree/InvenTree/pull/8220
+    - Tweak permission requirements for uninstalling plugins via API
+
+261 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8184
+    - Fixes for BuildOrder API serializers
+
+v260 - 2024-09-26 : https://github.com/inventree/InvenTree/pull/8190
+    - Adds facility for server-side context data to be passed to client-side plugins
+
+v259 - 2024-09-20 : https://github.com/inventree/InvenTree/pull/8137
+    - Implements new API endpoint for enabling custom UI features via plugins
+
+v258 - 2024-09-24 : https://github.com/inventree/InvenTree/pull/8163
+    - Enhances the existing PartScheduling API endpoint
+    - Adds a formal DRF serializer to the endpoint
+
+v257 - 2024-09-22 : https://github.com/inventree/InvenTree/pull/8150
+    - Adds API endpoint for reporting barcode scan history
+
+v256 - 2024-09-19 : https://github.com/inventree/InvenTree/pull/7704
+    - Adjustments for "stocktake" (stock history) API endpoints
+
+v255 - 2024-09-19 : https://github.com/inventree/InvenTree/pull/8145
+    - Enables copying line items when duplicating an order
 
 v254 - 2024-09-14 : https://github.com/inventree/InvenTree/pull/7470
     - Implements new API endpoints for enabling custom UI functionality via plugins

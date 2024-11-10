@@ -4,22 +4,6 @@ import InvenTree.fields
 from django.db import migrations
 import djmoney.models.fields
 
-from django.db.migrations.recorder import MigrationRecorder
-
-
-def show_migrations(apps, schema_editor):
-    """Show the latest migrations from each app"""
-
-    for app in apps.get_app_configs():
-
-        label = app.label
-
-        migrations = MigrationRecorder.Migration.objects.filter(app=app).order_by('-applied')[:5]
-
-        print(f"{label} migrations:")
-        for m in migrations:
-            print(f" - {m.name}")
-
 
 class Migration(migrations.Migration):
 
@@ -30,10 +14,6 @@ class Migration(migrations.Migration):
     operations = []
 
     xoperations = [
-        migrations.RunPython(
-            code=show_migrations,
-            reverse_code=migrations.RunPython.noop
-        ),
         migrations.AlterField(
             model_name='stockitem',
             name='purchase_price',

@@ -18,6 +18,7 @@ export interface StatusCodeListInterface {
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
+  hidden?: boolean;
 }
 
 /*
@@ -120,6 +121,10 @@ export const StatusRenderer = ({
   options?: RenderStatusLabelOptionsInterface;
 }) => {
   const statusCodes = getStatusCodes(type);
+
+  if (options?.hidden) {
+    return null;
+  }
 
   if (statusCodes === undefined || statusCodes === null) {
     console.warn('StatusRenderer: statusCodes is undefined');

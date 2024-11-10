@@ -43,6 +43,7 @@ from taggit.managers import TaggableManager
 import build.validators
 import common.currency
 import common.validators
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -779,10 +780,7 @@ class BaseInvenTreeSetting(models.Model):
             )
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive)'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     value = models.CharField(
@@ -828,6 +826,9 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
+        elif self.is_float():
+            self.value = self.as_float()
+
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
         )
@@ -864,6 +865,14 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError, TypeError):
                 raise ValidationError({'value': _('Value must be an integer value')})
 
+        # Floating point validator
+        if validator is float:
+            try:
+                # Coerce into a floating point value
+                value = float(value)
+            except (ValueError, TypeError):
+                raise ValidationError({'value': _('Value must be a valid number')})
+
         # If a list of validators is supplied, iterate through each one
         if type(validator) in [list, tuple]:
             for v in validator:
@@ -875,10 +884,20 @@ class BaseInvenTreeSetting(models.Model):
             if self.is_bool():
                 value = self.as_bool()
 
-            if self.is_int():
+            elif self.is_int():
                 value = self.as_int()
 
-            validator(value)
+            elif self.is_float():
+                value = self.as_float()
+
+            try:
+                validator(value)
+            except ValidationError as e:
+                raise e
+            except Exception:
+                raise ValidationError({
+                    'value': _('Value does not pass validation checks')
+                })
 
     def validate_unique(self, exclude=None):
         """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
@@ -971,6 +990,9 @@ class BaseInvenTreeSetting(models.Model):
 
         if not model_name:
             return None
+
+        # Enforce lower-case model name
+        model_name = str(model_name).strip().lower()
 
         try:
             (app, mdl) = model_name.strip().split('.')
@@ -1070,6 +1092,39 @@ class BaseInvenTreeSetting(models.Model):
                     return True
 
         return False
+
+    def is_float(self):
+        """Check if the setting is required to be a float value."""
+        validator = self.__class__.get_setting_validator(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return self.__class__.validator_is_float(validator)
+
+    @classmethod
+    def validator_is_float(cls, validator):
+        """Return if validator is for float."""
+        if validator == float:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == float:
+                    return True
+
+        return False
+
+    def as_float(self):
+        """Return the value of this setting converted to a float value.
+
+        If an error occurs, return the default value
+        """
+        try:
+            value = float(self.value)
+        except (ValueError, TypeError):
+            value = self.default_value
+
+        return value
 
     def is_int(self):
         """Check if the setting is required to be an integer value."""
@@ -1397,6 +1452,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable barcode scanner support in the web interface'),
             'default': True,
             'validator': bool,
+        },
+        'BARCODE_STORE_RESULTS': {
+            'name': _('Store Barcode Results'),
+            'description': _('Store barcode scan results in the database'),
+            'default': False,
+            'validator': bool,
+        },
+        'BARCODE_RESULTS_MAX_NUM': {
+            'name': _('Barcode Scans Maximum Count'),
+            'description': _('Maximum number of barcode scan results to store'),
+            'default': 100,
+            'validator': [int, MinValueValidator(1)],
         },
         'BARCODE_INPUT_DELAY': {
             'name': _('Barcode Input Delay'),
@@ -2166,10 +2233,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     typ = 'inventree'
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=True,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=True, help_text=_('Settings key')
     )
 
     def to_native_value(self):
@@ -2552,10 +2616,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     extra_unique_fields = ['user']
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     user = models.ForeignKey(
@@ -3451,3 +3512,67 @@ class InvenTreeCustomUserStateModel(models.Model):
             })
 
         return super().clean()
+
+
+class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+    """Model for storing barcode scans results."""
+
+    BARCODE_SCAN_MAX_LEN = 250
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Barcode Scan')
+
+    data = models.CharField(
+        max_length=BARCODE_SCAN_MAX_LEN,
+        verbose_name=_('Data'),
+        help_text=_('Barcode data'),
+        blank=False,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User who scanned the barcode'),
+    )
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Timestamp'),
+        help_text=_('Date and time of the barcode scan'),
+    )
+
+    endpoint = models.CharField(
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('URL endpoint which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    context = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Context'),
+        help_text=_('Context data for the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    response = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Response'),
+        help_text=_('Response data from the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    result = models.BooleanField(
+        verbose_name=_('Result'),
+        help_text=_('Was the barcode scan successful?'),
+        default=False,
+    )

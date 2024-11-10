@@ -14,13 +14,12 @@ import {
   Title,
   useMantineTheme
 } from '@mantine/core';
-import { IconReload, IconRestore } from '@tabler/icons-react';
+import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
 import { SizeMarks } from '../../../../defaults/defaults';
-import { notYetImplemented } from '../../../../functions/notifications';
 import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
 
@@ -32,7 +31,7 @@ const LOOKUP = Object.assign(
   ...Object.keys(DEFAULT_THEME.colors).map((clr) => getLkp(clr))
 );
 
-export function UserTheme({ height }: { height: number }) {
+export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
 
   const [themeLoader, setThemeLoader] = useLocalState((state) => [

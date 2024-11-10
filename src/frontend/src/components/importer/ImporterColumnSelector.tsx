@@ -20,7 +20,10 @@ import { apiUrl } from '../../states/ApiState';
 import { StandaloneField } from '../forms/StandaloneField';
 import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
-function ImporterColumn({ column, options }: { column: any; options: any[] }) {
+function ImporterColumn({
+  column,
+  options
+}: Readonly<{ column: any; options: any[] }>) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const [selectedColumn, setSelectedColumn] = useState<string>(
@@ -122,11 +125,11 @@ function ImporterColumnTableRow({
   session,
   column,
   options
-}: {
+}: Readonly<{
   session: ImportSessionState;
   column: any;
   options: any;
-}) {
+}>) {
   return (
     <Table.Tr key={column.label ?? column.field}>
       <Table.Td>
@@ -156,9 +159,9 @@ function ImporterColumnTableRow({
 
 export default function ImporterColumnSelector({
   session
-}: {
+}: Readonly<{
   session: ImportSessionState;
-}) {
+}>) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const acceptMapping = useCallback(() => {
@@ -221,6 +224,7 @@ export default function ImporterColumnSelector({
           {session.columnMappings.map((column: any) => {
             return (
               <ImporterColumnTableRow
+                key={`import-${column.field}}`}
                 session={session}
                 column={column}
                 options={columnOptions}

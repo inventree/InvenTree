@@ -266,6 +266,9 @@ class StockTest(StockTestBase):
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
             self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
+        else:
+            self.assertEqual(it.get_absolute_url(), '/platform/stock/item/2')
+            self.assertEqual(self.home.get_absolute_url(), '/platform/stock/location/1')
 
     def test_strings(self):
         """Test str function."""
@@ -1229,14 +1232,20 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item2.test_results.count(), 4)
 
         # Test StockItem serialization
-        item2.serializeStock(1, [100], self.user)
+        # Note: This will create a new StockItem with a new serial number
+
+        with self.assertRaises(ValidationError):
+            # Serial number #100 will be rejected by the sample plugin
+            item2.serializeStock(1, [100], self.user)
+
+        item2.serializeStock(1, [101], self.user)
 
         # Add a test result to the parent *after* serialization
         item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
-        item3 = StockItem.objects.get(serial=100, part=item2.part)
+        item3 = StockItem.objects.get(serial=101, part=item2.part)
 
         self.assertEqual(item3.test_results.count(), 4)
 

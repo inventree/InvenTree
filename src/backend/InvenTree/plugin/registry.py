@@ -572,16 +572,13 @@ class PluginsRegistry:
                 try:
                     self._init_plugin(plg, plugin_configs)
                     break
-                except IntegrationPluginError:
-                    # Error has been handled downstream
-                    pass
                 except Exception as error:
                     # Handle the error, log it and try again
-                    handle_error(
-                        error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                    )
-
                     if attempts == 0:
+                        handle_error(
+                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
+                        )
+
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
                             error.path,

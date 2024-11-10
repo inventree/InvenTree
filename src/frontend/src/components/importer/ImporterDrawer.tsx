@@ -27,7 +27,9 @@ import ImporterImportProgress from './ImporterImportProgress';
 /*
  * Stepper component showing the current step of the data import process.
  */
-function ImportDrawerStepper({ currentStep }: { currentStep: number }) {
+function ImportDrawerStepper({
+  currentStep
+}: Readonly<{ currentStep: number }>) {
   /* TODO: Enhance this with:
    * - Custom icons
    * - Loading indicators for "background" states
@@ -54,11 +56,11 @@ export default function ImporterDrawer({
   sessionId,
   opened,
   onClose
-}: {
+}: Readonly<{
   sessionId: number;
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const session = useImportSession({ sessionId: sessionId });
 
   const importSessionStatus = useStatusCodes({

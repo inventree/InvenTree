@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import {
   Anchor,
   Badge,
@@ -20,6 +20,7 @@ import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
+import { StylishText } from '../items/StylishText';
 
 type AboutLookupRef = {
   ref: string;
@@ -56,9 +57,9 @@ export function AboutInvenTreeModal({
     alwaysLink: boolean = false
   ) {
     return lookup.map((map: AboutLookupRef, idx) => (
-      <tr key={idx}>
-        <td>{map.title}</td>
-        <td>
+      <Table.Tr key={idx}>
+        <Table.Td>{map.title}</Table.Td>
+        <Table.Td>
           <Group justify="space-between" gap="xs">
             {alwaysLink ? (
               <Anchor href={data[map.ref]} target="_blank">
@@ -73,8 +74,8 @@ export function AboutInvenTreeModal({
             )}
             {map.copy && <CopyButton value={data[map.ref]} />}
           </Group>
-        </td>
-      </tr>
+        </Table.Td>
+      </Table.Tr>
     ));
   }
   /* renderer */
@@ -95,13 +96,10 @@ export function AboutInvenTreeModal({
   return (
     <Stack>
       <Divider />
-      <Title order={5}>
-        <Trans>Version Information</Trans>
-      </Title>
-      <Group>
-        <Text>
-          <Trans>Your InvenTree version status is</Trans>
-        </Text>
+      <Group justify="space-between" wrap="nowrap">
+        <StylishText size="lg">
+          <Trans>Version Information</Trans>
+        </StylishText>
         {data.dev ? (
           <Badge color="blue">
             <Trans>Development Version</Trans>
@@ -116,8 +114,8 @@ export function AboutInvenTreeModal({
           </Badge>
         )}
       </Group>
-      <Table>
-        <tbody>
+      <Table striped>
+        <Table.Tbody>
           {fillTable(
             [
               {
@@ -144,9 +142,14 @@ export function AboutInvenTreeModal({
               {
                 ref: 'api',
                 title: <Trans>API Version</Trans>,
-                link: `${host}api-doc/`
+                link: `${host}api-doc/`,
+                copy: true
               },
-              { ref: 'python', title: <Trans>Python Version</Trans> },
+              {
+                ref: 'python',
+                title: <Trans>Python Version</Trans>,
+                copy: true
+              },
               {
                 ref: 'django',
                 title: <Trans>Django Version</Trans>,
@@ -156,17 +159,18 @@ export function AboutInvenTreeModal({
             ],
             data.version
           )}
-        </tbody>
+        </Table.Tbody>
       </Table>
-      <Title order={5}>
+      <Divider />
+      <StylishText size="lg">
         <Trans>Links</Trans>
-      </Title>
-      <Table>
-        <tbody>
+      </StylishText>
+      <Table striped>
+        <Table.Tbody>
           {fillTable(
             [
-              { ref: 'doc', title: <Trans>InvenTree Documentation</Trans> },
-              { ref: 'code', title: <Trans>View Code on GitHub</Trans> },
+              { ref: 'doc', title: <Trans>Documentation</Trans> },
+              { ref: 'code', title: <Trans>Source Code</Trans> },
               { ref: 'credit', title: <Trans>Credits</Trans> },
               { ref: 'app', title: <Trans>Mobile App</Trans> },
               { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
@@ -174,22 +178,18 @@ export function AboutInvenTreeModal({
             data.links,
             true
           )}
-        </tbody>
+        </Table.Tbody>
       </Table>
       <Divider />
       <Group justify="space-between">
-        <CopyButton
-          value={copyval}
-          label={<Trans>Copy version information</Trans>}
-        />
+        <CopyButton value={copyval} label={t`Copy version information`} />
         <Space />
         <Button
-          color="red"
           onClick={() => {
             context.closeModal(id);
           }}
         >
-          <Trans>Dismiss</Trans>
+          <Trans>Close</Trans>
         </Button>
       </Group>
     </Stack>

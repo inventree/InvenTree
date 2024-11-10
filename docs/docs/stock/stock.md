@@ -18,6 +18,19 @@ If there are some icons missing in the tabler icons package, users can even inst
 
 A stock location type represents a specific type of location (e.g. one specific size of drawer, shelf, ... or box) which can be assigned to multiple stock locations. In the first place, it is used to specify an icon and having the icon in sync for all locations that use this location type, but it also serves as a data field to quickly see what type of location this is. It is planned to add e.g. drawer dimension information to the location type to add a "find a matching, empty stock location" tool.
 
+## External Stock Location
+An external stock location can be used to indicate that items in there might not be available
+for immediate usage. Stock items in an external location are marked with an additional icon
+in the build order line items view where the material is allocated.
+
+{% with id="stock_external_icon", url="stock/stock_external_icon.png", description="External stock indication" %}
+{% include 'img.html' %}
+{% endwith %}
+
+Anyhow there is no limitation on the stock item. It can be allocated as usual.
+
+The external flag does not get inherited to sublocations.
+
 ## Stock Item
 
 A *Stock Item* is an actual instance of a [*Part*](../part/part.md) item. It represents a physical quantity of the *Part* in a specific location.

@@ -113,7 +113,9 @@ def after_change_currency(setting) -> None:
     InvenTree.tasks.update_exchange_rates(force=True)
 
     # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
+    InvenTree.tasks.offload_task(
+        part_tasks.check_missing_pricing, force_async=True, group='pricing'
+    )
 
 
 def validate_currency_codes(value):

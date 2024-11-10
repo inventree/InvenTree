@@ -13,13 +13,15 @@ export default function TextField({
   controller,
   fieldName,
   definition,
-  onChange
-}: {
+  onChange,
+  onKeyDown
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
   onChange: (value: any) => void;
-}) {
+  onKeyDown: (value: any) => void;
+}>) {
   const fieldId = useId();
   const {
     field,
@@ -30,7 +32,7 @@ export default function TextField({
 
   const [rawText, setRawText] = useState<string>(value || '');
 
-  const [debouncedText] = useDebouncedValue(rawText, 250);
+  const [debouncedText] = useDebouncedValue(rawText, 100);
 
   useEffect(() => {
     setRawText(value || '');
@@ -58,8 +60,11 @@ export default function TextField({
       radius="sm"
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
-        onChange(event.currentTarget.value);
+        if (event.currentTarget.value != value) {
+          onChange(event.currentTarget.value);
+        }
       }}
+      onKeyDown={(event) => onKeyDown(event.code)}
       rightSection={
         value && !definition.required ? (
           <IconX size="1rem" color="red" onClick={() => onTextChange('')} />

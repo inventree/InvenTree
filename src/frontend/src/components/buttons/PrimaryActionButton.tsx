@@ -12,14 +12,14 @@ export default function PrimaryActionButton({
   color,
   hidden,
   onClick
-}: {
+}: Readonly<{
   title: string;
   tooltip?: string;
   icon?: InvenTreeIconType;
   color?: string;
   hidden?: boolean;
   onClick: () => void;
-}) {
+}>) {
   if (hidden) {
     return null;
   }

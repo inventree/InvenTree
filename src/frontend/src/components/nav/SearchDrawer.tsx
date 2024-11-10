@@ -14,7 +14,8 @@ import {
   Space,
   Stack,
   Text,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
@@ -56,11 +57,11 @@ function QueryResultGroup({
   query,
   onRemove,
   onResultClick
-}: {
+}: Readonly<{
   query: SearchQuery;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
-}) {
+}>) {
   if (query.results.count == 0) {
     return null;
   }
@@ -68,7 +69,13 @@ function QueryResultGroup({
   const model = getModelInfo(query.model);
 
   return (
-    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
+    <Paper
+      withBorder
+      shadow="sm"
+      p="md"
+      key={`paper-${query.model}`}
+      aria-label={`search-group-${query.model}`}
+    >
       <Stack key={`stack-${query.model}`}>
         <Group justify="space-between" wrap="nowrap">
           <Group justify="left" gap={5} wrap="nowrap">
@@ -84,19 +91,21 @@ function QueryResultGroup({
             color="red"
             variant="transparent"
             radius="xs"
+            aria-label={`remove-search-group-${query.model}`}
             onClick={() => onRemove(query.model)}
           >
             <IconX />
           </ActionIcon>
         </Group>
         <Divider />
-        <Stack>
+        <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
+              underline="never"
               onClick={(event: any) =>
                 onResultClick(query.model, result.pk, event)
               }
-              key={result.pk}
+              key={`result-${query.model}-${result.pk}`}
             >
               <RenderInstance instance={result} model={query.model} />
             </Anchor>
@@ -115,10 +124,10 @@ function QueryResultGroup({
 export function SearchDrawer({
   opened,
   onClose
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const [value, setValue] = useState<string>('');
   const [searchText] = useDebouncedValue(value, 500);
 
@@ -367,8 +376,8 @@ export function SearchDrawer({
       title={
         <Group justify="space-between" gap={1} wrap="nowrap">
           <TextInput
+            aria-label="global-search-input"
             placeholder={t`Enter search text`}
-            radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
             leftSection={<IconSearch size="0.8rem" />}
@@ -379,19 +388,22 @@ export function SearchDrawer({
             }
             styles={{ root: { width: '100%' } }}
           />
-          <ActionIcon
-            size="lg"
-            variant="outline"
-            radius="xs"
-            onClick={() => searchQuery.refetch()}
-          >
-            <IconRefresh />
-          </ActionIcon>
+          <Tooltip label={t`Refresh search results`} position="bottom-end">
+            <ActionIcon
+              size="lg"
+              variant="transparent"
+              onClick={() => searchQuery.refetch()}
+            >
+              <IconRefresh />
+            </ActionIcon>
+          </Tooltip>
           <Menu>
             <Menu.Target>
-              <ActionIcon size="lg" variant="outline" radius="xs">
-                <IconSettings />
-              </ActionIcon>
+              <Tooltip label={t`Search Options`} position="bottom-end">
+                <ActionIcon size="lg" variant="transparent">
+                  <IconSettings />
+                </ActionIcon>
+              </Tooltip>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>{t`Search Options`}</Menu.Label>
@@ -402,7 +414,6 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchRegex(event.currentTarget.checked)
                   }
-                  radius="sm"
                 />
               </Menu.Item>
               <Menu.Item>
@@ -412,7 +423,6 @@ export function SearchDrawer({
                   onChange={(event) =>
                     setSearchWhole(event.currentTarget.checked)
                   }
-                  radius="sm"
                 />
               </Menu.Item>
             </Menu.Dropdown>
@@ -459,7 +469,7 @@ export function SearchDrawer({
               color="blue"
               radius="sm"
               variant="light"
-              title={t`No results`}
+              title={t`No Results`}
               icon={<IconSearch size="1rem" />}
             >
               <Trans>No results available for search query</Trans>

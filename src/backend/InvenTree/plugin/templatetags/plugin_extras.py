@@ -95,7 +95,7 @@ def notification_list(context, *args, **kwargs):
             'description': a.__doc__,
             'name': a.__name__,
         }
-        for a in storage.liste
+        for a in storage.methods
     ]
 
 
@@ -112,7 +112,7 @@ def plugin_static(context, file: str, **kwargs):
     """
     plugin = context.get('plugin', None)
 
-    plugin = plugin.slug if plugin else kwargs.get('plugin', None)
+    plugin = plugin.slug if plugin else kwargs.get('plugin')
 
     if not plugin:
         return file

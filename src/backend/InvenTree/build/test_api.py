@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from part.models import Part, BomItem
-from build.models import Build, BuildItem
+from build.models import Build, BuildItem, BuildLine
 from stock.models import StockItem
 
 from build.status_codes import BuildStatus
@@ -450,6 +450,10 @@ class BuildTest(BuildAPITest):
 
         # Now, let's delete each build output individually via the API
         outputs = bo.build_outputs.all()
+
+        # Assert that each output is currently in production
+        for output in outputs:
+            self.assertTrue(output.is_building)
 
         delete_url = reverse('api-build-output-delete', kwargs={'pk': 1})
 
@@ -993,6 +997,65 @@ class BuildAllocationTest(BuildAPITest):
             expected_code=201,
         )
 
+class BuildItemTest(BuildAPITest):
+    """Unit tests for build items.
+
+    For this test, we will be using Build ID=1;
+
+    - This points to Part 100 (see fixture data in part.yaml)
+    - This Part already has a BOM with 4 items (see fixture data in bom.yaml)
+    - There are no BomItem objects yet created for this build
+    """
+
+    def setUp(self):
+        """Basic operation as part of test suite setup"""
+        super().setUp()
+
+        self.assignRole('build.add')
+        self.assignRole('build.change')
+
+        self.build = Build.objects.get(pk=1)
+
+        # Regenerate BuildLine objects
+        self.build.create_build_line_items()
+
+        # Record number of build items which exist at the start of each test
+        self.n = BuildItem.objects.count()
+
+    def test_update_overallocated(self):
+        """Test update of overallocated stock items."""
+
+        si = StockItem.objects.get(pk=2)
+
+        # Find line item
+        line = self.build.build_lines.all().filter(bom_item__sub_part=si.part).first()
+
+        # Set initial stock item quantity
+        si.quantity = 100
+        si.save()
+
+        # Create build item
+        bi = BuildItem(
+            build_line=line,
+            stock_item=si,
+            quantity=100
+        )
+        bi.save()
+
+        # Reduce stock item quantity
+        si.quantity = 50
+        si.save()
+
+        # Reduce build item quantity
+        url = reverse('api-build-item-detail', kwargs={'pk': bi.pk})
+
+        self.patch(
+            url,
+            {
+                "quantity": 50,
+            },
+            expected_code=200,
+        )
 
 class BuildOverallocationTest(BuildAPITest):
     """Unit tests for over allocation of stock items against a build order.
@@ -1210,6 +1273,86 @@ class BuildListTest(BuildAPITest):
         self.assertEqual(len(builds), 20)
 
 
+class BuildOutputCreateTest(BuildAPITest):
+    """Unit test for creating build output via API."""
+
+    def test_create_serialized_output(self):
+        """Create a serialized build output via the API."""
+
+        build_id = 1
+
+        url = reverse('api-build-output-create', kwargs={'pk': build_id})
+
+        build = Build.objects.get(pk=build_id)
+        part = build.part
+
+        n_outputs = build.output_count
+        n_items = part.stock_items.count()
+
+        # Post with invalid data
+        response = self.post(
+            url,
+            data={
+                'quantity': 10,
+                'serial_numbers': '1-100',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Group range 1-100 exceeds allowed quantity (10)', str(response.data['serial_numbers']))
+
+        # Build outputs have not increased
+        self.assertEqual(n_outputs, build.output_count)
+
+        # Stock items have not increased
+        self.assertEqual(n_items, part.stock_items.count())
+
+        response = self.post(
+            url,
+            data={
+                'quantity': 5,
+                'serial_numbers': '1,2,3-5',
+            },
+            expected_code=201
+        )
+
+        # Build outputs have incdeased
+        self.assertEqual(n_outputs + 5, build.output_count)
+
+        # Stock items have increased
+        self.assertEqual(n_items + 5, part.stock_items.count())
+
+        # Serial numbers have been created
+        for sn in range(1, 6):
+            self.assertTrue(part.stock_items.filter(serial=sn).exists())
+
+    def test_create_unserialized_output(self):
+        """Create an unserialized build output via the API."""
+
+        build_id = 1
+        url = reverse('api-build-output-create', kwargs={'pk': build_id})
+
+        build = Build.objects.get(pk=build_id)
+        part = build.part
+
+        n_outputs = build.output_count
+        n_items = part.stock_items.count()
+
+        # Create a single new output
+        self.post(
+            url,
+            data={
+                'quantity': 10,
+            },
+            expected_code=201
+        )
+
+        # Build outputs have increased
+        self.assertEqual(n_outputs + 1, build.output_count)
+
+        # Stock items have increased
+        self.assertEqual(n_items + 1, part.stock_items.count())
+
 class BuildOutputScrapTest(BuildAPITest):
     """Unit tests for scrapping build outputs"""
 
@@ -1332,3 +1475,29 @@ class BuildOutputScrapTest(BuildAPITest):
             output.refresh_from_db()
             self.assertEqual(output.status, StockStatus.REJECTED)
             self.assertFalse(output.is_building)
+
+
+class BuildLineTests(BuildAPITest):
+    """Unit tests for the BuildLine API endpoints."""
+
+    def test_filter_available(self):
+        """Filter BuildLine objects by 'available' status."""
+
+        url = reverse('api-build-line-list')
+
+        # First *all* BuildLine objects
+        response = self.get(url)
+        self.assertEqual(len(response.data), BuildLine.objects.count())
+
+        # Filter by 'available' status
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': True}, max_query_time=15)
+        n_t = len(response.data)
+        self.assertGreater(n_t, 0)
+
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
+        response = self.get(url, data={'available': False}, max_query_time=15)
+        n_f = len(response.data)
+        self.assertGreater(n_f, 0)
+
+        self.assertEqual(n_t + n_f, BuildLine.objects.count())

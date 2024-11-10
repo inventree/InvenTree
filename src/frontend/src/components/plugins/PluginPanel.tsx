@@ -1,52 +1,9 @@
-import { t } from '@lingui/macro';
-import { Alert, Stack, Text } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { Stack } from '@mantine/core';
+import { ReactNode } from 'react';
 
-import { PluginContext } from './PluginContext';
-import { findExternalPluginFunction } from './PluginSource';
-
-// Definition of the plugin panel properties, provided by the server API
-export type PluginPanelProps = {
-  plugin: string;
-  name: string;
-  label: string;
-  icon?: string;
-  content?: string;
-  source?: string;
-};
-
-export async function isPluginPanelHidden({
-  pluginProps,
-  pluginContext
-}: {
-  pluginProps: PluginPanelProps;
-  pluginContext: PluginContext;
-}): Promise<boolean> {
-  if (!pluginProps.source) {
-    // No custom source supplied - panel is not hidden
-    return false;
-  }
-
-  const func = await findExternalPluginFunction(
-    pluginProps.source,
-    'isPanelHidden'
-  );
-
-  if (!func) {
-    return false;
-  }
-
-  try {
-    return func(pluginContext);
-  } catch (error) {
-    console.error(
-      'Error occurred while checking if plugin panel is hidden:',
-      error
-    );
-    return true;
-  }
-}
+import { InvenTreeContext } from './PluginContext';
+import { PluginUIFeature } from './PluginUIFeature';
+import RemoteComponent from './RemoteComponent';
 
 /**
  * A custom panel which can be used to display plugin content.
@@ -62,61 +19,19 @@ export async function isPluginPanelHidden({
  *  - `params` is the set of run-time parameters to pass to the content rendering function
  */
 export default function PluginPanelContent({
-  pluginProps,
+  pluginFeature,
   pluginContext
-}: {
-  pluginProps: PluginPanelProps;
-  pluginContext: PluginContext;
-}): ReactNode {
-  const ref = useRef<HTMLDivElement>();
-
-  const [error, setError] = useState<string | undefined>(undefined);
-
-  const reloadPluginContent = async () => {
-    // If a "source" URL is provided, load the content from that URL
-    if (pluginProps.source) {
-      findExternalPluginFunction(pluginProps.source, 'renderPanel').then(
-        (func) => {
-          if (func) {
-            try {
-              func(ref.current, pluginContext);
-              setError('');
-            } catch (error) {
-              setError(t`Error occurred while rendering plugin content`);
-            }
-          } else {
-            setError(t`Plugin did not provide panel rendering function`);
-          }
-        }
-      );
-    } else if (pluginProps.content) {
-      // If content is provided directly, render it into the panel
-      if (ref.current) {
-        ref.current?.setHTMLUnsafe(pluginProps.content.toString());
-        setError('');
-      }
-    } else {
-      // If no content is provided, display a placeholder
-      setError(t`No content provided for this plugin`);
-    }
-  };
-
-  useEffect(() => {
-    reloadPluginContent();
-  }, [pluginProps, pluginContext]);
-
+}: Readonly<{
+  pluginFeature: PluginUIFeature;
+  pluginContext: InvenTreeContext;
+}>): ReactNode {
   return (
     <Stack gap="xs">
-      {error && (
-        <Alert
-          color="red"
-          title={t`Error Loading Plugin`}
-          icon={<IconExclamationCircle />}
-        >
-          <Text>{error}</Text>
-        </Alert>
-      )}
-      <div ref={ref as any}></div>
+      <RemoteComponent
+        source={pluginFeature.source}
+        defaultFunctionName="renderPanel"
+        context={pluginContext}
+      />
     </Stack>
   );
 }

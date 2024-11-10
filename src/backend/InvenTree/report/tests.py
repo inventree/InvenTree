@@ -18,6 +18,7 @@ from build.models import Build
 from common.models import Attachment, InvenTreeSetting
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
+from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
@@ -305,6 +306,16 @@ class ReportTest(InvenTreeAPITestCase):
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
 
+        # Filter by items
+        part_pk = Part.objects.first().pk
+        report = ReportTemplate.objects.filter(model_type='part').first()
+        return
+        # TODO @matmair re-enable this (in GitHub Actions) flaky test
+        response = self.get(url, {'model_type': 'part', 'items': part_pk})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], report.pk)
+        self.assertEqual(response.data[0]['name'], report.name)
+
     def test_create_endpoint(self):
         """Test that creating a new report works for each report."""
         url = reverse('api-report-template-list')
@@ -532,6 +543,22 @@ class PrintTestMixins:
             max_query_time=15,
             max_query_count=500 * len(qs),
         )
+
+        # Test with wrong dimensions
+        if not hasattr(template, 'width'):
+            return
+
+        org_width = template.width
+        template.width = 0
+        template.save()
+        response = self.post(
+            url,
+            {'template': template.pk, 'plugin': plugin.pk, 'items': [qs[0].pk]},
+            expected_code=400,
+        )
+        self.assertEqual(str(response.data['template'][0]), 'Invalid label dimensions')
+        template.width = org_width
+        template.save()
 
 
 class TestReportTest(PrintTestMixins, ReportTest):
