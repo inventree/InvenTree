@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
@@ -7,7 +7,9 @@ import {
   IconSquareArrowRight,
   IconTools
 } from '@tabler/icons-react';
+import { DataTableRowExpansionProps } from 'mantine-datatable';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -39,9 +41,12 @@ import {
   RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction
+  RowEditAction,
+  RowViewAction
 } from '../RowActions';
+import RowExpansionIcon from '../RowExpansionIcon';
 import { TableHoverCard } from '../TableHoverCard';
+import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
   orderId,
@@ -54,6 +59,7 @@ export default function SalesOrderLineItemTable({
   customerId: number;
   editable: boolean;
 }>) {
+  const navigate = useNavigate();
   const user = useUserState();
   const table = useTable('sales-order-line-item');
 
@@ -63,7 +69,17 @@ export default function SalesOrderLineItemTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn({ part: record?.part_detail })
+        render: (record: any) => {
+          return (
+            <Group wrap="nowrap">
+              <RowExpansionIcon
+                enabled={record.allocated}
+                expanded={table.isRowExpanded(record.pk)}
+              />
+              <PartColumn part={record.part_detail} />
+            </Group>
+          );
+        }
       },
       {
         accessor: 'part_detail.IPN',
@@ -189,7 +205,7 @@ export default function SalesOrderLineItemTable({
         accessor: 'link'
       })
     ];
-  }, []);
+  }, [table.isRowExpanded]);
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
@@ -318,6 +334,13 @@ export default function SalesOrderLineItemTable({
       const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
 
       return [
+        RowViewAction({
+          title: t`View Part`,
+          modelType: ModelType.part,
+          modelId: record.part,
+          navigate: navigate,
+          hidden: !user.hasViewRole(UserRoles.part)
+        }),
         {
           hidden:
             allocated ||
@@ -398,8 +421,31 @@ export default function SalesOrderLineItemTable({
         })
       ];
     },
-    [user, editable]
+    [navigate, user, editable]
   );
+
+  // Control row expansion
+  const rowExpansion: DataTableRowExpansionProps<any> = useMemo(() => {
+    return {
+      allowMultiple: true,
+      expandable: ({ record }: { record: any }) => {
+        return table.isRowExpanded(record.pk) || record.allocated > 0;
+      },
+      content: ({ record }: { record: any }) => {
+        return (
+          <SalesOrderAllocationTable
+            showOrderInfo={false}
+            showPartInfo={false}
+            orderId={orderId}
+            lineItemId={record.pk}
+            partId={record.part}
+            allowEdit
+            isSubTable
+          />
+        );
+      }
+    };
+  }, [orderId, table.isRowExpanded]);
 
   return (
     <>
@@ -423,8 +469,7 @@ export default function SalesOrderLineItemTable({
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,
-          modelType: ModelType.part,
-          modelField: 'part'
+          rowExpansion: rowExpansion
         }}
       />
     </>

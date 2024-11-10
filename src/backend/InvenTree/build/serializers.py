@@ -1278,8 +1278,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'pk',
             'build',
             'bom_item',
-            'bom_item_detail',
-            'part_detail',
             'quantity',
 
             # Build detail fields
@@ -1315,6 +1313,11 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             # Extra fields only for data export
             'part_description',
             'part_category_name',
+
+            # Extra detail (related field) serializers
+            'bom_item_detail',
+            'part_detail',
+            'build_detail',
         ]
 
         read_only_fields = [
@@ -1322,6 +1325,19 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item',
             'allocations',
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Determine which extra details fields should be included"""
+        part_detail = kwargs.pop('part_detail', True)
+        build_detail = kwargs.pop('build_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not part_detail:
+            self.fields.pop('part_detail', None)
+
+        if not build_detail:
+            self.fields.pop('build_detail', None)
 
     # Build info fields
     build_reference = serializers.CharField(source='build.reference', label=_('Build Reference'), read_only=True)
@@ -1362,6 +1378,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
+    build_detail = BuildSerializer(source='build', part_detail=False, many=False, read_only=True)
 
     # Annotated (calculated) fields
 
@@ -1404,9 +1421,13 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         """
         queryset = queryset.select_related(
             'build',
+            'build__part',
+            'build__part__pricing_data',
             'bom_item',
             'bom_item__part',
+            'bom_item__part__pricing_data',
             'bom_item__sub_part',
+            'bom_item__sub_part__pricing_data'
         )
 
         # Pre-fetch related fields

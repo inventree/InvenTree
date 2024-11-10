@@ -356,13 +356,29 @@ export function useSalesOrderShipmentCompleteFields({
 }
 
 export function useSalesOrderAllocationFields({
-  shipmentId
+  orderId,
+  shipment
 }: {
-  shipmentId?: number;
+  orderId?: number;
+  shipment: any | null;
 }): ApiFormFieldSet {
   return useMemo(() => {
     return {
-      quantity: {}
+      item: {
+        // Cannot change item, but display for reference
+        disabled: true
+      },
+      quantity: {},
+      shipment: {
+        // Cannot change shipment once it has been shipped
+        disabled: !!shipment?.shipment_date,
+        // Order ID is required for this field to be accessed
+        hidden: !orderId,
+        filters: {
+          order: orderId,
+          shipped: false
+        }
+      }
     };
-  }, [shipmentId]);
+  }, [orderId, shipment]);
 }

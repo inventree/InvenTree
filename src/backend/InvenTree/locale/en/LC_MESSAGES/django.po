@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-04 10:24+0000\n"
+"POT-Creation-Date: 2024-11-08 08:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,23 +18,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: InvenTree/api.py:270
+#: InvenTree/api.py:273
 msgid "API endpoint not found"
 msgstr ""
 
-#: InvenTree/api.py:387
+#: InvenTree/api.py:390
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:396
+#: InvenTree/api.py:399
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:401
+#: InvenTree/api.py:404
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:515
+#: InvenTree/api.py:518
 msgid "User does not have permission to view this model"
 msgstr ""
 
