@@ -39,13 +39,13 @@ export function TestStatisticsTable({
 
   function statCountString(count: number, total: number) {
     if (count > 0) {
-      const percentage =
-        ' (' +
-        ((100.0 * count) / total).toLocaleString(undefined, {
+      const percentage = ` (${((100.0 * count) / total).toLocaleString(
+        undefined,
+        {
           minimumFractionDigits: 0,
           maximumFractionDigits: 2
-        }) +
-        '%)';
+        }
+      )}%)`;
       return count.toString() + percentage;
     }
     return '-';
@@ -70,7 +70,7 @@ export function TestStatisticsTable({
     const newColumns: TableColumn[] = [];
     for (const key in records[0]) {
       if (key == 'total') continue;
-      const acc = 'col_' + columnIndex.toString();
+      const acc = `col_${columnIndex.toString()}`;
 
       const resultKeys = ['passed', 'failed', 'total'];
 
@@ -85,7 +85,7 @@ export function TestStatisticsTable({
       results[2][acc] = records[0][key]['total'].toString();
 
       newColumns.push({
-        accessor: 'col_' + columnIndex.toString(),
+        accessor: `col_${columnIndex.toString()}`,
         title: key
       });
       columnIndex++;
@@ -110,7 +110,7 @@ export function TestStatisticsTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(params.apiEndpoint, params.pk) + '/'}
+      url={`${apiUrl(params.apiEndpoint, params.pk)}/`}
       tableState={table}
       columns={tableColumns}
       props={{

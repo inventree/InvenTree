@@ -16,10 +16,8 @@
 			"noArrayIndexKey": "off",
 			"useDefaultSwitchClauseLast": "off"
 		},
-
 		"style": {
 			"noUselessElse": "off",
-			"useTemplate": "off",
 			"noNonNullAssertion": "off",
 			"noParameterAssign": "off"
 		}, "correctness":{

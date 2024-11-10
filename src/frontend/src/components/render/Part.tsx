@@ -27,7 +27,7 @@ export function RenderPart(
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else {
-    badgeText = t`Stock` + `: ${stock}`;
+    badgeText = `${t`Stock`}: ${stock}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 

@@ -28,7 +28,7 @@ function NewsLink({ item }: { item: any }) {
   let link: string = item.link;
 
   if (link?.startsWith('/')) {
-    link = 'https://inventree.org' + link;
+    link = `https://inventree.org${link}`;
   }
 
   if (link) {

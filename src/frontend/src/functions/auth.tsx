@@ -16,7 +16,7 @@ export function followRedirect(navigate: NavigateFunction, redirect: any) {
 
   if (redirect?.queryParams) {
     // Construct and appand query parameters
-    url = url + '?' + new URLSearchParams(redirect.queryParams).toString();
+    url = `${url}?${new URLSearchParams(redirect.queryParams).toString()}`;
   }
 
   navigate(url);

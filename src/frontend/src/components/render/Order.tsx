@@ -118,7 +118,7 @@ export function RenderSalesOrderShipment({
   return (
     <RenderInlineModel
       primary={order.reference}
-      secondary={t`Shipment` + ` ${instance.reference}`}
+      secondary={`${t`Shipment`} ${instance.reference}`}
     />
   );
 }

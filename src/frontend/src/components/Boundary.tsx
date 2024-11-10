@@ -9,7 +9,7 @@ function DefaultFallback({ title }: Readonly<{ title: string }>): ReactNode {
     <Alert
       color='red'
       icon={<IconExclamationCircle />}
-      title={t`Error rendering component` + `: ${title}`}
+      title={`${t`Error rendering component`}: ${title}`}
     >
       {t`An error occurred while rendering this component. Refer to the console for more information.`}
     </Alert>

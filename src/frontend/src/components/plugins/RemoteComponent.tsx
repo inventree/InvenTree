@@ -67,7 +67,7 @@ export default function RemoteComponent({
       });
     } else {
       setRenderingError(
-        t`Invalid source or function name` + ` - ${sourceFile}:${functionName}`
+        `${t`Invalid source or function name`} - ${sourceFile}:${functionName}`
       );
     }
   };

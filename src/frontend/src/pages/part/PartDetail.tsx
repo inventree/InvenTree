@@ -450,7 +450,7 @@ export default function PartDetail() {
           return (
             data.overall_min &&
             `${formatPriceRange(data.overall_min, data.overall_max)}${
-              part.units && ' / ' + part.units
+              part.units && ` / ${part.units}`
             }`
           );
         }
@@ -834,7 +834,7 @@ export default function PartDetail() {
     }
 
     return options.sort((a, b) => {
-      return ('' + a.part.revision).localeCompare(b.part.revision);
+      return `${a.part.revision}`.localeCompare(b.part.revision);
     });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
@@ -859,13 +859,13 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={t`In Stock` + `: ${part.total_in_stock}`}
+        label={`${t`In Stock`}: ${part.total_in_stock}`}
         color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.total_in_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
-        label={t`Available` + `: ${part.unallocated_stock}`}
+        label={`${t`Available`}: ${part.unallocated_stock}`}
         color='yellow'
         key='available_stock'
         visible={part.unallocated_stock != part.total_in_stock}
@@ -877,19 +877,19 @@ export default function PartDetail() {
         key='no_stock'
       />,
       <DetailsBadge
-        label={t`Required` + `: ${required}`}
+        label={`${t`Required`}: ${required}`}
         color='grape'
         visible={required > 0}
         key='required'
       />,
       <DetailsBadge
-        label={t`On Order` + `: ${part.ordering}`}
+        label={`${t`On Order`}: ${part.ordering}`}
         color='blue'
         visible={part.ordering > 0}
         key='on_order'
       />,
       <DetailsBadge
-        label={t`In Production` + `: ${part.building}`}
+        label={`${t`In Production`}: ${part.building}`}
         color='blue'
         visible={part.building > 0}
         key='in_production'
@@ -1084,7 +1084,7 @@ export default function PartDetail() {
             selectedId={part?.category}
           />
           <PageDetail
-            title={t`Part` + ': ' + part.full_name}
+            title={`${t`Part`}: ${part.full_name}`}
             icon={
               part?.locked ? (
                 <IconLock aria-label='part-lock-icon' />

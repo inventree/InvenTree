@@ -772,19 +772,19 @@ export default function StockDetail() {
           />,
           <DetailsBadge
             color='blue'
-            label={t`Serial Number` + `: ${stockitem.serial}`}
+            label={`${t`Serial Number`}: ${stockitem.serial}`}
             visible={!!stockitem.serial}
             key='serial'
           />,
           <DetailsBadge
             color='blue'
-            label={t`Quantity` + `: ${stockitem.quantity}`}
+            label={`${t`Quantity`}: ${stockitem.quantity}`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
-            label={t`Available` + `: ${available}`}
+            label={`${t`Available`}: ${available}`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
@@ -794,7 +794,7 @@ export default function StockDetail() {
           />,
           <DetailsBadge
             color='blue'
-            label={t`Batch Code` + `: ${stockitem.batch}`}
+            label={`${t`Batch Code`}: ${stockitem.batch}`}
             visible={!!stockitem.batch}
             key='batch'
           />,

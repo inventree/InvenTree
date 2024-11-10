@@ -68,7 +68,7 @@ export function useStockFields({
 
   const batchGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
-      setNextBatchCode(t`Next batch code` + `: ${value}`);
+      setNextBatchCode(`${t`Next batch code`}: ${value}`);
     } else {
       setNextBatchCode('');
     }
@@ -76,7 +76,7 @@ export function useStockFields({
 
   const serialGenerator = useSerialNumberGenerator((value: any) => {
     if (value) {
-      setNextSerialNumber(t`Next serial number` + `: ${value}`);
+      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
     } else {
       setNextSerialNumber('');
     }

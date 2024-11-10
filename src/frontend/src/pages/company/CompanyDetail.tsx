@@ -321,7 +321,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap='xs'>
           <PageDetail
-            title={t`Company` + `: ${company.name}`}
+            title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
             imageUrl={company.image}

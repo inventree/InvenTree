@@ -464,7 +464,7 @@ export default function ReturnOrderDetail() {
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap='xs'>
           <PageDetail
-            title={t`Return Order` + `: ${order.reference}`}
+            title={`${t`Return Order`}: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}

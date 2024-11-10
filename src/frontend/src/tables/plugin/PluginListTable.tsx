@@ -371,7 +371,7 @@ export default function PluginListTable() {
       {deletePluginModal.modal}
       {activatePluginModal.modal}
       <DetailDrawer
-        title={t`Plugin Detail` + ' - ' + selectedPlugin?.name}
+        title={`${t`Plugin Detail`} - ${selectedPlugin?.name}`}
         size={'65%'}
         renderContent={(pluginKey) => {
           if (!pluginKey) return;

@@ -74,7 +74,7 @@ function partTableColumns(): TableColumn[] {
         if (min_stock > stock) {
           extra.push(
             <Text key='min-stock' c='orange'>
-              {t`Minimum stock` + `: ${min_stock}`}
+              {`${t`Minimum stock`}: ${min_stock}`}
             </Text>
           );
 
@@ -83,21 +83,20 @@ function partTableColumns(): TableColumn[] {
 
         if (record.ordering > 0) {
           extra.push(
-            <Text key='on-order'>{t`On Order` + `: ${record.ordering}`}</Text>
+            <Text key='on-order'>{`${t`On Order`}: ${record.ordering}`}</Text>
           );
         }
 
         if (record.building) {
           extra.push(
-            <Text key='building'>{t`Building` + `: ${record.building}`}</Text>
+            <Text key='building'>{`${t`Building`}: ${record.building}`}</Text>
           );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
             <Text key='bo-allocations'>
-              {t`Build Order Allocations` +
-                `: ${record.allocated_to_build_orders}`}
+              {`${t`Build Order Allocations`}: ${record.allocated_to_build_orders}`}
             </Text>
           );
         }
@@ -105,8 +104,7 @@ function partTableColumns(): TableColumn[] {
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
             <Text key='so-allocations'>
-              {t`Sales Order Allocations` +
-                `: ${record.allocated_to_sales_orders}`}
+              {`${t`Sales Order Allocations`}: ${record.allocated_to_sales_orders}`}
             </Text>
           );
         }

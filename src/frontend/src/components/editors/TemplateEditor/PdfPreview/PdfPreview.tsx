@@ -62,7 +62,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
 
         const srcUrl = URL.createObjectURL(pdf);
 
-        setPdfUrl(srcUrl + '#view=fitH');
+        setPdfUrl(`${srcUrl}#view=fitH`);
       }
     }));
 

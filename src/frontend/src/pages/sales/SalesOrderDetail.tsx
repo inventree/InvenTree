@@ -516,7 +516,7 @@ export default function SalesOrderDetail() {
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap='xs'>
           <PageDetail
-            title={t`Sales Order` + `: ${order.reference}`}
+            title={`${t`Sales Order`}: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}

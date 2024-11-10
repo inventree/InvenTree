@@ -271,7 +271,7 @@ function MachineDrawer({
                   tooltip:
                     t`Restart machine` +
                     (machine?.restart_required
-                      ? ' (' + t`manual restart required` + ')'
+                      ? ` (${t`manual restart required`})`
                       : ''),
                   indicator: machine?.restart_required
                     ? { color: 'red' }
