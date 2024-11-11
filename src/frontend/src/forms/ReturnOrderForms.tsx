@@ -115,13 +115,7 @@ export function useReturnOrderLineItemFields({
       price_currency: {},
       target_date: {},
       notes: {},
-      link: {},
-      responsible: {
-        filters: {
-          is_active: true
-        },
-        icon: <IconUsers />
-      }
+      link: {}
     };
   }, [create, orderId, customerId]);
 }
