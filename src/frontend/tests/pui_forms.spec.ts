@@ -39,7 +39,7 @@ test('Forms - Stock Item Validation', async ({ page }) => {
 
   // Set location
   await page.getByLabel('related-field-location').click();
-  await page.getByRole('option', { name: /Electronics Lab/ }).click();
+  await page.getByText('Electronics production facility').click();
 
   // Create the stock item
   await page.getByLabel('number-field-quantity').fill('123');
