@@ -21,11 +21,11 @@ export function RenderStockLocation(
       tooltip={instance.pathstring}
       prefix={
         <>
-          <div style={{ width: 10 * (instance.level || 0) }}></div>
+          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.name}
+      primary={instance.pathstring}
       secondary={instance.description}
       url={
         props.link
