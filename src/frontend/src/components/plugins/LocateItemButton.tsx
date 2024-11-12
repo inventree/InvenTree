@@ -66,7 +66,8 @@ export default function LocateItemButton({
     url: apiUrl(ApiEndpoints.plugin_locate_item),
     method: 'POST',
     title: t`Locate Item`,
-    fields: locateFields
+    fields: locateFields,
+    successMessage: t`Item location requested`
   });
 
   if (!locatePlugins || locatePlugins.length === 0) {
