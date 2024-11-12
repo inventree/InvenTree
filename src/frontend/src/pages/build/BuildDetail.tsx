@@ -528,7 +528,7 @@ export default function BuildDetail() {
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap='xs'>
           <PageDetail
-            title={build.reference}
+            title={`${t`Build Order`}: ${build.reference}`}
             subtitle={build.title}
             badges={buildBadges}
             editAction={editBuild.open}

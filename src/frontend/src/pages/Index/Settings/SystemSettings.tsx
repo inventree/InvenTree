@@ -19,6 +19,7 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
@@ -303,6 +304,7 @@ export default function SystemSettings() {
 
   return (
     <>
+      <PageTitle title={t`System Settings`} />
       {user.isStaff() ? (
         <Stack gap='xs'>
           <SettingsHeader
