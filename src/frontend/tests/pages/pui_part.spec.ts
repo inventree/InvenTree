@@ -100,14 +100,12 @@ test('Parts - Allocations', async ({ page }) => {
   await doQuickLogin(page);
 
   // Let's look at the allocations for a single stock item
+  await page.goto(`${baseUrl}/stock/item/324/`);
+  await page.getByRole('tab', { name: 'Allocations' }).click();
 
-  // TODO: Un-comment these lines!
-  // await page.goto(`${baseUrl}/stock/item/324/`);
-  // await page.getByRole('tab', { name: 'Allocations' }).click();
-
-  // await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
-  // await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
-  // await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
+  await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
+  await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
+  await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
 
   // Let's look at the allocations for an entire part
   await page.goto(`${baseUrl}/part/74/details`);

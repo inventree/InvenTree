@@ -498,6 +498,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.activeFilters,
       tableState.searchTerm
     ],
+    retry: 3,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
