@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 
 /**
@@ -44,6 +44,10 @@ export default function PageTitle({
 
     return data;
   }, [title, subtitle, globalSettings]);
+
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [pageTitle]);
 
   return <title>{pageTitle}</title>;
 }
