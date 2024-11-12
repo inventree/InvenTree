@@ -466,7 +466,7 @@ export default function BuildDetail() {
         color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.build} pk={build.pk} />,
+      <AdminButton model={ModelType.build} id={build.pk} />,
       <BarcodeActionDropdown
         model={ModelType.build}
         pk={build.pk}

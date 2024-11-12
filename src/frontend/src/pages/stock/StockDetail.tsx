@@ -39,6 +39,7 @@ import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -653,7 +654,8 @@ export default function StockDetail() {
       stockitem.quantity == 1;
 
     return [
-      <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
+      <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
+      <LocateItemButton model={ModelType.stockitem} id={stockitem.pk} />,
       <BarcodeActionDropdown
         model={ModelType.stockitem}
         pk={stockitem.pk}

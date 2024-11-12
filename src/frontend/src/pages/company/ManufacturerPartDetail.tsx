@@ -234,7 +234,7 @@ export default function ManufacturerPartDetail() {
       <AdminButton
         key='admin'
         model={ModelType.manufacturerpart}
-        pk={manufacturerPart.pk}
+        id={manufacturerPart.pk}
       />,
       <OptionsActionDropdown
         key='options'

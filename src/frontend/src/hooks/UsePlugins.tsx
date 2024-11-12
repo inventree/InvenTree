@@ -37,3 +37,9 @@ export const usePlugins = (): UsePluginResult => {
     withMixin: pluginsWithMixin
   };
 };
+
+export const usePluginsWithMixin = (mixin: string): PluginInterface[] => {
+  const plugins = usePlugins();
+
+  return plugins.withMixin(mixin);
+};

@@ -275,7 +275,7 @@ export default function Stock() {
 
   const locationActions = useMemo(
     () => [
-      <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
+      <AdminButton model={ModelType.stocklocation} id={location.pk} />,
       <ActionButton
         icon={<InvenTreeIcon icon='stocktake' />}
         onClick={notYetImplemented}

@@ -453,7 +453,7 @@ export default function SalesOrderDetail() {
         color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.salesorder} pk={order.pk} />,
+      <AdminButton model={ModelType.salesorder} id={order.pk} />,
       <BarcodeActionDropdown
         model={ModelType.salesorder}
         pk={order.pk}
