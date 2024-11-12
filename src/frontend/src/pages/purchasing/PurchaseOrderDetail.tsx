@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -23,7 +26,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
@@ -108,7 +111,7 @@ export default function PurchaseOrderDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'reference',
@@ -144,7 +147,7 @@ export default function PurchaseOrderDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'progressbar',
         name: 'completed',
@@ -179,7 +182,7 @@ export default function PurchaseOrderDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         external: true,
@@ -208,7 +211,7 @@ export default function PurchaseOrderDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'date',
         name: 'creation_date',
@@ -286,9 +289,9 @@ export default function PurchaseOrderDetail() {
             multiple={true}
             defaultValue={['line-items', 'extra-items']}
           >
-            <Accordion.Item value="line-items" key="lineitems">
+            <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <PurchaseOrderLineItemTable
@@ -299,9 +302,9 @@ export default function PurchaseOrderDetail() {
                 />
               </Accordion.Panel>
             </Accordion.Item>
-            <Accordion.Item value="extra-items" key="extraitems">
+            <Accordion.Item value='extra-items' key='extraitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ExtraLineItemTable
@@ -321,7 +324,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
-            tableName="received-stock"
+            tableName='received-stock'
             params={{
               purchase_order: id
             }}
@@ -398,16 +401,16 @@ export default function PurchaseOrderDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
@@ -472,9 +475,9 @@ export default function PurchaseOrderDetail() {
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Purchase Order` + `: ${order.reference}`}
+            title={`${t`Purchase Order`}: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
@@ -484,7 +487,7 @@ export default function PurchaseOrderDetail() {
             editEnabled={user.hasChangePermission(ModelType.purchaseorder)}
           />
           <PanelGroup
-            pageKey="purchaseorder"
+            pageKey='purchaseorder'
             panels={orderPanels}
             model={ModelType.purchaseorder}
             instance={order}

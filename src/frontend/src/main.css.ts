@@ -83,7 +83,7 @@ export const link = style({
 });
 
 export const docHover = style({
-  border: `1px dashed `
+  border: '1px dashed '
 });
 
 export const layoutContent = style({

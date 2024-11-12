@@ -9,7 +9,10 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -22,7 +25,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -65,9 +68,9 @@ export default function ManufacturerPartDetail() {
       return <Skeleton />;
     }
 
-    let data = manufacturerPart ?? {};
+    const data = manufacturerPart ?? {};
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -93,7 +96,7 @@ export default function ManufacturerPartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'link',
         name: 'manufacturer',
@@ -229,10 +232,12 @@ export default function ManufacturerPartDetail() {
   const manufacturerPartActions = useMemo(() => {
     return [
       <AdminButton
+        key='admin'
         model={ModelType.manufacturerpart}
         pk={manufacturerPart.pk}
       />,
       <OptionsActionDropdown
+        key='options'
         tooltip={t`Manufacturer Part Actions`}
         actions={[
           DuplicateItemAction({
@@ -271,7 +276,7 @@ export default function ManufacturerPartDetail() {
       {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
             title={t`ManufacturerPart`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
@@ -282,7 +287,7 @@ export default function ManufacturerPartDetail() {
             editEnabled={user.hasChangePermission(ModelType.manufacturerpart)}
           />
           <PanelGroup
-            pageKey="manufacturerpart"
+            pageKey='manufacturerpart'
             panels={panels}
             instance={manufacturerPart}
             model={ModelType.manufacturerpart}

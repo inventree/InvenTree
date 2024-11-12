@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';

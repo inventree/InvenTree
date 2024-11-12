@@ -5,7 +5,7 @@ import {
   Divider,
   Drawer,
   Group,
-  MantineStyleProp,
+  type MantineStyleProp,
   Stack,
   Table,
   Text
@@ -27,8 +27,8 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import { TableFilter } from '../Filter';
+import type { TableColumn } from '../Column';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction } from '../RowActions';
 
@@ -52,24 +52,24 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
 
   return (
     <>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Divider />
         <Table>
           <Table.Tbody>
             <Table.Tr>
               <Table.Td colSpan={2}>
-                <StylishText size="sm">{t`Barcode Information`}</StylishText>
+                <StylishText size='sm'>{t`Barcode Information`}</StylishText>
               </Table.Td>
             </Table.Tr>
             <Table.Tr>
               <Table.Th>{t`Barcode`}</Table.Th>
               <Table.Td>
-                <Text size="sm" style={dataStyle}>
+                <Text size='sm' style={dataStyle}>
                   {scan.data}
                 </Text>
               </Table.Td>
               <Table.Td>
-                <CopyButton value={scan.data} size="xs" />
+                <CopyButton value={scan.data} size='xs' />
               </Table.Td>
             </Table.Tr>
             <Table.Tr>
@@ -95,7 +95,7 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
             {hasContextData && (
               <Table.Tr>
                 <Table.Td colSpan={2}>
-                  <StylishText size="sm">{t`Context`}</StylishText>
+                  <StylishText size='sm'>{t`Context`}</StylishText>
                 </Table.Td>
               </Table.Tr>
             )}
@@ -104,19 +104,19 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
                 <Table.Tr key={key}>
                   <Table.Th>{key}</Table.Th>
                   <Table.Td>
-                    <Text size="sm" style={dataStyle}>
+                    <Text size='sm' style={dataStyle}>
                       {scan.context[key]}
                     </Text>
                   </Table.Td>
                   <Table.Td>
-                    <CopyButton value={scan.context[key]} size="xs" />
+                    <CopyButton value={scan.context[key]} size='xs' />
                   </Table.Td>
                 </Table.Tr>
               ))}
             {hasResponseData && (
               <Table.Tr>
                 <Table.Td colSpan={2}>
-                  <StylishText size="sm">{t`Response`}</StylishText>
+                  <StylishText size='sm'>{t`Response`}</StylishText>
                 </Table.Td>
               </Table.Tr>
             )}
@@ -125,12 +125,12 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
                 <Table.Tr key={key}>
                   <Table.Th>{key}</Table.Th>
                   <Table.Td>
-                    <Text size="sm" style={dataStyle}>
+                    <Text size='sm' style={dataStyle}>
                       {scan.response[key]}
                     </Text>
                   </Table.Td>
                   <Table.Td>
-                    <CopyButton value={scan.response[key]} size="xs" />
+                    <CopyButton value={scan.response[key]} size='xs' />
                   </Table.Td>
                 </Table.Tr>
               ))}
@@ -162,10 +162,10 @@ export default function BarcodeScanHistoryTable() {
         switchable: false,
         render: (record: any) => {
           return (
-            <Group justify="space-between" wrap="nowrap">
+            <Group justify='space-between' wrap='nowrap'>
               <Text>{record.timestamp}</Text>
               {record.user_detail && (
-                <Badge size="xs">{record.user_detail.username}</Badge>
+                <Badge size='xs'>{record.user_detail.username}</Badge>
               )}
             </Group>
           );
@@ -178,7 +178,7 @@ export default function BarcodeScanHistoryTable() {
         render: (record: any) => {
           return (
             <Text
-              size="xs"
+              size='xs'
               style={{
                 textWrap: 'wrap',
                 lineBreak: 'auto',
@@ -253,17 +253,17 @@ export default function BarcodeScanHistoryTable() {
       {deleteResult.modal}
       <Drawer
         opened={opened}
-        size="xl"
-        position="right"
+        size='xl'
+        position='right'
         title={<StylishText>{t`Barcode Scan Details`}</StylishText>}
         onClose={close}
       >
         <BarcodeScanDetail scan={selectedResult} />
       </Drawer>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {!globalSettings.isSet('BARCODE_STORE_RESULTS') && (
           <Alert
-            color="red"
+            color='red'
             icon={<IconExclamationCircle />}
             title={t`Logging Disabled`}
           >

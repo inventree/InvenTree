@@ -1,11 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -18,12 +18,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowEditAction,
   RowViewAction
@@ -48,11 +48,11 @@ export default function PartTestTemplateTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
-          let extra: ReactNode[] = [];
+          const extra: ReactNode[] = [];
 
           if (record.part != partId) {
             extra.push(
-              <Text size="sm">{t`Test is defined for a parent template part`}</Text>
+              <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
             );
           }
 
@@ -78,7 +78,7 @@ export default function PartTestTemplateTable({
         sortable: true,
         title: t`Results`,
         render: (record: any) => {
-          return record.results || <Badge color="blue">{t`No Results`}</Badge>;
+          return record.results || <Badge color='blue'>{t`No Results`}</Badge>;
         }
       },
       DescriptionColumn({
@@ -185,7 +185,7 @@ export default function PartTestTemplateTable({
     pk: selectedTest,
     title: t`Delete Test Template`,
     preFormContent: (
-      <Alert color="red" title={t`This action cannot be reversed`}>
+      <Alert color='red' title={t`This action cannot be reversed`}>
         <Text>
           <Trans>
             Any tests results associated with this template will be deleted
@@ -234,11 +234,11 @@ export default function PartTestTemplateTable({
   );
 
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.part);
+    const can_add = user.hasAddRole(UserRoles.part);
 
     return [
       <AddItemButton
-        key="add-test-template"
+        key='add-test-template'
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
         hidden={partLocked || !can_add}
@@ -251,13 +251,13 @@ export default function PartTestTemplateTable({
       {newTestTemplate.modal}
       {editTestTemplate.modal}
       {deleteTestTemplate.modal}
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="orange"
+            color='orange'
             icon={<IconLock />}
-            p="xs"
+            p='xs'
           >
             <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
           </Alert>

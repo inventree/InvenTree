@@ -3,7 +3,7 @@ import {
   Box,
   CloseButton,
   Combobox,
-  ComboboxStore,
+  type ComboboxStore,
   Group,
   Input,
   InputBase,
@@ -17,12 +17,12 @@ import { useDebouncedValue, useElementSize } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import Fuse from 'fuse.js';
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 export default function IconField({
   controller,
@@ -52,13 +52,13 @@ export default function IconField({
           required={definition.required}
           error={error?.message}
           ref={field.ref}
-          component="button"
-          type="button"
+          component='button'
+          type='button'
           pointer
           rightSection={
             value !== null && !definition.required ? (
               <CloseButton
-                size="sm"
+                size='sm'
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => field.onChange(null)}
               />
@@ -70,9 +70,9 @@ export default function IconField({
           rightSectionPointerEvents={value === null ? 'none' : 'all'}
         >
           {field.value ? (
-            <Group gap="xs">
+            <Group gap='xs'>
               <ApiIcon name={field.value} />
-              <Text size="sm" c="dimmed">
+              <Text size='sm' c='dimmed'>
                 {field.value}
               </Text>
             </Group>
@@ -209,7 +209,7 @@ function ComboboxDropdown({
           placeholder={t`Search...`}
           rightSection={
             searchValue && !definition.required ? (
-              <IconX size="1rem" onClick={() => setSearchValue('')} />
+              <IconX size='1rem' onClick={() => setSearchValue('')} />
             ) : null
           }
           flex={1}
@@ -233,7 +233,7 @@ function ComboboxDropdown({
         />
       </Group>
 
-      <Text size="sm" c="dimmed" ta="center" mt={-4}>
+      <Text size='sm' c='dimmed' ta='center' mt={-4}>
         <Trans>{filteredIcons.length} icons</Trans>
       </Text>
 

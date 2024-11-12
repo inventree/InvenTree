@@ -45,7 +45,7 @@ export async function findExternalPluginFunction(
 
   const module = await loadExternalPluginSource(source);
 
-  if (module && module[functionName]) {
+  if (module?.[functionName]) {
     return module[functionName];
   }
 

@@ -7,8 +7,8 @@ import {
   IconSquareArrowRight,
   IconTools
 } from '@tabler/icons-react';
-import { DataTableRowExpansionProps } from 'mantine-datatable';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -33,12 +33,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction,
@@ -71,7 +71,7 @@ export default function SalesOrderLineItemTable({
         switchable: false,
         render: (record: any) => {
           return (
-            <Group wrap="nowrap">
+            <Group wrap='nowrap'>
               <RowExpansionIcon
                 enabled={record.allocated}
                 expanded={table.isRowExpanded(record.pk)}
@@ -126,19 +126,19 @@ export default function SalesOrderLineItemTable({
         accessor: 'stock',
         title: t`Available Stock`,
         render: (record: any) => {
-          let part_stock = record?.available_stock ?? 0;
-          let variant_stock = record?.available_variant_stock ?? 0;
-          let available = part_stock + variant_stock;
+          const part_stock = record?.available_stock ?? 0;
+          const variant_stock = record?.available_variant_stock ?? 0;
+          const available = part_stock + variant_stock;
 
-          let required = Math.max(
+          const required = Math.max(
             record.quantity - record.allocated - record.shipped,
             0
           );
 
           let color: string | undefined = undefined;
-          let text: string = `${available}`;
+          let text = `${available}`;
 
-          let extra: ReactNode[] = [];
+          const extra: ReactNode[] = [];
 
           if (available <= 0) {
             color = 'red';
@@ -148,12 +148,12 @@ export default function SalesOrderLineItemTable({
           }
 
           if (variant_stock > 0) {
-            extra.push(<Text size="sm">{t`Includes variant stock`}</Text>);
+            extra.push(<Text size='sm'>{t`Includes variant stock`}</Text>);
           }
 
           if (record.building > 0) {
             extra.push(
-              <Text size="sm">
+              <Text size='sm'>
                 {t`In production`}: {record.building}
               </Text>
             );
@@ -161,7 +161,7 @@ export default function SalesOrderLineItemTable({
 
           if (record.on_order > 0) {
             extra.push(
-              <Text size="sm">
+              <Text size='sm'>
                 {t`On order`}: {record.on_order}
               </Text>
             );
@@ -303,7 +303,7 @@ export default function SalesOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
+        key='add-line-item'
         tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
@@ -314,11 +314,11 @@ export default function SalesOrderLineItemTable({
         hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
       />,
       <ActionButton
-        key="allocate-stock"
+        key='allocate-stock'
         tooltip={t`Allocate Stock`}
         icon={<IconArrowRight />}
         disabled={!table.hasSelectedRecords}
-        color="green"
+        color='green'
         onClick={() => {
           setSelectedItems(
             table.selectedRecords.filter((r) => r.allocated < r.quantity)

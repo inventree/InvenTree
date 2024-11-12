@@ -15,8 +15,8 @@ export type ProgressBarProps = {
  */
 export function ProgressBar(props: Readonly<ProgressBarProps>) {
   const progress = useMemo(() => {
-    let maximum = props.maximum ?? 100;
-    let value = Math.max(props.value, 0);
+    const maximum = props.maximum ?? 100;
+    const value = Math.max(props.value, 0);
 
     if (maximum == 0) {
       return 0;
@@ -28,7 +28,7 @@ export function ProgressBar(props: Readonly<ProgressBarProps>) {
   return (
     <Stack gap={2} style={{ flexGrow: 1, minWidth: '100px' }}>
       {props.progressLabel && (
-        <Text ta="center" size="xs">
+        <Text ta='center' size='xs'>
           {props.value} / {props.maximum}
         </Text>
       )}
@@ -36,7 +36,7 @@ export function ProgressBar(props: Readonly<ProgressBarProps>) {
         value={progress}
         color={progress < 100 ? 'orange' : progress > 100 ? 'blue' : 'green'}
         size={props.size ?? 'md'}
-        radius="sm"
+        radius='sm'
       />
     </Stack>
   );

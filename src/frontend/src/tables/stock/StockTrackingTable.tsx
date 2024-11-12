@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Table, Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { RenderBuildOrder } from '../../components/render/Build';
@@ -22,9 +22,9 @@ import { ModelType } from '../../enums/ModelType';
 import { useUserFilters } from '../../hooks/UseFilter';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 type StockTrackingEntry = {
@@ -44,7 +44,7 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
     (record: any) => {
       const deltas: any = record?.deltas ?? {};
 
-      let entries: StockTrackingEntry[] = [
+      const entries: StockTrackingEntry[] = [
         {
           label: t`Stock Item`,
           key: 'stockitem',
@@ -210,7 +210,7 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
         title: t`User`,
         render: (record: any) => {
           if (!record.user_detail) {
-            return <Text size="sm" fs="italic">{t`No user information`}</Text>;
+            return <Text size='sm' fs='italic'>{t`No user information`}</Text>;
           }
 
           return RenderUser({ instance: record.user_detail });

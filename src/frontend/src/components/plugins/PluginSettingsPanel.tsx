@@ -26,7 +26,7 @@ export default function PluginSettingsPanel({
   return (
     <RemoteComponent
       source={pluginAdmin.source}
-      defaultFunctionName="renderPluginSettings"
+      defaultFunctionName='renderPluginSettings'
       context={{ ...pluginContext, context: pluginAdmin.context }}
     />
   );

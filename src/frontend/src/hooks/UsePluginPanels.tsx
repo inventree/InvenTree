@@ -2,20 +2,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { api } from '../App';
-import { PanelType } from '../components/panels/Panel';
+import type { PanelType } from '../components/panels/Panel';
 import {
-  InvenTreeContext,
+  type InvenTreeContext,
   useInvenTreeContext
 } from '../components/plugins/PluginContext';
 import PluginPanelContent from '../components/plugins/PluginPanel';
 import {
-  PluginUIFeature,
+  type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
-import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -68,7 +68,7 @@ export function usePluginPanels({
         })
         .then((response: any) => response.data)
         .catch((_error: any) => {
-          console.error(`ERR: Failed to fetch plugin panels`);
+          console.error('ERR: Failed to fetch plugin panels');
           return [];
         });
     }

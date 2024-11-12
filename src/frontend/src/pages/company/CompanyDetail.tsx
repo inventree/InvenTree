@@ -12,11 +12,14 @@ import {
   IconTruckReturn,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -25,12 +28,12 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import type { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -82,7 +85,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'description',
@@ -113,7 +116,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'currency',
@@ -206,7 +209,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: company?.pk && (
           <StockItemTable
             allowAdd={false}
-            tableName="company-stock"
+            tableName='company-stock'
             params={{ company: company.pk }}
           />
         )
@@ -237,7 +240,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: company?.pk ? (
           <StockItemTable
             allowAdd={false}
-            tableName="assigned-stock"
+            tableName='assigned-stock'
             params={{ customer: company.pk }}
           />
         ) : (
@@ -305,7 +308,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={company.active == false}
       />
     ];
@@ -316,9 +319,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {editCompany.modal}
       {deleteCompany.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Company` + `: ${company.name}`}
+            title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
             imageUrl={company.image}
@@ -328,7 +331,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             editEnabled={user.hasChangePermission(ModelType.company)}
           />
           <PanelGroup
-            pageKey="company"
+            pageKey='company'
             panels={companyPanels}
             instance={company}
             model={ModelType.company}

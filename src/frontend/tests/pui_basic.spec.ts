@@ -8,7 +8,7 @@ test('Basic Login Test', async ({ page }) => {
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
@@ -19,7 +19,7 @@ test('Basic Login Test', async ({ page }) => {
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
@@ -39,7 +39,7 @@ test('Quick Login Test', async ({ page }) => {
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);

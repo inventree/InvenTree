@@ -2,12 +2,12 @@ import { t } from '@lingui/macro';
 import { Group } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -23,9 +23,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -46,7 +46,7 @@ function ParameterCell({
     return record.parameters?.find((p: any) => p.template == template.pk);
   }, [record.parameters, template]);
 
-  let extra: any[] = [];
+  const extra: any[] = [];
 
   // Format the value for display
   const value: ReactNode = useMemo(() => {
@@ -76,7 +76,7 @@ function ParameterCell({
 
   return (
     <div>
-      <Group grow ref={ref} justify="space-between">
+      <Group grow ref={ref} justify='space-between'>
         <Group grow>
           <TableHoverCard
             value={value ?? '-'}
@@ -150,8 +150,8 @@ export default function ParametricPartTable({
   // Update a single parameter record in the table
   const updateParameterRecord = useCallback(
     (part: number, parameter: any) => {
-      let records = table.records;
-      let partIndex = records.findIndex((record: any) => record.pk == part);
+      const records = table.records;
+      const partIndex = records.findIndex((record: any) => record.pk == part);
 
       if (partIndex < 0) {
         // No matching part: reload the entire table
@@ -159,7 +159,7 @@ export default function ParametricPartTable({
         return;
       }
 
-      let parameterIndex = records[partIndex].parameters.findIndex(
+      const parameterIndex = records[partIndex].parameters.findIndex(
         (p: any) => p.pk == parameter.pk
       );
 
@@ -176,7 +176,7 @@ export default function ParametricPartTable({
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    let data = categoryParmeters.data ?? [];
+    const data = categoryParmeters.data ?? [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -206,7 +206,7 @@ export default function ParametricPartTable({
   const onParameterClick = useCallback((template: number, part: any) => {
     setSelectedTemplate(template);
     setSelectedPart(part.pk);
-    let parameter = part.parameters?.find((p: any) => p.template == template);
+    const parameter = part.parameters?.find((p: any) => p.template == template);
 
     if (parameter) {
       setSelectedParameter(parameter.pk);

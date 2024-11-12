@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { base_url } from '../../main';
@@ -44,12 +44,12 @@ function NotificationEntry({
 
   let link = notification.target?.link;
 
-  let model_type = notification.target?.model_type;
-  let model_id = notification.target?.model_id;
+  const model_type = notification.target?.model_type;
+  const model_id = notification.target?.model_id;
 
   // If a valid model type is provided, that overrides the specified link
   if (model_type as ModelType) {
-    let model_info = ModelInformationDict[model_type as ModelType];
+    const model_info = ModelInformationDict[model_type as ModelType];
     if (model_info?.url_detail && model_id) {
       link = getDetailUrl(model_type as ModelType, model_id);
     } else if (model_info?.url_overview) {
@@ -58,18 +58,18 @@ function NotificationEntry({
   }
 
   return (
-    <Paper p="xs" shadow="xs">
-      <Group justify="space-between" wrap="nowrap">
+    <Paper p='xs' shadow='xs'>
+      <Group justify='space-between' wrap='nowrap'>
         <Tooltip
           label={notification.message}
-          position="bottom-end"
+          position='bottom-end'
           hidden={!notification.message}
         >
           <Stack gap={2}>
             <Anchor
               href={link ? `/${base_url}${link}` : '#'}
-              underline="hover"
-              target="_blank"
+              underline='hover'
+              target='_blank'
               onClick={(event: any) => {
                 if (link) {
                   // Mark the notification as read
@@ -81,13 +81,13 @@ function NotificationEntry({
                 }
               }}
             >
-              <Text size="sm">{notification.name}</Text>
+              <Text size='sm'>{notification.name}</Text>
             </Anchor>
-            <Text size="xs">{notification.age_human}</Text>
+            <Text size='xs'>{notification.age_human}</Text>
           </Stack>
         </Tooltip>
-        <Tooltip label={t`Mark as read`} position="bottom-end">
-          <ActionIcon variant="transparent" onClick={onRead}>
+        <Tooltip label={t`Mark as read`} position='bottom-end'>
+          <ActionIcon variant='transparent' onClick={onRead}>
             <IconBellCheck />
           </ActionIcon>
         </Tooltip>
@@ -162,8 +162,8 @@ export function NotificationDrawer({
   return (
     <Drawer
       opened={opened}
-      size="md"
-      position="right"
+      size='md'
+      position='right'
       onClose={onClose}
       withCloseButton={false}
       styles={{
@@ -175,12 +175,12 @@ export function NotificationDrawer({
         }
       }}
       title={
-        <Group justify="space-between" wrap="nowrap">
-          <StylishText size="lg">{t`Notifications`}</StylishText>
-          <Group justify="end" wrap="nowrap">
+        <Group justify='space-between' wrap='nowrap'>
+          <StylishText size='lg'>{t`Notifications`}</StylishText>
+          <Group justify='end' wrap='nowrap'>
             <Tooltip label={t`Mark all as read`}>
               <ActionIcon
-                variant="transparent"
+                variant='transparent'
                 onClick={() => {
                   markAllAsRead();
                 }}
@@ -194,7 +194,7 @@ export function NotificationDrawer({
                   onClose();
                   navigateToLink('/notifications/unread', navigate, event);
                 }}
-                variant="transparent"
+                variant='transparent'
               >
                 <IconArrowRight />
               </ActionIcon>
@@ -203,12 +203,12 @@ export function NotificationDrawer({
         </Group>
       }
     >
-      <Boundary label="NotificationDrawer">
-        <Stack gap="xs">
+      <Boundary label='NotificationDrawer'>
+        <Stack gap='xs'>
           <Divider />
           {!hasNotifications && (
-            <Alert color="green">
-              <Text size="sm">{t`You have no unread notifications.`}</Text>
+            <Alert color='green'>
+              <Text size='sm'>{t`You have no unread notifications.`}</Text>
             </Alert>
           )}
           {hasNotifications &&
@@ -221,7 +221,7 @@ export function NotificationDrawer({
             ))}
           {notificationQuery.isFetching && (
             <Center>
-              <Loader size="sm" />
+              <Loader size='sm' />
             </Center>
           )}
         </Stack>
