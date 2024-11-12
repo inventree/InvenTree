@@ -83,7 +83,7 @@ export default function LocateItemButton({
       {locateForm.modal}
       <ActionButton
         icon={<IconRadar />}
-        variant='transparent'
+        variant='outline'
         size='lg'
         tooltip={t`Locate Item`}
         onClick={locateForm.open}
