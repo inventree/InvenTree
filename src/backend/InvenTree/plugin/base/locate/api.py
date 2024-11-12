@@ -6,7 +6,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from InvenTree.tasks import offload_task
-from plugin.registry import registry
+from plugin.registry import call_plugin_function, registry
 from stock.models import StockItem, StockLocation
 
 
@@ -59,10 +59,11 @@ class LocatePluginView(GenericAPIView):
                 StockItem.objects.get(pk=item_pk)
 
                 offload_task(
-                    registry.call_plugin_function,
+                    call_plugin_function,
                     plugin,
                     'locate_stock_item',
                     item_pk,
+                    force_async=True,
                     group='plugin',
                 )
 
@@ -78,10 +79,11 @@ class LocatePluginView(GenericAPIView):
                 StockLocation.objects.get(pk=location_pk)
 
                 offload_task(
-                    registry.call_plugin_function,
+                    call_plugin_function,
                     plugin,
                     'locate_stock_location',
                     location_pk,
+                    force_async=True,
                     group='plugin',
                 )
 
