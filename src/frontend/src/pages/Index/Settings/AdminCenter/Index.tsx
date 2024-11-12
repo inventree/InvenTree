@@ -30,6 +30,7 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
+import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
@@ -244,6 +245,7 @@ export default function AdminCenter() {
 
   return (
     <>
+      <PageTitle title={t`Admin Center`} />
       {user.isStaff() ? (
         <Stack gap='xs'>
           <SettingsHeader

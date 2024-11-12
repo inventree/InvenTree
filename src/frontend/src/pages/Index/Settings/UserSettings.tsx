@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
@@ -146,23 +147,26 @@ export default function UserSettings() {
   }
 
   return (
-    <Stack gap='xs'>
-      <SettingsHeader
-        label='user'
-        title={t`Account Settings`}
-        subtitle={
-          user?.first_name && user?.last_name
-            ? `${user?.first_name} ${user?.last_name}`
-            : null
-        }
-        shorthand={user?.username || ''}
-      />
-      <PanelGroup
-        pageKey='user-settings'
-        panels={userSettingsPanels}
-        model='usersettings'
-        id={null}
-      />
-    </Stack>
+    <>
+      <PageTitle title={t`User Settings`} />
+      <Stack gap='xs'>
+        <SettingsHeader
+          label='user'
+          title={t`Account Settings`}
+          subtitle={
+            user?.first_name && user?.last_name
+              ? `${user?.first_name} ${user?.last_name}`
+              : null
+          }
+          shorthand={user?.username || ''}
+        />
+        <PanelGroup
+          pageKey='user-settings'
+          panels={userSettingsPanels}
+          model='usersettings'
+          id={null}
+        />
+      </Stack>
+    </>
   );
 }
