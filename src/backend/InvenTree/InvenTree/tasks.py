@@ -178,8 +178,6 @@ def offload_task(
     # Extract group information from kwargs
     group = kwargs.pop('group', 'inventree')
 
-    print('offload_task', taskname, args, force_async, force_sync, kwargs)
-
     try:
         import importlib
 
