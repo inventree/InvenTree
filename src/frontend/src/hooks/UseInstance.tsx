@@ -1,4 +1,4 @@
-import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
@@ -8,7 +8,7 @@ import { type PathParams, apiUrl } from '../states/ApiState';
 export interface UseInstanceResult {
   instance: any;
   setInstance: (instance: any) => void;
-  refreshInstance: () => Promise<QueryObserverResult<any, any>>;
+  refreshInstance: () => void;
   instanceQuery: any;
   requestStatus: number;
   isLoaded: boolean;
@@ -112,7 +112,9 @@ export function useInstance<T = any>({
     );
   }, [instanceQuery]);
 
-  const refreshInstance = useCallback(() => instanceQuery.refetch(), []);
+  const refreshInstance = useCallback(() => {
+    instanceQuery.refetch();
+  }, []);
 
   return {
     instance,
