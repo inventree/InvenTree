@@ -63,7 +63,6 @@ class LocatePluginView(GenericAPIView):
                     plugin,
                     'locate_stock_item',
                     item_pk,
-                    force_async=True,
                     group='plugin',
                 )
 
@@ -83,7 +82,6 @@ class LocatePluginView(GenericAPIView):
                     plugin,
                     'locate_stock_location',
                     location_pk,
-                    force_async=True,
                     group='plugin',
                 )
 
