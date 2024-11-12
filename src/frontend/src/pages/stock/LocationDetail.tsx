@@ -25,6 +25,7 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -275,7 +276,8 @@ export default function Stock() {
 
   const locationActions = useMemo(
     () => [
-      <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
+      <AdminButton model={ModelType.stocklocation} id={location.pk} />,
+      <LocateItemButton locationId={location.pk} />,
       <ActionButton
         icon={<InvenTreeIcon icon='stocktake' />}
         onClick={notYetImplemented}

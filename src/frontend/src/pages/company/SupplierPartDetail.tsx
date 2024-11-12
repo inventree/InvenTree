@@ -276,7 +276,7 @@ export default function SupplierPartDetail() {
 
   const supplierPartActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
+      <AdminButton model={ModelType.supplierpart} id={supplierPart.pk} />,
       <BarcodeActionDropdown
         model={ModelType.supplierpart}
         pk={supplierPart.pk}

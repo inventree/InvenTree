@@ -412,7 +412,7 @@ export default function ReturnOrderDetail() {
         color='green'
         onClick={() => completeOrder.open()}
       />,
-      <AdminButton model={ModelType.returnorder} pk={order.pk} />,
+      <AdminButton model={ModelType.returnorder} id={order.pk} />,
       <BarcodeActionDropdown
         model={ModelType.returnorder}
         pk={order.pk}

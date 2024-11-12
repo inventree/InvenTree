@@ -996,7 +996,7 @@ export default function PartDetail() {
 
   const partActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.part} pk={part.pk} />,
+      <AdminButton model={ModelType.part} id={part.pk} />,
       <BarcodeActionDropdown
         model={ModelType.part}
         pk={part.pk}
