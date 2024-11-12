@@ -466,7 +466,7 @@ export default function BuildDetail() {
         color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.build} pk={build.pk} />,
+      <AdminButton model={ModelType.build} id={build.pk} />,
       <BarcodeActionDropdown
         model={ModelType.build}
         pk={build.pk}
@@ -528,7 +528,7 @@ export default function BuildDetail() {
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap='xs'>
           <PageDetail
-            title={build.reference}
+            title={`${t`Build Order`}: ${build.reference}`}
             subtitle={build.title}
             badges={buildBadges}
             editAction={editBuild.open}

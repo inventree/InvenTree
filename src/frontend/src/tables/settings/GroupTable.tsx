@@ -115,7 +115,7 @@ export function GroupDrawer({
         <Title order={5}>
           <Trans>Permission set</Trans>
         </Title>
-        <AdminButton model={ModelType.group} pk={instance.pk} />
+        <AdminButton model={ModelType.group} id={instance.pk} />
       </Group>
       <Group>{permissionsAccordion}</Group>
     </Stack>

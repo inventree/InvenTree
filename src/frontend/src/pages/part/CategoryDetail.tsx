@@ -223,7 +223,7 @@ export default function CategoryDetail() {
       <AdminButton
         key='admin'
         model={ModelType.partcategory}
-        pk={category.pk}
+        id={category.pk}
       />,
       <OptionsActionDropdown
         key='category-actions'

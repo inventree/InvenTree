@@ -47,6 +47,7 @@ import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
+import PageTitle from '../../components/nav/PageTitle';
 import { RenderInstance } from '../../components/render/Instance';
 import { ModelInformationDict } from '../../components/render/ModelType';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -290,6 +291,7 @@ export default function Scan() {
   // rendering
   return (
     <>
+      <PageTitle title={t`Barcode Scanning`} />
       <Group justify='space-between'>
         <Group justify='left'>
           <StylishText>

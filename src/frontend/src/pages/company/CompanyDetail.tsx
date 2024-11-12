@@ -287,7 +287,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const companyActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.company} pk={company.pk} />,
+      <AdminButton model={ModelType.company} id={company.pk} />,
       <OptionsActionDropdown
         tooltip={t`Company Actions`}
         actions={[
