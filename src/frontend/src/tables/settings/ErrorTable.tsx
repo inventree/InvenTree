@@ -15,7 +15,7 @@ import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction } from '../RowActions';
 
-function ErrorDetail({ errorId }: { errorId?: number }) {
+function ErrorDetail({ errorId }: Readonly<{ errorId?: number }>) {
   const { id } = useParams();
 
   const errorPrimaryKey = useMemo(() => {
