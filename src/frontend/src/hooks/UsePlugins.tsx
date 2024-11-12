@@ -16,7 +16,7 @@ export const usePlugins = (): UsePluginResult => {
     endpoint: ApiEndpoints.plugin_list,
     defaultValue: [],
     hasPrimaryKey: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     params: {
       active: true

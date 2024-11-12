@@ -655,7 +655,7 @@ export default function StockDetail() {
 
     return [
       <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
-      <LocateItemButton model={ModelType.stockitem} id={stockitem.pk} />,
+      <LocateItemButton stockId={stockitem.pk} />,
       <BarcodeActionDropdown
         model={ModelType.stockitem}
         pk={stockitem.pk}

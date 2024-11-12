@@ -72,7 +72,6 @@ export function ActionDropdown({
         <Menu.Target>
           <Tooltip label={tooltip} hidden={!tooltip} position='bottom'>
             <Button
-              radius='sm'
               variant={noindicator ? 'transparent' : 'light'}
               disabled={disabled}
               aria-label={menuName}

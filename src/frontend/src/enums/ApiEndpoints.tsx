@@ -203,6 +203,9 @@ export enum ApiEndpoints {
   // User interface plugin endpoints
   plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
+  // Special plugin endpoints
+  plugin_locate_item = 'locate/',
+
   // Machine API endpoints
   machine_types_list = 'machine/types/',
   machine_driver_list = 'machine/drivers/',
