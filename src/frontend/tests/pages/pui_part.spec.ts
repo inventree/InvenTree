@@ -172,7 +172,8 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
 
   // Part with no history
   await page.goto(`${baseUrl}/part/82/pricing`);
-  await page.getByText('1551ABK').waitFor();
+
+  await page.getByText('Small plastic enclosure, black').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -183,7 +184,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
 
   // Part with history
   await page.goto(`${baseUrl}/part/108/pricing`);
-  await page.getByText('Part: Blue Chair').waitFor();
+  await page.getByText('A chair - with blue paint').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -221,7 +222,7 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/55/pricing`);
-  await page.getByText('Part: C_100nF_0603').waitFor();
+  await page.getByText('Ceramic capacitor, 100nF in').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -247,7 +248,7 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/106/pricing`);
-  await page.getByText('Part: Chair').waitFor();
+  await page.getByText('A chair - available in multiple colors').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -273,7 +274,7 @@ test('Parts - Pricing (Internal)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/65/pricing`);
-  await page.getByText('Part: M2x4 SHCS').waitFor();
+  await page.getByText('Socket head cap screw, M2').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -298,7 +299,7 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/69/pricing`);
-  await page.getByText('Part: 530470210').waitFor();
+  await page.getByText('1.25mm Pitch, PicoBlade PCB').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();

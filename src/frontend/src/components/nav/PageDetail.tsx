@@ -73,7 +73,7 @@ export function PageDetail({
                   {subtitle && (
                     <Group gap='xs'>
                       {icon}
-                      <Text size='md' truncate>
+                      <Text size='sm' truncate>
                         {subtitle}
                       </Text>
                     </Group>
