@@ -482,7 +482,6 @@ if LDAP_AUTH:
         typecast=dict,
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
-    AUTH_LDAP_FIND_GROUP_PERMS = True
 
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
