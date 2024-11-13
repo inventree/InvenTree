@@ -29,7 +29,7 @@ export function RenderStockLocation(
       secondary={instance.description}
       url={
         props.link
-          ? getDetailUrl(ModelType.stocklocation, instance.pk)
+          ? getDetailUrl(ModelType.stocklocation, instance.pk, true)
           : undefined
       }
     />
@@ -70,7 +70,9 @@ export function RenderStockItem(
       suffix={<Text size='sm'>{quantity_string}</Text>}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={
-        props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined
+        props.link
+          ? getDetailUrl(ModelType.stockitem, instance.pk, true)
+          : undefined
       }
     />
   );

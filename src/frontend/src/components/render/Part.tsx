@@ -44,7 +44,9 @@ export function RenderPart(
       secondary={instance.description}
       suffix={badge}
       image={instance.thumnbnail || instance.image}
-      url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
+      url={
+        props.link ? getDetailUrl(ModelType.part, instance.pk, true) : undefined
+      }
     />
   );
 }
@@ -71,7 +73,7 @@ export function RenderPartCategory(
       secondary={instance.description}
       url={
         props.link
-          ? getDetailUrl(ModelType.partcategory, instance.pk)
+          ? getDetailUrl(ModelType.partcategory, instance.pk, true)
           : undefined
       }
     />

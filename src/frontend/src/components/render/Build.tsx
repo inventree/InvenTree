@@ -23,7 +23,11 @@ export function RenderBuildOrder(
         type: ModelType.build
       })}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
-      url={props.link ? getDetailUrl(ModelType.build, instance.pk) : undefined}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.build, instance.pk, true)
+          : undefined
+      }
     />
   );
 }
