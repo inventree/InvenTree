@@ -27,7 +27,7 @@ export function RenderPurchaseOrder(
       image={supplier.thumnbnail || supplier.image}
       url={
         props.link
-          ? getDetailUrl(ModelType.purchaseorder, instance.pk, true)
+          ? getDetailUrl(ModelType.purchaseorder, instance.pk)
           : undefined
       }
     />
@@ -55,7 +55,7 @@ export function RenderReturnOrder(
       image={customer.thumnbnail || customer.image}
       url={
         props.link
-          ? getDetailUrl(ModelType.returnorder, instance.pk, true)
+          ? getDetailUrl(ModelType.returnorder, instance.pk)
           : undefined
       }
     />
@@ -99,9 +99,7 @@ export function RenderSalesOrder(
       })}
       image={customer.thumnbnail || customer.image}
       url={
-        props.link
-          ? getDetailUrl(ModelType.salesorder, instance.pk, true)
-          : undefined
+        props.link ? getDetailUrl(ModelType.salesorder, instance.pk) : undefined
       }
     />
   );

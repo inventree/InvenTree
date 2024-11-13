@@ -40,9 +40,7 @@ export function RenderCompany(
       primary={instance.name}
       secondary={instance.description}
       url={
-        props.link
-          ? getDetailUrl(ModelType.company, instance.pk, true)
-          : undefined
+        props.link ? getDetailUrl(ModelType.company, instance.pk) : undefined
       }
     />
   );
@@ -78,7 +76,7 @@ export function RenderSupplierPart(
       }
       url={
         props.link
-          ? getDetailUrl(ModelType.supplierpart, instance.pk, true)
+          ? getDetailUrl(ModelType.supplierpart, instance.pk)
           : undefined
       }
     />
@@ -106,7 +104,7 @@ export function RenderManufacturerPart(
       image={manufacturer?.thumnbnail ?? manufacturer.image}
       url={
         props.link
-          ? getDetailUrl(ModelType.manufacturerpart, instance.pk, true)
+          ? getDetailUrl(ModelType.manufacturerpart, instance.pk)
           : undefined
       }
     />
