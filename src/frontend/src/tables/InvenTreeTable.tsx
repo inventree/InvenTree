@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import {} from '@mantine/core';
 import { Box, Stack } from '@mantine/core';
-import {} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useContextMenu } from 'mantine-contextmenu';
 import {
@@ -581,14 +580,18 @@ export function InvenTreeTable<T extends Record<string, any>>({
     if (props.onRowContextMenu) {
       return props.onRowContextMenu(record, event);
     } else if (props.rowActions) {
-      const rowActions = props.rowActions(record);
-      return showContextMenu(
-        rowActions.map((action) => ({
-          key: action.title ?? '',
-          icon: action.icon,
-          onClick: action.onClick
-        }))
-      )(event);
+      const empty = () => {};
+      const items = props.rowActions(record).map((action) => ({
+        key: action.title ?? '',
+        title: action.title ?? '',
+        tooltip: action.tooltip,
+        color: action.color,
+        icon: action.icon,
+        onClick: action.onClick ?? empty,
+        hidden: action.hidden,
+        disabled: action.disabled
+      }));
+      return showContextMenu(items)(event);
     }
   };
 
