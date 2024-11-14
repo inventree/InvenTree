@@ -3,7 +3,9 @@
 import base64
 import logging
 import os
+from datetime import date, datetime
 from decimal import Decimal
+from typing import Optional
 
 from django import template
 from django.conf import settings
@@ -55,7 +57,7 @@ def getindex(container: list, index: int):
 
 
 @register.simple_tag()
-def getkey(container: dict, key):
+def getkey(container: dict, key: str):
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -104,10 +106,13 @@ def asset(filename):
 
 @register.simple_tag()
 def uploaded_image(
-    filename,
-    replace_missing=True,
-    replacement_file='blank_image.png',
-    validate=True,
+    filename: str,
+    replace_missing: bool = True,
+    replacement_file: str = 'blank_image.png',
+    validate: bool = True,
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    rotate: Optional[float] = None,
     **kwargs,
 ):
     """Return raw image data from an 'uploaded' image.
@@ -116,11 +121,9 @@ def uploaded_image(
         filename: The filename of the image relative to the MEDIA_ROOT directory
         replace_missing: Optionally return a placeholder image if the provided filename does not exist (default = True)
         replacement_file: The filename of the placeholder image (default = 'blank_image.png')
-        validate: Optionally validate that the file is a valid image file (default = True)
-
-    kwargs:
-        width: Optional width of the image (default = None)
-        height: Optional height of the image (default = None)
+        validate: Optionally validate that the file is a valid image file
+        width: Optional width of the image
+        height: Optional height of the image
         rotate: Optional rotation to apply to the image
 
     Returns:
@@ -169,9 +172,6 @@ def uploaded_image(
         # A placeholder image showing that the image is missing
         img = Image.new('RGB', (64, 64), color='red')
 
-    width = kwargs.get('width')
-    height = kwargs.get('height')
-
     if width is not None:
         try:
             width = int(width)
@@ -199,7 +199,7 @@ def uploaded_image(
         img = img.resize((wsize, height))
 
     # Optionally rotate the image
-    if rotate := kwargs.get('rotate'):
+    if rotate is not None:
         try:
             rotate = int(rotate)
             img = img.rotate(rotate)
@@ -213,7 +213,7 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename):
+def encode_svg_image(filename: str):
     """Return a base64-encoded svg image data string."""
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -396,10 +396,16 @@ def render_html_text(text: str, **kwargs):
 
 
 @register.simple_tag
-def format_number(number, **kwargs):
+def format_number(
+    number,
+    decimal_places: Optional[int] = None,
+    integer: bool = False,
+    leading: int = 0,
+    separator: Optional[str] = None,
+) -> str:
     """Render a number with optional formatting options.
 
-    kwargs:
+    Arguments:
         decimal_places: Number of decimal places to render
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros (default = 0)
@@ -411,34 +417,30 @@ def format_number(number, **kwargs):
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
 
-    if kwargs.get('integer', False):
+    if integer:
         # Convert to integer
         number = Decimal(int(number))
 
     # Normalize the number (remove trailing zeroes)
     number = number.normalize()
 
-    decimals = kwargs.get('decimal_places')
+    decimal_places
 
-    if decimals is not None:
+    if decimal_places is not None:
         try:
-            decimals = int(decimals)
-            number = round(number, decimals)
+            decimal_places = int(decimal_places)
+            number = round(number, decimal_places)
         except ValueError:
             pass
 
     # Re-encode, and normalize again
     value = Decimal(number).normalize()
 
-    separator = kwargs.get('separator')
-
     if separator:
         value = f'{value:,}'
         value = value.replace(',', separator)
     else:
         value = f'{value}'
-
-    leading = kwargs.get('leading')
 
     if leading is not None:
         try:
@@ -451,37 +453,39 @@ def format_number(number, **kwargs):
 
 
 @register.simple_tag
-def format_datetime(datetime, timezone=None, fmt=None):
+def format_datetime(
+    dt: datetime, timezone: Optional[str] = None, fmt: Optional[str] = None
+):
     """Format a datetime object for display.
 
     Arguments:
-        datetime: The datetime object to format
+        dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
-    datetime = InvenTree.helpers.to_local_time(datetime, timezone)
+    dt = InvenTree.helpers.to_local_time(dt, timezone)
 
     if fmt:
-        return datetime.strftime(fmt)
+        return dt.strftime(fmt)
     else:
-        return datetime.isoformat()
+        return dt.isoformat()
 
 
 @register.simple_tag
-def format_date(date, timezone=None, fmt=None):
+def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = None):
     """Format a date object for display.
 
     Arguments:
-        date: The date to format
+        dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
-    date = InvenTree.helpers.to_local_time(date, timezone).date()
+    dt = InvenTree.helpers.to_local_time(dt, timezone).date()
 
     if fmt:
-        return date.strftime(fmt)
+        return dt.strftime(fmt)
     else:
-        return date.isoformat()
+        return dt.isoformat()
 
 
 @register.simple_tag()
