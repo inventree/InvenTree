@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { useContextMenu } from 'mantine-contextmenu';
 import {
   DataTable,
   type DataTableCellClickHandler,
@@ -87,6 +88,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
+  onRowContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
   noHeader?: boolean;
 };
@@ -137,6 +139,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
+  const { showContextMenu } = useContextMenu();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -565,6 +568,31 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [props.onRowClick, props.onCellClick]
   );
 
+  // Callback when a row is right-clicked
+  const handleRowContextMenu = ({
+    record,
+    event
+  }: {
+    record: any;
+    event: any;
+  }) => {
+    if (props.onRowContextMenu) {
+      return props.onRowContextMenu(record, event);
+    } else if (props.rowActions) {
+      const empty = () => {};
+      const items = props.rowActions(record).map((action) => ({
+        key: action.title ?? '',
+        title: action.title ?? '',
+        color: action.color,
+        icon: action.icon,
+        onClick: action.onClick ?? empty,
+        hidden: action.hidden,
+        disabled: action.disabled
+      }));
+      return showContextMenu(items)(event);
+    }
+  };
+
   // pagination refresth table if pageSize changes
   function updatePageSize(newData: number) {
     tableState.setPageSize(newData);
@@ -663,6 +691,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   overflow: 'hidden'
                 })
               }}
+              onRowContextMenu={handleRowContextMenu}
               {...optionalParams}
             />
           </Box>
