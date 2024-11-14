@@ -477,14 +477,16 @@ if settings.ENABLE_PLATFORM_FRONTEND:
         frontendpatterns += [
             path(
                 'accounts/login/',
-                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                RedirectView.as_view(
+                    url=f'/{settings.FRONTEND_URL_BASE}', permanent=False
+                ),
                 name='account_login',
             )
         ]
 
 urlpatterns += frontendpatterns
 
-# Append custom plugin URLs (if plugin support is enabled)
+# Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
 

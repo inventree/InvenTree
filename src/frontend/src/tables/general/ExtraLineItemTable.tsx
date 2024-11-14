@@ -3,8 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { UserRoles } from '../../enums/Roles';
+import type { ApiEndpoints } from '../../enums/ApiEndpoints';
+import type { UserRoles } from '../../enums/Roles';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
@@ -14,11 +14,11 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -29,12 +29,12 @@ export default function ExtraLineItemTable({
   orderId,
   currency,
   role
-}: {
+}: Readonly<{
   endpoint: ApiEndpoints;
   orderId: number;
   currency: string;
   role: UserRoles;
-}) {
+}>) {
   const table = useTable('extra-line-item');
   const user = useUserState();
 
@@ -139,6 +139,7 @@ export default function ExtraLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-line-item'
         tooltip={t`Add Extra Line Item`}
         hidden={!user.hasAddRole(role)}
         onClick={() => {

@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -39,7 +39,7 @@ jobs:
           npm: true
           apt-dependency: gettext
       - name: Make Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Remove compiled static files
         run: rm -rf src/backend/InvenTree/static
       - name: Remove all local changes that are not *.po files
@@ -47,11 +47,11 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add src/backend/InvenTree/locale/en/LC_MESSAGES/django.po src/frontend/src/locales/en/messages.po
-          git commit -m "add translations"
+          git commit -m "add translations" || true
           git reset --hard
           git reset HEAD~
       - name: crowdin action
-        uses: crowdin/github-action@6ed209d411599a981ccb978df3be9dc9b8a81699 # pin@v2
+        uses: crowdin/github-action@2d540f18b0a416b1fbf2ee5be35841bd380fc1da # pin@v2
         with:
           upload_sources: true
           upload_translations: false
@@ -60,7 +60,7 @@ jobs:
           create_pull_request: true
           pull_request_title: 'New Crowdin updates'
           pull_request_body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action)'
-          pull_request_base_branch_name: 'l10'
+          pull_request_base_branch_name: 'master'
           pull_request_labels: 'translations'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

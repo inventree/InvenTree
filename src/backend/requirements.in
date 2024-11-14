@@ -40,7 +40,7 @@ feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
-pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
+pint                                    # Unit conversion
 pip-licenses                            # License information for installed packages
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management

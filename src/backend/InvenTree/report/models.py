@@ -163,6 +163,14 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         editable=False,
     )
 
+    attach_to_model = models.BooleanField(
+        default=False,
+        verbose_name=_('Attach to Model on Print'),
+        help_text=_(
+            'Save report output as an attachment against linked model instance when printing'
+        ),
+    )
+
     def generate_filename(self, context, **kwargs):
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)

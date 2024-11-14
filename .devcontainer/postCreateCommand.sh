@@ -11,10 +11,10 @@ python3 -m venv /home/inventree/dev/venv --system-site-packages --upgrade-deps
 invoke update -s
 
 # Configure dev environment
-invoke setup-dev
+invoke dev.setup-dev
 
 # Install required frontend packages
-invoke frontend-install
+invoke dev.frontend-install
 
 # remove existing gitconfig created by "Avoiding Dubious Ownership" step
 # so that it gets copied from host to the container to have your global

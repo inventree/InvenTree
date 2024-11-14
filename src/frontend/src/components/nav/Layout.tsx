@@ -18,7 +18,14 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
   if (!isLoggedIn()) {
     return (
-      <Navigate to="/logged-in" state={{ redirectFrom: location.pathname }} />
+      <Navigate
+        to='/logged-in'
+        state={{
+          redirectUrl: location.pathname,
+          queryParams: location.search,
+          anchor: location.hash
+        }}
+      />
     );
   }
 
@@ -51,22 +58,22 @@ export default function LayoutComponent() {
 
   return (
     <ProtectedRoute>
-      <Flex direction="column" mih="100vh">
+      <Flex direction='column' mih='100vh'>
         <Header />
-        <Container className={classes.layoutContent} size="100%">
+        <Container className={classes.layoutContent} size='100%'>
           <Boundary label={'layout'}>
             <Outlet />
           </Boundary>
           {/* </ErrorBoundary> */}
         </Container>
-        <Space h="xl" />
+        <Space h='xl' />
         <Footer />
         <Spotlight
           actions={actions}
           store={firstStore}
           highlightQuery
           searchProps={{
-            leftSection: <IconSearch size="1.2rem" />,
+            leftSection: <IconSearch size='1.2rem' />,
             placeholder: t`Search...`
           }}
           shortcut={['mod + K', '/']}

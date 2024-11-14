@@ -5,11 +5,11 @@ import {
   Drawer,
   Group,
   LoadingOverlay,
-  RenderTreeNodePayload,
+  type RenderTreeNodePayload,
   Space,
   Stack,
   Tree,
-  TreeNodeData,
+  type TreeNodeData,
   useTree
 } from '@mantine/core';
 import {
@@ -22,8 +22,8 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ApiEndpoints } from '../../enums/ApiEndpoints';
+import type { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
@@ -40,14 +40,14 @@ export default function NavigationTree({
   selectedId,
   modelType,
   endpoint
-}: {
+}: Readonly<{
   title: string;
   opened: boolean;
   onClose: () => void;
   selectedId?: number | null;
   modelType: ModelType;
   endpoint: ApiEndpoints;
-}) {
+}>) {
   const navigate = useNavigate();
   const treeState = useTree();
 
@@ -89,19 +89,19 @@ export default function NavigationTree({
      * It is required (and assumed) that the data is first sorted by level.
      */
 
-    let nodes: Record<number, any> = {};
-    let tree: TreeNodeData[] = [];
+    const nodes: Record<number, any> = {};
+    const tree: TreeNodeData[] = [];
 
     if (!query?.data?.length) {
       return [];
     }
 
     for (let ii = 0; ii < query.data.length; ii++) {
-      let node = {
+      const node = {
         ...query.data[ii],
         children: [],
         label: (
-          <Group gap="xs">
+          <Group gap='xs'>
             <ApiIcon name={query.data[ii].icon} />
             {query.data[ii].name}
           </Group>
@@ -141,9 +141,9 @@ export default function NavigationTree({
     (payload: RenderTreeNodePayload) => {
       return (
         <Group
-          justify="left"
+          justify='left'
           key={payload.node.value}
-          wrap="nowrap"
+          wrap='nowrap'
           onClick={() => {
             if (payload.hasChildren) {
               treeState.toggleExpanded(payload.node.value);
@@ -152,8 +152,8 @@ export default function NavigationTree({
         >
           <Space w={5 * payload.level} />
           <ActionIcon
-            size="sm"
-            variant="transparent"
+            size='sm'
+            variant='transparent'
             aria-label={`nav-tree-toggle-${payload.node.value}}`}
           >
             {payload.hasChildren ? (
@@ -179,8 +179,8 @@ export default function NavigationTree({
   return (
     <Drawer
       opened={opened}
-      size="md"
-      position="left"
+      size='md'
+      position='left'
       onClose={onClose}
       withCloseButton={true}
       styles={{
@@ -192,13 +192,13 @@ export default function NavigationTree({
         }
       }}
       title={
-        <Group justify="left" p="ms" gap="md" wrap="nowrap">
+        <Group justify='left' p='ms' gap='md' wrap='nowrap'>
           <IconSitemap />
-          <StylishText size="lg">{title}</StylishText>
+          <StylishText size='lg'>{title}</StylishText>
         </Group>
       }
     >
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Divider />
         <LoadingOverlay visible={query.isFetching || query.isLoading} />
         <Tree data={data} tree={treeState} renderNode={renderNode} />

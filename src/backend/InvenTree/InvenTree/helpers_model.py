@@ -3,6 +3,7 @@
 import io
 import logging
 from decimal import Decimal
+from typing import Optional
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -179,12 +180,12 @@ def download_image_from_url(remote_url, timeout=2.5):
 
 
 def render_currency(
-    money,
-    decimal_places=None,
-    currency=None,
-    min_decimal_places=None,
-    max_decimal_places=None,
-    include_symbol=True,
+    money: Money,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    min_decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
@@ -210,9 +211,6 @@ def render_currency(
         except Exception:
             pass
 
-    if decimal_places is None:
-        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
-
     if min_decimal_places is None:
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
@@ -222,17 +220,19 @@ def render_currency(
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, min_decimal_places)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
+    if decimal_places is not None:
+        # Decimal place count is provided, use it
+        pass
+    elif '.' in value:
+        # If the value has a decimal point, use the number of decimal places in the value
+        decimal_places = len(value.split('.')[-1])
     else:
-        decimal_places = max(decimal_places, 2)
+        # No decimal point, use 2 as a default
+        decimal_places = 2
 
-    decimal_places = max(decimal_places, max_decimal_places)
+    # Clip the decimal places to the specified range
+    decimal_places = max(decimal_places, min_decimal_places)
+    decimal_places = min(decimal_places, max_decimal_places)
 
     return format_money(
         money, decimal_places=decimal_places, include_symbol=include_symbol

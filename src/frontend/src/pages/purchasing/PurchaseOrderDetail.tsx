@@ -1,35 +1,33 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
-import {
-  IconDots,
-  IconInfoCircle,
-  IconList,
-  IconNotes,
-  IconPackages,
-  IconPaperclip
-} from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { IconInfoCircle, IconList, IconPackages } from '@tabler/icons-react';
+import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction
+  HoldItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -45,7 +43,6 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -81,7 +78,11 @@ export default function PurchaseOrderDetail() {
     );
   }, [order, globalSettings]);
 
-  const purchaseOrderFields = usePurchaseOrderFields();
+  const purchaseOrderFields = usePurchaseOrderFields({});
+
+  const duplicatePurchaseOrderFields = usePurchaseOrderFields({
+    duplicateOrderId: order.pk
+  });
 
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,
@@ -96,7 +97,7 @@ export default function PurchaseOrderDetail() {
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
-    fields: purchaseOrderFields,
+    fields: duplicatePurchaseOrderFields,
     initialData: {
       ...order,
       reference: undefined
@@ -110,7 +111,7 @@ export default function PurchaseOrderDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'reference',
@@ -146,7 +147,7 @@ export default function PurchaseOrderDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'progressbar',
         name: 'completed',
@@ -156,11 +157,18 @@ export default function PurchaseOrderDetail() {
         progress: order.completed_lines
       },
       {
+        type: 'link',
+        model: ModelType.stocklocation,
+        link: true,
+        name: 'destination',
+        label: t`Destination`,
+        hidden: !order.destination
+      },
+      {
         type: 'text',
         name: 'currency',
         label: t`Order Currency`,
-        value_formatter: () =>
-          order?.order_currency ?? order?.supplier_detail?.currency
+        value_formatter: () => orderCurrency
       },
       {
         type: 'text',
@@ -174,7 +182,7 @@ export default function PurchaseOrderDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         external: true,
@@ -192,23 +200,46 @@ export default function PurchaseOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
-      }
-      // TODO: Project code
-    ];
-
-    let br: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
       },
       {
         type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
+        type: 'date',
+        name: 'creation_date',
+        label: t`Creation Date`,
+        icon: 'calendar'
+      },
+      {
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
         hidden: !order.target_date
+      },
+      {
+        type: 'date',
+        name: 'complete_date',
+        icon: 'calendar_check',
+        label: t`Completion Date`,
+        copy: true,
+        hidden: !order.complete_date
       },
       {
         type: 'text',
@@ -239,7 +270,7 @@ export default function PurchaseOrderDetail() {
         <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
-  }, [order, instanceQuery]);
+  }, [order, orderCurrency, instanceQuery]);
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -258,9 +289,9 @@ export default function PurchaseOrderDetail() {
             multiple={true}
             defaultValue={['line-items', 'extra-items']}
           >
-            <Accordion.Item value="line-items" key="lineitems">
+            <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <PurchaseOrderLineItemTable
@@ -271,9 +302,9 @@ export default function PurchaseOrderDetail() {
                 />
               </Accordion.Panel>
             </Accordion.Item>
-            <Accordion.Item value="extra-items" key="extraitems">
+            <Accordion.Item value='extra-items' key='extraitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ExtraLineItemTable
@@ -293,36 +324,21 @@ export default function PurchaseOrderDetail() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
-            tableName="received-stock"
+            tableName='received-stock'
             params={{
               purchase_order: id
             }}
           />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.purchaseorder}
-            model_id={order.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.purchaseorder}
-            modelId={order.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.purchaseorder,
+        model_id: order.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.purchaseorder,
+        model_id: order.pk
+      })
     ];
   }, [order, id, user]);
 
@@ -385,19 +401,19 @@ export default function PurchaseOrderDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
+      <AdminButton model={ModelType.purchaseorder} id={order.pk} />,
       <BarcodeActionDropdown
         model={ModelType.purchaseorder}
         pk={order.pk}
@@ -408,9 +424,8 @@ export default function PurchaseOrderDetail() {
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !canEdit,
@@ -460,9 +475,9 @@ export default function PurchaseOrderDetail() {
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Purchase Order` + `: ${order.reference}`}
+            title={`${t`Purchase Order`}: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
@@ -471,7 +486,13 @@ export default function PurchaseOrderDetail() {
             editAction={editPurchaseOrder.open}
             editEnabled={user.hasChangePermission(ModelType.purchaseorder)}
           />
-          <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey='purchaseorder'
+            panels={orderPanels}
+            model={ModelType.purchaseorder}
+            instance={order}
+            id={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

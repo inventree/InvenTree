@@ -1,11 +1,13 @@
 import { Trans, t } from '@lingui/macro';
-import { Container, Group, Table } from '@mantine/core';
-import { useCallback, useEffect, useMemo } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import { Alert, Container, Group, Stack, Table, Text } from '@mantine/core';
+import { IconExclamationCircle } from '@tabler/icons-react';
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
+import { identifierString } from '../../../functions/conversion';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 export interface TableFieldRowProps {
   item: any;
@@ -16,20 +18,83 @@ export interface TableFieldRowProps {
   removeFn: (idx: number) => void;
 }
 
+function TableFieldRow({
+  item,
+  idx,
+  errors,
+  definition,
+  control,
+  changeFn,
+  removeFn
+}: Readonly<{
+  item: any;
+  idx: number;
+  errors: any;
+  definition: ApiFormFieldType;
+  control: UseControllerReturn<FieldValues, any>;
+  changeFn: (idx: number, key: string, value: any) => void;
+  removeFn: (idx: number) => void;
+}>) {
+  // Table fields require render function
+  if (!definition.modelRenderer) {
+    return (
+      <Table.Tr key='table-row-no-renderer'>
+        <Table.Td colSpan={definition.headers?.length}>
+          <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+            {t`modelRenderer entry required for tables`}
+          </Alert>
+        </Table.Td>
+      </Table.Tr>
+    );
+  }
+
+  return definition.modelRenderer({
+    item: item,
+    idx: idx,
+    rowErrors: errors,
+    control: control,
+    changeFn: changeFn,
+    removeFn: removeFn
+  });
+}
+
+export function TableFieldErrorWrapper({
+  props,
+  errorKey,
+  children
+}: Readonly<{
+  props: TableFieldRowProps;
+  errorKey: string;
+  children: ReactNode;
+}>) {
+  const msg = props?.rowErrors?.[errorKey];
+
+  return (
+    <Stack gap='xs'>
+      {children}
+      {msg && (
+        <Text size='xs' c='red'>
+          {msg.message}
+        </Text>
+      )}
+    </Stack>
+  );
+}
+
 export function TableField({
   definition,
   fieldName,
   control
-}: {
+}: Readonly<{
   definition: ApiFormFieldType;
   fieldName: string;
   control: UseControllerReturn<FieldValues, any>;
-}) {
+}>) {
   const {
     field,
     fieldState: { error }
   } = control;
-  const { value, ref } = field;
+  const { value } = field;
 
   const onRowFieldChange = (idx: number, key: string, value: any) => {
     const val = field.value;
@@ -45,7 +110,7 @@ export function TableField({
   };
 
   // Extract errors associated with the current row
-  const rowErrors = useCallback(
+  const rowErrors: any = useCallback(
     (idx: number) => {
       if (Array.isArray(error)) {
         return error[idx];
@@ -58,32 +123,35 @@ export function TableField({
     <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
       <Table.Thead>
         <Table.Tr>
-          {definition.headers?.map((header) => {
-            return <Table.Th key={header}>{header}</Table.Th>;
+          {definition.headers?.map((header, index) => {
+            return (
+              <Table.Th
+                key={`table-header-${identifierString(header)}-${index}`}
+              >
+                {header}
+              </Table.Th>
+            );
           })}
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
         {value.length > 0 ? (
           value.map((item: any, idx: number) => {
-            // Table fields require render function
-            if (!definition.modelRenderer) {
-              return (
-                <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
-              );
-            }
-
-            return definition.modelRenderer({
-              item: item,
-              idx: idx,
-              rowErrors: rowErrors(idx),
-              control: control,
-              changeFn: onRowFieldChange,
-              removeFn: removeRow
-            });
+            return (
+              <TableFieldRow
+                key={`table-row-${idx}`}
+                item={item}
+                idx={idx}
+                errors={rowErrors(idx)}
+                control={control}
+                definition={definition}
+                changeFn={onRowFieldChange}
+                removeFn={removeRow}
+              />
+            );
           })
         ) : (
-          <Table.Tr key="table-row-no-entries">
+          <Table.Tr key='table-row-no-entries'>
             <Table.Td
               style={{ textAlign: 'center' }}
               colSpan={definition.headers?.length}
@@ -95,7 +163,7 @@ export function TableField({
                   gap: '5px'
                 }}
               >
-                <InvenTreeIcon icon="info" />
+                <InvenTreeIcon icon='info' />
                 <Trans>No entries available</Trans>
               </span>
             </Table.Td>
@@ -147,9 +215,9 @@ export function TableFieldExtraRow({
     visible && (
       <Table.Tr>
         <Table.Td colSpan={10}>
-          <Group grow preventGrowOverflow={false} justify="flex-apart" p="xs">
-            <Container flex={0} p="xs">
-              <InvenTreeIcon icon="downright" />
+          <Group grow preventGrowOverflow={false} justify='flex-apart' p='xs'>
+            <Container flex={0} p='xs'>
+              <InvenTreeIcon icon='downright' />
             </Container>
             <StandaloneField
               fieldDefinition={field}

@@ -1,35 +1,28 @@
 import { Trans, t } from '@lingui/macro';
 import {
-  ActionIcon,
   Alert,
   Box,
   Button,
   Code,
-  Divider,
-  Flex,
   Group,
   Image,
   Select,
   Skeleton,
   Stack,
-  Text,
-  TextInput
+  Text
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { IconQrcode } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useEffect, useMemo, useState } from 'react';
-import { set } from 'react-hook-form';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { InputImageBarcode, ScanItem } from '../../pages/Index/Scan';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
-import { QrCodeType } from './ActionDropdown';
+import type { QrCodeType } from './ActionDropdown';
+import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
   ecl?: 'L' | 'M' | 'Q' | 'H';
@@ -53,7 +46,7 @@ export const QRCode = ({ data, ecl = 'Q', margin = 1 }: QRCodeProps) => {
   return (
     <Box>
       {qrCode ? (
-        <Image src={qrCode} alt="QR Code" />
+        <Image src={qrCode} alt='QR Code' />
       ) : (
         <Skeleton height={500} />
       )}
@@ -82,7 +75,7 @@ export const InvenTreeQRCode = ({
   const { data } = useQuery({
     queryKey: ['qr-code', mdl_prop.model, mdl_prop.pk],
     queryFn: async () => {
-      const res = await api.post(apiUrl(ApiEndpoints.generate_barcode), {
+      const res = await api.post(apiUrl(ApiEndpoints.barcode_generate), {
         model: mdl_prop.model,
         pk: mdl_prop.pk
       });
@@ -104,7 +97,7 @@ export const InvenTreeQRCode = ({
   return (
     <Stack>
       {mdl_prop.hash ? (
-        <Alert variant="outline" color="red" title={t`Custom barcode`}>
+        <Alert variant='outline' color='red' title={t`Custom barcode`}>
           <Trans>
             A custom barcode is registered for this item. The shown code is not
             that custom barcode.
@@ -117,11 +110,11 @@ export const InvenTreeQRCode = ({
       {data && settings.getSetting('BARCODE_SHOW_TEXT', 'false') && (
         <Group
           justify={showEclSelector ? 'space-between' : 'center'}
-          align="flex-start"
+          align='flex-start'
           px={16}
         >
           <Stack gap={4} pt={2}>
-            <Text size="sm" fw={500}>
+            <Text size='sm' fw={500}>
               <Trans>Barcode Data:</Trans>
             </Text>
             <Group>
@@ -149,7 +142,6 @@ export const InvenTreeQRCode = ({
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [barcode, setBarcode] = useState('');
-  const [isScanning, toggleIsScanning] = useDisclosure(false);
 
   function linkBarcode(value?: string) {
     api
@@ -162,37 +154,22 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
         location.reload();
       });
   }
-  const actionSubmit = (data: ScanItem[]) => {
-    linkBarcode(data[0].data);
+  const actionSubmit = (decodedText: string) => {
+    linkBarcode(decodedText);
   };
+
+  const handleLinkBarcode = () => {
+    linkBarcode(barcode);
+  };
+
   return (
-    <Box>
-      {isScanning ? (
-        <>
-          <InputImageBarcode action={actionSubmit} />
-          <Divider />
-        </>
-      ) : null}
-      <TextInput
-        label={t`Barcode`}
-        value={barcode}
-        onChange={(event) => setBarcode(event.currentTarget.value)}
-        placeholder={t`Scan barcode data here using barcode scanner`}
-        leftSection={
-          <ActionIcon
-            variant="subtle"
-            onClick={toggleIsScanning.toggle}
-            size="input-sm"
-          >
-            <IconQrcode />
-          </ActionIcon>
-        }
-        w="100%"
-      />
-      <Button color="green" onClick={() => linkBarcode()} mt="lg" fullWidth>
-        <Trans>Link</Trans>
-      </Button>
-    </Box>
+    <BarcodeInput
+      value={barcode}
+      onChange={(event) => setBarcode(event.currentTarget.value)}
+      onScan={actionSubmit}
+      onAction={handleLinkBarcode}
+      actionText={t`Link`}
+    />
   );
 };
 
@@ -212,7 +189,7 @@ export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
       <Text>
         <Trans>This will remove the link to the associated barcode</Trans>
       </Text>
-      <Button color="red" onClick={unlinkBarcode}>
+      <Button color='red' onClick={unlinkBarcode}>
         <Trans>Unlink Barcode</Trans>
       </Button>
     </Box>

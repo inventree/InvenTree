@@ -6,12 +6,13 @@ import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import { useUserSettingsState } from '../../states/SettingsState';
+import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -28,6 +29,8 @@ export function PrintingActions({
   modelType?: ModelType;
 }) {
   const { host } = useLocalState.getState();
+
+  const userSettings = useUserSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
@@ -54,11 +57,11 @@ export function PrintingActions({
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = printingFields.data || {};
+    const fields: ApiFormFieldSet = printingFields.data || {};
 
     // Override field values
-    fields['template'] = {
-      ...fields['template'],
+    fields.template = {
+      ...fields.template,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -66,14 +69,15 @@ export function PrintingActions({
       }
     };
 
-    fields['items'] = {
-      ...fields['items'],
+    fields.items = {
+      ...fields.items,
       value: items,
       hidden: true
     };
 
     fields['plugin'] = {
       ...fields['plugin'],
+      value: userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
       filters: {
         active: true,
         mixin: 'labels'

@@ -1,12 +1,12 @@
+import * as crypto from 'node:crypto';
+import * as fs from 'node:fs';
+import os from 'node:os';
+import * as path from 'node:path';
 import { test as baseTest } from '@playwright/test';
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import os from 'os';
-import * as path from 'path';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
-let platform = os.platform();
-let systemKeyVar;
+const platform = os.platform();
+let systemKeyVar: string;
 if (platform === 'darwin') {
   systemKeyVar = 'Meta';
 } else {
@@ -67,10 +67,13 @@ export const test = baseTest.extend({
           ) < 0 &&
         msg.text() !=
           'Failed to load resource: the server responded with a status of 400 (Bad Request)' &&
+        !msg.text().includes('http://localhost:8000/this/does/not/exist.js') &&
+        url != 'http://localhost:8000/this/does/not/exist.js' &&
         url != 'http://localhost:8000/api/user/me/' &&
         url != 'http://localhost:8000/api/user/token/' &&
         url != 'http://localhost:8000/api/barcode/' &&
         url != 'https://docs.inventree.org/en/versions.json' &&
+        url != 'http://localhost:5173/favicon.ico' &&
         !url.startsWith('http://localhost:8000/api/news/') &&
         !url.startsWith('http://localhost:8000/api/notifications/') &&
         !url.startsWith('chrome://') &&

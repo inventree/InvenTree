@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**
@@ -110,15 +110,15 @@ export function RenderSalesOrder(
  */
 export function RenderSalesOrderShipment({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
-  let order = instance.sales_order_detail || {};
+}>): ReactNode {
+  const order = instance.order_detail || {};
 
   return (
     <RenderInlineModel
       primary={order.reference}
-      secondary={t`Shipment` + ` ${instance.description}`}
+      secondary={`${t`Shipment`} ${instance.reference}`}
     />
   );
 }

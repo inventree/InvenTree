@@ -2,9 +2,13 @@
 
 import logging
 
-from rest_framework import serializers
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+
+from rest_framework import exceptions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.request import clone_request
 from rest_framework.utils import model_meta
 
 import common.models
@@ -28,6 +32,40 @@ class InvenTreeMetadata(SimpleMetadata):
     Additionally, we include some extra information about database models,
     so we can perform lookup for ForeignKey related fields.
     """
+
+    def determine_actions(self, request, view):
+        """Determine the 'actions' available to the user for the given view.
+
+        Note that this differs from the standard DRF implementation,
+        in that we also allow annotation for the 'GET' method.
+
+        This allows the client to determine what fields are available,
+        even if they are only for a read (GET) operation.
+
+        See SimpleMetadata.determine_actions for more information.
+        """
+        actions = {}
+
+        for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
+            view.request = clone_request(request, method)
+            try:
+                # Test global permissions
+                if hasattr(view, 'check_permissions'):
+                    view.check_permissions(view.request)
+                # Test object permissions
+                if method == 'PUT' and hasattr(view, 'get_object'):
+                    view.get_object()
+            except (exceptions.APIException, PermissionDenied, Http404):
+                pass
+            else:
+                # If user has appropriate permissions for the view, include
+                # appropriate metadata about the fields that should be supplied.
+                serializer = view.get_serializer()
+                actions[method] = self.get_serializer_info(serializer)
+            finally:
+                view.request = request
+
+        return actions
 
     def determine_metadata(self, request, view):
         """Overwrite the metadata to adapt to the request user."""
@@ -81,6 +119,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Map the request method to a permission type
             rolemap = {
+                'GET': 'view',
                 'POST': 'add',
                 'PUT': 'change',
                 'PATCH': 'change',
@@ -101,10 +140,6 @@ class InvenTreeMetadata(SimpleMetadata):
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
                 actions['DELETE'] = {}
-
-            # Add a 'VIEW' action if we are allowed to view
-            if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                actions['GET'] = {}
 
             metadata['actions'] = actions
 

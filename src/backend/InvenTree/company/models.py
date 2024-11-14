@@ -1049,7 +1049,10 @@ class SupplierPriceBreak(common.models.PriceBreak):
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+    ):
         if instance.part and instance.part.part:
             instance.part.part.schedule_pricing_update(create=True)
 
@@ -1061,6 +1064,9 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+    ):
         if instance.part and instance.part.part:
             instance.part.part.schedule_pricing_update(create=False)

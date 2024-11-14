@@ -36,9 +36,11 @@ export default defineConfig({
       timeout: 120 * 1000
     },
     {
-      command: 'invoke server -a 127.0.0.1:8000',
+      command: 'invoke dev.server -a 127.0.0.1:8000',
       env: {
-        INVENTREE_DEBUG: 'True'
+        INVENTREE_DEBUG: 'True',
+        INVENTREE_PLUGINS_ENABLED: 'True',
+        INVENTREE_ADMIN_URL: 'test-admin'
       },
       url: 'http://127.0.0.1:8000/api/',
       reuseExistingServer: !process.env.CI,

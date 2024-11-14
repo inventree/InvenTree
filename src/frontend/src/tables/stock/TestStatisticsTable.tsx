@@ -1,31 +1,19 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
-import { stockLocationFields } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
-import {
-  useCreateApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function TestStatisticsTable({ params = {} }: { params?: any }) {
+export function TestStatisticsTable({
+  params = {}
+}: Readonly<{ params?: any }>) {
   const initialColumns: TableColumn[] = [];
   const [templateColumnList, setTemplateColumnList] = useState(initialColumns);
 
   const testTemplateColumns: TableColumn[] = useMemo(() => {
-    let data = templateColumnList ?? [];
+    const data = templateColumnList ?? [];
     return data;
   }, [templateColumnList]);
 
@@ -51,13 +39,13 @@ export function TestStatisticsTable({ params = {} }: { params?: any }) {
 
   function statCountString(count: number, total: number) {
     if (count > 0) {
-      let percentage =
-        ' (' +
-        ((100.0 * count) / total).toLocaleString(undefined, {
+      const percentage = ` (${((100.0 * count) / total).toLocaleString(
+        undefined,
+        {
           minimumFractionDigits: 0,
           maximumFractionDigits: 2
-        }) +
-        '%)';
+        }
+      )}%)`;
       return count.toString() + percentage;
     }
     return '-';
@@ -70,7 +58,7 @@ export function TestStatisticsTable({ params = {} }: { params?: any }) {
       [key: string]: string;
     }
     // Construct a list of test templates
-    let results: ResultRow[] = [
+    const results: ResultRow[] = [
       { id: 'row_passed', col_0: t`Passed` },
       { id: 'row_failed', col_0: t`Failed` },
       { id: 'row_total', col_0: t`Total` }
@@ -79,10 +67,10 @@ export function TestStatisticsTable({ params = {} }: { params?: any }) {
 
     columnIndex = 1;
 
-    let newColumns: TableColumn[] = [];
-    for (let key in records[0]) {
+    const newColumns: TableColumn[] = [];
+    for (const key in records[0]) {
       if (key == 'total') continue;
-      let acc = 'col_' + columnIndex.toString();
+      const acc = `col_${columnIndex.toString()}`;
 
       const resultKeys = ['passed', 'failed', 'total'];
 
@@ -97,7 +85,7 @@ export function TestStatisticsTable({ params = {} }: { params?: any }) {
       results[2][acc] = records[0][key]['total'].toString();
 
       newColumns.push({
-        accessor: 'col_' + columnIndex.toString(),
+        accessor: `col_${columnIndex.toString()}`,
         title: key
       });
       columnIndex++;
@@ -122,7 +110,7 @@ export function TestStatisticsTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(params.apiEndpoint, params.pk) + '/'}
+      url={`${apiUrl(params.apiEndpoint, params.pk)}/`}
       tableState={table}
       columns={tableColumns}
       props={{

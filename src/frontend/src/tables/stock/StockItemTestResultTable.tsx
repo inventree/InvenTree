@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
@@ -27,13 +27,14 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowActions,
   RowDeleteAction,
   RowEditAction
@@ -42,13 +43,18 @@ import {
 export default function StockItemTestResultTable({
   partId,
   itemId
-}: {
+}: Readonly<{
   partId: number;
   itemId: number;
-}) {
+}>) {
   const user = useUserState();
   const table = useTable('stocktests');
 
+  const globalSettings = useGlobalSettingsState();
+  const includeTestStation = useMemo(
+    () => globalSettings.isSet('TEST_STATION_DATA'),
+    [globalSettings]
+  );
   // Fetch the test templates required for this stock item
   const { data: testTemplates } = useQuery({
     queryKey: ['stocktesttemplates', partId, itemId],
@@ -78,7 +84,7 @@ export default function StockItemTestResultTable({
   const formatRecords = useCallback(
     (records: any[]): any[] => {
       // Construct a list of test templates
-      let results = testTemplates.map((template: any) => {
+      const results = testTemplates.map((template: any) => {
         return {
           ...template,
           templateId: template.pk,
@@ -106,7 +112,7 @@ export default function StockItemTestResultTable({
         })
         .forEach((record) => {
           // Find matching template
-          let idx = results.findIndex(
+          const idx = results.findIndex(
             (r: any) => r.templateId == record.template
           );
           if (idx >= 0) {
@@ -137,7 +143,7 @@ export default function StockItemTestResultTable({
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
-            <Group justify="space-between" wrap="nowrap">
+            <Group justify='space-between' wrap='nowrap'>
               <Text
                 style={{ fontStyle: installed ? 'italic' : undefined }}
                 c={enabled ? undefined : 'red'}
@@ -145,17 +151,17 @@ export default function StockItemTestResultTable({
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
               </Text>
-              <Group justify="right">
+              <Group justify='right'>
                 {record.results && record.results.length > 1 && (
                   <Tooltip label={t`Test Results`}>
-                    <Badge color="lightblue" variant="filled">
+                    <Badge color='lightblue' variant='filled'>
                       {record.results.length}
                     </Badge>
                   </Tooltip>
                 )}
                 {installed && (
                   <Tooltip label={t`Test result for installed stock item`}>
-                    <IconInfoCircle size={16} color="blue" />
+                    <IconInfoCircle size={16} color='blue' />
                   </Tooltip>
                 )}
               </Group>
@@ -171,7 +177,7 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           if (record.result === undefined) {
             return (
-              <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+              <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
             );
           } else {
             return <PassFailButton value={record.result} />;
@@ -203,15 +209,17 @@ export default function StockItemTestResultTable({
       {
         accessor: 'test_station',
         sortable: true,
-        title: t`Test station`
+        title: t`Test station`,
+        hidden: !includeTestStation
       },
       {
         accessor: 'started_datetime',
         sortable: true,
         title: t`Started`,
+        hidden: !includeTestStation,
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify='space-between'>
               {formatDate(record.started_datetime, {
                 showTime: true,
                 showSeconds: true
@@ -224,9 +232,10 @@ export default function StockItemTestResultTable({
         accessor: 'finished_datetime',
         sortable: true,
         title: t`Finished`,
+        hidden: !includeTestStation,
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify='space-between'>
               {formatDate(record.finished_datetime, {
                 showTime: true,
                 showSeconds: true
@@ -236,21 +245,29 @@ export default function StockItemTestResultTable({
         }
       }
     ];
-  }, [itemId]);
+  }, [itemId, includeTestStation]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
     undefined
   );
 
-  const resultFields: ApiFormFieldSet = useTestResultFields({
+  const newResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
     itemId: itemId,
-    templateId: selectedTemplate
+    templateId: selectedTemplate,
+    editing: false
+  });
+
+  const editResultFields: ApiFormFieldSet = useTestResultFields({
+    partId: partId,
+    itemId: itemId,
+    templateId: selectedTemplate,
+    editing: true
   });
 
   const newTestModal = useCreateApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: useMemo(() => ({ ...newResultFields }), [newResultFields]),
     initialData: {
       template: selectedTemplate,
       result: true
@@ -265,7 +282,7 @@ export default function StockItemTestResultTable({
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: useMemo(() => ({ ...editResultFields }), [editResultFields]),
     title: t`Edit Test Result`,
     table: table,
     successMessage: t`Test result updated`
@@ -382,6 +399,7 @@ export default function StockItemTestResultTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-test-result'
         tooltip={t`Add Test Result`}
         onClick={() => {
           setSelectedTemplate(undefined);

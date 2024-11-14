@@ -2,31 +2,33 @@ import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
-  IconDots,
   IconInfoCircle,
-  IconNotes,
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -71,14 +73,14 @@ export default function SupplierPartDetail() {
       return <Skeleton />;
     }
 
-    let data = supplierPart ?? {};
+    const data = supplierPart ?? {};
 
     // Access nested data
     data.manufacturer = data.manufacturer_detail?.pk;
     data.MPN = data.manufacturer_part_detail?.MPN;
     data.manufacturer_part = data.manufacturer_part_detail?.pk;
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -88,9 +90,19 @@ export default function SupplierPartDetail() {
       },
       {
         type: 'string',
-        name: 'description',
-        label: t`Description`,
-        copy: true
+        name: 'part_detail.IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !data.part_detail?.IPN,
+        icon: 'serial'
+      },
+      {
+        type: 'string',
+        name: 'part_detail.description',
+        label: t`Part Description`,
+        copy: true,
+        icon: 'info',
+        hidden: !data.part_detail?.description
       },
       {
         type: 'link',
@@ -109,7 +121,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'link',
         name: 'supplier',
@@ -124,6 +136,13 @@ export default function SupplierPartDetail() {
         label: t`SKU`,
         copy: true,
         icon: 'reference'
+      },
+      {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !data.description
       },
       {
         type: 'link',
@@ -145,7 +164,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'string',
         name: 'packaging',
@@ -163,7 +182,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'available',
@@ -196,7 +215,7 @@ export default function SupplierPartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable title={t`Supplier Part`} fields={tl} item={data} />
+            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
         <DetailsTable title={t`Supplier`} fields={tr} item={data} />
@@ -220,7 +239,7 @@ export default function SupplierPartDetail() {
         icon: <IconPackages />,
         content: supplierPart?.pk ? (
           <StockItemTable
-            tableName="supplier-stock"
+            tableName='supplier-stock'
             allowAdd={false}
             params={{ supplier_part: supplierPart.pk }}
           />
@@ -248,33 +267,24 @@ export default function SupplierPartDetail() {
           <Skeleton />
         )
       },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.supplierpart}
-            modelId={supplierPart.pk}
-            editable={user.hasChangeRole(UserRoles.purchase_order)}
-          />
-        )
-      }
+      NotesPanel({
+        model_type: ModelType.supplierpart,
+        model_id: supplierPart?.pk
+      })
     ];
   }, [supplierPart]);
 
   const supplierPartActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
+      <AdminButton model={ModelType.supplierpart} id={supplierPart.pk} />,
       <BarcodeActionDropdown
         model={ModelType.supplierpart}
         pk={supplierPart.pk}
         hash={supplierPart.barcode_hash}
         perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Supplier Part Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
@@ -340,7 +350,7 @@ export default function SupplierPartDetail() {
     return [
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={supplierPart.active == false}
       />
     ];
@@ -352,7 +362,7 @@ export default function SupplierPartDetail() {
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
@@ -363,7 +373,13 @@ export default function SupplierPartDetail() {
             editAction={editSupplierPart.open}
             editEnabled={user.hasChangePermission(ModelType.supplierpart)}
           />
-          <PanelGroup pageKey="supplierpart" panels={panels} />
+          <PanelGroup
+            pageKey='supplierpart'
+            panels={panels}
+            instance={supplierPart}
+            model={ModelType.supplierpart}
+            id={supplierPart.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

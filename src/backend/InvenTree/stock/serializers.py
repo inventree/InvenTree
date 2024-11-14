@@ -268,13 +268,13 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
 
-            else:
+            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
                 logger.debug(
                     "No matching test template found for '%s' - creating a new template",
                     test_name,
                 )
 
-                # Create a new test template based on the provided dasta
+                # Create a new test template based on the provided data
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
                 )
@@ -340,7 +340,7 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['tracking_items']
+    export_exclude_fields = ['tags', 'tracking_items']
 
     export_only_fields = ['part_pricing_min', 'part_pricing_max']
 
@@ -351,41 +351,40 @@ class StockItemSerializer(
 
         model = StockItem
         fields = [
+            'pk',
+            'part',
+            'quantity',
+            'serial',
             'batch',
+            'location',
+            'location_name',
+            'location_path',
             'belongs_to',
             'build',
             'consumed_by',
             'customer',
             'delete_on_deplete',
             'expiry_date',
+            'in_stock',
             'is_building',
             'link',
-            'location',
-            'location_name',
-            'location_detail',
-            'location_path',
             'notes',
             'owner',
             'packaging',
             'parent',
-            'part',
-            'part_detail',
             'purchase_order',
             'purchase_order_reference',
-            'pk',
-            'quantity',
             'sales_order',
             'sales_order_reference',
-            'serial',
             'status',
             'status_text',
             'status_custom_key',
-            'stocktake_date',
             'supplier_part',
-            'sku',
-            'supplier_part_detail',
+            'SKU',
+            'MPN',
             'barcode_hash',
             'updated',
+            'stocktake_date',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
@@ -398,6 +397,10 @@ class StockItemSerializer(
             'stale',
             'tracking_items',
             'tags',
+            # Detail fields (FK relationships)
+            'supplier_part_detail',
+            'part_detail',
+            'location_detail',
             # Export only fields
             'part_pricing_min',
             'part_pricing_max',
@@ -468,6 +471,8 @@ class StockItemSerializer(
         child=serializers.DictField(), source='location.get_path', read_only=True
     )
 
+    in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
+
     """
     Field used when creating a stock item
     """
@@ -519,6 +524,10 @@ class StockItemSerializer(
             'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
+            'customer',
+            'belongs_to',
+            'sales_order',
+            'consumed_by',
             'tags',
         )
 
@@ -568,9 +577,19 @@ class StockItemSerializer(
 
         return queryset
 
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
+    status_text = serializers.CharField(
+        source='get_status_display', read_only=True, label=_('Status')
+    )
 
-    sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
+    SKU = serializers.CharField(
+        source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
+    )
+
+    MPN = serializers.CharField(
+        source='supplier_part.manufacturer_part.MPN',
+        read_only=True,
+        label=_('Manufacturer Part Number'),
+    )
 
     # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = company_serializers.SupplierPartSerializer(
@@ -581,6 +600,7 @@ class StockItemSerializer(
         many=False,
         read_only=True,
     )
+
     part_detail = part_serializers.PartBriefSerializer(
         source='part', many=False, read_only=True
     )
@@ -721,7 +741,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
         try:
             serials = InvenTree.helpers.extract_serial_numbers(
-                serial_numbers, quantity, item.part.get_latest_serial_number()
+                serial_numbers,
+                quantity,
+                item.part.get_latest_serial_number(),
+                part=item.part,
             )
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
@@ -748,6 +771,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
             data['serial_numbers'],
             data['quantity'],
             item.part.get_latest_serial_number(),
+            part=item.part,
         )
 
         item.serializeStock(
@@ -820,9 +844,9 @@ class InstallStockItemSerializer(serializers.Serializer):
         quantity = data.get('quantity', stock_item.quantity)
 
         if quantity > stock_item.quantity:
-            raise ValidationError(
-                _('Quantity to install must not exceed available quantity')
-            )
+            raise ValidationError({
+                'quantity': _('Quantity to install must not exceed available quantity')
+            })
 
         return data
 

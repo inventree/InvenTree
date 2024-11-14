@@ -12,7 +12,8 @@ import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import { HostList } from './states/states';
+import { api } from './App';
+import type { HostList } from './states/states';
 import MainView from './views/MainView';
 
 // define settings
@@ -26,6 +27,8 @@ declare global {
       sentry_dsn?: string;
       environment?: string;
     };
+    InvenTreeAPI: typeof api;
+    React: typeof React;
   }
 }
 
@@ -34,7 +37,7 @@ export const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
 
 // Filter out any settings that are not defined
-let loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
+const loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
 Object.keys(loaded_vals).forEach((key) => {
   if (loaded_vals[key] === undefined) {
     delete loaded_vals[key];
@@ -71,8 +74,8 @@ window.INVENTREE_SETTINGS = {
   default_server: IS_DEV
     ? 'mantine-2j5j5j5j5'
     : IS_DEMO
-    ? 'mantine-u56l5jt85'
-    : 'mantine-cqj63coxn',
+      ? 'mantine-u56l5jt85'
+      : 'mantine-cqj63coxn',
   show_server_selector: IS_DEV_OR_DEMO,
 
   // merge in settings that are already set via django's spa_view or for development
@@ -100,3 +103,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 if (window.location.pathname === '/') {
   window.location.replace(`/${base_url}`);
 }
+
+window.React = React;
+window.InvenTreeAPI = api;

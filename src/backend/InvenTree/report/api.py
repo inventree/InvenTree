@@ -350,6 +350,15 @@ class ReportPrint(GenericAPIView):
 
                 output = template.render(instance, request)
 
+                if template.attach_to_model:
+                    # Attach the generated report to the model instance
+                    data = output.get_document().write_pdf()
+                    instance.create_attachment(
+                        attachment=ContentFile(data, report_name),
+                        comment=_('Report saved at time of printing'),
+                        upload_user=request.user,
+                    )
+
                 # Provide generated report to any interested plugins
                 for plugin in registry.with_mixin('report'):
                     try:

@@ -50,7 +50,7 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
 )
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from order.serializers import (
     PurchaseOrderSerializer,
     ReturnOrderSerializer,
@@ -101,55 +101,6 @@ class GenerateSerialNumber(GenericAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-class StockDetail(RetrieveUpdateDestroyAPI):
-    """API detail endpoint for Stock object.
-
-    get:
-    Return a single StockItem object
-
-    post:
-    Update a StockItem
-
-    delete:
-    Remove a StockItem
-    """
-
-    queryset = StockItem.objects.all()
-    serializer_class = StockSerializers.StockItemSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Annotate queryset."""
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-    def get_serializer_context(self):
-        """Extend serializer context."""
-        ctx = super().get_serializer_context()
-        ctx['user'] = getattr(self.request, 'user', None)
-
-        return ctx
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        kwargs['context'] = self.get_serializer_context()
-
-        try:
-            params = self.request.query_params
-
-            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
-            kwargs['location_detail'] = str2bool(params.get('location_detail', True))
-            kwargs['supplier_part_detail'] = str2bool(
-                params.get('supplier_part_detail', True)
-            )
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
-
-        return self.serializer_class(*args, **kwargs)
-
-
 class StockItemContextMixin:
     """Mixin class for adding StockItem object to serializer context."""
 
@@ -164,7 +115,7 @@ class StockItemContextMixin:
 
         try:
             context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         return context
@@ -526,58 +477,93 @@ class StockFilter(rest_filters.FilterSet):
     def filter_manufacturer(self, queryset, name, company):
         """Filter by manufacturer."""
         return queryset.filter(
-            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+            Q(supplier_part__manufacturer_part__manufacturer__is_manufacturer=True)
+            & Q(supplier_part__manufacturer_part__manufacturer=company)
         )
 
     supplier = rest_filters.ModelChoiceFilter(
-        label='Supplier',
+        label=_('Supplier'),
         queryset=Company.objects.filter(is_supplier=True),
         field_name='supplier_part__supplier',
     )
 
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        label=_('Part'), queryset=Part.objects.all(), method='filter_part'
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter StockItem list by provided Part instance.
+
+        Note:
+        - If "part" is a variant, include all variants of the selected part
+        - Otherwise, filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', True))
+
+        if include_variants:
+            return queryset.filter(part__in=part.get_descendants(include_self=True))
+        else:
+            return queryset.filter(part=part)
+
     # Part name filters
     name = rest_filters.CharFilter(
-        label='Part name (case insensitive)',
+        label=_('Part name (case insensitive)'),
         field_name='part__name',
         lookup_expr='iexact',
     )
     name_contains = rest_filters.CharFilter(
-        label='Part name contains (case insensitive)',
+        label=_('Part name contains (case insensitive)'),
         field_name='part__name',
         lookup_expr='icontains',
     )
+
     name_regex = rest_filters.CharFilter(
-        label='Part name (regex)', field_name='part__name', lookup_expr='iregex'
+        label=_('Part name (regex)'), field_name='part__name', lookup_expr='iregex'
     )
 
     # Part IPN filters
     IPN = rest_filters.CharFilter(
-        label='Part IPN (case insensitive)',
+        label=_('Part IPN (case insensitive)'),
         field_name='part__IPN',
         lookup_expr='iexact',
     )
     IPN_contains = rest_filters.CharFilter(
-        label='Part IPN contains (case insensitive)',
+        label=_('Part IPN contains (case insensitive)'),
         field_name='part__IPN',
         lookup_expr='icontains',
     )
     IPN_regex = rest_filters.CharFilter(
-        label='Part IPN (regex)', field_name='part__IPN', lookup_expr='iregex'
+        label=_('Part IPN (regex)'), field_name='part__IPN', lookup_expr='iregex'
     )
 
     # Part attribute filters
-    assembly = rest_filters.BooleanFilter(label='Assembly', field_name='part__assembly')
-    active = rest_filters.BooleanFilter(label='Active', field_name='part__active')
-    salable = rest_filters.BooleanFilter(label='Salable', field_name='part__salable')
+    assembly = rest_filters.BooleanFilter(
+        label=_('Assembly'), field_name='part__assembly'
+    )
+    active = rest_filters.BooleanFilter(label=_('Active'), field_name='part__active')
+    salable = rest_filters.BooleanFilter(label=_('Salable'), field_name='part__salable')
 
     min_stock = rest_filters.NumberFilter(
-        label='Minimum stock', field_name='quantity', lookup_expr='gte'
+        label=_('Minimum stock'), field_name='quantity', lookup_expr='gte'
     )
     max_stock = rest_filters.NumberFilter(
-        label='Maximum stock', field_name='quantity', lookup_expr='lte'
+        label=_('Maximum stock'), field_name='quantity', lookup_expr='lte'
     )
 
-    status = rest_filters.NumberFilter(label='Status Code', method='filter_status')
+    status = rest_filters.NumberFilter(label=_('Status Code'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code."""
@@ -859,17 +845,25 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.exclude(stale_filter)
 
 
-class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
-    """API endpoint for list view of Stock objects.
-
-    - GET: Return a list of all StockItem objects (with optional query filters)
-    - POST: Create a new StockItem
-    - DELETE: Delete multiple StockItem objects
-    """
+class StockApiMixin:
+    """Mixin class for StockItem API endpoints."""
 
     serializer_class = StockSerializers.StockItemSerializer
     queryset = StockItem.objects.all()
-    filterset_class = StockFilter
+
+    def get_queryset(self, *args, **kwargs):
+        """Annotate queryset."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+    def get_serializer_context(self):
+        """Extend serializer context."""
+        ctx = super().get_serializer_context()
+        ctx['user'] = getattr(self.request, 'user', None)
+
+        return ctx
 
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer.
@@ -886,24 +880,29 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
 
             for key in [
                 'part_detail',
+                'path_detail',
                 'location_detail',
                 'supplier_part_detail',
                 'tests',
             ]:
                 kwargs[key] = str2bool(params.get(key, False))
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
 
-    def get_serializer_context(self):
-        """Extend serializer context."""
-        ctx = super().get_serializer_context()
-        ctx['user'] = getattr(self.request, 'user', None)
 
-        return ctx
+class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
+    """API endpoint for list view of Stock objects.
+
+    - GET: Return a list of all StockItem objects (with optional query filters)
+    - POST: Create a new StockItem
+    - DELETE: Delete multiple StockItem objects
+    """
+
+    filterset_class = StockFilter
 
     def create(self, request, *args, **kwargs):
         """Create a new StockItem object via the API.
@@ -926,17 +925,14 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             raise ValidationError({'quantity': _('Quantity is required')})
 
         try:
-            Part.objects.prefetch_related(None)
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({'part': _('Valid part must be supplied')})
 
-        # Set default location (if not provided)
-        if 'location' not in data:
-            location = part.get_default_location()
-
-            if location:
-                data['location'] = location.pk
+        location = data.get('location', None)
+        # Override location if not specified
+        if location is None and part.default_location:
+            data['location'] = part.default_location.pk
 
         expiry_date = data.get('expiry_date', None)
 
@@ -950,15 +946,13 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serials = None
 
         # Check if a set of serial numbers was provided
-        serial_numbers = data.get('serial_numbers', '')
+        serial_numbers = data.pop('serial_numbers', '')
 
         # Check if the supplier_part has a package size defined, which is not 1
-        if 'supplier_part' in data and data['supplier_part'] is not None:
+        if supplier_part_id := data.get('supplier_part', None):
             try:
-                supplier_part = SupplierPart.objects.get(
-                    pk=data.get('supplier_part', None)
-                )
-            except (ValueError, SupplierPart.DoesNotExist):
+                supplier_part = SupplierPart.objects.get(pk=supplier_part_id)
+            except Exception:
                 raise ValidationError({
                     'supplier_part': _('The given supplier part does not exist')
                 })
@@ -977,18 +971,20 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
                     # Divide purchase price by pack size, to save correct price per stock item
-                    if data['purchase_price'] and supplier_part.pack_quantity_native:
+                    if (
+                        data.get('purchase_price')
+                        and supplier_part.pack_quantity_native
+                    ):
                         try:
                             data['purchase_price'] = float(
                                 data['purchase_price']
                             ) / float(supplier_part.pack_quantity_native)
-                        except ValueError:
+                        except ValueError:  # pragma: no cover
                             pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
-        if 'use_pack_size' in data:
-            data.pop('use_pack_size')
+        data.pop('use_pack_size', None)
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
@@ -1002,7 +998,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(
-                    serial_numbers, quantity, part.get_latest_serial_number()
+                    serial_numbers, quantity, part.get_latest_serial_number(), part=part
                 )
 
                 # Determine if any of the specified serial numbers are invalid
@@ -1010,22 +1006,20 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 invalid = []
                 errors = []
 
-                for serial in serials:
-                    try:
-                        part.validate_serial_number(serial, raise_error=True)
-                    except DjangoValidationError as exc:
-                        # Catch raised error to extract specific error information
-                        invalid.append(serial)
+                try:
+                    invalid = part.find_conflicting_serial_numbers(serials)
+                except DjangoValidationError as exc:
+                    errors.append(exc.message)
 
-                        if exc.message not in errors:
-                            errors.append(exc.message)
-
-                if len(errors) > 0:
+                if len(invalid) > 0:
                     msg = _('The following serial numbers already exist or are invalid')
                     msg += ' : '
                     msg += ','.join([str(e) for e in invalid])
 
-                    raise ValidationError({'serial_numbers': [*errors, msg]})
+                    errors.append(msg)
+
+                if len(errors) > 0:
+                    raise ValidationError({'serial_numbers': errors})
 
             except DjangoValidationError as e:
                 raise ValidationError({
@@ -1041,43 +1035,47 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Extract location information
+        location = serializer.validated_data.get('location', None)
+
         with transaction.atomic():
-            # Create an initial StockItem object
-            item = serializer.save()
-
             if serials:
-                # Assign the first serial number to the "master" item
-                item.serial = serials[0]
+                # Create multiple serialized StockItem objects
+                items = StockItem._create_serial_numbers(
+                    serials, **serializer.validated_data
+                )
 
-            # Save the item (with user information)
-            item.save(user=user)
+                # Next, bulk-create stock tracking entries for the newly created items
+                tracking = []
 
-            if serials:
-                for serial in serials[1:]:
-                    # Create a duplicate stock item with the next serial number
-                    item.pk = None
-                    item.serial = serial
+                for item in items:
+                    if entry := item.add_tracking_entry(
+                        StockHistoryCode.CREATED,
+                        user,
+                        deltas={'status': item.status},
+                        location=location,
+                        quantity=float(item.quantity),
+                        commit=False,
+                    ):
+                        tracking.append(entry)
 
-                    item.save(user=user)
+                StockItemTracking.objects.bulk_create(tracking)
 
                 response_data = {'quantity': quantity, 'serial_numbers': serials}
 
             else:
+                # Create a single StockItem object
+                # Note: This automatically creates a tracking entry
+                item = serializer.save()
+                item.save(user=user)
+
                 response_data = serializer.data
 
-            return Response(
-                response_data,
-                status=status.HTTP_201_CREATED,
-                headers=self.get_success_headers(serializer.data),
-            )
-
-    def get_queryset(self, *args, **kwargs):
-        """Annotate queryset before returning."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
-
-        return queryset
+        return Response(
+            response_data,
+            status=status.HTTP_201_CREATED,
+            headers=self.get_success_headers(serializer.data),
+        )
 
     def filter_queryset(self, queryset):
         """Custom filtering for the StockItem queryset."""
@@ -1096,48 +1094,8 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     pk__in=[it.pk for it in item.get_descendants(include_self=True)]
                 )
 
-            except (ValueError, StockItem.DoesNotExist):
+            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                 pass
-
-        # Exclude StockItems which are already allocated to a particular SalesOrder
-        exclude_so_allocation = params.get('exclude_so_allocation', None)
-
-        if exclude_so_allocation is not None:
-            try:
-                order = SalesOrder.objects.get(pk=exclude_so_allocation)
-
-                # Grab all the active SalesOrderAllocations for this order
-                allocations = SalesOrderAllocation.objects.filter(
-                    line__pk__in=[line.pk for line in order.lines.all()]
-                )
-
-                # Exclude any stock item which is already allocated to the sales order
-                queryset = queryset.exclude(pk__in=[a.item.pk for a in allocations])
-
-            except (ValueError, SalesOrder.DoesNotExist):
-                pass
-
-        # Does the client wish to filter by the Part ID?
-        part_id = params.get('part', None)
-
-        if part_id:
-            try:
-                part = Part.objects.get(pk=part_id)
-
-                # Do we wish to filter *just* for this part, or also for parts *under* this one?
-                include_variants = str2bool(params.get('include_variants', True))
-
-                if include_variants:
-                    # Filter by any parts "under" the given part
-                    parts = part.get_descendants(include_self=True)
-
-                    queryset = queryset.filter(part__in=parts)
-
-                else:
-                    queryset = queryset.filter(part=part)
-
-            except (ValueError, Part.DoesNotExist):
-                raise ValidationError({'part': 'Invalid Part ID specified'})
 
         # Does the client wish to filter by stock location?
         loc_id = params.get('location', None)
@@ -1160,7 +1118,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     else:
                         queryset = queryset.filter(location=loc_id)
 
-                except (ValueError, StockLocation.DoesNotExist):
+                except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
                     pass
 
         return queryset
@@ -1170,6 +1128,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
     ordering_field_aliases = {
         'location': 'location__pathstring',
         'SKU': 'supplier_part__SKU',
+        'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
     }
 
@@ -1186,6 +1145,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         'stock',
         'status',
         'SKU',
+        'MPN',
     ]
 
     ordering = ['part__name', 'quantity', 'location']
@@ -1200,6 +1160,10 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         'tags__name',
         'tags__slug',
     ]
+
+
+class StockDetail(StockApiMixin, RetrieveUpdateDestroyAPI):
+    """API detail endpoint for a single StockItem instance."""
 
 
 class StockItemTestResultMixin:
@@ -1223,7 +1187,7 @@ class StockItemTestResultMixin:
             kwargs['template_detail'] = str2bool(
                 self.request.query_params.get('template_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1363,7 +1327,7 @@ class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView
 
                 queryset = queryset.filter(stock_item__in=items)
 
-            except (ValueError, StockItem.DoesNotExist):
+            except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                 pass
 
         return queryset
@@ -1405,14 +1369,14 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
             kwargs['item_detail'] = str2bool(
                 self.request.query_params.get('item_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         try:
             kwargs['user_detail'] = str2bool(
                 self.request.query_params.get('user_detail', False)
             )
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
         kwargs['context'] = self.get_serializer_context()

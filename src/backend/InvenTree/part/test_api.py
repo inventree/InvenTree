@@ -2996,7 +2996,7 @@ class PartTestTemplateTest(PartAPITestBase):
             expected_code=400,
         )
 
-        # Try to post a new test against a non-trackable part (should fail)
+        # Try to post a new test against a non-testable part (should fail)
         response = self.post(
             url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
         )

@@ -31,6 +31,7 @@ var/
 # Django stuff:
 *.log
 local_settings.py
+*.sqlite
 *.sqlite3
 *.sqlite3-journal
 *.backup

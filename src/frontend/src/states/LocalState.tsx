@@ -1,9 +1,9 @@
-import { DataTableSortStatus } from 'mantine-datatable';
+import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { UiSizeType } from '../defaults/formatters';
-import { HostList } from './states';
+import type { UiSizeType } from '../defaults/formatters';
+import type { HostList } from './states';
 
 interface LocalStateProps {
   autoupdate: boolean;
@@ -31,7 +31,9 @@ interface LocalStateProps {
   ) => (names: Record<string, string>) => void;
   tableSorting: Record<string, any>;
   getTableSorting: (tableKey: string) => DataTableSortStatus;
-  setTableSorting: (tableKey: string) => (sorting: DataTableSortStatus) => void;
+  setTableSorting: (
+    tableKey: string
+  ) => (sorting: DataTableSortStatus<any>) => void;
   clearTableColumnNames: () => void;
   detailDrawerStack: number;
   addDetailDrawer: (value: number | false) => void;
@@ -77,7 +79,7 @@ export const useLocalState = create<LocalStateProps>()(
       // tables
       tableColumnNames: {},
       getTableColumnNames: (tableKey) => {
-        return get().tableColumnNames[tableKey] || {};
+        return get().tableColumnNames[tableKey] || null;
       },
       setTableColumnNames: (tableKey) => (names) => {
         // Update the table column names for the given table

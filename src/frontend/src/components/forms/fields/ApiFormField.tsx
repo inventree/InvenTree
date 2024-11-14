@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
-import { UseFormReturnType } from '@mantine/form';
+import type { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { ReactNode, useCallback, useEffect, useMemo } from 'react';
-import { Control, FieldValues, useController } from 'react-hook-form';
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import { ModelType } from '../../../enums/ModelType';
+import type { ModelType } from '../../../enums/ModelType';
 import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
@@ -41,6 +41,7 @@ export type ApiFormAdjustFilterType = {
  * @param required : Whether the field is required
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
+ * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
  * @param description : The description to display for the field
  * @param preFieldContent : Content to render before the field
@@ -48,6 +49,7 @@ export type ApiFormAdjustFilterType = {
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
+ * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -83,6 +85,7 @@ export type ApiFormFieldType = {
   choices?: any[];
   hidden?: boolean;
   disabled?: boolean;
+  exclude?: boolean;
   read_only?: boolean;
   placeholder?: string;
   description?: string;
@@ -104,15 +107,17 @@ export function ApiFormField({
   control,
   hideLabels,
   url,
-  setFields
-}: {
+  setFields,
+  onKeyDown
+}: Readonly<{
   fieldName: string;
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
   hideLabels?: boolean;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
-}) {
+  onKeyDown?: (value: any) => void;
+}>) {
   const fieldId = useId();
   const controller = useController({
     name: fieldName,
@@ -154,22 +159,24 @@ export function ApiFormField({
       adjustFilters: undefined,
       adjustValue: undefined,
       read_only: undefined,
-      children: undefined
+      children: undefined,
+      exclude: undefined
     };
   }, [fieldDefinition]);
 
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
+      let rtnValue = value;
       // Allow for custom value adjustments (per field)
       if (definition.adjustValue) {
-        value = definition.adjustValue(value);
+        rtnValue = definition.adjustValue(value);
       }
 
-      field.onChange(value);
+      field.onChange(rtnValue);
 
       // Run custom callback for this field
-      definition.onValueChange?.(value);
+      definition.onValueChange?.(rtnValue);
     },
     [fieldName, definition]
   );
@@ -180,18 +187,18 @@ export function ApiFormField({
 
     switch (definition.field_type) {
       case 'integer':
-        val = parseInt(value) ?? '';
+        val = Number.parseInt(value) ?? '';
         break;
       case 'decimal':
       case 'float':
       case 'number':
-        val = parseFloat(value) ?? '';
+        val = Number.parseFloat(value) ?? '';
         break;
       default:
         break;
     }
 
-    if (isNaN(val) || !isFinite(val)) {
+    if (Number.isNaN(val) || !Number.isFinite(val)) {
       val = '';
     }
 
@@ -223,6 +230,9 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
+            onKeyDown={(value) => {
+              onKeyDown?.(value);
+            }}
           />
         );
       case 'icon':
@@ -237,8 +247,8 @@ export function ApiFormField({
             ref={ref}
             id={fieldId}
             aria-label={`boolean-field-${fieldName}`}
-            radius="lg"
-            size="sm"
+            radius='lg'
+            size='sm'
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
@@ -255,7 +265,7 @@ export function ApiFormField({
         return (
           <NumberInput
             {...reducedDefinition}
-            radius="sm"
+            radius='sm'
             ref={field.ref}
             id={fieldId}
             aria-label={`number-field-${field.name}`}
@@ -280,7 +290,7 @@ export function ApiFormField({
             {...reducedDefinition}
             id={fieldId}
             ref={field.ref}
-            radius="sm"
+            radius='sm'
             value={value}
             error={error?.message}
             onChange={(payload: File | null) => onChange(payload)}
@@ -316,7 +326,7 @@ export function ApiFormField({
         );
       default:
         return (
-          <Alert color="red" title={t`Error`}>
+          <Alert color='red' title={t`Error`}>
             Invalid field type for field '{fieldName}': '
             {fieldDefinition.field_type}'
           </Alert>
@@ -332,6 +342,7 @@ export function ApiFormField({
     fieldDefinition,
     numericalValue,
     onChange,
+    onKeyDown,
     reducedDefinition,
     ref,
     setFields,

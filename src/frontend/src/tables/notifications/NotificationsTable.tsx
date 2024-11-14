@@ -2,23 +2,23 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { TableState } from '../../hooks/UseTable';
+import type { TableState } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import type { RowAction } from '../RowActions';
 
 export function NotificationTable({
   params,
   tableState,
   tableActions,
   actions
-}: {
+}: Readonly<{
   params: any;
   tableState: TableState;
   tableActions: any[];
   actions: (record: any) => RowAction[];
-}) {
+}>) {
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -32,7 +32,7 @@ export function NotificationTable({
         sortable: true
       },
       {
-        accessor: `name`,
+        accessor: 'name',
         title: t`Notification`
       },
       {

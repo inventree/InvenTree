@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
 import { ApiIcon } from '../items/ApiIcon';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance
@@ -18,7 +18,7 @@ export function RenderPart(
   let badgeText = '';
   let badgeColor = '';
 
-  let stock = instance.total_in_stock;
+  const stock = instance.total_in_stock;
 
   if (instance.active == false) {
     badgeColor = 'red';
@@ -27,12 +27,12 @@ export function RenderPart(
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else {
-    badgeText = t`Stock` + `: ${stock}`;
+    badgeText = `${t`Stock`}: ${stock}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
   const badge = (
-    <Badge size="xs" color={badgeColor}>
+    <Badge size='xs' color={badgeColor}>
       {badgeText}
     </Badge>
   );
@@ -63,11 +63,11 @@ export function RenderPartCategory(
       tooltip={instance.pathstring}
       prefix={
         <>
-          <div style={{ width: 10 * (instance.level || 0) }}></div>
+          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
           {instance.icon && <ApiIcon name={instance.icon} />}
         </>
       }
-      primary={instance.name}
+      primary={instance.pathstring}
       secondary={instance.description}
       url={
         props.link
@@ -83,9 +83,9 @@ export function RenderPartCategory(
  */
 export function RenderPartParameterTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.name}
@@ -97,9 +97,9 @@ export function RenderPartParameterTemplate({
 
 export function RenderPartTestTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.test_name}
