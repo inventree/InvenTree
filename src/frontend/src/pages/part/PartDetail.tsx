@@ -895,12 +895,6 @@ export default function PartDetail() {
         key='in_production'
       />,
       <DetailsBadge
-        label={t`Locked`}
-        color='black'
-        visible={part.locked}
-        key='locked'
-      />,
-      <DetailsBadge
         label={t`Inactive`}
         color='red'
         visible={!part.active}
