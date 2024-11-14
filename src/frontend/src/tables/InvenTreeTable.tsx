@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import {} from '@mantine/core';
 import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useContextMenu } from 'mantine-contextmenu';
@@ -584,7 +583,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
       const items = props.rowActions(record).map((action) => ({
         key: action.title ?? '',
         title: action.title ?? '',
-        tooltip: action.tooltip,
         color: action.color,
         icon: action.icon,
         onClick: action.onClick ?? empty,
@@ -693,8 +691,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   overflow: 'hidden'
                 })
               }}
-              recordsPerPageOptions={PAGE_SIZES}
-              onRecordsPerPageChange={updatePageSize}
               onRowContextMenu={handleRowContextMenu}
               {...optionalParams}
             />
