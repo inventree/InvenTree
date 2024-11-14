@@ -5,7 +5,7 @@ import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
+from typing import Any, Optional
 
 from django import template
 from django.conf import settings
@@ -30,7 +30,7 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
-def getindex(container: list, index: int):
+def getindex(container: list, index: int) -> Any:
     """Return the value contained at the specified index of the list.
 
     This function is provideed to get around template rendering limitations.
@@ -57,7 +57,7 @@ def getindex(container: list, index: int):
 
 
 @register.simple_tag()
-def getkey(container: dict, key: str):
+def getkey(container: dict, key: str) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -84,7 +84,7 @@ def asset(filename):
         filename: Asset filename (relative to the 'assets' media directory)
 
     Raises:
-        FileNotFoundError if file does not exist
+        FileNotFoundError: If file does not exist
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -114,7 +114,7 @@ def uploaded_image(
     height: Optional[int] = None,
     rotate: Optional[float] = None,
     **kwargs,
-):
+) -> str:
     """Return raw image data from an 'uploaded' image.
 
     Arguments:
@@ -130,7 +130,7 @@ def uploaded_image(
         Binary image data to be rendered directly in a <img> tag
 
     Raises:
-        FileNotFoundError if the file does not exist
+        FileNotFoundError: If the file does not exist
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -213,7 +213,7 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename: str):
+def encode_svg_image(filename: str) -> str:
     """Return a base64-encoded svg image data string."""
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -243,7 +243,7 @@ def encode_svg_image(filename: str):
 
 
 @register.simple_tag()
-def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
+def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwargs):
     """Return a fully-qualified path for a part image.
 
     Arguments:
@@ -252,7 +252,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
         thumbnail: Return the thumbnail image (default = False)
 
     Raises:
-        TypeError if provided part is not a Part instance
+        TypeError: If provided part is not a Part instance
     """
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
@@ -268,7 +268,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str):
+def part_parameter(part: Part, parameter_name: str) -> str:
     """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
@@ -284,7 +284,9 @@ def part_parameter(part: Part, parameter_name: str):
 
 
 @register.simple_tag()
-def company_image(company, preview=False, thumbnail=False, **kwargs):
+def company_image(
+    company: Company, preview: bool = False, thumbnail: bool = False, **kwargs
+) -> str:
     """Return a fully-qualified path for a company image.
 
     Arguments:
@@ -293,7 +295,7 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
         thumbnail: Return the thumbnail image (default = False)
 
     Raises:
-        TypeError if provided company is not a Company instance
+        TypeError: If provided company is not a Company instance
     """
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
@@ -309,7 +311,7 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
 
 
 @register.simple_tag()
-def logo_image(**kwargs):
+def logo_image(**kwargs) -> str:
     """Return a fully-qualified path for the logo image.
 
     - If a custom logo has been provided, return a path to that logo
@@ -322,7 +324,7 @@ def logo_image(**kwargs):
 
 
 @register.simple_tag()
-def internal_link(link, text):
+def internal_link(link, text) -> str:
     """Make a <a></a> href which points to an InvenTree URL.
 
     Uses the InvenTree.helpers_model.construct_absolute_url function to build the URL.

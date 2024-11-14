@@ -180,7 +180,7 @@ def download_image_from_url(remote_url, timeout=2.5):
 
 
 def render_currency(
-    money,
+    money: Money,
     decimal_places: Optional[int] = None,
     currency: Optional[str] = None,
     min_decimal_places: Optional[int] = None,

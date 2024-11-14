@@ -46,7 +46,7 @@ To return the element at a given index in a container which supports indexed acc
         show_docstring_description: false
         show_source: False
 
-### Example
+#### Example
 
 ```html
 {% raw %}
@@ -65,7 +65,7 @@ To return an element corresponding to a certain key in a container which support
         show_docstring_description: false
         show_source: False
 
-### Example
+#### Example
 
 ```html
 {% raw %}
@@ -80,6 +80,8 @@ To return an element corresponding to a certain key in a container which support
 
 ## Number Formatting
 
+### format_number
+
 The helper function `format_number` allows for some common number formatting options. It takes a number (or a number-like string) as an input, as well as some formatting arguments. It returns a *string* containing the formatted number:
 
 ::: report.templatetags.report.format_number
@@ -87,7 +89,7 @@ The helper function `format_number` allows for some common number formatting opt
         show_docstring_description: false
         show_source: False
 
-### Example
+#### Example
 
 ```html
 {% raw %}
@@ -136,6 +138,8 @@ Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
 
 ## Currency Formatting
 
+### render_currency
+
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
 
 ::: InvenTree.helpers_model.render_currency
@@ -144,7 +148,7 @@ The helper function `render_currency` allows for simple rendering of currency da
         show_source: False
 
 
-### Example
+#### Example
 
 ```html
 {% raw %}
@@ -298,7 +302,7 @@ A shortcut function is provided for rendering an image associated with a Part in
 
 #### Image Arguments
 
-Any optional arguments which can be used in the [uploaded_image tag](#uploaded-images) can be used here too.
+Any optional arguments which can be used in the [uploaded_image tag](#uploaded-image) can be used here too.
 
 #### Image Variations
 
