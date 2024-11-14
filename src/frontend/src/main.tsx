@@ -5,7 +5,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';
-import 'mantine-contextmenu/styles.layer.css';
+import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
