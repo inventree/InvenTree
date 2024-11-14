@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback } from 'react';
 
 import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
@@ -192,18 +192,18 @@ export function RenderInlineModel({
   );
 
   return (
-    <Group gap="xs" justify="space-between" wrap="nowrap" title={tooltip}>
-      <Group gap="xs" justify="left" wrap="nowrap">
+    <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
+      <Group gap='xs' justify='left' wrap='nowrap'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href={url} onClick={(event: any) => onClick(event)}>
-            <Text size="sm">{primary}</Text>
+            <Text size='sm'>{primary}</Text>
           </Anchor>
         ) : (
-          <Text size="sm">{primary}</Text>
+          <Text size='sm'>{primary}</Text>
         )}
-        {showSecondary && secondary && <Text size="xs">{secondary}</Text>}
+        {showSecondary && secondary && <Text size='xs'>{secondary}</Text>}
       </Group>
       {suffix && (
         <>
@@ -220,9 +220,5 @@ export function UnknownRenderer({
 }: Readonly<{
   model: ModelType | undefined;
 }>): ReactNode {
-  return (
-    <Alert color="red" title={t`Unknown model: ${model}`}>
-      <></>
-    </Alert>
-  );
+  return <Alert color='red' title={t`Unknown model: ${model}`} />;
 }

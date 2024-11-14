@@ -17,11 +17,11 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * PartCategoryTable - Displays a table of part categories
@@ -37,17 +37,17 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         sortable: true,
         switchable: false,
         render: (record: any) => (
-          <Group gap="xs" wrap="nowrap" justify="space-between">
-            <Group gap="xs" wrap="nowrap">
+          <Group gap='xs' wrap='nowrap' justify='space-between'>
+            <Group gap='xs' wrap='nowrap'>
               {record.icon && <ApiIcon name={record.icon} />}
               {record.name}
             </Group>
-            <Group gap="xs" justify="flex-end" wrap="nowrap">
+            <Group gap='xs' justify='flex-end' wrap='nowrap'>
               {record.starred && (
                 <Tooltip
                   label={t`You are subscribed to notifications for this category`}
                 >
-                  <IconBell color="green" size={16} />
+                  <IconBell color='green' size={16} />
                 </Tooltip>
               )}
             </Group>
@@ -121,11 +121,11 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   });
 
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.part_category);
+    const can_add = user.hasAddRole(UserRoles.part_category);
 
     return [
       <AddItemButton
-        key="add-part-category"
+        key='add-part-category'
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
         hidden={!can_add}
@@ -135,7 +135,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      let can_edit = user.hasChangeRole(UserRoles.part_category);
+      const can_edit = user.hasChangeRole(UserRoles.part_category);
 
       return [
         RowEditAction({

@@ -1,9 +1,9 @@
-import { QueryObserverResult, useQuery } from '@tanstack/react-query';
+import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { PathParams, apiUrl } from '../states/ApiState';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import { type PathParams, apiUrl } from '../states/ApiState';
 
 export interface UseInstanceResult {
   instance: any;
@@ -112,9 +112,7 @@ export function useInstance<T = any>({
     );
   }, [instanceQuery]);
 
-  const refreshInstance = useCallback(function () {
-    return instanceQuery.refetch();
-  }, []);
+  const refreshInstance = useCallback(() => instanceQuery.refetch(), []);
 
   return {
     instance,

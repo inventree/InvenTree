@@ -13,10 +13,10 @@ export default function RemoveRowButton({
   return (
     <ActionButton
       onClick={onClick}
-      icon={<InvenTreeIcon icon="square_x" />}
+      icon={<InvenTreeIcon icon='square_x' />}
       tooltip={tooltip}
-      tooltipAlignment="top"
-      color="red"
+      tooltipAlignment='top'
+      color='red'
     />
   );
 }

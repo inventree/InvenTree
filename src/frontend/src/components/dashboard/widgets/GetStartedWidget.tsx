@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { DocumentationLinks } from '../../../defaults/links';
 import { GettingStartedCarousel } from '../../items/GettingStartedCarousel';
-import { MenuLinkItem } from '../../items/MenuLinks';
+import type { MenuLinkItem } from '../../items/MenuLinks';
 import { StylishText } from '../../items/StylishText';
 
 export default function GetStartedWidget() {
@@ -12,7 +12,7 @@ export default function GetStartedWidget() {
 
   return (
     <Stack>
-      <StylishText size="xl">{t`Getting Started`}</StylishText>
+      <StylishText size='xl'>{t`Getting Started`}</StylishText>
       <GettingStartedCarousel items={docLinks} />
     </Stack>
   );

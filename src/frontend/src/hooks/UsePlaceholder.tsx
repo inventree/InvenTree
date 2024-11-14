@@ -54,9 +54,9 @@ export function useSerialNumberPlaceholder({
     if (!enabled) {
       return undefined;
     } else if (snQuery.data?.next) {
-      return t`Next serial number` + `: ${snQuery.data.next}`;
+      return `${t`Next serial number`}: ${snQuery.data.next}`;
     } else if (snQuery.data?.latest) {
-      return t`Latest serial number` + `: ${snQuery.data.latest}`;
+      return `${t`Latest serial number`}: ${snQuery.data.latest}`;
     } else {
       return undefined;
     }

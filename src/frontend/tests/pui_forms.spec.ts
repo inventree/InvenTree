@@ -107,7 +107,7 @@ test('Forms - Supplier Validation', async ({ page, request }) => {
   await page.getByLabel('text-field-name').fill(supplierName);
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText(supplierName).waitFor();
+  await page.getByText('A description').first().waitFor();
   await page
     .getByRole('link', { name: 'https://www.test-website.co.uk' })
     .waitFor();

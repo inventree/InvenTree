@@ -880,6 +880,7 @@ class StockApiMixin:
 
             for key in [
                 'part_detail',
+                'path_detail',
                 'location_detail',
                 'supplier_part_detail',
                 'tests',

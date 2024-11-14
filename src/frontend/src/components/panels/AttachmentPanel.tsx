@@ -2,9 +2,9 @@ import { t } from '@lingui/macro';
 import { Skeleton } from '@mantine/core';
 import { IconPaperclip } from '@tabler/icons-react';
 
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
-import { PanelType } from './Panel';
+import type { PanelType } from './Panel';
 
 export default function AttachmentPanel({
   model_type,

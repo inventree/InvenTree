@@ -11,9 +11,9 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction } from '../RowActions';
+import { type RowAction, RowDeleteAction } from '../RowActions';
 
 function ErrorDetail({ errorId }: { errorId?: number }) {
   const { id } = useParams();
@@ -43,15 +43,15 @@ function ErrorDetail({ errorId }: { errorId?: number }) {
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Table>
         <Table.Tbody>
           <Table.Tr>
             <Table.Th>{t`Message`}</Table.Th>
             <Table.Td>{error.info}</Table.Td>
             <Table.Td>
-              <Group justify="right">
-                <CopyButton value={error.info} size="sm" />
+              <Group justify='right'>
+                <CopyButton value={error.info} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>
@@ -66,8 +66,8 @@ function ErrorDetail({ errorId }: { errorId?: number }) {
           <Table.Tr>
             <Table.Th>{t`Traceback`}</Table.Th>
             <Table.Td colSpan={2}>
-              <Group justify="right">
-                <CopyButton value={error.data} size="sm" />
+              <Group justify='right'>
+                <CopyButton value={error.data} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>
@@ -75,7 +75,7 @@ function ErrorDetail({ errorId }: { errorId?: number }) {
             <Table.Td colSpan={2}>
               <Stack gap={3}>
                 {error.data?.split('\n').map((line: string, index: number) => (
-                  <Text size="xs" key={`error-line-${index}`}>
+                  <Text size='xs' key={`error-line-${index}`}>
                     {line}
                   </Text>
                 ))}
@@ -122,7 +122,7 @@ export default function ErrorReportTable() {
     pk: selectedError.pk,
     title: t`Delete Error Report`,
     preFormContent: (
-      <Text c="red">{t`Are you sure you want to delete this error report?`}</Text>
+      <Text c='red'>{t`Are you sure you want to delete this error report?`}</Text>
     ),
     successMessage: t`Error report deleted`,
     table: table

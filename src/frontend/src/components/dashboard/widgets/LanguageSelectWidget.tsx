@@ -3,12 +3,12 @@ import { Stack } from '@mantine/core';
 
 import { LanguageSelect } from '../../items/LanguageSelect';
 import { StylishText } from '../../items/StylishText';
-import { DashboardWidgetProps } from '../DashboardWidget';
+import type { DashboardWidgetProps } from '../DashboardWidget';
 
 function LanguageSelectWidget(title: string) {
   return (
-    <Stack gap="xs">
-      <StylishText size="lg">{title}</StylishText>
+    <Stack gap='xs'>
+      <StylishText size='lg'>{title}</StylishText>
       <LanguageSelect width={140} />
     </Stack>
   );

@@ -8,9 +8,9 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -60,21 +60,21 @@ export default function PartPurchaseOrdersTable({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let supplier_part = record?.supplier_part_detail ?? {};
-          let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
-          let extra = [];
+          const supplier_part = record?.supplier_part_detail ?? {};
+          const part = record?.part_detail ?? supplier_part?.part_detail ?? {};
+          const extra = [];
 
           if (supplier_part.pack_quantity_native != 1) {
-            let total = record.quantity * supplier_part.pack_quantity_native;
+            const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key="pack-quantity">
+              <Text key='pack-quantity'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key="total-quantity">
+              <Text key='total-quantity'>
                 {t`Total Quantity`}: {total} {part?.units}
               </Text>
             );

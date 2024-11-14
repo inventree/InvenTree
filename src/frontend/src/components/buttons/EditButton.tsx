@@ -17,7 +17,7 @@ export function EditButton({
     <ActionIcon
       onClick={() => setEditing()}
       disabled={disabled}
-      variant="default"
+      variant='default'
     >
       {editing ? saveIcon : <IconEdit />}
     </ActionIcon>

@@ -88,7 +88,7 @@ export function AuthenticationForm() {
     <>
       {auth_settings?.sso_enabled === true ? (
         <>
-          <Group grow mb="md" mt="md">
+          <Group grow mb='md' mt='md'>
             {auth_settings.providers.map((provider) => (
               <SsoButton provider={provider} key={provider.id} />
             ))}
@@ -96,8 +96,8 @@ export function AuthenticationForm() {
 
           <Divider
             label={t`Or continue with other methods`}
-            labelPosition="center"
-            my="lg"
+            labelPosition='center'
+            my='lg'
           />
         </>
       ) : null}
@@ -117,12 +117,12 @@ export function AuthenticationForm() {
               {...classicForm.getInputProps('password')}
             />
             {auth_settings?.password_forgotten_enabled === true && (
-              <Group justify="space-between" mt="0">
+              <Group justify='space-between' mt='0'>
                 <Anchor
-                  component="button"
-                  type="button"
-                  c="dimmed"
-                  size="xs"
+                  component='button'
+                  type='button'
+                  c='dimmed'
+                  size='xs'
                   onClick={() => navigate('/reset-password')}
                 >
                   <Trans>Reset password</Trans>
@@ -136,18 +136,18 @@ export function AuthenticationForm() {
               required
               label={t`Email`}
               description={t`We will send you a link to login - if you are registered`}
-              placeholder="email@example.org"
+              placeholder='email@example.org'
               {...simpleForm.getInputProps('email')}
             />
           </Stack>
         )}
 
-        <Group justify="space-between" mt="xl">
+        <Group justify='space-between' mt='xl'>
           <Anchor
-            component="button"
-            type="button"
-            c="dimmed"
-            size="xs"
+            component='button'
+            type='button'
+            c='dimmed'
+            size='xs'
             onClick={() => setMode.toggle()}
           >
             {classicLoginMode ? (
@@ -156,9 +156,9 @@ export function AuthenticationForm() {
               <Trans>Use username and password</Trans>
             )}
           </Anchor>
-          <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
+          <Button type='submit' disabled={isLoggingIn} onClick={handleLogin}>
             {isLoggingIn ? (
-              <Loader size="sm" />
+              <Loader size='sm' />
             ) : (
               <>
                 {classicLoginMode ? (
@@ -235,7 +235,7 @@ export function RegistrationForm() {
               required
               label={t`Email`}
               description={t`This will be used for a confirmation`}
-              placeholder="email@example.org"
+              placeholder='email@example.org'
               {...registrationForm.getInputProps('email')}
             />
             <PasswordInput
@@ -252,9 +252,9 @@ export function RegistrationForm() {
             />
           </Stack>
 
-          <Group justify="space-between" mt="xl">
+          <Group justify='space-between' mt='xl'>
             <Button
-              type="submit"
+              type='submit'
               disabled={isRegistering}
               onClick={handleRegistration}
               fullWidth
@@ -265,10 +265,10 @@ export function RegistrationForm() {
         </form>
       )}
       {both_reg_enabled && (
-        <Divider label={t`Or use SSO`} labelPosition="center" my="lg" />
+        <Divider label={t`Or use SSO`} labelPosition='center' my='lg' />
       )}
       {auth_settings?.sso_registration === true && (
-        <Group grow mb="md" mt="md">
+        <Group grow mb='md' mt='md'>
           {auth_settings.providers.map((provider) => (
             <SsoButton provider={provider} key={provider.id} />
           ))}
@@ -293,15 +293,15 @@ export function ModeSelector({
 
   if (registration_enabled === false) return null;
   return (
-    <Text ta="center" size={'xs'} mt={'md'}>
+    <Text ta='center' size={'xs'} mt={'md'}>
       {loginMode ? (
         <>
           <Trans>Don&apos;t have an account?</Trans>{' '}
           <Anchor
-            component="button"
-            type="button"
-            c="dimmed"
-            size="xs"
+            component='button'
+            type='button'
+            c='dimmed'
+            size='xs'
             onClick={() => setMode.close()}
           >
             <Trans>Register</Trans>
@@ -309,10 +309,10 @@ export function ModeSelector({
         </>
       ) : (
         <Anchor
-          component="button"
-          type="button"
-          c="dimmed"
-          size="xs"
+          component='button'
+          type='button'
+          c='dimmed'
+          size='xs'
           onClick={() => setMode.open()}
         >
           <Trans>Go back to login</Trans>

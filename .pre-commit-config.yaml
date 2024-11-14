@@ -69,26 +69,12 @@ repos:
           pyproject.toml |
           src/frontend/vite.config.ts |
       )$
-- repo: https://github.com/pre-commit/mirrors-prettier
-  rev: "v4.0.0-alpha.8"
-  hooks:
-    - id: prettier
-      files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
-      additional_dependencies:
-      - "prettier@^2.4.1"
-      - "@trivago/prettier-plugin-sort-imports"
-- repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.12.0"
-  hooks:
-  - id: eslint
-    additional_dependencies:
-      - eslint@^8.41.0
-      - eslint-config-google@^0.14.0
-      - eslint-plugin-react@6.10.3
-      - babel-eslint@6.1.2
-      - "@typescript-eslint/eslint-plugin@latest"
-      - "@typescript-eslint/parser"
-    files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
+-   repo: https://github.com/biomejs/pre-commit
+    rev: "v0.5.0"
+    hooks:
+    -   id: biome-check
+        additional_dependencies: ["@biomejs/biome@1.9.4"]
+        files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
     rev: v8.21.0
     hooks:

@@ -43,7 +43,7 @@ export default function DashboardWidget({
   // TODO: Add button to remove widget (if "editing")
 
   return (
-    <Paper withBorder key={item.label} shadow="sm" p="xs">
+    <Paper withBorder key={item.label} shadow='sm' p='xs'>
       <Boundary label={`dashboard-widget-${item.label}`}>
         <Box
           key={`dashboard-widget-${item.label}`}
@@ -58,17 +58,17 @@ export default function DashboardWidget({
           {item.render()}
         </Box>
         {removing && (
-          <Overlay color="black" opacity={0.7} zIndex={1000}>
+          <Overlay color='black' opacity={0.7} zIndex={1000}>
             {removing && (
-              <Group justify="right">
+              <Group justify='right'>
                 <Tooltip
                   label={t`Remove this widget from the dashboard`}
-                  position="bottom"
+                  position='bottom'
                 >
                   <ActionIcon
                     aria-label={`remove-dashboard-item-${item.label}`}
-                    variant="filled"
-                    color="red"
+                    variant='filled'
+                    color='red'
                     onClick={onRemove}
                   >
                     <IconX />

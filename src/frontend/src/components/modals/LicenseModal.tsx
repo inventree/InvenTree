@@ -19,17 +19,17 @@ import { apiUrl } from '../../states/ApiState';
 
 export function LicenceView(entries: any[]) {
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Divider />
       {entries?.length > 0 ? (
-        <Accordion variant="contained" defaultValue="-">
+        <Accordion variant='contained' defaultValue='-'>
           {entries?.map((entry: any, index: number) => (
             <Accordion.Item
               key={entry.name + entry.license + entry.version}
               value={`entry-${index}`}
             >
               <Accordion.Control>
-                <Group justify="space-between" grow>
+                <Group justify='space-between' grow>
                   <Text>{entry.name}</Text>
                   <Text>{entry.license}</Text>
                   <Space />
@@ -75,7 +75,7 @@ export function LicenseModal() {
   }, [packageKeys]);
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Divider />
       <LoadingOverlay visible={isFetching} />
       {isFetching && (
@@ -84,7 +84,7 @@ export function LicenseModal() {
         </Text>
       )}
       {isError ? (
-        <Alert color="red" title={t`Error`}>
+        <Alert color='red' title={t`Error`}>
           <Text>
             <Trans>Failed to fetch license information</Trans>
           </Text>

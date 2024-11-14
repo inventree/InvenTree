@@ -3,6 +3,7 @@
 import io
 import logging
 from decimal import Decimal
+from typing import Optional
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -179,12 +180,12 @@ def download_image_from_url(remote_url, timeout=2.5):
 
 
 def render_currency(
-    money,
-    decimal_places=None,
-    currency=None,
-    min_decimal_places=None,
-    max_decimal_places=None,
-    include_symbol=True,
+    money: Money,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    min_decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
