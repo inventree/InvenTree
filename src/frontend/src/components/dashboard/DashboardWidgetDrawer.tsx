@@ -26,12 +26,12 @@ export default function DashboardWidgetDrawer({
   onClose,
   onAddWidget,
   currentWidgets
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
   onAddWidget: (widget: string) => void;
   currentWidgets: string[];
-}) {
+}>) {
   // Load available widgets
   const availableWidgets = useDashboardItems();
 

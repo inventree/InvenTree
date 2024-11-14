@@ -21,11 +21,11 @@ export default function RemoteComponent({
   source,
   defaultFunctionName,
   context
-}: {
+}: Readonly<{
   source: string;
   defaultFunctionName: string;
   context: InvenTreeContext;
-}) {
+}>) {
   const componentRef = useRef<HTMLDivElement>();
 
   const [renderingError, setRenderingError] = useState<string | undefined>(
@@ -78,28 +78,23 @@ export default function RemoteComponent({
   }, [sourceFile, functionName, context]);
 
   return (
-    <>
-      <Boundary
-        label={identifierString(
-          `RemoteComponent-${sourceFile}-${functionName}`
+    <Boundary
+      label={identifierString(`RemoteComponent-${sourceFile}-${functionName}`)}
+    >
+      <Stack gap='xs'>
+        {renderingError && (
+          <Alert
+            color='red'
+            title={t`Error Loading Content`}
+            icon={<IconExclamationCircle />}
+          >
+            <Text>
+              {t`Error occurred while loading plugin content`}: {renderingError}
+            </Text>
+          </Alert>
         )}
-      >
-        <Stack gap='xs'>
-          {renderingError && (
-            <Alert
-              color='red'
-              title={t`Error Loading Content`}
-              icon={<IconExclamationCircle />}
-            >
-              <Text>
-                {t`Error occurred while loading plugin content`}:{' '}
-                {renderingError}
-              </Text>
-            </Alert>
-          )}
-          <div ref={componentRef as any} />
-        </Stack>
-      </Boundary>
-    </>
+        <div ref={componentRef as any} />
+      </Stack>
+    </Boundary>
   );
 }

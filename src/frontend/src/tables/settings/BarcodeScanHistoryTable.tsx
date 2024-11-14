@@ -35,7 +35,7 @@ import { RowDeleteAction } from '../RowActions';
 /*
  * Render detail information for a particular barcode scan result.
  */
-function BarcodeScanDetail({ scan }: { scan: any }) {
+function BarcodeScanDetail({ scan }: Readonly<{ scan: any }>) {
   const dataStyle: MantineStyleProp = {
     textWrap: 'wrap',
     lineBreak: 'auto',
@@ -51,93 +51,91 @@ function BarcodeScanDetail({ scan }: { scan: any }) {
   }, [scan.context]);
 
   return (
-    <>
-      <Stack gap='xs'>
-        <Divider />
-        <Table>
-          <Table.Tbody>
+    <Stack gap='xs'>
+      <Divider />
+      <Table>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td colSpan={2}>
+              <StylishText size='sm'>{t`Barcode Information`}</StylishText>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Th>{t`Barcode`}</Table.Th>
+            <Table.Td>
+              <Text size='sm' style={dataStyle}>
+                {scan.data}
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <CopyButton value={scan.data} size='xs' />
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Th>{t`Timestamp`}</Table.Th>
+            <Table.Td>{scan.timestamp}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Th>{t`User`}</Table.Th>
+            <Table.Td>
+              <RenderUser instance={scan.user_detail} />
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Th>{t`Endpoint`}</Table.Th>
+            <Table.Td>{scan.endpoint}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Th>{t`Result`}</Table.Th>
+            <Table.Td>
+              <PassFailButton value={scan.result} />
+            </Table.Td>
+          </Table.Tr>
+          {hasContextData && (
             <Table.Tr>
               <Table.Td colSpan={2}>
-                <StylishText size='sm'>{t`Barcode Information`}</StylishText>
+                <StylishText size='sm'>{t`Context`}</StylishText>
               </Table.Td>
             </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t`Barcode`}</Table.Th>
-              <Table.Td>
-                <Text size='sm' style={dataStyle}>
-                  {scan.data}
-                </Text>
-              </Table.Td>
-              <Table.Td>
-                <CopyButton value={scan.data} size='xs' />
-              </Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t`Timestamp`}</Table.Th>
-              <Table.Td>{scan.timestamp}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t`User`}</Table.Th>
-              <Table.Td>
-                <RenderUser instance={scan.user_detail} />
-              </Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t`Endpoint`}</Table.Th>
-              <Table.Td>{scan.endpoint}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t`Result`}</Table.Th>
-              <Table.Td>
-                <PassFailButton value={scan.result} />
-              </Table.Td>
-            </Table.Tr>
-            {hasContextData && (
-              <Table.Tr>
-                <Table.Td colSpan={2}>
-                  <StylishText size='sm'>{t`Context`}</StylishText>
+          )}
+          {hasContextData &&
+            Object.keys(scan.context).map((key) => (
+              <Table.Tr key={key}>
+                <Table.Th>{key}</Table.Th>
+                <Table.Td>
+                  <Text size='sm' style={dataStyle}>
+                    {scan.context[key]}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <CopyButton value={scan.context[key]} size='xs' />
                 </Table.Td>
               </Table.Tr>
-            )}
-            {hasContextData &&
-              Object.keys(scan.context).map((key) => (
-                <Table.Tr key={key}>
-                  <Table.Th>{key}</Table.Th>
-                  <Table.Td>
-                    <Text size='sm' style={dataStyle}>
-                      {scan.context[key]}
-                    </Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <CopyButton value={scan.context[key]} size='xs' />
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            {hasResponseData && (
-              <Table.Tr>
-                <Table.Td colSpan={2}>
-                  <StylishText size='sm'>{t`Response`}</StylishText>
+            ))}
+          {hasResponseData && (
+            <Table.Tr>
+              <Table.Td colSpan={2}>
+                <StylishText size='sm'>{t`Response`}</StylishText>
+              </Table.Td>
+            </Table.Tr>
+          )}
+          {hasResponseData &&
+            Object.keys(scan.response).map((key) => (
+              <Table.Tr key={key}>
+                <Table.Th>{key}</Table.Th>
+                <Table.Td>
+                  <Text size='sm' style={dataStyle}>
+                    {scan.response[key]}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <CopyButton value={scan.response[key]} size='xs' />
                 </Table.Td>
               </Table.Tr>
-            )}
-            {hasResponseData &&
-              Object.keys(scan.response).map((key) => (
-                <Table.Tr key={key}>
-                  <Table.Th>{key}</Table.Th>
-                  <Table.Td>
-                    <Text size='sm' style={dataStyle}>
-                      {scan.response[key]}
-                    </Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <CopyButton value={scan.response[key]} size='xs' />
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-          </Table.Tbody>
-        </Table>
-      </Stack>
-    </>
+            ))}
+        </Table.Tbody>
+      </Table>
+    </Stack>
   );
 }
 

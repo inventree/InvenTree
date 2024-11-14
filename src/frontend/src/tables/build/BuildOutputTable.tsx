@@ -61,61 +61,59 @@ function OutputAllocationDrawer({
   output,
   opened,
   close
-}: {
+}: Readonly<{
   build: any;
   output: any;
   opened: boolean;
   close: () => void;
-}) {
+}>) {
   return (
-    <>
-      <Drawer
-        position='bottom'
-        size='lg'
-        title={
-          <Group p='md' wrap='nowrap' justify='space-apart'>
-            <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
-            <Space h='lg' />
-            <PartColumn part={build.part_detail} />
-            {output?.serial && (
-              <Text size='sm'>
-                {t`Serial Number`}: {output.serial}
-              </Text>
-            )}
-            {output?.batch && (
-              <Text size='sm'>
-                {t`Batch Code`}: {output.batch}
-              </Text>
-            )}
-            <Space h='lg' />
-          </Group>
+    <Drawer
+      position='bottom'
+      size='lg'
+      title={
+        <Group p='md' wrap='nowrap' justify='space-apart'>
+          <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
+          <Space h='lg' />
+          <PartColumn part={build.part_detail} />
+          {output?.serial && (
+            <Text size='sm'>
+              {t`Serial Number`}: {output.serial}
+            </Text>
+          )}
+          {output?.batch && (
+            <Text size='sm'>
+              {t`Batch Code`}: {output.batch}
+            </Text>
+          )}
+          <Space h='lg' />
+        </Group>
+      }
+      opened={opened}
+      onClose={close}
+      withCloseButton
+      closeOnEscape
+      closeOnClickOutside
+      styles={{
+        header: {
+          width: '100%'
+        },
+        title: {
+          width: '100%'
         }
-        opened={opened}
-        onClose={close}
-        withCloseButton
-        closeOnEscape
-        closeOnClickOutside
-        styles={{
-          header: {
-            width: '100%'
-          },
-          title: {
-            width: '100%'
-          }
-        }}
-      >
-        <Divider />
-        <Paper p='md'>
-          <BuildLineTable
-            build={build}
-            output={output}
-            params={{
-              tracked: true
-            }}
-          />
-        </Paper>
-      </Drawer>
-    </>
+      }}
+    >
+      <Divider />
+      <Paper p='md'>
+        <BuildLineTable
+          build={build}
+          output={output}
+          params={{
+            tracked: true
+          }}
+        />
+      </Paper>
+    </Drawer>
   );
 }
 

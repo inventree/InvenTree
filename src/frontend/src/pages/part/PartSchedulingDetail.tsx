@@ -26,7 +26,7 @@ import { TableHoverCard } from '../../tables/TableHoverCard';
 /*
  * Render a tooltip for the chart, with correct date information
  */
-function ChartTooltip({ label, payload }: ChartTooltipProps) {
+function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   if (!payload) {
     return null;
   }
@@ -56,7 +56,9 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
   );
 }
 
-export default function PartSchedulingDetail({ part }: { part: any }) {
+export default function PartSchedulingDetail({
+  part
+}: Readonly<{ part: any }>) {
   const table = useTable('part-scheduling');
   const navigate = useNavigate();
 
