@@ -372,6 +372,7 @@ def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
     manage(c, 'clean_settings')
+    success('Settings cleaned successfully')
 
 
 @task(help={'mail': "mail of the user who's MFA should be disabled"})
@@ -623,6 +624,8 @@ def update(
 
     if not skip_static:
         static(c, frontend=not no_frontend)
+
+    success('InvenTree update complete!')
 
 
 # Data tasks
