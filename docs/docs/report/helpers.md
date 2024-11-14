@@ -302,7 +302,7 @@ A shortcut function is provided for rendering an image associated with a Part in
 
 #### Image Arguments
 
-Any optional arguments which can be used in the [uploaded_image tag](#uploaded-image) can be used here too.
+Any optional arguments which can be used in the [uploaded_image tag](#uploaded_image) can be used here too.
 
 #### Image Variations
 
