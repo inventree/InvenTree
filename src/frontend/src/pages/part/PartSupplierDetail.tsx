@@ -5,7 +5,9 @@ import { StylishText } from '../../components/items/StylishText';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
-export default function PartSupplierDetail({ partId }: { partId: number }) {
+export default function PartSupplierDetail({
+  partId
+}: Readonly<{ partId: number }>) {
   return (
     <Accordion multiple defaultValue={['part-suppliers', 'part-manufacturers']}>
       <Accordion.Item value='part-suppliers'>

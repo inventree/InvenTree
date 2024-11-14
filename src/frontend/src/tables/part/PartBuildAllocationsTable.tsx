@@ -27,9 +27,9 @@ import { BuildLineSubTable } from '../build/BuildLineTable';
  */
 export default function PartBuildAllocationsTable({
   partId
-}: {
+}: Readonly<{
   partId: number;
-}) {
+}>) {
   const user = useUserState();
   const navigate = useNavigate();
   const table = useTable('part-build-allocations');
@@ -106,25 +106,23 @@ export default function PartBuildAllocationsTable({
   }, [table.isRowExpanded]);
 
   return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.build_line_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          minHeight: 200,
-          params: {
-            part: partId,
-            consumable: false,
-            build_detail: true,
-            order_outstanding: true
-          },
-          enableColumnSwitching: false,
-          enableSearch: false,
-          rowActions: rowActions,
-          rowExpansion: rowExpansion
-        }}
-      />
-    </>
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.build_line_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        minHeight: 200,
+        params: {
+          part: partId,
+          consumable: false,
+          build_detail: true,
+          order_outstanding: true
+        },
+        enableColumnSwitching: false,
+        enableSearch: false,
+        rowActions: rowActions,
+        rowExpansion: rowExpansion
+      }}
+    />
   );
 }

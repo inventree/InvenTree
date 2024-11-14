@@ -29,12 +29,12 @@ export default function DashboardWidget({
   editing,
   removing,
   onRemove
-}: {
+}: Readonly<{
   item: DashboardWidgetProps;
   editing: boolean;
   removing: boolean;
   onRemove: () => void;
-}) {
+}>) {
   // TODO: Implement visibility check
   //     if (!props?.visible?.() == false) {
   //     return null;

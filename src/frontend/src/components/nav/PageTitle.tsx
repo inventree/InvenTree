@@ -7,10 +7,10 @@ import { useGlobalSettingsState } from '../../states/SettingsState';
 export default function PageTitle({
   title,
   subtitle
-}: {
+}: Readonly<{
   title?: string;
   subtitle?: string;
-}) {
+}>) {
   const globalSettings = useGlobalSettingsState();
 
   const pageTitle = useMemo(() => {

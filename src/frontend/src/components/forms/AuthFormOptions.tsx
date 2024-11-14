@@ -8,10 +8,10 @@ import { LanguageToggle } from '../items/LanguageToggle';
 export function AuthFormOptions({
   hostname,
   toggleHostEdit
-}: {
+}: Readonly<{
   hostname: string;
   toggleHostEdit: () => void;
-}) {
+}>) {
   const [server] = useServerApiState((state) => [state.server]);
 
   return (

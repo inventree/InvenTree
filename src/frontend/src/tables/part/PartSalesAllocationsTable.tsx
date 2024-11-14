@@ -24,9 +24,9 @@ import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 
 export default function PartSalesAllocationsTable({
   partId
-}: {
+}: Readonly<{
   partId: number;
-}) {
+}>) {
   const user = useUserState();
   const navigate = useNavigate();
   const table = useTable('part-sales-allocations');
@@ -109,24 +109,22 @@ export default function PartSalesAllocationsTable({
   }, [table.isRowExpanded]);
 
   return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.sales_order_line_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          minHeight: 200,
-          params: {
-            part: partId,
-            order_detail: true,
-            order_outstanding: true
-          },
-          enableSearch: false,
-          enableColumnSwitching: false,
-          rowExpansion: rowExpansion,
-          rowActions: rowActions
-        }}
-      />
-    </>
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.sales_order_line_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        minHeight: 200,
+        params: {
+          part: partId,
+          order_detail: true,
+          order_outstanding: true
+        },
+        enableSearch: false,
+        enableColumnSwitching: false,
+        rowExpansion: rowExpansion,
+        rowActions: rowActions
+      }}
+    />
   );
 }
