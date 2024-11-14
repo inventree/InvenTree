@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
@@ -9,6 +9,7 @@ export interface UseInstanceResult {
   instance: any;
   setInstance: (instance: any) => void;
   refreshInstance: () => void;
+  refreshInstancePromise: () => Promise<QueryObserverResult<any, any>>;
   instanceQuery: any;
   requestStatus: number;
   isLoaded: boolean;
@@ -23,6 +24,7 @@ export interface UseInstanceResult {
  * To use this hook:
  * const { instance, refreshInstance } = useInstance(url: string, pk: number)
  */
+
 export function useInstance<T = any>({
   endpoint,
   pk,
@@ -116,10 +118,15 @@ export function useInstance<T = any>({
     instanceQuery.refetch();
   }, []);
 
+  const refreshInstancePromise = useCallback(() => {
+    return instanceQuery.refetch();
+  }, []);
+
   return {
     instance,
     setInstance,
     refreshInstance,
+    refreshInstancePromise,
     instanceQuery,
     requestStatus,
     isLoaded

@@ -91,6 +91,7 @@ export default function StockDetail() {
   const {
     instance: stockitem,
     refreshInstance,
+    refreshInstancePromise,
     instanceQuery,
     requestStatus
   } = useInstance({
@@ -614,7 +615,7 @@ export default function StockDetail() {
     },
     onFormSuccess: () => {
       const partId = stockitem.part;
-      refreshInstance().catch(() => {
+      refreshInstancePromise().catch(() => {
         // Part may have been deleted - redirect to the part detail page
         navigate(getDetailUrl(ModelType.part, partId));
       });
