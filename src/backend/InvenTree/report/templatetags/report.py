@@ -402,7 +402,8 @@ def format_number(number, **kwargs):
     kwargs:
         decimal_places: Number of decimal places to render
         integer: Boolean, whether to render the number as an integer
-        leading: Number of leading zeros
+        leading: Number of leading zeros (default = 0)
+        separator: Character to use as a thousands separator (default = None)
     """
     try:
         number = Decimal(str(number))
@@ -428,8 +429,14 @@ def format_number(number, **kwargs):
 
     # Re-encode, and normalize again
     value = Decimal(number).normalize()
-    value = format(value, 'f')
-    value = str(value)
+
+    separator = kwargs.get('separator')
+
+    if separator:
+        value = f'{value:,}'
+        value = value.replace(',', separator)
+    else:
+        value = f'{value}'
 
     leading = kwargs.get('leading')
 
