@@ -1397,6 +1397,8 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
             'salesorder': (SalesOrder, SalesOrderSerializer),
             'returnorder': (ReturnOrder, ReturnOrderSerializer),
             'buildorder': (Build, BuildSerializer),
+            'item': (StockItem, StockSerializers.StockItemSerializer),
+            'stockitem': (StockItem, StockSerializers.StockItemSerializer),
         }
 
     def list(self, request, *args, **kwargs):
