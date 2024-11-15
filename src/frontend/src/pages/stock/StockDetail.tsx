@@ -211,10 +211,13 @@ export default function StockDetail() {
         type: 'link',
         name: 'belongs_to',
         label: t`Installed In`,
+        model_filters: {
+          part_detail: true
+        },
         model_formatter: (model: any) => {
           let text = model?.part_detail?.full_name ?? model?.name;
           if (model.serial && model.quantity == 1) {
-            text += `# ${model.serial}`;
+            text += ` # ${model.serial}`;
           }
 
           return text;

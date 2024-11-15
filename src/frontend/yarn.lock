@@ -3366,6 +3366,11 @@ make-dir@^4.0.0:
   dependencies:
     semver "^7.5.3"
 
+mantine-contextmenu@^7.11.3:
+  version "7.12.2"
+  resolved "https://registry.yarnpkg.com/mantine-contextmenu/-/mantine-contextmenu-7.12.2.tgz#60eb6b1aade5136737e894c1c2f3fa8dad22b1c0"
+  integrity sha512-HD/xrGTGkq51WIVOh97gG1C0Z+PgV6gBPzALrPmv14R4t8iBUEJEY1A9CUvnV/yNjxBas+AA+2flXMAc0wyBxw==
+
 mantine-datatable@^7.12.4:
   version "7.12.4"
   resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.12.4.tgz#68e5b0ab4dc7e32b505139bf2b4d05fbb1922c0f"
