@@ -83,6 +83,10 @@ For more information, refer to the installation guides:
 !!! warning "Invoke Update"
     You must ensure that the `invoke update` command is performed *every time* you update InvenTree
 
+### Breaking Changes
+
+Before performing an update, check the release notes! Any *breaking changes* (changes which require user intervention) will be clearly noted.
+
 ### Feature *x* does not work after update
 
 If a particular menu / item is not visible after updating InvenTree, or a certain function no longer seems to work, it may be due to your internet browser caching old versions of CSS and JavaScript files.
