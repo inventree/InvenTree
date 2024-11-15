@@ -10,9 +10,9 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function PendingTasksTable({
   onRecordsUpdated
-}: {
+}: Readonly<{
   onRecordsUpdated: () => void;
-}) {
+}>) {
   const table = useTable('tasks-pending');
   const user = useUserState();
 

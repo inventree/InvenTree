@@ -26,7 +26,7 @@ function TableFieldRow({
   control,
   changeFn,
   removeFn
-}: {
+}: Readonly<{
   item: any;
   idx: number;
   errors: any;
@@ -34,7 +34,7 @@ function TableFieldRow({
   control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number, key: string, value: any) => void;
   removeFn: (idx: number) => void;
-}) {
+}>) {
   // Table fields require render function
   if (!definition.modelRenderer) {
     return (
@@ -62,11 +62,11 @@ export function TableFieldErrorWrapper({
   props,
   errorKey,
   children
-}: {
+}: Readonly<{
   props: TableFieldRowProps;
   errorKey: string;
   children: ReactNode;
-}) {
+}>) {
   const msg = props?.rowErrors?.[errorKey];
 
   return (

@@ -25,12 +25,12 @@ function QueryCountWidget({
   title,
   icon,
   params
-}: {
+}: Readonly<{
   modelType: ModelType;
   title: string;
   icon?: InvenTreeIconType;
   params: any;
-}): ReactNode {
+}>): ReactNode {
   const user = useUserState();
   const navigate = useNavigate();
 

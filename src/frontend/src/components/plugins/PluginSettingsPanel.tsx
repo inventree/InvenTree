@@ -18,9 +18,9 @@ export interface PluginAdminInterface {
  */
 export default function PluginSettingsPanel({
   pluginAdmin
-}: {
+}: Readonly<{
   pluginAdmin: PluginAdminInterface;
-}) {
+}>) {
   const pluginContext = useInvenTreeContext();
 
   return (

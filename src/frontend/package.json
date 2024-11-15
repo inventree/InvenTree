@@ -54,6 +54,7 @@
         "embla-carousel-react": "^8.3.0",
         "fuse.js": "^7.0.0",
         "html5-qrcode": "^2.3.8",
+        "mantine-contextmenu": "^7.11.3",
         "mantine-datatable": "^7.12.4",
         "qrcode": "^1.5.4",
         "react": "^18.3.1",

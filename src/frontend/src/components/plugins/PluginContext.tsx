@@ -8,7 +8,8 @@ import type { AxiosInstance } from 'axios';
 import { useMemo } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
+import type { QueryClient } from '@tanstack/react-query';
+import { api, queryClient } from '../../App';
 import { useLocalState } from '../../states/LocalState';
 import {
   type SettingsStateProps,
@@ -32,6 +33,7 @@ import { type UserStateProps, useUserState } from '../../states/UserState';
  */
 export type InvenTreeContext = {
   api: AxiosInstance;
+  queryClient: QueryClient;
   user: UserStateProps;
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
@@ -56,6 +58,7 @@ export const useInvenTreeContext = () => {
       user: user,
       host: host,
       api: api,
+      queryClient: queryClient,
       navigate: navigate,
       globalSettings: globalSettings,
       userSettings: userSettings,
@@ -66,6 +69,7 @@ export const useInvenTreeContext = () => {
     user,
     host,
     api,
+    queryClient,
     navigate,
     globalSettings,
     userSettings,

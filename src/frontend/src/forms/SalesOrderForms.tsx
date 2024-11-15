@@ -121,11 +121,11 @@ function SalesOrderAllocateLineRow({
   props,
   record,
   sourceLocation
-}: {
+}: Readonly<{
   props: TableFieldRowProps;
   record: any;
   sourceLocation?: number | null;
-}) {
+}>) {
   // Statically defined field for selecting the stock item
   const stockItemField: ApiFormFieldType = useMemo(() => {
     return {
@@ -360,7 +360,7 @@ export function useSalesOrderAllocationFields({
   shipment
 }: {
   orderId?: number;
-  shipment: any | null;
+  shipment: any;
 }): ApiFormFieldSet {
   return useMemo(() => {
     return {
