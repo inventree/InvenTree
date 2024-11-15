@@ -27,7 +27,6 @@ The version information contains the following information extracted form the in
 | Target | No | ubuntu:20.04 | environment: `INVENTREE_PKG_TARGET` |
 | Active plugins | Yes | [{'name': 'InvenTreeBarcode', 'slug': 'inventreebarcode', 'version': '2.0.0'}] | instance |
 
-
 ### Installer codes
 
 The installer code is used to identify the way InvenTree was installed. If you vendor InvenTree, you can and should set the installer code to your own value to make sure debugging goes smoothly.
@@ -68,10 +67,14 @@ Next you can start configuring the connection. Either use the config file or set
 | `ldap.always_update_user` | `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | Always update the user on each login, default: `true` |
 | `ldap.cache_timeout` | `INVENTREE_LDAP_CACHE_TIMEOUT` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |
 | `ldap.group_search` | `INVENTREE_LDAP_GROUP_SEARCH` | Base LDAP DN for group searching; required to enable group features |
+| `ldap.group_object_class` | `INVENTREE_LDAP_GROUP_OBJECT_CLASS` | The string to pass to the LDAP group search `(objectClass=<...>)`, default: `groupOfUniqueNames` |
+| `ldap.mirror_groups` | `INVENTREE_LDAP_MIRROR_GROUPS` | If `True`, mirror a user's LDAP group membership in the Django database, default: `False` |
+| `ldap.group_type_class` | `INVENTREE_LDAP_GROUP_TYPE_CLASS` | The group class to be imported from `django_auth_ldap.config` as a string, default: `'GroupOfUniqueNamesType'`|
+| `ldap.group_type_class_args` | `INVENTREE_LDAP_GROUP_TYPE_CLASS_ARGS` | A `list` of positional args to pass to the LDAP group type class, default `[]` |
+| `ldap.group_type_class_kwargs` | `INVENTREE_LDAP_GROUP_TYPE_CLASS_KWARGS` | A `dict` of keyword args to pass to the LDAP group type class, default `{'name_attr': 'cn'}` |
 | `ldap.require_group` | `INVENTREE_LDAP_REQUIRE_GROUP` | If set, users _must_ be in this group to log in to InvenTree |
 | `ldap.deny_group` | `INVENTREE_LDAP_DENY_GROUP` | If set, users _must not_ be in this group to log in to InvenTree |
 | `ldap.user_flags_by_group` | `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |
-
 
 ## Tracing support
 
@@ -99,4 +102,4 @@ If your InvenTree instance is used in a multi-site environment, you can enable m
 | Environment Variable | Config Key | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_SITE_MULTI | site_multi | Enable multiple sites | False |
-| INVENTREE_SITE_ID | site_id | Specify a fixed site ID | *Not specified* |
+| INVENTREE_SITE_ID | site_id | Specify a fixed site ID | _Not specified_ |

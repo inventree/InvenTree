@@ -62,7 +62,7 @@ if __name__ == '__main__':
         percentage = int(covered / total * 100) if total > 0 else 0
 
         if verbose:
-            print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
+            print(f'| {locale.ljust(4, " ")} : {str(percentage).rjust(4, " ")}% |')
 
         locales_perc[locale] = percentage
 
