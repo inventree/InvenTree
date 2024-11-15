@@ -157,3 +157,20 @@ test('Stock - Stock Actions', async ({ page }) => {
 
   await page.waitForTimeout(2500);
 });
+
+test('Stock - Tracking', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Navigate to the "stock item" page
+  await page.goto(`${baseUrl}/stock/item/176/details/`);
+  await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
+
+  // Navigate to the "stock tracking" tab
+  await page.getByRole('tab', { name: 'Stock Tracking' }).click();
+  await page.getByText('- - Factory/Office Block/Room').first().waitFor();
+  await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
+  await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
+
+  await page.waitForTimeout(1500);
+  return;
+});

@@ -30,14 +30,14 @@ export default function DashboardMenu({
   onStartEdit,
   onStartRemove,
   onAcceptLayout
-}: {
+}: Readonly<{
   editing: boolean;
   removing: boolean;
   onAddWidget: () => void;
   onStartEdit: () => void;
   onStartRemove: () => void;
   onAcceptLayout: () => void;
-}) {
+}>) {
   const user = useUserState();
   const instanceName = useInstanceName();
 

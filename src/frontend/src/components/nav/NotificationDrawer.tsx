@@ -36,10 +36,10 @@ import { ModelInformationDict } from '../render/ModelType';
 function NotificationEntry({
   notification,
   onRead
-}: {
+}: Readonly<{
   notification: any;
   onRead: () => void;
-}) {
+}>) {
   const navigate = useNavigate();
 
   let link = notification.target?.link;

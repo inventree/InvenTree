@@ -46,7 +46,7 @@ export function NavigationDrawer({
   );
 }
 
-function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
+function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
   const user = useUserState();
 
   const globalSettings = useGlobalSettingsState();
@@ -186,13 +186,11 @@ function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
           />
           <Space h='md' />
           {plugins.length > 0 ? (
-            <>
-              <MenuLinks
-                title={t`Plugins`}
-                links={plugins}
-                beforeClick={closeFunc}
-              />
-            </>
+            <MenuLinks
+              title={t`Plugins`}
+              links={plugins}
+              beforeClick={closeFunc}
+            />
           ) : (
             <></>
           )}

@@ -12,10 +12,10 @@ import type { PluginInterface } from './PluginInterface';
 export default function LocateItemButton({
   stockId,
   locationId
-}: {
+}: Readonly<{
   stockId?: number;
   locationId?: number;
-}) {
+}>) {
   const locatePlugins = usePluginsWithMixin('locate');
 
   const [selectedPlugin, setSelectedPlugin] = useState<string | undefined>(

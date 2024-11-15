@@ -56,11 +56,11 @@ export function BuildLineSubTable({
   lineItem,
   onEditAllocation,
   onDeleteAllocation
-}: {
+}: Readonly<{
   lineItem: any;
   onEditAllocation?: (pk: number) => void;
   onDeleteAllocation?: (pk: number) => void;
-}) {
+}>) {
   const user = useUserState();
   const navigate = useNavigate();
 

@@ -15,9 +15,9 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function FailedTasksTable({
   onRecordsUpdated
-}: {
+}: Readonly<{
   onRecordsUpdated: () => void;
-}) {
+}>) {
   const table = useTable('tasks-failed');
   const user = useUserState();
 

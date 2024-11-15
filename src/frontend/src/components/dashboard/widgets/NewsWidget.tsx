@@ -24,7 +24,7 @@ import { StylishText } from '../../items/StylishText';
 /**
  * Render a link to an external news item
  */
-function NewsLink({ item }: { item: any }) {
+function NewsLink({ item }: Readonly<{ item: any }>) {
   let link: string = item.link;
 
   if (link?.startsWith('/')) {
@@ -45,10 +45,10 @@ function NewsLink({ item }: { item: any }) {
 function NewsItem({
   item,
   onMarkRead
-}: {
+}: Readonly<{
   item: any;
   onMarkRead: (id: number) => void;
-}) {
+}>) {
   const date: string = item.published?.split(' ')[0] ?? '';
   return (
     <Table.Tr>
