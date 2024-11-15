@@ -333,11 +333,6 @@ src="{% static 'img/blank_image.png' %}"
         });
     });
 
-    {% if build.part.testable %}
-    onPanelLoad("test-statistics", function() {
-        prepareTestStatisticsTable('build', '{% url "api-test-statistics-by-build" build.pk %}')
-    });
-    {% endif %}
     {% endif %}
     {% endif %}
 

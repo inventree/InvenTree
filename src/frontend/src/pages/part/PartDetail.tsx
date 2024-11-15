@@ -21,7 +21,6 @@ import {
   IconListTree,
   IconLock,
   IconPackages,
-  IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -98,7 +97,6 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
@@ -718,22 +716,6 @@ export default function PartDetail() {
         hidden: !part.testable,
         content: part?.pk ? (
           <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
-        ) : (
-          <Skeleton />
-        )
-      },
-      {
-        name: 'test_statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        hidden: !part.testable,
-        content: part?.pk ? (
-          <TestStatisticsTable
-            params={{
-              pk: part.pk,
-              apiEndpoint: ApiEndpoints.part_test_statistics
-            }}
-          />
         ) : (
           <Skeleton />
         )
