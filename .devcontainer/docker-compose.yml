@@ -40,7 +40,6 @@ services:
       INVENTREE_PLUGINS_ENABLED: True
       INVENTREE_SITE_URL: http://localhost:8000
       INVENTREE_CORS_ORIGIN_ALLOW_ALL: True
-      INVENTREE_PY_ENV: /home/inventree/dev/venv
 
     depends_on:
       - db
