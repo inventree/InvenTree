@@ -37,7 +37,7 @@ ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 # Location for python virtual environment
 # This will be created on the host system to persist *certain* packages
 # Note: *base* packages are installed into the docker image
-ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
+ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/venv"
 
 ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 
