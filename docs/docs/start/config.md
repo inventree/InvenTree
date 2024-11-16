@@ -46,6 +46,14 @@ Environment variable settings generally use the `INVENTREE_` prefix, and are all
 !!! warning "Available Variables"
     Some configuration options cannot be set via environment variables. Refer to the documentation below.
 
+#### List Values
+
+To specify a list value in an environment variable, use a comma-separated list. For example, to specify a list of trusted origins:
+
+```bash
+INVENTREE_TRUSTED_ORIGINS='https://inventree.example.com:8443,https://stock.example.com:8443'
+```
+
 ## Basic Options
 
 The following basic options are available:
