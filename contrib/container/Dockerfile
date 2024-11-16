@@ -34,6 +34,11 @@ ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 
+# Location for python virtual environment
+# This will be created on the host system to persist *certain* packages
+# Note: *base* packages are installed into the docker image
+ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
+
 ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 
 # InvenTree configuration files
@@ -160,10 +165,6 @@ RUN yarn config set network-timeout 600000 -g
 # So from here, we don't actually "do" anything, apart from some file management
 
 ENV INVENTREE_DEBUG=True
-
-# Location for python virtual environment
-# If the INVENTREE_PY_ENV variable is set, the entrypoint script will use it!
-ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 
 WORKDIR ${INVENTREE_HOME}
 
