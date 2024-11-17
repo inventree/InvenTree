@@ -214,10 +214,11 @@ def get_modules(pkg, path=None):
 
 def get_classes(module) -> list:
     """Get all classes in a given module."""
-    # try:
-    return inspect.getmembers(module, inspect.isclass)
-    # except Exception:
-    #     return []
+    try:
+        return inspect.getmembers(module, inspect.isclass)
+    except Exception:
+        log_error({module.__name__: 'Could not get classes'}, 'discovery')
+        return []
 
 
 def get_plugins(pkg, baseclass, path=None):
