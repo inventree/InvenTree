@@ -88,7 +88,7 @@ def check_plugins_path(packagename: str) -> bool:
     output = result.decode('utf-8').split('\n')
 
     # Check if the package is installed in the plugins directory
-    return any(re.match(f'^{packagename}==', line.strip()) for line in output)
+    return any(re.match(rf'^{packagename}[\s=@]', line.strip()) for line in output)
 
 
 def check_package_path(packagename: str) -> str:
