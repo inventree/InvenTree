@@ -3,6 +3,7 @@
 import logging
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 
@@ -21,8 +22,10 @@ logger = logging.getLogger('inventree')
 def pip_command(*args):
     """Build and run a pip command using using the current python executable.
 
-    returns: subprocess.check_output
-    throws: subprocess.CalledProcessError
+    Returns: The output of the pip command
+
+    Raises:
+        subprocess.CalledProcessError: If the pip command fails
     """
     python = sys.executable
 
@@ -88,13 +91,17 @@ def check_plugins_path(packagename: str) -> bool:
     return any(re.match(f'^{packagename}==', line.strip()) for line in output)
 
 
-def check_package_path(packagename: str):
+def check_package_path(packagename: str) -> str:
     """Determine the install path of a particular package.
 
     - If installed, return the installation path
-    - If not installed, return False
+    - If not installed, return an empty string
     """
     logger.debug('check_package_path: %s', packagename)
+
+    # First check if the package is installed in the plugins directory
+    if check_plugins_path(packagename):
+        return f'plugins/{packagename}'
 
     # Remove version information
     for c in '<>=! ':
@@ -120,7 +127,7 @@ def check_package_path(packagename: str):
         return False
 
     # If we get here, the package is not installed
-    return False
+    return ''
 
 
 def plugins_dir():
@@ -257,13 +264,6 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     logger.info('install_plugin: %s, %s', url, packagename)
 
-    # Check if we are running in a virtual environment
-    # For now, just log a warning
-    in_venv = sys.prefix != sys.base_prefix
-
-    if not in_venv:
-        logger.warning('InvenTree is not running in a virtual environment')
-
     plugin_dir = plugins_dir()
 
     # build up the command
@@ -359,23 +359,22 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
             _('Plugin cannot be uninstalled as it is currently active')
         )
 
+    if not cfg.is_installed():
+        raise ValidationError(_('Plugin is not installed'))
+
     validate_package_plugin(cfg, user)
     package_name = cfg.package_name
     logger.info('Uninstalling plugin: %s', package_name)
 
-    cmd = ['uninstall', '-y', package_name]
-
-    try:
-        result = pip_command(*cmd)
-
-        ret = {
-            'result': _('Uninstalled plugin successfully'),
-            'success': True,
-            'output': str(result, 'utf-8'),
-        }
-
-    except subprocess.CalledProcessError as error:
-        handle_pip_error(error, 'plugin_uninstall')
+    if check_plugins_path(package_name):
+        # Uninstall the plugin from the plugins directory
+        uninstall_from_plugins_dir(cfg)
+    elif check_package_path(package_name):
+        # Uninstall the plugin using pip
+        uninstall_from_pip(cfg)
+    else:
+        # No matching install target found
+        raise ValidationError(_('Plugin installation not found'))
 
     # Update the plugins file
     update_plugins_file(package_name, remove=True)
@@ -390,4 +389,36 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
-    return ret
+    return {'result': _('Uninstalled plugin successfully'), 'success': True}
+
+
+def uninstall_from_plugins_dir(cfg: plugin.models.PluginConfig):
+    """Uninstall a plugin from the plugins directory."""
+    package_name = cfg.package_name
+    logger.debug('Uninstalling plugin from plugins directory: %s', package_name)
+
+    plugin_install_dir = plugins_dir()
+    plugin_dir = cfg.plugin.path()
+
+    if plugin_dir.is_relative_to(plugin_install_dir):
+        # Find the top-most relative path
+        while plugin_dir.parent and plugin_dir.parent != plugin_install_dir:
+            plugin_dir = plugin_dir.parent
+
+        if plugin_dir and plugin_dir.is_relative_to(plugin_install_dir):
+            shutil.rmtree(plugin_dir)
+
+
+def uninstall_from_pip(cfg: plugin.models.PluginConfig):
+    """Uninstall a plugin using pip."""
+    package_name = cfg.package_name
+
+    logger.debug('Uninstalling plugin via PIP: %s', package_name)
+
+    cmd = ['uninstall', '-y', package_name]
+
+    try:
+        pip_command(*cmd)
+
+    except subprocess.CalledProcessError as error:
+        handle_pip_error(error, 'plugin_uninstall')
