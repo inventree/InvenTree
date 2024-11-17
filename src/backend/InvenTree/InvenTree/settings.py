@@ -143,8 +143,6 @@ PLUGINS_INSTALL_DISABLED = get_boolean_setting(
     'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
 
-PLUGIN_FILE = config.get_plugin_file()
-
 # Plugin test settings
 PLUGIN_TESTING = get_setting(
     'INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING
@@ -159,8 +157,6 @@ PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
-
-PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
 STATICFILES_DIRS = []
 

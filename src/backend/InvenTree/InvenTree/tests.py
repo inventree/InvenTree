@@ -1180,23 +1180,6 @@ class TestSettings(InvenTreeTestCase):
         # make sure to clean up
         settings.TESTING_ENV = False
 
-    def test_initial_install(self):
-        """Test if install of plugins on startup works."""
-        from plugin import registry
-
-        if not settings.DOCKER:
-            # Check an install run
-            response = registry.install_plugin_file()
-            self.assertEqual(response, 'first_run')
-
-            # Set dynamic setting to True and rerun to launch install
-            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-            registry.reload_plugins(full_reload=True)
-
-        # Check that there was another run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, True)
-
     def test_helpers_cfg_file(self):
         """Test get_config_file."""
         # normal run - not configured
@@ -1214,24 +1197,6 @@ class TestSettings(InvenTreeTestCase):
             self.assertIn(
                 'inventree/_testfolder/my_special_conf.yaml',
                 str(config.get_config_file()).lower(),
-            )
-
-    def test_helpers_plugin_file(self):
-        """Test get_plugin_file."""
-        # normal run - not configured
-
-        valid = ['inventree/plugins.txt', 'inventree/data/plugins.txt']
-
-        self.assertTrue(
-            any(opt in str(config.get_plugin_file()).lower() for opt in valid)
-        )
-
-        # with env set
-        with self.in_env_context({
-            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
-        }):
-            self.assertIn(
-                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
             )
 
     def test_helpers_setting(self):

@@ -402,5 +402,7 @@ The following [plugin](../extend/plugins.md) configuration options are available
 | --- | --- | --- | --- |
 | INVENTREE_PLUGINS_ENABLED | plugins_enabled | Enable plugin support | False |
 | INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Disable Plugin installation via API - only use plugins.txt file | False |
-| INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
+
+!!! info "Plugins Directory"
+    If the `INVENTREE_PLUGIN_DIR` environment variable is not specified, the default location is the `plugins` directory within the InvenTree installation.
