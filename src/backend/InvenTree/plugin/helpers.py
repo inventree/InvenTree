@@ -177,27 +177,31 @@ def get_modules(pkg, path=None):
     elif type(path) is not list:
         path = [path]
 
-    for finder, name, _ in pkgutil.walk_packages(path):
-        try:
-            if sys.version_info < (3, 12):
-                module = finder.find_module(name).load_module(name)
-            else:
-                spec = finder.find_spec(name)
-                module = module_from_spec(spec)
-                sys.modules[name] = module
-                spec.loader.exec_module(module)
-            pkg_names = getattr(module, '__all__', None)
-            for k, v in vars(module).items():
-                if not k.startswith('_') and (pkg_names is None or k in pkg_names):
-                    context[k] = v
-            context[name] = module
-        except AppRegistryNotReady:  # pragma: no cover
-            pass
-        except Exception as error:
-            # this 'protects' against malformed plugin modules by more or less silently failing
+    try:
+        for finder, name, _ in pkgutil.walk_packages(path):
+            try:
+                if sys.version_info < (3, 12):
+                    module = finder.find_module(name).load_module(name)
+                else:
+                    spec = finder.find_spec(name)
+                    module = module_from_spec(spec)
+                    sys.modules[name] = module
+                    spec.loader.exec_module(module)
+                pkg_names = getattr(module, '__all__', None)
+                for k, v in vars(module).items():
+                    if not k.startswith('_') and (pkg_names is None or k in pkg_names):
+                        context[k] = v
+                context[name] = module
+            except AppRegistryNotReady:  # pragma: no cover
+                pass
+            except Exception as error:
+                # this 'protects' against malformed plugin modules by more or less silently failing
 
-            # log to stack
-            log_error({name: str(error)}, 'discovery')
+                # log to stack
+                log_error({name: str(error)}, 'discovery')
+    except Exception as error:
+        # log to stack
+        log_error({pkg.__name__: str(error)}, 'discovery')
 
     return [v for k, v in context.items()]
 
