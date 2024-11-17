@@ -1,6 +1,7 @@
 """Install a plugin into the python virtual environment."""
 
 import logging
+import pathlib
 import re
 import subprocess
 import sys
@@ -11,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 import plugin.models
 import plugin.staticfiles
+from InvenTree.config import get_plugin_dir
 from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
@@ -210,8 +212,21 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     if not in_venv:
         logger.warning('InvenTree is not running in a virtual environment')
 
+    plugin_dir = get_plugin_dir()
+
+    if not plugin_dir:
+        raise ValidationError(_('Plugins directory not specified'))
+
+    plugin_dir_path = pathlib.Path(plugin_dir)
+
+    if not plugin_dir_path.exists():
+        try:
+            plugin_dir_path.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            raise ValidationError(_('Failed to create plugin directory'))
+
     # build up the command
-    install_name = ['install', '-U']
+    install_name = ['install', '-U', '--target', plugin_dir_path.absolute()]
 
     full_pkg = ''
 
