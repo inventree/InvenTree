@@ -65,6 +65,29 @@ def handle_pip_error(error, path: str) -> list:
         raise ValidationError(errors[0])
 
 
+def check_plugins_path(packagename: str) -> bool:
+    """Determine if the package is installed in the plugins directory."""
+    # Remove version information
+    for c in '<>=! ':
+        packagename = packagename.split(c)[0]
+
+    plugin_dir = get_plugin_dir()
+
+    if not plugin_dir:
+        return False
+
+    plugin_dir_path = pathlib.Path(plugin_dir)
+
+    if not plugin_dir_path.exists():
+        return False
+
+    result = pip_command('freeze', '--path', plugin_dir_path.absolute())
+    output = result.decode('utf-8').split('\n')
+
+    # Check if the package is installed in the plugins directory
+    return any(re.match(f'^{packagename}==', line.strip()) for line in output)
+
+
 def check_package_path(packagename: str):
     """Determine the install path of a particular package.
 
@@ -100,6 +123,31 @@ def check_package_path(packagename: str):
     return False
 
 
+def plugins_dir():
+    """Return the path to the InvenTree custom plugins director.
+
+    Returns:
+        pathlib.Path: Path to the custom plugins directory
+
+    Raises:
+        ValidationError: If the plugins directory is not specified, or does not exist
+    """
+    pd = get_plugin_dir()
+
+    if not pd:
+        raise ValidationError(_('Plugins directory not specified'))
+
+    pd = pathlib.Path(pd)
+
+    if not pd.exists():
+        try:
+            pd.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            raise ValidationError(_('Failed to create plugin directory'))
+
+    return pd.absolute()
+
+
 def install_plugins_file():
     """Install plugins from the plugins file."""
     logger.info('Installing plugins from plugins file')
@@ -110,8 +158,12 @@ def install_plugins_file():
         logger.warning('Plugin file %s does not exist', str(pf))
         return
 
+    plugin_dir = plugins_dir()
+
+    cmd = ['install', '-U', '--target', str(plugin_dir), '-r', str(pf)]
+
     try:
-        pip_command('install', '-r', str(pf))
+        pip_command(*cmd)
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
         logger.exception('Plugin file installation failed: %s', str(output))
@@ -212,21 +264,10 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     if not in_venv:
         logger.warning('InvenTree is not running in a virtual environment')
 
-    plugin_dir = get_plugin_dir()
-
-    if not plugin_dir:
-        raise ValidationError(_('Plugins directory not specified'))
-
-    plugin_dir_path = pathlib.Path(plugin_dir)
-
-    if not plugin_dir_path.exists():
-        try:
-            plugin_dir_path.mkdir(parents=True, exist_ok=True)
-        except Exception:
-            raise ValidationError(_('Failed to create plugin directory'))
+    plugin_dir = plugins_dir()
 
     # build up the command
-    install_name = ['install', '-U', '--target', plugin_dir_path.absolute()]
+    install_name = ['install', '-U', '--target', str(plugin_dir)]
 
     full_pkg = ''
 

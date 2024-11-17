@@ -365,31 +365,32 @@ class PluginsRegistry:
         collected_plugins = []
 
         # Collect plugins from paths
-        for plugin in self.plugin_dirs():
-            logger.debug("Loading plugins from directory '%s'", plugin)
+        for plugin_dir in self.plugin_dirs():
+            logger.debug("Loading plugins from directory '%s'", plugin_dir)
 
             parent_path = None
-            parent_obj = Path(plugin)
+            parent_obj = Path(plugin_dir)
 
             # If a "path" is provided, some special handling is required
-            if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
+            if parent_obj.name is not plugin_dir and len(parent_obj.parts) > 1:
                 # Ensure PosixPath object is converted to a string, before passing to get_plugins
                 parent_path = str(parent_obj.parent)
-                plugin = parent_obj.name
+                plugin_dir = parent_obj.name
 
             # Gather Modules
             if parent_path:
                 # On python 3.12 use new loader method
                 if sys.version_info < (3, 12):
                     raw_module = _load_source(
-                        plugin, str(parent_obj.joinpath('__init__.py'))
+                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
                     )
                 else:
                     raw_module = SourceFileLoader(
-                        plugin, str(parent_obj.joinpath('__init__.py'))
+                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
                     ).load_module()
             else:
-                raw_module = importlib.import_module(plugin)
+                raw_module = importlib.import_module(plugin_dir)
+
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
             for item in modules or []:
@@ -404,11 +405,11 @@ class PluginsRegistry:
                 # Collect plugins from setup entry points
                 for entry in get_entrypoints():
                     try:
-                        plugin = entry.load()
-                        plugin.is_package = True
-                        plugin.package_name = getattr(entry.dist, 'name', None)
-                        plugin._get_package_metadata()
-                        collected_plugins.append(plugin)
+                        plugin_dir = entry.load()
+                        plugin_dir.is_package = True
+                        plugin_dir.package_name = getattr(entry.dist, 'name', None)
+                        plugin_dir._get_package_metadata()
+                        collected_plugins.append(plugin_dir)
                     except Exception as error:  # pragma: no cover
                         handle_error(error, do_raise=False, log_name='discovery')
 
