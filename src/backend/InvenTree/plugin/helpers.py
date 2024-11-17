@@ -202,9 +202,12 @@ def get_modules(pkg, path=None):
     return [v for k, v in context.items()]
 
 
-def get_classes(module):
+def get_classes(module) -> list:
     """Get all classes in a given module."""
-    return inspect.getmembers(module, inspect.isclass)
+    try:
+        return inspect.getmembers(module, inspect.isclass)
+    except Exception:
+        return []
 
 
 def get_plugins(pkg, baseclass, path=None):
