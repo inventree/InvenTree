@@ -283,6 +283,37 @@ def get_backup_dir(create=True):
     return bd
 
 
+def get_plugin_file():
+    """Returns the path of the InvenTree plugins specification file.
+
+    Note: It will be created if it does not already exist!
+    """
+    # Check if the plugin.txt file (specifying required plugins) is specified
+    plugin_file = get_setting('INVENTREE_PLUGIN_FILE', 'plugin_file')
+
+    if not plugin_file:
+        # If not specified, look in the same directory as the configuration file
+        config_dir = get_config_file().parent
+        plugin_file = config_dir.joinpath('plugins.txt')
+    else:
+        # Make sure we are using a modern Path object
+        plugin_file = Path(plugin_file)
+
+    if not plugin_file.exists():
+        logger.warning(
+            'Plugin configuration file does not exist - creating default file'
+        )
+        logger.info("Creating plugin file at '%s'", plugin_file)
+        ensure_dir(plugin_file.parent)
+
+        # If opening the file fails (no write permission, for example), then this will throw an error
+        plugin_file.write_text(
+            '# InvenTree Plugins (uses PIP framework to install)\n\n'
+        )
+
+    return plugin_file
+
+
 def get_plugin_dir():
     """Returns the path of the custom plugins directory."""
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')

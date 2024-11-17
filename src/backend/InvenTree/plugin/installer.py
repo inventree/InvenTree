@@ -155,6 +155,98 @@ def plugins_dir():
     return pd.absolute()
 
 
+def install_plugins_file():
+    """Install plugins from the plugins file."""
+    logger.info('Installing plugins from plugins file')
+
+    pf = settings.PLUGIN_FILE
+
+    if not pf or not pf.exists():
+        logger.warning('Plugin file %s does not exist', str(pf))
+        return
+
+    plugin_dir = plugins_dir()
+
+    cmd = ['install', '-U', '--target', str(plugin_dir), '-r', str(pf)]
+
+    try:
+        pip_command(*cmd)
+    except subprocess.CalledProcessError as error:
+        output = error.output.decode('utf-8')
+        logger.exception('Plugin file installation failed: %s', str(output))
+        log_error('pip')
+        return False
+    except Exception as exc:
+        logger.exception('Plugin file installation failed: %s', exc)
+        log_error('pip')
+        return False
+
+    # Update static files
+    plugin.staticfiles.collect_plugins_static_files()
+    plugin.staticfiles.clear_plugins_static_files()
+
+    # At this point, the plugins file has been installed
+    return True
+
+
+def update_plugins_file(install_name, remove=False):
+    """Add a plugin to the plugins file."""
+    logger.info('Adding plugin to plugins file: %s', install_name)
+
+    pf = settings.PLUGIN_FILE
+
+    if not pf or not pf.exists():
+        logger.warning('Plugin file %s does not exist', str(pf))
+        return
+
+    def compare_line(line: str):
+        """Check if a line in the file matches the installname."""
+        return line.strip().split('==')[0] == install_name.split('==')[0]
+
+    # First, read in existing plugin file
+    try:
+        with pf.open(mode='r') as f:
+            lines = f.readlines()
+    except Exception as exc:
+        logger.exception('Failed to read plugins file: %s', str(exc))
+        return
+
+    # Reconstruct output file
+    output = []
+
+    found = False
+
+    # Check if plugin is already in file
+    for line in lines:
+        # Ignore processing for any commented lines
+        if line.strip().startswith('#'):
+            output.append(line)
+            continue
+
+        if compare_line(line):
+            found = True
+            if not remove:
+                # Replace line with new install name
+                output.append(install_name)
+        else:
+            output.append(line)
+
+    # Append plugin to file
+    if not found and not remove:
+        output.append(install_name)
+
+    # Write file back to disk
+    try:
+        with pf.open(mode='w') as f:
+            for line in output:
+                f.write(line)
+
+                if not line.endswith('\n'):
+                    f.write('\n')
+    except Exception as exc:
+        logger.exception('Failed to add plugin to plugins file: %s', str(exc))
+
+
 def install_plugin(url=None, packagename=None, user=None, version=None):
     """Install a plugin into the python virtual environment.
 
@@ -216,6 +308,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_install')
+
+    # Save plugin to plugins file
+    update_plugins_file(full_pkg)
 
     # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
@@ -280,6 +375,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     else:
         # No matching install target found
         raise ValidationError(_('Plugin installation not found'))
+
+    # Update the plugins file
+    update_plugins_file(package_name, remove=True)
 
     if delete_config:
         # Remove the plugin configuration from the database

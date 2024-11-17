@@ -428,6 +428,19 @@ class PluginsRegistry:
 
         self.mixin_modules = collected_mixins
 
+    def install_plugin_file(self):
+        """Make sure all plugins are installed in the current environment."""
+        if settings.PLUGIN_FILE_CHECKED:
+            logger.info('Plugin file was already checked')
+            return True
+
+        from plugin.installer import install_plugins_file
+
+        if install_plugins_file():
+            settings.PLUGIN_FILE_CHECKED = True
+            return 'first_run'
+        return False
+
     # endregion
 
     # region general internal loading / activating / deactivating / unloading
