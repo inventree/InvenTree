@@ -407,15 +407,25 @@ def uninstall_from_plugins_dir(cfg: plugin.models.PluginConfig):
 
         if plugin_dir and plugin_dir.is_relative_to(plugin_install_dir):
             logger.info('Removing plugin directory: %s', plugin_dir)
-            shutil.rmtree(plugin_dir)
+            try:
+                shutil.rmtree(plugin_dir)
+            except Exception:
+                logger.exception('Failed to remove plugin directory: %s', plugin_dir)
+                log_error(f'plugins.{package_name}.uninstall_from_plugins_dir')
+                raise ValidationError(_('Failed to remove plugin directory'))
 
-            # Finally, remote the dist-info directory (if it exists)
+            # Finally, remove the dist-info directory (if it exists)
             dist_pkg_name = package_name.replace('-', '_')
             dist_dirs = plugin_install_dir.glob(f'{dist_pkg_name}-*.dist-info')
 
             for dd in dist_dirs:
                 logger.info('Removing dist-info directory: %s', dd)
-                shutil.rmtree(dd)
+                try:
+                    shutil.rmtree(dd)
+                except Exception:
+                    logger.exception('Failed to remove dist-info directory: %s', dd)
+                    log_error(f'plugins.{package_name}.uninstall_from_plugins_dir')
+                    raise ValidationError(_('Failed to remove plugin directory'))
 
 
 def uninstall_from_pip(cfg: plugin.models.PluginConfig):
