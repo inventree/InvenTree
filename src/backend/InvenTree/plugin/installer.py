@@ -406,7 +406,16 @@ def uninstall_from_plugins_dir(cfg: plugin.models.PluginConfig):
             plugin_dir = plugin_dir.parent
 
         if plugin_dir and plugin_dir.is_relative_to(plugin_install_dir):
+            logger.info('Removing plugin directory: %s', plugin_dir)
             shutil.rmtree(plugin_dir)
+
+            # Finally, remote the dist-info directory (if it exists)
+            dist_pkg_name = package_name.replace('-', '_')
+            dist_dirs = plugin_install_dir.glob(f'{dist_pkg_name}-*.dist-info')
+
+            for dd in dist_dirs:
+                logger.info('Removing dist-info directory: %s', dd)
+                shutil.rmtree(dd)
 
 
 def uninstall_from_pip(cfg: plugin.models.PluginConfig):
