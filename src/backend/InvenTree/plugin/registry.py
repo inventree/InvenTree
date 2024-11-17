@@ -405,11 +405,11 @@ class PluginsRegistry:
                 # Collect plugins from setup entry points
                 for entry in get_entrypoints():
                     try:
-                        plugin_dir = entry.load()
-                        plugin_dir.is_package = True
-                        plugin_dir.package_name = getattr(entry.dist, 'name', None)
-                        plugin_dir._get_package_metadata()
-                        collected_plugins.append(plugin_dir)
+                        plugin = entry.load()
+                        plugin.is_package = True
+                        plugin.package_name = getattr(entry.dist, 'name', None)
+                        plugin._get_package_metadata()
+                        collected_plugins.append(plugin)
                     except Exception as error:  # pragma: no cover
                         handle_error(error, do_raise=False, log_name='discovery')
 
