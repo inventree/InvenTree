@@ -667,3 +667,15 @@ def admin_url(user, table, pk):
             pass
 
     return url
+
+
+@register.simple_tag()
+def cui_enabled():
+    """Return True if the CUI is enabled."""
+    return settings.ENABLE_CLASSIC_FRONTEND
+
+
+@register.simple_tag()
+def pui_enabled():
+    """Return True if the PUI is enabled."""
+    return settings.ENABLE_PLATFORM_FRONTEND
