@@ -210,6 +210,7 @@ Refer to the [return order settings](../order/return_order.md#return-order-setti
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("PLUGIN_ON_STARTUP") }}
 {{ globalsetting("PLUGIN_UPDATE_CHECK") }}
 {{ globalsetting("ENABLE_PLUGINS_URL") }}
 {{ globalsetting("ENABLE_PLUGINS_NAVIGATION") }}
