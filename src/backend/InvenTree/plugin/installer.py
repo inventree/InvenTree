@@ -103,6 +103,19 @@ def get_install_info(packagename: str) -> str:
     return info
 
 
+def plugins_file_hash():
+    """Return the file hash for the plugins file."""
+    import hashlib
+
+    pf = settings.PLUGIN_FILE
+
+    if not pf or not pf.exists():
+        return None
+
+    with pf.open('rb') as f:
+        return hashlib.md5(f.read()).hexdigest()
+
+
 def install_plugins_file():
     """Install plugins from the plugins file."""
     logger.info('Installing plugins from plugins file')
@@ -127,9 +140,8 @@ def install_plugins_file():
         log_error('pip')
         return False
 
-    # Update static files
+    # Collect plugin static files
     plugin.staticfiles.collect_plugins_static_files()
-    plugin.staticfiles.clear_plugins_static_files()
 
     # At this point, the plugins file has been installed
     return True

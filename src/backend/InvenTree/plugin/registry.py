@@ -287,6 +287,7 @@ class PluginsRegistry:
 
             if collect:
                 logger.info('Collecting plugins')
+                self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
 
             self.plugins_loaded = False
@@ -430,16 +431,13 @@ class PluginsRegistry:
 
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current environment."""
-        if settings.PLUGIN_FILE_CHECKED:
-            logger.info('Plugin file was already checked')
-            return True
+        from plugin.installer import install_plugins_file, plugins_file_hash
 
-        from plugin.installer import install_plugins_file
+        file_hash = plugins_file_hash()
 
-        if install_plugins_file():
-            settings.PLUGIN_FILE_CHECKED = True
-            return 'first_run'
-        return False
+        if file_hash != settings.PLUGIN_FILE_HASH:
+            install_plugins_file()
+            settings.PLUGIN_FILE_HASH = file_hash
 
     # endregion
 
