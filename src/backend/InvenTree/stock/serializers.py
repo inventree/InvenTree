@@ -425,7 +425,7 @@ class StockItemSerializer(
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
-        part_detail = kwargs.pop('part_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
         tests = kwargs.pop('tests', False)

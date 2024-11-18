@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 280
+INVENTREE_API_VERSION = 281
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v281 - 2024-11-15 : https://github.com/inventree/InvenTree/pull/8480
+    - Fixes StockHistory API data serialization
 
 v280 - 2024-11-10 : https://github.com/inventree/InvenTree/pull/8461
     - Makes schema for API information endpoint more informing
