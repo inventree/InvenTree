@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 281
+INVENTREE_API_VERSION = 282
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v282 - 2024-11-19 : https://github.com/inventree/InvenTree/pull/8487
+    - Remove the "test statistics" API endpoints
+    - This is now provided via a custom plugin
 
 v281 - 2024-11-15 : https://github.com/inventree/InvenTree/pull/8480
     - Fixes StockHistory API data serialization
