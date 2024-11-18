@@ -126,7 +126,14 @@ def install_plugins_file():
         logger.warning('Plugin file %s does not exist', str(pf))
         return
 
-    cmd = ['install', '--disable-pip-version-check', '-U', '-r', str(pf)]
+    cmd = [
+        'install',
+        '--disable-pip-version-check',
+        '--no-cache-dir',
+        '-U',
+        '-r',
+        str(pf),
+    ]
 
     try:
         pip_command(*cmd)
@@ -232,7 +239,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # build up the command
-    install_name = ['install', '-U']
+    install_name = ['install', '-U', '--no-cache-dir', '--disable-pip-version-check']
 
     full_pkg = ''
 
