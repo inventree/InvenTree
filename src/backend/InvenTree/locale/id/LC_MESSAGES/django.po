@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:273
+#: InvenTree/api.py:306
 msgid "API endpoint not found"
 msgstr "API endpoint tidak ditemukan"
 
-#: InvenTree/api.py:390
+#: InvenTree/api.py:428
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:399
+#: InvenTree/api.py:437
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:404
+#: InvenTree/api.py:442
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:518
+#: InvenTree/api.py:556
 msgid "User does not have permission to view this model"
 msgstr "Pengguna tidak memiliki izin untuk melihat model ini"
 
@@ -60,7 +60,7 @@ msgstr "Jumlah yang diberikan tidak valid"
 msgid "Error details can be found in the admin panel"
 msgstr "Detail terkait galat dapat dilihat di panel admin"
 
-#: InvenTree/fields.py:135
+#: InvenTree/fields.py:136
 msgid "Enter date"
 msgstr "Masukkan tanggal"
 
@@ -151,35 +151,35 @@ msgstr "Hapus tag-tag HTML dari nilai ini"
 msgid "Data contains prohibited markdown content"
 msgstr ""
 
-#: InvenTree/helpers_model.py:130
+#: InvenTree/helpers_model.py:131
 msgid "Connection error"
 msgstr "Koneksi Galat"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:136 InvenTree/helpers_model.py:143
 msgid "Server responded with invalid status code"
 msgstr ""
 
-#: InvenTree/helpers_model.py:138
+#: InvenTree/helpers_model.py:139
 msgid "Exception occurred"
 msgstr ""
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:149
 msgid "Server responded with invalid Content-Length value"
 msgstr ""
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Image size is too large"
 msgstr "Ukuran gambar terlalu besar"
 
-#: InvenTree/helpers_model.py:163
+#: InvenTree/helpers_model.py:164
 msgid "Image download exceeded maximum size"
 msgstr ""
 
-#: InvenTree/helpers_model.py:168
+#: InvenTree/helpers_model.py:169
 msgid "Remote server returned empty response"
 msgstr ""
 
-#: InvenTree/helpers_model.py:176
+#: InvenTree/helpers_model.py:177
 msgid "Supplied URL is not a valid image file"
 msgstr "URL yang diberikan bukan file gambar yang valid"
 
@@ -5047,7 +5047,7 @@ msgstr ""
 msgid "Filter by starred categories"
 msgstr ""
 
-#: part/api.py:123 stock/api.py:310
+#: part/api.py:123 stock/api.py:261
 msgid "Depth"
 msgstr ""
 
@@ -5055,7 +5055,7 @@ msgstr ""
 msgid "Filter by category depth"
 msgstr ""
 
-#: part/api.py:141 stock/api.py:328
+#: part/api.py:141 stock/api.py:279
 msgid "Top Level"
 msgstr ""
 
@@ -5063,7 +5063,7 @@ msgstr ""
 msgid "Filter by top-level categories"
 msgstr ""
 
-#: part/api.py:156 stock/api.py:343
+#: part/api.py:156 stock/api.py:294
 msgid "Cascade"
 msgstr ""
 
@@ -7382,11 +7382,11 @@ msgstr ""
 msgid "Serial"
 msgstr ""
 
-#: report/templatetags/report.py:98
+#: report/templatetags/report.py:100
 msgid "Asset file does not exist"
 msgstr ""
 
-#: report/templatetags/report.py:154 report/templatetags/report.py:233
+#: report/templatetags/report.py:157 report/templatetags/report.py:233
 msgid "Image file not found"
 msgstr ""
 
@@ -7394,7 +7394,7 @@ msgstr ""
 msgid "part_image tag requires a Part instance"
 msgstr ""
 
-#: report/templatetags/report.py:299
+#: report/templatetags/report.py:301
 msgid "company_image tag requires a Company instance"
 msgstr ""
 
@@ -7410,7 +7410,7 @@ msgstr ""
 msgid "Stock Item ID"
 msgstr ""
 
-#: stock/admin.py:168
+#: stock/admin.py:168 stock/api.py:566
 msgid "Status Code"
 msgstr ""
 
@@ -7466,23 +7466,23 @@ msgstr ""
 msgid "Expiry Date"
 msgstr ""
 
-#: stock/api.py:310
+#: stock/api.py:261
 msgid "Filter by location depth"
 msgstr ""
 
-#: stock/api.py:330
+#: stock/api.py:281
 msgid "Filter by top-level locations"
 msgstr ""
 
-#: stock/api.py:345
+#: stock/api.py:296
 msgid "Include sub-locations in filtered results"
 msgstr ""
 
-#: stock/api.py:366 stock/serializers.py:1217
+#: stock/api.py:317 stock/serializers.py:1217
 msgid "Parent Location"
 msgstr ""
 
-#: stock/api.py:367
+#: stock/api.py:318
 msgid "Filter by parent location"
 msgstr ""
 
@@ -7490,15 +7490,15 @@ msgstr ""
 msgid "External Location"
 msgstr ""
 
-#: stock/api.py:803
+#: stock/api.py:788
 msgid "Part Tree"
 msgstr ""
 
-#: stock/api.py:833
+#: stock/api.py:818
 msgid "Expiry date before"
 msgstr ""
 
-#: stock/api.py:837
+#: stock/api.py:822
 msgid "Expiry date after"
 msgstr ""
 
@@ -7506,23 +7506,23 @@ msgstr ""
 msgid "Stale"
 msgstr ""
 
-#: stock/api.py:927
+#: stock/api.py:925
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:932
+#: stock/api.py:930
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:959
+#: stock/api.py:957
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:969
+#: stock/api.py:967
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:996
+#: stock/api.py:994
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 

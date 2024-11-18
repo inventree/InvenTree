@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
@@ -19,8 +19,9 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
-import { PanelType } from '../../../components/panels/Panel';
+import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
@@ -303,17 +304,18 @@ export default function SystemSettings() {
 
   return (
     <>
+      <PageTitle title={t`System Settings`} />
       {user.isStaff() ? (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <SettingsHeader
-            label="system"
+            label='system'
             title={t`System Settings`}
             subtitle={server.instance || ''}
           />
           <PanelGroup
-            pageKey="system-settings"
+            pageKey='system-settings'
             panels={systemSettingsPanels}
-            model="systemsettings"
+            model='systemsettings'
             id={null}
           />
         </Stack>

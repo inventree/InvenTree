@@ -120,7 +120,7 @@ test('Report Editing', async ({ page, request }) => {
   expect(textareaValue).toContain(
     `<img class='qr' alt="{% trans 'QR Code' %}" src='{% qrcode qr_data %}'>`
   );
-  textarea.fill(textareaValue + '\nHello world');
+  textarea.fill(`${textareaValue}\nHello world`);
 
   // Switch back and forth to see if the changed contents get correctly passed between the hooks
   await page.getByRole('tab', { name: 'Code', exact: true }).click();

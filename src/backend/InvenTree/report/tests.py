@@ -156,6 +156,18 @@ class ReportTagTest(TestCase):
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
         self.assertEqual(report_tags.divide(100, 5), 20)
 
+    def test_number_tags(self):
+        """Simple tests for number formatting tags."""
+        fn = report_tags.format_number
+
+        self.assertEqual(fn(1234), '1234')
+        self.assertEqual(fn(1234.5678, decimal_places=2), '1234.57')
+        self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')
+        self.assertEqual(fn(-9999.5678, decimal_places=2, separator=','), '-9,999.57')
+        self.assertEqual(
+            fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
+        )
+
     @override_settings(TIME_ZONE='America/New_York')
     def test_date_tags(self):
         """Test for date formatting tags.

@@ -7,7 +7,7 @@ title: Machines
 InvenTree has a builtin machine registry. There are different machine types available where each type can have different drivers. Drivers and even custom machine types can be provided by plugins.
 
 !!! info "Requires Redis"
-    If the machines features is used in production setup using workers, a shared [redis cache](../../start/docker.md#redis-cache) is required to function properly.
+    If the machines features is used in production setup using workers, a shared [redis cache](../../start/processes.md#cache-server) is required to function properly.
 
 ### Registry
 

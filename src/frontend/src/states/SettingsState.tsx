@@ -6,9 +6,9 @@ import { create, createStore } from 'zustand';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
-import { PathParams, apiUrl } from './ApiState';
+import { type PathParams, apiUrl } from './ApiState';
 import { useUserState } from './UserState';
-import { Setting, SettingsLookup } from './states';
+import type { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {
   settings: Setting[];
@@ -51,7 +51,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
       return get().lookup[key] ?? default_value ?? '';
     },
     isSet: (key: string, default_value?: boolean) => {
-      let value = get().lookup[key] ?? default_value ?? 'false';
+      const value = get().lookup[key] ?? default_value ?? 'false';
       return isTrue(value);
     }
   })
@@ -87,7 +87,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
     return get().lookup[key] ?? default_value ?? '';
   },
   isSet: (key: string, default_value?: boolean) => {
-    let value = get().lookup[key] ?? default_value ?? 'false';
+    const value = get().lookup[key] ?? default_value ?? 'false';
     return isTrue(value);
   }
 }));
@@ -127,7 +127,7 @@ export const createPluginSettingsState = ({
       return get().lookup[key] ?? default_value ?? '';
     },
     isSet: (key: string, default_value?: boolean) => {
-      let value = get().lookup[key] ?? default_value ?? 'false';
+      const value = get().lookup[key] ?? default_value ?? 'false';
       return isTrue(value);
     }
   }));
@@ -175,7 +175,7 @@ export const createMachineSettingsState = ({
       return get().lookup[key] ?? default_value ?? '';
     },
     isSet: (key: string, default_value?: boolean) => {
-      let value = get().lookup[key] ?? default_value ?? 'false';
+      const value = get().lookup[key] ?? default_value ?? 'false';
       return isTrue(value);
     }
   }));
@@ -185,8 +185,8 @@ export const createMachineSettingsState = ({
   return a lookup dictionary for the value of the provided Setting list
 */
 function generate_lookup(data: Setting[]) {
-  let lookup_dir: SettingsLookup = {};
-  for (let setting of data) {
+  const lookup_dir: SettingsLookup = {};
+  for (const setting of data) {
     lookup_dir[setting.key] = setting.value;
   }
   return lookup_dir;

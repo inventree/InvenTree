@@ -17,13 +17,13 @@ import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 import {
   TableFieldExtraRow,
-  TableFieldRowProps
+  type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
@@ -32,7 +32,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import {
-  ApiFormModalProps,
+  type ApiFormModalProps,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -40,7 +40,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useInstance } from '../hooks/UseInstance';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
@@ -69,7 +68,7 @@ export function useStockFields({
 
   const batchGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
-      setNextBatchCode(`Next batch code` + `: ${value}`);
+      setNextBatchCode(`${t`Next batch code`}: ${value}`);
     } else {
       setNextBatchCode('');
     }
@@ -77,7 +76,7 @@ export function useStockFields({
 
   const serialGenerator = useSerialNumberGenerator((value: any) => {
     if (value) {
-      setNextSerialNumber(t`Next serial number` + `: ${value}`);
+      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
     } else {
       setNextSerialNumber('');
     }
@@ -352,21 +351,21 @@ function StockItemDefaultMove({
   });
 
   return (
-    <Flex gap="sm" justify="space-evenly" align="center">
-      <Flex gap="sm" direction="column" align="center">
+    <Flex gap='sm' justify='space-evenly' align='center'>
+      <Flex gap='sm' direction='column' align='center'>
         <Text>
           {value} x {stockItem.part_detail.name}
         </Text>
         <Thumbnail
           src={stockItem.part_detail.thumbnail}
           size={80}
-          align="center"
+          align='center'
         />
       </Flex>
-      <Flex direction="column" gap="sm" align="center">
+      <Flex direction='column' gap='sm' align='center'>
         <Text>{stockItem.location_detail.pathstring}</Text>
-        <InvenTreeIcon icon="arrow_down" />
-        <Suspense fallback={<Skeleton width="150px" />}>
+        <InvenTreeIcon icon='arrow_down' />
+        <Suspense fallback={<Skeleton width='150px' />}>
           <Text>{data?.pathstring}</Text>
         </Suspense>
       </Flex>
@@ -380,7 +379,7 @@ function moveToDefault(
   refresh: () => void
 ) {
   modals.openConfirmModal({
-    title: <StylishText>Confirm Stock Transfer</StylishText>,
+    title: <StylishText>{t`Confirm Stock Transfer`}</StylishText>,
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
       if (
@@ -444,7 +443,7 @@ function StockOperationsRow({
   record?: any;
 }) {
   const [quantity, setQuantity] = useState<StockItemQuantity>(
-    add ? 0 : props.item?.quantity ?? 0
+    add ? 0 : (props.item?.quantity ?? 0)
   );
 
   const removeAndRefresh = () => {
@@ -482,11 +481,11 @@ function StockOperationsRow({
     <>
       <Table.Tr>
         <Table.Td>
-          <Flex gap="sm" align="center">
+          <Flex gap='sm' align='center'>
             <Thumbnail
               size={40}
               src={record.part_detail?.thumbnail}
-              align="center"
+              align='center'
             />
             <div>{record.part_detail?.name}</div>
           </Flex>
@@ -495,7 +494,7 @@ function StockOperationsRow({
           {record.location ? record.location_detail?.pathstring : '-'}
         </Table.Td>
         <Table.Td>
-          <Group grow justify="space-between" wrap="nowrap">
+          <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
             <StatusRenderer status={record.status} type={ModelType.stockitem} />
           </Group>
@@ -503,7 +502,7 @@ function StockOperationsRow({
         {!merge && (
           <Table.Td>
             <StandaloneField
-              fieldName="quantity"
+              fieldName='quantity'
               fieldDefinition={{
                 field_type: 'number',
                 value: quantity,
@@ -517,15 +516,15 @@ function StockOperationsRow({
           </Table.Td>
         )}
         <Table.Td>
-          <Flex gap="3px">
+          <Flex gap='3px'>
             {transfer && (
               <ActionButton
                 onClick={() =>
                   moveToDefault(record, props.item.quantity, removeAndRefresh)
                 }
-                icon={<InvenTreeIcon icon="default_location" />}
+                icon={<InvenTreeIcon icon='default_location' />}
                 tooltip={t`Move to default location`}
-                tooltipAlignment="top"
+                tooltipAlignment='top'
                 disabled={
                   !record.part_detail?.default_location &&
                   !record.part_detail?.category_default_location
@@ -534,8 +533,8 @@ function StockOperationsRow({
             )}
             {transfer && (
               <ActionButton
-                size="sm"
-                icon={<InvenTreeIcon icon="packaging" />}
+                size='sm'
+                icon={<InvenTreeIcon icon='packaging' />}
                 tooltip={t`Adjust Packaging`}
                 onClick={() => packagingHandlers.toggle()}
                 variant={packagingOpen ? 'filled' : 'transparent'}
@@ -890,7 +889,7 @@ function stockOperationModal({
   };
 
   const params = useMemo(() => {
-    let query_params: any = {
+    const query_params: any = {
       ...baseParams,
       ...(filters ?? {})
     };
@@ -1004,7 +1003,7 @@ export function useAssignStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockAssignFields,
     endpoint: ApiEndpoints.stock_assign,
-    title: `Assign Stock to Customer`
+    title: t`Assign Stock to Customer`
   });
 }
 
@@ -1019,7 +1018,7 @@ export function useDeleteStockItem(props: StockOperationProps) {
 }
 
 export function stockLocationFields(): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = {
+  const fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
       required: false
@@ -1065,7 +1064,7 @@ export function useTestResultFields({
   );
 
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       stock_item: {
         value: itemId,
         hidden: true
@@ -1079,7 +1078,7 @@ export function useTestResultFields({
         onValueChange: (value: any, record: any) => {
           // Adjust the type of the "value" field based on the selected template
           if (record?.choices) {
-            let _choices: string[] = record.choices.split(',');
+            const _choices: string[] = record.choices.split(',');
 
             if (_choices.length > 0) {
               setChoices(

@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { DataTableRowExpansionProps } from 'mantine-datatable';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import {
   DescriptionColumn,
   ProjectCodeColumn,
@@ -27,9 +27,9 @@ import { BuildLineSubTable } from '../build/BuildLineTable';
  */
 export default function PartBuildAllocationsTable({
   partId
-}: {
+}: Readonly<{
   partId: number;
-}) {
+}>) {
   const user = useUserState();
   const navigate = useNavigate();
   const table = useTable('part-build-allocations');
@@ -41,7 +41,7 @@ export default function PartBuildAllocationsTable({
         title: t`Build Order`,
         sortable: true,
         render: (record: any) => (
-          <Group wrap="nowrap" gap="xs">
+          <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
               enabled={record.allocated > 0}
               expanded={table.isRowExpanded(record.pk)}
@@ -106,25 +106,23 @@ export default function PartBuildAllocationsTable({
   }, [table.isRowExpanded]);
 
   return (
-    <>
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.build_line_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          minHeight: 200,
-          params: {
-            part: partId,
-            consumable: false,
-            build_detail: true,
-            order_outstanding: true
-          },
-          enableColumnSwitching: false,
-          enableSearch: false,
-          rowActions: rowActions,
-          rowExpansion: rowExpansion
-        }}
-      />
-    </>
+    <InvenTreeTable
+      url={apiUrl(ApiEndpoints.build_line_list)}
+      tableState={table}
+      columns={tableColumns}
+      props={{
+        minHeight: 200,
+        params: {
+          part: partId,
+          consumable: false,
+          build_detail: true,
+          order_outstanding: true
+        },
+        enableColumnSwitching: false,
+        enableSearch: false,
+        rowActions: rowActions,
+        rowExpansion: rowExpansion
+      }}
+    />
   );
 }

@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
 import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
-import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../functions/icons';
 
 /*
  * A custom hovercard element for displaying extra information in a table cell.
@@ -30,9 +30,9 @@ export function TableHoverCard({
       }
 
       return (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           {extra.map((item, idx) => (
-            <div key={`item-${idx}`}>{item}</div>
+            <div key={`item-${idx}-${item}`}>{item}</div>
           ))}
         </Stack>
       );
@@ -49,7 +49,7 @@ export function TableHoverCard({
   return (
     <HoverCard withinPortal={true} closeDelay={20} openDelay={250}>
       <HoverCard.Target>
-        <Group gap="xs" justify="space-between" wrap="nowrap">
+        <Group gap='xs' justify='space-between' wrap='nowrap'>
           {value}
           <InvenTreeIcon
             icon={icon ?? 'info'}
@@ -58,10 +58,10 @@ export function TableHoverCard({
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Stack gap="xs">
-          <Group gap="xs" justify="left">
-            <IconInfoCircle size="16" color="blue" />
-            <Text fw="bold">{title}</Text>
+        <Stack gap='xs'>
+          <Group gap='xs' justify='left'>
+            <IconInfoCircle size='16' color='blue' />
+            <Text fw='bold'>{title}</Text>
           </Group>
           <Divider />
           {extraItems}
@@ -81,7 +81,7 @@ export function ProjectCodeHoverCard({ projectCode }: { projectCode: any }) {
       title={t`Project Code`}
       extra={
         projectCode && (
-          <Text key="project-code">{projectCode?.description}</Text>
+          <Text key='project-code'>{projectCode?.description}</Text>
         )
       }
     />

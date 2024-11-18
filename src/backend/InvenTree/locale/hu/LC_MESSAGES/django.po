@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:273
+#: InvenTree/api.py:306
 msgid "API endpoint not found"
 msgstr "API funkciót nem találom"
 
-#: InvenTree/api.py:390
+#: InvenTree/api.py:428
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:399
+#: InvenTree/api.py:437
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:404
+#: InvenTree/api.py:442
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:518
+#: InvenTree/api.py:556
 msgid "User does not have permission to view this model"
 msgstr "Nincs jogosultságod az adatok megtekintéséhez"
 
@@ -60,7 +60,7 @@ msgstr "Nem megfelelő mennyiség"
 msgid "Error details can be found in the admin panel"
 msgstr "A hiba részleteit megtalálod az admin panelen"
 
-#: InvenTree/fields.py:135
+#: InvenTree/fields.py:136
 msgid "Enter date"
 msgstr "Dátum megadása"
 
@@ -151,35 +151,35 @@ msgstr "HTML tag-ek eltávolítása ebből az értékből"
 msgid "Data contains prohibited markdown content"
 msgstr ""
 
-#: InvenTree/helpers_model.py:130
+#: InvenTree/helpers_model.py:131
 msgid "Connection error"
 msgstr "Csatlakozási hiba"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:136 InvenTree/helpers_model.py:143
 msgid "Server responded with invalid status code"
 msgstr "A kiszolgáló érvénytelen státuszkóddal válaszolt"
 
-#: InvenTree/helpers_model.py:138
+#: InvenTree/helpers_model.py:139
 msgid "Exception occurred"
 msgstr "Kivétel történt"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:149
 msgid "Server responded with invalid Content-Length value"
 msgstr "A kiszolgáló érvénytelen Content-Length értéket adott"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Image size is too large"
 msgstr "A kép mérete túl nagy"
 
-#: InvenTree/helpers_model.py:163
+#: InvenTree/helpers_model.py:164
 msgid "Image download exceeded maximum size"
 msgstr "A kép letöltés meghaladja a maximális méretet"
 
-#: InvenTree/helpers_model.py:168
+#: InvenTree/helpers_model.py:169
 msgid "Remote server returned empty response"
 msgstr "A kiszolgáló üres választ adott"
 
-#: InvenTree/helpers_model.py:176
+#: InvenTree/helpers_model.py:177
 msgid "Supplied URL is not a valid image file"
 msgstr "A megadott URL nem egy érvényes kép fájl"
 
@@ -5049,7 +5049,7 @@ msgstr "Csillagozott"
 msgid "Filter by starred categories"
 msgstr "Csillagozottra szűrés"
 
-#: part/api.py:123 stock/api.py:310
+#: part/api.py:123 stock/api.py:261
 msgid "Depth"
 msgstr "Mélység"
 
@@ -5057,7 +5057,7 @@ msgstr "Mélység"
 msgid "Filter by category depth"
 msgstr "Kategória mélységre szűrés"
 
-#: part/api.py:141 stock/api.py:328
+#: part/api.py:141 stock/api.py:279
 msgid "Top Level"
 msgstr "Felső szint"
 
@@ -5065,7 +5065,7 @@ msgstr "Felső szint"
 msgid "Filter by top-level categories"
 msgstr "Csúcs készlethelyre szűrés"
 
-#: part/api.py:156 stock/api.py:343
+#: part/api.py:156 stock/api.py:294
 msgid "Cascade"
 msgstr "Lépcsőzetes"
 
@@ -7384,11 +7384,11 @@ msgstr "Beépített tételek"
 msgid "Serial"
 msgstr "Sorozatszám"
 
-#: report/templatetags/report.py:98
+#: report/templatetags/report.py:100
 msgid "Asset file does not exist"
 msgstr "A fájl nem létezik"
 
-#: report/templatetags/report.py:154 report/templatetags/report.py:233
+#: report/templatetags/report.py:157 report/templatetags/report.py:233
 msgid "Image file not found"
 msgstr "A képfile nem található"
 
@@ -7396,7 +7396,7 @@ msgstr "A képfile nem található"
 msgid "part_image tag requires a Part instance"
 msgstr "part_image elem csak alkatrész példánynál használható"
 
-#: report/templatetags/report.py:299
+#: report/templatetags/report.py:301
 msgid "company_image tag requires a Company instance"
 msgstr "company_image elem csak cég példánynál használható"
 
@@ -7412,7 +7412,7 @@ msgstr "Hely elérési út"
 msgid "Stock Item ID"
 msgstr "Készlet tétel ID"
 
-#: stock/admin.py:168
+#: stock/admin.py:168 stock/api.py:566
 msgid "Status Code"
 msgstr "Státuszkód"
 
@@ -7468,23 +7468,23 @@ msgstr "Leltár"
 msgid "Expiry Date"
 msgstr "Lejárati dátum"
 
-#: stock/api.py:310
+#: stock/api.py:261
 msgid "Filter by location depth"
 msgstr "Hely mélységre szűrés"
 
-#: stock/api.py:330
+#: stock/api.py:281
 msgid "Filter by top-level locations"
 msgstr "Csúcs készlethelyre szűrés"
 
-#: stock/api.py:345
+#: stock/api.py:296
 msgid "Include sub-locations in filtered results"
 msgstr "Szűrt eredmények tartalmazzák az alhelyeket"
 
-#: stock/api.py:366 stock/serializers.py:1217
+#: stock/api.py:317 stock/serializers.py:1217
 msgid "Parent Location"
 msgstr "Szülő hely"
 
-#: stock/api.py:367
+#: stock/api.py:318
 msgid "Filter by parent location"
 msgstr "Szülő helyre szűrés"
 
@@ -7492,15 +7492,15 @@ msgstr "Szülő helyre szűrés"
 msgid "External Location"
 msgstr "Külső hely"
 
-#: stock/api.py:803
+#: stock/api.py:788
 msgid "Part Tree"
 msgstr "Alkatrész fa"
 
-#: stock/api.py:833
+#: stock/api.py:818
 msgid "Expiry date before"
 msgstr "Lejárat előtt"
 
-#: stock/api.py:837
+#: stock/api.py:822
 msgid "Expiry date after"
 msgstr "Lejárat után"
 
@@ -7508,23 +7508,23 @@ msgstr "Lejárat után"
 msgid "Stale"
 msgstr "Állott"
 
-#: stock/api.py:927
+#: stock/api.py:925
 msgid "Quantity is required"
 msgstr "Mennyiség megadása kötelező"
 
-#: stock/api.py:932
+#: stock/api.py:930
 msgid "Valid part must be supplied"
 msgstr "Egy érvényes alkatrészt meg kell adni"
 
-#: stock/api.py:959
+#: stock/api.py:957
 msgid "The given supplier part does not exist"
 msgstr "A megadott beszállítói alkatrész nem létezik"
 
-#: stock/api.py:969
+#: stock/api.py:967
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "A beszállítói alkatrészhez van megadva csomagolási mennyiség, de a use_pack_size flag nincs beállítva"
 
-#: stock/api.py:996
+#: stock/api.py:994
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Sorozatszámot nem lehet megadni nem követésre kötelezett alkatrész esetén"
 

@@ -3,12 +3,12 @@ import { Group } from '@mantine/core';
 
 import { ColorToggle } from '../../items/ColorToggle';
 import { StylishText } from '../../items/StylishText';
-import { DashboardWidgetProps } from '../DashboardWidget';
+import type { DashboardWidgetProps } from '../DashboardWidget';
 
 function ColorToggleWidget(title: string) {
   return (
-    <Group justify="space-between" wrap="nowrap">
-      <StylishText size="lg">{title}</StylishText>
+    <Group justify='space-between' wrap='nowrap'>
+      <StylishText size='lg'>{title}</StylishText>
       <ColorToggle />
     </Group>
   );

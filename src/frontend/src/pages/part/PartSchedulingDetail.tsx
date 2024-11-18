@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ChartTooltipProps, LineChart } from '@mantine/charts';
+import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Alert,
   Center,
@@ -9,7 +9,7 @@ import {
   SimpleGrid,
   Text
 } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatDate } from '../../defaults/formatters';
@@ -18,7 +18,7 @@ import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../../tables/Column';
+import type { TableColumn } from '../../tables/Column';
 import { DateColumn, DescriptionColumn } from '../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { TableHoverCard } from '../../tables/TableHoverCard';
@@ -26,7 +26,7 @@ import { TableHoverCard } from '../../tables/TableHoverCard';
 /*
  * Render a tooltip for the chart, with correct date information
  */
-function ChartTooltip({ label, payload }: ChartTooltipProps) {
+function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   if (!payload) {
     return null;
   }
@@ -40,23 +40,25 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
   const maximum = payload.find((item) => item.name == 'maximum');
 
   return (
-    <Paper px="md" py="sm" withBorder shadow="md" radius="md">
-      <Text key="title">{label}</Text>
+    <Paper px='md' py='sm' withBorder shadow='md' radius='md'>
+      <Text key='title'>{label}</Text>
       <Divider />
-      <Text key="maximum" c={maximum?.color} fz="sm">
+      <Text key='maximum' c={maximum?.color} fz='sm'>
         {t`Maximum`} : {maximum?.value}
       </Text>
-      <Text key="scheduled" c={scheduled?.color} fz="sm">
+      <Text key='scheduled' c={scheduled?.color} fz='sm'>
         {t`Scheduled`} : {scheduled?.value}
       </Text>
-      <Text key="minimum" c={minimum?.color} fz="sm">
+      <Text key='minimum' c={minimum?.color} fz='sm'>
         {t`Minimum`} : {minimum?.value}
       </Text>
     </Paper>
   );
 }
 
-export default function PartSchedulingDetail({ part }: { part: any }) {
+export default function PartSchedulingDetail({
+  part
+}: Readonly<{ part: any }>) {
   const table = useTable('part-scheduling');
   const navigate = useNavigate();
 
@@ -81,13 +83,13 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
         switchable: false,
         render: (record: any) => {
           let q = record.quantity;
-          let extra: ReactNode[] = [];
+          const extra: ReactNode[] = [];
 
           if (record.speculative_quantity != 0) {
             q = record.speculative_quantity;
             extra.push(
               <Text
-                size="sm"
+                size='sm'
                 key={'speculative'}
               >{t`Quantity is speculative`}</Text>
             );
@@ -97,18 +99,18 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
             extra.push(
               <Text
                 key={'null-date'}
-                size="sm"
+                size='sm'
               >{t`No date available for provided quantity`}</Text>
             );
           } else if (new Date(record.date) < new Date()) {
             extra.push(
-              <Text size="sm" key={'past-date'}>{t`Date is in the past`}</Text>
+              <Text size='sm' key={'past-date'}>{t`Date is in the past`}</Text>
             );
           }
 
           return (
             <TableHoverCard
-              value={<Text key="quantity">{q}</Text>}
+              value={<Text key='quantity'>{q}</Text>}
               title={t`Scheduled Quantity`}
               extra={extra}
             />
@@ -138,7 +140,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
 
     // First, iterate through each entry and find any entries without an associated date, or in the past
     table.records.forEach((record) => {
-      let q = record.quantity + record.speculative_quantity;
+      const q = record.quantity + record.speculative_quantity;
 
       if (record.date == null || new Date(record.date) < today) {
         if (q < 0) {
@@ -150,7 +152,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
     });
 
     // Construct initial chart entry (for today)
-    let entries: any[] = [
+    const entries: any[] = [
       {
         // date: formatDate(today.toISOString()),
         date: today.valueOf(),
@@ -163,7 +165,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
     ];
 
     table.records.forEach((record) => {
-      let q = record.quantity + record.speculative_quantity;
+      const q = record.quantity + record.speculative_quantity;
 
       if (!record.date) {
         return;
@@ -237,7 +239,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
   return (
     <>
       {!table.isLoading && !hasSchedulingInfo && (
-        <Alert color="blue" title={t`No information available`}>
+        <Alert color='blue' title={t`No information available`}>
           <Text>{t`There is no scheduling information available for the selected part`}</Text>
         </Alert>
       )}
@@ -265,7 +267,7 @@ export default function PartSchedulingDetail({ part }: { part: any }) {
           <LineChart
             data={chartData}
             mah={'500px'}
-            dataKey="date"
+            dataKey='date'
             withLegend
             withYAxis
             tooltipProps={{

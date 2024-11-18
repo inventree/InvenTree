@@ -112,7 +112,7 @@ class MachineConfig(models.Model):
         """Get machine errors for django admin interface."""
         return format_html_join(
             mark_safe('<br>'), '{}', ((str(error),) for error in self.errors)
-        ) or mark_safe(f"<i>{_('No errors')}</i>")
+        ) or mark_safe(f'<i>{_("No errors")}</i>')
 
     @admin.display(description=_('Machine status'))
     def get_machine_status(self):

@@ -30,7 +30,7 @@ import {
   MinDateFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -113,7 +113,7 @@ export function BuildOrderTable({
   const ownerFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    let filters: TableFilter[] = [
+    const filters: TableFilter[] = [
       {
         name: 'outstanding',
         type: 'boolean',
@@ -187,7 +187,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
-        key="add-build-order"
+        key='add-build-order'
       />
     ];
   }, [user]);

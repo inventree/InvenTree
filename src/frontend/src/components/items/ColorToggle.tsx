@@ -7,15 +7,15 @@ export function ColorToggle() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (
-    <Group justify="center">
+    <Group justify='center'>
       <ActionIcon
         onClick={toggleColorScheme}
-        size="lg"
+        size='lg'
         style={{
           color:
             colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
         }}
-        variant="transparent"
+        variant='transparent'
       >
         {colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
       </ActionIcon>

@@ -22,7 +22,7 @@ test('Quick Command - No Keys', async ({ page }) => {
     .getByRole('button', { name: 'Dashboard Go to the InvenTree' })
     .click();
 
-  await page.getByText('InvenTree Demo Server').waitFor();
+  await page.getByText('InvenTree Demo Server - ').waitFor();
   await page.waitForURL('**/platform/home');
 
   // Use navigation menu

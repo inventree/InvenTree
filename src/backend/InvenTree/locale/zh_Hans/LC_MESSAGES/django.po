@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:273
+#: InvenTree/api.py:306
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:390
+#: InvenTree/api.py:428
 msgid "Invalid items list provided"
 msgstr "提供了无效的单位"
 
-#: InvenTree/api.py:399
+#: InvenTree/api.py:437
 msgid "Invalid filters provided"
 msgstr "提供了无效的过滤器"
 
-#: InvenTree/api.py:404
+#: InvenTree/api.py:442
 msgid "No items found to delete"
 msgstr "未找到要删除的项目"
 
-#: InvenTree/api.py:518
+#: InvenTree/api.py:556
 msgid "User does not have permission to view this model"
 msgstr "用户没有权限查阅当前模型。"
 
@@ -60,7 +60,7 @@ msgstr "提供的数量无效"
 msgid "Error details can be found in the admin panel"
 msgstr "在管理面板中可以找到错误详细信息"
 
-#: InvenTree/fields.py:135
+#: InvenTree/fields.py:136
 msgid "Enter date"
 msgstr "输入日期"
 
@@ -151,35 +151,35 @@ msgstr "从这个值中删除 HTML 标签"
 msgid "Data contains prohibited markdown content"
 msgstr "数据包含禁止的 markdown 内容"
 
-#: InvenTree/helpers_model.py:130
+#: InvenTree/helpers_model.py:131
 msgid "Connection error"
 msgstr "连接错误"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:136 InvenTree/helpers_model.py:143
 msgid "Server responded with invalid status code"
 msgstr "服务器响应状态码无效"
 
-#: InvenTree/helpers_model.py:138
+#: InvenTree/helpers_model.py:139
 msgid "Exception occurred"
 msgstr "发生异常"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:149
 msgid "Server responded with invalid Content-Length value"
 msgstr "服务器响应的内容长度值无效"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Image size is too large"
 msgstr "图片尺寸过大"
 
-#: InvenTree/helpers_model.py:163
+#: InvenTree/helpers_model.py:164
 msgid "Image download exceeded maximum size"
 msgstr "图片下载超出最大尺寸"
 
-#: InvenTree/helpers_model.py:168
+#: InvenTree/helpers_model.py:169
 msgid "Remote server returned empty response"
 msgstr "远程服务器返回了空响应"
 
-#: InvenTree/helpers_model.py:176
+#: InvenTree/helpers_model.py:177
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
@@ -460,7 +460,7 @@ msgstr "伺服器紀錄了一個錯誤。"
 
 #: InvenTree/serializers.py:63 part/models.py:4434
 msgid "Must be a valid number"
-msgstr "必須是有效的數字"
+msgstr "必须是有效数字"
 
 #: InvenTree/serializers.py:100 company/models.py:183 part/models.py:3159
 msgid "Currency"
@@ -538,7 +538,7 @@ msgstr "請使用重設密碼功能來登入"
 
 #: InvenTree/serializers.py:531
 msgid "Welcome to InvenTree"
-msgstr "歡迎使用 InvenTree"
+msgstr "欢迎使用 InventTree"
 
 #: InvenTree/serializers.py:589
 msgid "Invalid value"
@@ -5047,7 +5047,7 @@ msgstr "已加星标"
 msgid "Filter by starred categories"
 msgstr "按星标类别筛选"
 
-#: part/api.py:123 stock/api.py:310
+#: part/api.py:123 stock/api.py:261
 msgid "Depth"
 msgstr "深度"
 
@@ -5055,7 +5055,7 @@ msgstr "深度"
 msgid "Filter by category depth"
 msgstr "按类别深度筛选"
 
-#: part/api.py:141 stock/api.py:328
+#: part/api.py:141 stock/api.py:279
 msgid "Top Level"
 msgstr "顶级"
 
@@ -5063,7 +5063,7 @@ msgstr "顶级"
 msgid "Filter by top-level categories"
 msgstr "按顶级类别筛选"
 
-#: part/api.py:156 stock/api.py:343
+#: part/api.py:156 stock/api.py:294
 msgid "Cascade"
 msgstr "级联"
 
@@ -7382,11 +7382,11 @@ msgstr "已安装的项目"
 msgid "Serial"
 msgstr "系列"
 
-#: report/templatetags/report.py:98
+#: report/templatetags/report.py:100
 msgid "Asset file does not exist"
 msgstr "资产文件不存在"
 
-#: report/templatetags/report.py:154 report/templatetags/report.py:233
+#: report/templatetags/report.py:157 report/templatetags/report.py:233
 msgid "Image file not found"
 msgstr "找不到图片文件"
 
@@ -7394,7 +7394,7 @@ msgstr "找不到图片文件"
 msgid "part_image tag requires a Part instance"
 msgstr "parpart_image 标签需要一个零件实例"
 
-#: report/templatetags/report.py:299
+#: report/templatetags/report.py:301
 msgid "company_image tag requires a Company instance"
 msgstr "公司_图片标签需要一个公司实例"
 
@@ -7410,7 +7410,7 @@ msgstr "地点路径"
 msgid "Stock Item ID"
 msgstr "库存项 ID"
 
-#: stock/admin.py:168
+#: stock/admin.py:168 stock/api.py:566
 msgid "Status Code"
 msgstr "状态代码"
 
@@ -7466,23 +7466,23 @@ msgstr "库存盘点"
 msgid "Expiry Date"
 msgstr "有效期至"
 
-#: stock/api.py:310
+#: stock/api.py:261
 msgid "Filter by location depth"
 msgstr "按位置深度筛选"
 
-#: stock/api.py:330
+#: stock/api.py:281
 msgid "Filter by top-level locations"
 msgstr "按顶级位置筛选"
 
-#: stock/api.py:345
+#: stock/api.py:296
 msgid "Include sub-locations in filtered results"
 msgstr "在筛选结果中包含子地点"
 
-#: stock/api.py:366 stock/serializers.py:1217
+#: stock/api.py:317 stock/serializers.py:1217
 msgid "Parent Location"
 msgstr "上级地点"
 
-#: stock/api.py:367
+#: stock/api.py:318
 msgid "Filter by parent location"
 msgstr "按上级位置筛选"
 
@@ -7490,15 +7490,15 @@ msgstr "按上级位置筛选"
 msgid "External Location"
 msgstr "外部地点"
 
-#: stock/api.py:803
+#: stock/api.py:788
 msgid "Part Tree"
 msgstr "零件树"
 
-#: stock/api.py:833
+#: stock/api.py:818
 msgid "Expiry date before"
 msgstr "过期日期前"
 
-#: stock/api.py:837
+#: stock/api.py:822
 msgid "Expiry date after"
 msgstr "过期日期后"
 
@@ -7506,23 +7506,23 @@ msgstr "过期日期后"
 msgid "Stale"
 msgstr "过期"
 
-#: stock/api.py:927
+#: stock/api.py:925
 msgid "Quantity is required"
 msgstr "请先输入数量"
 
-#: stock/api.py:932
+#: stock/api.py:930
 msgid "Valid part must be supplied"
 msgstr "必须提供有效的零件"
 
-#: stock/api.py:959
+#: stock/api.py:957
 msgid "The given supplier part does not exist"
 msgstr "给定的供应商零件不存在"
 
-#: stock/api.py:969
+#: stock/api.py:967
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "供应商零件有定义的包装大小，但 use_pack_size 标志未设置"
 
-#: stock/api.py:996
+#: stock/api.py:994
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "不能为不可跟踪的零件提供序列号"
 

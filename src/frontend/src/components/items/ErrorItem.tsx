@@ -9,7 +9,7 @@ export function ErrorItem({
 
   return (
     <>
-      <Alert color="red" title={t`An error occurred`}>
+      <Alert color='red' title={t`An error occurred`}>
         <Text>{error_message}</Text>
       </Alert>
     </>

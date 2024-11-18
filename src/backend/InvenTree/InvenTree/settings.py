@@ -349,8 +349,8 @@ AUTHENTICATION_BACKENDS = CONFIG.get(
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
+    import django_auth_ldap.config
     import ldap
-    from django_auth_ldap.config import GroupOfUniqueNamesType, LDAPSearch
 
     AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
@@ -401,7 +401,7 @@ if LDAP_AUTH:
     AUTH_LDAP_BIND_PASSWORD = get_setting(
         'INVENTREE_LDAP_BIND_PASSWORD', 'ldap.bind_password'
     )
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
         ldap.SCOPE_SUBTREE,
         str(
@@ -428,12 +428,38 @@ if LDAP_AUTH:
         'INVENTREE_LDAP_CACHE_TIMEOUT', 'ldap.cache_timeout', 3600, int
     )
 
-    AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    AUTH_LDAP_MIRROR_GROUPS = get_boolean_setting(
+        'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups', False
+    )
+    AUTH_LDAP_GROUP_OBJECT_CLASS = get_setting(
+        'INVENTREE_LDAP_GROUP_OBJECT_CLASS',
+        'ldap.group_object_class',
+        'groupOfUniqueNames',
+        str,
+    )
+    AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
         ldap.SCOPE_SUBTREE,
-        '(objectClass=groupOfUniqueNames)',
+        f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
-    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
+    AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
+        'INVENTREE_LDAP_GROUP_TYPE_CLASS',
+        'ldap.group_type_class',
+        'GroupOfUniqueNamesType',
+        str,
+    )
+    AUTH_LDAP_GROUP_TYPE_CLASS_ARGS = get_setting(
+        'INVENTREE_LDAP_GROUP_TYPE_CLASS_ARGS', 'ldap.group_type_class_args', [], list
+    )
+    AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS = get_setting(
+        'INVENTREE_LDAP_GROUP_TYPE_CLASS_KWARGS',
+        'ldap.group_type_class_kwargs',
+        {'name_attr': 'cn'},
+        dict,
+    )
+    AUTH_LDAP_GROUP_TYPE = getattr(django_auth_ldap.config, AUTH_LDAP_GROUP_TYPE_CLASS)(
+        *AUTH_LDAP_GROUP_TYPE_CLASS_ARGS, **AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS
+    )
     AUTH_LDAP_REQUIRE_GROUP = get_setting(
         'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
     )

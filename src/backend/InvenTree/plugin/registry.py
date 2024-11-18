@@ -159,7 +159,7 @@ class PluginsRegistry:
         # Update the registry hash value
         self.update_plugin_hash()
 
-    def call_plugin_function(self, slug, func, *args, **kwargs):
+    def call_plugin_function(self, slug: str, func: str, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
         As this is intended to be run by the background worker,
@@ -807,7 +807,7 @@ class PluginsRegistry:
 registry: PluginsRegistry = PluginsRegistry()
 
 
-def call_function(plugin_name, function_name, *args, **kwargs):
+def call_plugin_function(plugin_name: str, function_name: str, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
 

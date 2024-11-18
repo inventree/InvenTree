@@ -372,6 +372,7 @@ def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
     manage(c, 'clean_settings')
+    success('Settings cleaned successfully')
 
 
 @task(help={'mail': "mail of the user who's MFA should be disabled"})
@@ -621,6 +622,8 @@ def update(
 
     if not skip_static:
         static(c, frontend=not no_frontend)
+
+    success('InvenTree update complete!')
 
 
 # Data tasks
@@ -1438,7 +1441,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
             error('ERROR: Cannot find any workflow runs for current SHA')
             return
         print(
-            f"Found workflow {qc_run['name']} (run {qc_run['run_number']}-{qc_run['run_attempt']})"
+            f'Found workflow {qc_run["name"]} (run {qc_run["run_number"]}-{qc_run["run_attempt"]})'
         )
 
         # get frontend-build artifact from all artifacts available for this workflow run
@@ -1453,7 +1456,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
             print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
         print(
-            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes'] / 1e6:.2f}MB)."
+            f'Found artifact {frontend_artifact["name"]} with id {frontend_artifact["id"]} ({frontend_artifact["size_in_bytes"] / 1e6:.2f}MB).'
         )
 
         print(

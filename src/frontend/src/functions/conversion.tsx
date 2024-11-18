@@ -15,7 +15,7 @@ export function isTrue(value: any): boolean {
     return false;
   }
 
-  let s = String(value).trim().toLowerCase();
+  const s = String(value).trim().toLowerCase();
 
   return ['true', 'yes', '1', 'on', 't', 'y'].includes(s);
 }
@@ -29,7 +29,7 @@ export function isTrue(value: any): boolean {
  * Allows for retrieval of nested items in an object.
  */
 export function resolveItem(obj: any, path: string): any {
-  let properties = path.split('.');
+  const properties = path.split('.');
   return properties.reduce((prev, curr) => prev?.[curr], obj);
 }
 

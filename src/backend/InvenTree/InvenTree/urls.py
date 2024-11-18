@@ -30,7 +30,6 @@ import report.api
 import stock.api
 import users.api
 from plugin.urls import get_plugin_urls
-from stock.api import test_statistics_api_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
@@ -86,7 +85,6 @@ apipatterns = [
             ),
         ]),
     ),
-    path('test-statistics/', include(test_statistics_api_urls)),
     path('user/', include(users.api.user_urls)),
     path('web/', include(web_api_urls)),
     # Plugin endpoints
@@ -231,7 +229,7 @@ urlpatterns.append(
     )
 )
 
-# Send any unknown URLs to the parts page
+# Send any unknown URLs to the index page
 urlpatterns += [
     re_path(
         r'^.*$',

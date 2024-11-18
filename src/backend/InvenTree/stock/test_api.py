@@ -2399,38 +2399,3 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             'api-stock-item-metadata': StockItem,
         }.items():
             self.metatester(apikey, model)
-
-
-class StockStatisticsTest(StockAPITestCase):
-    """Tests for the StockStatistics API endpoints."""
-
-    fixtures = [*StockAPITestCase.fixtures, 'build']
-
-    def test_test_statistics(self):
-        """Test the test statistics API endpoints."""
-        part = Part.objects.first()
-        response = self.get(
-            reverse('api-test-statistics-by-part', kwargs={'pk': part.pk}),
-            {},
-            expected_code=200,
-        )
-        self.assertEqual(response.data, [{}])
-
-        # Now trackable part
-        part1 = Part.objects.filter(trackable=True).first()
-        response = self.get(
-            reverse(
-                'api-test-statistics-by-part',
-                kwargs={'pk': part1.stock_items.first().pk},
-            ),
-            {},
-            expected_code=404,
-        )
-        self.assertIn('detail', response.data)
-
-        # 105
-
-        bld = build.models.Build.objects.first()
-        url = reverse('api-test-statistics-by-build', kwargs={'pk': bld.pk})
-        response = self.get(url, {}, expected_code=200)
-        self.assertEqual(response.data, [{}])

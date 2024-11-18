@@ -1,15 +1,15 @@
 import { t } from '@lingui/macro';
 import { Alert } from '@mantine/core';
-import { ErrorBoundary, FallbackRender } from '@sentry/react';
+import { ErrorBoundary, type FallbackRender } from '@sentry/react';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback } from 'react';
 
 function DefaultFallback({ title }: Readonly<{ title: string }>): ReactNode {
   return (
     <Alert
-      color="red"
+      color='red'
       icon={<IconExclamationCircle />}
-      title={t`Error rendering component` + `: ${title}`}
+      title={`${t`Error rendering component`}: ${title}`}
     >
       {t`An error occurred while rendering this component. Refer to the console for more information.`}
     </Alert>

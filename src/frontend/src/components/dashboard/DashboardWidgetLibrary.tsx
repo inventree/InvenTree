@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 
 import { ModelType } from '../../enums/ModelType';
-import { DashboardWidgetProps } from './DashboardWidget';
+import type { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';

@@ -89,8 +89,8 @@ export default function Set_Password() {
 
   return (
     <LanguageContext>
-      <Center mih="100vh">
-        <Container w="md" miw={425}>
+      <Center mih='100vh'>
+        <Container w='md' miw={425}>
           <Stack>
             <Title>
               <Trans>Set new password</Trans>
@@ -103,7 +103,7 @@ export default function Set_Password() {
                 {...simpleForm.getInputProps('password')}
               />
             </Stack>
-            <Button type="submit" onClick={handleSet}>
+            <Button type='submit' onClick={handleSet}>
               <Trans>Send Email</Trans>
             </Button>
           </Stack>

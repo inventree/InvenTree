@@ -1720,7 +1720,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         line_item = data['line_item']
         stock_items = data['stock_items']
-        shipment = data['shipment']
+        shipment = data.get('shipment', None)
 
         allocations = []
 
@@ -1758,10 +1758,10 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         """Run validation against the provided shipment instance."""
         order = self.context['order']
 
-        if shipment.shipment_date is not None:
+        if shipment and shipment.shipment_date is not None:
             raise ValidationError(_('Shipment has already been shipped'))
 
-        if shipment.order != order:
+        if shipment and shipment.order != order:
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment

@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:273
+#: InvenTree/api.py:306
 msgid "API endpoint not found"
 msgstr "Endpoint API non trovato"
 
-#: InvenTree/api.py:390
+#: InvenTree/api.py:428
 msgid "Invalid items list provided"
-msgstr ""
+msgstr "Lista elementi fornita non valida"
 
-#: InvenTree/api.py:399
+#: InvenTree/api.py:437
 msgid "Invalid filters provided"
-msgstr ""
+msgstr "Filtri forniti non validi"
 
-#: InvenTree/api.py:404
+#: InvenTree/api.py:442
 msgid "No items found to delete"
-msgstr ""
+msgstr "Nessun elemento trovato da eliminare"
 
-#: InvenTree/api.py:518
+#: InvenTree/api.py:556
 msgid "User does not have permission to view this model"
 msgstr "L'utente non ha i permessi per vedere questo modello"
 
@@ -60,7 +60,7 @@ msgstr "Quantità inserita non valida"
 msgid "Error details can be found in the admin panel"
 msgstr "I dettagli dell'errore possono essere trovati nel pannello di amministrazione"
 
-#: InvenTree/fields.py:135
+#: InvenTree/fields.py:136
 msgid "Enter date"
 msgstr "Inserisci la data"
 
@@ -114,7 +114,7 @@ msgstr "La registrazione è disabilitata."
 
 #: InvenTree/helpers.py:508
 msgid "Cannot serialize more than 1000 items at once"
-msgstr ""
+msgstr "Impossibile serializzare più di 1000 elementi contemporaneamente"
 
 #: InvenTree/helpers.py:514
 msgid "Empty serial number string"
@@ -128,7 +128,7 @@ msgstr "Seriale Duplicato"
 #: InvenTree/helpers.py:643 InvenTree/helpers.py:662
 #, python-brace-format
 msgid "Invalid group: {group}"
-msgstr ""
+msgstr "Gruppo non valido: {group}"
 
 #: InvenTree/helpers.py:606
 #, python-brace-format
@@ -149,37 +149,37 @@ msgstr "Rimuovi i tag HTML da questo valore"
 
 #: InvenTree/helpers.py:855
 msgid "Data contains prohibited markdown content"
-msgstr ""
+msgstr "I dati contengono un contenuto in markdown proibito"
 
-#: InvenTree/helpers_model.py:130
+#: InvenTree/helpers_model.py:131
 msgid "Connection error"
 msgstr "Errore di connessione"
 
-#: InvenTree/helpers_model.py:135 InvenTree/helpers_model.py:142
+#: InvenTree/helpers_model.py:136 InvenTree/helpers_model.py:143
 msgid "Server responded with invalid status code"
 msgstr "Il server ha risposto con un codice di stato non valido"
 
-#: InvenTree/helpers_model.py:138
+#: InvenTree/helpers_model.py:139
 msgid "Exception occurred"
 msgstr "Si è verificata un'eccezione"
 
-#: InvenTree/helpers_model.py:148
+#: InvenTree/helpers_model.py:149
 msgid "Server responded with invalid Content-Length value"
 msgstr "Il server ha risposto con valore Content-Length non valido"
 
-#: InvenTree/helpers_model.py:151
+#: InvenTree/helpers_model.py:152
 msgid "Image size is too large"
 msgstr "Immagine troppo grande"
 
-#: InvenTree/helpers_model.py:163
+#: InvenTree/helpers_model.py:164
 msgid "Image download exceeded maximum size"
 msgstr "Il download dell'immagine ha superato la dimensione massima"
 
-#: InvenTree/helpers_model.py:168
+#: InvenTree/helpers_model.py:169
 msgid "Remote server returned empty response"
 msgstr "Il server remoto ha restituito una risposta vuota"
 
-#: InvenTree/helpers_model.py:176
+#: InvenTree/helpers_model.py:177
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fornito non è un file immagine valido"
 
@@ -261,7 +261,7 @@ msgstr "Coreano"
 
 #: InvenTree/locales.py:39
 msgid "Lithuanian"
-msgstr ""
+msgstr "Lituano"
 
 #: InvenTree/locales.py:40
 msgid "Latvian"
@@ -337,7 +337,7 @@ msgstr "Cinese (Tradizionale)"
 
 #: InvenTree/magic_login.py:28
 msgid "Log in to the app"
-msgstr ""
+msgstr "Accedi all'app"
 
 #: InvenTree/magic_login.py:38 InvenTree/serializers.py:416
 #: company/models.py:133
@@ -443,12 +443,12 @@ msgstr "Trovato codice a barre esistente"
 
 #: InvenTree/models.py:1112
 msgid "Task Failure"
-msgstr ""
+msgstr "Fallimento Attività"
 
 #: InvenTree/models.py:1114
 #, python-brace-format
 msgid "Background worker task '{instance.func}' failed after {n} attempts"
-msgstr ""
+msgstr "Attività di lavoro in background '{instance.func}' fallita dopo i tentativi di {n}"
 
 #: InvenTree/models.py:1142
 msgid "Server Error"
@@ -534,7 +534,7 @@ msgstr "Il tuo account è stato creato."
 
 #: InvenTree/serializers.py:525
 msgid "Please use the password reset function to login"
-msgstr "Si prega di utilizzare la funzione di reset password per accedere"
+msgstr "Si prega di utilizzare la funzione di reimpostazione password per accedere"
 
 #: InvenTree/serializers.py:531
 msgid "Welcome to InvenTree"
@@ -554,7 +554,7 @@ msgstr "Seleziona un file per il caricamento"
 
 #: InvenTree/serializers.py:632 common/files.py:63
 msgid "Unsupported file format"
-msgstr ""
+msgstr "Formato file non supportato"
 
 #: InvenTree/serializers.py:638
 msgid "File is too large"
@@ -600,7 +600,7 @@ msgstr "Il download delle immagini da URL remoto non è abilitato"
 
 #: InvenTree/serializers.py:917
 msgid "Failed to download image from remote URL"
-msgstr ""
+msgstr "Impossibile scaricare l'immagine dall'URL remoto"
 
 #: InvenTree/validators.py:32
 msgid "Invalid physical unit"
@@ -633,11 +633,11 @@ msgstr ""
 
 #: build/api.py:93
 msgid "Ancestor Build"
-msgstr ""
+msgstr "Produzione Antenata"
 
 #: build/api.py:109 order/api.py:90
 msgid "Assigned to me"
-msgstr ""
+msgstr "Assegnato a me"
 
 #: build/api.py:126
 #: report/templates/report/inventree_build_order_report.html:152
@@ -646,7 +646,7 @@ msgstr "Inviato da"
 
 #: build/api.py:148
 msgid "Assigned To"
-msgstr ""
+msgstr "Assegnato a"
 
 #: build/api.py:310
 msgid "Build must be cancelled before it can be deleted"
@@ -671,7 +671,7 @@ msgstr "Monitorato"
 
 #: build/api.py:355 build/serializers.py:1331 part/models.py:1229
 msgid "Testable"
-msgstr ""
+msgstr "Testabile"
 
 #: build/api.py:357 part/admin.py:144
 msgid "Allocated"
@@ -893,7 +893,7 @@ msgstr "Codice del progetto per questo ordine di produzione"
 
 #: build/models.py:648 build/models.py:775
 msgid "Failed to offload task to complete build allocations"
-msgstr ""
+msgstr "Impossibile scaricare l'attività per completare le allocazioni di build"
 
 #: build/models.py:670
 #, python-brace-format
@@ -930,11 +930,11 @@ msgstr "La quantità non può essere maggiore della quantità in uscita"
 #: build/models.py:1119 build/serializers.py:604
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr ""
+msgstr "L'output della build {serial} non ha superato tutti i test richiesti"
 
 #: build/models.py:1470
 msgid "Build Order Line Item"
-msgstr ""
+msgstr "Elemento di Riga Ordine di Produzione"
 
 #: build/models.py:1495
 msgid "Build object"
@@ -1014,7 +1014,7 @@ msgstr "Destinazione articolo in giacenza"
 
 #: build/serializers.py:108
 msgid "Build Level"
-msgstr ""
+msgstr "Livello Produzione"
 
 #: build/serializers.py:115 build/serializers.py:1231 build/serializers.py:1320
 #: part/admin.py:41 part/admin.py:408 part/models.py:4150 part/stocktake.py:219
@@ -1024,15 +1024,15 @@ msgstr "Nome Articolo"
 
 #: build/serializers.py:128
 msgid "Project Code Label"
-msgstr ""
+msgstr "Etichetta Codice Progetto"
 
 #: build/serializers.py:134
 msgid "Create Child Builds"
-msgstr ""
+msgstr "Crea Produzioni Figlie"
 
 #: build/serializers.py:135
 msgid "Automatically generate child build orders"
-msgstr ""
+msgstr "Genera automaticamente ordini di produzione figli"
 
 #: build/serializers.py:216 build/serializers.py:965
 msgid "Build Output"
@@ -1085,7 +1085,7 @@ msgstr "Posizione"
 
 #: build/serializers.py:360
 msgid "Stock location for build output"
-msgstr ""
+msgstr "Posizione dello stock per l'output della produzione"
 
 #: build/serializers.py:374
 msgid "Auto Allocate Serial Numbers"
@@ -1109,15 +1109,15 @@ msgstr "Deve essere fornito un elenco dei risultati di produzione"
 
 #: build/serializers.py:498
 msgid "Stock location for scrapped outputs"
-msgstr ""
+msgstr "Posizione dello stock per l'output di produzione rimosso"
 
 #: build/serializers.py:504
 msgid "Discard Allocations"
-msgstr ""
+msgstr "Scarta Assegnazioni"
 
 #: build/serializers.py:505
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr ""
+msgstr "Scartare tutte le assegnazioni di magazzino per gli output rimossi"
 
 #: build/serializers.py:510
 msgid "Reason for scrapping build output(s)"
@@ -1535,7 +1535,7 @@ msgstr ""
 
 #: common/models.py:783 common/models.py:2179 common/models.py:2556
 msgid "Settings key"
-msgstr ""
+msgstr "Tasto impostazioni"
 
 #: common/models.py:787
 msgid "Settings value"
@@ -1762,19 +1762,19 @@ msgstr ""
 
 #: common/models.py:1400
 msgid "Store Barcode Results"
-msgstr ""
+msgstr "Memorizza Risultati Barcode"
 
 #: common/models.py:1401
 msgid "Store barcode scan results in the database"
-msgstr ""
+msgstr "Memorizza i risultati della scansione del codice a barre nel database"
 
 #: common/models.py:1406
 msgid "Barcode Scans Maximum Count"
-msgstr ""
+msgstr "Numero Massimo Scansioni Barcode"
 
 #: common/models.py:1407
 msgid "Maximum number of barcode scan results to store"
-msgstr ""
+msgstr "Numero massimo di risultati della scansione del codice a barre da memorizzare"
 
 #: common/models.py:1412
 msgid "Barcode Input Delay"
@@ -2552,11 +2552,11 @@ msgstr "Abilita plugin per rispondere agli eventi interni"
 
 #: common/models.py:2109
 msgid "Enable interface integration"
-msgstr ""
+msgstr "Abilita integrazione interfaccia"
 
 #: common/models.py:2110
 msgid "Enable plugins to integrate into the user interface"
-msgstr ""
+msgstr "Abilita i plugin per l'integrazione nell'interfaccia utente"
 
 #: common/models.py:2116
 msgid "Enable project codes"
@@ -2616,11 +2616,11 @@ msgstr ""
 
 #: common/models.py:2167
 msgid "Create Template on Upload"
-msgstr ""
+msgstr "Crea modello al caricamento"
 
 #: common/models.py:2169
 msgid "Create a new test template when uploading test data which does not match an existing template"
-msgstr ""
+msgstr "Crea un nuovo modello di test quando si caricano dati di test che non corrispondono a un modello esistente"
 
 #: common/models.py:2222
 msgid "Hide inactive parts"
@@ -3269,7 +3269,7 @@ msgstr ""
 
 #: common/models.py:3307 part/serializers.py:273
 msgid "Label"
-msgstr ""
+msgstr "Etichetta"
 
 #: common/models.py:3308
 msgid "Label that will be displayed in the frontend"
@@ -3349,7 +3349,7 @@ msgstr ""
 
 #: common/models.py:3409
 msgid "Barcode Scan"
-msgstr ""
+msgstr "Scansione Codice A Barre"
 
 #: common/models.py:3413 importer/models.py:504 part/models.py:3999
 msgid "Data"
@@ -3357,11 +3357,11 @@ msgstr "Dati"
 
 #: common/models.py:3414
 msgid "Barcode data"
-msgstr ""
+msgstr "Dati del Codice a Barre"
 
 #: common/models.py:3425
 msgid "User who scanned the barcode"
-msgstr ""
+msgstr "Utente che ha scannerizzato il codice a barre"
 
 #: common/models.py:3430 importer/models.py:60
 msgid "Timestamp"
@@ -3369,11 +3369,11 @@ msgstr ""
 
 #: common/models.py:3431
 msgid "Date and time of the barcode scan"
-msgstr ""
+msgstr "Data e ora della scansione del codice a barre"
 
 #: common/models.py:3437
 msgid "URL endpoint which processed the barcode"
-msgstr ""
+msgstr "Endpoint URL che ha elaborato il codice a barre"
 
 #: common/models.py:3444 order/models.py:1426 plugin/serializers.py:89
 msgid "Context"
@@ -3381,15 +3381,15 @@ msgstr "Contesto"
 
 #: common/models.py:3445
 msgid "Context data for the barcode scan"
-msgstr ""
+msgstr "Dati contestuali per la scansione del codice a barre"
 
 #: common/models.py:3452
 msgid "Response"
-msgstr ""
+msgstr "Risposta"
 
 #: common/models.py:3453
 msgid "Response data from the barcode scan"
-msgstr ""
+msgstr "Dati di risposta dalla scansione del codice a barre"
 
 #: common/models.py:3459 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:2648
@@ -3398,7 +3398,7 @@ msgstr "Risultato"
 
 #: common/models.py:3460
 msgid "Was the barcode scan successful?"
-msgstr ""
+msgstr "La scansione del codice a barre è riuscita?"
 
 #: common/notifications.py:328
 #, python-brace-format
@@ -4656,27 +4656,27 @@ msgstr ""
 
 #: order/serializers.py:86
 msgid "Order ID"
-msgstr ""
+msgstr "ID Ordine"
 
 #: order/serializers.py:86
 msgid "ID of the order to duplicate"
-msgstr ""
+msgstr "ID dell'ordine da duplicare"
 
 #: order/serializers.py:92
 msgid "Copy Lines"
-msgstr ""
+msgstr "Copia Linee"
 
 #: order/serializers.py:93
 msgid "Copy line items from the original order"
-msgstr ""
+msgstr "Copia gli elementi di riga dall'ordine originale"
 
 #: order/serializers.py:99
 msgid "Copy Extra Lines"
-msgstr ""
+msgstr "Copia Linee Extra"
 
 #: order/serializers.py:100
 msgid "Copy extra line items from the original order"
-msgstr ""
+msgstr "Copia gli elementi di riga extra dall'ordine originale"
 
 #: order/serializers.py:112
 #: report/templates/report/inventree_purchase_order_report.html:22
@@ -4691,15 +4691,15 @@ msgstr ""
 
 #: order/serializers.py:160
 msgid "Duplicate Order"
-msgstr ""
+msgstr "Duplica Ordine"
 
 #: order/serializers.py:161
 msgid "Specify options for duplicating this order"
-msgstr ""
+msgstr "Specifica le opzioni per duplicare questo ordine"
 
 #: order/serializers.py:233
 msgid "Invalid order ID"
-msgstr ""
+msgstr "ID dell'ordine non corretto"
 
 #: order/serializers.py:372 stock/admin.py:196
 msgid "Supplier Name"
@@ -4832,7 +4832,7 @@ msgstr "Valuta prezzo di vendita"
 
 #: order/serializers.py:1231
 msgid "Allocated Items"
-msgstr ""
+msgstr "Elementi Assegnati"
 
 #: order/serializers.py:1345
 msgid "No shipment details provided"
@@ -4864,7 +4864,7 @@ msgstr "Nessuna corrispondenza trovata per i seguenti numeri di serie"
 
 #: order/serializers.py:1649
 msgid "The following serial numbers are unavailable"
-msgstr ""
+msgstr "I seguenti numeri di serie non sono disponibili"
 
 #: order/serializers.py:1875
 msgid "Return order line item"
@@ -5047,7 +5047,7 @@ msgstr ""
 msgid "Filter by starred categories"
 msgstr ""
 
-#: part/api.py:123 stock/api.py:310
+#: part/api.py:123 stock/api.py:261
 msgid "Depth"
 msgstr ""
 
@@ -5055,7 +5055,7 @@ msgstr ""
 msgid "Filter by category depth"
 msgstr ""
 
-#: part/api.py:141 stock/api.py:328
+#: part/api.py:141 stock/api.py:279
 msgid "Top Level"
 msgstr ""
 
@@ -5063,7 +5063,7 @@ msgstr ""
 msgid "Filter by top-level categories"
 msgstr ""
 
-#: part/api.py:156 stock/api.py:343
+#: part/api.py:156 stock/api.py:294
 msgid "Cascade"
 msgstr ""
 
@@ -5628,7 +5628,7 @@ msgstr ""
 
 #: part/models.py:3619
 msgid "Test templates can only be created for testable parts"
-msgstr ""
+msgstr "Il modello di prova può essere creato solo per gli articoli testabili"
 
 #: part/models.py:3630
 msgid "Test template with the same key already exists for part"
@@ -5940,11 +5940,11 @@ msgstr "Valuta di acquisto di questo articolo in stock"
 
 #: part/serializers.py:268
 msgid "Speculative Quantity"
-msgstr ""
+msgstr "Quantità Speculativa"
 
 #: part/serializers.py:277
 msgid "Model ID"
-msgstr ""
+msgstr "ID Modello"
 
 #: part/serializers.py:324
 msgid "Number of parts using this template"
@@ -6355,7 +6355,7 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:450 plugin/base/barcodes/api.py:664
 msgid "No matching plugin found for barcode data"
-msgstr ""
+msgstr "Nessuna plugin corrispondente trovato per i dati del codice a barre"
 
 #: plugin/base/barcodes/api.py:460
 msgid "Matched supplier part"
@@ -6379,7 +6379,7 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:661
 msgid "No sales order provided"
-msgstr ""
+msgstr "Nessun ordine di vendita fornito"
 
 #: plugin/base/barcodes/api.py:670
 msgid "Barcode does not match an existing stock item"
@@ -6509,39 +6509,39 @@ msgstr ""
 
 #: plugin/base/ui/serializers.py:30
 msgid "Plugin Name"
-msgstr ""
+msgstr "Nome Plugin"
 
 #: plugin/base/ui/serializers.py:34
 msgid "Feature Type"
-msgstr ""
+msgstr "Tipo di funzionalità"
 
 #: plugin/base/ui/serializers.py:39
 msgid "Feature Label"
-msgstr ""
+msgstr "Etichetta Funzionalità"
 
 #: plugin/base/ui/serializers.py:44
 msgid "Feature Title"
-msgstr ""
+msgstr "Titolo della funzionalità"
 
 #: plugin/base/ui/serializers.py:49
 msgid "Feature Description"
-msgstr ""
+msgstr "Descrizione Funzionalità"
 
 #: plugin/base/ui/serializers.py:54
 msgid "Feature Icon"
-msgstr ""
+msgstr "Icona Funzionalità"
 
 #: plugin/base/ui/serializers.py:58
 msgid "Feature Options"
-msgstr ""
+msgstr "Opzioni Funzionalità"
 
 #: plugin/base/ui/serializers.py:61
 msgid "Feature Context"
-msgstr ""
+msgstr "Contesto Funzionalità"
 
 #: plugin/base/ui/serializers.py:64
 msgid "Feature Source (javascript)"
-msgstr ""
+msgstr "Sorgente Funzionalità (javascript)"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:27
 msgid "InvenTree Barcodes"
@@ -6912,79 +6912,79 @@ msgstr ""
 
 #: plugin/samples/integration/user_interface_sample.py:27
 msgid "Enable Part Panels"
-msgstr ""
+msgstr "Abilita Pannelli della Parte"
 
 #: plugin/samples/integration/user_interface_sample.py:28
 msgid "Enable custom panels for Part views"
-msgstr ""
+msgstr "Abilita pannelli personalizzati per le viste Parte"
 
 #: plugin/samples/integration/user_interface_sample.py:33
 msgid "Enable Purchase Order Panels"
-msgstr ""
+msgstr "Abilita i Pannelli Ordine D'Acquisto"
 
 #: plugin/samples/integration/user_interface_sample.py:34
 msgid "Enable custom panels for Purchase Order views"
-msgstr ""
+msgstr "Abilita pannelli personalizzati per le viste Ordine d'Acquisto"
 
 #: plugin/samples/integration/user_interface_sample.py:39
 msgid "Enable Broken Panels"
-msgstr ""
+msgstr "Abilita Pannelli Interrotti"
 
 #: plugin/samples/integration/user_interface_sample.py:40
 msgid "Enable broken panels for testing"
-msgstr ""
+msgstr "Abilita pannelli interrotti per testing"
 
 #: plugin/samples/integration/user_interface_sample.py:45
 msgid "Enable Dynamic Panel"
-msgstr ""
+msgstr "Abilita Pannello Dinamico"
 
 #: plugin/samples/integration/user_interface_sample.py:46
 msgid "Enable dynamic panels for testing"
-msgstr ""
+msgstr "Abilita pannelli dinamici per testing"
 
 #: plugin/samples/integration/user_interface_sample.py:98
 msgid "Part Panel"
-msgstr ""
+msgstr "Pannello Articolo"
 
 #: plugin/samples/integration/user_interface_sample.py:131
 msgid "Broken Dashboard Item"
-msgstr ""
+msgstr "Elemento Dashboard Interrotto"
 
 #: plugin/samples/integration/user_interface_sample.py:133
 msgid "This is a broken dashboard item - it will not render!"
-msgstr ""
+msgstr "Questo è un elemento di dashborad interrotto - non sarà renderizzato!"
 
 #: plugin/samples/integration/user_interface_sample.py:139
 msgid "Sample Dashboard Item"
-msgstr ""
+msgstr "Elemento Dashboard d'Esempio"
 
 #: plugin/samples/integration/user_interface_sample.py:141
 msgid "This is a sample dashboard item. It renders a simple string of HTML content."
-msgstr ""
+msgstr "Questo è un esempio di elemento dashboard. Renderizza una semplice stringa di contenuto HTML."
 
 #: plugin/samples/integration/user_interface_sample.py:147
 msgid "Context Dashboard Item"
-msgstr ""
+msgstr "Elemento Dashboard Contesto"
 
 #: plugin/samples/integration/user_interface_sample.py:161
 msgid "Admin Dashboard Item"
-msgstr ""
+msgstr "Elemento Dashboard Amministratore"
 
 #: plugin/samples/integration/user_interface_sample.py:162
 msgid "This is an admin-only dashboard item."
-msgstr ""
+msgstr "Questo è un elemento dashboard solo per amministratori."
 
 #: plugin/serializers.py:82
 msgid "Source File"
-msgstr ""
+msgstr "File Sorgente"
 
 #: plugin/serializers.py:83
 msgid "Path to the source file for admin integration"
-msgstr ""
+msgstr "Percorso del file sorgente per l'integrazione amministrazione"
 
 #: plugin/serializers.py:90
 msgid "Optional context data for the admin integration"
-msgstr ""
+msgstr "Dati di contesto opzionali per l'integrazione amministrazione"
 
 #: plugin/serializers.py:106
 msgid "Source URL"
@@ -7097,7 +7097,7 @@ msgstr ""
 
 #: report/api.py:358
 msgid "Report saved at time of printing"
-msgstr ""
+msgstr "Report salvato al momento della stampa"
 
 #: report/api.py:384 report/api.py:420
 #, python-brace-format
@@ -7138,11 +7138,11 @@ msgstr ""
 
 #: report/models.py:168
 msgid "Attach to Model on Print"
-msgstr ""
+msgstr "Allega al Modello su Stampa"
 
 #: report/models.py:170
 msgid "Save report output as an attachment against linked model instance when printing"
-msgstr ""
+msgstr "Salva l'output del report come allegato contro l'istanza del modello collegato durante la stampa"
 
 #: report/models.py:210
 msgid "Filename Pattern"
@@ -7382,11 +7382,11 @@ msgstr "Elementi installati"
 msgid "Serial"
 msgstr "Seriale"
 
-#: report/templatetags/report.py:98
+#: report/templatetags/report.py:100
 msgid "Asset file does not exist"
 msgstr ""
 
-#: report/templatetags/report.py:154 report/templatetags/report.py:233
+#: report/templatetags/report.py:157 report/templatetags/report.py:233
 msgid "Image file not found"
 msgstr ""
 
@@ -7394,7 +7394,7 @@ msgstr ""
 msgid "part_image tag requires a Part instance"
 msgstr ""
 
-#: report/templatetags/report.py:299
+#: report/templatetags/report.py:301
 msgid "company_image tag requires a Company instance"
 msgstr ""
 
@@ -7410,7 +7410,7 @@ msgstr "Percorso Ubicazione"
 msgid "Stock Item ID"
 msgstr "ID Elemento Stock"
 
-#: stock/admin.py:168
+#: stock/admin.py:168 stock/api.py:566
 msgid "Status Code"
 msgstr "Codici di stato"
 
@@ -7466,23 +7466,23 @@ msgstr "Inventario"
 msgid "Expiry Date"
 msgstr "Data di Scadenza"
 
-#: stock/api.py:310
+#: stock/api.py:261
 msgid "Filter by location depth"
 msgstr ""
 
-#: stock/api.py:330
+#: stock/api.py:281
 msgid "Filter by top-level locations"
 msgstr ""
 
-#: stock/api.py:345
+#: stock/api.py:296
 msgid "Include sub-locations in filtered results"
 msgstr ""
 
-#: stock/api.py:366 stock/serializers.py:1217
+#: stock/api.py:317 stock/serializers.py:1217
 msgid "Parent Location"
 msgstr ""
 
-#: stock/api.py:367
+#: stock/api.py:318
 msgid "Filter by parent location"
 msgstr ""
 
@@ -7490,15 +7490,15 @@ msgstr ""
 msgid "External Location"
 msgstr "Ubicazione Esterna"
 
-#: stock/api.py:803
+#: stock/api.py:788
 msgid "Part Tree"
 msgstr ""
 
-#: stock/api.py:833
+#: stock/api.py:818
 msgid "Expiry date before"
 msgstr ""
 
-#: stock/api.py:837
+#: stock/api.py:822
 msgid "Expiry date after"
 msgstr ""
 
@@ -7506,23 +7506,23 @@ msgstr ""
 msgid "Stale"
 msgstr "Obsoleto"
 
-#: stock/api.py:927
+#: stock/api.py:925
 msgid "Quantity is required"
 msgstr "La quantità è richiesta"
 
-#: stock/api.py:932
+#: stock/api.py:930
 msgid "Valid part must be supplied"
 msgstr "Deve essere fornita un articolo valido"
 
-#: stock/api.py:959
+#: stock/api.py:957
 msgid "The given supplier part does not exist"
 msgstr ""
 
-#: stock/api.py:969
+#: stock/api.py:967
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:996
+#: stock/api.py:994
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "I numeri di serie non possono essere forniti per un articolo non tracciabile"
 
@@ -7580,7 +7580,7 @@ msgstr "Non puoi rendere strutturale questa posizione di magazzino perché alcun
 
 #: stock/models.py:490
 msgid "Part must be specified"
-msgstr ""
+msgstr "L'articolo deve essere specificato"
 
 #: stock/models.py:739
 msgid "Stock items cannot be located into structural stock locations!"
@@ -7714,7 +7714,7 @@ msgstr ""
 
 #: stock/models.py:1616
 msgid "Serial numbers must be provided as a list"
-msgstr ""
+msgstr "I numeri di serie devono essere forniti come elenco"
 
 #: stock/models.py:1621
 msgid "Quantity does not match serial numbers"

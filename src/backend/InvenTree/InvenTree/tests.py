@@ -1034,14 +1034,14 @@ class TestVersionNumber(TestCase):
         # Check that the current .git values work too
 
         git_hash = str(
-            subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
+            subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8'
         ).strip()
 
         # On some systems the hash is a different length, so just check the first 6 characters
         self.assertEqual(git_hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
-            str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
+            str(subprocess.check_output(['git', 'show', '-s', '--format=%ci']), 'utf-8')
             .strip()
             .split(' ')[0]
         )
