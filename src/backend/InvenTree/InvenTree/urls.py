@@ -504,14 +504,14 @@ urlpatterns.append(
     )
 )
 
-# Send any unknown URLs to the parts page
+# Send any unknown URLs to the index page
 urlpatterns += [
     re_path(
         r'^.*$',
         RedirectView.as_view(
             url='/index/'
             if settings.ENABLE_CLASSIC_FRONTEND
-            else settings.FRONTEND_URL_BASE,
+            else f'/{settings.FRONTEND_URL_BASE}/',
             permanent=False,
         ),
         name='index',
