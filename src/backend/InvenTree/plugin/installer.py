@@ -66,7 +66,7 @@ def handle_pip_error(error, path: str) -> list:
         raise ValidationError(errors[0])
 
 
-def get_install_info(packagename: str) -> str:
+def get_install_info(packagename: str) -> dict:
     """Determine the install information for a particular package.
 
     - Uses 'pip show' to determine the install location of a package.
