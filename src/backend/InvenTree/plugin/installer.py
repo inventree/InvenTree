@@ -3,7 +3,6 @@
 import logging
 import pathlib
 import re
-import shutil
 import subprocess
 import sys
 
@@ -30,6 +29,7 @@ def pip_command(*args):
     python = sys.executable
 
     command = [python, '-m', 'pip']
+
     command.extend(args)
 
     command = [str(x) for x in command]
@@ -366,12 +366,12 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     package_name = cfg.package_name
     logger.info('Uninstalling plugin: %s', package_name)
 
-    if check_plugins_path(package_name):
-        # Uninstall the plugin from the plugins directory
-        uninstall_from_plugins_dir(cfg)
-    elif check_package_path(package_name):
+    if check_package_path(package_name):
         # Uninstall the plugin using pip
-        uninstall_from_pip(cfg)
+        try:
+            pip_command('uninstall', '-y', package_name)
+        except subprocess.CalledProcessError as error:
+            handle_pip_error(error, 'plugin_uninstall')
     else:
         # No matching install target found
         raise ValidationError(_('Plugin installation not found'))
@@ -390,54 +390,3 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     return {'result': _('Uninstalled plugin successfully'), 'success': True}
-
-
-def uninstall_from_plugins_dir(cfg: plugin.models.PluginConfig):
-    """Uninstall a plugin from the plugins directory."""
-    package_name = cfg.package_name
-    logger.debug('Uninstalling plugin from plugins directory: %s', package_name)
-
-    plugin_install_dir = plugins_dir()
-    plugin_dir = cfg.plugin.path()
-
-    if plugin_dir.is_relative_to(plugin_install_dir):
-        # Find the top-most relative path
-        while plugin_dir.parent and plugin_dir.parent != plugin_install_dir:
-            plugin_dir = plugin_dir.parent
-
-        if plugin_dir and plugin_dir.is_relative_to(plugin_install_dir):
-            logger.info('Removing plugin directory: %s', plugin_dir)
-            try:
-                shutil.rmtree(plugin_dir)
-            except Exception:
-                logger.exception('Failed to remove plugin directory: %s', plugin_dir)
-                log_error(f'plugins.{package_name}.uninstall_from_plugins_dir')
-                raise ValidationError(_('Failed to remove plugin directory'))
-
-            # Finally, remove the dist-info directory (if it exists)
-            dist_pkg_name = package_name.replace('-', '_')
-            dist_dirs = plugin_install_dir.glob(f'{dist_pkg_name}-*.dist-info')
-
-            for dd in dist_dirs:
-                logger.info('Removing dist-info directory: %s', dd)
-                try:
-                    shutil.rmtree(dd)
-                except Exception:
-                    logger.exception('Failed to remove dist-info directory: %s', dd)
-                    log_error(f'plugins.{package_name}.uninstall_from_plugins_dir')
-                    raise ValidationError(_('Failed to remove plugin directory'))
-
-
-def uninstall_from_pip(cfg: plugin.models.PluginConfig):
-    """Uninstall a plugin using pip."""
-    package_name = cfg.package_name
-
-    logger.debug('Uninstalling plugin via PIP: %s', package_name)
-
-    cmd = ['uninstall', '-y', package_name]
-
-    try:
-        pip_command(*cmd)
-
-    except subprocess.CalledProcessError as error:
-        handle_pip_error(error, 'plugin_uninstall')
