@@ -206,7 +206,7 @@ export default function ManufacturerPartDetail() {
     pk: manufacturerPart?.pk,
     title: t`Edit Manufacturer Part`,
     fields: editManufacturerPartFields,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const duplicateManufacturerPart = useCreateApiFormModal({

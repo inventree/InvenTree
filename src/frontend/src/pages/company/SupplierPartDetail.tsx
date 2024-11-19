@@ -310,7 +310,7 @@ export default function SupplierPartDetail() {
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({

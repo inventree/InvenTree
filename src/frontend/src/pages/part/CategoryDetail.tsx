@@ -175,7 +175,7 @@ export default function CategoryDetail() {
     pk: id,
     title: t`Edit Part Category`,
     fields: partCategoryFields({}),
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const deleteOptions = useMemo(() => {

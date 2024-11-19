@@ -275,14 +275,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     pk: company?.pk,
     title: t`Edit Company`,
     fields: companyFields(),
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const deleteCompany = useDeleteApiFormModal({
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Delete Company`,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const companyActions = useMemo(() => {

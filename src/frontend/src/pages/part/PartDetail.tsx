@@ -892,7 +892,7 @@ export default function PartDetail() {
     pk: part.pk,
     title: t`Edit Part`,
     fields: partFields,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const createPartFields = usePartFields({ create: true });

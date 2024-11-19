@@ -217,7 +217,7 @@ export default function Stock() {
     pk: id,
     title: t`Edit Stock Location`,
     fields: stockLocationFields(),
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const deleteOptions = useMemo(() => {

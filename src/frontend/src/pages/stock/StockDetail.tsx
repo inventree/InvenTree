@@ -552,7 +552,7 @@ export default function StockDetail() {
     pk: stockitem.pk,
     title: t`Edit Stock Item`,
     fields: editStockItemFields,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const duplicateStockItemFields = useStockFields({ create: true });

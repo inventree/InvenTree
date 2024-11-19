@@ -358,7 +358,7 @@ export default function BuildDetail() {
     pk: build.pk,
     title: t`Edit Build Order`,
     fields: buildOrderFields,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => refreshInstance()
   });
 
   const duplicateBuild = useCreateApiFormModal({
@@ -376,7 +376,7 @@ export default function BuildDetail() {
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
     title: t`Cancel Build Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     successMessage: t`Order cancelled`,
     preFormWarning: t`Cancel this order`,
     fields: {
@@ -388,7 +388,7 @@ export default function BuildDetail() {
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_hold, build.pk),
     title: t`Hold Build Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
   });
@@ -396,7 +396,7 @@ export default function BuildDetail() {
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_issue, build.pk),
     title: t`Issue Build Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
   });
@@ -404,7 +404,7 @@ export default function BuildDetail() {
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
     title: t`Complete Build Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Mark this order as complete`,
     successMessage: t`Order completed`,
     fields: {

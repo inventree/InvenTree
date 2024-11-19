@@ -347,7 +347,7 @@ export default function PurchaseOrderDetail() {
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
     title: t`Issue Purchase Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
   });
@@ -355,7 +355,7 @@ export default function PurchaseOrderDetail() {
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_cancel, order.pk),
     title: t`Cancel Purchase Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Cancel this order`,
     successMessage: t`Order cancelled`
   });
@@ -363,7 +363,7 @@ export default function PurchaseOrderDetail() {
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_hold, order.pk),
     title: t`Hold Purchase Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
   });
@@ -376,7 +376,7 @@ export default function PurchaseOrderDetail() {
     fields: {
       accept_incomplete: {}
     },
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Mark this order as complete`
   });
 

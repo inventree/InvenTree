@@ -344,7 +344,7 @@ export default function ReturnOrderDetail() {
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_issue, order.pk),
     title: t`Issue Return Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
   });
@@ -352,7 +352,7 @@ export default function ReturnOrderDetail() {
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_cancel, order.pk),
     title: t`Cancel Return Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Cancel this order`,
     successMessage: t`Order cancelled`
   });
@@ -360,7 +360,7 @@ export default function ReturnOrderDetail() {
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_hold, order.pk),
     title: t`Hold Return Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
   });
@@ -368,7 +368,7 @@ export default function ReturnOrderDetail() {
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_complete, order.pk),
     title: t`Complete Return Order`,
-    onFormSuccess: refreshInstance,
+    onFormSuccess: () => refreshInstance(),
     preFormWarning: t`Mark this order as complete`,
     successMessage: t`Order completed`
   });
