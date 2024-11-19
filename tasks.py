@@ -286,7 +286,8 @@ def plugins(c, uv=False):
 )
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
-    INSTALL_FILE = 'src/backend/requirements.txt'
+    # Ensure path is relative to *this* directory
+    INSTALL_FILE = localDir().joinpath('src/backend/requirements.txt')
 
     info(f"Installing required python packages from '{INSTALL_FILE}'")
 
