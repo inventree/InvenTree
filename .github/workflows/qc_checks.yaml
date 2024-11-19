@@ -561,3 +561,4 @@ jobs:
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
+          include-hidden-files: true
