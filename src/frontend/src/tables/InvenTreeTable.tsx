@@ -590,6 +590,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
         disabled: action.disabled
       }));
       return showContextMenu(items)(event);
+    } else {
+      return showContextMenu([])(event);
     }
   };
 
