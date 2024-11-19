@@ -92,14 +92,14 @@ ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
 )
 
 # Configure logging settings
-log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
-json_log = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
+LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
+JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
 
-logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
-if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-    log_level = 'WARNING'  # pragma: no cover
+if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+    LOG_LEVEL = 'WARNING'  # pragma: no cover
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -128,14 +128,14 @@ LOGGING = {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
     },
     'loggers': {
-        'django_structlog': {'handlers': ['console'], 'level': log_level},
-        'inventree': {'handlers': ['console'], 'level': log_level},
+        'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
+        'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
     },
 }
 
 
 # Add handlers
-if WRITE_LOG and json_log:  # pragma: no cover
+if WRITE_LOG and JSON_LOG:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.json')),
@@ -168,7 +168,7 @@ structlog.configure(
 )
 # Optionally add database-level logging
 if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
-    LOGGING['loggers'] = {'django.db.backends': {'level': log_level or 'DEBUG'}}
+    LOGGING['loggers'] = {'django.db.backends': {'level': LOG_LEVEL or 'DEBUG'}}
 
 # Get a logger instance for this setup file
 logger = structlog.getLogger('inventree')
