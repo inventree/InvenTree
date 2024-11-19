@@ -1427,37 +1427,50 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         return response
 
 
-class PartRelatedList(ListCreateAPI):
-    """API endpoint for accessing a list of PartRelated objects."""
+class PartRelatedFilter(rest_filters.FilterSet):
+    """FilterSet for PartRelated objects."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = PartRelated
+        fields = ['part_1', 'part_2']
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter queryset to include only PartRelated objects which reference the specified part."""
+        return queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
+
+
+class PartRelatedMixin:
+    """Mixin class for PartRelated API endpoints."""
 
     queryset = PartRelated.objects.all()
     serializer_class = part_serializers.PartRelationSerializer
 
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        queryset = super().filter_queryset(queryset)
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartRelatedDetail endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
 
-        params = self.request.query_params
-
-        # Add a filter for "part" - we can filter either part_1 or part_2
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
-
-            except (ValueError, Part.DoesNotExist):
-                pass
+        queryset = queryset.prefetch_related('part_1', 'part_2')
 
         return queryset
 
 
-class PartRelatedDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for accessing detail view of a PartRelated object."""
+class PartRelatedList(PartRelatedMixin, ListCreateAPI):
+    """API endpoint for accessing a list of PartRelated objects."""
 
-    queryset = PartRelated.objects.all()
-    serializer_class = part_serializers.PartRelationSerializer
+    filterset_class = PartRelatedFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['part_1__name', 'part_2__name']
+
+
+class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for accessing detail view of a PartRelated object."""
 
 
 class PartParameterTemplateFilter(rest_filters.FilterSet):

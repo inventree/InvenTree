@@ -20,6 +20,7 @@ from django.core.validators import URLValidator
 from django.http import Http404
 
 import pytz
+import structlog
 from dotenv import load_dotenv
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
@@ -91,31 +92,86 @@ ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
 )
 
 # Configure logging settings
-log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
+LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
+JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
+WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
 
-logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
-if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-    log_level = 'WARNING'  # pragma: no cover
-
+if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+    LOG_LEVEL = 'WARNING'  # pragma: no cover
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {'console': {'class': 'logging.StreamHandler'}},
-    'root': {'handlers': ['console'], 'level': log_level},
     'filters': {
         'require_not_maintenance_mode_503': {
             '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503'
         }
     },
+    'formatters': {
+        'json_formatter': {
+            '()': structlog.stdlib.ProcessorFormatter,
+            'processor': structlog.processors.JSONRenderer(),
+        },
+        'plain_console': {
+            '()': structlog.stdlib.ProcessorFormatter,
+            'processor': structlog.dev.ConsoleRenderer(),
+        },
+        'key_value': {
+            '()': structlog.stdlib.ProcessorFormatter,
+            'processor': structlog.processors.KeyValueRenderer(
+                key_order=['timestamp', 'level', 'event', 'logger']
+            ),
+        },
+    },
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
+    },
+    'loggers': {
+        'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
+        'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
+    },
 }
 
+
+# Add handlers
+if WRITE_LOG and JSON_LOG:  # pragma: no cover
+    LOGGING['handlers']['log_file'] = {
+        'class': 'logging.handlers.WatchedFileHandler',
+        'filename': str(BASE_DIR.joinpath('logs.json')),
+        'formatter': 'json_formatter',
+    }
+    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+elif WRITE_LOG:  # pragma: no cover
+    LOGGING['handlers']['log_file'] = {
+        'class': 'logging.handlers.WatchedFileHandler',
+        'filename': str(BASE_DIR.joinpath('logs.log')),
+        'formatter': 'key_value',
+    }
+    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.filter_by_level,
+        structlog.processors.TimeStamper(fmt='iso'),
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    ],
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
+)
 # Optionally add database-level logging
 if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
-    LOGGING['loggers'] = {'django.db.backends': {'level': log_level or 'DEBUG'}}
+    LOGGING['loggers'] = {'django.db.backends': {'level': LOG_LEVEL or 'DEBUG'}}
 
 # Get a logger instance for this setup file
-logger = logging.getLogger('inventree')
+logger = structlog.getLogger('inventree')
 
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
@@ -266,6 +322,7 @@ INSTALLED_APPS = [
     'dbbackup',  # Backups - django-dbbackup
     'taggit',  # Tagging
     'flags',  # Flagging - django-flags
+    'django_structlog',  # Structured logging
     'allauth',  # Base app for SSO
     'allauth.account',  # Extend user with accounts
     'allauth.socialaccount',  # Use 'social' providers
@@ -301,6 +358,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+        'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
 

@@ -88,6 +88,10 @@ env/
 src/backend/InvenTree/InvenTree/locale_stats.json
 src/backend/InvenTree/InvenTree/licenses.txt
 
+# Logs
+src/backend/InvenTree/logs.json
+src/backend/InvenTree/logs.log
+
 # node.js
 node_modules/
 

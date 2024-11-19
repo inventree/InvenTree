@@ -21,8 +21,6 @@
 {% trans "Child Build Orders" as text %}
 {% include "sidebar_item.html" with label='children' text=text icon="fa-sitemap" %}
 {% if build.part.testable %}
-{% trans "Test Statistics" as text %}
-{% include "sidebar_item.html" with label='test-statistics' text=text icon="fa-chart-line" %}
 {% endif %}
 {% trans "Attachments" as text %}
 {% include "sidebar_item.html" with label='attachments' text=text icon="fa-paperclip" %}
