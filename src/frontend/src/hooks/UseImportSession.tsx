@@ -123,7 +123,7 @@ export function useImportSession({
     sessionData,
     setSessionData,
     sessionId,
-    refreshSession,
+    refreshSession: () => refreshSession(),
     sessionQuery,
     status,
     availableFields,
