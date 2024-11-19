@@ -125,7 +125,7 @@ npx playwright show-report path/to/report
 
 ### No Tests Found
 
-If there is any problem in the testing launch sequence, the playwright UI will display the message "No Tests". In this case, an error has occured, likely launching the InvenTree server process (which runs in the background).
+If there is any problem in the testing launch sequence, the playwright UI will display the message "No Tests". In this case, an error has occurred, likely launching the InvenTree server process (which runs in the background).
 
 To debug this situation, and determine what error needs to be resolved, run the following command:
 
