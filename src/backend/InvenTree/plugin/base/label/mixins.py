@@ -83,7 +83,7 @@ class LabelPrintingMixin:
                 [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
         """
         # Check if pdf data is provided
-        pdf_data = kwargs.get('pdf_data', None)
+        pdf_data = kwargs.get('pdf_data')
 
         if not pdf_data:
             pdf_data = (
@@ -185,7 +185,12 @@ class LabelPrintingMixin:
                 # Exclude the 'context' object - cannot be pickled
                 print_args.pop('context', None)
 
-                offload_task(plugin_label.print_label, self.plugin_slug(), **print_args)
+                offload_task(
+                    plugin_label.print_label,
+                    self.plugin_slug(),
+                    group='plugin',
+                    **print_args,
+                )
 
             # Update the progress of the print job
             output.progress += int(100 / N)
@@ -251,8 +256,6 @@ class LabelPrintingMixin:
 
     def before_printing(self):
         """Hook method called before printing labels."""
-        pass
 
     def after_printing(self):
         """Hook method called after printing labels."""
-        pass

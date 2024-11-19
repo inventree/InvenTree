@@ -15,13 +15,13 @@ export default function Logout() {
 
   return (
     <Container>
-      <Stack align="center">
-        <Card shadow="sm" padding="lg" radius="md">
+      <Stack align='center'>
+        <Card shadow='sm' padding='lg' radius='md'>
           <Stack>
-            <Text size="lg">
+            <Text size='lg'>
               <Trans>Logging out</Trans>
             </Text>
-            <Group justify="center">
+            <Group justify='center'>
               <Loader />
             </Group>
           </Stack>

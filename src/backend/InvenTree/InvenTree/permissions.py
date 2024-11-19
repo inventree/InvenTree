@@ -79,6 +79,9 @@ class RolePermission(permissions.BasePermission):
             # Extract the model name associated with this request
             model = get_model_for_view(view)
 
+            if model is None:
+                return True
+
             app_label = model._meta.app_label
             model_name = model._meta.model_name
 
@@ -99,14 +102,24 @@ class IsSuperuser(permissions.IsAdminUser):
         return bool(request.user and request.user.is_superuser)
 
 
+class IsSuperuserOrReadOnly(permissions.IsAdminUser):
+    """Allow read-only access to any user, but write access is restricted to superuser users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(
+            (request.user and request.user.is_superuser)
+            or request.method in permissions.SAFE_METHODS
+        )
+
+
 class IsStaffOrReadOnly(permissions.IsAdminUser):
     """Allows read-only access to any user, but write access is restricted to staff users."""
 
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
         return bool(
-            request.user
-            and request.user.is_staff
+            (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
 

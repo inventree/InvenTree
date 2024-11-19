@@ -82,46 +82,13 @@ export const link = style({
   }
 });
 
-export const subLink = style({
-  width: '100%',
-  padding: `${vars.spacing.xs} ${vars.spacing.md}`,
-  borderRadius: vars.radiusDefault,
-
-  ':hover': {
-    [vars.lightSelector]: { backgroundColor: vars.colors.gray[0] },
-    [vars.darkSelector]: { backgroundColor: vars.colors.dark[7] }
-  },
-
-  ':active': {
-    color: vars.colors.defaultHover
-  }
-});
-
 export const docHover = style({
-  border: `1px dashed `
+  border: '1px dashed '
 });
 
 export const layoutContent = style({
   flex: 1,
   width: '100%'
-});
-
-export const layoutFooterLinks = style({
-  [vars.smallerThan('xs')]: {
-    marginTop: vars.spacing.md
-  }
-});
-
-export const layoutFooterInner = style({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingTop: vars.spacing.xl,
-  paddingBottom: vars.spacing.xl,
-
-  [vars.smallerThan('xs')]: {
-    flexDirection: 'column'
-  }
 });
 
 export const tabs = style({

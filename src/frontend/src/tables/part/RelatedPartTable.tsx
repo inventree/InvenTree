@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -15,14 +15,16 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction } from '../RowActions';
+import { type RowAction, RowDeleteAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
  */
-export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
+export function RelatedPartTable({
+  partId
+}: Readonly<{ partId: number }>): ReactNode {
   const table = useTable('relatedparts');
 
   const navigate = useNavigate();
@@ -44,11 +46,11 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
         accessor: 'part',
         title: t`Part`,
         render: (record: any) => {
-          let part = getPart(record);
+          const part = getPart(record);
           return (
             <Group
-              wrap="nowrap"
-              justify="left"
+              wrap='nowrap'
+              justify='left'
               onClick={() => {
                 navigate(`/part/${part.pk}/`);
               }}
@@ -103,7 +105,8 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <AddItemButton
-        tooltip={t`Add related part`}
+        key='add-related-part'
+        tooltip={t`Add Related Part`}
         hidden={!user.hasAddRole(UserRoles.part)}
         onClick={() => newRelatedPart.open()}
       />

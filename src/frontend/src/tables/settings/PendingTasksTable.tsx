@@ -5,10 +5,14 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export default function PendingTasksTable() {
+export default function PendingTasksTable({
+  onRecordsUpdated
+}: Readonly<{
+  onRecordsUpdated: () => void;
+}>) {
   const table = useTable('tasks-pending');
   const user = useUserState();
 
@@ -50,6 +54,7 @@ export default function PendingTasksTable() {
       tableState={table}
       columns={columns}
       props={{
+        afterBulkDelete: onRecordsUpdated,
         enableBulkDelete: user.isStaff(),
         enableSelection: true
       }}

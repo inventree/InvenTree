@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 export function RenderProjectCode({
   instance
@@ -13,6 +13,18 @@ export function RenderProjectCode({
       />
     )
   );
+}
+
+export function RenderContentType({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return instance && <RenderInlineModel primary={instance.app_labeled_name} />;
+}
+
+export function RenderError({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return instance && <RenderInlineModel primary={instance.name} />;
 }
 
 export function RenderImportSession({

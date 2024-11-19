@@ -2,9 +2,13 @@
 
 import logging
 
-from rest_framework import serializers
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+
+from rest_framework import exceptions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.request import clone_request
 from rest_framework.utils import model_meta
 
 import common.models
@@ -28,6 +32,40 @@ class InvenTreeMetadata(SimpleMetadata):
     Additionally, we include some extra information about database models,
     so we can perform lookup for ForeignKey related fields.
     """
+
+    def determine_actions(self, request, view):
+        """Determine the 'actions' available to the user for the given view.
+
+        Note that this differs from the standard DRF implementation,
+        in that we also allow annotation for the 'GET' method.
+
+        This allows the client to determine what fields are available,
+        even if they are only for a read (GET) operation.
+
+        See SimpleMetadata.determine_actions for more information.
+        """
+        actions = {}
+
+        for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
+            view.request = clone_request(request, method)
+            try:
+                # Test global permissions
+                if hasattr(view, 'check_permissions'):
+                    view.check_permissions(view.request)
+                # Test object permissions
+                if method == 'PUT' and hasattr(view, 'get_object'):
+                    view.get_object()
+            except (exceptions.APIException, PermissionDenied, Http404):
+                pass
+            else:
+                # If user has appropriate permissions for the view, include
+                # appropriate metadata about the fields that should be supplied.
+                serializer = view.get_serializer()
+                actions[method] = self.get_serializer_info(serializer)
+            finally:
+                view.request = request
+
+        return actions
 
     def determine_metadata(self, request, view):
         """Overwrite the metadata to adapt to the request user."""
@@ -81,6 +119,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Map the request method to a permission type
             rolemap = {
+                'GET': 'view',
                 'POST': 'add',
                 'PUT': 'change',
                 'PATCH': 'change',
@@ -101,10 +140,6 @@ class InvenTreeMetadata(SimpleMetadata):
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
                 actions['DELETE'] = {}
-
-            # Add a 'VIEW' action if we are allowed to view
-            if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                actions['GET'] = {}
 
             metadata['actions'] = actions
 
@@ -204,7 +239,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
-                if name in serializer_info.keys():
+                if name in serializer_info:
                     if name in read_only_fields:
                         serializer_info[name]['read_only'] = True
 
@@ -236,7 +271,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
-                if name not in serializer_info.keys():
+                if name not in serializer_info:
                     # Skip relation not defined in serializer
                     continue
 
@@ -307,12 +342,12 @@ class InvenTreeMetadata(SimpleMetadata):
                 instance_filters = instance.api_instance_filters()
 
                 for field_name, field_filters in instance_filters.items():
-                    if field_name not in serializer_info.keys():
+                    if field_name not in serializer_info:
                         # The field might be missing, but is added later on
                         # This function seems to get called multiple times?
                         continue
 
-                    if 'instance_filters' not in serializer_info[field_name].keys():
+                    if 'instance_filters' not in serializer_info[field_name]:
                         serializer_info[field_name]['instance_filters'] = {}
 
                     for key, value in field_filters.items():
@@ -363,7 +398,7 @@ class InvenTreeMetadata(SimpleMetadata):
                 field_info['type'] = 'related field'
                 field_info['model'] = model._meta.model_name
 
-                # Special case for 'user' model
+                # Special case for special models
                 if field_info['model'] == 'user':
                     field_info['api_url'] = '/api/user/'
                 elif field_info['model'] == 'contenttype':
@@ -380,6 +415,14 @@ class InvenTreeMetadata(SimpleMetadata):
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':
             field_info['depends_on'] = field.depends_on
+
+        # Extend field info if the field has a get_field_info method
+        if (
+            not field_info.get('read_only')
+            and hasattr(field, 'get_field_info')
+            and callable(field.get_field_info)
+        ):
+            field_info = field.get_field_info(field, field_info)
 
         return field_info
 

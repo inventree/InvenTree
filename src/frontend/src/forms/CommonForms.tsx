@@ -1,6 +1,6 @@
 import { IconUsers } from '@tabler/icons-react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
 export function projectCodeFields(): ApiFormFieldSet {
   return {
@@ -9,6 +9,18 @@ export function projectCodeFields(): ApiFormFieldSet {
     responsible: {
       icon: <IconUsers />
     }
+  };
+}
+
+export function customStateFields(): ApiFormFieldSet {
+  return {
+    key: {},
+    name: {},
+    label: {},
+    color: {},
+    logical_key: {},
+    model: {},
+    reference_status: {}
   };
 }
 

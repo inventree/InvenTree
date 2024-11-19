@@ -5,10 +5,37 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+import common.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
+from InvenTree.serializers import UserSerializer
 from order.status_codes import PurchaseOrderStatus, SalesOrderStatus
+
+
+class BarcodeScanResultSerializer(serializers.ModelSerializer):
+    """Serializer for barcode scan results."""
+
+    class Meta:
+        """Meta class for BarcodeScanResultSerializer."""
+
+        model = common.models.BarcodeScanResult
+
+        fields = [
+            'pk',
+            'data',
+            'timestamp',
+            'endpoint',
+            'context',
+            'response',
+            'result',
+            'user',
+            'user_detail',
+        ]
+
+        read_only_fields = fields
+
+    user_detail = UserSerializer(source='user', read_only=True)
 
 
 class BarcodeSerializer(serializers.Serializer):
@@ -41,7 +68,7 @@ class BarcodeGenerateSerializer(serializers.Serializer):
             plugin.base.barcodes.helper.get_supported_barcode_models_map()
         )
 
-        if model not in supported_models.keys():
+        if model not in supported_models:
             raise ValidationError(_('Model is not supported'))
 
         return model

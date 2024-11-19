@@ -35,7 +35,6 @@ from company.urls import company_urls, manufacturer_part_urls, supplier_part_url
 from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
-from stock.api import test_statistics_api_urls
 from stock.urls import stock_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
@@ -110,7 +109,6 @@ apipatterns = [
             ),
         ]),
     ),
-    path('test-statistics/', include(test_statistics_api_urls)),
     path('user/', include(users.api.user_urls)),
     path('web/', include(web_api_urls)),
     # Plugin endpoints
@@ -456,7 +454,7 @@ urlpatterns = []
 if settings.INVENTREE_ADMIN_ENABLED:
     admin_url = settings.INVENTREE_ADMIN_URL
 
-    if settings.ADMIN_SHELL_ENABLE:  # noqa
+    if settings.ADMIN_SHELL_ENABLE:
         urlpatterns += [path(f'{admin_url}/shell/', include('django_admin_shell.urls'))]
 
     urlpatterns += [
@@ -477,14 +475,16 @@ if settings.ENABLE_PLATFORM_FRONTEND:
         frontendpatterns += [
             path(
                 'accounts/login/',
-                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                RedirectView.as_view(
+                    url=f'/{settings.FRONTEND_URL_BASE}', permanent=False
+                ),
                 name='account_login',
             )
         ]
 
 urlpatterns += frontendpatterns
 
-# Append custom plugin URLs (if plugin support is enabled)
+# Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
 
@@ -504,14 +504,14 @@ urlpatterns.append(
     )
 )
 
-# Send any unknown URLs to the parts page
+# Send any unknown URLs to the index page
 urlpatterns += [
     re_path(
         r'^.*$',
         RedirectView.as_view(
             url='/index/'
             if settings.ENABLE_CLASSIC_FRONTEND
-            else settings.FRONTEND_URL_BASE,
+            else f'/{settings.FRONTEND_URL_BASE}/',
             permanent=False,
         ),
         name='index',

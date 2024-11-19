@@ -28,9 +28,7 @@ def validate_physical_units(unit):
 
     try:
         ureg(unit)
-    except AttributeError:
-        raise ValidationError(_('Invalid physical unit'))
-    except pint.errors.UndefinedUnitError:
+    except (AssertionError, AttributeError, pint.errors.UndefinedUnitError):
         raise ValidationError(_('Invalid physical unit'))
 
 
@@ -96,7 +94,6 @@ def validate_sales_order_reference(value):
 
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""
-    ...
 
 
 def validate_overage(value):

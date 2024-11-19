@@ -1,7 +1,10 @@
 """Background tasks for the 'order' app."""
 
+import logging
 from datetime import datetime, timedelta
 
+from django.contrib.auth.models import User
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 import common.notifications
@@ -10,6 +13,8 @@ import order.models
 from InvenTree.tasks import ScheduledTask, scheduled_task
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from plugin.events import trigger_event
+
+logger = logging.getLogger('inventree')
 
 
 def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
@@ -109,3 +114,31 @@ def check_overdue_sales_orders():
 
     for po in overdue_orders:
         notify_overdue_sales_order(po)
+
+
+def complete_sales_order_shipment(shipment_id: int, user_id: int) -> None:
+    """Complete allocations for a pending shipment against a SalesOrder.
+
+    At this stage, the shipment is assumed to be complete,
+    and we need to perform the required "processing" tasks.
+    """
+    try:
+        shipment = order.models.SalesOrderShipment.objects.get(pk=shipment_id)
+    except Exception:
+        # Shipping object does not exist
+        logger.warning(
+            'Failed to complete shipment - no matching SalesOrderShipment for ID <%s>',
+            shipment_id,
+        )
+        return
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except Exception:
+        user = None
+
+    logger.info('Completing SalesOrderShipment <%s>', shipment)
+
+    with transaction.atomic():
+        for allocation in shipment.allocations.all():
+            allocation.complete_allocation(user=user)

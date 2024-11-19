@@ -33,7 +33,8 @@ from . import config, locales
 
 checkMinPythonVersion()
 
-INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
+INVENTREE_BASE_URL = 'https://inventree.org'
+INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv or 'TESTING' in os.environ
@@ -85,6 +86,7 @@ ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
 # Disable CUI parts if CUI tests are disabled
 if TESTING and '--exclude-tag=cui' in sys.argv:
     ENABLE_CLASSIC_FRONTEND = False
+
 ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
     'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
 )
@@ -186,6 +188,34 @@ STATIC_URL = '/static/'
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
+# Are plugins enabled?
+PLUGINS_ENABLED = get_boolean_setting(
+    'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
+)
+
+PLUGINS_INSTALL_DISABLED = get_boolean_setting(
+    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
+)
+
+PLUGIN_FILE = config.get_plugin_file()
+
+# Plugin test settings
+PLUGIN_TESTING = get_setting(
+    'INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING
+)  # Are plugins being tested?
+
+PLUGIN_TESTING_SETUP = get_setting(
+    'INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False
+)  # Load plugins from setup hooks in testing?
+
+PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
+
+PLUGIN_RETRY = get_setting(
+    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
+)  # How often should plugin loading be tried?
+
+PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
+
 STATICFILES_DIRS = []
 
 # Translated Template settings
@@ -206,6 +236,12 @@ if DEBUG and 'collectstatic' not in sys.argv:
     if web_dir.exists():
         STATICFILES_DIRS.append(web_dir)
 
+    # Append directory for sample plugin static content (if in debug mode)
+    if PLUGINS_ENABLED:
+        print('Adding plugin sample static content')
+        STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
+
+        print('-', STATICFILES_DIRS[-1])
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
 # Color Themes Directory
@@ -222,10 +258,11 @@ DBBACKUP_STORAGE = get_setting(
 
 # Default backup configuration
 DBBACKUP_STORAGE_OPTIONS = get_setting(
-    'INVENTREE_BACKUP_OPTIONS', 'backup_options', None
+    'INVENTREE_BACKUP_OPTIONS',
+    'backup_options',
+    default_value={'location': config.get_backup_dir()},
+    typecast=dict,
 )
-if DBBACKUP_STORAGE_OPTIONS is None:
-    DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
 
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
     'INVENTREE_ADMIN_ENABLED', config_key='admin_enabled', default_value=True
@@ -336,7 +373,7 @@ QUERYCOUNT = {
         'MIN_TIME_TO_LOG': 0.1,
         'MIN_QUERY_COUNT_TO_LOG': 25,
     },
-    'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
+    'IGNORE_REQUEST_PATTERNS': [r'^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
     'DISPLAY_DUPLICATES': 1,
     'RESPONSE_HEADER': 'X-Django-Query-Count',
@@ -353,7 +390,7 @@ if (
     and INVENTREE_ADMIN_ENABLED
     and not TESTING
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):  # noqa
+):
     try:
         import django_admin_shell  # noqa: F401
 
@@ -379,8 +416,8 @@ AUTHENTICATION_BACKENDS = CONFIG.get(
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
+    import django_auth_ldap.config
     import ldap
-    from django_auth_ldap.config import GroupOfUniqueNamesType, LDAPSearch
 
     AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
@@ -431,7 +468,7 @@ if LDAP_AUTH:
     AUTH_LDAP_BIND_PASSWORD = get_setting(
         'INVENTREE_LDAP_BIND_PASSWORD', 'ldap.bind_password'
     )
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
         ldap.SCOPE_SUBTREE,
         str(
@@ -458,12 +495,38 @@ if LDAP_AUTH:
         'INVENTREE_LDAP_CACHE_TIMEOUT', 'ldap.cache_timeout', 3600, int
     )
 
-    AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    AUTH_LDAP_MIRROR_GROUPS = get_boolean_setting(
+        'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups', False
+    )
+    AUTH_LDAP_GROUP_OBJECT_CLASS = get_setting(
+        'INVENTREE_LDAP_GROUP_OBJECT_CLASS',
+        'ldap.group_object_class',
+        'groupOfUniqueNames',
+        str,
+    )
+    AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
         get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
         ldap.SCOPE_SUBTREE,
-        '(objectClass=groupOfUniqueNames)',
+        f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
     )
-    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
+    AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
+        'INVENTREE_LDAP_GROUP_TYPE_CLASS',
+        'ldap.group_type_class',
+        'GroupOfUniqueNamesType',
+        str,
+    )
+    AUTH_LDAP_GROUP_TYPE_CLASS_ARGS = get_setting(
+        'INVENTREE_LDAP_GROUP_TYPE_CLASS_ARGS', 'ldap.group_type_class_args', [], list
+    )
+    AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS = get_setting(
+        'INVENTREE_LDAP_GROUP_TYPE_CLASS_KWARGS',
+        'ldap.group_type_class_kwargs',
+        {'name_attr': 'cn'},
+        dict,
+    )
+    AUTH_LDAP_GROUP_TYPE = getattr(django_auth_ldap.config, AUTH_LDAP_GROUP_TYPE_CLASS)(
+        *AUTH_LDAP_GROUP_TYPE_CLASS_ARGS, **AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS
+    )
     AUTH_LDAP_REQUIRE_GROUP = get_setting(
         'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
     )
@@ -609,6 +672,9 @@ for key in db_keys:
 
 # Check that required database configuration options are specified
 required_keys = ['ENGINE', 'NAME']
+
+# Ensure all database keys are upper case
+db_config = {key.upper(): value for key, value in db_config.items()}
 
 for key in required_keys:
     if key not in db_config:  # pragma: no cover
@@ -867,13 +933,20 @@ _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
 )
 
+
+# Prevent running multiple background workers if global cache is disabled
+# This is to prevent scheduling conflicts due to the lack of a shared cache
+BACKGROUND_WORKER_COUNT = (
+    int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4))
+    if GLOBAL_CACHE_ENABLED
+    else 1
+)
+
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
-    'workers': int(
-        get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)
-    ),
+    'workers': BACKGROUND_WORKER_COUNT,
     'timeout': _q_worker_timeout,
     'retry': max(120, _q_worker_timeout + 30),
     'max_attempts': int(
@@ -1004,10 +1077,7 @@ USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
-if not TESTING:
-    USE_TZ = True  # pragma: no cover
-else:
-    USE_TZ = False
+USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
@@ -1113,26 +1183,40 @@ if (
     sys.exit(-1)
 
 COOKIE_MODE = (
-    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'None'))
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'False'))
     .lower()
     .strip()
 )
 
-valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+# Valid modes (as per the django settings documentation)
+valid_cookie_modes = ['lax', 'strict', 'none']
 
-if COOKIE_MODE not in valid_cookie_modes.keys():
-    logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
-    sys.exit(-1)
-
-COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
+if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
+    # Set the cookie mode (in production mode only)
+    COOKIE_MODE = COOKIE_MODE.capitalize()
+else:
+    # Default to False, as per the Django settings
+    COOKIE_MODE = False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
+
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
-SESSION_COOKIE_SECURE = get_boolean_setting(
-    'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+
+"""Set the SESSION_COOKIE_SECURE value based on the following rules:
+- False if the server is running in DEBUG mode
+- True if samesite cookie setting is set to 'None'
+- Otherwise, use the value specified in the configuration file (or env var)
+"""
+SESSION_COOKIE_SECURE = (
+    False
+    if DEBUG
+    else (
+        SESSION_COOKIE_SAMESITE == 'None'
+        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+    )
 )
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
@@ -1284,23 +1368,29 @@ MARKDOWNIFY = {
             'abbr',
             'b',
             'blockquote',
+            'code',
             'em',
             'h1',
             'h2',
             'h3',
+            'h4',
+            'h5',
+            'hr',
             'i',
             'img',
             'li',
             'ol',
             'p',
+            'pre',
+            's',
             'strong',
-            'ul',
             'table',
             'thead',
             'tbody',
             'th',
             'tr',
             'td',
+            'ul',
         ],
     }
 }
@@ -1312,31 +1402,11 @@ IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 MAINTENANCE_MODE_RETRY_AFTER = 10
 MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBackend'
 
-# Are plugins enabled?
-PLUGINS_ENABLED = get_boolean_setting(
-    'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
-)
-PLUGINS_INSTALL_DISABLED = get_boolean_setting(
-    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
-)
-
-PLUGIN_FILE = config.get_plugin_file()
-
-# Plugin test settings
-PLUGIN_TESTING = get_setting(
-    'INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING
-)  # Are plugins being tested?
-PLUGIN_TESTING_SETUP = get_setting(
-    'INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False
-)  # Load plugins from setup hooks in testing?
-PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
-PLUGIN_RETRY = get_setting(
-    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
-)  # How often should plugin loading be tried?
-PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
-
 # Flag to allow table events during testing
 TESTING_TABLE_EVENTS = False
+
+# Flag to allow pricing recalculations during testing
+TESTING_PRICING = False
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(

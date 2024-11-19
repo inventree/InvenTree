@@ -38,6 +38,8 @@ Refer to the source code for the Purchase Order status codes:
         show_source: True
         members: []
 
+Purchase Order Status supports [custom states](../concepts/custom_states.md).
+
 ### Purchase Order Currency
 
 The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
@@ -90,6 +92,14 @@ There are two options to mark items as "received":
 
 !!! note "Permissions"
 	Marking line items as received requires the "Purchase order" ADD permission.
+
+### Item Location
+
+When receiving items from a purchase order, the location of the items must be specified. There are multiple ways to specify the location:
+
+* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location.
+
+* **Line Item Location**: Each line item can have a specific location set. When receiving items, the location will default to the line item location. *Note: A destination specified at the line item level will override the destination specified at the order level.*
 
 ### Received Items
 

@@ -180,9 +180,9 @@ class PartImport(FileManagementFormView):
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                     try:
-                        exact_match = self.allowed_items[idx].get(**{
-                            a: data for a in self.matches[idx]
-                        })
+                        exact_match = self.allowed_items[idx].get(
+                            **dict.fromkeys(self.matches[idx], data)
+                        )
                     except (
                         ValueError,
                         self.allowed_items[idx].model.DoesNotExist,
@@ -295,7 +295,7 @@ class PartImport(FileManagementFormView):
 
         # Set alerts
         if import_done:
-            alert = f"<strong>{_('Part-Import')}</strong><br>{_(f'Imported {import_done} parts')}"
+            alert = f'<strong>{_("Part-Import")}</strong><br>{_(f"Imported {import_done} parts")}'
             messages.success(self.request, alert)
         if import_error:
             error_text = '\n'.join([
@@ -304,7 +304,7 @@ class PartImport(FileManagementFormView):
             ])
             messages.error(
                 self.request,
-                f"<strong>{_('Some errors occurred:')}</strong><br><ul>{error_text}</ul>",
+                f'<strong>{_("Some errors occurred:")}</strong><br><ul>{error_text}</ul>',
             )
 
         return HttpResponseRedirect(reverse('part-index'))
@@ -414,7 +414,7 @@ class PartDetailFromIPN(PartDetail):
         if not self.object:
             return HttpResponseRedirect(reverse('part-index'))
 
-        return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class PartImageSelect(AjaxUpdateView):
@@ -720,7 +720,7 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
             context['part_count'] = 0
 
         # Get current category
-        category = kwargs.get('object', None)
+        category = kwargs.get('object')
 
         if category:
             # Insert "starred" information

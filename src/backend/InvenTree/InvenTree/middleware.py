@@ -36,7 +36,25 @@ def get_token_from_request(request):
     return None
 
 
-class AuthRequiredMiddleware(object):
+# List of target URL endpoints where *do not* want to redirect to
+urls = [
+    reverse_lazy('account_login'),
+    reverse_lazy('account_logout'),
+    reverse_lazy('admin:login'),
+    reverse_lazy('admin:logout'),
+]
+
+# Do not redirect requests to any of these paths
+paths_ignore = [
+    '/api/',
+    '/auth/',
+    '/js/',  # TODO - remove when CUI is removed
+    settings.MEDIA_URL,
+    settings.STATIC_URL,
+]
+
+
+class AuthRequiredMiddleware:
     """Check for user to be authenticated."""
 
     def __init__(self, get_response):
@@ -92,43 +110,21 @@ class AuthRequiredMiddleware(object):
 
             # Allow static files to be accessed without auth
             # Important for e.g. login page
-            if request.path_info.startswith('/static/'):
-                authorized = True
-
-            # Unauthorized users can access the login page
-            elif request.path_info.startswith('/accounts/'):
-                authorized = True
-
-            elif (
-                request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
-                or request.path_info.startswith('/assets/')
-                or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+            if (
+                request.path_info.startswith('/static/')
+                or request.path_info.startswith('/accounts/')
+                or (
+                    request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
+                    or request.path_info.startswith('/assets/')
+                    or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+                )
+                or self.check_token(request)
             ):
-                authorized = True
-
-            elif self.check_token(request):
                 authorized = True
 
             # No authorization was found for the request
             if not authorized:
                 path = request.path_info
-
-                # List of URL endpoints we *do not* want to redirect to
-                urls = [
-                    reverse_lazy('account_login'),
-                    reverse_lazy('account_logout'),
-                    reverse_lazy('admin:login'),
-                    reverse_lazy('admin:logout'),
-                ]
-
-                # Do not redirect requests to any of these paths
-                paths_ignore = [
-                    '/api/',
-                    '/auth/',
-                    '/js/',
-                    settings.MEDIA_URL,
-                    settings.STATIC_URL,
-                ]
 
                 if path not in urls and not any(
                     path.startswith(p) for p in paths_ignore

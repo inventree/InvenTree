@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import plugin.models
+import plugin.staticfiles
 from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
@@ -119,6 +120,10 @@ def install_plugins_file():
         log_error('pip')
         return False
 
+    # Update static files
+    plugin.staticfiles.collect_plugins_static_files()
+    plugin.staticfiles.clear_plugins_static_files()
+
     # At this point, the plugins file has been installed
     return True
 
@@ -216,19 +221,12 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
             identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
         ]:
             # using a VCS provider
-            if packagename:
-                full_pkg = f'{packagename}@{url}'
-            else:
-                full_pkg = url
-        else:  # pragma: no cover
-            # using a custom package repositories
-            # This is only for pypa compliant directory services (all current are tested above)
-            # and not covered by tests.
-            if url:
-                install_name.append('-i')
-                full_pkg = url
-            elif packagename:
-                full_pkg = packagename
+            full_pkg = f'{packagename}@{url}' if packagename else url
+        elif url:
+            install_name.append('-i')
+            full_pkg = url
+        elif packagename:
+            full_pkg = packagename
 
     elif packagename:
         # use pypi
@@ -248,10 +246,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         ret['result'] = ret['success'] = _('Installed plugin successfully')
         ret['output'] = str(result, 'utf-8')
 
-        if packagename:
-            if path := check_package_path(packagename):
-                # Override result information
-                ret['result'] = _(f'Installed plugin into {path}')
+        if packagename and (path := check_package_path(packagename)):
+            # Override result information
+            ret['result'] = _(f'Installed plugin into {path}')
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_install')
@@ -263,6 +260,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     from plugin.registry import registry
 
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    # Update static files
+    plugin.staticfiles.collect_plugins_static_files()
 
     return ret
 
@@ -327,6 +327,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     if delete_config:
         # Remove the plugin configuration from the database
         cfg.delete()
+
+    # Remove static files associated with this plugin
+    plugin.staticfiles.clear_plugin_static_files(cfg.key)
 
     # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

@@ -1,44 +1,39 @@
 import { t } from '@lingui/macro';
 import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
-import {
-  IconDots,
-  IconInfoCircle,
-  IconList,
-  IconNotes,
-  IconPaperclip
-} from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { IconInfoCircle, IconList } from '@tabler/icons-react';
+import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
-import { notYetImplemented } from '../../functions/notifications';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -48,7 +43,6 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 
@@ -88,7 +82,7 @@ export default function ReturnOrderDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'reference',
@@ -99,6 +93,7 @@ export default function ReturnOrderDetail() {
         type: 'text',
         name: 'customer_reference',
         label: t`Customer Reference`,
+        icon: 'customer',
         copy: true,
         hidden: !order.customer_reference
       },
@@ -123,7 +118,7 @@ export default function ReturnOrderDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'line_items',
@@ -157,7 +152,7 @@ export default function ReturnOrderDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         external: true,
@@ -175,23 +170,48 @@ export default function ReturnOrderDetail() {
         icon: 'user',
         copy: true,
         hidden: !order.contact
-      }
-      // TODO: Project code
-    ];
-
-    let br: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
       },
       {
         type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !order.project_code
+      }
+    ];
+
+    const br: DetailsField[] = [
+      {
+        type: 'date',
+        name: 'creation_date',
+        label: t`Creation Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.creation_date
+      },
+      {
+        type: 'date',
+        name: 'issue_date',
+        label: t`Issue Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.issue_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
-        icon: 'calendar',
+        copy: true,
         hidden: !order.target_date
+      },
+      {
+        type: 'date',
+        name: 'complete_date',
+        icon: 'calendar_check',
+        label: t`Completion Date`,
+        copy: true,
+        hidden: !order.complete_date
       },
       {
         type: 'text',
@@ -241,21 +261,22 @@ export default function ReturnOrderDetail() {
             multiple={true}
             defaultValue={['line-items', 'extra-items']}
           >
-            <Accordion.Item value="line-items" key="lineitems">
+            <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
+                  order={order}
                   customerId={order.customer}
                   currency={orderCurrency}
                 />
               </Accordion.Panel>
             </Accordion.Item>
-            <Accordion.Item value="extra-items" key="extraitems">
+            <Accordion.Item value='extra-items' key='extraitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ExtraLineItemTable
@@ -269,29 +290,14 @@ export default function ReturnOrderDetail() {
           </Accordion>
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.returnorder}
-            model_id={order.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.returnorder}
-            modelId={order.pk}
-            editable={user.hasChangeRole(UserRoles.return_order)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk
+      })
     ];
   }, [order, id, user]);
 
@@ -300,14 +306,18 @@ export default function ReturnOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status}
+            status={order.status_custom_key}
             type={ModelType.returnorder}
             options={{ size: 'lg' }}
           />
         ];
   }, [order, instanceQuery]);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
+
+  const duplicateReturnOrderFields = useReturnOrderFields({
+    duplicateOrderId: order.pk
+  });
 
   const editReturnOrder = useEditApiFormModal({
     url: ApiEndpoints.return_order_list,
@@ -322,7 +332,7 @@ export default function ReturnOrderDetail() {
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
-    fields: returnOrderFields,
+    fields: duplicateReturnOrderFields,
     initialData: {
       ...order,
       reference: undefined
@@ -344,7 +354,7 @@ export default function ReturnOrderDetail() {
     title: t`Cancel Return Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Cancel this order`,
-    successMessage: t`Order canceled`
+    successMessage: t`Order cancelled`
   });
 
   const holdOrder = useCreateApiFormModal({
@@ -390,43 +400,31 @@ export default function ReturnOrderDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={() => issueOrder.open()}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={() => completeOrder.open()}
       />,
-      <AdminButton model={ModelType.returnorder} pk={order.pk} />,
+      <AdminButton model={ModelType.returnorder} id={order.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.returnorder,
-            pk: order.pk
-          }),
-          LinkBarcodeAction({
-            hidden: order?.barcode_hash,
-            onClick: notYetImplemented
-          }),
-          UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash,
-            onClick: notYetImplemented
-          })
-        ]}
+        model={ModelType.returnorder}
+        pk={order.pk}
+        hash={order?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.returnorder}
         items={[order.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.return_order),
@@ -464,9 +462,9 @@ export default function ReturnOrderDetail() {
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Return Order` + `: ${order.reference}`}
+            title={`${t`Return Order`}: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
@@ -475,7 +473,13 @@ export default function ReturnOrderDetail() {
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
-          <PanelGroup pageKey="returnorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey='returnorder'
+            panels={orderPanels}
+            model={ModelType.returnorder}
+            instance={order}
+            id={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

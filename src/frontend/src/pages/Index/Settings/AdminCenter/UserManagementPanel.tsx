@@ -8,7 +8,7 @@ import { UserTable } from '../../../../tables/settings/UserTable';
 
 export default function UserManagementPanel() {
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Title order={5}>
         <Trans>Users</Trans>
       </Title>
@@ -28,13 +28,13 @@ export default function UserManagementPanel() {
           <Trans>Settings</Trans>
         </Text>
         <Group>
-          <Text c="dimmed">
+          <Text c='dimmed'>
             <Trans>
               Select settings relevant for user lifecycle. More available in
             </Trans>
           </Text>
           <Anchor component={Link} to={'/settings/system'}>
-            <Trans>System settings</Trans>
+            <Trans>System Settings</Trans>
           </Anchor>
         </Group>
       </Stack>

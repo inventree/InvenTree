@@ -187,6 +187,43 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         return getattr(self.plugin, 'is_package', False)
 
+    @property
+    def admin_source(self) -> str:
+        """Return the path to the javascript file which renders custom admin content for this plugin.
+
+        - It is required that the file provides a 'renderPluginSettings' function!
+        """
+        if not self.plugin:
+            return None
+
+        if not self.is_installed() or not self.active:
+            return None
+
+        if hasattr(self.plugin, 'get_admin_source'):
+            try:
+                return self.plugin.get_admin_source()
+            except Exception:
+                pass
+
+        return None
+
+    @property
+    def admin_context(self) -> dict:
+        """Return the context data for the admin integration."""
+        if not self.plugin:
+            return None
+
+        if not self.is_installed() or not self.active:
+            return None
+
+        if hasattr(self.plugin, 'get_admin_context'):
+            try:
+                return self.plugin.get_admin_context()
+            except Exception:
+                pass
+
+        return {}
+
     def activate(self, active: bool) -> None:
         """Set the 'active' status of this plugin instance."""
         from InvenTree.tasks import check_for_migrations, offload_task
@@ -199,7 +236,9 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         if active:
             offload_task(check_for_migrations)
-            offload_task(plugin.staticfiles.copy_plugin_static_files, self.key)
+            offload_task(
+                plugin.staticfiles.copy_plugin_static_files, self.key, group='plugin'
+            )
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

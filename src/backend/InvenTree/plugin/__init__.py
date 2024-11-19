@@ -5,8 +5,8 @@ from .plugin import InvenTreePlugin
 from .registry import registry
 
 __all__ = [
-    'registry',
     'InvenTreePlugin',
-    'MixinNotImplementedError',
     'MixinImplementationError',
+    'MixinNotImplementedError',
+    'registry',
 ]

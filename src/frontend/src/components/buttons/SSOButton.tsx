@@ -17,7 +17,7 @@ import {
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
-import { Provider } from '../../states/states';
+import type { Provider } from '../../states/states';
 
 const brandIcons: { [key: string]: JSX.Element } = {
   google: <IconBrandGoogle />,
@@ -33,7 +33,7 @@ const brandIcons: { [key: string]: JSX.Element } = {
   microsoft: <IconBrandAzure />
 };
 
-export function SsoButton({ provider }: { provider: Provider }) {
+export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
   function login() {
     // set preferred provider
     api
@@ -51,8 +51,8 @@ export function SsoButton({ provider }: { provider: Provider }) {
   return (
     <Button
       leftSection={getBrandIcon(provider)}
-      radius="xl"
-      component="a"
+      radius='xl'
+      component='a'
       onClick={login}
     >
       {provider.display_name}{' '}

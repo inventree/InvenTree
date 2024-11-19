@@ -61,6 +61,8 @@ Refer to the source code for the Return Order status codes:
         show_source: True
         members: []
 
+Return Order Status supports [custom states](../concepts/custom_states.md).
+
 ## Create a Return Order
 
 From the Return Order index, click on <span class='badge inventree add'><span class='fas fa-plus-circle'></span> New Return Order</span> which opens the "Create Return Order" form.

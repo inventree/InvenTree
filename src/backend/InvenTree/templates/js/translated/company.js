@@ -165,6 +165,7 @@ function supplierPartFields(options={}) {
             icon: 'fa-box',
         },
         pack_quantity: {},
+        active: {},
     };
 
     if (options.part) {

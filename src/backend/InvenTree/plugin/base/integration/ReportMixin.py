@@ -33,7 +33,6 @@ class ReportMixin:
             request: The request object which initiated the report generation
             context: The context dictionary to add to
         """
-        pass
 
     def add_label_context(self, label_instance, model_instance, request, context):
         """Add extra context to the provided label instance.
@@ -46,7 +45,6 @@ class ReportMixin:
             request: The request object which initiated the label generation
             context: The context dictionary to add to
         """
-        pass
 
     def report_callback(self, template, instance, report, request):
         """Callback function called after a report is generated.
@@ -59,4 +57,3 @@ class ReportMixin:
 
         The default implementation does nothing.
         """
-        pass

@@ -98,7 +98,8 @@ function purchaseOrderFields(options={}) {
 
                     return fields;
                 }
-            }
+            },
+            disabled: !!options.duplicate_order,
         },
         supplier_reference: {},
         project_code: {
@@ -109,6 +110,9 @@ function purchaseOrderFields(options={}) {
         },
         target_date: {
             icon: 'fa-calendar-alt',
+        },
+        destination: {
+            icon: 'fa-sitemap'
         },
         link: {
             icon: 'fa-link',
@@ -155,35 +159,13 @@ function purchaseOrderFields(options={}) {
 
     // Add fields for order duplication (only if required)
     if (options.duplicate_order) {
-        fields.duplicate_order = {
+        fields.duplicate__order_id = {
             value: options.duplicate_order,
-            group: 'duplicate',
-            required: 'true',
-            type: 'related field',
-            model: 'purchaseorder',
-            filters: {
-                supplier_detail: true,
-            },
-            api_url: '{% url "api-po-list" %}',
-            label: '{% trans "Purchase Order" %}',
-            help_text: '{% trans "Select purchase order to duplicate" %}',
+            hidden: true,
         };
 
-        fields.duplicate_line_items = {
-            value: true,
-            group: 'duplicate',
-            type: 'boolean',
-            label: '{% trans "Duplicate Line Items" %}',
-            help_text: '{% trans "Duplicate all line items from the selected order" %}',
-        };
-
-        fields.duplicate_extra_lines = {
-            value: true,
-            group: 'duplicate',
-            type: 'boolean',
-            label: '{% trans "Duplicate Extra Lines" %}',
-            help_text: '{% trans "Duplicate extra line items from the selected order" %}',
-        };
+        fields.duplicate__copy_lines = {};
+        fields.duplicate__copy_extra_lines = {};
     }
 
     if (!global_settings.PROJECT_CODES_ENABLED) {
@@ -277,6 +259,7 @@ function poLineItemFields(options={}) {
         part: {
             icon: 'fa-shapes',
             filters: {
+                active: true,
                 part_detail: true,
                 supplier_detail: true,
                 supplier: options.supplier,
@@ -1382,6 +1365,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         method: 'POST',
         fields: {
             location: {
+                value: options.destination,
                 filters: {
                     structural: false,
                 },
@@ -1788,12 +1772,12 @@ function loadPurchaseOrderTable(table, options) {
                 }
             },
             {
-                field: 'status',
+                field: 'status_custom_key',
                 title: '{% trans "Status" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return purchaseOrderStatusDisplay(row.status);
+                    return purchaseOrderStatusDisplay(row.status_custom_key);
                 }
             },
             {
@@ -2119,7 +2103,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 sortable: true,
                 sortName: 'MPN',
-                field: 'supplier_part_detail.manufacturer_part_detail.MPN',
+                field: 'mpn',
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {

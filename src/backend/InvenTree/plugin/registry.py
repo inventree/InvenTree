@@ -159,7 +159,7 @@ class PluginsRegistry:
         # Update the registry hash value
         self.update_plugin_hash()
 
-    def call_plugin_function(self, slug, func, *args, **kwargs):
+    def call_plugin_function(self, slug: str, func: str, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
         As this is intended to be run by the background worker,
@@ -572,16 +572,13 @@ class PluginsRegistry:
                 try:
                     self._init_plugin(plg, plugin_configs)
                     break
-                except IntegrationPluginError:
-                    # Error has been handled downstream
-                    pass
                 except Exception as error:
                     # Handle the error, log it and try again
-                    handle_error(
-                        error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                    )
-
                     if attempts == 0:
+                        handle_error(
+                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
+                        )
+
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
                             error.path,
@@ -742,11 +739,12 @@ class PluginsRegistry:
     def plugin_settings_keys(self):
         """A list of keys which are used to store plugin settings."""
         return [
-            'ENABLE_PLUGINS_URL',
-            'ENABLE_PLUGINS_NAVIGATION',
             'ENABLE_PLUGINS_APP',
-            'ENABLE_PLUGINS_SCHEDULE',
             'ENABLE_PLUGINS_EVENTS',
+            'ENABLE_PLUGINS_INTERFACE',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_URL',
         ]
 
     def calculate_plugin_hash(self):
@@ -768,7 +766,7 @@ class PluginsRegistry:
 
         for k in self.plugin_settings_keys():
             try:
-                val = get_global_setting(k)
+                val = get_global_setting(k, create=False)
                 msg = f'{k}-{val}'
 
                 data.update(msg.encode())
@@ -809,7 +807,7 @@ class PluginsRegistry:
 registry: PluginsRegistry = PluginsRegistry()
 
 
-def call_function(plugin_name, function_name, *args, **kwargs):
+def call_plugin_function(plugin_name: str, function_name: str, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
 

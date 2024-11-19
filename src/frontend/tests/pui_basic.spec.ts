@@ -2,26 +2,24 @@ import { expect, test } from './baseFixtures.js';
 import { baseUrl, user } from './defaults.js';
 import { doLogin, doQuickLogin } from './login.js';
 
-test('PUI - Basic Login Test', async ({ page }) => {
+test('Basic Login Test', async ({ page }) => {
   await doLogin(page);
 
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
   await page.waitForURL('**/platform');
 
-  await page
-    .getByRole('heading', { name: `Welcome to your Dashboard, ${user.name}` })
-    .click();
+  await page.getByText('InvenTree Demo Server -').waitFor();
 
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
@@ -35,21 +33,19 @@ test('PUI - Basic Login Test', async ({ page }) => {
   await page.getByLabel('username');
 });
 
-test('PUI - Quick Login Test', async ({ page }) => {
+test('Quick Login Test', async ({ page }) => {
   await doQuickLogin(page);
 
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
   await page.waitForURL('**/platform');
 
-  await page
-    .getByRole('heading', { name: `Welcome to your Dashboard, ${user.name}` })
-    .click();
+  await page.getByText('InvenTree Demo Server - ').waitFor();
 
   // Logout (via URL)
   await page.goto(`${baseUrl}/logout/`);

@@ -23,7 +23,15 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import {
+  AssignedToMeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  type TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
@@ -33,11 +41,13 @@ export function BuildOrderTable({
   partId,
   parentBuildId,
   salesOrderId
-}: {
+}: Readonly<{
   partId?: number;
   parentBuildId?: number;
   salesOrderId?: number;
-}) {
+}>) {
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+
   const tableColumns = useMemo(() => {
     return [
       ReferenceColumn({}),
@@ -45,7 +55,7 @@ export function BuildOrderTable({
         accessor: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'part_detail.IPN',
@@ -85,6 +95,7 @@ export function BuildOrderTable({
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
+        title: t`Completion Date`,
         sortable: true
       }),
       {
@@ -102,12 +113,12 @@ export function BuildOrderTable({
   const ownerFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    const filters: TableFilter[] = [
       {
-        name: 'active',
+        name: 'outstanding',
         type: 'boolean',
-        label: t`Active`,
-        description: t`Show active orders`
+        label: t`Outstanding`,
+        description: t`Show outstanding orders`
       },
       {
         name: 'status',
@@ -115,29 +126,17 @@ export function BuildOrderTable({
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.build)
       },
-      {
-        name: 'overdue',
-        label: t`Overdue`,
-        type: 'boolean',
-        description: t`Show overdue status`
-      },
-      {
-        name: 'assigned_to_me',
-        type: 'boolean',
-        label: t`Assigned to me`,
-        description: t`Show orders assigned to me`
-      },
+      OverdueFilter(),
+      AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'issued_by',
         label: t`Issued By`,
@@ -151,11 +150,21 @@ export function BuildOrderTable({
         choices: ownerFilters.choices
       }
     ];
-  }, [parentBuildId, projectCodeFilters.choices, ownerFilters.choices]);
+
+    // If we are filtering on a specific part, we can include the "include variants" filter
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId, projectCodeFilters.choices, ownerFilters.choices]);
 
   const user = useUserState();
-
-  const table = useTable('buildorder');
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
@@ -178,7 +187,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
-        key="add-build-order"
+        key='add-build-order'
       />
     ];
   }, [user]);
@@ -194,6 +203,7 @@ export function BuildOrderTable({
           params: {
             part: partId,
             ancestor: parentBuildId,
+            sales_order: salesOrderId,
             part_detail: true
           },
           tableActions: tableActions,

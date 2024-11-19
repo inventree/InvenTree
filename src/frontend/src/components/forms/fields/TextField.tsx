@@ -2,7 +2,7 @@ import { TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import { useCallback, useEffect, useId, useState } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 /*
  * Custom implementation of the mantine <TextInput> component,
@@ -13,13 +13,15 @@ export default function TextField({
   controller,
   fieldName,
   definition,
-  onChange
-}: {
+  onChange,
+  onKeyDown
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
   onChange: (value: any) => void;
-}) {
+  onKeyDown: (value: any) => void;
+}>) {
   const fieldId = useId();
   const {
     field,
@@ -28,11 +30,12 @@ export default function TextField({
 
   const { value } = field;
 
-  const [rawText, setRawText] = useState(value);
-  const [debouncedText] = useDebouncedValue(rawText, 250);
+  const [rawText, setRawText] = useState<string>(value || '');
+
+  const [debouncedText] = useDebouncedValue(rawText, 100);
 
   useEffect(() => {
-    setRawText(value);
+    setRawText(value || '');
   }, [value]);
 
   const onTextChange = useCallback((value: any) => {
@@ -54,14 +57,17 @@ export default function TextField({
       type={definition.field_type}
       value={rawText || ''}
       error={error?.message}
-      radius="sm"
+      radius='sm'
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
-        onChange(event.currentTarget.value);
+        if (event.currentTarget.value != value) {
+          onChange(event.currentTarget.value);
+        }
       }}
+      onKeyDown={(event) => onKeyDown(event.code)}
       rightSection={
         value && !definition.required ? (
-          <IconX size="1rem" color="red" onClick={() => onTextChange('')} />
+          <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
         ) : null
       }
     />
