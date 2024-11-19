@@ -93,7 +93,7 @@ export function usePluginPanels({
     };
   }, [model, id, instance, inventreeContext]);
 
-  const pluginPanels: PluginPanelTypee[] = useMemo(() => {
+  const pluginPanels: PluginPanelType[] = useMemo(() => {
     return (
       pluginData?.map((props: PluginUIFeature) => {
         const iconName: string = props?.icon || 'ti:plug:outline';
