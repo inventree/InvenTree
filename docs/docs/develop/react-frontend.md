@@ -122,3 +122,15 @@ To view the report, you can use the following command, after downloading the rep
 ```bash
 npx playwright show-report path/to/report
 ```
+
+### No Tests Found
+
+If there is any problem in the testing launch sequence, the playwright UI will display the message "No Tests". In this case, an error has occured, likely launching the InvenTree server process (which runs in the background).
+
+To debug this situation, and determine what error needs to be resolved, run the following command:
+
+```bash
+npx playwright test --debug
+```
+
+This will print out any errors to the console, allowing you to resolve issues before continuing. In all likelihood, your InvenTree installation needs to be updated, and simply running `invoke update` will allow you to continue.
