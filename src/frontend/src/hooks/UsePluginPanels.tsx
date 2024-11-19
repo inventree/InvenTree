@@ -15,7 +15,6 @@ import {
 } from '../components/plugins/PluginUIFeature';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import type { ModelType } from '../enums/ModelType';
-import { identifierString } from '../functions/conversion';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -30,6 +29,14 @@ export type PluginPanelContext = InvenTreeContext & {
   instance?: any;
 };
 
+/**
+ * Type definition for a plugin panel which extends the standard PanelType
+ * @param pluginName - The name of the plugin which provides this panel
+ */
+export type PluginPanelType = PanelType & {
+  pluginName: string;
+};
+
 export function usePluginPanels({
   instance,
   model,
@@ -38,7 +45,7 @@ export function usePluginPanels({
   instance?: any;
   model?: ModelType | string;
   id?: string | number | null;
-}): PanelType[] {
+}): PluginPanelType[] {
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
@@ -86,13 +93,10 @@ export function usePluginPanels({
     };
   }, [model, id, instance, inventreeContext]);
 
-  const pluginPanels: PanelType[] = useMemo(() => {
+  const pluginPanels: PluginPanelType[] = useMemo(() => {
     return (
       pluginData?.map((props: PluginUIFeature) => {
         const iconName: string = props?.icon || 'ti:plug:outline';
-        const identifier = identifierString(
-          `${props.plugin_name}-${props.key}`
-        );
 
         const pluginContext: any = {
           ...contextData,
@@ -100,7 +104,8 @@ export function usePluginPanels({
         };
 
         return {
-          name: identifier,
+          name: props.key,
+          pluginName: props.plugin_name,
           label: props.title,
           icon: <ApiIcon name={iconName} />,
           content: (
