@@ -41,7 +41,7 @@ export default function InvenTreeTableHeader({
   columns,
   filters,
   toggleColumn
-}: {
+}: Readonly<{
   tableUrl: string;
   tableState: TableState;
   tableProps: InvenTreeTableProps<any>;
@@ -49,7 +49,7 @@ export default function InvenTreeTableHeader({
   columns: any;
   filters: TableFilter[];
   toggleColumn: (column: string) => void;
-}) {
+}>) {
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 

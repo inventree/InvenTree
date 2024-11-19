@@ -6,7 +6,7 @@ import * as classes from './GettingStartedCarousel.css';
 import type { MenuLinkItem } from './MenuLinks';
 import { StylishText } from './StylishText';
 
-function StartedCard({ title, description, link }: MenuLinkItem) {
+function StartedCard({ title, description, link }: Readonly<MenuLinkItem>) {
   return (
     <Paper shadow='md' p='xl' radius='md' className={classes.card}>
       <div>

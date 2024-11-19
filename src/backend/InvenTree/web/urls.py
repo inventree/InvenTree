@@ -18,7 +18,7 @@ class RedirectAssetView(TemplateView):
     def get(self, request, *args, **kwargs):
         """Redirect to static asset."""
         return redirect(
-            f"{settings.STATIC_URL}web/assets/{kwargs['path']}", permanent=True
+            f'{settings.STATIC_URL}web/assets/{kwargs["path"]}', permanent=True
         )
 
 

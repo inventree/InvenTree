@@ -50,7 +50,17 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
           key: 'stockitem',
           details:
             deltas.stockitem_detail &&
-            RenderStockItem({ instance: deltas.stockitem_detail })
+            RenderStockItem({ instance: deltas.stockitem_detail, link: true })
+        },
+        {
+          label: t`Stock Item`,
+          key: 'item',
+          details:
+            deltas.item_detail &&
+            RenderStockItem({
+              instance: deltas.item_detail,
+              link: true
+            })
         },
         {
           label: t`Status`,

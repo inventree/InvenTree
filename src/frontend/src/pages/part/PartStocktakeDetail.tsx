@@ -33,7 +33,7 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 /*
  * Render a tooltip for the chart, with correct date information
  */
-function ChartTooltip({ label, payload }: ChartTooltipProps) {
+function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   const formattedLabel: string = useMemo(() => {
     if (label && typeof label === 'number') {
       return formatDate(new Date(label).toISOString()) ?? label;
@@ -66,7 +66,9 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
   );
 }
 
-export default function PartStocktakeDetail({ partId }: { partId: number }) {
+export default function PartStocktakeDetail({
+  partId
+}: Readonly<{ partId: number }>) {
   const user = useUserState();
   const table = useTable('part-stocktake');
 

@@ -11,7 +11,12 @@ export const ApiIcon = ({ name: _name, size = 22 }: ApiIconProps) => {
   const icon = useIconState(
     (s) => s.packagesMap[iconPackage]?.icons[name]?.variants[variant]
   );
+
   const unicode = icon ? String.fromCodePoint(Number.parseInt(icon, 16)) : '';
+
+  if (!unicode) {
+    console.warn(`ApiIcon not found: ${_name}`);
+  }
 
   return (
     <i

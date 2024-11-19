@@ -470,7 +470,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
-        return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
+        return f'{self.reference} - {self.supplier.name if self.supplier else _("deleted")}'
 
     reference = models.CharField(
         unique=True,
@@ -996,7 +996,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
-        return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
+        return f'{self.reference} - {self.customer.name if self.customer else _("deleted")}'
 
     reference = models.CharField(
         unique=True,
@@ -2194,7 +2194,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
-        return f"{self.reference} - {self.customer.name if self.customer else _('no customer')}"
+        return f'{self.reference} - {self.customer.name if self.customer else _("no customer")}'
 
     reference = models.CharField(
         unique=True,

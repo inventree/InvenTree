@@ -67,6 +67,7 @@ type InternalLinkField = {
   model: ModelType;
   model_field?: string;
   model_formatter?: (value: any) => string;
+  model_filters?: any;
   backup_value?: string;
 };
 
@@ -234,7 +235,9 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       const url = apiUrl(modelDef.api_endpoint, props.field_value);
 
       return api
-        .get(url)
+        .get(url, {
+          params: props.field_data.model_filters ?? undefined
+        })
         .then((response) => {
           switch (response.status) {
             case 200:

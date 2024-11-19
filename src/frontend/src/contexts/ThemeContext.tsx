@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+import { ContextMenuProvider } from 'mantine-contextmenu';
 
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
@@ -40,20 +41,22 @@ export function ThemeContext({
 
   return (
     <MantineProvider theme={myTheme} colorSchemeManager={colorSchema}>
-      <LanguageContext>
-        <ModalsProvider
-          labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-          modals={{
-            qr: QrCodeModal,
-            info: ServerInfoModal,
-            about: AboutInvenTreeModal,
-            license: LicenseModal
-          }}
-        >
-          <Notifications />
-          {children}
-        </ModalsProvider>
-      </LanguageContext>
+      <ContextMenuProvider>
+        <LanguageContext>
+          <ModalsProvider
+            labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+            modals={{
+              qr: QrCodeModal,
+              info: ServerInfoModal,
+              about: AboutInvenTreeModal,
+              license: LicenseModal
+            }}
+          >
+            <Notifications />
+            {children}
+          </ModalsProvider>
+        </LanguageContext>
+      </ContextMenuProvider>
     </MantineProvider>
   );
 }

@@ -53,6 +53,8 @@ def check_link(url) -> bool:
         if url in cache:
             return True
 
+    print(f'Checking external URL: {url}')
+
     attempts = 5
 
     while attempts > 0:
@@ -65,6 +67,8 @@ def check_link(url) -> bool:
             return True
 
         attempts -= 1
+
+        print(f' - URL check failed with status code {response.status_code}')
 
     return False
 
@@ -151,16 +155,18 @@ def define_env(env):
         if not os.path.exists(file_path):
             raise FileNotFoundError(f'Source file {filename} does not exist.')
 
-        repo_url = get_repo_url(raw=raw)
-
-        if raw:
-            url = f'{repo_url}/{branch}/{filename}'
-        else:
-            url = f'{repo_url}/blob/{branch}/{filename}'
+        # Construct repo URL
+        repo_url = get_repo_url(raw=False)
+        url = f'{repo_url}/blob/{branch}/{filename}'
 
         # Check that the URL exists before returning it
         if not check_link(url):
             raise FileNotFoundError(f'URL {url} does not exist.')
+
+        if raw:
+            # If requesting the 'raw' URL, take this into account here...
+            repo_url = get_repo_url(raw=True)
+            url = f'{repo_url}/{branch}/{filename}'
 
         return url
 
