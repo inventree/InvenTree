@@ -113,7 +113,9 @@ def plugins_file_hash():
         return None
 
     with pf.open('rb') as f:
-        return hashlib.sha256(f.read()).hexdigest()
+        digest = hashlib.file_digest(f, 'sha256')
+
+    return digest.hexdigest()
 
 
 def install_plugins_file():
