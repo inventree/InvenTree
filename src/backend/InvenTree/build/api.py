@@ -357,6 +357,23 @@ class BuildLineFilter(rest_filters.FilterSet):
     tracked = rest_filters.BooleanFilter(label=_('Tracked'), field_name='bom_item__sub_part__trackable')
     testable = rest_filters.BooleanFilter(label=_('Testable'), field_name='bom_item__sub_part__testable')
 
+    part = rest_filters.ModelChoiceFilter(
+        queryset=part.models.Part.objects.all(),
+        label=_('Part'),
+        field_name='bom_item__sub_part',
+    )
+
+    order_outstanding = rest_filters.BooleanFilter(
+        label=_('Order Outstanding'),
+        method='filter_order_outstanding'
+    )
+
+    def filter_order_outstanding(self, queryset, name, value):
+        """Filter by whether the associated BuildOrder is 'outstanding'."""
+        if str2bool(value):
+            return queryset.filter(build__status__in=BuildStatusGroups.ACTIVE_CODES)
+        return queryset.exclude(build__status__in=BuildStatusGroups.ACTIVE_CODES)
+
     allocated = rest_filters.BooleanFilter(label=_('Allocated'), method='filter_allocated')
 
     def filter_allocated(self, queryset, name, value):
@@ -391,11 +408,27 @@ class BuildLineFilter(rest_filters.FilterSet):
         return queryset.exclude(flt)
 
 
+
 class BuildLineEndpoint:
     """Mixin class for BuildLine API endpoints."""
 
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint."""
+
+        kwargs['context'] = self.get_serializer_context()
+
+        try:
+            params = self.request.query_params
+
+            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
+            kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+        except AttributeError:
+            pass
+
+        return self.serializer_class(*args, **kwargs)
 
     def get_source_build(self) -> Build:
         """Return the source Build object for the BuildLine queryset.

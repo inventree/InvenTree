@@ -6,11 +6,14 @@ import {
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -24,7 +27,7 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -70,14 +73,14 @@ export default function SupplierPartDetail() {
       return <Skeleton />;
     }
 
-    let data = supplierPart ?? {};
+    const data = supplierPart ?? {};
 
     // Access nested data
     data.manufacturer = data.manufacturer_detail?.pk;
     data.MPN = data.manufacturer_part_detail?.MPN;
     data.manufacturer_part = data.manufacturer_part_detail?.pk;
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -118,7 +121,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'link',
         name: 'supplier',
@@ -161,7 +164,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'string',
         name: 'packaging',
@@ -179,7 +182,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'available',
@@ -236,7 +239,7 @@ export default function SupplierPartDetail() {
         icon: <IconPackages />,
         content: supplierPart?.pk ? (
           <StockItemTable
-            tableName="supplier-stock"
+            tableName='supplier-stock'
             allowAdd={false}
             params={{ supplier_part: supplierPart.pk }}
           />
@@ -273,7 +276,7 @@ export default function SupplierPartDetail() {
 
   const supplierPartActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
+      <AdminButton model={ModelType.supplierpart} id={supplierPart.pk} />,
       <BarcodeActionDropdown
         model={ModelType.supplierpart}
         pk={supplierPart.pk}
@@ -347,7 +350,7 @@ export default function SupplierPartDetail() {
     return [
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={supplierPart.active == false}
       />
     ];
@@ -359,7 +362,7 @@ export default function SupplierPartDetail() {
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
@@ -371,7 +374,7 @@ export default function SupplierPartDetail() {
             editEnabled={user.hasChangePermission(ModelType.supplierpart)}
           />
           <PanelGroup
-            pageKey="supplierpart"
+            pageKey='supplierpart'
             panels={panels}
             instance={supplierPart}
             model={ModelType.supplierpart}

@@ -1,11 +1,20 @@
 ---
-title:  Platform UI / React
+title: React Frontend Development
 ---
 
 ## Setup
 
-The new React-based UI will not be available by default. In order to set your development environment up to view the frontend, follow this guide.
-The new UI requires a separate frontend server to run to serve data for the new Frontend.
+The following documentation details how to setup and run a development installation of the InvenTree frontend user interface.
+
+### Prerequisites
+
+To run the frontend development server, you will need to have the following installed:
+
+- Node.js
+- Yarn
+
+!!! note "Devcontainer"
+    The [devcontainer](./devcontainer.md) setup already includes all prerequisite packages, and is ready to run the frontend server.
 
 ### Install
 
@@ -79,3 +88,37 @@ When running the frontend development server, some features may not work entirel
 #### SSO Login
 
 When logging into the frontend dev server via SSO, the redirect URL may not redirect correctly.
+
+## Testing
+
+The frontend codebase it tested using [Playwright](https://playwright.dev/). There are a large number of tests that cover the frontend codebase, which are run automatically as part of the CI pipeline.
+
+### Install Playwright
+
+To install the required packages to run the tests, you can use the following command:
+
+```bash
+cd src/frontend
+npx playwright install
+```
+
+### Running Tests
+
+To run the tests locally, in an interactive editor, you can use the following command:
+
+```bash
+cd src/frontend
+npx playwright test --ui
+```
+
+This will first launch the backend server (at `http://localhost:8000`), and then run the tests against the frontend server (at `http://localhost:5173`). An interactive browser window will open, and you can run the tests individually or as a group.
+
+### Viewing Reports
+
+The playwright tests are run automatically as part of the project's CI pipeline, and the results are stored as a downloadable report. The report file can be "replayed" using playwright, to view the results of the test run, as well as closely inspect any failed tests.
+
+To view the report, you can use the following command, after downloading the report and extracting from the zipped file:
+
+```bash
+npx playwright show-report path/to/report
+```

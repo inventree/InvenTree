@@ -71,26 +71,26 @@ function QueryResultGroup({
   return (
     <Paper
       withBorder
-      shadow="sm"
-      p="md"
+      shadow='sm'
+      p='md'
       key={`paper-${query.model}`}
       aria-label={`search-group-${query.model}`}
     >
       <Stack key={`stack-${query.model}`}>
-        <Group justify="space-between" wrap="nowrap">
-          <Group justify="left" gap={5} wrap="nowrap">
-            <Text size="lg">{model.label_multiple}</Text>
-            <Text size="sm" style={{ fontStyle: 'italic' }}>
+        <Group justify='space-between' wrap='nowrap'>
+          <Group justify='left' gap={5} wrap='nowrap'>
+            <Text size='lg'>{model.label_multiple}</Text>
+            <Text size='sm' style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>
           </Group>
           <Space />
           <ActionIcon
-            size="sm"
-            color="red"
-            variant="transparent"
-            radius="xs"
+            size='sm'
+            color='red'
+            variant='transparent'
+            radius='xs'
             aria-label={`remove-search-group-${query.model}`}
             onClick={() => onRemove(query.model)}
           >
@@ -101,7 +101,7 @@ function QueryResultGroup({
         <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
-              underline="never"
+              underline='never'
               onClick={(event: any) =>
                 onResultClick(query.model, result.pk, event)
               }
@@ -231,7 +231,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.purchase_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS')
       },
       {
         model: ModelType.salesorder,
@@ -245,7 +245,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.sales_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
       },
       {
         model: ModelType.returnorder,
@@ -259,7 +259,7 @@ export function SearchDrawer({
         },
         enabled:
           user.hasViewRole(UserRoles.return_order) &&
-          userSettings.isSet(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];
   }, [user, userSettings]);
@@ -279,7 +279,7 @@ export function SearchDrawer({
       return [];
     }
 
-    let params: any = {
+    const params: any = {
       offset: 0,
       limit: userSettings.getSetting('SEARCH_PREVIEW_RESULTS', '10'),
       search: searchText,
@@ -294,10 +294,8 @@ export function SearchDrawer({
 
     return api
       .post(apiUrl(ApiEndpoints.api_search), params)
-      .then(function (response) {
-        return response.data;
-      })
-      .catch(function (error) {
+      .then((response) => response.data)
+      .catch((error) => {
         console.error(error);
         return [];
       });
@@ -319,8 +317,8 @@ export function SearchDrawer({
         (query) => query.model in searchQuery.data
       );
 
-      for (let key in searchQuery.data) {
-        let query = queries.find((q) => q.model == key);
+      for (const key in searchQuery.data) {
+        const query = queries.find((q) => q.model == key);
         if (query) {
           query.results = searchQuery.data[key];
         }
@@ -361,37 +359,37 @@ export function SearchDrawer({
       closeDrawer();
     }
 
-    let url = targetModel.url_detail.replace(':pk', pk.toString());
+    const url = targetModel.url_detail.replace(':pk', pk.toString());
     navigateToLink(url, navigate, event);
   }
 
   return (
     <Drawer
       opened={opened}
-      size="xl"
+      size='xl'
       onClose={closeDrawer}
-      position="right"
+      position='right'
       withCloseButton={false}
       styles={{ header: { width: '100%' }, title: { width: '100%' } }}
       title={
-        <Group justify="space-between" gap={1} wrap="nowrap">
+        <Group justify='space-between' gap={1} wrap='nowrap'>
           <TextInput
-            aria-label="global-search-input"
+            aria-label='global-search-input'
             placeholder={t`Enter search text`}
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
-            leftSection={<IconSearch size="0.8rem" />}
+            leftSection={<IconSearch size='0.8rem' />}
             rightSection={
               value && (
-                <IconBackspace color="red" onClick={() => setValue('')} />
+                <IconBackspace color='red' onClick={() => setValue('')} />
               )
             }
             styles={{ root: { width: '100%' } }}
           />
-          <Tooltip label={t`Refresh search results`} position="bottom-end">
+          <Tooltip label={t`Refresh search results`} position='bottom-end'>
             <ActionIcon
-              size="lg"
-              variant="transparent"
+              size='lg'
+              variant='transparent'
               onClick={() => searchQuery.refetch()}
             >
               <IconRefresh />
@@ -399,8 +397,8 @@ export function SearchDrawer({
           </Tooltip>
           <Menu>
             <Menu.Target>
-              <Tooltip label={t`Search Options`} position="bottom-end">
-                <ActionIcon size="lg" variant="transparent">
+              <Tooltip label={t`Search Options`} position='bottom-end'>
+                <ActionIcon size='lg' variant='transparent'>
                   <IconSettings />
                 </ActionIcon>
               </Tooltip>
@@ -430,14 +428,14 @@ export function SearchDrawer({
         </Group>
       }
     >
-      <Boundary label="SearchDrawer">
+      <Boundary label='SearchDrawer'>
         {searchQuery.isFetching && (
           <Center>
             <Loader />
           </Center>
         )}
         {!searchQuery.isFetching && !searchQuery.isError && (
-          <Stack gap="md">
+          <Stack gap='md'>
             {queryResults.map((query, idx) => (
               <QueryResultGroup
                 key={idx}
@@ -452,11 +450,11 @@ export function SearchDrawer({
         )}
         {searchQuery.isError && (
           <Alert
-            color="red"
-            radius="sm"
-            variant="light"
+            color='red'
+            radius='sm'
+            variant='light'
             title={t`Error`}
-            icon={<IconAlertCircle size="1rem" />}
+            icon={<IconAlertCircle size='1rem' />}
           >
             <Trans>An error occurred during search query</Trans>
           </Alert>
@@ -466,11 +464,11 @@ export function SearchDrawer({
           !searchQuery.isError &&
           queryResults.length == 0 && (
             <Alert
-              color="blue"
-              radius="sm"
-              variant="light"
+              color='blue'
+              radius='sm'
+              variant='light'
               title={t`No Results`}
-              icon={<IconSearch size="1rem" />}
+              icon={<IconSearch size='1rem' />}
             >
               <Trans>No results available for search query</Trans>
             </Alert>

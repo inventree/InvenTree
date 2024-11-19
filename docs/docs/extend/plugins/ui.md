@@ -173,9 +173,17 @@ This context data can be used to provide additional information to the rendering
 
 Note that additional context can be passed to the rendering functions by adding additional key-value pairs to the `context` field in the `UIFeature` return type (provided by the backend via the API). This field is optional, and can be used at the discretion of the plugin developer.
 
+## File Distribution
+
+When distributing a custom UI plugin, the plugin should include the necessary frontend code to render the custom content. This frontend code should be included in the plugin package, and should be made available to the InvenTree frontend when the plugin is installed.
+
+The simplest (and recommended) way to achieve this is to distribute the compiled javascript files with the plugin package, in a top-level `static` directory. This directory will be automatically collected by InvenTree when the plugin is installed, and the files will be copied to the appropriate location.
+
+Read more about [static plugin files](../plugins.md#static-files) for more information.
+
 ## Sample Plugin
 
-A sample plugin which implements custom user interface functionality is provided in the InvenTree source code, which provides a full working example of how to implement custom user interface functionality.
+A (very simple) sample plugin which implements custom user interface functionality is provided in the InvenTree source code, which provides a full working example of how to implement custom user interface functionality.
 
 ::: plugin.samples.integration.user_interface_sample.SampleUserInterfacePlugin
     options:
@@ -184,3 +192,28 @@ A sample plugin which implements custom user interface functionality is provided
         show_root_toc_entry: False
         show_source: True
         members: []
+
+### More Examples
+
+Some more complex examples of user interface plugins can be found on the InvenTree GitHub repository:
+
+- [inventree-test-statistics](https://github.com/inventree/inventree-test-statistics)
+- [inventree-order-history](https://github.com/inventree/inventree-order-history)
+
+## Consistent Theming
+
+When developing a custom UI plugin for InvenTree, the plugin should aim to match the existing InvenTree theme as closely as possible. This will help to ensure that the custom content fits seamlessly into the existing user interface.
+
+To achieve this, we strongly recommend that you use the same framework as the InvenTree frontend - which is built using [React](https://react.dev) on top of the [Mantine](https://mantine.dev) UI component library.
+
+### Mantine
+
+The Mantine UI component library is used throughout the InvenTree frontend, and provides a consistent look and feel to the user interface. By using Mantine components in your custom UI plugin, you can ensure that your custom content fits seamlessly into the existing InvenTree theme.
+
+### InvenTree Component Library
+
+We are working to develop and distribute a library of custom InvenTree components which can be used to build custom UI plugins. This library will be made available to plugin developers in the near future.
+
+### Examples
+
+Refer to some of the existing InvenTree plugins linked above for examples of building custom UI plugins using the Mantine component library for seamless integration.

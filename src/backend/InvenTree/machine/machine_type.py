@@ -260,7 +260,7 @@ class BaseMachineType(
                     error_parts.append(
                         f'{config_type.name} settings: ' + ', '.join(missing)
                     )
-            self.handle_error(f"Missing {' and '.join(error_parts)}")
+            self.handle_error(f'Missing {" and ".join(error_parts)}')
             return
 
         try:

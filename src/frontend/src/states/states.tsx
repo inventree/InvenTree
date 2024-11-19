@@ -47,6 +47,7 @@ export interface ServerAPIProps {
   installer: null | string;
   target: null | string;
   default_locale: null | string;
+  django_admin: null | string;
 }
 
 export interface AuthProps {

@@ -17,7 +17,6 @@ test('Parts - Tabs', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('tab', { name: 'Scheduling' }).click();
@@ -48,9 +47,9 @@ test('Parts - Tabs', async ({ page }) => {
 test('Parts - Manufacturer Parts', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/84/manufacturers`);
+  await page.goto(`${baseUrl}/part/84/suppliers`);
 
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByText('Hammond Manufacturing').click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
@@ -108,22 +107,62 @@ test('Parts - Allocations', async ({ page }) => {
   await page.getByRole('cell', { name: 'Making some blue chairs' }).waitFor();
   await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
 
-  // Let's look at the allocations for the entire part
-  await page.getByRole('tab', { name: 'Details' }).click();
-  await page.getByRole('link', { name: 'Leg' }).click();
+  // Let's look at the allocations for an entire part
+  await page.goto(`${baseUrl}/part/74/details`);
 
-  await page.getByRole('tab', { name: 'Part Details' }).click();
-  await page.getByText('660 / 760').waitFor();
+  // Check that the overall allocations are displayed correctly
+  await page.getByText('11 / 825').waitFor();
+  await page.getByText('6 / 110').waitFor();
 
+  // Navigate to the "Allocations" tab
   await page.getByRole('tab', { name: 'Allocations' }).click();
 
-  // Number of table records
-  await page.getByText('1 - 4 / 4').waitFor();
-  await page.getByRole('cell', { name: 'Making red square tables' }).waitFor();
+  await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
+  await page.getByRole('button', { name: 'Sales Order Allocations' }).waitFor();
 
-  // Navigate through to the build order
-  await page.getByRole('cell', { name: 'BO0007' }).click();
-  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
+  // Expected order reference values
+  await page.getByText('BO0001').waitFor();
+  await page.getByText('BO0016').waitFor();
+  await page.getByText('BO0019').waitFor();
+  await page.getByText('SO0008').waitFor();
+  await page.getByText('SO0025').waitFor();
+
+  // Check "progress" bar of BO0001
+  const build_order_cell = await page.getByRole('cell', { name: 'BO0001' });
+  const build_order_row = await build_order_cell
+    .locator('xpath=ancestor::tr')
+    .first();
+  await build_order_row.getByText('11 / 75').waitFor();
+
+  // Expand allocations against BO0001
+  await build_order_cell.click();
+  await page.getByRole('cell', { name: '# 3', exact: true }).waitFor();
+  await page.getByRole('cell', { name: 'Room 101', exact: true }).waitFor();
+  await build_order_cell.click();
+
+  // Check row options for BO0001
+  await build_order_row.getByLabel(/row-action-menu/).click();
+  await page.getByRole('menuitem', { name: 'View Build Order' }).waitFor();
+  await page.keyboard.press('Escape');
+
+  // Check "progress" bar of SO0025
+  const sales_order_cell = await page.getByRole('cell', { name: 'SO0025' });
+  const sales_order_row = await sales_order_cell
+    .locator('xpath=ancestor::tr')
+    .first();
+  await sales_order_row.getByText('3 / 10').waitFor();
+
+  // Expand allocations against SO0025
+  await sales_order_cell.click();
+  await page.getByRole('cell', { name: '161', exact: true });
+  await page.getByRole('cell', { name: '169', exact: true });
+  await page.getByRole('cell', { name: '170', exact: true });
+  await sales_order_cell.click();
+
+  // Check row options for SO0025
+  await sales_order_row.getByLabel(/row-action-menu/).click();
+  await page.getByRole('menuitem', { name: 'View Sales Order' }).waitFor();
+  await page.keyboard.press('Escape');
 });
 
 test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
@@ -131,7 +170,8 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
 
   // Part with no history
   await page.goto(`${baseUrl}/part/82/pricing`);
-  await page.getByText('1551ABK').waitFor();
+
+  await page.getByText('Small plastic enclosure, black').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -142,7 +182,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
 
   // Part with history
   await page.goto(`${baseUrl}/part/108/pricing`);
-  await page.getByText('Part: Blue Chair').waitFor();
+  await page.getByText('A chair - with blue paint').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -153,7 +193,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
 
   // Overview Graph
-  let graph = page.getByLabel('pricing-overview-chart');
+  const graph = page.getByLabel('pricing-overview-chart');
   await graph.waitFor();
   await graph.getByText('$60').waitFor();
   await graph.locator('tspan').filter({ hasText: 'BOM Pricing' }).waitFor();
@@ -180,7 +220,7 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/55/pricing`);
-  await page.getByText('Part: C_100nF_0603').waitFor();
+  await page.getByText('Ceramic capacitor, 100nF in').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -195,7 +235,7 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
   await page.getByRole('button', { name: 'SKU Not sorted' }).waitFor();
 
   // Supplier Pricing - linkjumping
-  let target = page.getByText('ARR-26041-LPC').first();
+  const target = page.getByText('ARR-26041-LPC').first();
   await target.waitFor();
   await target.click();
   // await page.waitForURL('**/purchasing/supplier-part/697/');
@@ -206,7 +246,7 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/106/pricing`);
-  await page.getByText('Part: Chair').waitFor();
+  await page.getByText('A chair - available in multiple colors').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -221,7 +261,7 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
 
   // Variant Pricing - linkjumping
-  let target = page.getByText('Green Chair').first();
+  const target = page.getByText('Green Chair').first();
   await target.waitFor();
   await target.click();
   await page.waitForURL('**/part/109/**');
@@ -232,7 +272,7 @@ test('Parts - Pricing (Internal)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/65/pricing`);
-  await page.getByText('Part: M2x4 SHCS').waitFor();
+  await page.getByText('Socket head cap screw, M2').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
@@ -257,7 +297,7 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
 
   // Part
   await page.goto(`${baseUrl}/part/69/pricing`);
-  await page.getByText('Part: 530470210').waitFor();
+  await page.getByText('1.25mm Pitch, PicoBlade PCB').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();

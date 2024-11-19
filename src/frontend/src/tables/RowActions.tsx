@@ -1,15 +1,20 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import {
+  IconArrowRight,
   IconCircleX,
   IconCopy,
   IconDots,
   IconEdit,
   IconTrash
 } from '@tabler/icons-react';
-import { ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
+import type { NavigateFunction } from 'react-router-dom';
 
+import type { ModelType } from '../enums/ModelType';
 import { cancelEvent } from '../functions/events';
+import { navigateToLink } from '../functions/navigation';
+import { getDetailUrl } from '../functions/urls';
 
 // Type definition for a table row action
 export type RowAction = {
@@ -17,10 +22,31 @@ export type RowAction = {
   tooltip?: string;
   color?: string;
   icon?: ReactNode;
-  onClick: (event: any) => void;
+  onClick?: (event: any) => void;
   hidden?: boolean;
   disabled?: boolean;
 };
+
+type RowModelProps = {
+  modelType: ModelType;
+  modelId: number;
+  navigate: NavigateFunction;
+};
+
+export type RowViewProps = RowAction & RowModelProps;
+
+// Component for viewing a row in a table
+export function RowViewAction(props: RowViewProps): RowAction {
+  return {
+    ...props,
+    color: undefined,
+    icon: <IconArrowRight />,
+    onClick: (event: any) => {
+      const url = getDetailUrl(props.modelType, props.modelId);
+      navigateToLink(url, props.navigate, event);
+    }
+  };
+}
 
 // Component for duplicating a row in a table
 export function RowDuplicateAction(props: RowAction): RowAction {
@@ -97,7 +123,7 @@ export function RowActions({
         withinPortal={true}
         label={action.tooltip ?? action.title}
         key={action.title}
-        position="left"
+        position='left'
       >
         <Menu.Item
           color={action.color}
@@ -105,7 +131,7 @@ export function RowActions({
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);
-            action.onClick(event);
+            action.onClick?.(event);
             setOpened(false);
           }}
           disabled={action.disabled || false}
@@ -121,7 +147,7 @@ export function RowActions({
       <Menu
         withinPortal={true}
         disabled={disabled}
-        position="bottom-end"
+        position='bottom-end'
         opened={opened}
         onChange={setOpened}
       >
@@ -132,8 +158,8 @@ export function RowActions({
               aria-label={`row-action-menu-${index ?? ''}`}
               onClick={openMenu}
               disabled={disabled}
-              variant="subtle"
-              color="gray"
+              variant='subtle'
+              color='gray'
             >
               <IconDots />
             </ActionIcon>

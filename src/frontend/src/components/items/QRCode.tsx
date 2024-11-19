@@ -21,7 +21,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
-import { QrCodeType } from './ActionDropdown';
+import type { QrCodeType } from './ActionDropdown';
 import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
@@ -46,7 +46,7 @@ export const QRCode = ({ data, ecl = 'Q', margin = 1 }: QRCodeProps) => {
   return (
     <Box>
       {qrCode ? (
-        <Image src={qrCode} alt="QR Code" />
+        <Image src={qrCode} alt='QR Code' />
       ) : (
         <Skeleton height={500} />
       )}
@@ -97,7 +97,7 @@ export const InvenTreeQRCode = ({
   return (
     <Stack>
       {mdl_prop.hash ? (
-        <Alert variant="outline" color="red" title={t`Custom barcode`}>
+        <Alert variant='outline' color='red' title={t`Custom barcode`}>
           <Trans>
             A custom barcode is registered for this item. The shown code is not
             that custom barcode.
@@ -110,11 +110,11 @@ export const InvenTreeQRCode = ({
       {data && settings.getSetting('BARCODE_SHOW_TEXT', 'false') && (
         <Group
           justify={showEclSelector ? 'space-between' : 'center'}
-          align="flex-start"
+          align='flex-start'
           px={16}
         >
           <Stack gap={4} pt={2}>
-            <Text size="sm" fw={500}>
+            <Text size='sm' fw={500}>
               <Trans>Barcode Data:</Trans>
             </Text>
             <Group>
@@ -189,7 +189,7 @@ export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
       <Text>
         <Trans>This will remove the link to the associated barcode</Trans>
       </Text>
-      <Button color="red" onClick={unlinkBarcode}>
+      <Button color='red' onClick={unlinkBarcode}>
         <Trans>Unlink Barcode</Trans>
       </Button>
     </Box>

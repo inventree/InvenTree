@@ -108,7 +108,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   let sn = 1;
 
   if (!!placeholder && placeholder.includes('Next serial number')) {
-    sn = parseInt(placeholder.split(':')[1].trim());
+    sn = Number.parseInt(placeholder.split(':')[1].trim());
   }
 
   // Generate some new serial numbers
@@ -212,7 +212,7 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
     {
       name: 'Blue Widget',
       ipn: 'widget.blue',
-      available: '45',
+      available: '39',
       required: '5',
       allocated: '5'
     },
@@ -234,11 +234,11 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
 
   // Check for expected rows
   for (let idx = 0; idx < data.length; idx++) {
-    let item = data[idx];
+    const item = data[idx];
 
-    let cell = await page.getByRole('cell', { name: item.name });
-    let row = await cell.locator('xpath=ancestor::tr').first();
-    let progress = `${item.allocated} / ${item.required}`;
+    const cell = await page.getByRole('cell', { name: item.name });
+    const row = await cell.locator('xpath=ancestor::tr').first();
+    const progress = `${item.allocated} / ${item.required}`;
 
     await row.getByRole('cell', { name: item.ipn }).first().waitFor();
     await row.getByRole('cell', { name: item.available }).first().waitFor();
@@ -246,8 +246,8 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
   }
 
   // Check for expected buttons on Red Widget
-  let redWidget = await page.getByRole('cell', { name: 'Red Widget' });
-  let redRow = await redWidget.locator('xpath=ancestor::tr').first();
+  const redWidget = await page.getByRole('cell', { name: 'Red Widget' });
+  const redRow = await redWidget.locator('xpath=ancestor::tr').first();
 
   await redRow.getByLabel(/row-action-menu-/i).click();
   await page

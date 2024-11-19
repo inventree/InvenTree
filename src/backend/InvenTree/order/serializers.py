@@ -990,6 +990,8 @@ class SalesOrderSerializer(
             'shipment_date',
             'total_price',
             'order_currency',
+            'shipments_count',
+            'completed_shipments_count',
         ])
 
         read_only_fields = ['status', 'creation_date', 'shipment_date']
@@ -1035,10 +1037,24 @@ class SalesOrderSerializer(
             )
         )
 
+        # Annotate shipment details
+        queryset = queryset.annotate(
+            shipments_count=SubqueryCount('shipments'),
+            completed_shipments_count=SubqueryCount(
+                'shipments', filter=Q(shipment_date__isnull=False)
+            ),
+        )
+
         return queryset
 
     customer_detail = CompanyBriefSerializer(
         source='customer', many=False, read_only=True
+    )
+
+    shipments_count = serializers.IntegerField(read_only=True, label=_('Shipments'))
+
+    completed_shipments_count = serializers.IntegerField(
+        read_only=True, label=_('Completed Shipments')
     )
 
 
@@ -1246,6 +1262,15 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
             'notes',
         ]
 
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer."""
+        order_detail = kwargs.pop('order_detail', True)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail', None)
+
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with extra information."""
@@ -1276,21 +1301,25 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
-            'line',
-            'customer_detail',
-            'serial',
-            'quantity',
-            'location',
-            'location_detail',
             'item',
-            'item_detail',
-            'order',
-            'order_detail',
-            'part',
-            'part_detail',
+            'quantity',
             'shipment',
+            # Annotated read-only fields
+            'line',
+            'part',
+            'order',
+            'serial',
+            'location',
+            # Extra detail fields
+            'item_detail',
+            'part_detail',
+            'order_detail',
+            'customer_detail',
+            'location_detail',
             'shipment_detail',
         ]
+
+        read_only_fields = ['line', '']
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
@@ -1341,7 +1370,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
     shipment_detail = SalesOrderShipmentSerializer(
-        source='shipment', many=False, read_only=True
+        source='shipment', order_detail=False, many=False, read_only=True
     )
 
 
@@ -1596,8 +1625,8 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
         many=False,
-        allow_null=False,
-        required=True,
+        required=False,
+        allow_null=True,
         label=_('Shipment'),
     )
 
@@ -1609,10 +1638,10 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         """
         order = self.context['order']
 
-        if shipment.shipment_date is not None:
+        if shipment and shipment.shipment_date is not None:
             raise ValidationError(_('Shipment has already been shipped'))
 
-        if shipment.order != order:
+        if shipment and shipment.order != order:
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
@@ -1691,7 +1720,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         line_item = data['line_item']
         stock_items = data['stock_items']
-        shipment = data['shipment']
+        shipment = data.get('shipment', None)
 
         allocations = []
 
@@ -1720,8 +1749,8 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
         many=False,
-        allow_null=False,
-        required=True,
+        required=False,
+        allow_null=True,
         label=_('Shipment'),
     )
 
@@ -1729,10 +1758,10 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         """Run validation against the provided shipment instance."""
         order = self.context['order']
 
-        if shipment.shipment_date is not None:
+        if shipment and shipment.shipment_date is not None:
             raise ValidationError(_('Shipment has already been shipped'))
 
-        if shipment.order != order:
+        if shipment and shipment.order != order:
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
@@ -1756,7 +1785,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data['items']
-        shipment = data['shipment']
+        shipment = data.get('shipment')
 
         with transaction.atomic():
             for entry in items:

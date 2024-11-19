@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ScheduledTasksTable() {
@@ -31,12 +31,12 @@ export default function ScheduledTasksTable() {
           }
 
           return (
-            <Group justify="space-between">
+            <Group justify='space-between'>
               <Text>{record.last_run}</Text>
               {record.success ? (
-                <IconCircleCheck color="green" />
+                <IconCircleCheck color='green' />
               ) : (
-                <IconCircleX color="red" />
+                <IconCircleX color='red' />
               )}
             </Group>
           );

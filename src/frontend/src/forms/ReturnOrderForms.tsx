@@ -4,11 +4,11 @@ import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useCreateApiFormModal } from '../hooks/UseForm';
@@ -20,7 +20,7 @@ export function useReturnOrderFields({
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
       customer: {
@@ -115,13 +115,7 @@ export function useReturnOrderLineItemFields({
       price_currency: {},
       target_date: {},
       notes: {},
-      link: {},
-      responsible: {
-        filters: {
-          is_active: true
-        },
-        icon: <IconUsers />
-      }
+      link: {}
     };
   }, [create, orderId, customerId]);
 }
@@ -143,11 +137,11 @@ function ReturnOrderLineItemFormRow({
     <>
       <Table.Tr>
         <Table.Td>
-          <Flex gap="sm" align="center">
+          <Flex gap='sm' align='center'>
             <Thumbnail
               size={40}
               src={record.part_detail.thumbnail}
-              align="center"
+              align='center'
             />
             <div>{record.part_detail.name}</div>
           </Flex>

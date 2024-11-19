@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -32,7 +33,7 @@ import {
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -50,7 +51,7 @@ export function SalesOrderTable({
   const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    let filters: TableFilter[] = [
+    const filters: TableFilter[] = [
       {
         name: 'status',
         label: t`Status`,
@@ -105,7 +106,7 @@ export function SalesOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-sales-order"
+        key='add-sales-order'
         tooltip={t`Add Sales Order`}
         onClick={() => newSalesOrder.open()}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
@@ -120,8 +121,8 @@ export function SalesOrderTable({
         accessor: 'customer__name',
         title: t`Customer`,
         sortable: true,
-        render: function (record: any) {
-          let customer = record.customer_detail ?? {};
+        render: (record: any) => {
+          const customer = record.customer_detail ?? {};
 
           return (
             <Thumbnail
@@ -138,6 +139,17 @@ export function SalesOrderTable({
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
+      {
+        accessor: 'shipments_count',
+        title: t`Shipments`,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel
+            value={record.completed_shipments_count}
+            maximum={record.shipments_count}
+          />
+        )
+      },
       StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),

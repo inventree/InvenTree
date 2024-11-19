@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { IconArrowRight, IconTruckDelivery } from '@tabler/icons-react';
+import { IconTruckDelivery } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,9 +12,6 @@ import {
   useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields
 } from '../../forms/SalesOrderForms';
-import { navigateToLink } from '../../functions/navigation';
-import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -23,16 +20,16 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import {
-  BooleanColumn,
-  DateColumn,
-  LinkColumn,
-  NoteColumn
-} from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableColumn } from '../Column';
+import { DateColumn, LinkColumn } from '../ColumnRenderers';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowCancelAction, RowEditAction } from '../RowActions';
+import {
+  type RowAction,
+  RowCancelAction,
+  RowEditAction,
+  RowViewAction
+} from '../RowActions';
 
 export default function SalesOrderShipmentTable({
   orderId
@@ -135,17 +132,12 @@ export default function SalesOrderShipmentTable({
       const shipped: boolean = !!record.shipment_date;
 
       return [
-        {
+        RowViewAction({
           title: t`View Shipment`,
-          icon: <IconArrowRight />,
-          onClick: (event: any) => {
-            navigateToLink(
-              getDetailUrl(ModelType.salesordershipment, record.pk),
-              navigate,
-              event
-            );
-          }
-        },
+          modelType: ModelType.salesordershipment,
+          modelId: record.pk,
+          navigate: navigate
+        }),
         {
           hidden: shipped || !user.hasChangeRole(UserRoles.sales_order),
           title: t`Complete Shipment`,
@@ -180,7 +172,7 @@ export default function SalesOrderShipmentTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-shipment"
+        key='add-shipment'
         tooltip={t`Add shipment`}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
         onClick={() => {

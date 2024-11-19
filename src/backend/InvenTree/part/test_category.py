@@ -130,6 +130,10 @@ class CategoryTest(TestCase):
         """Test that the PartCategory URL works."""
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(self.capacitors.get_absolute_url(), '/part/category/3/')
+        else:
+            self.assertEqual(
+                self.capacitors.get_absolute_url(), '/platform/part/category/3'
+            )
 
     def test_part_count(self):
         """Test that the Category part count works."""

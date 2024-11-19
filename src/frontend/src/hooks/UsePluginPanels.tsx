@@ -2,20 +2,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { api } from '../App';
-import { PanelType } from '../components/panels/Panel';
+import { ApiIcon } from '../components/items/ApiIcon';
+import type { PanelType } from '../components/panels/Panel';
 import {
-  InvenTreeContext,
+  type InvenTreeContext,
   useInvenTreeContext
 } from '../components/plugins/PluginContext';
 import PluginPanelContent from '../components/plugins/PluginPanel';
 import {
-  PluginUIFeature,
+  type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
-import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -68,7 +68,7 @@ export function usePluginPanels({
         })
         .then((response: any) => response.data)
         .catch((_error: any) => {
-          console.error(`ERR: Failed to fetch plugin panels`);
+          console.error('ERR: Failed to fetch plugin panels');
           return [];
         });
     }
@@ -89,7 +89,7 @@ export function usePluginPanels({
   const pluginPanels: PanelType[] = useMemo(() => {
     return (
       pluginData?.map((props: PluginUIFeature) => {
-        const iconName: string = props?.icon || 'plugin';
+        const iconName: string = props?.icon || 'ti:plug:outline';
         const identifier = identifierString(
           `${props.plugin_name}-${props.key}`
         );
@@ -102,7 +102,7 @@ export function usePluginPanels({
         return {
           name: identifier,
           label: props.title,
-          icon: <InvenTreeIcon icon={iconName as InvenTreeIconType} />,
+          icon: <ApiIcon name={iconName} />,
           content: (
             <PluginPanelContent
               pluginFeature={props}

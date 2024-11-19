@@ -106,4 +106,4 @@ known_django="django"
 sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
-ignore-words-list = ["assertIn","SME","intoto"]
+ignore-words-list = ["assertIn","SME","intoto","fitH"]

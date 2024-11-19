@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -40,10 +41,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { LocationColumn, PartColumn, StatusColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction, RowViewAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
@@ -60,61 +61,59 @@ function OutputAllocationDrawer({
   output,
   opened,
   close
-}: {
+}: Readonly<{
   build: any;
   output: any;
   opened: boolean;
   close: () => void;
-}) {
+}>) {
   return (
-    <>
-      <Drawer
-        position="bottom"
-        size="lg"
-        title={
-          <Group p="md" wrap="nowrap" justify="space-apart">
-            <StylishText size="lg">{t`Build Output Stock Allocation`}</StylishText>
-            <Space h="lg" />
-            <PartColumn part={build.part_detail} />
-            {output?.serial && (
-              <Text size="sm">
-                {t`Serial Number`}: {output.serial}
-              </Text>
-            )}
-            {output?.batch && (
-              <Text size="sm">
-                {t`Batch Code`}: {output.batch}
-              </Text>
-            )}
-            <Space h="lg" />
-          </Group>
+    <Drawer
+      position='bottom'
+      size='lg'
+      title={
+        <Group p='md' wrap='nowrap' justify='space-apart'>
+          <StylishText size='lg'>{t`Build Output Stock Allocation`}</StylishText>
+          <Space h='lg' />
+          <PartColumn part={build.part_detail} />
+          {output?.serial && (
+            <Text size='sm'>
+              {t`Serial Number`}: {output.serial}
+            </Text>
+          )}
+          {output?.batch && (
+            <Text size='sm'>
+              {t`Batch Code`}: {output.batch}
+            </Text>
+          )}
+          <Space h='lg' />
+        </Group>
+      }
+      opened={opened}
+      onClose={close}
+      withCloseButton
+      closeOnEscape
+      closeOnClickOutside
+      styles={{
+        header: {
+          width: '100%'
+        },
+        title: {
+          width: '100%'
         }
-        opened={opened}
-        onClose={close}
-        withCloseButton
-        closeOnEscape
-        closeOnClickOutside
-        styles={{
-          header: {
-            width: '100%'
-          },
-          title: {
-            width: '100%'
-          }
-        }}
-      >
-        <Divider />
-        <Paper p="md">
-          <BuildLineTable
-            build={build}
-            output={output}
-            params={{
-              tracked: true
-            }}
-          />
-        </Paper>
-      </Drawer>
-    </>
+      }}
+    >
+      <Divider />
+      <Paper p='md'>
+        <BuildLineTable
+          build={build}
+          output={output}
+          params={{
+            tracked: true
+          }}
+        />
+      </Paper>
+    </Drawer>
   );
 }
 
@@ -123,6 +122,7 @@ export default function BuildOutputTable({
   refreshBuild
 }: Readonly<{ build: any; refreshBuild: () => void }>) {
   const user = useUserState();
+  const navigate = useNavigate();
   const table = useTable('build-outputs');
 
   const buildId: number = useMemo(() => {
@@ -198,13 +198,13 @@ export default function BuildOutputTable({
     (records: any[]): any[] => {
       records?.forEach((record: any, index: number) => {
         // Test result information, per record
-        let results: TestResultOverview[] = [];
-        let passCount: number = 0;
+        const results: TestResultOverview[] = [];
+        let passCount = 0;
 
         // Iterate through each
         testTemplates?.forEach((template: any) => {
           // Find the "newest" result for this template in the returned data
-          let result = record.tests
+          const result = record.tests
             ?.filter((test: any) => test.template == template.pk)
             .sort((a: any, b: any) => {
               return a.pk < b.pk ? 1 : -1;
@@ -225,7 +225,7 @@ export default function BuildOutputTable({
         records[index].results = results;
 
         // Stock allocation information, per record
-        let fullyAllocatedCount: number = 0;
+        let fullyAllocatedCount = 0;
 
         // Iterate through each tracked item
         trackedItems?.forEach((item: any) => {
@@ -314,7 +314,7 @@ export default function BuildOutputTable({
     title: t`Deallocate Stock`,
     preFormContent: (
       <Alert
-        color="yellow"
+        color='yellow'
         icon={<IconExclamationCircle />}
         title={t`Deallocate Stock`}
       >
@@ -337,10 +337,10 @@ export default function BuildOutputTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
-        key="complete-selected-outputs"
+        key='complete-selected-outputs'
         tooltip={t`Complete selected outputs`}
-        icon={<InvenTreeIcon icon="success" />}
-        color="green"
+        icon={<InvenTreeIcon icon='success' />}
+        color='green'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
           setSelectedOutputs(table.selectedRecords);
@@ -348,10 +348,10 @@ export default function BuildOutputTable({
         }}
       />,
       <ActionButton
-        key="scrap-selected-outputs"
+        key='scrap-selected-outputs'
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon="delete" />}
-        color="red"
+        icon={<InvenTreeIcon icon='delete' />}
+        color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
           setSelectedOutputs(table.selectedRecords);
@@ -359,10 +359,10 @@ export default function BuildOutputTable({
         }}
       />,
       <ActionButton
-        key="cancel-selected-outputs"
+        key='cancel-selected-outputs'
         tooltip={t`Cancel selected outputs`}
-        icon={<InvenTreeIcon icon="cancel" />}
-        color="red"
+        icon={<InvenTreeIcon icon='cancel' />}
+        color='red'
         disabled={!table.hasSelectedRecords}
         onClick={() => {
           setSelectedOutputs(table.selectedRecords);
@@ -370,7 +370,7 @@ export default function BuildOutputTable({
         }}
       />,
       <AddItemButton
-        key="add-build-output"
+        key='add-build-output'
         tooltip={t`Add Build Output`}
         hidden={!user.hasAddRole(UserRoles.build)}
         onClick={addBuildOutput.open}
@@ -381,12 +381,18 @@ export default function BuildOutputTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
+        RowViewAction({
+          title: t`View Build Output`,
+          modelId: record.pk,
+          modelType: ModelType.stockitem,
+          navigate: navigate
+        }),
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
           hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
-          icon: <InvenTreeIcon icon="plus" />,
+          icon: <InvenTreeIcon icon='plus' />,
           onClick: () => {
             setSelectedOutputs([record]);
             openDrawer();
@@ -397,7 +403,7 @@ export default function BuildOutputTable({
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
           hidden: !hasTrackedItems || !user.hasChangeRole(UserRoles.build),
-          icon: <InvenTreeIcon icon="minus" />,
+          icon: <InvenTreeIcon icon='minus' />,
           onClick: () => {
             setSelectedOutputs([record]);
             deallocateBuildOutput.open();
@@ -407,7 +413,7 @@ export default function BuildOutputTable({
           title: t`Complete`,
           tooltip: t`Complete build output`,
           color: 'green',
-          icon: <InvenTreeIcon icon="success" />,
+          icon: <InvenTreeIcon icon='success' />,
           onClick: () => {
             setSelectedOutputs([record]);
             completeBuildOutputsForm.open();
@@ -423,7 +429,7 @@ export default function BuildOutputTable({
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
-          icon: <InvenTreeIcon icon="delete" />,
+          icon: <InvenTreeIcon icon='delete' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);
@@ -433,7 +439,7 @@ export default function BuildOutputTable({
         {
           title: t`Cancel`,
           tooltip: t`Cancel build output`,
-          icon: <InvenTreeIcon icon="cancel" />,
+          icon: <InvenTreeIcon icon='cancel' />,
           color: 'red',
           onClick: () => {
             setSelectedOutputs([record]);
@@ -507,11 +513,11 @@ export default function BuildOutputTable({
             record.results?.map((result: TestResultOverview) => {
               return (
                 result && (
-                  <Group justify="left" key={result.name} wrap="nowrap">
+                  <Group justify='left' key={result.name} wrap='nowrap'>
                     {result.result ? (
-                      <IconCircleCheck color="green" />
+                      <IconCircleCheck color='green' />
                     ) : (
-                      <IconCircleX color="red" />
+                      <IconCircleX color='red' />
                     )}
                     <Text>{result.name}</Text>
                   </Group>

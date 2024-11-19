@@ -138,8 +138,6 @@ export enum ApiEndpoints {
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
   stock_return = 'stock/:id/return/',
-  build_test_statistics = 'test-statistics/by-build/:id/',
-  part_test_statistics = 'test-statistics/by-part/:id/',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
@@ -202,6 +200,9 @@ export enum ApiEndpoints {
 
   // User interface plugin endpoints
   plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
+
+  // Special plugin endpoints
+  plugin_locate_item = 'locate/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

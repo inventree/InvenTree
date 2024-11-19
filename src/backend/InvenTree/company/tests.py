@@ -62,6 +62,10 @@ class CompanySimpleTest(TestCase):
         c = Company.objects.get(pk=1)
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(c.get_absolute_url(), '/company/1/')
+        else:
+            self.assertEqual(
+                c.get_absolute_url(), '/platform/purchasing/manufacturer/1'
+            )
 
     def test_image_renamer(self):
         """Test the company image upload functionality."""

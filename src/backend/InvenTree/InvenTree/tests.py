@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings, tag
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -1034,14 +1034,14 @@ class TestVersionNumber(TestCase):
         # Check that the current .git values work too
 
         git_hash = str(
-            subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
+            subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8'
         ).strip()
 
         # On some systems the hash is a different length, so just check the first 6 characters
         self.assertEqual(git_hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
-            str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
+            str(subprocess.check_output(['git', 'show', '-s', '--format=%ci']), 'utf-8')
             .strip()
             .split(' ')[0]
         )
@@ -1493,8 +1493,6 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
-# TODO - refactor to not use CUI
-@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 

@@ -30,7 +30,6 @@ from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
-from .views import AjaxView
 
 logger = logging.getLogger('inventree')
 
@@ -196,8 +195,35 @@ class VersionTextView(ListAPI):
         return JsonResponse(inventreeApiText())
 
 
-class InfoView(AjaxView):
-    """Simple JSON endpoint for InvenTree information.
+class InfoApiSerializer(serializers.Serializer):
+    """InvenTree server information - some information might be blanked if called without elevated credentials."""
+
+    server = serializers.CharField(read_only=True)
+    version = serializers.CharField(read_only=True)
+    instance = serializers.CharField(read_only=True)
+    apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
+    worker_running = serializers.BooleanField(read_only=True)
+    worker_count = serializers.IntegerField(read_only=True)
+    worker_pending_tasks = serializers.IntegerField(read_only=True)
+    plugins_enabled = serializers.BooleanField(read_only=True)
+    plugins_install_disabled = serializers.BooleanField(read_only=True)
+    active_plugins = serializers.JSONField(read_only=True)
+    email_configured = serializers.BooleanField(read_only=True)
+    debug_mode = serializers.BooleanField(read_only=True)
+    docker_mode = serializers.BooleanField(read_only=True)
+    default_locale = serializers.ChoiceField(
+        choices=settings.LOCALE_CODES, read_only=True
+    )
+    system_health = serializers.BooleanField(read_only=True)
+    database = serializers.CharField(read_only=True)
+    platform = serializers.CharField(read_only=True)
+    installer = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True)
+    django_admin = serializers.CharField(read_only=True)
+
+
+class InfoView(APIView):
+    """JSON endpoint for InvenTree server information.
 
     Use to confirm that the server is running, etc.
     """
@@ -208,6 +234,13 @@ class InfoView(AjaxView):
         """Return the current number of outstanding background tasks."""
         return OrmQ.objects.count()
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=InfoApiSerializer, description='InvenTree server information'
+            )
+        }
+    )
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
         is_staff = request.user.is_staff
@@ -236,6 +269,9 @@ class InfoView(AjaxView):
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'django_admin': settings.INVENTREE_ADMIN_URL
+            if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
+            else None,
         }
 
         return JsonResponse(data)
@@ -258,7 +294,7 @@ class InfoView(AjaxView):
         return False
 
 
-class NotFoundView(AjaxView):
+class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
     permission_classes = [permissions.AllowAny]
@@ -277,22 +313,27 @@ class NotFoundView(AjaxView):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def get(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def post(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def patch(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def put(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)
 
+    @extend_schema(exclude=True)
     def delete(self, request, *args, **kwargs):
         """Return 404."""
         return self.not_found(request)

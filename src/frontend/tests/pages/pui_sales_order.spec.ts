@@ -18,7 +18,7 @@ test('Sales Orders', async ({ page }) => {
   await page.getByRole('cell', { name: 'SO0003' }).click();
 
   // Order is "on hold". We will "issue" it and then place on hold again
-  await page.getByText('Sales Order: SO0003').waitFor();
+  await page.getByText('Selling stuff').first().waitFor();
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -122,8 +122,6 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByLabel('number-field-quantity').fill('123');
   await page.getByLabel('related-field-stock_item').click();
   await page.getByText('Quantity: 42').click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('This field is required.').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
 

@@ -252,7 +252,7 @@ class RegistryTests(TestCase):
     def test_package_loading(self):
         """Test that package distributed plugins work."""
         # Install sample package
-        subprocess.check_output('pip install inventree-zapier'.split())
+        subprocess.check_output(['pip', 'install', 'inventree-zapier'])
 
         # Reload to discover plugin
         registry.reload_plugins(full_reload=True, collect=True)

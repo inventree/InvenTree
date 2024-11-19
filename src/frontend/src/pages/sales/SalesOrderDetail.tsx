@@ -7,13 +7,16 @@ import {
   IconTools,
   IconTruckDelivery
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -29,7 +32,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
@@ -88,7 +91,7 @@ export default function SalesOrderDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'reference',
@@ -124,30 +127,30 @@ export default function SalesOrderDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
         label: t`Completed Line Items`,
         total: order.line_items,
-        progress: order.completed_lines
+        progress: order.completed_lines,
+        hidden: !order.line_items
       },
       {
         type: 'progressbar',
         name: 'shipments',
         icon: 'shipment',
         label: t`Completed Shipments`,
-        total: order.shipments,
-        progress: order.completed_shipments,
-        hidden: !order.shipments
+        total: order.shipments_count,
+        progress: order.completed_shipments_count,
+        hidden: !order.shipments_count
       },
       {
         type: 'text',
         name: 'currency',
         label: t`Order Currency`,
-        value_formatter: () =>
-          order?.order_currency ?? order?.customer_detail.currency
+        value_formatter: () => orderCurrency
       },
       {
         type: 'text',
@@ -155,13 +158,13 @@ export default function SalesOrderDetail() {
         label: t`Total Cost`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
-            currency: order?.order_currency ?? order?.customer_detail?.currency
+            currency: orderCurrency
           });
         }
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         external: true,
@@ -190,7 +193,7 @@ export default function SalesOrderDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'date',
         name: 'creation_date',
@@ -249,7 +252,7 @@ export default function SalesOrderDetail() {
         <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
-  }, [order, instanceQuery]);
+  }, [order, orderCurrency, instanceQuery]);
 
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
@@ -298,9 +301,9 @@ export default function SalesOrderDetail() {
             multiple={true}
             defaultValue={['line-items', 'extra-items']}
           >
-            <Accordion.Item value="line-items" key="lineitems">
+            <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <SalesOrderLineItemTable
@@ -314,9 +317,9 @@ export default function SalesOrderDetail() {
                 />
               </Accordion.Panel>
             </Accordion.Item>
-            <Accordion.Item value="extra-items" key="extraitems">
+            <Accordion.Item value='extra-items' key='extraitems'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ExtraLineItemTable
@@ -345,7 +348,7 @@ export default function SalesOrderDetail() {
             orderId={order.pk}
             showPartInfo
             allowEdit
-            modelField="item"
+            modelField='item'
             modelTarget={ModelType.stockitem}
           />
         )
@@ -354,6 +357,7 @@ export default function SalesOrderDetail() {
         name: 'build-orders',
         label: t`Build Orders`,
         icon: <IconTools />,
+        hidden: !user.hasViewRole(UserRoles.build),
         content: order?.pk ? (
           <BuildOrderTable salesOrderId={order.pk} />
         ) : (
@@ -369,7 +373,7 @@ export default function SalesOrderDetail() {
         model_id: order.pk
       })
     ];
-  }, [order, id, user, soStatus]);
+  }, [order, id, user, soStatus, user]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
@@ -430,26 +434,26 @@ export default function SalesOrderDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Ship Order`}
-        icon="deliver"
+        icon='deliver'
         hidden={!canShip}
-        color="blue"
+        color='blue'
         onClick={completeOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.salesorder} pk={order.pk} />,
+      <AdminButton model={ModelType.salesorder} id={order.pk} />,
       <BarcodeActionDropdown
         model={ModelType.salesorder}
         pk={order.pk}
@@ -510,9 +514,9 @@ export default function SalesOrderDetail() {
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Sales Order` + `: ${order.reference}`}
+            title={`${t`Sales Order`}: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
@@ -522,7 +526,7 @@ export default function SalesOrderDetail() {
             editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
           <PanelGroup
-            pageKey="salesorder"
+            pageKey='salesorder'
             panels={orderPanels}
             model={ModelType.salesorder}
             id={order.pk}

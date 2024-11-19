@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Badge, MantineColor, Skeleton } from '@mantine/core';
+import { Badge, type MantineColor, Skeleton } from '@mantine/core';
 
 import { isTrue } from '../../functions/conversion';
 
@@ -26,9 +26,9 @@ export function PassFailButton({
   return (
     <Badge
       color={v ? pColor : fColor}
-      variant="filled"
-      radius="lg"
-      size="sm"
+      variant='filled'
+      radius='lg'
+      size='sm'
       style={{ maxWidth: '50px' }}
     >
       {v ? pass : fail}

@@ -295,7 +295,7 @@ class PartImport(FileManagementFormView):
 
         # Set alerts
         if import_done:
-            alert = f"<strong>{_('Part-Import')}</strong><br>{_(f'Imported {import_done} parts')}"
+            alert = f'<strong>{_("Part-Import")}</strong><br>{_(f"Imported {import_done} parts")}'
             messages.success(self.request, alert)
         if import_error:
             error_text = '\n'.join([
@@ -304,7 +304,7 @@ class PartImport(FileManagementFormView):
             ])
             messages.error(
                 self.request,
-                f"<strong>{_('Some errors occurred:')}</strong><br><ul>{error_text}</ul>",
+                f'<strong>{_("Some errors occurred:")}</strong><br><ul>{error_text}</ul>',
             )
 
         return HttpResponseRedirect(reverse('part-index'))
