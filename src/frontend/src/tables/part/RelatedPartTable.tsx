@@ -10,14 +10,15 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
-  useDeleteApiFormModal
+  useDeleteApiFormModal,
+  useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
@@ -45,6 +46,7 @@ export function RelatedPartTable({
       {
         accessor: 'part',
         title: t`Part`,
+        switchable: false,
         render: (record: any) => {
           const part = getPart(record);
           return (
@@ -63,11 +65,16 @@ export function RelatedPartTable({
       },
       {
         accessor: 'description',
-        title: t`Description`,
+        title: t`Part Description`,
         ellipsis: true,
         render: (record: any) => {
           return getPart(record).description;
         }
+      },
+      {
+        accessor: 'note',
+        title: t`Note`,
+        sortable: false
       }
     ];
   }, [partId]);
@@ -102,6 +109,16 @@ export function RelatedPartTable({
     table: table
   });
 
+  const editRelatedPart = useEditApiFormModal({
+    url: ApiEndpoints.related_part_list,
+    pk: selectedRelatedPart,
+    title: t`Edit Related Part`,
+    fields: {
+      note: {}
+    },
+    table: table
+  });
+
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <AddItemButton
@@ -116,6 +133,13 @@ export function RelatedPartTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.part),
+          onClick: () => {
+            setSelectedRelatedPart(record.pk);
+            editRelatedPart.open();
+          }
+        }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
@@ -131,6 +155,7 @@ export function RelatedPartTable({
   return (
     <>
       {newRelatedPart.modal}
+      {editRelatedPart.modal}
       {deleteRelatedPart.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.related_part_list)}
