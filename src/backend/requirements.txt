@@ -10,6 +10,7 @@ asgiref==3.8.1 \
     # via
     #   django
     #   django-cors-headers
+    #   django-structlog
 async-timeout==4.0.3 \
     --hash=sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f \
     --hash=sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028
@@ -389,6 +390,7 @@ django==4.2.16 \
     #   django-sql-utils
     #   django-sslserver
     #   django-stdimage
+    #   django-structlog
     #   django-taggit
     #   django-user-sessions
     #   django-weasyprint
@@ -445,6 +447,10 @@ django-import-export==3.3.9 \
     --hash=sha256:16797965e93a8001fe812c61e3b71fb858c57c1bd16da195fe276d6de685348e \
     --hash=sha256:dd6cabc08ed6d1bd37a392e7fb542bd7d196b615c800168f5c69f0f55f49b103
     # via -r src/backend/requirements.in
+django-ipware==7.0.1 \
+    --hash=sha256:d9ec43d2bf7cdf216fed8d494a084deb5761a54860a53b2e74346a4f384cff47 \
+    --hash=sha256:db16bbee920f661ae7f678e4270460c85850f03c6761a4eaeb489bdc91f64709
+    # via django-structlog
 django-js-asset==2.2.0 \
     --hash=sha256:0c57a82cae2317e83951d956110ce847f58ff0cdc24e314dbc18b35033917e94 \
     --hash=sha256:7ef3e858e13d06f10799b56eea62b1e76706f42cf4e709be4e13356bc0ae30d8
@@ -502,6 +508,10 @@ django-sslserver==0.22 \
 django-stdimage==6.0.2 \
     --hash=sha256:880ab14828be56b53f711c3afae83c219ddd5d9af00850626736feb48382bf7f \
     --hash=sha256:9a73f7da48c48074580e2b032d5bdb7164935dbe4b9dc4fb88a7e112f3d521c8
+    # via -r src/backend/requirements.in
+django-structlog==8.1.0 \
+    --hash=sha256:0229b9a2efbd24a4e3500169788e53915c2429521e34e41dd58ccc56039bef3f \
+    --hash=sha256:1072564bd6f36e8d3ba9893e7b31c1c46e94301189fedaecc0fb8a46525a3214
     # via -r src/backend/requirements.in
 django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
@@ -1229,6 +1239,10 @@ python-fsutil==0.14.1 \
     --hash=sha256:0d45e623f0f4403f674bdd8ae7aa7d24a4b3132ea45c65416bd2865e6b20b035 \
     --hash=sha256:8fb204fa8059f37bdeee8a1dc0fff010170202ea47c4225ee71bb3c26f3997be
     # via django-maintenance-mode
+python-ipware==3.0.0 \
+    --hash=sha256:9117b1c4dddcb5d5ca49e6a9617de2fc66aec2ef35394563ac4eecabdf58c062 \
+    --hash=sha256:fc936e6e7ec9fcc107f9315df40658f468ac72f739482a707181742882e36b60
+    # via django-ipware
 python3-openid==3.2.0 \
     --hash=sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf \
     --hash=sha256:6626f771e0417486701e0b4daff762e7212e820ca5b29fcc0d05f6f8736dfa6b
@@ -1646,6 +1660,10 @@ sqlparse==0.5.1 \
     # via
     #   django
     #   django-sql-utils
+structlog==24.4.0 \
+    --hash=sha256:597f61e80a91cc0749a9fd2a098ed76715a1c8a01f73e336b746504d1aad7610 \
+    --hash=sha256:b27bfecede327a6d2da5fbc96bd859f114ecc398a6389d664f62085ee7ae6fc4
+    # via django-structlog
 tablib[html, ods, xls, xlsx, yaml]==3.5.0 \
     --hash=sha256:9821caa9eca6062ff7299fa645e737aecff982e6b2b42046928a6413c8dabfd9 \
     --hash=sha256:f6661dfc45e1d4f51fa8a6239f9c8349380859a5bfaa73280645f046d6c96e33
