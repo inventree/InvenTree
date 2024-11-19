@@ -30,7 +30,7 @@ django-stdimage                         # Advanced ImageField management
 django-taggit                           # Tagging support
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
-djangorestframework<3.15                # DRF framework  # FIXED 2024-06-26 see https://github.com/inventree/InvenTree/pull/7521
+djangorestframework<3.16                # DRF framework  # FIXED 2024-06-26 see https://github.com/inventree/InvenTree/pull/7521
 djangorestframework-simplejwt[crypto]   # JWT authentication
 django-xforwardedfor-middleware         # IP forwarding metadata
 dj-rest-auth                            # Authentication API endpoints
