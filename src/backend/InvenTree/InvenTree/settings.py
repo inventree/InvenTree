@@ -94,6 +94,7 @@ ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 json_log = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
+WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
 
 logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -127,25 +128,27 @@ LOGGING = {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
     },
     'loggers': {
-        'django_structlog': {'handlers': ['console', 'log_file'], 'level': log_level},
-        'inventree': {'handlers': ['console', 'log_file'], 'level': log_level},
+        'django_structlog': {'handlers': ['console'], 'level': log_level},
+        'inventree': {'handlers': ['console'], 'level': log_level},
     },
 }
 
 
 # Add handlers
-if json_log:  # pragma: no cover
+if WRITE_LOG and json_log:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.json')),
         'formatter': 'json_formatter',
     }
-else:
+    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+elif WRITE_LOG:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.log')),
         'formatter': 'key_value',
     }
+    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
 
 structlog.configure(
     processors=[

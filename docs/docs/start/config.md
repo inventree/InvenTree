@@ -67,6 +67,7 @@ The following basic options are available:
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
+| INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |

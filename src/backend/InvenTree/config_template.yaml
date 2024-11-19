@@ -47,6 +47,8 @@ log_level: WARNING
 json_log: False
 # Enable database-level logging, or use the environment variable INVENTREE_DB_LOGGING
 db_logging: False
+# Enable writing a log file, or use the environment variable INVENTREE_WRITE_LOG
+write_log: False
 
 # Select default system language , or use the environment variable INVENTREE_LANGUAGE
 language: en-us
