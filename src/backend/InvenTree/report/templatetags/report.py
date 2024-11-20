@@ -426,8 +426,6 @@ def format_number(
     # Normalize the number (remove trailing zeroes)
     number = number.normalize()
 
-    decimal_places
-
     if decimal_places is not None:
         try:
             decimal_places = int(decimal_places)

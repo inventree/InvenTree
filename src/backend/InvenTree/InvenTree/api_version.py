@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 282
+INVENTREE_API_VERSION = 283
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v283 - 2024-11-20 : https://github.com/inventree/InvenTree/pull/8524
+    - Adds "note" field to the PartRelated API endpoint
 
 v282 - 2024-11-19 : https://github.com/inventree/InvenTree/pull/8487
     - Remove the "test statistics" API endpoints
