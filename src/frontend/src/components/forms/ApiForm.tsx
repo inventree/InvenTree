@@ -219,7 +219,7 @@ export function ApiForm({
     // If the user has specified initial data, that overrides default values
     // But, *only* for the fields we have specified
     if (props.initialData) {
-      Object.keys(props.initialData).map((key) => {
+      Object.keys(props.initialData).forEach((key) => {
         if (key in defaultValuesMap) {
           defaultValuesMap[key] =
             props?.initialData?.[key] ?? defaultValuesMap[key];

@@ -70,7 +70,6 @@ export default function ImporterDrawer({
   // Map from import steps to stepper steps
   const currentStep = useMemo(() => {
     switch (session.status) {
-      default:
       case importSessionStatus.INITIAL:
         return 0;
       case importSessionStatus.MAPPING:
@@ -81,6 +80,7 @@ export default function ImporterDrawer({
         return 3;
       case importSessionStatus.COMPLETE:
         return 4;
+      default:
     }
   }, [session.status]);
 
