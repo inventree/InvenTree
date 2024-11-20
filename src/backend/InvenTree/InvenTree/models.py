@@ -289,6 +289,7 @@ class ReferenceIndexingMixin(models.Model):
 
     # Name of the global setting which defines the required reference pattern for this model
     REFERENCE_PATTERN_SETTING = None
+    REFERENCE_PATTERN_WILDCARD_DEFAULT_SETTING = None
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -308,6 +309,28 @@ class ReferenceIndexingMixin(models.Model):
         return common.settings.get_global_setting(
             cls.REFERENCE_PATTERN_SETTING, create=False
         ).strip()
+
+    @classmethod
+    def get_reference_pattern_wildcard_default(cls):
+        """Returns the reference pattern associated with this model.
+
+        This is defined by a global setting object, specified by the REFERENCE_PATTERN_WILDCARD_DEFAULT_SETTING attribute
+        """
+        # By default, we return None to indicate no default exists
+        if cls.REFERENCE_PATTERN_WILDCARD_DEFAULT_SETTING is None:
+            return None
+
+        # import at function level to prevent cyclic imports
+        from common.models import InvenTreeSetting
+
+        setting = InvenTreeSetting.get_setting(
+            cls.REFERENCE_PATTERN_WILDCARD_DEFAULT_SETTING, create=False
+        ).strip()
+
+        if setting == '':
+            return None
+        else:
+            return setting
 
     @classmethod
     def get_reference_context(cls):
@@ -365,6 +388,7 @@ class ReferenceIndexingMixin(models.Model):
         """Generate the next 'reference' field based on specified pattern."""
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
+        wildcard_default = cls.get_reference_pattern_wildcard_default()
 
         reference = None
 
@@ -393,6 +417,9 @@ class ReferenceIndexingMixin(models.Model):
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
                 reference = recent.reference if recent else ''
+
+        if wildcard_default is not None:
+            reference = reference.replace('?', wildcard_default)
 
         return reference
 
