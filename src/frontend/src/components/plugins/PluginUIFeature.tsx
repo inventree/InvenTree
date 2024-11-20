@@ -9,13 +9,13 @@ import {
   useState
 } from 'react';
 
-import { TemplateI } from '../../tables/settings/TemplateTable';
-import {
+import type { TemplateI } from '../../tables/settings/TemplateTable';
+import type {
   EditorComponent,
   PreviewAreaComponent,
   PreviewAreaRef
 } from '../editors/TemplateEditor/TemplateEditor';
-import {
+import type {
   PluginUIFuncWithoutInvenTreeContextType,
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
@@ -104,17 +104,17 @@ export const getPluginTemplateEditor = (
     }, []);
 
     return (
-      <Stack gap="xs" style={{ display: 'flex', flex: 1 }}>
+      <Stack gap='xs' style={{ display: 'flex', flex: 1 }}>
         {error && (
           <Alert
-            color="red"
+            color='red'
             title={t`Error Loading Plugin Editor`}
             icon={<IconExclamationCircle />}
           >
             <Text>{error}</Text>
           </Alert>
         )}
-        <div ref={elRef as any} style={{ display: 'flex', flex: 1 }}></div>
+        <div ref={elRef as any} style={{ display: 'flex', flex: 1 }} />
       </Stack>
     );
   }) as EditorComponent;
@@ -151,17 +151,17 @@ export const getPluginTemplatePreview = (
     }, []);
 
     return (
-      <Stack gap="xs" style={{ display: 'flex', flex: 1 }}>
+      <Stack gap='xs' style={{ display: 'flex', flex: 1 }}>
         {error && (
           <Alert
-            color="red"
+            color='red'
             title={t`Error Loading Plugin Preview`}
             icon={<IconExclamationCircle />}
           >
             <Text>{error}</Text>
           </Alert>
         )}
-        <div ref={elRef as any} style={{ display: 'flex', flex: 1 }}></div>
+        <div ref={elRef as any} style={{ display: 'flex', flex: 1 }} />
       </Stack>
     );
   }) as PreviewAreaComponent;

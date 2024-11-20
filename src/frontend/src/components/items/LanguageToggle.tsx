@@ -9,17 +9,17 @@ export function LanguageToggle() {
 
   return (
     <Group
-      justify="center"
+      justify='center'
       style={{
-        border: open === true ? `1px dashed ` : ``,
+        border: open === true ? '1px dashed' : '',
         margin: open === true ? 2 : 12,
         padding: open === true ? 8 : 0
       }}
     >
       <ActionIcon
         onClick={() => toggle.toggle()}
-        size="lg"
-        variant="transparent"
+        size='lg'
+        variant='transparent'
       >
         <IconLanguage />
       </ActionIcon>

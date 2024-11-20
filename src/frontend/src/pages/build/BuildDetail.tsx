@@ -8,7 +8,6 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
-  IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -17,7 +16,10 @@ import { useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -32,7 +34,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -54,7 +56,6 @@ import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
 /**
  * Detail page for a single Build Order
@@ -85,7 +86,7 @@ export default function BuildDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -130,7 +131,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'quantity',
@@ -155,7 +156,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'text',
         name: 'issued_by',
@@ -201,7 +202,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'link',
         name: 'take_from',
@@ -283,7 +284,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-outputs"
+            tableName='build-outputs'
             params={{
               build: id,
               is_building: false
@@ -311,7 +312,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-consumed"
+            tableName='build-consumed'
             params={{
               consumed_by: id
             }}
@@ -338,20 +339,6 @@ export default function BuildDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      {
-        name: 'test-statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        content: (
-          <TestStatisticsTable
-            params={{
-              pk: build.pk,
-              apiEndpoint: ApiEndpoints.build_test_statistics
-            }}
-          />
-        ),
-        hidden: !build?.part_detail?.testable
       },
       AttachmentPanel({
         model_type: ModelType.build,
@@ -451,19 +438,19 @@ export default function BuildDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.build} pk={build.pk} />,
+      <AdminButton model={ModelType.build} id={build.pk} />,
       <BarcodeActionDropdown
         model={ModelType.build}
         pk={build.pk}
@@ -523,9 +510,9 @@ export default function BuildDetail() {
       {issueOrder.modal}
       {completeOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={build.reference}
+            title={`${t`Build Order`}: ${build.reference}`}
             subtitle={build.title}
             badges={buildBadges}
             editAction={editBuild.open}
@@ -541,7 +528,7 @@ export default function BuildDetail() {
             actions={buildActions}
           />
           <PanelGroup
-            pageKey="build"
+            pageKey='build'
             panels={buildPanels}
             instance={build}
             model={ModelType.build}

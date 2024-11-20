@@ -425,7 +425,7 @@ class StockItemSerializer(
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
-        part_detail = kwargs.pop('part_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
         tests = kwargs.pop('tests', False)
@@ -902,36 +902,6 @@ class UninstallStockItemSerializer(serializers.Serializer):
         note = data.get('note', '')
 
         item.uninstall_into_location(location, request.user, note)
-
-
-class TestStatisticsLineField(serializers.DictField):
-    """DRF field definition for one column of the test statistics."""
-
-    test_name = serializers.CharField()
-    results = serializers.DictField(child=serializers.IntegerField(min_value=0))
-
-
-class TestStatisticsSerializer(serializers.Serializer):
-    """DRF serializer class for the test statistics."""
-
-    results = serializers.ListField(child=TestStatisticsLineField(), read_only=True)
-
-    def to_representation(self, obj):
-        """Just pass through the test statistics from the model."""
-        if self.context['type'] == 'by-part':
-            return obj.part_test_statistics(
-                self.context['pk'],
-                self.context['finished_datetime_after'],
-                self.context['finished_datetime_before'],
-            )
-        elif self.context['type'] == 'by-build':
-            return obj.build_test_statistics(
-                self.context['pk'],
-                self.context['finished_datetime_after'],
-                self.context['finished_datetime_before'],
-            )
-
-        raise ValidationError(_('Unsupported statistic type: ' + self.context['type']))
 
 
 class ConvertStockItemSerializer(serializers.Serializer):

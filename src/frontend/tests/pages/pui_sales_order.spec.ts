@@ -18,7 +18,7 @@ test('Sales Orders', async ({ page }) => {
   await page.getByRole('cell', { name: 'SO0003' }).click();
 
   // Order is "on hold". We will "issue" it and then place on hold again
-  await page.getByText('Sales Order: SO0003').waitFor();
+  await page.getByText('Selling stuff').first().waitFor();
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();

@@ -1,7 +1,7 @@
-import { Badge, Center, MantineSize } from '@mantine/core';
+import { Badge, Center, type MantineSize } from '@mantine/core';
 
 import { statusColorMap } from '../../defaults/backendMappings';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
@@ -36,8 +36,8 @@ function renderStatusLabel(
   let color = null;
 
   // Find the entry which matches the provided key
-  for (let name in codes.values) {
-    let entry: StatusCodeInterface = codes.values[name];
+  for (const name in codes.values) {
+    const entry: StatusCodeInterface = codes.values[name];
 
     if (entry?.key == key) {
       text = entry.label;
@@ -62,7 +62,7 @@ function renderStatusLabel(
   }
 
   return (
-    <Badge color={color} variant="filled" size={size}>
+    <Badge color={color} variant='filled' size={size}>
       {text}
     </Badge>
   );
@@ -99,8 +99,8 @@ export function getStatusCodeName(
     return null;
   }
 
-  for (let name in statusCodes) {
-    let entry: StatusCodeInterface = statusCodes.values[name];
+  for (const name in statusCodes) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
 
     if (entry.key == key) {
       return entry.name;

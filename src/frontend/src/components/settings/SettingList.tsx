@@ -11,17 +11,17 @@ import React, {
 import { useStore } from 'zustand';
 
 import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import {
-  SettingsStateProps,
+  type SettingsStateProps,
   createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import { Setting } from '../../states/states';
+import type { Setting } from '../../states/states';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -41,7 +41,7 @@ export function SettingList({
   }, []);
 
   const allKeys = useMemo(
-    () => settingsState?.settings?.map((s) => s.key),
+    () => settingsState?.settings?.map((s) => s.key) ?? [],
     [settingsState?.settings]
   );
 
@@ -130,8 +130,8 @@ export function SettingList({
   return (
     <>
       {editSettingModal.modal}
-      <Stack gap="xs">
-        {(keys || allKeys).map((key, i) => {
+      <Stack gap='xs'>
+        {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );
@@ -150,7 +150,7 @@ export function SettingList({
                   onToggle={onValueToggle}
                 />
               ) : (
-                <Text size="sm" style={{ fontStyle: 'italic' }} c="red">
+                <Text size='sm' style={{ fontStyle: 'italic' }} c='red'>
                   Setting {key} not found
                 </Text>
               )}

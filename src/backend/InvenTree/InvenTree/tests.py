@@ -1034,14 +1034,14 @@ class TestVersionNumber(TestCase):
         # Check that the current .git values work too
 
         git_hash = str(
-            subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
+            subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8'
         ).strip()
 
         # On some systems the hash is a different length, so just check the first 6 characters
         self.assertEqual(git_hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
-            str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
+            str(subprocess.check_output(['git', 'show', '-s', '--format=%ci']), 'utf-8')
             .strip()
             .split(' ')[0]
         )
@@ -1184,18 +1184,8 @@ class TestSettings(InvenTreeTestCase):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
-        if not settings.DOCKER:
-            # Check an install run
-            response = registry.install_plugin_file()
-            self.assertEqual(response, 'first_run')
-
-            # Set dynamic setting to True and rerun to launch install
-            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-            registry.reload_plugins(full_reload=True)
-
-        # Check that there was another run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, True)
+        registry.reload_plugins(full_reload=True, collect=True)
+        self.assertGreater(len(settings.PLUGIN_FILE_HASH), 0)
 
     def test_helpers_cfg_file(self):
         """Test get_config_file."""

@@ -10,7 +10,13 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import {
   Navigate,
   Route,
@@ -20,7 +26,7 @@ import {
   useParams
 } from 'react-router-dom';
 
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
@@ -28,7 +34,7 @@ import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-import { PanelType } from '../panels/Panel';
+import type { PanelType } from '../panels/Panel';
 
 /**
  * Set of properties which define a panel group:
@@ -78,10 +84,30 @@ function BasePanelGroup({
     id: id
   });
 
-  const allPanels = useMemo(
-    () => [...panels, ...pluginPanels],
-    [panels, pluginPanels]
-  );
+  // Rebuild the list of panels
+  const allPanels = useMemo(() => {
+    const _panels = [...panels];
+
+    // Add plugin panels
+    pluginPanels?.forEach((panel) => {
+      let panelKey = panel.name;
+
+      // Check if panel with this name already exists
+      const existingPanel = _panels.find((p) => p.name === panelKey);
+
+      if (existingPanel) {
+        // Create a unique key for the panel which includes the plugin slug
+        panelKey = identifierString(`${panel.pluginName}-${panel.name}`);
+      }
+
+      _panels.push({
+        ...panel,
+        name: panelKey
+      });
+    });
+
+    return _panels;
+  }, [panels, pluginPanels]);
 
   const activePanels = useMemo(
     () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),
@@ -127,14 +153,14 @@ function BasePanelGroup({
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
-      <Paper p="sm" radius="xs" shadow="xs" aria-label={`${pageKey}`}>
+      <Paper p='sm' radius='xs' shadow='xs' aria-label={`${pageKey}`}>
         <Tabs
           value={currentPanel}
-          orientation="vertical"
+          orientation='vertical'
           keepMounted={false}
           aria-label={`panel-group-${pageKey}`}
         >
-          <Tabs.List justify="left" aria-label={`panel-tabs-${pageKey}`}>
+          <Tabs.List justify='left' aria-label={`panel-tabs-${pageKey}`}>
             {allPanels.map(
               (panel) =>
                 !panel.hidden && (
@@ -142,10 +168,10 @@ function BasePanelGroup({
                     label={panel.label ?? panel.name}
                     key={panel.name}
                     disabled={expanded}
-                    position="right"
+                    position='right'
                   >
                     <Tabs.Tab
-                      p="xs"
+                      p='xs'
                       key={`panel-label-${panel.name}`}
                       value={panel.name}
                       leftSection={panel.icon}
@@ -167,8 +193,8 @@ function BasePanelGroup({
                   paddingLeft: '10px'
                 }}
                 onClick={() => setExpanded(!expanded)}
-                variant="transparent"
-                size="md"
+                variant='transparent'
+                size='md'
               >
                 {expanded ? (
                   <IconLayoutSidebarLeftCollapse opacity={0.5} />
@@ -187,16 +213,16 @@ function BasePanelGroup({
                   aria-label={`nav-panel-${identifierString(
                     `${pageKey}-${panel.name}`
                   )}`}
-                  p="sm"
+                  p='sm'
                   style={{
                     overflowX: 'scroll',
                     width: '100%'
                   }}
                 >
-                  <Stack gap="md">
+                  <Stack gap='md'>
                     {panel.showHeadline !== false && (
                       <>
-                        <StylishText size="xl">{panel.label}</StylishText>
+                        <StylishText size='xl'>{panel.label}</StylishText>
                         <Divider />
                       </>
                     )}
@@ -246,7 +272,7 @@ export function PanelGroup(props: Readonly<PanelProps>) {
   return (
     <Routes>
       <Route index element={<IndexPanelComponent {...props} />} />
-      <Route path="/:panel/*" element={<BasePanelGroup {...props} />} />
+      <Route path='/:panel/*' element={<BasePanelGroup {...props} />} />
     </Routes>
   );
 }

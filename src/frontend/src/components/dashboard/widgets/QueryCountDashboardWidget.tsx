@@ -1,29 +1,21 @@
-import {
-  ActionIcon,
-  Card,
-  Group,
-  Loader,
-  Skeleton,
-  Space,
-  Stack,
-  Text
-} from '@mantine/core';
+import { ActionIcon, Group, Loader } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { on } from 'events';
-import { ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../App';
-import { ModelType } from '../../../enums/ModelType';
-import { identifierString } from '../../../functions/conversion';
-import { InvenTreeIcon, InvenTreeIconType } from '../../../functions/icons';
+import type { ModelType } from '../../../enums/ModelType';
+import {
+  InvenTreeIcon,
+  type InvenTreeIconType
+} from '../../../functions/icons';
 import { navigateToLink } from '../../../functions/navigation';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { StylishText } from '../../items/StylishText';
 import { ModelInformationDict } from '../../render/ModelType';
-import { DashboardWidgetProps } from '../DashboardWidget';
+import type { DashboardWidgetProps } from '../DashboardWidget';
 
 /**
  * A simple dashboard widget for displaying the number of results for a particular query
@@ -33,12 +25,12 @@ function QueryCountWidget({
   title,
   icon,
   params
-}: {
+}: Readonly<{
   modelType: ModelType;
   title: string;
   icon?: InvenTreeIconType;
   params: any;
-}): ReactNode {
+}>): ReactNode {
   const user = useUserState();
   const navigate = useNavigate();
 
@@ -81,18 +73,18 @@ function QueryCountWidget({
   // TODO: Improve visual styling
 
   return (
-    <Group gap="xs" wrap="nowrap">
+    <Group gap='xs' wrap='nowrap'>
       <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-      <Group gap="xs" wrap="nowrap" justify="space-between">
-        <StylishText size="md">{title}</StylishText>
-        <Group gap="xs" wrap="nowrap" justify="right">
+      <Group gap='xs' wrap='nowrap' justify='space-between'>
+        <StylishText size='md'>{title}</StylishText>
+        <Group gap='xs' wrap='nowrap' justify='right'>
           {query.isFetching ? (
-            <Loader size="sm" />
+            <Loader size='sm' />
           ) : (
-            <StylishText size="sm">{query.data?.count ?? '-'}</StylishText>
+            <StylishText size='sm'>{query.data?.count ?? '-'}</StylishText>
           )}
           {modelProperties?.url_overview && (
-            <ActionIcon size="sm" variant="transparent" onClick={onFollowLink}>
+            <ActionIcon size='sm' variant='transparent' onClick={onFollowLink}>
               <IconExternalLink />
             </ActionIcon>
           )}

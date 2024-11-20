@@ -65,10 +65,10 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <LoadingOverlay visible={instanceQuery.isLoading} />
       {!pricing && !instanceQuery.isLoading && (
-        <Alert color="ref" title={t`Error`}>
+        <Alert color='ref' title={t`Error`}>
           <Text>{t`No pricing data found for this part.`}</Text>
         </Alert>
       )}

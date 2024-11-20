@@ -112,3 +112,25 @@ npx playwright test --ui
 ```
 
 This will first launch the backend server (at `http://localhost:8000`), and then run the tests against the frontend server (at `http://localhost:5173`). An interactive browser window will open, and you can run the tests individually or as a group.
+
+### Viewing Reports
+
+The playwright tests are run automatically as part of the project's CI pipeline, and the results are stored as a downloadable report. The report file can be "replayed" using playwright, to view the results of the test run, as well as closely inspect any failed tests.
+
+To view the report, you can use the following command, after downloading the report and extracting from the zipped file:
+
+```bash
+npx playwright show-report path/to/report
+```
+
+### No Tests Found
+
+If there is any problem in the testing launch sequence, the playwright UI will display the message "No Tests". In this case, an error has occurred, likely launching the InvenTree server process (which runs in the background).
+
+To debug this situation, and determine what error needs to be resolved, run the following command:
+
+```bash
+npx playwright test --debug
+```
+
+This will print out any errors to the console, allowing you to resolve issues before continuing. In all likelihood, your InvenTree installation needs to be updated, and simply running `invoke update` will allow you to continue.

@@ -1,12 +1,11 @@
 import { t } from '@lingui/macro';
 import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
-import { useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { useUserState } from '../../states/UserState';
 import NotesEditor from '../editors/NotesEditor';
-import { PanelType } from './Panel';
+import type { PanelType } from './Panel';
 
 export default function NotesPanel({
   model_type,

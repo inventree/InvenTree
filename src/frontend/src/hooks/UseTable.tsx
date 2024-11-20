@@ -1,8 +1,8 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
-import { SetURLSearchParams, useSearchParams } from 'react-router-dom';
+import { type SetURLSearchParams, useSearchParams } from 'react-router-dom';
 
-import { TableFilter } from '../tables/Filter';
+import type { TableFilter } from '../tables/Filter';
 
 /*
  * Type definition for representing the state of a table:
@@ -161,7 +161,7 @@ export function useTable(tableName: string): TableState {
   // Update a single record in the table, by primary key value
   const updateRecord = useCallback(
     (record: any) => {
-      let _records = [...records];
+      const _records = [...records];
 
       // Find the matching record in the table
       const index = _records.findIndex((r) => r.pk === record.pk);

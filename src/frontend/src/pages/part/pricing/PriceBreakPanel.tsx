@@ -5,9 +5,9 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import type { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
@@ -17,10 +17,10 @@ import {
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowEditAction
 } from '../../../tables/RowActions';
@@ -107,7 +107,7 @@ export default function PriceBreakPanel({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-price-break"
+        key='add-price-break'
         tooltip={t`Add Price Break`}
         onClick={() => {
           newPriceBreak.open();
@@ -166,7 +166,7 @@ export default function PriceBreakPanel({
         />
         {table.records.length > 0 ? (
           <BarChart
-            dataKey="quantity"
+            dataKey='quantity'
             data={table.records}
             series={[{ name: 'price', label: t`Price`, color: 'blue.6' }]}
             xAxisLabel={t`Quantity`}

@@ -70,7 +70,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Nice name for printing."""
         name = f'{self.name} - {self.key}'
         if not self.active:
-            name += '(not active)'
+            name += ' (not active)'
         return name
 
     # extra attributes from the registry

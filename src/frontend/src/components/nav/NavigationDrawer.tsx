@@ -18,7 +18,7 @@ import * as classes from '../../main.css';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
-import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
+import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 import { StylishText } from '../items/StylishText';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
@@ -35,7 +35,7 @@ export function NavigationDrawer({
     <Drawer
       opened={opened}
       onClose={close}
-      size="lg"
+      size='lg'
       withCloseButton={false}
       classNames={{
         body: classes.navigationDrawer
@@ -46,7 +46,7 @@ export function NavigationDrawer({
   );
 }
 
-function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
+function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
   const user = useUserState();
 
   const globalSettings = useGlobalSettingsState();
@@ -161,14 +161,14 @@ function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
   const menuItemsAbout: MenuLinkItem[] = useMemo(() => AboutLinks(), []);
 
   return (
-    <Flex direction="column" mih="100vh" p={16}>
-      <Group wrap="nowrap">
+    <Flex direction='column' mih='100vh' p={16}>
+      <Group wrap='nowrap'>
         <InvenTreeLogo />
-        <StylishText size="xl">{title}</StylishText>
+        <StylishText size='xl'>{title}</StylishText>
       </Group>
-      <Space h="xs" />
+      <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
-        <ScrollArea h={scrollHeight} type="always" offsetScrollbars>
+        <ScrollArea h={scrollHeight} type='always' offsetScrollbars>
           <MenuLinks
             title={t`Navigation`}
             links={menuItemsNavigate}
@@ -184,28 +184,26 @@ function DrawerContent({ closeFunc }: { closeFunc?: () => void }) {
             links={menuItemsAction}
             beforeClick={closeFunc}
           />
-          <Space h="md" />
+          <Space h='md' />
           {plugins.length > 0 ? (
-            <>
-              <MenuLinks
-                title={t`Plugins`}
-                links={plugins}
-                beforeClick={closeFunc}
-              />
-            </>
+            <MenuLinks
+              title={t`Plugins`}
+              links={plugins}
+              beforeClick={closeFunc}
+            />
           ) : (
             <></>
           )}
         </ScrollArea>
       </Container>
       <div ref={ref}>
-        <Space h="md" />
+        <Space h='md' />
         <MenuLinks
           title={t`Documentation`}
           links={menuItemsDocumentation}
           beforeClick={closeFunc}
         />
-        <Space h="md" />
+        <Space h='md' />
         <MenuLinks
           title={t`About`}
           links={menuItemsAbout}

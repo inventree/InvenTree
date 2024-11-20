@@ -1,8 +1,8 @@
 import { IconUsers } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import {
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
@@ -27,7 +27,7 @@ export function useCustomStateFields(): ApiFormFieldSet {
 
   // Construct a list of status options based on the selected status class
   const statusOptions: any[] = useMemo(() => {
-    let options: any[] = [];
+    const options: any[] = [];
 
     const valuesList = Object.values(statusCodes.status ?? {}).find(
       (value: StatusCodeListInterface) => value.statusClass === statusClass

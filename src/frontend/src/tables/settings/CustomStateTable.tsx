@@ -1,9 +1,9 @@
 import { t } from '@lingui/macro';
-import { Badge, Group, Text } from '@mantine/core';
+import { Badge } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import {
+import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../../components/render/StatusRenderer';
@@ -20,9 +20,9 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalStatusState } from '../../states/StatusState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom states
@@ -62,7 +62,7 @@ export default function CustomStateTable() {
         title: t`Logical State`,
         sortable: true,
         render: (record: any) => {
-          let stateText = getLogicalState(
+          const stateText = getLogicalState(
             record.reference_status,
             record.logical_key
           );
@@ -89,8 +89,8 @@ export default function CustomStateTable() {
           return (
             <Badge
               color={statusColorMap[record.color] || statusColorMap['default']}
-              variant="filled"
-              size="xs"
+              variant='filled'
+              size='xs'
             >
               {record.color}
             </Badge>
@@ -154,6 +154,7 @@ export default function CustomStateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key={'add'}
         onClick={() => newCustomState.open()}
         tooltip={t`Add State`}
       />
