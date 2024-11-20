@@ -1184,18 +1184,8 @@ class TestSettings(InvenTreeTestCase):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
-        if not settings.DOCKER:
-            # Check an install run
-            response = registry.install_plugin_file()
-            self.assertEqual(response, 'first_run')
-
-            # Set dynamic setting to True and rerun to launch install
-            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-            registry.reload_plugins(full_reload=True)
-
-        # Check that there was another run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, True)
+        registry.reload_plugins(full_reload=True, collect=True)
+        self.assertGreater(len(settings.PLUGIN_FILE_HASH), 0)
 
     def test_helpers_cfg_file(self):
         """Test get_config_file."""

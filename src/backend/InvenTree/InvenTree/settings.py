@@ -217,7 +217,8 @@ PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
 
-PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
+# Hash of the plugin file (will be updated on each change)
+PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
