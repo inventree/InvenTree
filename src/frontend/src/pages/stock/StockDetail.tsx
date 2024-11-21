@@ -110,6 +110,8 @@ export default function StockDetail() {
 
     data.available_stock = Math.max(0, data.quantity - data.allocated);
 
+    data.stock_status = data.status_custom_key || data.status;
+
     if (instanceQuery.isFetching) {
       return <Skeleton />;
     }
@@ -131,10 +133,11 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
-        name: 'status',
+        name: 'stock_status',
         type: 'status',
         label: t`Stock Status`,
-        model: ModelType.stockitem
+        model: ModelType.stockitem,
+        icon: 'status'
       },
       {
         type: 'text',
@@ -805,11 +808,10 @@ export default function StockDetail() {
             key='batch'
           />,
           <StatusRenderer
-            status={stockitem.status_custom_key}
+            status={stockitem.status_custom_key || stockitem.status}
             type={ModelType.stockitem}
             options={{
-              size: 'lg',
-              hidden: !!stockitem.status_custom_key
+              size: 'lg'
             }}
             key='status'
           />,
