@@ -4,6 +4,7 @@ import sys
 from decimal import Decimal
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -152,7 +153,10 @@ class DatePickerFormField(forms.DateField):
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
     if type(value) in [Decimal, float]:
-        value = round(value, places)
+        try:
+            value = round(value, places)
+        except Exception:
+            raise ValidationError(_('Invalid decimal value') + f' ({value})')
 
         if normalize:
             # Remove any trailing zeroes

@@ -46,6 +46,14 @@ Environment variable settings generally use the `INVENTREE_` prefix, and are all
 !!! warning "Available Variables"
     Some configuration options cannot be set via environment variables. Refer to the documentation below.
 
+#### List Values
+
+To specify a list value in an environment variable, use a comma-separated list. For example, to specify a list of trusted origins:
+
+```bash
+INVENTREE_TRUSTED_ORIGINS='https://inventree.example.com:8443,https://stock.example.com:8443'
+```
+
 ## Basic Options
 
 The following basic options are available:
@@ -57,7 +65,9 @@ The following basic options are available:
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
 | INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
+| INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
+| INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |

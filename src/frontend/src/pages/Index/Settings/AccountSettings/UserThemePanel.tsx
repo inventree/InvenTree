@@ -96,7 +96,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
   }
 
   return (
-    <Container w="100%" mih={height} p={0}>
+    <Container w='100%' mih={height} p={0}>
       <Title order={3}>
         <Trans>Display Settings</Trans>
       </Title>
@@ -111,7 +111,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               {IS_DEV && (
-                <Button onClick={enablePseudoLang} variant="light">
+                <Button onClick={enablePseudoLang} variant='light'>
                   <Trans>Use pseudo language</Trans>
                 </Button>
               )}
@@ -122,11 +122,11 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
               <Trans>Color Mode</Trans>
             </Table.Td>
             <Table.Td>
-              <Group justify="left">
+              <Group justify='left'>
                 <ColorToggle />
               </Group>
             </Table.Td>
-            <Table.Td></Table.Td>
+            <Table.Td />
           </Table.Tr>
           <Table.Tr>
             <Table.Td>
@@ -134,14 +134,14 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ColorPicker
-                format="hex"
+                format='hex'
                 onChange={changePrimary}
                 withPicker={false}
                 swatches={Object.keys(LOOKUP)}
               />
             </Table.Td>
             <Table.Td>
-              <Button color={theme.primaryColor} variant="light">
+              <Button color={theme.primaryColor} variant='light'>
                 <Trans>Example</Trans>
               </Button>
             </Table.Td>
@@ -155,7 +155,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ActionIcon
-                variant="default"
+                variant='default'
                 onClick={() => changeWhite('#FFFFFF')}
               >
                 <IconRestore />
@@ -171,7 +171,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ActionIcon
-                variant="default"
+                variant='default'
                 onClick={() => changeBlack('#000000')}
               >
                 <IconRestore />
@@ -199,7 +199,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
               <Trans>Loader</Trans>
             </Table.Td>
             <Table.Td>
-              <Group justify="left">
+              <Group justify='left'>
                 <Select
                   data={loaderDate}
                   value={themeLoader}
@@ -208,8 +208,8 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
               </Group>
             </Table.Td>
             <Table.Td>
-              <Group justify="left">
-                <Loader type={themeLoader} mah={16} size="sm" />
+              <Group justify='left'>
+                <Loader type={themeLoader} mah={16} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>

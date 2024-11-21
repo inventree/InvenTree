@@ -31,7 +31,7 @@ import {
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -88,8 +88,8 @@ export function PurchaseOrderTable({
         accessor: 'supplier__name',
         title: t`Supplier`,
         sortable: true,
-        render: function (record: any) {
-          let supplier = record.supplier_detail ?? {};
+        render: (record: any) => {
+          const supplier = record.supplier_detail ?? {};
 
           return (
             <Thumbnail
@@ -138,7 +138,7 @@ export function PurchaseOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-purchase-order"
+        key='add-purchase-order'
         tooltip={t`Add Purchase Order`}
         onClick={() => newPurchaseOrder.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}

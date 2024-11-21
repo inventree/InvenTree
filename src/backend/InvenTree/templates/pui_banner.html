@@ -2,8 +2,9 @@
 {% load i18n %}
 
 {% inventree_customize 'hide_pui_banner' as hidden %}
+{% pui_enabled as pui %}
 
-{% if not hidden %}
+{% if pui and not hidden %}
 <div class='alert alert-block alert-warning'>
     {% if mode == 'admin' %}
     {% trans "Platform UI - the new UI for InvenTree - provides more modern administration options." %}

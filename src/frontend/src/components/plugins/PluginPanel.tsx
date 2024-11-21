@@ -1,8 +1,8 @@
 import { Stack } from '@mantine/core';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { InvenTreeContext } from './PluginContext';
-import { PluginUIFeature } from './PluginUIFeature';
+import type { InvenTreeContext } from './PluginContext';
+import type { PluginUIFeature } from './PluginUIFeature';
 import RemoteComponent from './RemoteComponent';
 
 /**
@@ -26,10 +26,10 @@ export default function PluginPanelContent({
   pluginContext: InvenTreeContext;
 }>): ReactNode {
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <RemoteComponent
         source={pluginFeature.source}
-        defaultFunctionName="renderPanel"
+        defaultFunctionName='renderPanel'
         context={pluginContext}
       />
     </Stack>

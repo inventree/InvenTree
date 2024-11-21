@@ -1,9 +1,9 @@
-import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIconType } from '../../functions/icons';
-import { TemplateI } from '../../tables/settings/TemplateTable';
-import { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
-import { InvenTreeContext } from './PluginContext';
-import { PluginUIFeature } from './PluginUIFeature';
+import type { ModelType } from '../../enums/ModelType';
+import type { InvenTreeIconType } from '../../functions/icons';
+import type { TemplateI } from '../../tables/settings/TemplateTable';
+import type { TemplateEditorProps } from '../editors/TemplateEditor/TemplateEditor';
+import type { InvenTreeContext } from './PluginContext';
+import type { PluginUIFeature } from './PluginUIFeature';
 
 // #region  Type Helpers
 export type BaseUIFeature = {
@@ -45,7 +45,7 @@ export type TemplateEditorUIFeature = {
     }) => void;
     template: TemplateI;
   };
-  featureReturnType: void;
+  featureReturnType: undefined;
 };
 
 export type TemplatePreviewUIFeature = {
@@ -71,5 +71,5 @@ export type TemplatePreviewUIFeature = {
       ) => void | Promise<void>;
     }) => void;
   };
-  featureReturnType: void;
+  featureReturnType: undefined;
 };

@@ -8,18 +8,18 @@ test('Basic Login Test', async ({ page }) => {
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
   await page.waitForURL('**/platform');
 
-  await page.getByText('InvenTree Demo Server').waitFor();
+  await page.getByText('InvenTree Demo Server -').waitFor();
 
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
@@ -39,13 +39,13 @@ test('Quick Login Test', async ({ page }) => {
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(RegExp('^InvenTree'));
+  await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
   await page.goto(baseUrl);
   await page.waitForURL('**/platform');
 
-  await page.getByText('InvenTree Demo Server').waitFor();
+  await page.getByText('InvenTree Demo Server - ').waitFor();
 
   // Logout (via URL)
   await page.goto(`${baseUrl}/logout/`);

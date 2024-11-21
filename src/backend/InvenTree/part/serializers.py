@@ -1514,7 +1514,7 @@ class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass defining serializer fields."""
 
         model = PartRelated
-        fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail']
+        fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail', 'note']
 
     part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
     part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)

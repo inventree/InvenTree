@@ -18,15 +18,15 @@ export interface PluginAdminInterface {
  */
 export default function PluginSettingsPanel({
   pluginAdmin
-}: {
+}: Readonly<{
   pluginAdmin: PluginAdminInterface;
-}) {
+}>) {
   const pluginContext = useInvenTreeContext();
 
   return (
     <RemoteComponent
       source={pluginAdmin.source}
-      defaultFunctionName="renderPluginSettings"
+      defaultFunctionName='renderPluginSettings'
       context={{ ...pluginContext, context: pluginAdmin.context }}
     />
   );

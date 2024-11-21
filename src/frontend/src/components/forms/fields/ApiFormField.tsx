@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
 import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
-import { UseFormReturnType } from '@mantine/form';
+import type { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { ReactNode, useCallback, useEffect, useMemo } from 'react';
-import { Control, FieldValues, useController } from 'react-hook-form';
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { type Control, type FieldValues, useController } from 'react-hook-form';
 
-import { ModelType } from '../../../enums/ModelType';
+import type { ModelType } from '../../../enums/ModelType';
 import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
@@ -169,15 +169,16 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
+      let rtnValue = value;
       // Allow for custom value adjustments (per field)
       if (definition.adjustValue) {
-        value = definition.adjustValue(value);
+        rtnValue = definition.adjustValue(value);
       }
 
-      field.onChange(value);
+      field.onChange(rtnValue);
 
       // Run custom callback for this field
-      definition.onValueChange?.(value);
+      definition.onValueChange?.(rtnValue);
     },
     [fieldName, definition]
   );
@@ -188,18 +189,18 @@ export function ApiFormField({
 
     switch (definition.field_type) {
       case 'integer':
-        val = parseInt(value) ?? '';
+        val = Number.parseInt(value) ?? '';
         break;
       case 'decimal':
       case 'float':
       case 'number':
-        val = parseFloat(value) ?? '';
+        val = Number.parseFloat(value) ?? '';
         break;
       default:
         break;
     }
 
-    if (isNaN(val) || !isFinite(val)) {
+    if (Number.isNaN(val) || !Number.isFinite(val)) {
       val = '';
     }
 
@@ -248,8 +249,8 @@ export function ApiFormField({
             ref={ref}
             id={fieldId}
             aria-label={`boolean-field-${fieldName}`}
-            radius="lg"
-            size="sm"
+            radius='lg'
+            size='sm'
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
@@ -266,7 +267,7 @@ export function ApiFormField({
         return (
           <NumberInput
             {...reducedDefinition}
-            radius="sm"
+            radius='sm'
             ref={field.ref}
             id={fieldId}
             aria-label={`number-field-${field.name}`}
@@ -291,7 +292,7 @@ export function ApiFormField({
             {...reducedDefinition}
             id={fieldId}
             ref={field.ref}
-            radius="sm"
+            radius='sm'
             value={value}
             error={error?.message}
             onChange={(payload: File | null) => onChange(payload)}
@@ -327,7 +328,7 @@ export function ApiFormField({
         );
       default:
         return (
-          <Alert color="red" title={t`Error`}>
+          <Alert color='red' title={t`Error`}>
             Invalid field type for field '{fieldName}': '
             {fieldDefinition.field_type}'
           </Alert>

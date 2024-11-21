@@ -239,9 +239,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         """File that contains plugin definition."""
         return Path(inspect.getfile(cls))
 
-    def path(self) -> Path:
+    @classmethod
+    def path(cls) -> Path:
         """Path to plugins base folder."""
-        return self.file().parent
+        return cls.file().parent
 
     def _get_value(self, meta_name: str, package_name: str) -> str:
         """Extract values from class meta or package info.

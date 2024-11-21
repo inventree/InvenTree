@@ -3,7 +3,7 @@ import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { api } from '../App';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
@@ -137,8 +137,8 @@ export function partCategoryFields({
 }: {
   create?: boolean;
 }): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = {
+  const fields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = {
       parent: {
         description: t`Parent part category`,
         required: false
@@ -201,7 +201,7 @@ export function usePartParameterFields({
             setChoices([]);
             setFieldType('boolean');
           } else if (record?.choices) {
-            let _choices: string[] = record.choices.split(',');
+            const _choices: string[] = record.choices.split(',');
 
             if (_choices.length > 0) {
               setChoices(

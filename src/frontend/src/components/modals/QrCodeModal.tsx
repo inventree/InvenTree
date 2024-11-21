@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Button, ScrollArea, Stack, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
-import { ContextModalProps } from '@mantine/modals';
+import type { ContextModalProps } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 
 import { api } from '../../App';
@@ -32,14 +32,14 @@ export function QrCodeModal({
   }
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <BarcodeInput onScan={onScanAction} />
       {values.length == 0 ? (
         <Text c={'grey'}>
           <Trans>No scans yet!</Trans>
         </Text>
       ) : (
-        <ScrollArea style={{ height: 200 }} type="auto" offsetScrollbars>
+        <ScrollArea style={{ height: 200 }} type='auto' offsetScrollbars>
           {values.map((value, index) => (
             <div key={`${index}-${value}`}>{value}</div>
           ))}
@@ -47,8 +47,8 @@ export function QrCodeModal({
       )}
       <Button
         fullWidth
-        mt="md"
-        color="red"
+        mt='md'
+        color='red'
         onClick={() => {
           // stopScanning();
           context.closeModal(id);

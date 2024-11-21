@@ -85,7 +85,7 @@ export function LanguageContext({
          * - Server default locale
          * - en-us (backup)
          */
-        let locales: (string | undefined)[] = [];
+        const locales: (string | undefined)[] = [];
 
         if (language != 'pseudo-LOCALE') {
           locales.push(language);
@@ -100,7 +100,7 @@ export function LanguageContext({
         }
 
         // Ensure that the locales are properly formatted
-        let new_locales = locales
+        const new_locales = locales
           .map((locale) => locale?.replaceAll('_', '-').toLowerCase())
           .join(', ');
 

@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { L } from '@lingui/react/dist/shared/react.e5f95de8';
 import {
   Badge,
   Button,
@@ -13,16 +12,16 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { DateInput, DateValue } from '@mantine/dates';
+import { DateInput, type DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '../components/items/StylishText';
-import { TableState } from '../hooks/UseTable';
+import type { TableState } from '../hooks/UseTable';
 import {
-  TableFilter,
-  TableFilterChoice,
-  TableFilterType,
+  type TableFilter,
+  type TableFilterChoice,
+  type TableFilterType,
   getTableFilterOptions
 } from './Filter';
 
@@ -37,23 +36,23 @@ function FilterItem({
   tableState: TableState;
 }>) {
   const removeFilter = useCallback(() => {
-    let newFilters = tableState.activeFilters.filter(
+    const newFilters = tableState.activeFilters.filter(
       (f) => f.name !== flt.name
     );
     tableState.setActiveFilters(newFilters);
   }, [flt]);
 
   return (
-    <Paper p="sm" shadow="sm" radius="xs">
-      <Group justify="space-between" key={flt.name} wrap="nowrap">
-        <Stack gap="xs">
-          <Text size="sm">{flt.label}</Text>
-          <Text size="xs">{flt.description}</Text>
+    <Paper p='sm' shadow='sm' radius='xs'>
+      <Group justify='space-between' key={flt.name} wrap='nowrap'>
+        <Stack gap='xs'>
+          <Text size='sm'>{flt.label}</Text>
+          <Text size='xs'>{flt.description}</Text>
         </Stack>
-        <Group justify="right">
+        <Group justify='right'>
           <Badge>{flt.displayValue ?? flt.value}</Badge>
           <Tooltip label={t`Remove filter`} withinPortal={true}>
-            <CloseButton size="md" color="red" onClick={removeFilter} />
+            <CloseButton size='md' color='red' onClick={removeFilter} />
           </Tooltip>
         </Group>
       </Group>
@@ -92,7 +91,7 @@ function FilterAddGroup({
 
   const valueOptions: TableFilterChoice[] = useMemo(() => {
     // Find the matching filter
-    let filter: TableFilter | undefined = availableFilters?.find(
+    const filter: TableFilter | undefined = availableFilters?.find(
       (flt) => flt.name === selectedFilter
     );
 
@@ -114,7 +113,7 @@ function FilterAddGroup({
   const setSelectedValue = useCallback(
     (value: string | null) => {
       // Find the matching filter
-      let filter: TableFilter | undefined = availableFilters.find(
+      const filter: TableFilter | undefined = availableFilters.find(
         (flt) => flt.name === selectedFilter
       );
 
@@ -122,12 +121,12 @@ function FilterAddGroup({
         return;
       }
 
-      let filters =
+      const filters =
         tableState.activeFilters?.filter(
           (flt) => flt.name !== selectedFilter
         ) ?? [];
 
-      let newFilter: TableFilter = {
+      const newFilter: TableFilter = {
         ...filter,
         value: value,
         displayValue: valueOptions.find((v) => v.value === value)?.label
@@ -141,7 +140,7 @@ function FilterAddGroup({
   const setDateValue = useCallback(
     (value: DateValue) => {
       if (value) {
-        let date = value.toString();
+        const date = value.toString();
         setSelectedValue(dayjs(date).format('YYYY-MM-DD'));
       } else {
         setSelectedValue('');
@@ -151,7 +150,7 @@ function FilterAddGroup({
   );
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <Divider />
       <Select
         data={filterOptions}
@@ -201,31 +200,31 @@ export function FilterSelectDrawer({
   }, [tableState.activeFilters]);
 
   const hasFilters: boolean = useMemo(() => {
-    let filters = tableState?.activeFilters ?? [];
+    const filters = tableState?.activeFilters ?? [];
 
     return filters.length > 0;
   }, [tableState.activeFilters]);
 
   return (
     <Drawer
-      size="sm"
-      position="right"
+      size='sm'
+      position='right'
       withCloseButton={true}
       opened={opened}
       onClose={onClose}
       closeButtonProps={{
         'aria-label': 'filter-drawer-close'
       }}
-      title={<StylishText size="lg">{t`Table Filters`}</StylishText>}
+      title={<StylishText size='lg'>{t`Table Filters`}</StylishText>}
     >
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {hasFilters &&
           tableState.activeFilters?.map((f) => (
             <FilterItem key={f.name} flt={f} tableState={tableState} />
           ))}
         {hasFilters && <Divider />}
         {addFilter && (
-          <Stack gap="xs">
+          <Stack gap='xs'>
             <FilterAddGroup
               tableState={tableState}
               availableFilters={availableFilters}
@@ -235,8 +234,8 @@ export function FilterSelectDrawer({
         {addFilter && (
           <Button
             onClick={() => setAddFilter(false)}
-            color="orange"
-            variant="subtle"
+            color='orange'
+            variant='subtle'
           >
             <Text>{t`Cancel`}</Text>
           </Button>
@@ -245,8 +244,8 @@ export function FilterSelectDrawer({
           tableState.activeFilters.length < availableFilters.length && (
             <Button
               onClick={() => setAddFilter(true)}
-              color="green"
-              variant="subtle"
+              color='green'
+              variant='subtle'
             >
               <Text>{t`Add Filter`}</Text>
             </Button>
@@ -254,8 +253,8 @@ export function FilterSelectDrawer({
         {!addFilter && tableState.activeFilters.length > 0 && (
           <Button
             onClick={tableState.clearActiveFilters}
-            color="red"
-            variant="subtle"
+            color='red'
+            variant='subtle'
           >
             <Text>{t`Clear Filters`}</Text>
           </Button>

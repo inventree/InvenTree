@@ -10,13 +10,16 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -34,15 +37,16 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
-  StockOperationProps,
+  type StockOperationProps,
   useAddStockItem,
   useCountStockItem,
   useRemoveStockItem,
@@ -87,6 +91,7 @@ export default function StockDetail() {
   const {
     instance: stockitem,
     refreshInstance,
+    refreshInstancePromise,
     instanceQuery,
     requestStatus
   } = useInstance({
@@ -100,8 +105,8 @@ export default function StockDetail() {
   });
 
   const detailsPanel = useMemo(() => {
-    let data = { ...stockitem };
-    let part = stockitem?.part_detail ?? {};
+    const data = { ...stockitem };
+    const part = stockitem?.part_detail ?? {};
 
     data.available_stock = Math.max(0, data.quantity - data.allocated);
 
@@ -110,7 +115,7 @@ export default function StockDetail() {
     }
 
     // Top left - core part information
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         name: 'part',
         label: t`Base Part`,
@@ -134,7 +139,7 @@ export default function StockDetail() {
       {
         type: 'text',
         name: 'tests',
-        label: `Completed Tests`,
+        label: t`Completed Tests`,
         icon: 'progress',
         hidden: !part?.testable
       },
@@ -154,7 +159,7 @@ export default function StockDetail() {
     ];
 
     // Top right - available stock information
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'quantity',
@@ -188,7 +193,7 @@ export default function StockDetail() {
     ];
 
     // Bottom left: location information
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         name: 'supplier_part',
         label: t`Supplier Part`,
@@ -207,10 +212,13 @@ export default function StockDetail() {
         type: 'link',
         name: 'belongs_to',
         label: t`Installed In`,
+        model_filters: {
+          part_detail: true
+        },
         model_formatter: (model: any) => {
           let text = model?.part_detail?.full_name ?? model?.name;
           if (model.serial && model.quantity == 1) {
-            text += `# ${model.serial}`;
+            text += ` # ${model.serial}`;
           }
 
           return text;
@@ -275,7 +283,7 @@ export default function StockDetail() {
     ];
 
     // Bottom right - any other information
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       // Expiry date
       {
         type: 'date',
@@ -438,14 +446,14 @@ export default function StockDetail() {
             defaultValue={['buildallocations', 'salesallocations']}
           >
             {showBuildAllocations && (
-              <Accordion.Item value="buildallocations" key="buildallocations">
+              <Accordion.Item value='buildallocations' key='buildallocations'>
                 <Accordion.Control>
-                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <BuildAllocatedStockTable
                     stockId={stockitem.pk}
-                    modelField="build"
+                    modelField='build'
                     modelTarget={ModelType.build}
                     showBuildInfo
                   />
@@ -453,14 +461,14 @@ export default function StockDetail() {
               </Accordion.Item>
             )}
             {showSalesAlloctions && (
-              <Accordion.Item value="salesallocations" key="salesallocations">
+              <Accordion.Item value='salesallocations' key='salesallocations'>
                 <Accordion.Control>
-                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <SalesOrderAllocationTable
                     stockId={stockitem.pk}
-                    modelField="order"
+                    modelField='order'
                     modelTarget={ModelType.salesorder}
                     showOrderInfo
                   />
@@ -498,7 +506,7 @@ export default function StockDetail() {
         hidden: (stockitem?.child_items ?? 0) == 0,
         content: stockitem?.pk ? (
           <StockItemTable
-            tableName="child-stock"
+            tableName='child-stock'
             params={{ ancestor: stockitem.pk }}
           />
         ) : (
@@ -610,7 +618,7 @@ export default function StockDetail() {
     },
     onFormSuccess: () => {
       const partId = stockitem.part;
-      refreshInstance().catch(() => {
+      refreshInstancePromise().catch(() => {
         // Part may have been deleted - redirect to the part detail page
         navigate(getDetailUrl(ModelType.part, partId));
       });
@@ -623,7 +631,7 @@ export default function StockDetail() {
     pk: stockitem.pk,
     title: t`Return Stock Item`,
     preFormContent: (
-      <Alert color="blue">
+      <Alert color='blue'>
         {t`Return this item into stock. This will remove the customer assignment.`}
       </Alert>
     ),
@@ -650,7 +658,8 @@ export default function StockDetail() {
       stockitem.quantity == 1;
 
     return [
-      <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
+      <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
+      <LocateItemButton stockId={stockitem.pk} />,
       <BarcodeActionDropdown
         model={ModelType.stockitem}
         pk={stockitem.pk}
@@ -672,7 +681,7 @@ export default function StockDetail() {
             tooltip: t`Count stock`,
             hidden: serialized || !inStock,
             icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             onClick: () => {
               stockitem.pk && countStockItem.open();
@@ -682,7 +691,7 @@ export default function StockDetail() {
             name: t`Add`,
             tooltip: t`Add Stock`,
             hidden: serialized || !inStock,
-            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
             }
@@ -691,7 +700,7 @@ export default function StockDetail() {
             name: t`Remove`,
             tooltip: t`Remove Stock`,
             hidden: serialized || !inStock,
-            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
             }
@@ -703,7 +712,7 @@ export default function StockDetail() {
               !inStock ||
               serialized ||
               stockitem?.part_detail?.trackable != true,
-            icon: <InvenTreeIcon icon="serial" iconProps={{ color: 'blue' }} />,
+            icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
             onClick: () => {
               serializeStockItem.open();
             }
@@ -713,7 +722,7 @@ export default function StockDetail() {
             tooltip: t`Transfer Stock`,
             hidden: !inStock,
             icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
             onClick: () => {
               stockitem.pk && transferStockItem.open();
@@ -725,7 +734,7 @@ export default function StockDetail() {
             hidden: !stockitem.sales_order,
             icon: (
               <InvenTreeIcon
-                icon="return_orders"
+                icon='return_orders'
                 iconProps={{ color: 'blue' }}
               />
             ),
@@ -763,37 +772,37 @@ export default function StockDetail() {
       ? []
       : [
           <DetailsBadge
-            color="yellow"
+            color='yellow'
             label={t`In Production`}
             visible={stockitem.is_building}
           />,
           <DetailsBadge
-            color="blue"
-            label={t`Serial Number` + `: ${stockitem.serial}`}
+            color='blue'
+            label={`${t`Serial Number`}: ${stockitem.serial}`}
             visible={!!stockitem.serial}
-            key="serial"
+            key='serial'
           />,
           <DetailsBadge
-            color="blue"
-            label={t`Quantity` + `: ${stockitem.quantity}`}
+            color='blue'
+            label={`${t`Quantity`}: ${stockitem.quantity}`}
             visible={!stockitem.serial}
-            key="quantity"
+            key='quantity'
           />,
           <DetailsBadge
-            color="yellow"
-            label={t`Available` + `: ${available}`}
+            color='yellow'
+            label={`${t`Available`}: ${available}`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
               available != stockitem.quantity
             }
-            key="available"
+            key='available'
           />,
           <DetailsBadge
-            color="blue"
-            label={t`Batch Code` + `: ${stockitem.batch}`}
+            color='blue'
+            label={`${t`Batch Code`}: ${stockitem.batch}`}
             visible={!!stockitem.batch}
-            key="batch"
+            key='batch'
           />,
           <StatusRenderer
             status={stockitem.status_custom_key}
@@ -802,25 +811,25 @@ export default function StockDetail() {
               size: 'lg',
               hidden: !!stockitem.status_custom_key
             }}
-            key="status"
+            key='status'
           />,
           <DetailsBadge
-            color="yellow"
+            color='yellow'
             label={t`Stale`}
             visible={enableExpiry && stockitem.stale && !stockitem.expired}
-            key="stale"
+            key='stale'
           />,
           <DetailsBadge
-            color="orange"
+            color='orange'
             label={t`Expired`}
             visible={enableExpiry && stockitem.expired}
-            key="expired"
+            key='expired'
           />,
           <DetailsBadge
-            color="red"
+            color='red'
             label={t`Unavailable`}
             visible={stockitem.in_stock == false}
-            key="unavailable"
+            key='unavailable'
           />
         ];
   }, [stockitem, instanceQuery, enableExpiry]);
@@ -850,7 +859,7 @@ export default function StockDetail() {
           actions={stockActions}
         />
         <PanelGroup
-          pageKey="stockitem"
+          pageKey='stockitem'
           panels={stockPanels}
           model={ModelType.stockitem}
           id={stockitem.pk}

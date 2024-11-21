@@ -43,37 +43,37 @@ export default function MachineManagementPanel() {
 
   return (
     <Accordion multiple defaultValue={['machinelist', 'machinetypes']}>
-      <Accordion.Item value="machinelist">
+      <Accordion.Item value='machinelist'>
         <Accordion.Control>
-          <StylishText size="lg">{t`Machines`}</StylishText>
+          <StylishText size='lg'>{t`Machines`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <MachineListTable props={{}} />
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value="machinetypes">
+      <Accordion.Item value='machinetypes'>
         <Accordion.Control>
-          <StylishText size="lg">{t`Machine Types`}</StylishText>
+          <StylishText size='lg'>{t`Machine Types`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <MachineTypeListTable props={{}} />
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value="machineerrors">
+      <Accordion.Item value='machineerrors'>
         <Accordion.Control>
-          <StylishText size="lg">{t`Machine Errors`}</StylishText>
+          <StylishText size='lg'>{t`Machine Errors`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          <Stack gap="xs">
+          <Stack gap='xs'>
             <Group
-              justify="space-beteen"
-              wrap="nowrap"
+              justify='space-beteen'
+              wrap='nowrap'
               style={{ width: '100%' }}
             >
               {hasErrors ? (
                 <Alert
                   flex={10}
-                  color="red"
+                  color='red'
                   title={t`Registry Registry Errors`}
                   icon={<IconInfoCircle />}
                 >
@@ -82,14 +82,14 @@ export default function MachineManagementPanel() {
               ) : (
                 <Alert
                   flex={10}
-                  color="green"
+                  color='green'
                   title={t`Machine Registry Errors`}
                   icon={<IconInfoCircle />}
                 >
                   <Text>{t`There are no machine registry errors`}</Text>
                 </Alert>
               )}
-              <ActionIcon variant="outline" onClick={() => refetch()}>
+              <ActionIcon variant='outline' onClick={() => refetch()}>
                 <IconRefresh />
               </ActionIcon>
             </Group>

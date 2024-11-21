@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { useGlobalStatusState } from '../states/StatusState';
 
 /**

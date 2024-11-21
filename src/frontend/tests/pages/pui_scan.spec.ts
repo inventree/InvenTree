@@ -73,7 +73,7 @@ test('Scanning (StockLocation)', async ({ page }) => {
   await defaultScanTest(page, '{"stocklocation": 3}');
 
   // stocklocation: 3
-  await page.getByText('Storage Room B', { exact: true }).waitFor();
+  await page.getByText('Factory/Storage Room B', { exact: true }).waitFor();
   await page.getByText('Storage Room B (green door)').waitFor();
   await page.getByRole('cell', { name: 'stocklocation' }).waitFor();
 });

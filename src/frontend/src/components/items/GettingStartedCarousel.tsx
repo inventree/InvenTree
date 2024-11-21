@@ -3,19 +3,19 @@ import { Carousel } from '@mantine/carousel';
 import { Anchor, Button, Paper, Text } from '@mantine/core';
 
 import * as classes from './GettingStartedCarousel.css';
-import { MenuLinkItem } from './MenuLinks';
+import type { MenuLinkItem } from './MenuLinks';
 import { StylishText } from './StylishText';
 
-function StartedCard({ title, description, link }: MenuLinkItem) {
+function StartedCard({ title, description, link }: Readonly<MenuLinkItem>) {
   return (
-    <Paper shadow="md" p="xl" radius="md" className={classes.card}>
+    <Paper shadow='md' p='xl' radius='md' className={classes.card}>
       <div>
-        <StylishText size="md">{title}</StylishText>
-        <Text size="sm" className={classes.category} lineClamp={2}>
+        <StylishText size='md'>{title}</StylishText>
+        <Text size='sm' className={classes.category} lineClamp={2}>
           {description}
         </Text>
       </div>
-      <Anchor href={link} target="_blank">
+      <Anchor href={link} target='_blank'>
         <Button>
           <Trans>Read More</Trans>
         </Button>
@@ -40,7 +40,7 @@ export function GettingStartedCarousel({
       slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
       slideGap={{ base: 0, sm: 'md' }}
       slidesToScroll={3}
-      align="start"
+      align='start'
       loop
     >
       {slides}

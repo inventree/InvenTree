@@ -13,9 +13,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of custom states
@@ -111,6 +111,7 @@ export default function CustomStateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key={'add'}
         onClick={() => newCustomState.open()}
         tooltip={t`Add State`}
       />

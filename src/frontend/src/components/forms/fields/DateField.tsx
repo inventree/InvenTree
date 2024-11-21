@@ -2,9 +2,9 @@ import { DateInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useCallback, useId, useMemo } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 dayjs.extend(customParseFormat);
 
@@ -47,7 +47,7 @@ export default function DateField({
     }
 
     // Ensure that the date is valid
-    if (dv instanceof Date && !isNaN(dv.getTime())) {
+    if (dv instanceof Date && !Number.isNaN(dv.getTime())) {
       return dv;
     } else {
       return null;
@@ -58,7 +58,7 @@ export default function DateField({
     <DateInput
       id={fieldId}
       aria-label={`date-field-${field.name}`}
-      radius="sm"
+      radius='sm'
       ref={field.ref}
       type={undefined}
       error={error?.message}

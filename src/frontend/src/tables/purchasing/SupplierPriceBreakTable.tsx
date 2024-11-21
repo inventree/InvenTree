@@ -3,7 +3,7 @@ import { Anchor, Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -18,13 +18,13 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function calculateSupplierPartUnitPrice(record: any) {
-  let pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;
-  let unit_price = record.price / pack_quantity;
+  const pack_quantity = record?.part_detail?.pack_quantity_native ?? 1;
+  const unit_price = record.price / pack_quantity;
 
   return unit_price;
 }
@@ -38,7 +38,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
       switchable: true,
       render: (record: any) => {
         return (
-          <Group gap="xs" wrap="nowrap">
+          <Group gap='xs' wrap='nowrap'>
             <Thumbnail
               src={
                 record?.supplier_detail?.thumbnail ??
@@ -93,16 +93,16 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
       sortable: true,
       switchable: true,
       render: (record: any) => {
-        let units = record.part_detail?.pack_quantity;
+        const units = record.part_detail?.pack_quantity;
 
-        let price = formatCurrency(calculateSupplierPartUnitPrice(record), {
+        const price = formatCurrency(calculateSupplierPartUnitPrice(record), {
           currency: record.price_currency
         });
 
         return (
-          <Group justify="space-between" gap="xs" grow>
+          <Group justify='space-between' gap='xs' grow>
             <Text>{price}</Text>
-            {units && <Text size="xs">[{units}]</Text>}
+            {units && <Text size='xs'>[{units}]</Text>}
           </Group>
         );
       }
@@ -165,7 +165,7 @@ export default function SupplierPriceBreakTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-price-break"
+        key='add-price-break'
         tooltip={t`Add Price Break`}
         onClick={() => {
           newPriceBreak.open();

@@ -21,7 +21,6 @@ import {
   IconListTree,
   IconLock,
   IconPackages,
-  IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -31,18 +30,21 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -57,7 +59,7 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -66,7 +68,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import {
-  StockOperationProps,
+  type StockOperationProps,
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
@@ -95,7 +97,6 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
@@ -143,7 +144,7 @@ export default function PartDetail() {
       return <Skeleton />;
     }
 
-    let data = { ...part };
+    const data = { ...part };
 
     data.required =
       (data?.required_for_build_orders ?? 0) +
@@ -155,7 +156,7 @@ export default function PartDetail() {
     }
 
     // Construct the details tables
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'string',
         name: 'name',
@@ -241,7 +242,7 @@ export default function PartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'total_in_stock',
@@ -322,7 +323,7 @@ export default function PartDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'boolean',
         name: 'active',
@@ -384,7 +385,7 @@ export default function PartDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'creation_date',
@@ -447,7 +448,7 @@ export default function PartDetail() {
           return (
             data.overall_min &&
             `${formatPriceRange(data.overall_min, data.overall_max)}${
-              part.units && ' / ' + part.units
+              part.units && ` / ${part.units}`
             }`
           );
         }
@@ -495,7 +496,7 @@ export default function PartDetail() {
             }
           });
 
-          if (data && data.quantity) {
+          if (data?.quantity) {
             return `${data.quantity} (${data.date})`;
           } else {
             return '-';
@@ -592,7 +593,7 @@ export default function PartDetail() {
         icon: <IconPackages />,
         content: part.pk ? (
           <StockItemTable
-            tableName="part-stock"
+            tableName='part-stock'
             allowAdd
             params={{
               part: part.pk
@@ -720,22 +721,6 @@ export default function PartDetail() {
         )
       },
       {
-        name: 'test_statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        hidden: !part.testable,
-        content: part?.pk ? (
-          <TestStatisticsTable
-            params={{
-              pk: part.pk,
-              apiEndpoint: ApiEndpoints.part_test_statistics
-            }}
-          />
-        ) : (
-          <Skeleton />
-        )
-      },
-      {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked />,
@@ -766,7 +751,7 @@ export default function PartDetail() {
         return [];
       }
 
-      let revisions = [];
+      const revisions = [];
 
       // First, fetch information for the top-level part
       if (part.revision_of) {
@@ -813,7 +798,7 @@ export default function PartDetail() {
       return [];
     }
 
-    let options: any[] = partRevisionQuery.data.map((revision: any) => {
+    const options: any[] = partRevisionQuery.data.map((revision: any) => {
       return {
         value: revision.pk,
         label: revision.full_name,
@@ -831,7 +816,7 @@ export default function PartDetail() {
     }
 
     return options.sort((a, b) => {
-      return ('' + a.part.revision).localeCompare(b.part.revision);
+      return `${a.part.revision}`.localeCompare(b.part.revision);
     });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
@@ -856,46 +841,46 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={t`In Stock` + `: ${part.total_in_stock}`}
+        label={`${t`In Stock`}: ${part.total_in_stock}`}
         color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.total_in_stock > 0}
-        key="in_stock"
+        key='in_stock'
       />,
       <DetailsBadge
-        label={t`Available` + `: ${part.unallocated_stock}`}
-        color="yellow"
-        key="available_stock"
+        label={`${t`Available`}: ${part.unallocated_stock}`}
+        color='yellow'
+        key='available_stock'
         visible={part.unallocated_stock != part.total_in_stock}
       />,
       <DetailsBadge
         label={t`No Stock`}
-        color="orange"
+        color='orange'
         visible={part.total_in_stock == 0}
-        key="no_stock"
+        key='no_stock'
       />,
       <DetailsBadge
-        label={t`Required` + `: ${required}`}
-        color="grape"
+        label={`${t`Required`}: ${required}`}
+        color='grape'
         visible={required > 0}
-        key="required"
+        key='required'
       />,
       <DetailsBadge
-        label={t`On Order` + `: ${part.ordering}`}
-        color="blue"
+        label={`${t`On Order`}: ${part.ordering}`}
+        color='blue'
         visible={part.ordering > 0}
-        key="on_order"
+        key='on_order'
       />,
       <DetailsBadge
-        label={t`In Production` + `: ${part.building}`}
-        color="blue"
+        label={`${t`In Production`}: ${part.building}`}
+        color='blue'
         visible={part.building > 0}
-        key="in_production"
+        key='in_production'
       />,
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
-        visible={part.active == false}
-        key="inactive"
+        color='red'
+        visible={!part.active}
+        key='inactive'
       />
     ];
   }, [part, instanceQuery]);
@@ -963,8 +948,8 @@ export default function PartDetail() {
       }
     },
     preFormContent: (
-      <Alert color="red" title={t`Deleting this part cannot be reversed`}>
-        <Stack gap="xs">
+      <Alert color='red' title={t`Deleting this part cannot be reversed`}>
+        <Stack gap='xs'>
           <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
         </Stack>
       </Alert>
@@ -987,13 +972,13 @@ export default function PartDetail() {
 
   const partActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.part} pk={part.pk} />,
+      <AdminButton model={ModelType.part} id={part.pk} />,
       <BarcodeActionDropdown
         model={ModelType.part}
         pk={part.pk}
         hash={part?.barcode_hash}
         perm={user.hasChangeRole(UserRoles.part)}
-        key="action_dropdown"
+        key='action_dropdown'
       />,
       <PrintingActions
         modelType={ModelType.part}
@@ -1007,7 +992,7 @@ export default function PartDetail() {
         actions={[
           {
             icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             name: t`Count Stock`,
             tooltip: t`Count part stock`,
@@ -1018,7 +1003,7 @@ export default function PartDetail() {
           },
           {
             icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
             name: t`Transfer Stock`,
             tooltip: t`Transfer part stock`,
@@ -1063,7 +1048,7 @@ export default function PartDetail() {
       {editPart.modal}
       {deletePart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <NavigationTree
             title={t`Part Categories`}
             modelType={ModelType.partcategory}
@@ -1075,10 +1060,10 @@ export default function PartDetail() {
             selectedId={part?.category}
           />
           <PageDetail
-            title={t`Part` + ': ' + part.full_name}
+            title={`${t`Part`}: ${part.full_name}`}
             icon={
               part?.locked ? (
-                <IconLock aria-label="part-lock-icon" />
+                <IconLock aria-label='part-lock-icon' />
               ) : undefined
             }
             subtitle={part.description}
@@ -1093,11 +1078,11 @@ export default function PartDetail() {
             actions={partActions}
             detail={
               enableRevisionSelection ? (
-                <Stack gap="xs">
+                <Stack gap='xs'>
                   <Text>{t`Select Part Revision`}</Text>
                   <Select
-                    id="part-revision-select"
-                    aria-label="part-revision-select"
+                    id='part-revision-select'
+                    aria-label='part-revision-select'
                     options={partRevisionOptions}
                     value={{
                       value: part.pk,
@@ -1127,7 +1112,7 @@ export default function PartDetail() {
             }
           />
           <PanelGroup
-            pageKey="part"
+            pageKey='part'
             panels={partPanels}
             instance={part}
             model={ModelType.part}

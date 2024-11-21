@@ -12,7 +12,7 @@ const StocktakeReportTable = Loadable(
 
 export default function StocktakePanel() {
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <GlobalSettingList
         keys={[
           'STOCKTAKE_ENABLE',
@@ -21,7 +21,7 @@ export default function StocktakePanel() {
           'STOCKTAKE_DELETE_REPORT_DAYS'
         ]}
       />
-      <StylishText size="lg">
+      <StylishText size='lg'>
         <Trans>Stocktake Reports</Trans>
       </StylishText>
       <Divider />
