@@ -1,7 +1,11 @@
 import { t } from '@lingui/macro';
 
+import type {
+  StatusCodeInterface,
+  StatusCodeListInterface
+} from '../components/render/StatusRenderer';
 import type { ModelType } from '../enums/ModelType';
-import { useGlobalStatusState } from '../states/StatusState';
+import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
 
 /**
  * Interface for the table filter choice
@@ -70,17 +74,18 @@ export function StatusFilterOptions(
   model: ModelType
 ): () => TableFilterChoice[] {
   return () => {
-    const statusCodeList = useGlobalStatusState.getState().status;
+    const statusCodeList: StatusLookup | undefined =
+      useGlobalStatusState.getState().status;
 
     if (!statusCodeList) {
       return [];
     }
 
-    const codes = statusCodeList[model];
+    const codes: StatusCodeListInterface | undefined = statusCodeList[model];
 
     if (codes) {
-      return Object.keys(codes).map((key) => {
-        const entry = codes[key];
+      return Object.keys(codes.values).map((key) => {
+        const entry: StatusCodeInterface = codes.values[key];
         return {
           value: entry.key.toString(),
           label: entry.label?.toString() ?? entry.key.toString()

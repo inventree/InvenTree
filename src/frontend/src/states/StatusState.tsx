@@ -9,7 +9,7 @@ import type { ModelType } from '../enums/ModelType';
 import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 
-type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
+export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerStateProps {
   status?: StatusLookup;
