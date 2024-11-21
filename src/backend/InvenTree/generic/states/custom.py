@@ -17,13 +17,35 @@ def get_status_api_response(base_class=StatusCode, prefix=None):
         base_class: The base class to search for subclasses.
         prefix: A list of strings to prefix the class names with.
     """
-    return {
-        '__'.join([*(prefix or []), k.__name__]): {
-            'class': k.__name__,
-            'values': k.dict(),
-        }
-        for k in get_custom_classes(base_class=base_class, subclass=False)
-    }
+    # TODO: Come back and fix this...
+    # return {
+    #     '__'.join([*(prefix or []), k.__name__]): {
+    #         'class': k.__name__,
+    #         'values': k.dict(),
+    #     }
+    #     for k in get_custom_classes(base_class=base_class, subclass=False)
+    # }
+
+    classes = inheritors(base_class, subclasses=True)
+
+    data = {}
+
+    for cls in classes:
+        name = cls.__name__
+        data[name] = {'class': name, 'values': cls.dict()}
+
+        # Extend with custom values
+        for item in cls.custom_values():
+            label = str(item.name)
+            if label not in data[name]['values']:
+                data[name]['values'][label] = {
+                    'color': item.color,
+                    'key': item.key,
+                    'label': item.label,
+                    'name': item.name,
+                }
+
+    return data
 
 
 def state_color_mappings():
@@ -55,20 +77,38 @@ def get_custom_classes(
 
     states = {}
 
+    print('get_custom_classes:', len(discovered_classes))
+
     for cls in discovered_classes:
         name = cls.__name__
-        states[name] = cls
+        # states[name] =
 
-        data = [(str(m.name), (m.value, m.label, m.color)) for m in cls]
+        # print("-", cls)
 
-        labels = [str(item[0]) for item in data]
+        if name in states:
+            continue
+
+        # states[name] = cls
+
+        data = [
+            (str(m.name), (m.value, m.label, m.color))
+            for m in cls
+            if cls._is_element(m.name)
+        ]
+        # values = cls.values()
+
+        labels = [item[0] for item in data]
 
         for item in cls.custom_values():
             label = str(item.name)
-            if label not in labels and label not in cls.labels():
-                data += [(str(item.name), (item.key, item.label, item.color))]
+            if label not in labels:
+                setattr(cls, label, (item.key, item.label, item.color))
+                # data += [(label, (item.key, item.label, item.color))]
+                # values += [(str(item.name), (item.key, item.label, item.color))]
 
         # Re-assemble the enum
-        states[name] = base_class(name, data)
+        # states[name] = base_class(name, values)
+        # states[name] = base_class(name, data)
+        states[name] = cls
 
     return states.values()

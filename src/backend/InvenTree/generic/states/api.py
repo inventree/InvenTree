@@ -83,9 +83,11 @@ class AllStatusViews(StatusView):
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        data = get_status_api_response()
+        data = get_status_api_response(StatusCode)
+
         # Extend with MachineStatus classes
         data.update(get_status_api_response(MachineStatus, prefix=['MachineStatus']))
+
         return Response(data)
 
 

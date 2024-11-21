@@ -108,8 +108,10 @@ class StatusCode(BaseEnum):
         from common.models import InvenTreeCustomUserStateModel
 
         try:
-            return InvenTreeCustomUserStateModel.objects.filter(
-                reference_status=cls.__name__
+            return list(
+                InvenTreeCustomUserStateModel.objects.filter(
+                    reference_status=cls.__name__
+                )
             )
         except Exception:
             return []
