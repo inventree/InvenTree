@@ -120,6 +120,8 @@ export default function SalesOrderDetail() {
         copy: true
       },
       {
+        icon: 'status',
+        value_formatter: () => order.status_custom_key || order.status,
         type: 'status',
         name: 'status',
         label: t`Status`,
