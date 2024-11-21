@@ -68,7 +68,9 @@ function renderStatusLabel(
   );
 }
 
-export function getStatusCodes(type: ModelType | string) {
+export function getStatusCodes(
+  type: ModelType | string
+): StatusCodeListInterface | null {
   const statusCodeList = useGlobalStatusState.getState().status;
 
   if (statusCodeList === undefined) {
