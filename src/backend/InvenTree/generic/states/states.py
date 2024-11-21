@@ -103,9 +103,22 @@ class StatusCode(BaseEnum):
         return isinstance(value.value, int)
 
     @classmethod
-    def values(cls, key=None):
+    def custom_values(cls):
+        """Return all user-defined custom values for this status class."""
+        from common.models import InvenTreeCustomUserStateModel
+
+        try:
+            return InvenTreeCustomUserStateModel.objects.filter(
+                reference_status=cls.__name__
+            )
+        except Exception:
+            return []
+
+    @classmethod
+    def values(cls, key=None, custom=True):
         """Return a dict representation containing all required information."""
         elements = [itm for itm in cls if cls._is_element(itm.name)]
+
         if key is None:
             return elements
 

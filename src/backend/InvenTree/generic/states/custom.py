@@ -53,37 +53,22 @@ def get_custom_classes(
     if not include_custom:
         return discovered_classes
 
-    # Gather DB settings
-    from common.models import InvenTreeCustomUserStateModel
-
-    custom_db_states = {}
-    custom_db_mdls = {}
-    for item in list(InvenTreeCustomUserStateModel.objects.all()):
-        if not custom_db_states.get(item.reference_status):
-            custom_db_states[item.reference_status] = []
-        custom_db_states[item.reference_status].append(item)
-        custom_db_mdls[item.model.app_label] = item.reference_status
-    custom_db_mdls_keys = custom_db_mdls.keys()
-
     states = {}
+
     for cls in discovered_classes:
-        tag = cls.tag()
-        states[tag] = cls
-        if custom_db_mdls and tag in custom_db_mdls_keys:
-            data = [(str(m.name), (m.value, m.label, m.color)) for m in states[tag]]
-            data_keys = [i[0] for i in data]
+        name = cls.__name__
+        states[name] = cls
 
-            # Extent with non present tags
-            for entry in custom_db_states[custom_db_mdls[tag]]:
-                ref_name = str(entry.name.upper().replace(' ', ''))
-                if ref_name not in data_keys:
-                    data += [
-                        (
-                            str(entry.name.upper().replace(' ', '')),
-                            (entry.key, entry.label, entry.color),
-                        )
-                    ]
+        data = [(str(m.name), (m.value, m.label, m.color)) for m in cls]
 
-            # Re-assemble the enum
-            states[tag] = base_class(f'{tag.capitalize()}Status', data)
+        labels = [str(item[0]) for item in data]
+
+        for item in cls.custom_values():
+            label = str(item.name)
+            if label not in labels and label not in cls.labels():
+                data += [(str(item.name), (item.key, item.label, item.color))]
+
+        # Re-assemble the enum
+        states[name] = base_class(name, data)
+
     return states.values()
