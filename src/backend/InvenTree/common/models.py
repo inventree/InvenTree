@@ -1981,15 +1981,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
         },
-        'PURCHASEORDER_REFERENCE_PATTERN_WILDCARD_DEFAULT': {
-            'name': _('Purchase Order Reference Pattern Wildcard Default'),
-            'description': _(
-                'Replace all wildcard ? characters in reference pattern with a default value'
-            ),
-            'default': None,
-            # TODO: add validator
-            'validator': lambda x: x,
-        },
         'PURCHASEORDER_REQUIRE_RESPONSIBLE': {
             'name': _('Require Responsible Owner'),
             'description': _('A responsible owner must be assigned to each order'),
