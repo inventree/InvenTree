@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 
 function BuildAllocateLineRow({
   props
@@ -66,19 +66,19 @@ function BuildAllocateLineRow({
   return (
     <Table.Tr key={`table-row-${props.item.pk}`}>
       <Table.Td>
-        <StandaloneField fieldName="value" fieldDefinition={valueField} />
+        <StandaloneField fieldName='value' fieldDefinition={valueField} />
       </Table.Td>
       <Table.Td>
-        <StandaloneField fieldName="label" fieldDefinition={labelField} />
+        <StandaloneField fieldName='label' fieldDefinition={labelField} />
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="description"
+          fieldName='description'
           fieldDefinition={descriptionField}
         />
       </Table.Td>
       <Table.Td>
-        <StandaloneField fieldName="active" fieldDefinition={activeField} />
+        <StandaloneField fieldName='active' fieldDefinition={activeField} />
       </Table.Td>
       <Table.Td>
         <RemoveRowButton onClick={() => props.removeFn(props.idx)} />

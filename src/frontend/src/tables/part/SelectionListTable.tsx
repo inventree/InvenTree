@@ -13,10 +13,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Table for displaying list of selectionlist items
@@ -104,7 +104,7 @@ export default function SelectionListTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-selection-list"
+        key='add-selection-list'
         onClick={() => newSelectionList.open()}
         tooltip={t`Add Selection List`}
       />

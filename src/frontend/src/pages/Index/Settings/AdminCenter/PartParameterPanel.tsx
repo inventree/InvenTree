@@ -11,9 +11,9 @@ export default function PartParameterPanel() {
       <PartParameterTemplateTable />
 
       <Accordion>
-        <Accordion.Item value="selectionlist" key="selectionlist">
+        <Accordion.Item value='selectionlist' key='selectionlist'>
           <Accordion.Control>
-            <StylishText size="lg">{t`Selection Lists`}</StylishText>
+            <StylishText size='lg'>{t`Selection Lists`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
             <SelectionListTable />
