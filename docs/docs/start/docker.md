@@ -46,7 +46,7 @@ InvenTree run-time configuration options described in the [configuration documen
 
 As docker containers are ephemeral, any *persistent* data must be stored in an external [volume](https://docs.docker.com/storage/volumes/). To simplify installation / implementation, all external data are stored in a single volume, arranged as follows:
 
-#### Media FIles
+#### Media Files
 
 Uploaded media files are stored in the `media/` subdirectory of the external data volume.
 
@@ -73,8 +73,9 @@ By default, the InvenTree container expects the secret key file to exist as `sec
 
 #### Plugins
 
-Plugins are supported natively when running under docker. There are two ways to [install plugins](../extend/plugins/install.md) when using docker:
+Plugins are supported natively when running under docker. There are three ways to [install plugins](../extend/plugins/install.md) when using docker:
 
+- Install via the InvenTree web interface (this is the recommended method)
 - Install via the `plugins.txt` file provided in the external data directory
 - Install into the `plugins/` subdirectory in the external data directory
 
@@ -103,7 +104,7 @@ The example docker compose file launches the following containers:
 | inventree-server | [InvenTree web server](./processes.md#web-server) |
 | inventree-worker | [django-q background worker](./processes.md#background-worker) |
 | inventree-proxy | [Caddy file server and reverse proxy](./processes.md#proxy-server) |
-| *inventree-cache* | [*redis cache (optional)*](./processes.md#cache-server) |
+| inventree-cache | [redis cache (optional)](./processes.md#cache-server) |
 
 ### Data Volume
 

@@ -33,18 +33,29 @@ The following files required for this setup are provided with the InvenTree sour
 | --- | --- |
 | [docker-compose.yml]({{ sourcefile("contrib/container/docker-compose.yml", raw=True) }}) | The docker compose script |
 | [.env]({{ sourcefile("contrib/container/.env", raw=True) }}) | Environment variables |
-| [Caddyfile]({{ sourcefile("contrib/container/Caddyfile", raw=True) }}) | Caddy configuration file |
 
 Download these files to a directory on your local machine.
-
-!!! warning "File Extensions"
-    If your computer adds *.txt* extensions to any of the downloaded files, rename the file and remove the added extension before continuing!
 
 !!! success "Working Directory"
     This tutorial assumes you are working from a directory where all of these files are located.
 
 !!! tip "No Source Required"
     For a production setup you do not need the InvenTree source code. Simply download the three required files from the links above!
+
+#### docker-compose.yml
+
+This file defines the docker containers required to run InvenTree. Each container runs a different part of the InvenTree application - refer to the [process documentation](./processes.md) for more information.
+
+!!! warning "No Edits Required"
+    For most installation, this file should not be edited. Any changes should be made in the `.env` file.
+
+#### .env
+
+The `.env` file contains environment variables which are used to configure the InvenTree installation. *Note: The file must be named `.env` exactly, without any other file extension!*
+
+!!! warning "File Extensions"
+    If your computer adds *.txt* extensions to any of the downloaded files, rename the file and remove the added extension before continuing!
+
 
 ### Edit Environment Variables
 
@@ -192,8 +203,7 @@ Look for the `INVENTREE_SITE_URL` variable, and set it to the desired domain nam
 
 ### SSL Configuration
 
-The provided `Caddyfile` configuration file is setup to enable [Automatic HTTPS](https://caddyserver.com/docs/automatic-https) "out of the box". All you have to do is specify a `https://` URL in the `INVENTREE_SITE_URL` variable.
-
+The provided `Caddyfile` configuration is setup to enable [Automatic HTTPS](https://caddyserver.com/docs/automatic-https) "out of the box". All you have to do is specify a `https://` URL in the `INVENTREE_SITE_URL` variable.
 
 The [Caddy](./docker.md#ssl-certificates) container will automatically generate SSL certificates for your domain.
 
@@ -299,3 +309,11 @@ COPY --from=prebuild /root/.local /root/.local
 ```
 
 </details>
+
+## Custom Caddy Image
+
+Note that the default docker setup uses a custom [Caddy image](https://hub.docker.com/r/inventree/inventree-caddy/) which is based on the official [Caddy image](https://hub.docker.com/_/caddy). Our Caddy image uses a custom Caddyfile which is mounted into the container, which supports the InvenTree application out of the box.
+
+### Source Code
+
+The source code for the custom Caddy image can be found in the [InvenTree GitHub repository](https://github.com/inventree/inventree-caddy). If you need to extend or modify the behaviour of this container, you can use our image as a staritng point!
