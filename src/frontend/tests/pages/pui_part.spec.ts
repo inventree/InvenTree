@@ -112,7 +112,7 @@ test('Parts - Allocations', async ({ page }) => {
 
   // Check that the overall allocations are displayed correctly
   await page.getByText('11 / 825').waitFor();
-  await page.getByText('6 / 110').waitFor();
+  await page.getByText('5 / 109').waitFor();
 
   // Navigate to the "Allocations" tab
   await page.getByRole('tab', { name: 'Allocations' }).click();

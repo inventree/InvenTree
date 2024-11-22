@@ -84,10 +84,30 @@ function BasePanelGroup({
     id: id
   });
 
-  const allPanels = useMemo(
-    () => [...panels, ...pluginPanels],
-    [panels, pluginPanels]
-  );
+  // Rebuild the list of panels
+  const allPanels = useMemo(() => {
+    const _panels = [...panels];
+
+    // Add plugin panels
+    pluginPanels?.forEach((panel) => {
+      let panelKey = panel.name;
+
+      // Check if panel with this name already exists
+      const existingPanel = _panels.find((p) => p.name === panelKey);
+
+      if (existingPanel) {
+        // Create a unique key for the panel which includes the plugin slug
+        panelKey = identifierString(`${panel.pluginName}-${panel.name}`);
+      }
+
+      _panels.push({
+        ...panel,
+        name: panelKey
+      });
+    });
+
+    return _panels;
+  }, [panels, pluginPanels]);
 
   const activePanels = useMemo(
     () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),

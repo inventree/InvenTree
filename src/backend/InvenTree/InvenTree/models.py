@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime
+from string import Formatter
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -315,8 +316,9 @@ class ReferenceIndexingMixin(models.Model):
 
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
+        - The '?' key is required to accept our wildcard-with-default syntax {?:default}
         """
-        return {'ref': cls.get_next_reference(), 'date': datetime.now()}
+        return {'ref': cls.get_next_reference(), 'date': datetime.now(), '?': '?'}
 
     @classmethod
     def get_most_recent_item(cls):
@@ -363,8 +365,18 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern."""
-        fmt = cls.get_reference_pattern()
+
+        # Based on https://stackoverflow.com/a/57570269/14488558
+        class ReferenceFormatter(Formatter):
+            def format_field(self, value, format_spec):
+                if isinstance(value, str) and value == '?':
+                    value = format_spec
+                    format_spec = ''
+                return super().format_field(value, format_spec)
+
+        ref_ptn = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
+        fmt = ReferenceFormatter()
 
         reference = None
 
@@ -372,7 +384,7 @@ class ReferenceIndexingMixin(models.Model):
 
         while reference is None:
             try:
-                ref = fmt.format(**ctx)
+                ref = fmt.format(ref_ptn, **ctx)
 
                 if ref in attempts:
                     # We are stuck in a loop!

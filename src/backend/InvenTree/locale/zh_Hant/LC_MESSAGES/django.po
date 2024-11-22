@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-14 05:11+0000\n"
-"PO-Revision-Date: 2024-11-14 05:14\n"
+"POT-Creation-Date: 2024-11-20 20:39+0000\n"
+"PO-Revision-Date: 2024-11-20 20:42\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Language: zh_TW\n"
@@ -69,7 +69,7 @@ msgid "Invalid decimal value"
 msgstr ""
 
 #: InvenTree/fields.py:208 InvenTree/models.py:928 build/serializers.py:512
-#: build/serializers.py:590 build/templates/build/sidebar.html:29
+#: build/serializers.py:590 build/templates/build/sidebar.html:27
 #: company/models.py:833
 #: company/templates/company/manufacturer_part_sidebar.html:11
 #: company/templates/company/sidebar.html:37
@@ -77,12 +77,12 @@ msgstr ""
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:59
-#: part/models.py:3348 part/templates/part/part_sidebar.html:65
+#: part/models.py:3348 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/admin.py:231 stock/models.py:2494 stock/models.py:2679
-#: stock/serializers.py:725 stock/serializers.py:887 stock/serializers.py:1013
-#: stock/serializers.py:1063 stock/serializers.py:1374
-#: stock/serializers.py:1463 stock/serializers.py:1628
+#: stock/admin.py:231 stock/models.py:2492 stock/models.py:2616
+#: stock/serializers.py:725 stock/serializers.py:887 stock/serializers.py:983
+#: stock/serializers.py:1033 stock/serializers.py:1344
+#: stock/serializers.py:1433 stock/serializers.py:1598
 #: stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1265
 #: templates/js/translated/company.js:1685 templates/js/translated/order.js:372
@@ -91,7 +91,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:774
 #: templates/js/translated/sales_order.js:1071
 #: templates/js/translated/sales_order.js:2025
-#: templates/js/translated/stock.js:1621 templates/js/translated/stock.js:2514
+#: templates/js/translated/stock.js:1619 templates/js/translated/stock.js:2512
 msgid "Notes"
 msgstr "備註"
 
@@ -437,7 +437,7 @@ msgstr "無效的選項"
 #: InvenTree/models.py:769 common/models.py:2766 common/models.py:3193
 #: common/models.py:3413 common/serializers.py:460 company/models.py:590
 #: machine/models.py:24 part/models.py:1044 part/models.py:3815
-#: plugin/models.py:51 report/models.py:149 stock/models.py:83
+#: plugin/models.py:51 report/models.py:149 stock/models.py:81
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:83
@@ -450,7 +450,7 @@ msgstr "無效的選項"
 #: templates/js/translated/company.js:1166
 #: templates/js/translated/company.js:1414 templates/js/translated/part.js:1193
 #: templates/js/translated/part.js:1481 templates/js/translated/part.js:1617
-#: templates/js/translated/part.js:2768 templates/js/translated/stock.js:2802
+#: templates/js/translated/part.js:2768 templates/js/translated/stock.js:2800
 msgid "Name"
 msgstr "名稱"
 
@@ -466,7 +466,7 @@ msgstr "名稱"
 #: part/templates/part/part_scheduling.html:12 report/models.py:155
 #: report/models.py:517 report/models.py:543
 #: report/templates/report/inventree_build_order_report.html:117
-#: stock/admin.py:54 stock/models.py:89 stock/templates/stock/location.html:123
+#: stock/admin.py:54 stock/models.py:87 stock/templates/stock/location.html:123
 #: templates/InvenTree/settings/notifications.html:19
 #: templates/InvenTree/settings/plugin_settings.html:27
 #: templates/InvenTree/settings/settings_staff_js.html:170
@@ -486,17 +486,17 @@ msgstr "名稱"
 #: templates/js/translated/return_order.js:313
 #: templates/js/translated/sales_order.js:799
 #: templates/js/translated/sales_order.js:1855
-#: templates/js/translated/stock.js:1600 templates/js/translated/stock.js:2144
-#: templates/js/translated/stock.js:2833 templates/js/translated/stock.js:2916
+#: templates/js/translated/stock.js:1598 templates/js/translated/stock.js:2142
+#: templates/js/translated/stock.js:2831 templates/js/translated/stock.js:2914
 msgid "Description"
 msgstr "描述"
 
-#: InvenTree/models.py:776 stock/models.py:90
+#: InvenTree/models.py:776 stock/models.py:88
 msgid "Description (optional)"
 msgstr "描述（選填）"
 
 #: InvenTree/models.py:791 common/models.py:3546
-#: templates/js/translated/part.js:2812 templates/js/translated/stock.js:2842
+#: templates/js/translated/part.js:2812 templates/js/translated/stock.js:2840
 msgid "Path"
 msgstr "路徑"
 
@@ -602,10 +602,10 @@ msgstr "此用户是否為超級用户"
 #: templates/js/translated/company.js:524
 #: templates/js/translated/table_filters.js:134
 #: templates/js/translated/table_filters.js:226
-#: templates/js/translated/table_filters.js:513
-#: templates/js/translated/table_filters.js:541
-#: templates/js/translated/table_filters.js:719
-#: templates/js/translated/table_filters.js:808 users/models.py:182
+#: templates/js/translated/table_filters.js:499
+#: templates/js/translated/table_filters.js:527
+#: templates/js/translated/table_filters.js:705
+#: templates/js/translated/table_filters.js:794 users/models.py:182
 msgid "Active"
 msgstr "激活"
 
@@ -761,16 +761,16 @@ msgstr "可測試部分"
 
 #: build/api.py:112 order/api.py:90
 #: templates/js/translated/table_filters.js:101
-#: templates/js/translated/table_filters.js:549
-#: templates/js/translated/table_filters.js:633
-#: templates/js/translated/table_filters.js:674
+#: templates/js/translated/table_filters.js:535
+#: templates/js/translated/table_filters.js:619
+#: templates/js/translated/table_filters.js:660
 msgid "Assigned to me"
 msgstr "分配給我"
 
 #: build/api.py:129 build/templates/build/build_base.html:206
 #: build/templates/build/detail.html:115
 #: report/templates/report/inventree_build_order_report.html:152
-#: templates/js/translated/table_filters.js:552
+#: templates/js/translated/table_filters.js:538
 msgid "Issued By"
 msgstr "發佈者"
 
@@ -786,7 +786,7 @@ msgstr "工單必須被取消才能被刪除"
 #: templates/js/translated/bom.js:997 templates/js/translated/bom.js:1037
 #: templates/js/translated/build.js:2711
 #: templates/js/translated/table_filters.js:197
-#: templates/js/translated/table_filters.js:586
+#: templates/js/translated/table_filters.js:572
 msgid "Consumable"
 msgstr "耗材"
 
@@ -795,7 +795,7 @@ msgstr "耗材"
 #: templates/js/translated/bom.js:1028 templates/js/translated/build.js:2702
 #: templates/js/translated/table_filters.js:193
 #: templates/js/translated/table_filters.js:222
-#: templates/js/translated/table_filters.js:590
+#: templates/js/translated/table_filters.js:576
 msgid "Optional"
 msgstr "非必須項目"
 
@@ -803,18 +803,18 @@ msgstr "非必須項目"
 #: part/models.py:1215 part/serializers.py:1633 stock/api.py:554
 #: templates/js/translated/bom.js:1639
 #: templates/js/translated/table_filters.js:337
-#: templates/js/translated/table_filters.js:729
+#: templates/js/translated/table_filters.js:715
 msgid "Assembly"
 msgstr "裝配"
 
 #: build/api.py:357 templates/js/translated/table_filters.js:415
-#: templates/js/translated/table_filters.js:582
+#: templates/js/translated/table_filters.js:568
 msgid "Tracked"
 msgstr "追蹤中"
 
 #: build/api.py:358 build/serializers.py:1360 part/models.py:1233
 #: templates/js/translated/table_filters.js:146
-#: templates/js/translated/table_filters.js:779
+#: templates/js/translated/table_filters.js:765
 msgid "Testable"
 msgstr "可測試"
 
@@ -822,12 +822,12 @@ msgstr "可測試"
 #: build/serializers.py:1346 build/templates/build/build_base.html:106
 #: build/templates/build/detail.html:29 company/models.py:1043 order/api.py:775
 #: order/api.py:1014 order/models.py:1546 order/models.py:1701
-#: order/models.py:1702 part/api.py:1495 part/api.py:1802 part/models.py:419
-#: part/models.py:3177 part/models.py:3321 part/models.py:3469
-#: part/models.py:3490 part/models.py:3512 part/models.py:3648
-#: part/models.py:3995 part/models.py:4158 part/models.py:4288
-#: part/models.py:4654 part/serializers.py:1245 part/serializers.py:1898
-#: part/templates/part/part_app_base.html:8
+#: order/models.py:1702 part/api.py:1440 part/api.py:1508 part/api.py:1815
+#: part/models.py:419 part/models.py:3177 part/models.py:3321
+#: part/models.py:3469 part/models.py:3490 part/models.py:3512
+#: part/models.py:3648 part/models.py:3995 part/models.py:4158
+#: part/models.py:4288 part/models.py:4654 part/serializers.py:1245
+#: part/serializers.py:1898 part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
 #: report/templates/report/inventree_bill_of_materials_report.html:110
@@ -839,7 +839,7 @@ msgstr "可測試"
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
 #: stock/api.py:504 stock/serializers.py:112 stock/serializers.py:160
-#: stock/serializers.py:456 stock/serializers.py:947
+#: stock/serializers.py:456 stock/serializers.py:917
 #: templates/InvenTree/search.html:82
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -864,10 +864,10 @@ msgstr "可測試"
 #: templates/js/translated/sales_order.js:1201
 #: templates/js/translated/sales_order.js:1630
 #: templates/js/translated/sales_order.js:1839
-#: templates/js/translated/stock.js:682 templates/js/translated/stock.js:848
-#: templates/js/translated/stock.js:1065 templates/js/translated/stock.js:2083
-#: templates/js/translated/stock.js:2942 templates/js/translated/stock.js:3175
-#: templates/js/translated/stock.js:3320
+#: templates/js/translated/stock.js:680 templates/js/translated/stock.js:846
+#: templates/js/translated/stock.js:1063 templates/js/translated/stock.js:2081
+#: templates/js/translated/stock.js:2940 templates/js/translated/stock.js:3173
+#: templates/js/translated/stock.js:3318
 msgid "Part"
 msgstr "零件"
 
@@ -878,7 +878,7 @@ msgstr ""
 #: build/api.py:377 order/api.py:779 part/admin.py:144
 #: templates/js/translated/build.js:1920 templates/js/translated/build.js:2838
 #: templates/js/translated/sales_order.js:1972
-#: templates/js/translated/table_filters.js:574
+#: templates/js/translated/table_filters.js:560
 msgid "Allocated"
 msgstr "已分配"
 
@@ -892,7 +892,7 @@ msgstr "已分配"
 #: templates/js/translated/part.js:695 templates/js/translated/part.js:697
 #: templates/js/translated/part.js:702
 #: templates/js/translated/table_filters.js:347
-#: templates/js/translated/table_filters.js:578
+#: templates/js/translated/table_filters.js:564
 msgid "Available"
 msgstr "可用數量"
 
@@ -901,7 +901,7 @@ msgstr "可用數量"
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:85 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
-#: templates/js/translated/build.js:1148 templates/js/translated/stock.js:2977
+#: templates/js/translated/build.js:1148 templates/js/translated/stock.js:2975
 msgid "Build Order"
 msgstr "生產工單"
 
@@ -1023,9 +1023,9 @@ msgid "Build status code"
 msgstr "生產狀態代碼"
 
 #: build/models.py:331 build/serializers.py:349 build/serializers.py:1243
-#: order/serializers.py:755 stock/models.py:936 stock/serializers.py:77
-#: stock/serializers.py:1593 templates/js/translated/purchase_order.js:1112
-#: templates/js/translated/stock.js:1199
+#: order/serializers.py:755 stock/models.py:934 stock/serializers.py:77
+#: stock/serializers.py:1563 templates/js/translated/purchase_order.js:1112
+#: templates/js/translated/stock.js:1197
 msgid "Batch Code"
 msgstr "批號"
 
@@ -1076,7 +1076,7 @@ msgstr "發布此生產工單的使用者"
 #: templates/js/translated/build.js:2394
 #: templates/js/translated/purchase_order.js:1817
 #: templates/js/translated/return_order.js:358
-#: templates/js/translated/table_filters.js:551
+#: templates/js/translated/table_filters.js:537
 msgid "Responsible"
 msgstr "負責人"
 
@@ -1090,14 +1090,14 @@ msgstr "負責此生產工單的使用者或羣組"
 #: order/templates/order/order_base.html:181
 #: order/templates/order/return_order_base.html:149
 #: order/templates/order/sales_order_base.html:188
-#: part/templates/part/part_base.html:400 stock/models.py:932
+#: part/templates/part/part_base.html:400 stock/models.py:930
 #: stock/templates/stock/item_base.html:197
 #: templates/js/translated/company.js:1020
 msgid "External Link"
 msgstr "外部連結"
 
 #: build/models.py:376 common/models.py:3334 part/models.py:1119
-#: stock/models.py:932
+#: stock/models.py:930
 msgid "Link to external URL"
 msgstr "外部URL連結"
 
@@ -1157,7 +1157,7 @@ msgstr "產出與生產訂單不匹配"
 #: build/models.py:1062 build/serializers.py:282 build/serializers.py:331
 #: build/serializers.py:959 order/models.py:586 order/serializers.py:584
 #: order/serializers.py:750 part/serializers.py:1627 part/serializers.py:2060
-#: stock/models.py:777 stock/models.py:1609 stock/serializers.py:696
+#: stock/models.py:775 stock/models.py:1607 stock/serializers.py:696
 msgid "Quantity must be greater than zero"
 msgstr "數量必須大於零"
 
@@ -1221,9 +1221,9 @@ msgstr "生產對象"
 #: templates/js/translated/sales_order.js:1651
 #: templates/js/translated/sales_order.js:1741
 #: templates/js/translated/sales_order.js:1867
-#: templates/js/translated/stock.js:570 templates/js/translated/stock.js:708
-#: templates/js/translated/stock.js:879 templates/js/translated/stock.js:3106
-#: templates/js/translated/stock.js:3189
+#: templates/js/translated/stock.js:568 templates/js/translated/stock.js:706
+#: templates/js/translated/stock.js:877 templates/js/translated/stock.js:3104
+#: templates/js/translated/stock.js:3187
 msgid "Quantity"
 msgstr "數量"
 
@@ -1259,8 +1259,8 @@ msgstr "選擇的庫存品項和BOM的項目不符"
 #: build/models.py:1774 build/serializers.py:939 order/serializers.py:1452
 #: order/serializers.py:1473
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:382 stock/serializers.py:94 stock/serializers.py:794
-#: stock/serializers.py:1312 stock/serializers.py:1424
+#: stock/models.py:380 stock/serializers.py:94 stock/serializers.py:794
+#: stock/serializers.py:1282 stock/serializers.py:1394
 #: stock/templates/stock/item_base.html:11
 #: stock/templates/stock/item_base.html:24
 #: stock/templates/stock/item_base.html:191
@@ -1270,8 +1270,8 @@ msgstr "選擇的庫存品項和BOM的項目不符"
 #: templates/js/translated/sales_order.js:1508
 #: templates/js/translated/sales_order.js:1648
 #: templates/js/translated/sales_order.js:1735
-#: templates/js/translated/stock.js:683 templates/js/translated/stock.js:849
-#: templates/js/translated/stock.js:3062
+#: templates/js/translated/stock.js:681 templates/js/translated/stock.js:847
+#: templates/js/translated/stock.js:3060
 msgid "Stock Item"
 msgstr "庫存品項"
 
@@ -1348,7 +1348,7 @@ msgstr "因為BOM包含可追蹤的零件，所以數量必須為整數"
 
 #: build/serializers.py:356 order/serializers.py:763 order/serializers.py:1619
 #: stock/serializers.py:707 templates/js/translated/purchase_order.js:1137
-#: templates/js/translated/stock.js:373 templates/js/translated/stock.js:571
+#: templates/js/translated/stock.js:371 templates/js/translated/stock.js:569
 msgid "Serial Numbers"
 msgstr "序號"
 
@@ -1359,8 +1359,8 @@ msgstr "輸出產出的序列號"
 #: build/serializers.py:362 build/serializers.py:500 build/serializers.py:572
 #: order/serializers.py:739 order/serializers.py:880 order/serializers.py:1962
 #: part/serializers.py:1265 stock/serializers.py:103 stock/serializers.py:718
-#: stock/serializers.py:882 stock/serializers.py:1008 stock/serializers.py:1456
-#: stock/serializers.py:1712 stock/templates/stock/item_base.html:391
+#: stock/serializers.py:882 stock/serializers.py:978 stock/serializers.py:1426
+#: stock/serializers.py:1682 stock/templates/stock/item_base.html:391
 #: templates/js/translated/barcode.js:578
 #: templates/js/translated/barcode.js:826 templates/js/translated/build.js:1035
 #: templates/js/translated/build.js:1177 templates/js/translated/build.js:2551
@@ -1370,9 +1370,9 @@ msgstr "輸出產出的序列號"
 #: templates/js/translated/sales_order.js:1662
 #: templates/js/translated/sales_order.js:1670
 #: templates/js/translated/sales_order.js:1749
-#: templates/js/translated/stock.js:684 templates/js/translated/stock.js:850
-#: templates/js/translated/stock.js:1067 templates/js/translated/stock.js:2287
-#: templates/js/translated/stock.js:2956
+#: templates/js/translated/stock.js:682 templates/js/translated/stock.js:848
+#: templates/js/translated/stock.js:1065 templates/js/translated/stock.js:2285
+#: templates/js/translated/stock.js:2954
 msgid "Location"
 msgstr "地點"
 
@@ -1389,7 +1389,7 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "自動為需要項目分配對應的序號"
 
 #: build/serializers.py:415 order/serializers.py:858 stock/api.py:1015
-#: stock/models.py:1632
+#: stock/models.py:1630
 msgid "The following serial numbers already exist or are invalid"
 msgstr "序號已存在或無效"
 
@@ -1420,15 +1420,15 @@ msgstr "已完成刪除的庫存地點"
 #: build/serializers.py:579 build/templates/build/build_base.html:160
 #: build/templates/build/detail.html:62 order/models.py:488
 #: order/models.py:1029 order/models.py:2227 order/serializers.py:771
-#: stock/admin.py:165 stock/serializers.py:581 stock/serializers.py:1059
-#: stock/serializers.py:1600 stock/templates/stock/item_base.html:424
+#: stock/admin.py:165 stock/serializers.py:581 stock/serializers.py:1029
+#: stock/serializers.py:1570 stock/templates/stock/item_base.html:424
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2366
 #: templates/js/translated/purchase_order.js:1354
 #: templates/js/translated/purchase_order.js:1776
 #: templates/js/translated/return_order.js:330
 #: templates/js/translated/sales_order.js:816
-#: templates/js/translated/stock.js:2262 templates/js/translated/stock.js:3080
-#: templates/js/translated/stock.js:3205
+#: templates/js/translated/stock.js:2260 templates/js/translated/stock.js:3078
+#: templates/js/translated/stock.js:3203
 msgid "Status"
 msgstr "狀態"
 
@@ -1536,7 +1536,7 @@ msgstr "生產行項目"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part 必須與生產訂單零件相同"
 
-#: build/serializers.py:945 stock/serializers.py:1325
+#: build/serializers.py:945 stock/serializers.py:1295
 msgid "Item must be in stock"
 msgstr "商品必須有庫存"
 
@@ -1620,13 +1620,13 @@ msgstr "物料清單參考"
 
 #: build/serializers.py:1231 company/models.py:849
 #: company/templates/company/supplier_part.html:161 order/serializers.py:775
-#: stock/admin.py:229 stock/models.py:895 stock/serializers.py:1610
+#: stock/admin.py:229 stock/models.py:893 stock/serializers.py:1580
 #: stock/templates/stock/item_base.html:237
 #: templates/js/translated/company.js:1647
 #: templates/js/translated/purchase_order.js:1152
 #: templates/js/translated/purchase_order.js:1315
-#: templates/js/translated/stock.js:1214 templates/js/translated/stock.js:1246
-#: templates/js/translated/stock.js:2510
+#: templates/js/translated/stock.js:1212 templates/js/translated/stock.js:1244
+#: templates/js/translated/stock.js:2508
 msgid "Packaging"
 msgstr "打包"
 
@@ -1656,7 +1656,7 @@ msgstr "物料清單零件名稱"
 #: build/serializers.py:1244
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:922
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:920
 #: stock/serializers.py:152 stock/templates/stock/item_base.html:308
 #: templates/js/translated/build.js:523 templates/js/translated/build.js:1543
 #: templates/js/translated/build.js:2534
@@ -1665,7 +1665,7 @@ msgstr "物料清單零件名稱"
 #: templates/js/translated/return_order.js:722
 #: templates/js/translated/sales_order.js:1654
 #: templates/js/translated/sales_order.js:1739
-#: templates/js/translated/stock.js:602
+#: templates/js/translated/stock.js:600
 msgid "Serial Number"
 msgstr "序列號"
 
@@ -1691,7 +1691,7 @@ msgstr "零件類別名稱"
 #: part/models.py:1227 templates/js/translated/build.js:2738
 #: templates/js/translated/table_filters.js:150
 #: templates/js/translated/table_filters.js:230
-#: templates/js/translated/table_filters.js:783
+#: templates/js/translated/table_filters.js:769
 msgid "Trackable"
 msgstr "可追蹤"
 
@@ -1751,7 +1751,7 @@ msgstr "可用的變體庫存"
 #: build/status_codes.py:11 generic/states/tests.py:21
 #: generic/states/tests.py:131 order/status_codes.py:12
 #: order/status_codes.py:44 order/status_codes.py:76 order/status_codes.py:102
-#: templates/js/translated/table_filters.js:601
+#: templates/js/translated/table_filters.js:587
 msgid "Pending"
 msgstr "待定"
 
@@ -1938,9 +1938,9 @@ msgstr "此次生產的截止日期為 %(target)s"
 #: order/templates/order/return_order_base.html:121
 #: order/templates/order/sales_order_base.html:130
 #: templates/js/translated/table_filters.js:97
-#: templates/js/translated/table_filters.js:545
-#: templates/js/translated/table_filters.js:629
-#: templates/js/translated/table_filters.js:670
+#: templates/js/translated/table_filters.js:531
+#: templates/js/translated/table_filters.js:615
+#: templates/js/translated/table_filters.js:656
 msgid "Overdue"
 msgstr "逾期"
 
@@ -1962,7 +1962,7 @@ msgstr "產出已完成"
 #: templates/js/translated/pricing.js:927
 #: templates/js/translated/sales_order.js:766
 #: templates/js/translated/sales_order.js:1003
-#: templates/js/translated/stock.js:3009
+#: templates/js/translated/stock.js:3007
 msgid "Sales Order"
 msgstr "銷售訂單"
 
@@ -2023,8 +2023,8 @@ msgstr "已分配的零件"
 #: templates/js/translated/build.js:1556
 #: templates/js/translated/model_renderers.js:245
 #: templates/js/translated/purchase_order.js:1309
-#: templates/js/translated/stock.js:1139 templates/js/translated/stock.js:1240
-#: templates/js/translated/stock.js:2276 templates/js/translated/stock.js:3212
+#: templates/js/translated/stock.js:1137 templates/js/translated/stock.js:1238
+#: templates/js/translated/stock.js:2274 templates/js/translated/stock.js:3210
 #: templates/js/translated/table_filters.js:320
 #: templates/js/translated/table_filters.js:411
 msgid "Batch"
@@ -2044,7 +2044,7 @@ msgstr "未設置目標日期"
 
 #: build/templates/build/detail.html:149 order/api.py:794
 #: order/templates/order/sales_order_base.html:210
-#: templates/js/translated/table_filters.js:692
+#: templates/js/translated/table_filters.js:678
 msgid "Completed"
 msgstr "已完成"
 
@@ -2117,11 +2117,7 @@ msgstr "已消耗的庫存"
 msgid "Completed Build Outputs"
 msgstr "已完成的產出"
 
-#: build/templates/build/detail.html:273
-msgid "Build test statistics"
-msgstr "構建測試統計數據"
-
-#: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
+#: build/templates/build/detail.html:273 build/templates/build/sidebar.html:25
 #: company/templates/company/detail.html:229
 #: company/templates/company/manufacturer_part.html:141
 #: company/templates/company/manufacturer_part_sidebar.html:9
@@ -2131,25 +2127,25 @@ msgstr "構建測試統計數據"
 #: order/templates/order/return_order_detail.html:70
 #: order/templates/order/return_order_sidebar.html:7
 #: order/templates/order/sales_order_detail.html:124
-#: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:233
-#: part/templates/part/part_sidebar.html:63 stock/templates/stock/item.html:110
+#: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:217
+#: part/templates/part/part_sidebar.html:61 stock/templates/stock/item.html:110
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
 msgstr "附件"
 
-#: build/templates/build/detail.html:303
+#: build/templates/build/detail.html:288
 msgid "Build Notes"
 msgstr "生產備註"
 
-#: build/templates/build/detail.html:458
+#: build/templates/build/detail.html:443
 msgid "Allocation Complete"
 msgstr "分配完成"
 
-#: build/templates/build/detail.html:459
+#: build/templates/build/detail.html:444
 msgid "All lines have been fully allocated"
 msgstr "所有行項目已全部分配"
 
-#: build/templates/build/index.html:18 part/templates/part/detail.html:335
+#: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
 msgstr "新建生產訂單"
 
@@ -2170,11 +2166,6 @@ msgstr "行項目"
 #: build/templates/build/sidebar.html:10
 msgid "Incomplete Outputs"
 msgstr "未完成的產出"
-
-#: build/templates/build/sidebar.html:24
-#: part/templates/part/part_sidebar.html:56
-msgid "Test Statistics"
-msgstr "測試統計"
 
 #: common/api.py:725
 msgid "Is Link"
@@ -2623,7 +2614,7 @@ msgstr "創建零件時複製類別參數模板"
 #: report/models.py:301 report/models.py:368 report/serializers.py:91
 #: report/serializers.py:132 stock/serializers.py:233
 #: templates/js/translated/table_filters.js:138
-#: templates/js/translated/table_filters.js:775
+#: templates/js/translated/table_filters.js:761
 msgid "Template"
 msgstr "模板"
 
@@ -2636,7 +2627,7 @@ msgid "Parts can be assembled from other components by default"
 msgstr "默認情況下，元件可由其他零件組裝而成"
 
 #: common/models.py:1564 part/admin.py:95 part/models.py:1221
-#: part/serializers.py:1654 templates/js/translated/table_filters.js:737
+#: part/serializers.py:1654 templates/js/translated/table_filters.js:723
 msgid "Component"
 msgstr "組件"
 
@@ -2653,7 +2644,7 @@ msgid "Parts are purchaseable by default"
 msgstr "默認情況下可購買零件"
 
 #: common/models.py:1576 part/admin.py:104 part/models.py:1245 stock/api.py:557
-#: templates/js/translated/table_filters.js:763
+#: templates/js/translated/table_filters.js:749
 msgid "Salable"
 msgstr "可銷售"
 
@@ -2668,7 +2659,7 @@ msgstr "默認情況下可跟蹤零件"
 #: common/models.py:1588 part/admin.py:117 part/models.py:1261
 #: part/templates/part/part_base.html:155
 #: templates/js/translated/table_filters.js:142
-#: templates/js/translated/table_filters.js:787
+#: templates/js/translated/table_filters.js:773
 msgid "Virtual"
 msgstr "虛擬的"
 
@@ -3765,7 +3756,7 @@ msgstr "為用户保存上次使用的打印設備"
 #: importer/models.py:89 part/models.py:3358 part/models.py:3445
 #: part/models.py:3519 part/models.py:3547 plugin/models.py:313
 #: plugin/models.py:314 report/templates/report/inventree_test_report.html:105
-#: templates/js/translated/stock.js:3121 users/models.py:111
+#: templates/js/translated/stock.js:3119 users/models.py:111
 msgid "User"
 msgstr "使用者"
 
@@ -3962,7 +3953,7 @@ msgstr "定義"
 msgid "Unit definition"
 msgstr "單位定義"
 
-#: common/models.py:3267 common/models.py:3324 stock/models.py:2674
+#: common/models.py:3267 common/models.py:3324 stock/models.py:2611
 #: stock/serializers.py:244 templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:345
 msgid "Attachment"
@@ -4146,7 +4137,7 @@ msgid "Response data from the barcode scan"
 msgstr "掃描條碼的響應數據"
 
 #: common/models.py:3569 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2660
+#: stock/models.py:2597
 msgid "Result"
 msgstr "結果"
 
@@ -4538,7 +4529,7 @@ msgstr "鏈接地址信息 (外部)"
 msgid "Manufacturer Part"
 msgstr "製造商零件"
 
-#: company/models.py:484 company/models.py:776 stock/models.py:864
+#: company/models.py:484 company/models.py:776 stock/models.py:862
 #: stock/serializers.py:455 stock/templates/stock/item_base.html:139
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
@@ -4556,7 +4547,7 @@ msgstr "選擇零件"
 #: templates/js/translated/company.js:1119
 #: templates/js/translated/company.js:1297
 #: templates/js/translated/company.js:1612
-#: templates/js/translated/table_filters.js:812
+#: templates/js/translated/table_filters.js:798
 msgid "Manufacturer"
 msgstr "製造商"
 
@@ -4592,9 +4583,9 @@ msgid "Parameter name"
 msgstr "參數名稱"
 
 #: company/models.py:597 report/templates/report/inventree_test_report.html:104
-#: stock/models.py:2666 templates/js/translated/company.js:1167
+#: stock/models.py:2603 templates/js/translated/company.js:1167
 #: templates/js/translated/company.js:1420 templates/js/translated/part.js:1499
-#: templates/js/translated/stock.js:1607
+#: templates/js/translated/stock.js:1605
 msgid "Value"
 msgstr "值"
 
@@ -4616,12 +4607,12 @@ msgstr "參數單位"
 
 #: company/models.py:659 company/templates/company/supplier_part.html:8
 #: company/templates/company/supplier_part.html:25 order/api.py:392
-#: order/serializers.py:576 stock/models.py:875
+#: order/serializers.py:576 stock/models.py:873
 #: stock/templates/stock/item_base.html:230
 #: templates/js/translated/build.js:1055
 #: templates/js/translated/company.js:1601
 #: templates/js/translated/purchase_order.js:735
-#: templates/js/translated/stock.js:2366
+#: templates/js/translated/stock.js:2364
 msgid "Supplier Part"
 msgstr "供應商零件"
 
@@ -4650,7 +4641,7 @@ msgstr "鏈接的製造商零件必須引用相同的基礎零件"
 #: templates/js/translated/company.js:1585 templates/js/translated/part.js:1775
 #: templates/js/translated/pricing.js:498
 #: templates/js/translated/purchase_order.js:1743
-#: templates/js/translated/table_filters.js:816
+#: templates/js/translated/table_filters.js:802
 msgid "Supplier"
 msgstr "供應商"
 
@@ -4680,7 +4671,7 @@ msgstr "供應商零件説明"
 
 #: company/models.py:832 company/templates/company/supplier_part.html:188
 #: order/serializers.py:783 part/admin.py:415 part/models.py:4345
-#: part/templates/part/upload_bom.html:59
+#: part/models.py:4686 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
 #: report/templates/report/inventree_return_order_report.html:27
@@ -4822,15 +4813,15 @@ msgstr "刪除圖像"
 
 #: company/templates/company/company_base.html:92 order/models.py:1017
 #: order/models.py:2215 order/templates/order/return_order_base.html:135
-#: order/templates/order/sales_order_base.html:152 stock/models.py:917
-#: stock/models.py:918 stock/serializers.py:1360
+#: order/templates/order/sales_order_base.html:152 stock/models.py:915
+#: stock/models.py:916 stock/serializers.py:1330
 #: stock/templates/stock/item_base.html:402
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:504
 #: templates/js/translated/return_order.js:295
 #: templates/js/translated/sales_order.js:781
-#: templates/js/translated/stock.js:3044
-#: templates/js/translated/table_filters.js:820
+#: templates/js/translated/stock.js:3042
+#: templates/js/translated/table_filters.js:806
 msgid "Customer"
 msgstr "客户"
 
@@ -4880,7 +4871,7 @@ msgstr "創建新的供應商零件"
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:123
-#: part/templates/part/detail.html:372
+#: part/templates/part/detail.html:356
 msgid "New Supplier Part"
 msgstr "新建供應商零件"
 
@@ -4893,7 +4884,7 @@ msgstr "製造商零件"
 msgid "Create new manufacturer part"
 msgstr "創建新的製造商零件"
 
-#: company/templates/company/detail.html:46 part/templates/part/detail.html:392
+#: company/templates/company/detail.html:46 part/templates/part/detail.html:376
 msgid "New Manufacturer Part"
 msgstr "新建制造商零件"
 
@@ -4907,7 +4898,7 @@ msgstr "供應商庫存"
 #: order/templates/order/order_base.html:14
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
-#: part/templates/part/detail.html:122 part/templates/part/part_sidebar.html:35
+#: part/templates/part/detail.html:106 part/templates/part/part_sidebar.html:35
 #: templates/InvenTree/index.html:227 templates/InvenTree/search.html:199
 #: templates/InvenTree/settings/sidebar.html:57
 #: templates/js/translated/search.js:205 templates/navbar.html:50
@@ -4930,7 +4921,7 @@ msgstr "新建採購訂單"
 #: order/templates/order/sales_order_base.html:14
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
-#: part/templates/part/detail.html:143 part/templates/part/part_sidebar.html:39
+#: part/templates/part/detail.html:127 part/templates/part/part_sidebar.html:39
 #: templates/InvenTree/index.html:259 templates/InvenTree/search.html:219
 #: templates/InvenTree/settings/sidebar.html:59
 #: templates/js/translated/search.js:219 templates/navbar.html:62
@@ -5002,7 +4993,7 @@ msgstr "製造商"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:228
-#: part/templates/part/detail.html:125 part/templates/part/part_base.html:84
+#: part/templates/part/detail.html:109 part/templates/part/part_base.html:84
 msgid "Order part"
 msgstr "訂購零件"
 
@@ -5037,12 +5028,12 @@ msgstr "供應商"
 #: company/templates/company/manufacturer_part.html:156
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:20
-#: part/templates/part/detail.html:211 part/templates/part/part_sidebar.html:8
+#: part/templates/part/detail.html:195 part/templates/part/part_sidebar.html:8
 msgid "Parameters"
 msgstr "參數"
 
 #: company/templates/company/manufacturer_part.html:160
-#: part/templates/part/detail.html:216
+#: part/templates/part/detail.html:200
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part_parameters.html:24
 msgid "New Parameter"
@@ -5085,7 +5076,7 @@ msgstr "供應商零件操作"
 #: company/templates/company/supplier_part.html:56
 #: company/templates/company/supplier_part.html:57
 #: company/templates/company/supplier_part.html:229
-#: part/templates/part/detail.html:126
+#: part/templates/part/detail.html:110
 msgid "Order Part"
 msgstr "訂購零件"
 
@@ -5139,7 +5130,7 @@ msgstr "創建新庫存項目"
 
 #: company/templates/company/supplier_part.html:211
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:206
-#: templates/js/translated/stock.js:543
+#: templates/js/translated/stock.js:541
 msgid "New Stock Item"
 msgstr "新庫存項目"
 
@@ -5177,13 +5168,13 @@ msgstr "更新零件可用性"
 #: part/serializers.py:954 part/stocktake.py:223
 #: part/templates/part/category.html:180
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:68
-#: stock/serializers.py:1045 stock/serializers.py:1223
+#: stock/serializers.py:1015 stock/serializers.py:1193
 #: stock/templates/stock/location.html:168
 #: stock/templates/stock/location.html:189
 #: stock/templates/stock/location.html:201
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:155 templates/js/translated/part.js:1067
-#: templates/js/translated/search.js:172 templates/js/translated/stock.js:2851
+#: templates/js/translated/search.js:172 templates/js/translated/stock.js:2849
 #: users/models.py:206
 msgid "Stock Items"
 msgstr "庫存項"
@@ -5518,9 +5509,9 @@ msgstr "訂單參考"
 
 #: order/api.py:114 order/api.py:1033
 #: templates/js/translated/table_filters.js:93
-#: templates/js/translated/table_filters.js:625
-#: templates/js/translated/table_filters.js:651
-#: templates/js/translated/table_filters.js:666
+#: templates/js/translated/table_filters.js:611
+#: templates/js/translated/table_filters.js:637
+#: templates/js/translated/table_filters.js:652
 msgid "Outstanding"
 msgstr "未完成"
 
@@ -5529,7 +5520,7 @@ msgid "Has Project Code"
 msgstr "有項目編碼"
 
 #: order/api.py:153 templates/js/translated/table_filters.js:201
-#: templates/js/translated/table_filters.js:791
+#: templates/js/translated/table_filters.js:777
 msgid "Has Pricing"
 msgstr "有定價"
 
@@ -5561,7 +5552,7 @@ msgstr ""
 #: templates/js/translated/part.js:1752 templates/js/translated/pricing.js:804
 #: templates/js/translated/purchase_order.js:736
 #: templates/js/translated/purchase_order.js:1727
-#: templates/js/translated/stock.js:2346 templates/js/translated/stock.js:2992
+#: templates/js/translated/stock.js:2344 templates/js/translated/stock.js:2990
 msgid "Purchase Order"
 msgstr "採購訂單"
 
@@ -5570,7 +5561,7 @@ msgstr "採購訂單"
 #: order/templates/order/return_order_base.html:29
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/js/translated/return_order.js:280
-#: templates/js/translated/stock.js:3026
+#: templates/js/translated/stock.js:3024
 msgid "Return Order"
 msgstr "退貨訂單"
 
@@ -5767,7 +5758,7 @@ msgstr "供應商零件"
 #: templates/js/translated/purchase_order.js:2223
 #: templates/js/translated/return_order.js:762
 #: templates/js/translated/table_filters.js:119
-#: templates/js/translated/table_filters.js:605
+#: templates/js/translated/table_filters.js:591
 msgid "Received"
 msgstr "已接收"
 
@@ -5775,9 +5766,9 @@ msgstr "已接收"
 msgid "Number of items received"
 msgstr "收到的物品數量"
 
-#: order/models.py:1563 stock/models.py:1036 stock/serializers.py:637
+#: order/models.py:1563 stock/models.py:1034 stock/serializers.py:637
 #: stock/templates/stock/item_base.html:180
-#: templates/js/translated/stock.js:2397
+#: templates/js/translated/stock.js:2395
 msgid "Purchase Price"
 msgstr "採購價格"
 
@@ -6104,7 +6095,7 @@ msgid "Select destination location for received items"
 msgstr "為收到的物品選擇目的地位置"
 
 #: order/serializers.py:756 templates/js/translated/purchase_order.js:1113
-#: templates/js/translated/stock.js:1200
+#: templates/js/translated/stock.js:1198
 msgid "Enter batch code for incoming stock items"
 msgstr "輸入入庫項目的批號"
 
@@ -6426,7 +6417,7 @@ msgstr "重複選項"
 #: templates/js/translated/purchase_order.js:1271
 #: templates/js/translated/return_order.js:505
 #: templates/js/translated/sales_order.js:1113
-#: templates/js/translated/stock.js:720 templates/js/translated/stock.js:889
+#: templates/js/translated/stock.js:718 templates/js/translated/stock.js:887
 #: templates/patterns/wizard/match_fields.html:70
 msgid "Remove row"
 msgstr "移除行"
@@ -6635,7 +6626,7 @@ msgstr "更新零件 {part} 單價到 {price} 且更新數量到 {qty}"
 #: part/templates/part/part_base.html:277
 #: report/templates/report/inventree_stock_location_report.html:103
 #: templates/js/translated/part.js:1233 templates/js/translated/part.js:2347
-#: templates/js/translated/stock.js:2122
+#: templates/js/translated/stock.js:2120
 msgid "IPN"
 msgstr "內部零件號 IPN"
 
@@ -6840,7 +6831,7 @@ msgstr "有修訂版本"
 msgid "BOM Valid"
 msgstr "物料清單合規"
 
-#: part/api.py:1509 part/models.py:1085 part/models.py:3540 part/models.py:4104
+#: part/api.py:1522 part/models.py:1085 part/models.py:3540 part/models.py:4104
 #: part/serializers.py:474 part/serializers.py:1255
 #: part/templates/part/part_base.html:268 stock/api.py:766
 #: templates/InvenTree/settings/settings_staff_js.html:300
@@ -6849,15 +6840,15 @@ msgstr "物料清單合規"
 msgid "Category"
 msgstr "類別"
 
-#: part/api.py:1750
+#: part/api.py:1763
 msgid "Assembly part is testable"
 msgstr "裝配部份是可測試的"
 
-#: part/api.py:1759
+#: part/api.py:1772
 msgid "Component part is testable"
 msgstr "組件部份是可測試的"
 
-#: part/api.py:1810
+#: part/api.py:1823
 msgid "Uses"
 msgstr "使用"
 
@@ -6891,8 +6882,8 @@ msgstr "零件類別"
 msgid "Default location for parts in this category"
 msgstr "此類別零件的默認庫存地點"
 
-#: part/models.py:115 stock/models.py:193 templates/js/translated/part.js:2828
-#: templates/js/translated/stock.js:2857
+#: part/models.py:115 stock/models.py:191 templates/js/translated/part.js:2828
+#: templates/js/translated/stock.js:2855
 #: templates/js/translated/table_filters.js:246
 #: templates/js/translated/table_filters.js:290
 msgid "Structural"
@@ -6910,13 +6901,13 @@ msgstr "默認關鍵字"
 msgid "Default keywords for parts in this category"
 msgstr "此類別零件的默認關鍵字"
 
-#: part/models.py:133 stock/models.py:96 stock/models.py:175
+#: part/models.py:133 stock/models.py:94 stock/models.py:173
 #: templates/InvenTree/settings/settings_staff_js.html:445
 msgid "Icon"
 msgstr "圖標"
 
 #: part/models.py:134 part/serializers.py:143 part/serializers.py:161
-#: stock/models.py:176
+#: stock/models.py:174
 msgid "Icon (optional)"
 msgstr "圖標(可選)"
 
@@ -7096,7 +7087,7 @@ msgid "Is this part active?"
 msgstr "這個零件是否已激活？"
 
 #: part/models.py:1255 templates/js/translated/part.js:821
-#: templates/js/translated/table_filters.js:724
+#: templates/js/translated/table_filters.js:710
 msgid "Locked"
 msgstr "已鎖定"
 
@@ -7298,7 +7289,7 @@ msgstr "盤點時可用庫存總額"
 #: templates/js/translated/part.js:1092 templates/js/translated/pricing.js:824
 #: templates/js/translated/pricing.js:948
 #: templates/js/translated/purchase_order.js:1785
-#: templates/js/translated/stock.js:2906
+#: templates/js/translated/stock.js:2904
 msgid "Date"
 msgstr "日期"
 
@@ -7400,7 +7391,7 @@ msgstr "輸入測試的描述"
 
 #: part/models.py:3674 report/models.py:216
 #: templates/js/translated/part.js:2919
-#: templates/js/translated/table_filters.js:502
+#: templates/js/translated/table_filters.js:488
 msgid "Enabled"
 msgstr "已啓用"
 
@@ -7409,7 +7400,7 @@ msgid "Is this test enabled?"
 msgstr "此測試是否已啓用？"
 
 #: part/models.py:3679 templates/js/translated/part.js:2927
-#: templates/js/translated/table_filters.js:498
+#: templates/js/translated/table_filters.js:484
 msgid "Required"
 msgstr "必須的"
 
@@ -7470,7 +7461,7 @@ msgid "Parameter description"
 msgstr "參數説明"
 
 #: part/models.py:3837 templates/js/translated/part.js:1634
-#: templates/js/translated/table_filters.js:837
+#: templates/js/translated/table_filters.js:823
 msgid "Checkbox"
 msgstr "勾選框"
 
@@ -7618,7 +7609,7 @@ msgstr "此物料清單項目是由物料清單繼承的變體零件"
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "變體零件的庫存項可以用於此物料清單項目"
 
-#: part/models.py:4456 stock/models.py:762
+#: part/models.py:4456 stock/models.py:760
 msgid "Quantity must be integer value for trackable parts"
 msgstr "可追蹤零件的數量必須是整數"
 
@@ -7654,11 +7645,15 @@ msgstr "零件2"
 msgid "Select Related Part"
 msgstr "選擇相關的零件"
 
-#: part/models.py:4699
+#: part/models.py:4687
+msgid "Note for this relationship"
+msgstr ""
+
+#: part/models.py:4706
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "零件關係不能在零件和自身之間創建"
 
-#: part/models.py:4704
+#: part/models.py:4711
 msgid "Duplicate relationship already exists"
 msgstr "複製關係已經存在"
 
@@ -7724,7 +7719,7 @@ msgstr "複製圖片"
 msgid "Copy image from original part"
 msgstr "從原零件複製圖片"
 
-#: part/serializers.py:523 part/templates/part/detail.html:293
+#: part/serializers.py:523 part/templates/part/detail.html:277
 msgid "Copy BOM"
 msgstr "複製物料清單"
 
@@ -8181,7 +8176,7 @@ msgstr "添加盤點信息"
 #: part/templates/part/detail.html:67 part/templates/part/part_sidebar.html:50
 #: stock/admin.py:256 templates/InvenTree/settings/part_stocktake.html:30
 #: templates/InvenTree/settings/sidebar.html:53
-#: templates/js/translated/stock.js:2302 users/models.py:204
+#: templates/js/translated/stock.js:2300 users/models.py:204
 msgid "Stocktake"
 msgstr "庫存盤點"
 
@@ -8193,105 +8188,101 @@ msgstr "零件測試模板"
 msgid "Add Test Template"
 msgstr "添加測試模板"
 
-#: part/templates/part/detail.html:106
-msgid "Part Test Statistics"
-msgstr "零件測試統計"
-
-#: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
+#: part/templates/part/detail.html:139 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
 msgstr "分配銷售訂單"
 
-#: part/templates/part/detail.html:172
+#: part/templates/part/detail.html:156
 msgid "Part Notes"
 msgstr "零件備註"
 
-#: part/templates/part/detail.html:187
+#: part/templates/part/detail.html:171
 msgid "Part Variants"
 msgstr "零件變體"
 
-#: part/templates/part/detail.html:191
+#: part/templates/part/detail.html:175
 msgid "Create new variant"
 msgstr "創建零件變體"
 
-#: part/templates/part/detail.html:192
+#: part/templates/part/detail.html:176
 msgid "New Variant"
 msgstr "新建零件變體"
 
-#: part/templates/part/detail.html:215
+#: part/templates/part/detail.html:199
 msgid "Add new parameter"
 msgstr "添加參數"
 
-#: part/templates/part/detail.html:248 part/templates/part/part_sidebar.html:60
+#: part/templates/part/detail.html:232 part/templates/part/part_sidebar.html:58
 msgid "Related Parts"
 msgstr "關聯零件"
 
-#: part/templates/part/detail.html:252 part/templates/part/detail.html:253
+#: part/templates/part/detail.html:236 part/templates/part/detail.html:237
 msgid "Add Related"
 msgstr "添加關聯"
 
-#: part/templates/part/detail.html:271 part/templates/part/part_sidebar.html:17
+#: part/templates/part/detail.html:255 part/templates/part/part_sidebar.html:17
 #: report/templates/report/inventree_bill_of_materials_report.html:100
 msgid "Bill of Materials"
 msgstr "物料清單"
 
-#: part/templates/part/detail.html:276
+#: part/templates/part/detail.html:260
 msgid "Export actions"
 msgstr "輸出操作"
 
-#: part/templates/part/detail.html:280 templates/js/translated/bom.js:340
+#: part/templates/part/detail.html:264 templates/js/translated/bom.js:340
 msgid "Export BOM"
 msgstr "輸出物料清單"
 
-#: part/templates/part/detail.html:282
+#: part/templates/part/detail.html:266
 msgid "Print BOM Report"
 msgstr "打印物料清單"
 
-#: part/templates/part/detail.html:288
+#: part/templates/part/detail.html:272
 msgid "BOM actions"
 msgstr "物料清單操作"
 
-#: part/templates/part/detail.html:292
+#: part/templates/part/detail.html:276
 msgid "Upload BOM"
 msgstr "上傳物料清單"
 
-#: part/templates/part/detail.html:294
+#: part/templates/part/detail.html:278
 msgid "Validate BOM"
 msgstr "驗證物料清單"
 
-#: part/templates/part/detail.html:299 part/templates/part/detail.html:300
+#: part/templates/part/detail.html:283 part/templates/part/detail.html:284
 #: templates/js/translated/bom.js:1320 templates/js/translated/bom.js:1321
 msgid "Add BOM Item"
 msgstr "添加物料清單項"
 
-#: part/templates/part/detail.html:313
+#: part/templates/part/detail.html:297
 msgid "Assemblies"
 msgstr "裝配"
 
-#: part/templates/part/detail.html:329
+#: part/templates/part/detail.html:313
 msgid "Part Builds"
 msgstr "零件組裝"
 
-#: part/templates/part/detail.html:354 stock/templates/stock/item.html:36
+#: part/templates/part/detail.html:338 stock/templates/stock/item.html:36
 msgid "Build Order Allocations"
 msgstr "分配生產訂單"
 
-#: part/templates/part/detail.html:368
+#: part/templates/part/detail.html:352
 msgid "Part Suppliers"
 msgstr "零件供應商"
 
-#: part/templates/part/detail.html:388
+#: part/templates/part/detail.html:372
 msgid "Part Manufacturers"
 msgstr "零件製造商"
 
-#: part/templates/part/detail.html:672
+#: part/templates/part/detail.html:656
 msgid "Related Part"
 msgstr "關聯零件"
 
-#: part/templates/part/detail.html:680
+#: part/templates/part/detail.html:664
 msgid "Add Related Part"
 msgstr "添加關聯零件"
 
-#: part/templates/part/detail.html:765
+#: part/templates/part/detail.html:749
 msgid "Add Test Result Template"
 msgstr "添加測試結果模板"
 
@@ -8538,8 +8529,8 @@ msgstr "變體"
 #: templates/InvenTree/search.html:153
 #: templates/InvenTree/settings/sidebar.html:51
 #: templates/js/translated/part.js:1249 templates/js/translated/part.js:2152
-#: templates/js/translated/part.js:2411 templates/js/translated/stock.js:1066
-#: templates/js/translated/stock.js:2156 templates/navbar.html:31
+#: templates/js/translated/part.js:2411 templates/js/translated/stock.js:1064
+#: templates/js/translated/stock.js:2154 templates/navbar.html:31
 msgid "Stock"
 msgstr "庫存"
 
@@ -8585,7 +8576,7 @@ msgstr "編輯"
 #: stock/templates/stock/item_base.html:443
 #: templates/js/translated/company.js:1704
 #: templates/js/translated/company.js:1714
-#: templates/js/translated/stock.js:2332
+#: templates/js/translated/stock.js:2330
 msgid "Last Updated"
 msgstr "最近更新"
 
@@ -9188,44 +9179,52 @@ msgstr "為掃描 TME 條形碼提供支持"
 msgid "The Supplier which acts as 'TME'"
 msgstr "作為‘TME’的供應商"
 
-#: plugin/installer.py:199 plugin/installer.py:282
+#: plugin/installer.py:228 plugin/installer.py:306
 msgid "Only staff users can administer plugins"
 msgstr "只有員工用户可以管理插件"
 
-#: plugin/installer.py:202
+#: plugin/installer.py:231
 msgid "Plugin installation is disabled"
 msgstr "插件安裝已禁用"
 
-#: plugin/installer.py:246
+#: plugin/installer.py:268
 msgid "Installed plugin successfully"
 msgstr "插件安裝成功"
 
-#: plugin/installer.py:251
+#: plugin/installer.py:273
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "插件安裝到 {path}"
 
-#: plugin/installer.py:273
+#: plugin/installer.py:297
 msgid "Plugin was not found in registry"
 msgstr "在插件倉庫中找不到插件"
 
-#: plugin/installer.py:276
+#: plugin/installer.py:300
 msgid "Plugin is not a packaged plugin"
 msgstr "插件不是一個打包的插件"
 
-#: plugin/installer.py:279
+#: plugin/installer.py:303
 msgid "Plugin package name not found"
 msgstr "找不到插件包名稱"
 
-#: plugin/installer.py:299
+#: plugin/installer.py:323
 msgid "Plugin uninstalling is disabled"
 msgstr "插件卸載已禁用"
 
-#: plugin/installer.py:303
+#: plugin/installer.py:327
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr "插件無法卸載，因為它目前處於激活狀態"
 
-#: plugin/installer.py:316
+#: plugin/installer.py:331
+msgid "Plugin is not installed"
+msgstr ""
+
+#: plugin/installer.py:347
+msgid "Plugin installation not found"
+msgstr ""
+
+#: plugin/installer.py:362
 msgid "Uninstalled plugin successfully"
 msgstr "插件卸載成功"
 
@@ -9258,7 +9257,7 @@ msgid "Is the plugin active"
 msgstr "插件是否激活"
 
 #: plugin/models.py:157 templates/js/translated/table_filters.js:377
-#: templates/js/translated/table_filters.js:525
+#: templates/js/translated/table_filters.js:511
 msgid "Installed"
 msgstr "已安裝"
 
@@ -9284,21 +9283,21 @@ msgstr "插件"
 msgid "Method"
 msgstr "方法"
 
-#: plugin/plugin.py:275
+#: plugin/plugin.py:276
 msgid "No author found"
 msgstr "未找到作者"
 
-#: plugin/registry.py:534
+#: plugin/registry.py:533
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "插件 '{p}' 與當前 InvenTree 版本{v} 不兼容"
 
-#: plugin/registry.py:537
+#: plugin/registry.py:536
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "插件所需最低版本 {v}"
 
-#: plugin/registry.py:539
+#: plugin/registry.py:538
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "插件所需最高版本 {v}"
@@ -9759,8 +9758,6 @@ msgstr "額外行項目"
 #: report/templates/report/inventree_sales_order_report.html:72
 #: templates/js/translated/purchase_order.js:2071
 #: templates/js/translated/sales_order.js:1849
-#: templates/test_statistics_table.html:8
-#: templates/test_statistics_table.html:19
 msgid "Total"
 msgstr "總計"
 
@@ -9782,17 +9779,17 @@ msgid "Test Results"
 msgstr "測試結果"
 
 #: report/templates/report/inventree_test_report.html:102
-#: templates/js/translated/stock.js:1580
+#: templates/js/translated/stock.js:1578
 msgid "Test"
 msgstr "測試"
 
 #: report/templates/report/inventree_test_report.html:129
-#: templates/js/translated/stock.js:1448
+#: templates/js/translated/stock.js:1446
 msgid "Pass"
 msgstr "通過"
 
 #: report/templates/report/inventree_test_report.html:131
-#: templates/js/translated/stock.js:1450
+#: templates/js/translated/stock.js:1448
 msgid "Fail"
 msgstr "失敗"
 
@@ -9801,7 +9798,7 @@ msgid "No result (required)"
 msgstr "無結果 (必填)"
 
 #: report/templates/report/inventree_test_report.html:140
-#: templates/js/translated/stock.js:1455
+#: templates/js/translated/stock.js:1453
 msgid "No result"
 msgstr "沒有結果"
 
@@ -9811,8 +9808,8 @@ msgid "Installed Items"
 msgstr "已安裝的項目"
 
 #: report/templates/report/inventree_test_report.html:167 stock/admin.py:162
-#: templates/js/translated/stock.js:706 templates/js/translated/stock.js:877
-#: templates/js/translated/stock.js:3195
+#: templates/js/translated/stock.js:704 templates/js/translated/stock.js:875
+#: templates/js/translated/stock.js:3193
 msgid "Serial"
 msgstr "系列"
 
@@ -9865,7 +9862,7 @@ msgstr "供應商 ID"
 msgid "Customer ID"
 msgstr "客户 ID"
 
-#: stock/admin.py:206 stock/models.py:902
+#: stock/admin.py:206 stock/models.py:900
 #: stock/templates/stock/item_base.html:351
 msgid "Installed In"
 msgstr "安裝於"
@@ -9890,9 +9887,9 @@ msgstr "需要審核"
 msgid "Delete on Deplete"
 msgstr "在消耗品上刪除"
 
-#: stock/admin.py:261 stock/models.py:996
+#: stock/admin.py:261 stock/models.py:994
 #: stock/templates/stock/item_base.html:430
-#: templates/js/translated/stock.js:2316 users/models.py:124
+#: templates/js/translated/stock.js:2314 users/models.py:124
 msgid "Expiry Date"
 msgstr "有效期至"
 
@@ -9908,7 +9905,7 @@ msgstr "按頂級位置篩選"
 msgid "Include sub-locations in filtered results"
 msgstr "在篩選結果中包含子地點"
 
-#: stock/api.py:317 stock/serializers.py:1217
+#: stock/api.py:317 stock/serializers.py:1187
 msgid "Parent Location"
 msgstr "上級地點"
 
@@ -9990,316 +9987,316 @@ msgstr "供應商零件有定義的包裝大小，但 use_pack_size 標誌未設
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "不能為不可跟蹤的零件提供序列號"
 
-#: stock/models.py:70
+#: stock/models.py:68
 msgid "Stock Location type"
 msgstr "庫存地點類型"
 
-#: stock/models.py:71
+#: stock/models.py:69
 msgid "Stock Location types"
 msgstr "庫存地點類型"
 
-#: stock/models.py:97
+#: stock/models.py:95
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "為所有沒有圖標的位置設置默認圖標(可選)"
 
-#: stock/models.py:137 stock/models.py:884
+#: stock/models.py:135 stock/models.py:882
 #: stock/templates/stock/location.html:18
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
 msgstr "庫存地點"
 
-#: stock/models.py:138 stock/templates/stock/location.html:184
+#: stock/models.py:136 stock/templates/stock/location.html:184
 #: templates/InvenTree/search.html:166 templates/js/translated/search.js:178
 #: users/models.py:205
 msgid "Stock Locations"
 msgstr "庫存地點"
 
-#: stock/models.py:186 stock/models.py:1045
+#: stock/models.py:184 stock/models.py:1043
 #: stock/templates/stock/item_base.html:244
 msgid "Owner"
 msgstr "所有者"
 
-#: stock/models.py:187 stock/models.py:1046
+#: stock/models.py:185 stock/models.py:1044
 msgid "Select Owner"
 msgstr "選擇所有者"
 
-#: stock/models.py:195
+#: stock/models.py:193
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "庫存項可能不直接位於結構庫存地點，但可能位於其子地點。"
 
-#: stock/models.py:202 templates/js/translated/stock.js:2866
+#: stock/models.py:200 templates/js/translated/stock.js:2864
 #: templates/js/translated/table_filters.js:250
 msgid "External"
 msgstr "外部"
 
-#: stock/models.py:203
+#: stock/models.py:201
 msgid "This is an external stock location"
 msgstr "這是一個外部庫存地點"
 
-#: stock/models.py:209 templates/js/translated/stock.js:2875
+#: stock/models.py:207 templates/js/translated/stock.js:2873
 #: templates/js/translated/table_filters.js:253
 msgid "Location type"
 msgstr "位置類型"
 
-#: stock/models.py:213
+#: stock/models.py:211
 msgid "Stock location type of this location"
 msgstr "該位置的庫存地點類型"
 
-#: stock/models.py:285
+#: stock/models.py:283
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "您不能將此庫存地點設置為結構性，因為某些庫存項已經位於它！"
 
-#: stock/models.py:492
+#: stock/models.py:490
 msgid "Part must be specified"
 msgstr ""
 
-#: stock/models.py:741
+#: stock/models.py:739
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "庫存項不能存放在結構性庫存地點！"
 
-#: stock/models.py:768 stock/serializers.py:492
+#: stock/models.py:766 stock/serializers.py:492
 msgid "Stock item cannot be created for virtual parts"
 msgstr "無法為虛擬零件創建庫存項"
 
-#: stock/models.py:785
+#: stock/models.py:783
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "零件類型 ('{self.supplier_part.part}') 必須為 {self.part}"
 
-#: stock/models.py:795 stock/models.py:808
+#: stock/models.py:793 stock/models.py:806
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "有序列號的項目的數量必須是1"
 
-#: stock/models.py:798
+#: stock/models.py:796
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "如果數量大於1，則不能設置序列號"
 
-#: stock/models.py:820
+#: stock/models.py:818
 msgid "Item cannot belong to itself"
 msgstr "項目不能屬於其自身"
 
-#: stock/models.py:825
+#: stock/models.py:823
 msgid "Item must have a build reference if is_building=True"
 msgstr "如果is_building=True，則項必須具有構建引用"
 
-#: stock/models.py:838
+#: stock/models.py:836
 msgid "Build reference does not point to the same part object"
 msgstr "構建引用未指向同一零件對象"
 
-#: stock/models.py:854
+#: stock/models.py:852
 msgid "Parent Stock Item"
 msgstr "母庫存項目"
 
-#: stock/models.py:866
+#: stock/models.py:864
 msgid "Base part"
 msgstr "基礎零件"
 
-#: stock/models.py:876
+#: stock/models.py:874
 msgid "Select a matching supplier part for this stock item"
 msgstr "為此庫存項目選擇匹配的供應商零件"
 
-#: stock/models.py:888
+#: stock/models.py:886
 msgid "Where is this stock item located?"
 msgstr "這個庫存物品在哪裏？"
 
-#: stock/models.py:896 stock/serializers.py:1611
+#: stock/models.py:894 stock/serializers.py:1581
 msgid "Packaging this stock item is stored in"
 msgstr "包裝此庫存物品存儲在"
 
-#: stock/models.py:907
+#: stock/models.py:905
 msgid "Is this item installed in another item?"
 msgstr "此項目是否安裝在另一個項目中？"
 
-#: stock/models.py:926
+#: stock/models.py:924
 msgid "Serial number for this item"
 msgstr "此項目的序列號"
 
-#: stock/models.py:940 stock/serializers.py:1594
+#: stock/models.py:938 stock/serializers.py:1564
 msgid "Batch code for this stock item"
 msgstr "此庫存項的批號"
 
-#: stock/models.py:945
+#: stock/models.py:943
 msgid "Stock Quantity"
 msgstr "庫存數量"
 
-#: stock/models.py:955
+#: stock/models.py:953
 msgid "Source Build"
 msgstr "源代碼構建"
 
-#: stock/models.py:958
+#: stock/models.py:956
 msgid "Build for this stock item"
 msgstr "為此庫存項目構建"
 
-#: stock/models.py:965 stock/templates/stock/item_base.html:360
+#: stock/models.py:963 stock/templates/stock/item_base.html:360
 msgid "Consumed By"
 msgstr "消費者"
 
-#: stock/models.py:968
+#: stock/models.py:966
 msgid "Build order which consumed this stock item"
 msgstr "構建消耗此庫存項的生產訂單"
 
-#: stock/models.py:977
+#: stock/models.py:975
 msgid "Source Purchase Order"
 msgstr "採購訂單來源"
 
-#: stock/models.py:981
+#: stock/models.py:979
 msgid "Purchase order for this stock item"
 msgstr "此庫存商品的採購訂單"
 
-#: stock/models.py:987
+#: stock/models.py:985
 msgid "Destination Sales Order"
 msgstr "目的地銷售訂單"
 
-#: stock/models.py:998
+#: stock/models.py:996
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "庫存物品的到期日。在此日期之後，庫存將被視為過期"
 
-#: stock/models.py:1016
+#: stock/models.py:1014
 msgid "Delete on deplete"
 msgstr "耗盡時刪除"
 
-#: stock/models.py:1017
+#: stock/models.py:1015
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "當庫存耗盡時刪除此庫存項"
 
-#: stock/models.py:1037
+#: stock/models.py:1035
 msgid "Single unit purchase price at time of purchase"
 msgstr "購買時一個單位的價格"
 
-#: stock/models.py:1068
+#: stock/models.py:1066
 msgid "Converted to part"
 msgstr "轉換為零件"
 
-#: stock/models.py:1600
+#: stock/models.py:1598
 msgid "Part is not set as trackable"
 msgstr "零件未設置為可跟蹤"
 
-#: stock/models.py:1606
+#: stock/models.py:1604
 msgid "Quantity must be integer"
 msgstr "數量必須是整數"
 
-#: stock/models.py:1614
+#: stock/models.py:1612
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "數量不得超過現有庫存量 ({self.quantity})"
 
-#: stock/models.py:1620
+#: stock/models.py:1618
 msgid "Serial numbers must be provided as a list"
 msgstr ""
 
-#: stock/models.py:1625
+#: stock/models.py:1623
 msgid "Quantity does not match serial numbers"
 msgstr "數量不匹配序列號"
 
-#: stock/models.py:1747 stock/models.py:2563
+#: stock/models.py:1745 stock/models.py:2561
 msgid "Test template does not exist"
 msgstr "測試模板不存在"
 
-#: stock/models.py:1765
+#: stock/models.py:1763
 msgid "Stock item has been assigned to a sales order"
 msgstr "庫存項已分配到銷售訂單"
 
-#: stock/models.py:1769
+#: stock/models.py:1767
 msgid "Stock item is installed in another item"
 msgstr "庫存項已安裝在另一個項目中"
 
-#: stock/models.py:1772
+#: stock/models.py:1770
 msgid "Stock item contains other items"
 msgstr "庫存項包含其他項目"
 
-#: stock/models.py:1775
+#: stock/models.py:1773
 msgid "Stock item has been assigned to a customer"
 msgstr "庫存項已分配給客户"
 
-#: stock/models.py:1778
+#: stock/models.py:1776
 msgid "Stock item is currently in production"
 msgstr "庫存項目前正在生產"
 
-#: stock/models.py:1781
+#: stock/models.py:1779
 msgid "Serialized stock cannot be merged"
 msgstr "序列化的庫存不能合併"
 
-#: stock/models.py:1788 stock/serializers.py:1500
+#: stock/models.py:1786 stock/serializers.py:1470
 msgid "Duplicate stock items"
 msgstr "複製庫存項"
 
-#: stock/models.py:1792
+#: stock/models.py:1790
 msgid "Stock items must refer to the same part"
 msgstr "庫存項必須指相同零件"
 
-#: stock/models.py:1800
+#: stock/models.py:1798
 msgid "Stock items must refer to the same supplier part"
 msgstr "庫存項必須是同一供應商的零件"
 
-#: stock/models.py:1805
+#: stock/models.py:1803
 msgid "Stock status codes must match"
 msgstr "庫存狀態碼必須匹配"
 
-#: stock/models.py:2066
+#: stock/models.py:2064
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "庫存項不能移動，因為它沒有庫存"
 
-#: stock/models.py:2462
+#: stock/models.py:2460
 msgid "Stock Item Tracking"
 msgstr "庫存項跟蹤"
 
-#: stock/models.py:2495
+#: stock/models.py:2493
 msgid "Entry notes"
 msgstr "條目註釋"
 
-#: stock/models.py:2535
+#: stock/models.py:2533
 msgid "Stock Item Test Result"
 msgstr "庫存項測試結果"
 
-#: stock/models.py:2566
+#: stock/models.py:2564
 msgid "Value must be provided for this test"
 msgstr "必須為此測試提供值"
 
-#: stock/models.py:2570
+#: stock/models.py:2568
 msgid "Attachment must be uploaded for this test"
 msgstr "測試附件必須上傳"
 
-#: stock/models.py:2575
+#: stock/models.py:2573
 msgid "Invalid value for this test"
 msgstr "此測試的值無效"
 
-#: stock/models.py:2660
+#: stock/models.py:2597
 msgid "Test result"
 msgstr "測試結果"
 
-#: stock/models.py:2667
+#: stock/models.py:2604
 msgid "Test output value"
 msgstr "測試輸出值"
 
-#: stock/models.py:2675 stock/serializers.py:245
+#: stock/models.py:2612 stock/serializers.py:245
 msgid "Test result attachment"
 msgstr "測驗結果附件"
 
-#: stock/models.py:2679
+#: stock/models.py:2616
 msgid "Test notes"
 msgstr "測試備註"
 
-#: stock/models.py:2687 templates/js/translated/stock.js:1633
+#: stock/models.py:2624 templates/js/translated/stock.js:1631
 msgid "Test station"
 msgstr "測試站"
 
-#: stock/models.py:2688
+#: stock/models.py:2625
 msgid "The identifier of the test station where the test was performed"
 msgstr "進行測試的測試站的標識符"
 
-#: stock/models.py:2694
+#: stock/models.py:2631
 msgid "Started"
 msgstr "已開始"
 
-#: stock/models.py:2695
+#: stock/models.py:2632
 msgid "The timestamp of the test start"
 msgstr "測試開始的時間戳"
 
-#: stock/models.py:2701
+#: stock/models.py:2638
 msgid "Finished"
 msgstr "已完成"
 
-#: stock/models.py:2702
+#: stock/models.py:2639
 msgid "The timestamp of the test finish"
 msgstr "測試結束的時間戳"
 
@@ -10409,7 +10406,7 @@ msgstr "數量不得超過現有庫存量 ({q})"
 msgid "Enter serial numbers for new items"
 msgstr "輸入新項目的序列號"
 
-#: stock/serializers.py:719 stock/serializers.py:1457 stock/serializers.py:1713
+#: stock/serializers.py:719 stock/serializers.py:1427 stock/serializers.py:1683
 msgid "Destination stock location"
 msgstr "目標庫存位置"
 
@@ -10437,8 +10434,8 @@ msgstr "安裝數量"
 msgid "Enter the quantity of items to install"
 msgstr "輸入要安裝的項目數量"
 
-#: stock/serializers.py:808 stock/serializers.py:888 stock/serializers.py:1014
-#: stock/serializers.py:1064
+#: stock/serializers.py:808 stock/serializers.py:888 stock/serializers.py:984
+#: stock/serializers.py:1034
 msgid "Add transaction note (optional)"
 msgstr "添加交易記錄 (可選)"
 
@@ -10462,110 +10459,106 @@ msgstr "安裝數量不得超過可用數量"
 msgid "Destination location for uninstalled item"
 msgstr "已卸載項目的目標位置"
 
-#: stock/serializers.py:934
-msgid "Unsupported statistic type: "
-msgstr "不支持的統計類型： "
-
-#: stock/serializers.py:948
+#: stock/serializers.py:918
 msgid "Select part to convert stock item into"
 msgstr "選擇要將庫存項目轉換為的零件"
 
-#: stock/serializers.py:961
+#: stock/serializers.py:931
 msgid "Selected part is not a valid option for conversion"
 msgstr "所選零件不是有效的轉換選項"
 
-#: stock/serializers.py:978
+#: stock/serializers.py:948
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "無法轉換已分配供應商零件的庫存項"
 
-#: stock/serializers.py:1009
+#: stock/serializers.py:979
 msgid "Destination location for returned item"
 msgstr "退回物品的目的地位置"
 
-#: stock/serializers.py:1046
+#: stock/serializers.py:1016
 msgid "Select stock items to change status"
 msgstr "選擇要更改狀態的庫存項目"
 
-#: stock/serializers.py:1052
+#: stock/serializers.py:1022
 msgid "No stock items selected"
 msgstr "未選擇庫存商品"
 
-#: stock/serializers.py:1148 stock/serializers.py:1225
+#: stock/serializers.py:1118 stock/serializers.py:1195
 #: stock/templates/stock/location.html:163
 #: stock/templates/stock/location.html:220
 #: stock/templates/stock/location_sidebar.html:5
 msgid "Sublocations"
 msgstr "轉租"
 
-#: stock/serializers.py:1218 templates/js/translated/stock.js:160
+#: stock/serializers.py:1188 templates/js/translated/stock.js:158
 msgid "Parent stock location"
 msgstr "上級庫存地點"
 
-#: stock/serializers.py:1329
+#: stock/serializers.py:1299
 msgid "Part must be salable"
 msgstr "零件必須可銷售"
 
-#: stock/serializers.py:1333
+#: stock/serializers.py:1303
 msgid "Item is allocated to a sales order"
 msgstr "物料已分配到銷售訂單"
 
-#: stock/serializers.py:1337
+#: stock/serializers.py:1307
 msgid "Item is allocated to a build order"
 msgstr "項目被分配到生產訂單中"
 
-#: stock/serializers.py:1361
+#: stock/serializers.py:1331
 msgid "Customer to assign stock items"
 msgstr "客户分配庫存項目"
 
-#: stock/serializers.py:1367
+#: stock/serializers.py:1337
 msgid "Selected company is not a customer"
 msgstr "所選公司不是客户"
 
-#: stock/serializers.py:1375
+#: stock/serializers.py:1345
 msgid "Stock assignment notes"
 msgstr "庫存分配説明"
 
-#: stock/serializers.py:1385 stock/serializers.py:1639
+#: stock/serializers.py:1355 stock/serializers.py:1609
 msgid "A list of stock items must be provided"
 msgstr "必須提供庫存物品清單"
 
-#: stock/serializers.py:1464
+#: stock/serializers.py:1434
 msgid "Stock merging notes"
 msgstr "庫存合併説明"
 
-#: stock/serializers.py:1469
+#: stock/serializers.py:1439
 msgid "Allow mismatched suppliers"
 msgstr "允許不匹配的供應商"
 
-#: stock/serializers.py:1470
+#: stock/serializers.py:1440
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "允許合併具有不同供應商零件的庫存項目"
 
-#: stock/serializers.py:1475
+#: stock/serializers.py:1445
 msgid "Allow mismatched status"
 msgstr "允許不匹配的狀態"
 
-#: stock/serializers.py:1476
+#: stock/serializers.py:1446
 msgid "Allow stock items with different status codes to be merged"
 msgstr "允許合併具有不同狀態代碼的庫存項目"
 
-#: stock/serializers.py:1486
+#: stock/serializers.py:1456
 msgid "At least two stock items must be provided"
 msgstr "必須提供至少兩件庫存物品"
 
-#: stock/serializers.py:1553
+#: stock/serializers.py:1523
 msgid "No Change"
 msgstr "無更改"
 
-#: stock/serializers.py:1582
+#: stock/serializers.py:1552
 msgid "StockItem primary key value"
 msgstr "庫存項主鍵值"
 
-#: stock/serializers.py:1601
+#: stock/serializers.py:1571
 msgid "Stock item status code"
 msgstr "庫存項狀態代碼"
 
-#: stock/serializers.py:1629
+#: stock/serializers.py:1599
 msgid "Stock transaction notes"
 msgstr "庫存交易記錄"
 
@@ -10597,7 +10590,7 @@ msgstr "隔離"
 msgid "Legacy stock tracking entry"
 msgstr "舊庫存跟蹤條目"
 
-#: stock/status_codes.py:46 templates/js/translated/stock.js:550
+#: stock/status_codes.py:46 templates/js/translated/stock.js:548
 msgid "Stock item created"
 msgstr "庫存項已創建"
 
@@ -10653,7 +10646,7 @@ msgstr "從上級項拆分"
 msgid "Split child item"
 msgstr "拆分子項"
 
-#: stock/status_codes.py:73 templates/js/translated/stock.js:1944
+#: stock/status_codes.py:73 templates/js/translated/stock.js:1942
 msgid "Merged stock items"
 msgstr "合併的庫存項"
 
@@ -10673,7 +10666,7 @@ msgstr "生產訂單已出產"
 msgid "Build order output rejected"
 msgstr "生產訂單產出被拒絕"
 
-#: stock/status_codes.py:82 templates/js/translated/stock.js:1849
+#: stock/status_codes.py:82 templates/js/translated/stock.js:1847
 msgid "Consumed by build order"
 msgstr "被工單消耗的"
 
@@ -10734,7 +10727,7 @@ msgstr "庫存項目備註"
 msgid "Installed Stock Items"
 msgstr "已安裝的庫存項"
 
-#: stock/templates/stock/item.html:145 templates/js/translated/stock.js:3355
+#: stock/templates/stock/item.html:145 templates/js/translated/stock.js:3353
 msgid "Install Stock Item"
 msgstr "安裝庫存項"
 
@@ -10742,7 +10735,7 @@ msgstr "安裝庫存項"
 msgid "Delete all test results for this stock item"
 msgstr "刪除此庫存項目的所有測試結果"
 
-#: stock/templates/stock/item.html:294 templates/js/translated/stock.js:1786
+#: stock/templates/stock/item.html:294 templates/js/translated/stock.js:1784
 msgid "Add Test Result"
 msgstr "添加測試結果"
 
@@ -10769,17 +10762,17 @@ msgid "Stock adjustment actions"
 msgstr "庫存調整操作"
 
 #: stock/templates/stock/item_base.html:76
-#: stock/templates/stock/location.html:88 templates/js/translated/stock.js:1909
+#: stock/templates/stock/location.html:88 templates/js/translated/stock.js:1907
 msgid "Count stock"
 msgstr "清點庫存"
 
 #: stock/templates/stock/item_base.html:78
-#: templates/js/translated/stock.js:1891
+#: templates/js/translated/stock.js:1889
 msgid "Add stock"
 msgstr "增加庫存"
 
 #: stock/templates/stock/item_base.html:79
-#: templates/js/translated/stock.js:1900
+#: templates/js/translated/stock.js:1898
 msgid "Remove stock"
 msgstr "移除庫存"
 
@@ -10788,12 +10781,12 @@ msgid "Serialize stock"
 msgstr "序列化庫存"
 
 #: stock/templates/stock/item_base.html:85
-#: stock/templates/stock/location.html:94 templates/js/translated/stock.js:1918
+#: stock/templates/stock/location.html:94 templates/js/translated/stock.js:1916
 msgid "Transfer stock"
 msgstr "轉移庫存"
 
 #: stock/templates/stock/item_base.html:88
-#: templates/js/translated/stock.js:1973
+#: templates/js/translated/stock.js:1971
 msgid "Assign to customer"
 msgstr "分配給客户"
 
@@ -10919,7 +10912,7 @@ msgid "No stocktake performed"
 msgstr "未進行盤點"
 
 #: stock/templates/stock/item_base.html:501
-#: templates/js/translated/stock.js:2038
+#: templates/js/translated/stock.js:2036
 msgid "stock item"
 msgstr "庫存項"
 
@@ -11028,7 +11021,7 @@ msgid "New Location"
 msgstr "新建庫存地點"
 
 #: stock/templates/stock/location.html:299
-#: templates/js/translated/stock.js:2658
+#: templates/js/translated/stock.js:2656
 msgid "stock location"
 msgstr "庫存位置"
 
@@ -11412,7 +11405,7 @@ msgstr "安裝路徑"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
 #: templates/js/translated/plugin.js:68
-#: templates/js/translated/table_filters.js:517
+#: templates/js/translated/table_filters.js:503
 msgid "Builtin"
 msgstr "內置"
 
@@ -11422,7 +11415,7 @@ msgstr "這是一個無法禁用的內置插件"
 
 #: templates/InvenTree/settings/plugin_settings.html:107
 #: templates/js/translated/plugin.js:72
-#: templates/js/translated/table_filters.js:521
+#: templates/js/translated/table_filters.js:507
 msgid "Sample"
 msgstr "樣本"
 
@@ -11527,7 +11520,7 @@ msgstr "匯率"
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/js/translated/forms.js:548 templates/js/translated/helpers.js:109
 #: templates/js/translated/part.js:395 templates/js/translated/pricing.js:629
-#: templates/js/translated/stock.js:252 users/models.py:408
+#: templates/js/translated/stock.js:250 users/models.py:408
 msgid "Delete"
 msgstr "刪除"
 
@@ -12385,7 +12378,7 @@ msgstr "這將刪除關聯條形碼的鏈接"
 msgid "Unlink"
 msgstr "取消鏈接"
 
-#: templates/js/translated/barcode.js:598 templates/js/translated/stock.js:1188
+#: templates/js/translated/barcode.js:598 templates/js/translated/stock.js:1186
 msgid "Remove stock item"
 msgstr "移除庫存項"
 
@@ -12698,13 +12691,13 @@ msgstr "生產訂單未完成"
 msgid "Complete Build Order"
 msgstr "完成生產訂單"
 
-#: templates/js/translated/build.js:372 templates/js/translated/stock.js:127
-#: templates/js/translated/stock.js:301
+#: templates/js/translated/build.js:372 templates/js/translated/stock.js:125
+#: templates/js/translated/stock.js:299
 msgid "Next available serial number"
 msgstr "下一個可用序列號"
 
-#: templates/js/translated/build.js:374 templates/js/translated/stock.js:129
-#: templates/js/translated/stock.js:303
+#: templates/js/translated/build.js:374 templates/js/translated/stock.js:127
+#: templates/js/translated/stock.js:301
 msgid "Latest serial number"
 msgstr "最新序列號"
 
@@ -12965,7 +12958,7 @@ msgstr "沒有與查詢匹配的構建"
 #: templates/js/translated/build.js:2292 templates/js/translated/build.js:2661
 #: templates/js/translated/forms.js:2196 templates/js/translated/forms.js:2212
 #: templates/js/translated/part.js:2322 templates/js/translated/part.js:2761
-#: templates/js/translated/stock.js:2069 templates/js/translated/stock.js:2796
+#: templates/js/translated/stock.js:2067 templates/js/translated/stock.js:2794
 msgid "Select"
 msgstr "選擇"
 
@@ -12973,7 +12966,7 @@ msgstr "選擇"
 msgid "Build order is overdue"
 msgstr "生產訂單已逾期"
 
-#: templates/js/translated/build.js:2388 templates/js/translated/stock.js:3127
+#: templates/js/translated/build.js:2388 templates/js/translated/stock.js:3125
 msgid "No user information"
 msgstr "沒有用户信息"
 
@@ -13042,7 +13035,7 @@ msgstr "根據單個構建輸出分配跟蹤項目"
 msgid "Build stock"
 msgstr "生產庫存"
 
-#: templates/js/translated/build.js:2876 templates/js/translated/stock.js:1954
+#: templates/js/translated/build.js:2876 templates/js/translated/stock.js:1952
 msgid "Order stock"
 msgstr "訂單庫存"
 
@@ -13582,8 +13575,8 @@ msgstr "零件複製選項"
 msgid "Add Part Category"
 msgstr "增加零件類別"
 
-#: templates/js/translated/part.js:334 templates/js/translated/stock.js:147
-#: templates/js/translated/stock.js:182
+#: templates/js/translated/part.js:334 templates/js/translated/stock.js:145
+#: templates/js/translated/stock.js:180
 msgid "Icon (optional) - Explore all available icons on"
 msgstr "圖標(可選) - 瀏覽所有可用圖標"
 
@@ -13708,7 +13701,7 @@ msgid "Copy Bill of Materials"
 msgstr "複製物料清單"
 
 #: templates/js/translated/part.js:688
-#: templates/js/translated/table_filters.js:755
+#: templates/js/translated/table_filters.js:741
 msgid "Low stock"
 msgstr "低庫存"
 
@@ -13838,7 +13831,7 @@ msgid "No category"
 msgstr "無類別"
 
 #: templates/js/translated/part.js:2550 templates/js/translated/part.js:2680
-#: templates/js/translated/stock.js:2755
+#: templates/js/translated/stock.js:2753
 msgid "Display as list"
 msgstr "按列表顯示"
 
@@ -13850,7 +13843,7 @@ msgstr "按網格顯示"
 msgid "No subcategories found"
 msgstr "未找到子類別"
 
-#: templates/js/translated/part.js:2700 templates/js/translated/stock.js:2775
+#: templates/js/translated/part.js:2700 templates/js/translated/stock.js:2773
 msgid "Display as tree"
 msgstr "樹狀顯示"
 
@@ -14112,7 +14105,7 @@ msgid "Quantity to receive"
 msgstr "待接收數量"
 
 #: templates/js/translated/purchase_order.js:1153
-#: templates/js/translated/stock.js:1215
+#: templates/js/translated/stock.js:1213
 msgid "Specify packaging for incoming stock items"
 msgstr "指定進貨庫存項的包裝"
 
@@ -14445,7 +14438,7 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:1666
 #: templates/js/translated/sales_order.js:1753
-#: templates/js/translated/stock.js:1861
+#: templates/js/translated/stock.js:1859
 msgid "Shipped to customer"
 msgstr "已配送到客户"
 
@@ -14500,492 +14493,484 @@ msgstr "最小化結果"
 msgid "Remove results"
 msgstr "刪除結果"
 
-#: templates/js/translated/stock.js:106
+#: templates/js/translated/stock.js:104
 msgid "Serialize Stock Item"
 msgstr "序列化庫存項目"
 
-#: templates/js/translated/stock.js:137
+#: templates/js/translated/stock.js:135
 msgid "Confirm Stock Serialization"
 msgstr "確認庫存序列化"
 
-#: templates/js/translated/stock.js:173
+#: templates/js/translated/stock.js:171
 msgid "Add Location type"
 msgstr "添加位置類型"
 
-#: templates/js/translated/stock.js:209
+#: templates/js/translated/stock.js:207
 msgid "Edit Stock Location"
 msgstr "編輯庫存地點"
 
-#: templates/js/translated/stock.js:224
+#: templates/js/translated/stock.js:222
 msgid "New Stock Location"
 msgstr "添加庫存地點"
 
-#: templates/js/translated/stock.js:226
+#: templates/js/translated/stock.js:224
 msgid "Create another location after this one"
 msgstr "在此位置之後創建另一個位置"
 
-#: templates/js/translated/stock.js:227
+#: templates/js/translated/stock.js:225
 msgid "Stock location created"
 msgstr "庫存地點已創建"
 
-#: templates/js/translated/stock.js:241
+#: templates/js/translated/stock.js:239
 msgid "Are you sure you want to delete this stock location?"
 msgstr "您確定要刪除此庫存位置嗎？"
 
-#: templates/js/translated/stock.js:248
+#: templates/js/translated/stock.js:246
 msgid "Move to parent stock location"
 msgstr "移動到母庫存位置"
 
-#: templates/js/translated/stock.js:257
+#: templates/js/translated/stock.js:255
 msgid "Delete Stock Location"
 msgstr "刪除庫存地點"
 
-#: templates/js/translated/stock.js:261
+#: templates/js/translated/stock.js:259
 msgid "Action for stock items in this stock location"
 msgstr "此庫存位置的庫存物品操作"
 
-#: templates/js/translated/stock.js:266
+#: templates/js/translated/stock.js:264
 msgid "Action for sub-locations"
 msgstr "針對子地點的行動"
 
-#: templates/js/translated/stock.js:320
+#: templates/js/translated/stock.js:318
 msgid "This part cannot be serialized"
 msgstr "此零件無法序列化"
 
-#: templates/js/translated/stock.js:356
+#: templates/js/translated/stock.js:354
 msgid "Add given quantity as packs instead of individual items"
 msgstr "將給定數量添加為包，而不是單個項目"
 
-#: templates/js/translated/stock.js:368
+#: templates/js/translated/stock.js:366
 msgid "Enter initial quantity for this stock item"
 msgstr "輸入此庫存項目的初始數量"
 
-#: templates/js/translated/stock.js:374
+#: templates/js/translated/stock.js:372
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "輸入新庫存的序列號(或留空)"
 
-#: templates/js/translated/stock.js:445
+#: templates/js/translated/stock.js:443
 msgid "Stock item duplicated"
 msgstr "庫存項重複"
 
-#: templates/js/translated/stock.js:465
+#: templates/js/translated/stock.js:463
 msgid "Duplicate Stock Item"
 msgstr "複製庫存項"
 
-#: templates/js/translated/stock.js:481
+#: templates/js/translated/stock.js:479
 msgid "Are you sure you want to delete this stock item?"
 msgstr "確定要刪除此庫存項嗎?"
 
-#: templates/js/translated/stock.js:486
+#: templates/js/translated/stock.js:484
 msgid "Delete Stock Item"
 msgstr "刪除庫存項"
 
-#: templates/js/translated/stock.js:507
+#: templates/js/translated/stock.js:505
 msgid "Edit Stock Item"
 msgstr "編輯庫存項"
 
-#: templates/js/translated/stock.js:549
+#: templates/js/translated/stock.js:547
 msgid "Create another item after this one"
 msgstr "在此之後創建另一個項目"
 
-#: templates/js/translated/stock.js:561
+#: templates/js/translated/stock.js:559
 msgid "Created new stock item"
 msgstr "新建庫存項"
 
-#: templates/js/translated/stock.js:574
+#: templates/js/translated/stock.js:572
 msgid "Created multiple stock items"
 msgstr "創建了多個庫存項目"
 
-#: templates/js/translated/stock.js:599
+#: templates/js/translated/stock.js:597
 msgid "Find Serial Number"
 msgstr "查找序列號"
 
-#: templates/js/translated/stock.js:603 templates/js/translated/stock.js:604
-#: templates/js/translated/stock.js:620
+#: templates/js/translated/stock.js:601 templates/js/translated/stock.js:602
+#: templates/js/translated/stock.js:618
 msgid "Enter serial number"
 msgstr "輸入序列號"
 
-#: templates/js/translated/stock.js:640
+#: templates/js/translated/stock.js:638
 msgid "No matching serial number"
 msgstr "沒有匹配的序列號"
 
-#: templates/js/translated/stock.js:649
+#: templates/js/translated/stock.js:647
 msgid "More than one matching result found"
 msgstr "找到多個匹配結果"
 
-#: templates/js/translated/stock.js:757
+#: templates/js/translated/stock.js:755
 msgid "Confirm stock assignment"
 msgstr "確認庫存分配"
 
-#: templates/js/translated/stock.js:758
+#: templates/js/translated/stock.js:756
 msgid "Assign Stock to Customer"
 msgstr "將庫存分配給客户"
 
-#: templates/js/translated/stock.js:835
+#: templates/js/translated/stock.js:833
 msgid "Warning: Merge operation cannot be reversed"
 msgstr "警告：合併操作無法撤銷"
 
-#: templates/js/translated/stock.js:836
+#: templates/js/translated/stock.js:834
 msgid "Some information will be lost when merging stock items"
 msgstr "合併庫存項目時會丟失一些信息"
 
-#: templates/js/translated/stock.js:838
+#: templates/js/translated/stock.js:836
 msgid "Stock transaction history will be deleted for merged items"
 msgstr "合併項目的庫存交易歷史記錄將被刪除"
 
-#: templates/js/translated/stock.js:839
+#: templates/js/translated/stock.js:837
 msgid "Supplier part information will be deleted for merged items"
 msgstr "合併項目的供應商零件信息將被刪除"
 
-#: templates/js/translated/stock.js:933
+#: templates/js/translated/stock.js:931
 msgid "Confirm stock item merge"
 msgstr "確認合併庫存項"
 
-#: templates/js/translated/stock.js:934
+#: templates/js/translated/stock.js:932
 msgid "Merge Stock Items"
 msgstr "合併庫存項目"
 
-#: templates/js/translated/stock.js:1031
+#: templates/js/translated/stock.js:1029
 msgid "Transfer Stock"
 msgstr "轉移庫存"
 
-#: templates/js/translated/stock.js:1032
+#: templates/js/translated/stock.js:1030
 msgid "Move"
 msgstr "移動"
 
-#: templates/js/translated/stock.js:1038
+#: templates/js/translated/stock.js:1036
 msgid "Count Stock"
 msgstr "庫存計數"
 
-#: templates/js/translated/stock.js:1039
+#: templates/js/translated/stock.js:1037
 msgid "Count"
 msgstr "計數"
 
-#: templates/js/translated/stock.js:1043
+#: templates/js/translated/stock.js:1041
 msgid "Remove Stock"
 msgstr "移除庫存"
 
-#: templates/js/translated/stock.js:1044
+#: templates/js/translated/stock.js:1042
 msgid "Take"
 msgstr "拿出"
 
-#: templates/js/translated/stock.js:1048
+#: templates/js/translated/stock.js:1046
 msgid "Add Stock"
 msgstr "添加庫存"
 
-#: templates/js/translated/stock.js:1049 users/models.py:398
+#: templates/js/translated/stock.js:1047 users/models.py:398
 msgid "Add"
 msgstr "添加"
 
-#: templates/js/translated/stock.js:1053
+#: templates/js/translated/stock.js:1051
 msgid "Delete Stock"
 msgstr "刪除庫存"
 
-#: templates/js/translated/stock.js:1152
+#: templates/js/translated/stock.js:1150
 msgid "Quantity cannot be adjusted for serialized stock"
 msgstr "序列化庫存的數量不能調整"
 
-#: templates/js/translated/stock.js:1152
+#: templates/js/translated/stock.js:1150
 msgid "Specify stock quantity"
 msgstr "指定庫存數量"
 
-#: templates/js/translated/stock.js:1168
+#: templates/js/translated/stock.js:1166
 msgid "Adjust batch code"
 msgstr "調整批次代碼"
 
-#: templates/js/translated/stock.js:1178
+#: templates/js/translated/stock.js:1176
 msgid "Adjust packaging"
 msgstr "調整包裝"
 
-#: templates/js/translated/stock.js:1256 templates/js/translated/stock.js:3383
+#: templates/js/translated/stock.js:1254 templates/js/translated/stock.js:3381
 msgid "Select Stock Items"
 msgstr "選擇庫存項"
 
-#: templates/js/translated/stock.js:1257
+#: templates/js/translated/stock.js:1255
 msgid "Select at least one available stock item"
 msgstr "至少選擇一個可用庫存項目"
 
-#: templates/js/translated/stock.js:1303
+#: templates/js/translated/stock.js:1301
 msgid "Confirm stock adjustment"
 msgstr "確認庫存調整"
 
-#: templates/js/translated/stock.js:1535
+#: templates/js/translated/stock.js:1533
 msgid "Pass test"
 msgstr "通過測試"
 
-#: templates/js/translated/stock.js:1538
+#: templates/js/translated/stock.js:1536
 msgid "Add test result"
 msgstr "新增測試結果"
 
-#: templates/js/translated/stock.js:1541
+#: templates/js/translated/stock.js:1539
 msgid "Edit test result"
 msgstr "編輯測試結果"
 
-#: templates/js/translated/stock.js:1542 templates/js/translated/stock.js:1816
+#: templates/js/translated/stock.js:1540 templates/js/translated/stock.js:1814
 msgid "Delete test result"
 msgstr "刪除測試結果"
 
-#: templates/js/translated/stock.js:1561
+#: templates/js/translated/stock.js:1559
 msgid "No test results found"
 msgstr "未找到測試結果"
 
-#: templates/js/translated/stock.js:1625
+#: templates/js/translated/stock.js:1623
 msgid "Test Date"
 msgstr "測試日期"
 
-#: templates/js/translated/stock.js:1638
+#: templates/js/translated/stock.js:1636
 msgid "Test started"
 msgstr "測試已開始"
 
-#: templates/js/translated/stock.js:1647
+#: templates/js/translated/stock.js:1645
 msgid "Test finished"
 msgstr "測試已完成"
 
-#: templates/js/translated/stock.js:1801
+#: templates/js/translated/stock.js:1799
 msgid "Edit Test Result"
 msgstr "編輯測試結果"
 
-#: templates/js/translated/stock.js:1821
+#: templates/js/translated/stock.js:1819
 msgid "Delete Test Result"
 msgstr "刪除測試結果"
 
-#: templates/js/translated/stock.js:1853
+#: templates/js/translated/stock.js:1851
 msgid "In production"
 msgstr "生產中"
 
-#: templates/js/translated/stock.js:1857
+#: templates/js/translated/stock.js:1855
 msgid "Installed in Stock Item"
 msgstr "已安裝庫存項目"
 
-#: templates/js/translated/stock.js:1865
+#: templates/js/translated/stock.js:1863
 msgid "Assigned to Sales Order"
 msgstr "分配給銷售訂單"
 
-#: templates/js/translated/stock.js:1871
+#: templates/js/translated/stock.js:1869
 msgid "No stock location set"
 msgstr "未設置庫存位置"
 
-#: templates/js/translated/stock.js:1928
+#: templates/js/translated/stock.js:1926
 msgid "Change stock status"
 msgstr "更改庫存狀態"
 
-#: templates/js/translated/stock.js:1937
+#: templates/js/translated/stock.js:1935
 msgid "Merge stock"
 msgstr "合併庫存"
 
-#: templates/js/translated/stock.js:1986
+#: templates/js/translated/stock.js:1984
 msgid "Delete stock"
 msgstr "刪除庫存"
 
-#: templates/js/translated/stock.js:2039
+#: templates/js/translated/stock.js:2037
 msgid "stock items"
 msgstr "庫存項"
 
-#: templates/js/translated/stock.js:2044
+#: templates/js/translated/stock.js:2042
 msgid "Scan to location"
 msgstr "掃描到位置"
 
-#: templates/js/translated/stock.js:2055
+#: templates/js/translated/stock.js:2053
 msgid "Stock Actions"
 msgstr "庫存操作"
 
-#: templates/js/translated/stock.js:2099
+#: templates/js/translated/stock.js:2097
 msgid "Load installed items"
 msgstr "加載已安裝的項目"
 
-#: templates/js/translated/stock.js:2177
+#: templates/js/translated/stock.js:2175
 msgid "Stock item is in production"
 msgstr "庫存項正在生產"
 
-#: templates/js/translated/stock.js:2182
+#: templates/js/translated/stock.js:2180
 msgid "Stock item assigned to sales order"
 msgstr "分配給銷售訂單的庫存項目"
 
-#: templates/js/translated/stock.js:2185
+#: templates/js/translated/stock.js:2183
 msgid "Stock item assigned to customer"
 msgstr "分配給客户的庫存項"
 
-#: templates/js/translated/stock.js:2188
+#: templates/js/translated/stock.js:2186
 msgid "Serialized stock item has been allocated"
 msgstr "已分配序列化庫存項"
 
-#: templates/js/translated/stock.js:2190
+#: templates/js/translated/stock.js:2188
 msgid "Stock item has been fully allocated"
 msgstr "庫存項目已完全分配"
 
-#: templates/js/translated/stock.js:2192
+#: templates/js/translated/stock.js:2190
 msgid "Stock item has been partially allocated"
 msgstr "庫存項目已部分分配"
 
-#: templates/js/translated/stock.js:2195
+#: templates/js/translated/stock.js:2193
 msgid "Stock item has been installed in another item"
 msgstr "庫存項目已安裝在另一個項目中"
 
-#: templates/js/translated/stock.js:2197
+#: templates/js/translated/stock.js:2195
 msgid "Stock item has been consumed by a build order"
 msgstr "庫存項已被生產訂單消耗"
 
-#: templates/js/translated/stock.js:2201
+#: templates/js/translated/stock.js:2199
 msgid "Stock item has expired"
 msgstr "庫存項已過期"
 
-#: templates/js/translated/stock.js:2203
+#: templates/js/translated/stock.js:2201
 msgid "Stock item will expire soon"
 msgstr "庫存項即將過期"
 
-#: templates/js/translated/stock.js:2208
+#: templates/js/translated/stock.js:2206
 msgid "Stock item has been rejected"
 msgstr "庫存項已被拒絕"
 
-#: templates/js/translated/stock.js:2210
+#: templates/js/translated/stock.js:2208
 msgid "Stock item is lost"
 msgstr "庫存項丟失了"
 
-#: templates/js/translated/stock.js:2212
+#: templates/js/translated/stock.js:2210
 msgid "Stock item is destroyed"
 msgstr "庫存項已銷燬"
 
-#: templates/js/translated/stock.js:2216
+#: templates/js/translated/stock.js:2214
 #: templates/js/translated/table_filters.js:357
 msgid "Depleted"
 msgstr "已用完"
 
-#: templates/js/translated/stock.js:2381
+#: templates/js/translated/stock.js:2379
 msgid "Supplier part not specified"
 msgstr "未指定供應商零件"
 
-#: templates/js/translated/stock.js:2428
+#: templates/js/translated/stock.js:2426
 msgid "Stock Value"
 msgstr "庫存值"
 
-#: templates/js/translated/stock.js:2556
+#: templates/js/translated/stock.js:2554
 msgid "No stock items matching query"
 msgstr "沒有符合查詢的庫存項目"
 
-#: templates/js/translated/stock.js:2659
+#: templates/js/translated/stock.js:2657
 msgid "stock locations"
 msgstr "庫存地點"
 
-#: templates/js/translated/stock.js:2814
+#: templates/js/translated/stock.js:2812
 msgid "Load Sublocations"
 msgstr "加載次級地點"
 
-#: templates/js/translated/stock.js:2931
+#: templates/js/translated/stock.js:2929
 msgid "Details"
 msgstr "詳情"
 
-#: templates/js/translated/stock.js:2935
+#: templates/js/translated/stock.js:2933
 msgid "No changes"
 msgstr "無更改"
 
-#: templates/js/translated/stock.js:2947
+#: templates/js/translated/stock.js:2945
 msgid "Part information unavailable"
 msgstr "零件信息不可用"
 
-#: templates/js/translated/stock.js:2969
+#: templates/js/translated/stock.js:2967
 msgid "Location no longer exists"
 msgstr "位置不再存在"
 
-#: templates/js/translated/stock.js:2986
+#: templates/js/translated/stock.js:2984
 msgid "Build order no longer exists"
 msgstr "生產訂單不再存在"
 
-#: templates/js/translated/stock.js:3001
+#: templates/js/translated/stock.js:2999
 msgid "Purchase order no longer exists"
 msgstr "採購訂單不再存在"
 
-#: templates/js/translated/stock.js:3018
+#: templates/js/translated/stock.js:3016
 msgid "Sales Order no longer exists"
 msgstr "銷售訂單不再存在"
 
-#: templates/js/translated/stock.js:3035
+#: templates/js/translated/stock.js:3033
 msgid "Return Order no longer exists"
 msgstr "退貨訂單已不存在"
 
-#: templates/js/translated/stock.js:3054
+#: templates/js/translated/stock.js:3052
 msgid "Customer no longer exists"
 msgstr "客户已不存在"
 
-#: templates/js/translated/stock.js:3072
+#: templates/js/translated/stock.js:3070
 msgid "Stock item no longer exists"
 msgstr "庫存項已不存在"
 
-#: templates/js/translated/stock.js:3090
+#: templates/js/translated/stock.js:3088
 msgid "Added"
 msgstr "已添加"
 
-#: templates/js/translated/stock.js:3098
+#: templates/js/translated/stock.js:3096
 msgid "Removed"
 msgstr "已刪除"
 
-#: templates/js/translated/stock.js:3170
+#: templates/js/translated/stock.js:3168
 msgid "No installed items"
 msgstr "沒有已安裝的項目"
 
-#: templates/js/translated/stock.js:3224 templates/js/translated/stock.js:3260
+#: templates/js/translated/stock.js:3222 templates/js/translated/stock.js:3258
 msgid "Uninstall Stock Item"
 msgstr "卸載庫存項"
 
-#: templates/js/translated/stock.js:3281
+#: templates/js/translated/stock.js:3279
 msgid "Select stock item to uninstall"
 msgstr "選擇要卸載的庫存項"
 
-#: templates/js/translated/stock.js:3302
+#: templates/js/translated/stock.js:3300
 msgid "Install another stock item into this item"
 msgstr "在此項中安裝另一個庫存項"
 
-#: templates/js/translated/stock.js:3303
+#: templates/js/translated/stock.js:3301
 msgid "Stock items can only be installed if they meet the following criteria"
 msgstr "只有滿足以下條件，才能安裝庫存項目"
 
-#: templates/js/translated/stock.js:3305
+#: templates/js/translated/stock.js:3303
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
 msgstr "庫存項鍊接到一個零件，該零件是此庫存項的物料清單"
 
-#: templates/js/translated/stock.js:3306
+#: templates/js/translated/stock.js:3304
 msgid "The Stock Item is currently available in stock"
 msgstr "該庫存項目前有庫存"
 
-#: templates/js/translated/stock.js:3307
+#: templates/js/translated/stock.js:3305
 msgid "The Stock Item is not already installed in another item"
 msgstr "庫存項目尚未安裝在其他項目中"
 
-#: templates/js/translated/stock.js:3308
+#: templates/js/translated/stock.js:3306
 msgid "The Stock Item is tracked by either a batch code or serial number"
 msgstr "庫存項被批號或序列號跟蹤"
 
-#: templates/js/translated/stock.js:3321
+#: templates/js/translated/stock.js:3319
 msgid "Select part to install"
 msgstr "選擇要安裝的零件"
 
-#: templates/js/translated/stock.js:3384
+#: templates/js/translated/stock.js:3382
 msgid "Select one or more stock items"
 msgstr "選擇一個或多個庫存項目"
 
-#: templates/js/translated/stock.js:3397
+#: templates/js/translated/stock.js:3395
 msgid "Selected stock items"
 msgstr "選定的庫存項"
 
-#: templates/js/translated/stock.js:3401
+#: templates/js/translated/stock.js:3399
 msgid "Change Stock Status"
 msgstr "更改庫存狀態"
-
-#: templates/js/translated/stock.js:3478
-msgid "This week"
-msgstr "本週"
-
-#: templates/js/translated/stock.js:3486
-msgid "This month"
-msgstr "本月"
 
 #: templates/js/translated/table_filters.js:73
 msgid "Has project code"
 msgstr "有項目編碼"
 
 #: templates/js/translated/table_filters.js:88
-#: templates/js/translated/table_filters.js:608
-#: templates/js/translated/table_filters.js:620
-#: templates/js/translated/table_filters.js:661
+#: templates/js/translated/table_filters.js:594
+#: templates/js/translated/table_filters.js:606
+#: templates/js/translated/table_filters.js:647
 msgid "Order status"
 msgstr "訂單狀態"
 
@@ -15024,12 +15009,12 @@ msgstr "具有位置類型"
 
 #: templates/js/translated/table_filters.js:285
 #: templates/js/translated/table_filters.js:286
-#: templates/js/translated/table_filters.js:714
+#: templates/js/translated/table_filters.js:700
 msgid "Include subcategories"
 msgstr "包括子類別"
 
 #: templates/js/translated/table_filters.js:294
-#: templates/js/translated/table_filters.js:767
+#: templates/js/translated/table_filters.js:753
 msgid "Subscribed"
 msgstr "已訂閲"
 
@@ -15071,7 +15056,7 @@ msgid "Batch code"
 msgstr "批號"
 
 #: templates/js/translated/table_filters.js:332
-#: templates/js/translated/table_filters.js:703
+#: templates/js/translated/table_filters.js:689
 msgid "Active parts"
 msgstr "激活的零件"
 
@@ -15168,64 +15153,56 @@ msgstr "測試通過"
 msgid "Include Installed Items"
 msgstr "包括已安裝的項目"
 
-#: templates/js/translated/table_filters.js:478
-msgid "Interval start"
-msgstr "間隔開始"
-
-#: templates/js/translated/table_filters.js:482
-msgid "Interval end"
-msgstr "間隔結束"
-
-#: templates/js/translated/table_filters.js:536
+#: templates/js/translated/table_filters.js:522
 msgid "Build status"
 msgstr "生產狀態"
 
-#: templates/js/translated/table_filters.js:715
+#: templates/js/translated/table_filters.js:701
 msgid "Include parts in subcategories"
 msgstr "在子類別中包含零件"
 
-#: templates/js/translated/table_filters.js:720
+#: templates/js/translated/table_filters.js:706
 msgid "Show active parts"
 msgstr "顯示活動零件"
 
-#: templates/js/translated/table_filters.js:725
+#: templates/js/translated/table_filters.js:711
 msgid "Show locked parts"
 msgstr "顯示鎖定的零件"
 
-#: templates/js/translated/table_filters.js:733
+#: templates/js/translated/table_filters.js:719
 msgid "Available stock"
 msgstr "可用庫存"
 
-#: templates/js/translated/table_filters.js:741
-#: templates/js/translated/table_filters.js:845
+#: templates/js/translated/table_filters.js:727
+#: templates/js/translated/table_filters.js:831
 msgid "Has Units"
 msgstr "有單位"
 
-#: templates/js/translated/table_filters.js:742
+#: templates/js/translated/table_filters.js:728
 msgid "Part has defined units"
 msgstr "零件已定義單位"
 
-#: templates/js/translated/table_filters.js:746
+#: templates/js/translated/table_filters.js:732
 msgid "Has IPN"
 msgstr "有內部零件號"
 
-#: templates/js/translated/table_filters.js:747
+#: templates/js/translated/table_filters.js:733
 msgid "Part has internal part number"
 msgstr "零件有內部零件號"
 
-#: templates/js/translated/table_filters.js:751
+#: templates/js/translated/table_filters.js:737
 msgid "In stock"
 msgstr "有庫存"
 
-#: templates/js/translated/table_filters.js:759
+#: templates/js/translated/table_filters.js:745
 msgid "Purchasable"
 msgstr "可購買的"
 
-#: templates/js/translated/table_filters.js:771
+#: templates/js/translated/table_filters.js:757
 msgid "Has stocktake entries"
 msgstr "有盤點記錄"
 
-#: templates/js/translated/table_filters.js:841
+#: templates/js/translated/table_filters.js:827
 msgid "Has Choices"
 msgstr "有選項"
 
@@ -15333,19 +15310,19 @@ msgstr "儲存"
 msgid "Show all notifications and history"
 msgstr "顯示所有通知和歷史記錄"
 
-#: templates/pui_banner.html:9
+#: templates/pui_banner.html:10
 msgid "Platform UI - the new UI for InvenTree - provides more modern administration options."
 msgstr "平台 UI - 新的 UI for InvenTree 提供了更現代化的管理選項。"
 
-#: templates/pui_banner.html:12
+#: templates/pui_banner.html:13
 msgid "Platform UI - the new UI for InvenTree - is ready to be tested."
 msgstr "平台界面-InvenTree的新界面-已準備就緒可供測試。"
 
-#: templates/pui_banner.html:15
+#: templates/pui_banner.html:16
 msgid "Try it out now"
 msgstr "現在試試"
 
-#: templates/pui_banner.html:15
+#: templates/pui_banner.html:16
 msgid "here"
 msgstr "這裏"
 
@@ -15493,14 +15470,6 @@ msgstr "電子郵件設置"
 #: templates/stats.html:78
 msgid "Email settings not configured"
 msgstr "電子郵件設置未配置"
-
-#: templates/test_statistics_table.html:13
-msgid "Passed"
-msgstr "已通過"
-
-#: templates/test_statistics_table.html:16
-msgid "Failed"
-msgstr "已失敗"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
