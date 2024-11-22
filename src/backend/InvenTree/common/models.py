@@ -3632,6 +3632,8 @@ class SelectionListEntry(models.Model):
     list = models.ForeignKey(
         SelectionList,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name='entries',
         verbose_name=_('Selection List'),
         help_text=_('Selection list to which this entry belongs'),

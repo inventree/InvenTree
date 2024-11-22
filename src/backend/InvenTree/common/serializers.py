@@ -660,6 +660,9 @@ class SelectionEntrySerializer(InvenTreeModelSerializer):
 class SelectionListSerializer(InvenTreeModelSerializer):
     """Serializer for a selection list."""
 
+    _choices = None
+    _choices_validated = None
+
     class Meta:
         """Meta options for SelectionListSerializer."""
 
@@ -679,7 +682,59 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         ]
 
     default = SelectionEntrySerializer(read_only=True, many=False)
-    choices = SelectionEntrySerializer(source='entries', read_only=True, many=True)
+    choices = SelectionEntrySerializer(source='entries', many=True)
+
+    def is_valid(self, *, raise_exception=False):
+        """Validate the selection list. Choices are validated separately."""
+        self._choices = self.initial_data.pop('choices')
+
+        # Validate the choices
+        _choices_validated = {}
+        db_entries = {a.id: a for a in self.instance.entries.all()}
+        for choice in self._choices:
+            serializer = SelectionEntrySerializer(
+                instance=db_entries.get(choice.get('id')), data={'list': None, **choice}
+            )
+            serializer.is_valid(raise_exception=raise_exception)
+            if s_id := serializer.data.get('id'):
+                _choices_validated[s_id] = serializer.validated_data
+        self._choices_validated = _choices_validated
+
+        return super().is_valid(raise_exception=raise_exception)
+
+    def create(self, validated_data):
+        """Create a new selection list. Save the choices separately."""
+        choices_data = validated_data.pop('choices')
+        list_entry = common_models.SelectionList.objects.create(**validated_data)
+        for choice_data in choices_data:
+            common_models.SelectionListEntry.objects.create(
+                list=list_entry, **choice_data
+            )
+        return list_entry
+
+    def update(self, instance, validated_data):
+        """Update an existing selection list. Save the choices separately."""
+        inst_mapping = {inst.id: inst for inst in instance.entries.all()}
+        exsising_ids = {a.get('id') for a in self._choices}
+
+        # Perform creations and updates.
+        ret = []
+        for choice_id, data in self._choices_validated.items():
+            list_inst = data.get('list', None)
+            inst = inst_mapping.get(choice_id)
+            if inst is None:
+                if list_inst is None:
+                    data['list'] = instance
+                ret.append(SelectionEntrySerializer().create(data))
+            else:
+                ret.append(SelectionEntrySerializer().update(inst, data))
+
+        # Perform deletions.
+        for book_id, inst in inst_mapping.items():
+            if book_id not in exsising_ids:
+                inst.delete()
+
+        return super().update(instance, validated_data)
 
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
