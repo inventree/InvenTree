@@ -98,7 +98,7 @@ services:
     # https://hub.docker.com/_/caddy
     inventree-proxy:
         container_name: inventree-proxy
-        image: caddy:alpine
+        image: inventree/inventree-caddy:latest
         restart: always
         depends_on:
             - inventree-server
@@ -108,7 +108,6 @@ services:
         env_file:
             - .env
         volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
             - ${INVENTREE_EXT_VOLUME}/static:/var/www/static:z
             - ${INVENTREE_EXT_VOLUME}/media:/var/www/media:z
             - ${INVENTREE_EXT_VOLUME}:/var/log:z
