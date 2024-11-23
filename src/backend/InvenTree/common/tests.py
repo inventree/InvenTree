@@ -1734,9 +1734,11 @@ class SelectionListTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['label'], 'Test Entry')
         self.assertEqual(response.data['description'], 'Test Description')
 
+    def test_api_1(self):
+        """Test adding and editing via the SelectionList."""
         # Test adding a new list via the API
         response = self.post(
-            url,
+            reverse('api-selectionlist-list'),
             {
                 'name': 'New List',
                 'active': True,
@@ -1761,11 +1763,12 @@ class SelectionListTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '2')
         self.assertEqual(response.data['choices'][0]['label'], 'New Label')
+        entry_id = response.data['choices'][0]['id']
 
         # Test changing an entry via list API
         response = self.patch(
             reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'value': '2', 'label': 'New Label Text'}]},
+            {'choices': [{'id': entry_id, 'value': '2', 'label': 'New Label Text'}]},
             expected_code=200,
         )
         self.assertEqual(response.data['name'], 'New List')

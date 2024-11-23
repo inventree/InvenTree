@@ -698,8 +698,10 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         )
 
         for choice in choices:
+            current_inst = db_entries.get(choice.get('id'))
             serializer = SelectionEntrySerializer(
-                instance=db_entries.get(choice.get('id')), data={'list': None, **choice}
+                instance=current_inst,
+                data={'list': current_inst.list.pk if current_inst else None, **choice},
             )
             serializer.is_valid(raise_exception=raise_exception)
             _choices_validated.append({
