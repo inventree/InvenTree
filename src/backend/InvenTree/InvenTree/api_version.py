@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 284
 
 INVENTREE_API_TEXT = """
 
-v284 - 2024-11-21 : https://github.com/inventree/InvenTree/pull/8054
+v284 - 2024-11-23 : https://github.com/inventree/InvenTree/pull/8054
     - Adds "SelectionList" and "SelectionListEntry" API endpoints
 
 v283 - 2024-11-20 : https://github.com/inventree/InvenTree/pull/8524
