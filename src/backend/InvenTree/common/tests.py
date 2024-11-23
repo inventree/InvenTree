@@ -1734,6 +1734,46 @@ class SelectionListTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['label'], 'Test Entry')
         self.assertEqual(response.data['description'], 'Test Description')
 
+        # Test adding a new list via the API
+        response = self.post(
+            url,
+            {
+                'name': 'New List',
+                'active': True,
+                'choices': [{'value': '1', 'label': 'Test Entry'}],
+            },
+            expected_code=201,
+        )
+        list_pk = response.data['pk']
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '1')
+
+        # Test editing the list choices via the API (remove and add in same call)
+        response = self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            {'choices': [{'value': '2', 'label': 'New Label'}]},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '2')
+        self.assertEqual(response.data['choices'][0]['label'], 'New Label')
+
+        # Test changing an entry via list API
+        response = self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            {'choices': [{'value': '2', 'label': 'New Label Text'}]},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '2')
+        self.assertEqual(response.data['choices'][0]['label'], 'New Label Text')
+
     def test_api_locked(self):
         """Test editing with locked/unlocked list."""
         # Lock list
