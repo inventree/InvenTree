@@ -1734,7 +1734,7 @@ class SelectionListTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['label'], 'Test Entry')
         self.assertEqual(response.data['description'], 'Test Description')
 
-    def test_api_1(self):
+    def test_api_update(self):
         """Test adding and editing via the SelectionList."""
         # Test adding a new list via the API
         response = self.post(
