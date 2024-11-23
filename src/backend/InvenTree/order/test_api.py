@@ -2,6 +2,7 @@
 
 import base64
 import io
+import json
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
@@ -15,6 +16,7 @@ from rest_framework import status
 
 from common.currency import currency_codes
 from common.models import InvenTreeSetting
+from common.settings import set_global_setting
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
@@ -255,6 +257,49 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(order.reference, 'PO-92233720368547758089999999999999999')
         self.assertEqual(order.reference_int, 0x7FFFFFFF)
+
+    def test_po_reference_wildcard_default(self):
+        """Test that a reference with a wildcard default."""
+        # get permissions
+        self.assignRole('purchase_order.add')
+
+        # set PO reference setting
+        set_global_setting('PURCHASEORDER_REFERENCE_PATTERN', '{?:PO}-{ref:04d}')
+
+        url = reverse('api-po-list')
+
+        # first, check that the default character is suggested by OPTIONS
+        options = json.loads(self.options(url).content)
+        suggested_reference = options['actions']['POST']['reference']['default']
+        self.assertTrue(suggested_reference.startswith('PO-'))
+
+        # next, check that certain variations of a provided reference are accepted
+        test_accepted_references = ['PO-9991', 'P-9992', 'T-9993', 'ABC-9994']
+        for ref in test_accepted_references:
+            response = self.post(
+                url,
+                {
+                    'supplier': 1,
+                    'reference': ref,
+                    'description': 'PO created via the API',
+                },
+                expected_code=201,
+            )
+            order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+            self.assertEqual(order.reference, ref)
+
+        # finally, check that certain provided referencees are rejected (because the wildcard character is required!)
+        test_rejected_references = ['9995', '-9996']
+        for ref in test_rejected_references:
+            response = self.post(
+                url,
+                {
+                    'supplier': 1,
+                    'reference': ref,
+                    'description': 'PO created via the API',
+                },
+                expected_code=400,
+            )
 
     def test_po_attachments(self):
         """Test the list endpoint for the PurchaseOrderAttachment model."""
