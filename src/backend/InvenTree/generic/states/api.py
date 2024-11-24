@@ -137,6 +137,7 @@ class CustomStateList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['key']
     search_fields = ['key', 'name', 'label', 'reference_status']
+    filterset_fields = ['model', 'reference_status']
 
 
 class CustomStateDetail(RetrieveUpdateDestroyAPI):

@@ -21,6 +21,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalStatusState } from '../../states/StatusState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -43,12 +44,28 @@ export default function CustomStateTable() {
         (value: StatusCodeInterface) => value.key === key
       );
 
-      return value?.label ?? '';
+      return value?.label ?? value?.name ?? '';
     },
     [statusCodes]
   );
 
   const user = useUserState();
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'reference_status',
+        label: t`Status Group`,
+        field_type: 'choice',
+        choices: Object.values(statusCodes.status ?? {}).map(
+          (value: StatusCodeListInterface) => ({
+            label: value.status_class,
+            value: value.status_class
+          })
+        )
+      }
+    ];
+  }, [statusCodes]);
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -173,6 +190,7 @@ export default function CustomStateTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           enableDownload: true
         }}
       />
