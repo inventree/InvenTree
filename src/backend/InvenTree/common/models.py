@@ -3607,7 +3607,7 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
 
     def get_choices(self):
         """Return the choices for the selection list."""
-        choices = SelectionListEntry.objects.filter(list=self, active=True)
+        choices = self.entries.filter(active=True)
         return [c.value for c in choices]
 
 
