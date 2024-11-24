@@ -72,6 +72,21 @@ class StatusView(GenericAPIView):
 
         data = {'class': status_class.__name__, 'values': status_class.dict()}
 
+        # Extend with custom values
+        try:
+            custom_values = status_class.custom_values()
+            for item in custom_values:
+                if item.name not in data['values']:
+                    data['values'][item.name] = {
+                        'color': item.color,
+                        'logical_key': item.logical_key,
+                        'key': item.key,
+                        'label': item.label,
+                        'name': item.name,
+                    }
+        except Exception:
+            pass
+
         return Response(data)
 
 
