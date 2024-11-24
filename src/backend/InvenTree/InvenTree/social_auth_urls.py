@@ -195,8 +195,6 @@ class SocialProviderListView(ListAPI):
                 provider
             )
 
-            # OIDC provider
-
             provider_list.append(provider_data)
 
         data = {
