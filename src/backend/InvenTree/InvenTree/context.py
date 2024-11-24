@@ -1,9 +1,9 @@
 """Provides extra global data to all templates."""
 
+import InvenTree.helpers
 import InvenTree.helpers_email
 import InvenTree.ready
 import InvenTree.status
-from generic.states.custom import get_custom_classes
 from users.models import RuleSet, check_user_role
 
 
@@ -50,10 +50,15 @@ def status_codes(request):
         # Do not duplicate efforts
         return {}
 
+    from generic.states import StatusCode
+
     request._inventree_status_codes = True
+
     get_custom = InvenTree.ready.isRebuildingData() is False
+
     return {
-        cls.__name__: cls.template_context() for cls in get_custom_classes(get_custom)
+        cls.__name__: cls.template_context(custom=get_custom)
+        for cls in InvenTree.helpers.inheritors(StatusCode)
     }
 
 
