@@ -19,6 +19,7 @@ from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
 from machine.machine_type import MachineStatus
 
+from .serializers import GenericStateClassSerializer
 from .states import StatusCode
 
 
@@ -38,6 +39,7 @@ class StatusView(GenericAPIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = GenericStateClassSerializer
 
     # Override status_class for implementing subclass
     MODEL_REF = 'statusmodel'
@@ -56,7 +58,7 @@ class StatusView(GenericAPIView):
     @extend_schema(
         description='Retrieve information about a specific status code',
         responses={
-            200: OpenApiResponse(description='Status code information'),
+            200: GenericStateClassSerializer,
             400: OpenApiResponse(description='Invalid request'),
         },
     )
@@ -87,7 +89,9 @@ class StatusView(GenericAPIView):
         except Exception:
             pass
 
-        return Response(data)
+        serializer = GenericStateClassSerializer(data, many=False)
+
+        return Response(serializer.data)
 
 
 class AllStatusViews(StatusView):
