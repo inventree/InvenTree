@@ -55,7 +55,7 @@ import plugin.base.barcodes.helper
 import report.helpers
 import users.models
 from generic.states import ColorEnum
-from generic.states.custom import get_custom_classes, state_color_mappings
+from generic.states.custom import state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
@@ -3415,6 +3415,13 @@ class InvenTreeCustomUserStateModel(models.Model):
 
     """
 
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        verbose_name = _('Custom State')
+        verbose_name_plural = _('Custom States')
+        unique_together = [('reference_status', 'key'), ('reference_status', 'name')]
+
     reference_status = models.CharField(
         max_length=250,
         verbose_name=_('Reference Status Set'),
@@ -3466,13 +3473,6 @@ class InvenTreeCustomUserStateModel(models.Model):
         help_text=_('Model this state is associated with'),
     )
 
-    class Meta:
-        """Metaclass options for this mixin."""
-
-        verbose_name = _('Custom State')
-        verbose_name_plural = _('Custom States')
-        unique_together = [['model', 'reference_status', 'key', 'logical_key']]
-
     def __str__(self) -> str:
         """Return string representation of the custom state."""
         return f'{self.model.name} ({self.reference_status}): {self.name} | {self.key} ({self.logical_key})'
@@ -3497,41 +3497,49 @@ class InvenTreeCustomUserStateModel(models.Model):
         if self.key == self.logical_key:
             raise ValidationError({'key': _('Key must be different from logical key')})
 
-        if self.reference_status is None or self.reference_status == '':
+        # Check against the reference status class
+        status_class = self.get_status_class()
+
+        if not status_class:
             raise ValidationError({
-                'reference_status': _('Reference status must be selected')
+                'reference_status': _('Valid reference status class must be provided')
             })
 
-        # Ensure that the key is not in the range of the logical keys of the reference status
-        ref_set = list(
-            filter(
-                lambda x: x.__name__ == self.reference_status,
-                get_custom_classes(include_custom=False),
-            )
-        )
-
-        if len(ref_set) == 0:
-            raise ValidationError({
-                'reference_status': _('Reference status set not found')
-            })
-
-        ref_set = ref_set[0]
-
-        if self.key in ref_set.keys():  # noqa: SIM118
+        if self.key in status_class.values():
             raise ValidationError({
                 'key': _(
                     'Key must be different from the logical keys of the reference status'
                 )
             })
 
-        if self.logical_key not in ref_set.keys():  # noqa: SIM118
+        if self.logical_key not in status_class.values():
             raise ValidationError({
                 'logical_key': _(
                     'Logical key must be in the logical keys of the reference status'
                 )
             })
 
+        if self.name in status_class.names():
+            raise ValidationError({
+                'name': _(
+                    'Name must be different from the names of the reference status'
+                )
+            })
+
         return super().clean()
+
+    def get_status_class(self):
+        """Return the appropriate status class for this custom state."""
+        from generic.states import StatusCode
+        from InvenTree.helpers import inheritors
+
+        if not self.reference_status:
+            return None
+
+        # Return the first class that matches the reference status
+        for cls in inheritors(StatusCode):
+            if cls.__name__ == self.reference_status:
+                return cls
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
