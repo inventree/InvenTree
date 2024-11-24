@@ -30,9 +30,9 @@ class GenericStateClassSerializer(serializers.Serializer):
     class Meta:
         """Meta class for GenericStateClassSerializer."""
 
-        fields = ['class', 'values']
+        fields = ['class_name', 'values']
 
-    class_ = serializers.CharField(label=_('Class'), read_only=True)
+    class_name = serializers.CharField(label=_('Class'), read_only=True)
 
     values = serializers.DictField(
         child=GenericStateValueSerializer(), label=_('Values'), required=True

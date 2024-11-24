@@ -11,13 +11,11 @@ from rest_framework.response import Response
 
 import common.models
 import common.serializers
-from generic.states.custom import get_status_api_response
 from importer.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
-from machine.machine_type import MachineStatus
 
 from .serializers import GenericStateClassSerializer
 from .states import StatusCode
@@ -72,7 +70,7 @@ class StatusView(GenericAPIView):
         if not issubclass(status_class, StatusCode):
             raise NotImplementedError('`status_class` not a valid StatusCode class')
 
-        data = {'class': status_class.__name__, 'values': status_class.dict()}
+        data = {'class_name': status_class.__name__, 'values': status_class.dict()}
 
         # Extend with custom values
         try:
@@ -102,10 +100,29 @@ class AllStatusViews(StatusView):
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        data = get_status_api_response(StatusCode)
+        from InvenTree.helpers import inheritors
 
-        # Extend with MachineStatus classes
-        data.update(get_status_api_response(MachineStatus, prefix=['MachineStatus']))
+        data = {}
+
+        # Find all inherited status classes
+        status_classes = inheritors(StatusCode)
+
+        for cls in status_classes:
+            cls_data = {'class_name': cls.__name__, 'values': cls.dict()}
+
+            # Extend with custom values
+            for item in cls.custom_values():
+                label = str(item.name)
+                if label not in cls_data['values']:
+                    cls_data['values'][label] = {
+                        'color': item.color,
+                        'logical_key': item.logical_key,
+                        'key': item.key,
+                        'label': item.label,
+                        'name': item.name,
+                    }
+
+            data[cls.__name__] = GenericStateClassSerializer(cls_data, many=False).data
 
         return Response(data)
 
