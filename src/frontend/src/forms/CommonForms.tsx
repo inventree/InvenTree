@@ -30,7 +30,7 @@ export function useCustomStateFields(): ApiFormFieldSet {
     const options: any[] = [];
 
     const valuesList = Object.values(statusCodes.status ?? {}).find(
-      (value: StatusCodeListInterface) => value.statusClass === statusClass
+      (value: StatusCodeListInterface) => value.status_class === statusClass
     );
 
     Object.values(valuesList?.values ?? {}).forEach(

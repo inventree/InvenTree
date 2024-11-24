@@ -36,7 +36,7 @@ export default function CustomStateTable() {
   const getLogicalState = useCallback(
     (group: string, key: number) => {
       const valuesList = Object.values(statusCodes.status ?? {}).find(
-        (value: StatusCodeListInterface) => value.statusClass === group
+        (value: StatusCodeListInterface) => value.status_class === group
       );
 
       const value = Object.values(valuesList?.values ?? {}).find(

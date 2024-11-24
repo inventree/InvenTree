@@ -13,7 +13,7 @@ export interface StatusCodeInterface {
 }
 
 export interface StatusCodeListInterface {
-  statusClass: string;
+  status_class: string;
   values: {
     [key: string]: StatusCodeInterface;
   };

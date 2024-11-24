@@ -70,7 +70,7 @@ class StatusView(GenericAPIView):
         if not issubclass(status_class, StatusCode):
             raise NotImplementedError('`status_class` not a valid StatusCode class')
 
-        data = {'class_name': status_class.__name__, 'values': status_class.dict()}
+        data = {'status_class': status_class.__name__, 'values': status_class.dict()}
 
         # Extend with custom values
         try:
@@ -108,7 +108,7 @@ class AllStatusViews(StatusView):
         status_classes = inheritors(StatusCode)
 
         for cls in status_classes:
-            cls_data = {'class_name': cls.__name__, 'values': cls.dict()}
+            cls_data = {'status_class': cls.__name__, 'values': cls.dict()}
 
             # Extend with custom values
             for item in cls.custom_values():
