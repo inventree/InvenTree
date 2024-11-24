@@ -23,7 +23,12 @@ import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '../RowActions';
 
 /**
  * Table for displaying list of custom states
@@ -118,12 +123,23 @@ export default function CustomStateTable() {
   }, [getLogicalState]);
 
   const newCustomStateFields = useCustomStateFields();
+  const duplicateCustomStateFields = useCustomStateFields();
   const editCustomStateFields = useCustomStateFields();
+
+  const [initialStateData, setInitialStateData] = useState<any>({});
 
   const newCustomState = useCreateApiFormModal({
     url: ApiEndpoints.custom_state_list,
     title: t`Add State`,
     fields: newCustomStateFields,
+    table: table
+  });
+
+  const duplicateCustomState = useCreateApiFormModal({
+    url: ApiEndpoints.custom_state_list,
+    title: t`Add State`,
+    fields: duplicateCustomStateFields,
+    initialData: initialStateData,
     table: table
   });
 
@@ -156,6 +172,13 @@ export default function CustomStateTable() {
             editCustomState.open();
           }
         }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.admin),
+          onClick: () => {
+            setInitialStateData(record);
+            duplicateCustomState.open();
+          }
+        }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.admin),
           onClick: () => {
@@ -172,7 +195,10 @@ export default function CustomStateTable() {
     return [
       <AddItemButton
         key={'add'}
-        onClick={() => newCustomState.open()}
+        onClick={() => {
+          setInitialStateData({});
+          newCustomState.open();
+        }}
         tooltip={t`Add State`}
       />
     ];
@@ -182,6 +208,7 @@ export default function CustomStateTable() {
     <>
       {newCustomState.modal}
       {editCustomState.modal}
+      {duplicateCustomState.modal}
       {deleteCustomState.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.custom_state_list)}
