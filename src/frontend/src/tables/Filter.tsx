@@ -173,6 +173,24 @@ export function TargetDateAfterFilter(): TableFilter {
   };
 }
 
+export function CompletedBeforeFilter(): TableFilter {
+  return {
+    name: 'completed_before',
+    label: t`Completed Before`,
+    description: t`Show items completed before this date`,
+    type: 'date'
+  };
+}
+
+export function CompletedAfterFilter(): TableFilter {
+  return {
+    name: 'completed_after',
+    label: t`Completed After`,
+    description: t`Show items completed after this date`,
+    type: 'date'
+  };
+}
+
 export function HasProjectCodeFilter(): TableFilter {
   return {
     name: 'has_project_code',
