@@ -1,4 +1,4 @@
-"""The TMEPlugin is meant to integrate the TME API into Inventree.
+"""The TMEPlugin is meant to integrate the TME API into InvenTree.
 
 This plugin can currently only match TME barcodes to supplier parts.
 """
@@ -12,7 +12,7 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 
 class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
-    """Plugin to integrate the TME API into Inventree."""
+    """Plugin to integrate the TME API into InvenTree."""
 
     NAME = 'TMEPlugin'
     TITLE = _('Supplier Integration - TME')
