@@ -81,6 +81,7 @@ export default function ImporterDrawer({
       case importSessionStatus.COMPLETE:
         return 4;
       default:
+        return 0;
     }
   }, [session.status]);
 
