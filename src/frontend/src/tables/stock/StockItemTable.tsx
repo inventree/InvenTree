@@ -412,39 +412,39 @@ function stockItemTableFilters({
     {
       name: 'expiry_before',
       label: t`Expired Before`,
-      description: t`Show items which have expired before a given date`,
+      description: t`Show items which expired before this date`,
       type: 'date',
       active: enableExpiry
     },
     {
       name: 'expiry_after',
       label: t`Expired After`,
-      description: t`Show items which have expired after a given date`,
+      description: t`Show items which expired after this date`,
       type: 'date',
       active: enableExpiry
     },
     {
       name: 'updated_before',
       label: t`Updated Before`,
-      description: t`Show items which have been updated before a given date`,
+      description: t`Show items updated before this date`,
       type: 'date'
     },
     {
       name: 'updated_after',
       label: t`Updated After`,
-      description: t`Show items which have been updated after a given date`,
+      description: t`Show items updated after this date`,
       type: 'date'
     },
     {
       name: 'stocktake_before',
       label: t`Stocktake Before`,
-      description: t`Show items which have been counted before a given date`,
+      description: t`Show items counted before this date`,
       type: 'date'
     },
     {
       name: 'stocktake_after',
       label: t`Stocktake After`,
-      description: t`Show items which have been counted after a given date`,
+      description: t`Show items counted after this date`,
       type: 'date'
     },
     {

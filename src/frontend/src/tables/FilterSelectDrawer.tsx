@@ -95,6 +95,7 @@ function FilterElement({
           placeholder={t`Enter filter value`}
           rightSection={
             <ActionIcon
+              aria-label='apply-text-filter'
               variant='transparent'
               onClick={() => onValueChange(textValue)}
             >
