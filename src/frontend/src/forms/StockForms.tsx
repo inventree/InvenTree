@@ -159,7 +159,7 @@ export function useStockFields({
         hidden:
           create ||
           partInstance.trackable == false ||
-          (!stockItem?.quantity != undefined && stockItem?.quantity != 1)
+          (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
         placeholder: nextBatchCode
