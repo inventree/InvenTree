@@ -43,12 +43,7 @@ def filter_queryset(queryset, **kwargs) -> list:
     Example:
         {% filter_queryset companies is_supplier=True as suppliers %}
     """
-    results = queryset.filter(**kwargs)
-
-    # Return the filtered queryset, which can be assigned to a new variable
-    # Note that we return a list, not a queryset, to ensure that the results are evaluated before being passed to the template
-    # This prevents a malicious user from using the queryset in nefarious ways
-    return list(results)
+    return queryset.filter(**kwargs)
 
 
 @register.simple_tag()
