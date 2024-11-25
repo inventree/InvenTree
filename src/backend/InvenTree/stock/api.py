@@ -807,10 +807,19 @@ class StockFilter(rest_filters.FilterSet):
 
     # Update date filters
     updated_before = InvenTreeDateFilter(
-        label='Updated before', field_name='updated', lookup_expr='lte'
+        label=_('Updated before'), field_name='updated', lookup_expr='lte'
     )
+
     updated_after = InvenTreeDateFilter(
-        label='Updated after', field_name='updated', lookup_expr='gte'
+        label=_('Updated after'), field_name='updated', lookup_expr='gte'
+    )
+
+    stocktake_before = InvenTreeDateFilter(
+        label=_('Stocktake Before'), field_name='stocktake_date', lookup_expr='lte'
+    )
+
+    stocktake_after = InvenTreeDateFilter(
+        label=_('Stocktake After'), field_name='stocktake_date', lookup_expr='gte'
     )
 
     # Stock "expiry" filters
