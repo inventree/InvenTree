@@ -1,7 +1,7 @@
 """JSON serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import OuterRef, Subquery
+from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -678,10 +678,17 @@ class SelectionListSerializer(InvenTreeModelSerializer):
             'created',
             'last_updated',
             'choices',
+            'entry_count',
         ]
 
     default = SelectionEntrySerializer(read_only=True, many=False)
     choices = SelectionEntrySerializer(source='entries', many=True, required=False)
+    entry_count = serializers.IntegerField(read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add count of entries for each selection list."""
+        return queryset.annotate(entry_count=Count('entries'))
 
     def is_valid(self, *, raise_exception=False):
         """Validate the selection list. Choices are validated separately."""

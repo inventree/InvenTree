@@ -49,6 +49,9 @@ export default function SelectionListTable() {
       {
         accessor: 'source_string',
         sortable: true
+      },
+      {
+        accessor: 'entry_count'
       }
     ];
   }, []);

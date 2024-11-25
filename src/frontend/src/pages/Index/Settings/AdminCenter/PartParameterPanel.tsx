@@ -7,19 +7,23 @@ import SelectionListTable from '../../../../tables/part/SelectionListTable';
 
 export default function PartParameterPanel() {
   return (
-    <>
-      <PartParameterTemplateTable />
-
-      <Accordion>
-        <Accordion.Item value='selectionlist' key='selectionlist'>
-          <Accordion.Control>
-            <StylishText size='lg'>{t`Selection Lists`}</StylishText>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <SelectionListTable />
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-    </>
+    <Accordion defaultValue='parametertemplate'>
+      <Accordion.Item value='parametertemplate' key='parametertemplate'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Part Parameter Template`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <PartParameterTemplateTable />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value='selectionlist' key='selectionlist'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Selection Lists`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <SelectionListTable />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }

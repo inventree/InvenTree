@@ -815,6 +815,10 @@ class SelectionListList(ListCreateAPI):
     serializer_class = common.serializers.SelectionListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        """Override the queryset method to include entry count."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
 
 class SelectionListDetail(RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionList object."""
