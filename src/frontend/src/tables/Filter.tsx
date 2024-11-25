@@ -17,8 +17,9 @@ export type TableFilterChoice = {
  * boolean: A simple true/false filter
  * choice: A filter which allows selection from a list of (supplied)
  * date: A filter which allows selection from a date input
+ * text: A filter which allows raw text input
  */
-export type TableFilterType = 'boolean' | 'choice' | 'date';
+export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
 
 /**
  * Interface for the table filter type. Provides a number of options for selecting filter value:
