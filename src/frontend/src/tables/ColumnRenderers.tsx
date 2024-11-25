@@ -242,6 +242,14 @@ export function CreationDateColumn(props: TableColumnProps): TableColumn {
   });
 }
 
+export function CompletionDateColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'completion_date',
+    title: t`Completion Date`,
+    ...props
+  });
+}
+
 export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'shipment_date',
