@@ -57,7 +57,7 @@ class CleanMixin:
         Ref: https://github.com/mozilla/bleach/issues/192
 
         """
-        cleaned = strip_html_tags(data, field_name=field)
+        cleaned = data
 
         # By default, newline characters are removed
         remove_newline = True
@@ -85,6 +85,8 @@ class CleanMixin:
         cleaned = remove_non_printable_characters(
             cleaned, remove_newline=remove_newline
         )
+
+        cleaned = strip_html_tags(cleaned, field_name=field)
 
         if is_markdown:
             cleaned = clean_markdown(cleaned)
