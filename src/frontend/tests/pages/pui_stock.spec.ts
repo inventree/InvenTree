@@ -1,5 +1,6 @@
 import { test } from '../baseFixtures.js';
 import { baseUrl } from '../defaults.js';
+import { clickButtonIfVisible, openFilterDrawer } from '../helpers.js';
 import { doQuickLogin } from '../login.js';
 
 test('Stock - Basic Tests', async ({ page }) => {
@@ -54,15 +55,9 @@ test('Stock - Filters', async ({ page }) => {
 
   await page.goto(`${baseUrl}/stock/location/index/`);
   await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page.getByLabel('table-select-filters').click();
 
-  // Clear filters if they exist
-  await page.waitForTimeout(500);
-
-  // Check if the "Clear Filters" button exists
-  if (await page.getByRole('button', { name: 'Clear Filters' }).isVisible()) {
-    await page.getByRole('button', { name: 'Clear Filters' }).click();
-  }
+  await openFilterDrawer(page);
+  await clickButtonIfVisible(page, 'Clear Filters');
 
   // Filter by updated date
   await page.getByRole('button', { name: 'Add Filter' }).click();
@@ -90,8 +85,8 @@ test('Stock - Filters', async ({ page }) => {
     .waitFor();
 
   // Clear filters (ready for next set of tests)
-  await page.getByLabel('table-select-filters').click();
-  await page.getByRole('button', { name: 'Clear Filters' }).click();
+  await openFilterDrawer(page);
+  await clickButtonIfVisible(page, 'Clear Filters');
 });
 
 test('Stock - Serial Numbers', async ({ page }) => {
