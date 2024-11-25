@@ -191,6 +191,14 @@ class PurchaseOrderFilter(OrderFilter):
         model = models.PurchaseOrder
         fields = ['supplier']
 
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
+
 
 class PurchaseOrderMixin:
     """Mixin class for PurchaseOrder endpoints."""
@@ -667,6 +675,14 @@ class SalesOrderFilter(OrderFilter):
 
         # Now we have a list of matching IDs, filter the queryset
         return queryset.filter(pk__in=sales_orders)
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='shipment_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='shipment_date', lookup_expr='gt'
+    )
 
 
 class SalesOrderMixin:
@@ -1276,6 +1292,14 @@ class ReturnOrderFilter(OrderFilter):
 
         # Now we have a list of matching IDs, filter the queryset
         return queryset.filter(pk__in=return_orders)
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
 
 
 class ReturnOrderMixin:
