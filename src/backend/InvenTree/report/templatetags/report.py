@@ -8,6 +8,7 @@ from decimal import Decimal
 from typing import Any, Optional
 
 from django import template
+from django.apps.registry import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import SafeString, mark_safe
@@ -27,6 +28,52 @@ register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+@register.simple_tag()
+def filter_queryset(queryset, **kwargs) -> list:
+    """Filter a database queryset based on the provided keyword arguments.
+
+    Arguments:
+        queryset: The queryset to filter
+
+    Keyword Arguments:
+        Any keyword arguments will be used to filter the queryset
+
+    Example:
+        {% filter_queryset companies is_supplier=True as suppliers %}
+    """
+    results = queryset.filter(**kwargs)
+
+    # Return the filtered queryset, which can be assigned to a new variable
+    # Note that we return a list, not a queryset, to ensure that the results are evaluated before being passed to the template
+    # This prevents a malicious user from using the queryset in nefarious ways
+    return list(results)
+
+
+@register.simple_tag()
+def filter_db_model(model_name, **kwargs) -> list:
+    """Filter a database model based on the provided keyword arguments.
+
+    Arguments:
+        model_name: The name of the Django model - including app name (e.g. 'part.partcategory')
+
+    Keyword Arguments:
+        Any keyword arguments will be used to filter the model
+
+    Example:
+        {% filter_db_model 'part.partcategory' is_template=True as template_parts %}
+    """
+    app_name, model_name = model_name.split('.')
+
+    model = apps.get_model(app_name, model_name)
+
+    if model is None:
+        return []
+
+    queryset = model.objects.all()
+
+    return filter_queryset(queryset, **kwargs)
 
 
 @register.simple_tag()
