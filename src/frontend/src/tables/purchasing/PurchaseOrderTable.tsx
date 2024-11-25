@@ -25,6 +25,8 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasProjectCodeFilter,
@@ -72,6 +74,8 @@ export function PurchaseOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
