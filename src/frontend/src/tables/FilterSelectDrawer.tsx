@@ -152,6 +152,7 @@ function FilterAddGroup({
     return (
       availableFilters
         ?.filter((flt) => !activeFilterNames.includes(flt.name))
+        ?.sort((a, b) => a.label.localeCompare(b.label))
         ?.map((flt) => ({
           value: flt.name,
           label: flt.label,
