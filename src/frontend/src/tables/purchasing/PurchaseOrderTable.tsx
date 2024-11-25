@@ -14,6 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -120,6 +121,9 @@ export function PurchaseOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
+      CompletionDateColumn({
+        accessor: 'complete_date'
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,

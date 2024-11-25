@@ -305,6 +305,7 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
         'reference',
         'supplier__name',
         'target_date',
+        'complete_date',
         'line_items',
         'status',
         'responsible',
