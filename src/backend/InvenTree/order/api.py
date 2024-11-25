@@ -191,6 +191,33 @@ class PurchaseOrderFilter(OrderFilter):
         model = models.PurchaseOrder
         fields = ['supplier']
 
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
+    )
+
+    def filter_part(self, queryset, name, part: Part):
+        """Filter by provided Part instance."""
+        orders = part.purchase_orders()
+
+        return queryset.filter(pk__in=[o.pk for o in orders])
+
+    supplier_part = rest_filters.ModelChoiceFilter(
+        queryset=company.models.SupplierPart.objects.all(),
+        label=_('Supplier Part'),
+        method='filter_supplier_part',
+    )
+
+    def filter_supplier_part(
+        self, queryset, name, supplier_part: company.models.SupplierPart
+    ):
+        """Filter by provided SupplierPart instance."""
+        orders = supplier_part.purchase_orders()
+
+        return queryset.filter(pk__in=[o.pk for o in orders])
+
     completed_before = InvenTreeDateFilter(
         label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
     )
@@ -248,32 +275,6 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
-
-        # Attempt to filter by part
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(
-                    id__in=[p.id for p in part.purchase_orders()]
-                )
-            except (Part.DoesNotExist, ValueError):
-                pass
-
-        # Attempt to filter by supplier part
-        supplier_part = params.get('supplier_part', None)
-
-        if supplier_part is not None:
-            try:
-                supplier_part = company.models.SupplierPart.objects.get(
-                    pk=supplier_part
-                )
-                queryset = queryset.filter(
-                    id__in=[p.id for p in supplier_part.purchase_orders()]
-                )
-            except (ValueError, company.models.SupplierPart.DoesNotExist):
-                pass
 
         # Filter by 'date range'
         min_date = params.get('min_date', None)
