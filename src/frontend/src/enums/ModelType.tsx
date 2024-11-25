@@ -22,6 +22,7 @@ export enum ModelType {
   salesorder = 'salesorder',
   salesordershipment = 'salesordershipment',
   returnorder = 'returnorder',
+  returnorderlineitem = 'returnorderlineitem',
   importsession = 'importsession',
   address = 'address',
   contact = 'contact',
@@ -30,5 +31,7 @@ export enum ModelType {
   group = 'group',
   reporttemplate = 'reporttemplate',
   labeltemplate = 'labeltemplate',
-  pluginconfig = 'pluginconfig'
+  pluginconfig = 'pluginconfig',
+  contenttype = 'contenttype',
+  error = 'error'
 }

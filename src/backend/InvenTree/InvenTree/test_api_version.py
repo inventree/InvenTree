@@ -13,12 +13,12 @@ class ApiVersionTests(InvenTreeAPITestCase):
     def test_api(self):
         """Test that the API text is correct."""
         url = reverse('api-version-text')
-        response = self.client.get(url, format='json')
+        response = self.get(url, format='json')
         data = response.json()
 
         self.assertEqual(len(data), 10)
 
-        response = self.client.get(reverse('api-version'), format='json').json()
+        response = self.get(reverse('api-version')).json()
         self.assertIn('version', response)
         self.assertIn('dev', response)
         self.assertIn('up_to_date', response)

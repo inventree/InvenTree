@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -15,15 +15,17 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
  */
-export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
+export function ManufacturerPartTable({
+  params
+}: Readonly<{ params: any }>): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
@@ -35,13 +37,13 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         accessor: 'part',
         switchable: 'part' in params,
         sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'manufacturer',
         sortable: true,
         render: (record: any) => {
-          let manufacturer = record?.manufacturer_detail ?? {};
+          const manufacturer = record?.manufacturer_detail ?? {};
 
           return (
             <Thumbnail
@@ -94,12 +96,13 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   });
 
   const tableActions = useMemo(() => {
-    let can_add =
+    const can_add =
       user.hasAddRole(UserRoles.purchase_order) &&
       user.hasAddRole(UserRoles.part);
 
     return [
       <AddItemButton
+        key='add-manufacturer-part'
         tooltip={t`Add Manufacturer Part`}
         onClick={() => createManufacturerPart.open()}
         hidden={!can_add}
@@ -108,7 +111,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),

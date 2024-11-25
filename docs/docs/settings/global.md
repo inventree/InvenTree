@@ -17,120 +17,139 @@ Global settings are arranged in the following categories:
 
 ### Server Settings
 
-Configuration of basic server settings.
+Configuration of basic server settings:
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| InvenTree Instance Name | String | String descriptor for the InvenTree server instance | InvenTree Server |
-| Use Instance Name | Boolean | Use instance name in title bars | False |
-| Restrict showing `about` | Boolean | Show the `about` modal only to superusers | False |
-| Base URL | String | Base URL for server instance | *blank* |
-| Company Name | String | Company name | My company name |
-| Download from URL | Boolean | Allow downloading of images from remote URLs | False |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("INVENTREE_BASE_URL") }}
+{{ globalsetting("INVENTREE_COMPANY_NAME") }}
+{{ globalsetting("INVENTREE_INSTANCE") }}
+{{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
+{{ globalsetting("INVENTREE_RESTRICT_ABOUT") }}
+{{ globalsetting("DISPLAY_FULL_NAMES") }}
+{{ globalsetting("INVENTREE_UPDATE_CHECK_INTERVAL") }}
+{{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
+{{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
+{{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT") }}
+{{ globalsetting("INVENTREE_REQUIRE_CONFIRM") }}
+{{ globalsetting("INVENTREE_STRICT_URLS") }}
+{{ globalsetting("INVENTREE_TREE_DEPTH") }}
+{{ globalsetting("INVENTREE_BACKUP_ENABLE") }}
+{{ globalsetting("INVENTREE_BACKUP_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_ERRORS_DAYS") }}
+{{ globalsetting("INVENTREE_DELETE_NOTIFICATIONS_DAYS") }}
+
 
 ### Login Settings
 
-Change how logins, password-forgot, signups are handled.
+Change how logins, password-forgot, signups are handled:
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Enable registration | Boolean | Enable self-registration for users on the login-pages | False |
-| Enable SSO | Boolean | Enable SSO on the login-pages | False |
-| Enable SSO registration | Boolean | Enable self-registration for users via SSO on the login-pages | False |
-| Enable SSO group sync | Boolean | Enable synchronizing InvenTree groups directly from the IdP | False |
-| SSO group key | String | The name of the groups claim attribute provided by the IdP | |
-| SSO group map | String (JSON) | A mapping from SSO groups to local InvenTree groups | {} |
-| Remove groups outside of SSO | Boolean | Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues | True |
-| Enable password forgot | Boolean | Enable password forgot function on the login-pages.<br><br>This will let users reset their passwords on their own. For this feature to work you need to configure E-mail | True |
-| E-Mail required | Boolean | Require user to supply e-mail on signup.<br><br>Without a way (e-mail) to contact the user notifications and security features might not work! | False |
-| Enforce MFA | Boolean | Users must use multifactor security.<br><br>This forces each user to setup MFA and use it on each authentication | False |
-| Mail twice | Boolean | On signup ask users twice for their mail | False |
-| Password twice | Boolean | On signup ask users twice for their password | True |
-| Auto-fill SSO users | Boolean | Automatically fill out user-details from SSO account-data.<br><br>If this feature is enabled the user is only asked for their username, first- and surname if those values can not be gathered from their SSO profile. This might lead to unwanted usernames bleeding over. | True |
-| Allowed domains | String | Restrict signup to certain domains (comma-separated, starting with @) |  |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("LOGIN_ENABLE_PWD_FORGOT") }}
+{{ globalsetting("LOGIN_MAIL_REQUIRED") }}
+{{ globalsetting("LOGIN_ENFORCE_MFA") }}
+{{ globalsetting("LOGIN_ENABLE_REG") }}
+{{ globalsetting("LOGIN_SIGNUP_MAIL_TWICE") }}
+{{ globalsetting("LOGIN_SIGNUP_PWD_TWICE") }}
+{{ globalsetting("SIGNUP_GROUP") }}
+{{ globalsetting("LOGIN_SIGNUP_MAIL_RESTRICTION") }}
+{{ globalsetting("LOGIN_ENABLE_SSO") }}
+{{ globalsetting("LOGIN_ENABLE_SSO_REG") }}
+{{ globalsetting("LOGIN_SIGNUP_SSO_AUTO") }}
+{{ globalsetting("LOGIN_ENABLE_SSO_GROUP_SYNC") }}
+{{ globalsetting("SSO_GROUP_MAP") }}
+{{ globalsetting("SSO_GROUP_KEY") }}
+{{ globalsetting("SSO_REMOVE_GROUPS") }}
 
+#### Require User Email
+
+If this setting is enabled, users must provide an email address when signing up. Note that some notification and security features require a valid email address.
+
+#### Forgot Password
+
+If this setting is enabled, users can reset their password via email. This requires a valid email address to be associated with the user account.
+
+#### Enforce Multi-Factor Authentication
+
+If this setting is enabled, users must have multi-factor authentication enabled to log in.
+
+#### Auto Fil SSO Users
+
+Automatically fill out user-details from SSO account-data. If this feature is enabled the user is only asked for their username, first- and surname if those values can not be gathered from their SSO profile. This might lead to unwanted usernames bleeding over.
 
 ### Barcodes
 
-Configuration of barcode functionality
+Configuration of barcode functionality:
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Barcode Support | Boolean | Enable barcode functionality in web interface | True |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("BARCODE_ENABLE") }}
+{{ globalsetting("BARCODE_INPUT_DELAY") }}
+{{ globalsetting("BARCODE_WEBCAM_SUPPORT") }}
+{{ globalsetting("BARCODE_SHOW_TEXT") }}
+{{ globalsetting("BARCODE_GENERATION_PLUGIN") }}
+{{ globalsetting("BARCODE_STORE_RESULTS") }}
+{{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
 
-### Currencies
+### Pricing and Currency
 
-Configuration of currency support
+Configuration of pricing data and currency support:
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Default Currency | Currency | Default currency | USD |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("INVENTREE_DEFAULT_CURRENCY") }}
+{{ globalsetting("CURRENCY_CODES") }}
+{{ globalsetting("PART_INTERNAL_PRICE") }}
+{{ globalsetting("PART_BOM_USE_INTERNAL_PRICE") }}
+{{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
+{{ globalsetting("PRICING_DECIMAL_PLACES") }}
+{{ globalsetting("PRICING_UPDATE_DAYS") }}
+{{ globalsetting("PRICING_USE_SUPPLIER_PRICING") }}
+{{ globalsetting("PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER") }}
+{{ globalsetting("PRICING_USE_STOCK_PRICING") }}
+{{ globalsetting("PRICING_STOCK_ITEM_AGE_DAYS") }}
+{{ globalsetting("PRICING_USE_VARIANT_PRICING") }}
+{{ globalsetting("PRICING_ACTIVE_VARIANTS") }}
 
 ### Reporting
 
-Configuration of report generation
+Configuration of report generation:
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Enable Reports | Boolean | Enable report generation | False |
-| Page Size | String | Default page size | A4 |
-| Debug Mode | Boolean | Generate reports in debug mode (HTML output) | False |
-| Test Reports | Boolean | Enable generation of test reports | False |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("REPORT_ENABLE") }}
+{{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
+{{ globalsetting("REPORT_DEBUG_MODE") }}
+{{ globalsetting("REPORT_LOG_ERRORS") }}
 
 ### Parts
 
-#### Main Settings
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| IPN Regex | String | Regular expression pattern for matching Part IPN | *blank* |
-| Allow Duplicate IPN | Boolean | Allow multiple parts to share the same IPN | True |
-| Allow Editing IPN | Boolean | Allow changing the IPN value while editing a part | True |
-| Part Name Display Format | String | Format to display the part name | {% raw %}`{{ part.id if part.id }}{{ ' | ' if part.id }}{{ part.name }}{{ ' | ' if part.revision }}{{ part.revision if part.revision }}`{% endraw %} |
-| Show Price History | Boolean | Display historical pricing for Part | False |
-| Show Price in Forms | Boolean | Display part price in some forms | True |
-| Show Price in BOM | Boolean | Include pricing information in BOM tables | True |
-| Show related parts | Boolean | Display related parts for a part | True |
-| Create initial stock | Boolean | Create initial stock on part creation | True |
-
-#### Creation Settings
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Template | Boolean | Parts are templates by default | False |
-| Assembly | Boolean | Parts can be assembled from other components by default | False |
-| Component | Boolean | Parts can be used as sub-components by default | True |
-| Trackable | Boolean | Parts are trackable by default | False |
-| Purchaseable | Boolean | Parts are purchaseable by default | True |
-| Salable | Boolean | Parts are salable by default | False |
-| Virtual | Boolean | Parts are virtual by default | False |
-
-#### Copy Settings
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Copy Part BOM Data | Boolean | Copy BOM data by default when duplicating a part | True |
-| Copy Part Parameter Data | Boolean | Copy parameter data by default when duplicating a part | True |
-| Copy Part Test Data | Boolean | Copy test data by default when duplicating a part | True |
-| Copy Category Parameter Templates | Boolean | Copy category parameter templates when creating a part | True |
-
-#### Internal Price Settings
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Internal Prices | Boolean | Enable internal prices for parts | False |
-| Internal Price as BOM-Price | Boolean | Use the internal price (if set) in BOM-price calculations | False |
-
-#### Part Import Setting
-
-This section of the part settings allows staff users to:
-
-- import parts to InvenTree clicking the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> Import Part</span> button
-- enable the ["Import Parts" tab in the part category view](../part/part.md#part-import).
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Show Import in Views | Boolean | Display the import wizard in some part views | True |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PART_IPN_REGEX") }}
+{{ globalsetting("PART_ALLOW_DUPLICATE_IPN") }}
+{{ globalsetting("PART_ALLOW_EDIT_IPN") }}
+{{ globalsetting("PART_ALLOW_DELETE_FROM_ASSEMBLY") }}
+{{ globalsetting("PART_ENABLE_REVISION") }}
+{{ globalsetting("PART_REVISION_ASSEMBLY_ONLY") }}
+{{ globalsetting("PART_NAME_FORMAT") }}
+{{ globalsetting("PART_SHOW_RELATED") }}
+{{ globalsetting("PART_CREATE_INITIAL") }}
+{{ globalsetting("PART_CREATE_SUPPLIER") }}
+{{ globalsetting("PART_TEMPLATE") }}
+{{ globalsetting("PART_ASSEMBLY") }}
+{{ globalsetting("PART_COMPONENT") }}
+{{ globalsetting("PART_TRACKABLE") }}
+{{ globalsetting("PART_PURCHASEABLE") }}
+{{ globalsetting("PART_SALABLE") }}
+{{ globalsetting("PART_VIRTUAL") }}
+{{ globalsetting("PART_COPY_BOM") }}
+{{ globalsetting("PART_COPY_PARAMETERS") }}
+{{ globalsetting("PART_COPY_TESTS") }}
+{{ globalsetting("PART_CATEGORY_PARAMETERS") }}
+{{ globalsetting("PART_CATEGORY_DEFAULT_ICON") }}
 
 #### Part Parameter Templates
 
@@ -153,45 +172,49 @@ After a list of parameters is added to a part category and upon creation of a ne
 
 Configuration of stock item options
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Stock Expiry | Boolean | Enable stock expiry functionality | False |
-| Stock Stale Time | Days | Number of days stock items are considered stale before expiring | 90 |
-| Sell Expired Stock | Boolean | Allow sale of expired stock | False |
-| Build Expired Stock | Boolean | Allow building with expired stock | False |
-| Stock Ownership Control | Boolean | Enable ownership control functionality | False |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("SERIAL_NUMBER_GLOBALLY_UNIQUE") }}
+{{ globalsetting("SERIAL_NUMBER_AUTOFILL") }}
+{{ globalsetting("STOCK_DELETE_DEPLETED_DEFAULT") }}
+{{ globalsetting("STOCK_BATCH_CODE_TEMPLATE") }}
+{{ globalsetting("STOCK_ENABLE_EXPIRY") }}
+{{ globalsetting("STOCK_STALE_DAYS") }}
+{{ globalsetting("STOCK_ALLOW_EXPIRED_SALE") }}
+{{ globalsetting("STOCK_ALLOW_EXPIRED_BUILD") }}
+{{ globalsetting("STOCK_OWNERSHIP_CONTROL") }}
+{{ globalsetting("STOCK_LOCATION_DEFAULT_ICON") }}
+{{ globalsetting("STOCK_SHOW_INSTALLED_ITEMS") }}
+{{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
+{{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
+{{ globalsetting("TEST_STATION_DATA") }}
+{{ globalsetting("TEST_UPLOAD_CREATE_TEMPLATE") }}
 
 ### Build Orders
 
-Options for build orders
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Reference Pattern | String | Pattern for defining Build Order reference values | {% raw %}BO-{ref:04d}{% endraw %} |
+Refer to the [build order settings](../build/build.md#build-order-settings).
 
 ### Purchase Orders
 
-Options for purchase orders
+Refer to the [purchase order settings](../order/purchase_order.md#purchase-order-settings).
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Reference Pattern | String | Pattern for defining Purchase Order reference values | {% raw %}PO-{ref:04d}{% endraw %} |
+### Sales Orders
 
-### Sales orders
+Refer to the [sales order settings](../order/sales_order.md#sales-order-settings).
 
-Options for sales orders
+### Return Orders
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Reference Pattern | String | Pattern for defining Sales Order reference values | {% raw %}SO-{ref:04d}{% endraw %} |
+Refer to the [return order settings](../order/return_order.md#return-order-settings).
 
 ### Plugin Settings
 
-Change into what parts plugins can integrate into.
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Enable URL integration | Boolean | Enable plugins to add URL routes | False |
-| Enable navigation integration | Boolean | Enable plugins to integrate into navigation | False |
-| Enable setting integration | Boolean | Enable plugins to integrate into inventree settings | False |
-| Enable app integration | Boolean | Enable plugins to add apps | False |
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PLUGIN_ON_STARTUP") }}
+{{ globalsetting("PLUGIN_UPDATE_CHECK") }}
+{{ globalsetting("ENABLE_PLUGINS_URL") }}
+{{ globalsetting("ENABLE_PLUGINS_NAVIGATION") }}
+{{ globalsetting("ENABLE_PLUGINS_APP") }}
+{{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
+{{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
+{{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}

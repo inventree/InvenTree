@@ -76,8 +76,6 @@ def generate_batch_code(**kwargs):
 
 def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
     """Generate a default 'serial number' for a new StockItem."""
-    from plugin.registry import registry
-
     quantity = quantity or 1
 
     if part is None:
@@ -101,7 +99,7 @@ def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
     # Generate the required quantity of serial numbers
     # Note that this call gets passed through to the plugin system
     while quantity > 0:
-        sn = InvenTree.helpers.increment_serial_number(sn)
+        sn = InvenTree.helpers.increment_serial_number(sn, part=part)
 
         # Exit if an empty or duplicated serial is generated
         if not sn or sn in serials:

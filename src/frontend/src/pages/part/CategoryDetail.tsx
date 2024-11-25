@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
-  IconDots,
   IconInfoCircle,
   IconListDetails,
   IconSitemap
@@ -11,18 +10,22 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
-  ActionDropdown,
   DeleteItemAction,
-  EditItemAction
+  EditItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -46,7 +49,7 @@ import { PartListTable } from '../../tables/part/PartTable';
 export default function CategoryDetail() {
   const { id: _id } = useParams();
   const id = useMemo(
-    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    () => (!Number.isNaN(Number.parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
 
@@ -74,14 +77,14 @@ export default function CategoryDetail() {
       return <Skeleton />;
     }
 
-    let left: DetailsField[] = [
+    const left: DetailsField[] = [
       {
         type: 'text',
         name: 'name',
         label: t`Name`,
         copy: true,
         value_formatter: () => (
-          <Group gap="xs">
+          <Group gap='xs'>
             {category.icon && <ApiIcon name={category.icon} />}
             {category.name}
           </Group>
@@ -109,10 +112,16 @@ export default function CategoryDetail() {
         label: t`Parent Category`,
         model: ModelType.partcategory,
         hidden: !category?.parent
+      },
+      {
+        type: 'boolean',
+        name: 'starred',
+        icon: 'notification',
+        label: t`Subscribed`
       }
     ];
 
-    let right: DetailsField[] = [
+    const right: DetailsField[] = [
       {
         type: 'text',
         name: 'part_count',
@@ -165,7 +174,7 @@ export default function CategoryDetail() {
     url: ApiEndpoints.category_list,
     pk: id,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: partCategoryFields({}),
     onFormSuccess: refreshInstance
   });
 
@@ -173,7 +182,7 @@ export default function CategoryDetail() {
     return [
       {
         value: 0,
-        display_name: `Move items to parent category`
+        display_name: t`Move items to parent category`
       },
       {
         value: 1,
@@ -211,10 +220,14 @@ export default function CategoryDetail() {
 
   const categoryActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.partcategory} pk={category.pk} />,
-      <ActionDropdown
+      <AdminButton
+        key='admin'
+        model={ModelType.partcategory}
+        id={category.pk}
+      />,
+      <OptionsActionDropdown
+        key='category-actions'
         tooltip={t`Category Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.part_category),
@@ -231,7 +244,7 @@ export default function CategoryDetail() {
     ];
   }, [id, user, category.pk]);
 
-  const categoryPanels: PanelType[] = useMemo(
+  const panels: PanelType[] = useMemo(
     () => [
       {
         name: 'details',
@@ -289,7 +302,7 @@ export default function CategoryDetail() {
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
       >
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <LoadingOverlay visible={instanceQuery.isFetching} />
           <NavigationTree
             modelType={ModelType.partcategory}
@@ -310,8 +323,16 @@ export default function CategoryDetail() {
               setTreeOpen(true);
             }}
             actions={categoryActions}
+            editAction={editCategory.open}
+            editEnabled={user.hasChangePermission(ModelType.partcategory)}
           />
-          <PanelGroup pageKey="partcategory" panels={categoryPanels} />
+          <PanelGroup
+            pageKey='partcategory'
+            panels={panels}
+            model={ModelType.partcategory}
+            instance={category}
+            id={category.pk ?? null}
+          />
         </Stack>
       </InstanceDetail>
     </>

@@ -66,10 +66,11 @@ Each *Build Order* has an associated *Status* flag, which indicates the state of
 
 | Status | Description |
 | ----------- | ----------- |
-| `Pending` | Build has been created and build is ready for subpart allocation |
-| `Production` | One or more build outputs have been created for this build |
-| `Cancelled` | Build has been cancelled |
-| `Completed` | Build has been completed |
+| `Pending` | Build order has been created, but is not yet in production |
+| `Production` | Build order is currently in production |
+| `On Hold` | Build order has been placed on hold, but is still active |
+| `Cancelled` | Build order has been cancelled |
+| `Completed` | Build order has been completed |
 
 **Source Code**
 
@@ -103,25 +104,44 @@ For further information, refer to the [stock allocation documentation](./allocat
 
 ## Build Order Display
 
-The detail view for a single build order provides multiple display tabs, as follows:
+The detail view for a single build order provides multiple display panels, as follows:
 
 ### Build Details
 
-The *Build Details* tab provides an overview of the Build Order:
+The *Build Details* panel provides an overview of the Build Order:
 
-{% with id="build_details", url="build/build_details.png", description="Details tab" %}
+{% with id="build_details", url="build/build_panel_details.png", description="Build details panel" %}
 {% include "img.html" %}
 {% endwith %}
 
 ### Line Items
 
-The *Line Items* tab provides an interface to allocate required stock (as specified by the BOM) to the build:
+The *Line Items* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
 
-{% with id="build_allocate", url="build/build_allocate.png", description="Allocation tab" %}
+{% with id="build_allocate", url="build/build_panel_line_items.png", description="Build line items panel" %}
 {% include "img.html" %}
 {% endwith %}
 
-The allocation table (as shown above) shows the stock allocation progress for this build. In the example above, there are two BOM lines, which have been partially allocated.
+The allocation table (as shown above) provides an interface to allocate required stock, and also shows the stock allocation progress for each line item in the build.
+
+### Incomplete Outputs
+
+The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./output.md) (created stock items) associated with this build.
+
+{% with id="build_outputs", url="build/build_outputs.png", description="Outputs tab" %}
+{% include "img.html" %}
+{% endwith %}
+
+!!! info "Example: Build Outputs"
+	In the example image above, a single output (serial number 2) has been completed, while serial numbers 1 and 4 are still in progress.
+
+- Build outputs can be created from this screen, by selecting the *Create New Output* button
+- Outputs which are "in progress" can be completed or cancelled
+- Completed outputs (which are simply *stock items*) can be viewed in the stock table at the bottom of the screen
+
+### Completed Outputs
+
+This panel displays all the completed build outputs (stock items) which have been created by this build order:
 
 ### Allocated Stock
 
@@ -138,28 +158,29 @@ The *Consumed Stock* tab displays all stock items which have been *consumed* by 
 - [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
 - [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
 
-### Build Outputs
-
-The *Build Outputs* tab shows the [build outputs](./output.md) (created stock items) associated with this build.
-
-As shown below, there are separate panels for *incomplete* and *completed* build outputs.
-
-{% with id="build_outputs", url="build/build_outputs.png", description="Outputs tab" %}
-{% include "img.html" %}
-{% endwith %}
-
-!!! info "Example: Build Outputs"
-	In the example image above, a single output (serial number 2) has been completed, while serial numbers 1 and 4 are still in progress.
-
-- Build outputs can be created from this screen, by selecting the *Create New Output* button
-- Outputs which are "in progress" can be completed or cancelled
-- Completed outputs (which are simply *stock items*) can be viewed in the stock table at the bottom of the screen
-
 ### Child Builds
 
 If there exist any build orders which are *children* of the selected build order, they are displayed in the *Child Builds* tab:
 
-{% with id="build_childs", url="build/build_childs.png", description="Child builds tab" %}
+{% with id="build_childs", url="build/build_childs.png", description="Child builds panel" %}
+{% include "img.html" %}
+{% endwith %}
+
+### Test Results
+
+For *trackable* parts, test results can be recorded against each build output. These results are displayed in the *Test Results* panel:
+
+{% with id="build_test_results", url="build/build_panel_test_results.png", description="Test Results panel" %}
+{% include "img.html" %}
+{% endwith %}
+
+This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
+
+### Test Statistics
+
+For *trackable* parts, this panel displays a summary of the test results for all build outputs:
+
+{% with id="build_test_stats", url="build/build_panel_test_statistics.png", description="Test Statistics panel" %}
 {% include "img.html" %}
 {% endwith %}
 
@@ -199,6 +220,10 @@ To create a build order for your part, you have two options:
 - Click on *New Build Order*
 
 Fill-out the form as required, then click the "Submit" button to create the build.
+
+### Create Child Builds
+
+When creating a new build order, you have the option to automatically generate build orders for any subassembly parts. This can be useful to create a complete tree of build orders for a complex assembly. *However*, it must be noted that any build orders created for subassemblies will use the default BOM quantity for that part. Any child build orders created in this manner must be manually reviewed, to ensure that the correct quantity is being built as per your production requirements.
 
 ## Complete Build Order
 
@@ -244,18 +269,16 @@ Build orders may (optionally) have a target complete date specified. If this dat
 - Builds can be filtered by overdue status in the build list
 - Overdue builds will be displayed on the home page
 
-## Build Order Restrictions
+## Build Order Settings
 
-There are a number of optional restrictions which can be applied to build orders, which may be enabled or disabled in the system settings:
+The following [global settings](../settings/global.md) are available for adjusting the behavior of build orders:
 
-### Require Active Part
-
-If this option is enabled, build orders can only be created for parts which are marked as [Active](../part/part.md#active-parts).
-
-### Require Locked Part
-
-If this option is enabled, build orders can only be created for parts which are marked as [Locked](../part/part.md#locked-parts).
-
-### Require Valid BOM
-
-If this option is enabled, build orders can only be created for parts which have a valid [Bill of Materials](./bom.md) defined.
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("BUILDORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("BUILDORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("BUILDORDER_REQUIRE_ACTIVE_PART") }}
+{{ globalsetting("BUILDORDER_REQUIRE_LOCKED_PART") }}
+{{ globalsetting("BUILDORDER_REQUIRE_VALID_BOM") }}
+{{ globalsetting("BUILDORDER_REQUIRE_CLOSED_CHILDS") }}
+{{ globalsetting("PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS") }}

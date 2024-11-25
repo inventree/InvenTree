@@ -12,12 +12,12 @@ export function ScanButton() {
       onClick={() =>
         openContextModal({
           modal: 'qr',
-          title: t`Scan QR code`,
+          title: t`Scan Barcode`,
           innerProps: {}
         })
       }
-      variant="transparent"
-      title={t`Open QR code scanner`}
+      variant='transparent'
+      title={t`Open Barcode Scanner`}
     >
       <IconQrcode />
     </ActionIcon>

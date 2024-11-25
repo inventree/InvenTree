@@ -14,14 +14,14 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-from sql_util.utils import SubqueryCount
+from sql_util.utils import SubqueryCount, SubquerySum
 
 import order.models
-import part.filters
 import part.filters as part_filters
 import part.models as part_models
 import stock.models
@@ -33,6 +33,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import (
@@ -74,10 +75,39 @@ class TotalPriceMixin(serializers.Serializer):
     )
 
 
+class DuplicateOrderSerializer(serializers.Serializer):
+    """Serializer for specifying options when duplicating an order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['order_id', 'copy_lines', 'copy_extra_lines']
+
+    order_id = serializers.IntegerField(
+        required=True, label=_('Order ID'), help_text=_('ID of the order to duplicate')
+    )
+
+    copy_lines = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Copy Lines'),
+        help_text=_('Copy line items from the original order'),
+    )
+
+    copy_extra_lines = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Copy Extra Lines'),
+        help_text=_('Copy extra line items from the original order'),
+    )
+
+
 class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types."""
 
-    export_exclude_fields = ['notes']
+    export_exclude_fields = ['notes', 'duplicate']
+
+    import_exclude_fields = ['notes', 'duplicate']
 
     # Number of line items in this order
     line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
@@ -127,6 +157,13 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         required=False, allow_null=True, label=_('Creation Date')
     )
 
+    duplicate = DuplicateOrderSerializer(
+        label=_('Duplicate Order'),
+        help_text=_('Specify options for duplicating this order'),
+        required=False,
+        write_only=True,
+    )
+
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
         self.Meta.model.validate_reference_field(reference)
@@ -162,10 +199,52 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'address_detail',
             'status',
             'status_text',
+            'status_custom_key',
             'notes',
             'barcode_hash',
             'overdue',
-        ] + extra_fields
+            'duplicate',
+            *extra_fields,
+        ]
+
+    def clean_line_item(self, line):
+        """Clean a line item object (when duplicating)."""
+        line.pk = None
+        line.order = self
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new order object.
+
+        Optionally, copy line items from an existing order.
+        """
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            order_id = duplicate.get('order_id', None)
+            copy_lines = duplicate.get('copy_lines', True)
+            copy_extra_lines = duplicate.get('copy_extra_lines', True)
+
+            try:
+                copy_from = instance.__class__.objects.get(pk=order_id)
+            except Exception:
+                # If the order ID is invalid, raise a validation error
+                raise ValidationError(_('Invalid order ID'))
+
+            if copy_lines:
+                for line in copy_from.lines.all():
+                    instance.clean_line_item(line)
+                    line.save()
+
+            if copy_extra_lines:
+                for line in copy_from.extra_lines.all():
+                    line.pk = None
+                    line.order = instance
+                    line.save()
+
+        return instance
 
 
 class AbstractLineItemSerializer:
@@ -217,7 +296,11 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -232,8 +315,10 @@ class PurchaseOrderSerializer(
             'supplier',
             'supplier_detail',
             'supplier_reference',
+            'supplier_name',
             'total_price',
             'order_currency',
+            'destination',
         ])
 
         read_only_fields = ['issue_date', 'complete_date', 'creation_date']
@@ -251,6 +336,12 @@ class PurchaseOrderSerializer(
 
         if supplier_detail is not True:
             self.fields.pop('supplier_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -279,42 +370,61 @@ class PurchaseOrderSerializer(
 
         return queryset
 
+    supplier_name = serializers.CharField(
+        source='supplier.name', read_only=True, label=_('Supplier Name')
+    )
+
     supplier_detail = CompanyBriefSerializer(
         source='supplier', many=False, read_only=True
     )
 
 
-class PurchaseOrderCancelSerializer(serializers.Serializer):
-    """Serializer for cancelling a PurchaseOrder."""
+class OrderAdjustSerializer(serializers.Serializer):
+    """Generic serializer class for adjusting the status of an order."""
 
     class Meta:
-        """Metaclass options."""
+        """Metaclass options.
+
+        By default, there are no fields required for this serializer type.
+        """
 
         fields = []
 
-    def get_context_data(self):
-        """Return custom context information about the order."""
-        self.order = self.context['order']
+    @property
+    def order(self):
+        """Return the order object associated with this serializer.
 
-        return {'can_cancel': self.order.can_cancel}
+        Note: It is passed in via the serializer context data.
+        """
+        return self.context['order']
+
+
+class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializer for placing a PurchaseOrder on hold."""
+
+    def save(self):
+        """Save the serializer to 'hold' the order."""
+        self.order.hold_order()
+
+
+class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
+    """Serializer for cancelling a PurchaseOrder."""
 
     def save(self):
         """Save the serializer to 'cancel' the order."""
-        order = self.context['order']
-
-        if not order.can_cancel:
+        if not self.order.can_cancel:
             raise ValidationError(_('Order cannot be cancelled'))
 
-        order.cancel_order()
+        self.order.cancel_order()
 
 
-class PurchaseOrderCompleteSerializer(serializers.Serializer):
+class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a purchase order."""
 
     class Meta:
         """Metaclass options."""
 
-        fields = []
+        fields = ['accept_incomplete']
 
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
@@ -340,22 +450,15 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to 'complete' the order."""
-        order = self.context['order']
-        order.complete_order()
+        self.order.complete_order()
 
 
-class PurchaseOrderIssueSerializer(serializers.Serializer):
+class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing (sending) a purchase order."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'place' the order."""
-        order = self.context['order']
-        order.place_order()
+        self.order.place_order()
 
 
 @register_importer()
@@ -402,7 +505,6 @@ class PurchaseOrderLineItemSerializer(
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
         part_detail = kwargs.pop('part_detail', False)
-
         order_detail = kwargs.pop('order_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -416,7 +518,7 @@ class PurchaseOrderLineItemSerializer(
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
-        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
+        return ['auto_pricing', 'merge_items', *super().skip_create_fields()]
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -434,6 +536,18 @@ class PurchaseOrderLineItemSerializer(
                     )
                 ).prefetch_related(None),
             )
+        )
+
+        queryset = queryset.prefetch_related(
+            'order',
+            'order__responsible',
+            'order__stock_items',
+            'part__tags',
+            'part__supplier',
+            'part__manufacturer_part',
+            'part__manufacturer_part__manufacturer',
+            'part__part__pricing_data',
+            'part__part__tags',
         )
 
         queryset = queryset.annotate(
@@ -489,7 +603,7 @@ class PurchaseOrderLineItemSerializer(
     )
 
     supplier_part_detail = SupplierPartSerializer(
-        source='part', many=False, read_only=True
+        source='part', brief=True, many=False, read_only=True
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
@@ -711,23 +825,39 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         base_quantity = line_item.part.base_quantity(quantity)
 
         # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable:
-            if Decimal(base_quantity) != int(base_quantity):
-                raise ValidationError({
-                    'quantity': _(
-                        'An integer quantity must be provided for trackable parts'
-                    )
-                })
+        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
+            raise ValidationError({
+                'quantity': _(
+                    'An integer quantity must be provided for trackable parts'
+                )
+            })
 
         # If serial numbers are provided
         if serial_numbers:
             try:
                 # Pass the serial numbers through to the parent serializer once validated
                 data['serials'] = extract_serial_numbers(
-                    serial_numbers, base_quantity, base_part.get_latest_serial_number()
+                    serial_numbers,
+                    base_quantity,
+                    base_part.get_latest_serial_number(),
+                    part=base_part,
                 )
             except DjangoValidationError as e:
                 raise ValidationError({'serial_numbers': e.messages})
+
+            invalid_serials = []
+
+            # Check the serial numbers are valid
+            for serial in data['serials']:
+                try:
+                    base_part.validate_serial_number(serial, raise_error=True)
+                except (ValidationError, DjangoValidationError):
+                    invalid_serials.append(serial)
+
+            if len(invalid_serials) > 0:
+                msg = _('The following serial numbers already exist or are invalid')
+                msg += ': ' + ', '.join(invalid_serials)
+                raise ValidationError({'serial_numbers': msg})
 
         return data
 
@@ -745,6 +875,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
         many=False,
+        required=False,
         allow_null=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
@@ -758,9 +889,10 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         """
         super().validate(data)
 
+        order = self.context['order']
         items = data.get('items', [])
 
-        location = data.get('location', None)
+        location = data.get('location', order.destination)
 
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
@@ -804,15 +936,17 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         order = self.context['order']
 
         items = data['items']
-        location = data.get('location', None)
+
+        # Location can be provided, or default to the order destination
+        location = data.get('location', order.destination)
 
         # Now we can actually receive the items into stock
         with transaction.atomic():
             for item in items:
                 # Select location (in descending order of priority)
                 loc = (
-                    location
-                    or item.get('location', None)
+                    item.get('location', None)
+                    or location
                     or item['line_item'].get_destination()
                 )
 
@@ -836,7 +970,11 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -852,6 +990,8 @@ class SalesOrderSerializer(
             'shipment_date',
             'total_price',
             'order_currency',
+            'shipments_count',
+            'completed_shipments_count',
         ])
 
         read_only_fields = ['status', 'creation_date', 'shipment_date']
@@ -866,6 +1006,12 @@ class SalesOrderSerializer(
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -891,25 +1037,255 @@ class SalesOrderSerializer(
             )
         )
 
+        # Annotate shipment details
+        queryset = queryset.annotate(
+            shipments_count=SubqueryCount('shipments'),
+            completed_shipments_count=SubqueryCount(
+                'shipments', filter=Q(shipment_date__isnull=False)
+            ),
+        )
+
         return queryset
 
     customer_detail = CompanyBriefSerializer(
         source='customer', many=False, read_only=True
     )
 
+    shipments_count = serializers.IntegerField(read_only=True, label=_('Shipments'))
 
-class SalesOrderIssueSerializer(serializers.Serializer):
+    completed_shipments_count = serializers.IntegerField(
+        read_only=True, label=_('Completed Shipments')
+    )
+
+
+class SalesOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing a SalesOrder."""
+
+    def save(self):
+        """Save the serializer to 'issue' the order."""
+        self.order.issue_order()
+
+
+@register_importer()
+class SalesOrderLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a SalesOrderLineItem object."""
 
     class Meta:
         """Metaclass options."""
 
-        fields = []
+        model = order.models.SalesOrderLineItem
 
-    def save(self):
-        """Save the serializer to 'issue' the order."""
-        order = self.context['order']
-        order.issue_order()
+        fields = [
+            'pk',
+            'allocated',
+            'customer_detail',
+            'quantity',
+            'reference',
+            'notes',
+            'order',
+            'order_detail',
+            'overdue',
+            'part',
+            'part_detail',
+            'sale_price',
+            'sale_price_currency',
+            'shipped',
+            'target_date',
+            'link',
+            # Annotated fields for part stocking information
+            'available_stock',
+            'available_variant_stock',
+            'building',
+            'on_order',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer.
+
+        - Add extra related serializer information if required
+        """
+        part_detail = kwargs.pop('part_detail', False)
+        order_detail = kwargs.pop('order_detail', False)
+        customer_detail = kwargs.pop('customer_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail', None)
+
+        if order_detail is not True:
+            self.fields.pop('order_detail', None)
+
+        if customer_detail is not True:
+            self.fields.pop('customer_detail', None)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add some extra annotations to this queryset.
+
+        - "overdue" status (boolean field)
+        - "available_quantity"
+        - "building"
+        - "on_order"
+        """
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=SalesOrderStatusGroups.OPEN)
+                    & order.models.SalesOrderLineItem.OVERDUE_FILTER,
+                    then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
+        # Annotate each line with the available stock quantity
+        # To do this, we need to look at the total stock and any allocations
+        queryset = queryset.alias(
+            total_stock=part_filters.annotate_total_stock(reference='part__'),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
+                reference='part__'
+            ),
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
+                reference='part__'
+            ),
+        )
+
+        queryset = queryset.annotate(
+            available_stock=ExpressionWrapper(
+                F('total_stock')
+                - F('allocated_to_sales_orders')
+                - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Filter for "variant" stock: Variant stock items must be salable and active
+        variant_stock_query = part_filters.variant_stock_query(
+            reference='part__'
+        ).filter(part__salable=True, part__active=True)
+
+        # Also add in available "variant" stock
+        queryset = queryset.alias(
+            variant_stock_total=part_filters.annotate_variant_quantity(
+                variant_stock_query, reference='quantity'
+            ),
+            variant_bo_allocations=part_filters.annotate_variant_quantity(
+                variant_stock_query, reference='sales_order_allocations__quantity'
+            ),
+            variant_so_allocations=part_filters.annotate_variant_quantity(
+                variant_stock_query, reference='allocations__quantity'
+            ),
+        )
+
+        queryset = queryset.annotate(
+            available_variant_stock=ExpressionWrapper(
+                F('variant_stock_total')
+                - F('variant_bo_allocations')
+                - F('variant_so_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Add information about the quantity of parts currently on order
+        queryset = queryset.annotate(
+            on_order=part_filters.annotate_on_order_quantity(reference='part__')
+        )
+
+        # Add information about the quantity of parts currently in production
+        queryset = queryset.annotate(
+            building=part_filters.annotate_in_production_quantity(reference='part__')
+        )
+
+        # Annotate total 'allocated' stock quantity
+        queryset = queryset.annotate(
+            allocated=Coalesce(
+                SubquerySum('allocations__quantity'),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        return queryset
+
+    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    customer_detail = CompanyBriefSerializer(
+        source='order.customer', many=False, read_only=True
+    )
+
+    # Annotated fields
+    overdue = serializers.BooleanField(required=False, read_only=True)
+    available_stock = serializers.FloatField(read_only=True)
+    available_variant_stock = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+    building = serializers.FloatField(label=_('In Production'), read_only=True)
+
+    quantity = InvenTreeDecimalField()
+
+    allocated = serializers.FloatField(read_only=True)
+
+    shipped = InvenTreeDecimalField(read_only=True)
+
+    sale_price = InvenTreeMoneySerializer(allow_null=True)
+
+    sale_price_currency = InvenTreeCurrencySerializer(
+        help_text=_('Sale price currency')
+    )
+
+
+@register_importer()
+class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+    """Serializer for the SalesOrderShipment class."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.SalesOrderShipment
+
+        fields = [
+            'pk',
+            'order',
+            'order_detail',
+            'allocated_items',
+            'shipment_date',
+            'delivery_date',
+            'checked_by',
+            'reference',
+            'tracking_number',
+            'invoice_number',
+            'link',
+            'notes',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialization routine for the serializer."""
+        order_detail = kwargs.pop('order_detail', True)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail', None)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with extra information."""
+        # Prefetch related objects
+        queryset = queryset.prefetch_related('order', 'order__customer', 'allocations')
+
+        queryset = queryset.annotate(allocated_items=SubqueryCount('allocations'))
+
+        return queryset
+
+    allocated_items = serializers.IntegerField(
+        read_only=True, label=_('Allocated Items')
+    )
+
+    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
@@ -925,21 +1301,25 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
-            'line',
-            'customer_detail',
-            'serial',
-            'quantity',
-            'location',
-            'location_detail',
             'item',
-            'item_detail',
-            'order',
-            'order_detail',
-            'part',
-            'part_detail',
+            'quantity',
             'shipment',
-            'shipment_date',
+            # Annotated read-only fields
+            'line',
+            'part',
+            'order',
+            'serial',
+            'location',
+            # Extra detail fields
+            'item_detail',
+            'part_detail',
+            'order_detail',
+            'customer_detail',
+            'location_detail',
+            'shipment_detail',
         ]
+
+        read_only_fields = ['line', '']
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
@@ -979,204 +1359,19 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     # Extra detail fields
     order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
-    item_detail = stock.serializers.StockItemSerializer(
+    item_detail = stock.serializers.StockItemSerializerBrief(
         source='item', many=False, read_only=True
     )
-    location_detail = stock.serializers.LocationSerializer(
+    location_detail = stock.serializers.LocationBriefSerializer(
         source='item.location', many=False, read_only=True
     )
     customer_detail = CompanyBriefSerializer(
         source='line.order.customer', many=False, read_only=True
     )
 
-    shipment_date = serializers.DateField(
-        source='shipment.shipment_date', read_only=True
+    shipment_detail = SalesOrderShipmentSerializer(
+        source='shipment', order_detail=False, many=False, read_only=True
     )
-
-
-@register_importer()
-class SalesOrderLineItemSerializer(
-    DataImportExportSerializerMixin,
-    AbstractLineItemSerializer,
-    InvenTreeModelSerializer,
-):
-    """Serializer for a SalesOrderLineItem object."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderLineItem
-
-        fields = [
-            'pk',
-            'allocated',
-            'allocations',
-            'available_stock',
-            'available_variant_stock',
-            'customer_detail',
-            'quantity',
-            'reference',
-            'notes',
-            'order',
-            'order_detail',
-            'overdue',
-            'part',
-            'part_detail',
-            'sale_price',
-            'sale_price_currency',
-            'shipped',
-            'target_date',
-            'link',
-        ]
-
-    def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer.
-
-        - Add extra related serializer information if required
-        """
-        part_detail = kwargs.pop('part_detail', False)
-        order_detail = kwargs.pop('order_detail', False)
-        allocations = kwargs.pop('allocations', False)
-        customer_detail = kwargs.pop('customer_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if part_detail is not True:
-            self.fields.pop('part_detail', None)
-
-        if order_detail is not True:
-            self.fields.pop('order_detail', None)
-
-        if allocations is not True:
-            self.fields.pop('allocations', None)
-
-        if customer_detail is not True:
-            self.fields.pop('customer_detail', None)
-
-    @staticmethod
-    def annotate_queryset(queryset):
-        """Add some extra annotations to this queryset.
-
-        - "overdue" status (boolean field)
-        - "available_quantity"
-        """
-        queryset = queryset.annotate(
-            overdue=Case(
-                When(
-                    Q(order__status__in=SalesOrderStatusGroups.OPEN)
-                    & order.models.SalesOrderLineItem.OVERDUE_FILTER,
-                    then=Value(True, output_field=BooleanField()),
-                ),
-                default=Value(False, output_field=BooleanField()),
-            )
-        )
-
-        # Annotate each line with the available stock quantity
-        # To do this, we need to look at the total stock and any allocations
-        queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference='part__'),
-            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(
-                reference='part__'
-            ),
-            allocated_to_build_orders=part.filters.annotate_build_order_allocations(
-                reference='part__'
-            ),
-        )
-
-        queryset = queryset.annotate(
-            available_stock=ExpressionWrapper(
-                F('total_stock')
-                - F('allocated_to_sales_orders')
-                - F('allocated_to_build_orders'),
-                output_field=models.DecimalField(),
-            )
-        )
-
-        # Filter for "variant" stock: Variant stock items must be salable and active
-        variant_stock_query = part.filters.variant_stock_query(
-            reference='part__'
-        ).filter(part__salable=True, part__active=True)
-
-        # Also add in available "variant" stock
-        queryset = queryset.alias(
-            variant_stock_total=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='quantity'
-            ),
-            variant_bo_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='sales_order_allocations__quantity'
-            ),
-            variant_so_allocations=part.filters.annotate_variant_quantity(
-                variant_stock_query, reference='allocations__quantity'
-            ),
-        )
-
-        queryset = queryset.annotate(
-            available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total')
-                - F('variant_bo_allocations')
-                - F('variant_so_allocations'),
-                output_field=models.DecimalField(),
-            )
-        )
-
-        return queryset
-
-    customer_detail = CompanyBriefSerializer(
-        source='order.customer', many=False, read_only=True
-    )
-    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-    allocations = SalesOrderAllocationSerializer(
-        many=True, read_only=True, location_detail=True
-    )
-
-    # Annotated fields
-    overdue = serializers.BooleanField(required=False, read_only=True)
-    available_stock = serializers.FloatField(read_only=True)
-    available_variant_stock = serializers.FloatField(read_only=True)
-
-    quantity = InvenTreeDecimalField()
-
-    allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
-
-    shipped = InvenTreeDecimalField(read_only=True)
-
-    sale_price = InvenTreeMoneySerializer(allow_null=True)
-
-    sale_price_currency = InvenTreeCurrencySerializer(
-        help_text=_('Sale price currency')
-    )
-
-
-@register_importer()
-class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
-    """Serializer for the SalesOrderShipment class."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderShipment
-
-        fields = [
-            'pk',
-            'order',
-            'order_detail',
-            'allocations',
-            'shipment_date',
-            'delivery_date',
-            'checked_by',
-            'reference',
-            'tracking_number',
-            'invoice_number',
-            'link',
-            'notes',
-        ]
-
-    allocations = SalesOrderAllocationSerializer(
-        many=True, read_only=True, location_detail=True
-    )
-
-    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
 
 class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
@@ -1313,8 +1508,13 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
         return data
 
 
-class SalesOrderCompleteSerializer(serializers.Serializer):
+class SalesOrderCompleteSerializer(OrderAdjustSerializer):
     """DRF serializer for manually marking a sales order as complete."""
+
+    class Meta:
+        """Serializer metaclass options."""
+
+        fields = ['accept_incomplete']
 
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
@@ -1344,10 +1544,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for the serializer."""
         data = super().validate(data)
-
-        order = self.context['order']
-
-        order.can_complete(
+        self.order.can_complete(
             raise_error=True,
             allow_incomplete_lines=str2bool(data.get('accept_incomplete', False)),
         )
@@ -1357,17 +1554,24 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to complete the SalesOrder."""
         request = self.context['request']
-        order = self.context['order']
         data = self.validated_data
 
         user = getattr(request, 'user', None)
 
-        order.ship_order(
+        self.order.ship_order(
             user, allow_incomplete_lines=str2bool(data.get('accept_incomplete', False))
         )
 
 
-class SalesOrderCancelSerializer(serializers.Serializer):
+class SalesOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializer for placing a SalesOrder on hold."""
+
+    def save(self):
+        """Save the serializer to place the SalesOrder on hold."""
+        self.order.hold_order()
+
+
+class SalesOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for marking a SalesOrder as cancelled."""
 
     def get_context_data(self):
@@ -1378,9 +1582,7 @@ class SalesOrderCancelSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to cancel the order."""
-        order = self.context['order']
-
-        order.cancel_order()
+        self.order.cancel_order()
 
 
 class SalesOrderSerialAllocationSerializer(serializers.Serializer):
@@ -1423,8 +1625,8 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
         many=False,
-        allow_null=False,
-        required=True,
+        required=False,
+        allow_null=True,
         label=_('Shipment'),
     )
 
@@ -1436,10 +1638,10 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         """
         order = self.context['order']
 
-        if shipment.shipment_date is not None:
+        if shipment and shipment.shipment_date is not None:
             raise ValidationError(_('Shipment has already been shipped'))
 
-        if shipment.order != order:
+        if shipment and shipment.order != order:
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
@@ -1461,42 +1663,50 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         try:
             data['serials'] = extract_serial_numbers(
-                serial_numbers, quantity, part.get_latest_serial_number()
+                serial_numbers, quantity, part.get_latest_serial_number(), part=part
             )
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
 
-        serials_not_exist = []
-        serials_allocated = []
+        serials_not_exist = set()
+        serials_unavailable = set()
         stock_items_to_allocate = []
 
         for serial in data['serials']:
+            serial = str(serial).strip()
+
             items = stock.models.StockItem.objects.filter(
                 part=part, serial=serial, quantity=1
             )
 
             if not items.exists():
-                serials_not_exist.append(str(serial))
+                serials_not_exist.add(str(serial))
                 continue
 
             stock_item = items[0]
 
-            if stock_item.unallocated_quantity() == 1:
-                stock_items_to_allocate.append(stock_item)
-            else:
-                serials_allocated.append(str(serial))
+            if not stock_item.in_stock:
+                serials_unavailable.add(str(serial))
+                continue
+
+            if stock_item.unallocated_quantity() < 1:
+                serials_unavailable.add(str(serial))
+                continue
+
+            # At this point, the serial number is valid, and can be added to the list
+            stock_items_to_allocate.append(stock_item)
 
         if len(serials_not_exist) > 0:
             error_msg = _('No match found for the following serial numbers')
             error_msg += ': '
-            error_msg += ','.join(serials_not_exist)
+            error_msg += ','.join(sorted(serials_not_exist))
 
             raise ValidationError({'serial_numbers': error_msg})
 
-        if len(serials_allocated) > 0:
-            error_msg = _('The following serial numbers are already allocated')
+        if len(serials_unavailable) > 0:
+            error_msg = _('The following serial numbers are unavailable')
             error_msg += ': '
-            error_msg += ','.join(serials_allocated)
+            error_msg += ','.join(sorted(serials_unavailable))
 
             raise ValidationError({'serial_numbers': error_msg})
 
@@ -1510,14 +1720,20 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         line_item = data['line_item']
         stock_items = data['stock_items']
-        shipment = data['shipment']
+        shipment = data.get('shipment', None)
 
-        with transaction.atomic():
-            for stock_item in stock_items:
-                # Create a new SalesOrderAllocation
-                order.models.SalesOrderAllocation.objects.create(
+        allocations = []
+
+        for stock_item in stock_items:
+            # Create a new SalesOrderAllocation
+            allocations.append(
+                order.models.SalesOrderAllocation(
                     line=line_item, item=stock_item, quantity=1, shipment=shipment
                 )
+            )
+
+        with transaction.atomic():
+            order.models.SalesOrderAllocation.objects.bulk_create(allocations)
 
 
 class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
@@ -1533,8 +1749,8 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
         many=False,
-        allow_null=False,
-        required=True,
+        required=False,
+        allow_null=True,
         label=_('Shipment'),
     )
 
@@ -1542,10 +1758,10 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         """Run validation against the provided shipment instance."""
         order = self.context['order']
 
-        if shipment.shipment_date is not None:
+        if shipment and shipment.shipment_date is not None:
             raise ValidationError(_('Shipment has already been shipped'))
 
-        if shipment.order != order:
+        if shipment and shipment.order != order:
             raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
@@ -1569,7 +1785,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data['items']
-        shipment = data['shipment']
+        shipment = data.get('shipment')
 
         with transaction.atomic():
             for entry in items:
@@ -1601,7 +1817,11 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    TotalPriceMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the ReturnOrder model class."""
 
@@ -1611,6 +1831,8 @@ class ReturnOrderSerializer(
         model = order.models.ReturnOrder
 
         fields = AbstractOrderSerializer.order_fields([
+            'issue_date',
+            'complete_date',
             'customer',
             'customer_detail',
             'customer_reference',
@@ -1628,6 +1850,12 @@ class ReturnOrderSerializer(
 
         if customer_detail is not True:
             self.fields.pop('customer_detail', None)
+
+    def skip_create_fields(self):
+        """Skip these fields when instantiating a new object."""
+        fields = super().skip_create_fields()
+
+        return [*fields, 'duplicate']
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1657,46 +1885,36 @@ class ReturnOrderSerializer(
     )
 
 
-class ReturnOrderIssueSerializer(serializers.Serializer):
+class ReturnOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializers for holding a ReturnOrder."""
+
+    def save(self):
+        """Save the serializer to 'hold' the order."""
+        self.order.hold_order()
+
+
+class ReturnOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing a ReturnOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'issue' the order."""
-        order = self.context['order']
-        order.issue_order()
+        self.order.issue_order()
 
 
-class ReturnOrderCancelSerializer(serializers.Serializer):
+class ReturnOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for cancelling a ReturnOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'cancel' the order."""
-        order = self.context['order']
-        order.cancel_order()
+        self.order.cancel_order()
 
 
-class ReturnOrderCompleteSerializer(serializers.Serializer):
+class ReturnOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a ReturnOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'complete' the order."""
-        order = self.context['order']
-        order.complete_order()
+        self.order.complete_order()
 
 
 class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):

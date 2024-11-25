@@ -1,4 +1,4 @@
-import { MantineSize } from '@mantine/core';
+import type { MantineSize } from '@mantine/core';
 import dayjs from 'dayjs';
 
 import {
@@ -24,13 +24,17 @@ export function formatDecimal(
   value: number | null | undefined,
   options: FormatDecmimalOptionsInterface = {}
 ) {
-  let locale = options.locale || navigator.language || 'en-US';
+  const locale = options.locale || navigator.language || 'en-US';
 
   if (value === null || value === undefined) {
     return value;
   }
 
-  let formatter = new Intl.NumberFormat(locale);
+  const formatter = new Intl.NumberFormat(locale, {
+    style: 'decimal',
+    maximumFractionDigits: options.digits ?? 6,
+    minimumFractionDigits: options.minDigits ?? 0
+  });
 
   return formatter.format(value);
 }
@@ -51,9 +55,9 @@ export function formatCurrency(
     return null;
   }
 
-  value = parseFloat(value.toString());
+  value = Number.parseFloat(value.toString());
 
-  if (isNaN(value) || !isFinite(value)) {
+  if (Number.isNaN(value) || !Number.isFinite(value)) {
     return null;
   }
 
@@ -68,13 +72,13 @@ export function formatCurrency(
   minDigits = Number(minDigits);
 
   // Extract default currency information
-  let currency =
+  const currency =
     options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
 
   // Extract locale information
-  let locale = options.locale || navigator.language || 'en-US';
+  const locale = options.locale || navigator.language || 'en-US';
 
-  let formatter = new Intl.NumberFormat(locale, {
+  const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
     maximumFractionDigits: Math.max(minDigits, maxDigits),

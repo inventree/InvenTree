@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { api } from '../../../../App';
-import { PreviewAreaComponent } from '../TemplateEditor';
+import type { PreviewAreaComponent } from '../TemplateEditor';
 
 export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
   (props, ref) => {
@@ -56,13 +56,13 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           });
         }
 
-        let pdf = new Blob([preview.data], {
+        const pdf = new Blob([preview.data], {
           type: preview.headers['content-type']
         });
 
-        let srcUrl = URL.createObjectURL(pdf);
+        const srcUrl = URL.createObjectURL(pdf);
 
-        setPdfUrl(srcUrl + '#view=fitH');
+        setPdfUrl(`${srcUrl}#view=fitH`);
       }
     }));
 
@@ -82,7 +82,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           </div>
         )}
         {pdfUrl && (
-          <iframe src={pdfUrl} width="100%" height="100%" title="PDF Preview" />
+          <iframe src={pdfUrl} width='100%' height='100%' title='PDF Preview' />
         )}
       </>
     );

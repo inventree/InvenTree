@@ -7,7 +7,7 @@ import {
   IconCircleDashedCheck,
   IconExclamationCircle
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -16,16 +16,20 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { ImportSessionState } from '../../hooks/UseImportSession';
+import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../../tables/Column';
-import { TableFilter } from '../../tables/Filter';
+import type { TableColumn } from '../../tables/Column';
+import type { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
+import {
+  type RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
-import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ProgressBar } from '../items/ProgressBar';
 import { RenderRemoteInstance } from '../render/Instance';
 
@@ -34,12 +38,12 @@ function ImporterDataCell({
   column,
   row,
   onEdit
-}: {
+}: Readonly<{
   session: ImportSessionState;
   column: any;
   row: any;
   onEdit?: () => void;
-}) {
+}>) {
   const onRowEdit = useCallback(
     (event: any) => {
       cancelEvent(event);
@@ -59,7 +63,7 @@ function ImporterDataCell({
   }, [row.errors, column.field]);
 
   const cellValue: ReactNode = useMemo(() => {
-    let field_def = session.availableFields[column.field];
+    const field_def = session.availableFields[column.field];
 
     if (!row?.data) {
       return '-';
@@ -84,7 +88,7 @@ function ImporterDataCell({
         break;
     }
 
-    let value = row.data ? row.data[column.field] ?? '' : '';
+    let value = row.data ? (row.data[column.field] ?? '') : '';
 
     if (!value) {
       value = '-';
@@ -101,18 +105,18 @@ function ImporterDataCell({
   return (
     <HoverCard disabled={cellValid} openDelay={100} closeDelay={100}>
       <HoverCard.Target>
-        <Group grow justify="apart" onClick={onRowEdit}>
+        <Group grow justify='apart' onClick={onRowEdit}>
           <Group grow style={{ flex: 1 }}>
-            <Text size="xs" c={cellValid ? undefined : 'red'}>
+            <Text size='xs' c={cellValid ? undefined : 'red'}>
               {cellValue}
             </Text>
           </Group>
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           {cellErrors.map((error: string) => (
-            <Text size="xs" c="red" key={error}>
+            <Text size='xs' c='red' key={error}>
               {error}
             </Text>
           ))}
@@ -124,19 +128,19 @@ function ImporterDataCell({
 
 export default function ImporterDataSelector({
   session
-}: {
+}: Readonly<{
   session: ImportSessionState;
-}) {
+}>) {
   const table = useTable('dataimporter');
 
   const [selectedFieldNames, setSelectedFieldNames] = useState<string[]>([]);
 
   const selectedFields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = {};
+    const fields: ApiFormFieldSet = {};
 
-    for (let field of selectedFieldNames) {
+    for (const field of selectedFieldNames) {
       // Find the field definition in session.availableFields
-      let fieldDef = session.availableFields[field];
+      const fieldDef = session.availableFields[field];
       if (fieldDef) {
         // Construct field filters based on session field filters
         let filters = fieldDef.filters ?? {};
@@ -239,7 +243,7 @@ export default function ImporterDataSelector({
       return [];
     }
 
-    let errors: string[] = [];
+    const errors: string[] = [];
 
     for (const k of Object.keys(row.errors)) {
       if (row.errors[k]) {
@@ -257,7 +261,7 @@ export default function ImporterDataSelector({
   }, []);
 
   const columns: TableColumn[] = useMemo(() => {
-    let columns: TableColumn[] = [
+    const columns: TableColumn[] = [
       {
         accessor: 'row_index',
         title: t`Row`,
@@ -265,22 +269,22 @@ export default function ImporterDataSelector({
         switchable: false,
         render: (row: any) => {
           return (
-            <Group justify="left" gap="xs">
-              <Text size="sm">{row.row_index}</Text>
-              {row.complete && <IconCircleCheck color="green" size={16} />}
+            <Group justify='left' gap='xs'>
+              <Text size='sm'>{row.row_index}</Text>
+              {row.complete && <IconCircleCheck color='green' size={16} />}
               {!row.complete && row.valid && (
-                <IconCircleDashedCheck color="blue" size={16} />
+                <IconCircleDashedCheck color='blue' size={16} />
               )}
               {!row.complete && !row.valid && (
                 <HoverCard openDelay={50} closeDelay={100}>
                   <HoverCard.Target>
-                    <IconExclamationCircle color="red" size={16} />
+                    <IconExclamationCircle color='red' size={16} />
                   </HoverCard.Target>
                   <HoverCard.Dropdown>
-                    <Stack gap="xs">
+                    <Stack gap='xs'>
                       <Text>{t`Row contains errors`}:</Text>
                       {rowErrors(row).map((error: string) => (
-                        <Text size="sm" c="red" key={error}>
+                        <Text size='sm' c='red' key={error}>
                           {error}
                         </Text>
                       ))}
@@ -295,7 +299,7 @@ export default function ImporterDataSelector({
       ...session.mappedFields.map((column: any) => {
         return {
           accessor: column.field,
-          title: column.column ?? column.title,
+          title: column.label ?? column.column,
           sortable: false,
           switchable: true,
           render: (row: any) => {
@@ -316,7 +320,7 @@ export default function ImporterDataSelector({
   }, [session]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         {
           title: t`Accept`,
@@ -373,9 +377,10 @@ export default function ImporterDataSelector({
 
     return [
       <ActionButton
+        key='import-selected-rows'
         disabled={!canImport}
         icon={<IconArrowRight />}
-        color="green"
+        color='green'
         tooltip={t`Import selected rows`}
         onClick={() => {
           importData(table.selectedRecords.map((row: any) => row.pk));
@@ -388,10 +393,10 @@ export default function ImporterDataSelector({
     <>
       {editRow.modal}
       {deleteRow.modal}
-      <Stack gap="xs">
-        <Paper shadow="xs" p="xs">
-          <Group grow justify="apart">
-            <Text size="lg">{t`Processing Data`}</Text>
+      <Stack gap='xs'>
+        <Paper shadow='xs' p='xs'>
+          <Group grow justify='apart'>
+            <Text size='lg'>{t`Processing Data`}</Text>
             <Space />
             <ProgressBar
               maximum={session.rowCount}

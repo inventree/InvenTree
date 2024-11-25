@@ -47,6 +47,7 @@ export interface ServerAPIProps {
   installer: null | string;
   target: null | string;
   default_locale: null | string;
+  django_admin: null | string;
 }
 
 export interface AuthProps {
@@ -91,7 +92,7 @@ export interface SettingChoice {
 }
 
 export enum SettingTyp {
-  Inventree = 'inventree',
+  InvenTree = 'inventree',
   Plugin = 'plugin',
   User = 'user',
   Notification = 'notification'

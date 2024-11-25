@@ -39,7 +39,7 @@ InvenTree allows you to upload simple BOM files in multiple formats, and downloa
 
 ## Build Parts
 
-Inventree features a build management system to help you track the progress of your builds.
+InvenTree features a build management system to help you track the progress of your builds.
 Builds consume stock items to make new parts, you can decide to automatically or manually allocate parts from your current inventory.
 
 [Read more...](./build/build.md)

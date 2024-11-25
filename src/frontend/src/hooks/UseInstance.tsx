@@ -1,9 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { PathParams, apiUrl } from '../states/ApiState';
+import type { ApiEndpoints } from '../enums/ApiEndpoints';
+import { type PathParams, apiUrl } from '../states/ApiState';
+
+export interface UseInstanceResult {
+  instance: any;
+  setInstance: (instance: any) => void;
+  refreshInstance: () => void;
+  refreshInstancePromise: () => Promise<QueryObserverResult<any, any>>;
+  instanceQuery: any;
+  requestStatus: number;
+  isLoaded: boolean;
+}
 
 /**
  * Custom hook for loading a single instance of an instance from the API
@@ -14,6 +24,7 @@ import { PathParams, apiUrl } from '../states/ApiState';
  * To use this hook:
  * const { instance, refreshInstance } = useInstance(url: string, pk: number)
  */
+
 export function useInstance<T = any>({
   endpoint,
   pk,
@@ -36,13 +47,19 @@ export function useInstance<T = any>({
   refetchOnWindowFocus?: boolean;
   throwError?: boolean;
   updateInterval?: number;
-}) {
+}): UseInstanceResult {
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
   const [requestStatus, setRequestStatus] = useState<number>(0);
 
   const instanceQuery = useQuery<T>({
-    queryKey: ['instance', endpoint, pk, params, pathParams],
+    queryKey: [
+      'instance',
+      endpoint,
+      pk,
+      JSON.stringify(params),
+      JSON.stringify(pathParams)
+    ],
     queryFn: async () => {
       if (hasPrimaryKey) {
         if (
@@ -89,15 +106,29 @@ export function useInstance<T = any>({
     refetchInterval: updateInterval
   });
 
-  const refreshInstance = useCallback(function () {
+  const isLoaded = useMemo(() => {
+    return (
+      instanceQuery.isFetched &&
+      instanceQuery.isSuccess &&
+      !instanceQuery.isError
+    );
+  }, [instanceQuery]);
+
+  const refreshInstance = useCallback(() => {
     instanceQuery.refetch();
+  }, []);
+
+  const refreshInstancePromise = useCallback(() => {
+    return instanceQuery.refetch();
   }, []);
 
   return {
     instance,
     setInstance,
     refreshInstance,
+    refreshInstancePromise,
     instanceQuery,
-    requestStatus
+    requestStatus,
+    isLoaded
   };
 }

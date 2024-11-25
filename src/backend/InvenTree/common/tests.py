@@ -23,7 +23,12 @@ import PIL
 import common.validators
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from InvenTree.unit_test import (
+    AdminTestCase,
+    InvenTreeAPITestCase,
+    InvenTreeTestCase,
+    PluginMixin,
+)
 from part.models import Part
 from plugin import registry
 from plugin.models import NotificationUserSetting
@@ -33,6 +38,7 @@ from .models import (
     Attachment,
     ColorTheme,
     CustomUnit,
+    InvenTreeCustomUserStateModel,
     InvenTreeSetting,
     InvenTreeUserSetting,
     NotesImage,
@@ -157,6 +163,29 @@ class AttachmentTest(InvenTreeAPITestCase):
         # Upload should now work!
         response = self.post(url, data, expected_code=201)
 
+        pk = response.data['pk']
+
+        # Edit the attachment via API
+        response = self.patch(
+            reverse('api-attachment-detail', kwargs={'pk': pk}),
+            {'comment': 'New comment'},
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['comment'], 'New comment')
+
+        attachment = Attachment.objects.get(pk=pk)
+        self.assertEqual(attachment.comment, 'New comment')
+
+        # And check that we cannot edit the attachment without the correct permissions
+        self.clearRoles()
+
+        self.patch(
+            reverse('api-attachment-detail', kwargs={'pk': pk}),
+            {'comment': 'New comment 2'},
+            expected_code=403,
+        )
+
         # Try to delete the attachment via API (should fail)
         attachment = part.attachments.first()
         url = reverse('api-attachment-detail', kwargs={'pk': attachment.pk})
@@ -204,9 +233,6 @@ class SettingsTest(InvenTreeTestCase):
         report_size_obj = InvenTreeSetting.get_setting_object(
             'REPORT_DEFAULT_PAGE_SIZE'
         )
-        report_test_obj = InvenTreeSetting.get_setting_object(
-            'REPORT_ENABLE_TEST_REPORT'
-        )
 
         # check settings base fields
         self.assertEqual(instance_obj.name, 'Server Instance Name')
@@ -236,7 +262,6 @@ class SettingsTest(InvenTreeTestCase):
 
         # check setting_type
         self.assertEqual(instance_obj.setting_type(), 'string')
-        self.assertEqual(report_test_obj.setting_type(), 'boolean')
         self.assertEqual(stale_days.setting_type(), 'integer')
 
         # check as_int
@@ -244,9 +269,6 @@ class SettingsTest(InvenTreeTestCase):
         self.assertEqual(
             instance_obj.as_int(), 'InvenTree'
         )  # not an int -> return default
-
-        # check as_bool
-        self.assertEqual(report_test_obj.as_bool(), True)
 
         # check to_native_value
         self.assertEqual(stale_days.to_native_value(), 0)
@@ -369,7 +391,7 @@ class SettingsTest(InvenTreeTestCase):
             'before_save',
         ]
 
-        for k in setting.keys():
+        for k in setting:
             self.assertIn(k, allowed_keys)
 
         # Check default value for boolean settings
@@ -407,9 +429,7 @@ class SettingsTest(InvenTreeTestCase):
     @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        N = len(InvenTreeSetting.SETTINGS.keys())
-
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS:
             value = InvenTreeSetting.get_setting_default(key)
 
             try:
@@ -498,7 +518,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
 
         n_public_settings = len([
-            k for k in InvenTreeSetting.SETTINGS.keys() if not k.startswith('_')
+            k for k in InvenTreeSetting.SETTINGS if not k.startswith('_')
         ])
 
         # Number of results should match the number of settings
@@ -810,11 +830,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
     def test_invalid_setting_key(self):
         """Test that an invalid setting key returns a 404."""
-        ...
 
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
-        ...
 
 
 class ErrorReportTest(InvenTreeAPITestCase):
@@ -912,7 +930,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, **{'HTTP_TOKEN': '1234567fghj'}
+            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -935,7 +953,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -983,7 +1001,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
+            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -998,7 +1016,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1103,7 +1121,6 @@ class CommonTest(InvenTreeAPITestCase):
 
     def test_restart_flag(self):
         """Test that the restart flag is reset on start."""
-        import common.models
         from plugin import registry
 
         # set flag true
@@ -1483,6 +1500,14 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
 
+    def test_api(self):
+        """Test the CustomUnit API."""
+        response = self.get(reverse('api-all-unit-list'))
+        self.assertIn('default_system', response.data)
+        self.assertIn('available_systems', response.data)
+        self.assertIn('available_units', response.data)
+        self.assertEqual(len(response.data['available_units']) > 100, True)
+
 
 class ContentTypeAPITest(InvenTreeAPITestCase):
     """Unit tests for the ContentType API."""
@@ -1566,3 +1591,104 @@ class ValidatorsTest(TestCase):
             common.validators.validate_icon('ti:package:non-existing-variant')
 
         common.validators.validate_icon('ti:package:outline')
+
+
+class CustomStatusTest(TestCase):
+    """Unit tests for the custom status model."""
+
+    def setUp(self):
+        """Setup for all tests."""
+        self.data = {
+            'key': 11,
+            'name': 'OK - advanced',
+            'label': 'OK - adv.',
+            'color': 'secondary',
+            'logical_key': 10,
+            'model': ContentType.objects.get(model='stockitem'),
+            'reference_status': 'StockStatus',
+        }
+
+    def test_validation_model(self):
+        """Test that model is present."""
+        data = self.data
+        data.pop('model')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_key(self):
+        """Tests Model must have a key."""
+        data = self.data
+        data.pop('key')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logicalkey(self):
+        """Tests Logical key must be present."""
+        data = self.data
+        data.pop('logical_key')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_reference(self):
+        """Tests Reference status must be present."""
+        data = self.data
+        data.pop('reference_status')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logical_unique(self):
+        """Tests Logical key must be unique."""
+        data = self.data
+        data['logical_key'] = data['key']
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_reference_exsists(self):
+        """Tests Reference status set not found."""
+        data = self.data
+        data['reference_status'] = 'abcd'
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_key_unique(self):
+        """Tests Key must be different from the logical keys of the reference."""
+        data = self.data
+        data['key'] = 50
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logical_key_exsists(self):
+        """Tests Logical key must be in the logical keys of the reference status."""
+        data = self.data
+        data['logical_key'] = 12
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation(self):
+        """Tests Valid run."""
+        data = self.data
+        instance = InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(data['key'], instance.key)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 1)
+        self.assertEqual(
+            instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
+        )
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(
+            model=Attachment,
+            model_kwargs={'link': 'https://aa.example.org', 'model_id': 1},
+        )

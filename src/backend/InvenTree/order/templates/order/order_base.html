@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load generic %}
 
@@ -63,23 +64,28 @@
         <li><a class='dropdown-item' href='#' id='edit-order'>
             <span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}
         </a></li>
-        {% if order.can_cancel %}
-        <li><a class='dropdown-item' href='#' id='cancel-order'>
-            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
-        </a></li>
-        {% endif %}
         {% if roles.purchase_order.add %}
         <li><a class='dropdown-item' href='#' id='duplicate-order'>
             <span class='fas fa-clone'></span> {% trans "Duplicate order" %}
         </a></li>
         {% endif %}
+        {% if order.can_hold %}
+        <li><a class='dropdown-item' href='#' id='hold-order'>
+            <span class='fas fa-hand-paper icon-yellow'></span> {% trans "Hold order" %}
+        </a></li>
+        {% endif %}
+        {% if order.can_cancel %}
+        <li><a class='dropdown-item' href='#' id='cancel-order'>
+            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
+        </a></li>
+        {% endif %}
     </ul>
 </div>
-{% if order.is_pending %}
+{% if order.can_issue %}
 <button type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
-{% elif order.is_open %}
+{% elif order.status == PurchaseOrderStatus.PLACED %}
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
@@ -117,13 +123,21 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
         <td>
-            {% status_label 'purchase_order' order.status %}
+            {% display_status_label 'purchase_order' order.status_custom_key order.status %}
             {% if order.is_overdue %}
             <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
-
+    {% if order.destination %}
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Destination" %}</td>
+        <td>
+            <a href='{% url "stock-location-detail" order.destination.id %}'>{{ order.destination.name }}</a>
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock details %}
@@ -138,7 +152,7 @@ src="{% static 'img/blank_image.png' %}"
             {% if order.supplier %}
             <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html" %}
             {% else %}
-            <em>{% trans "No suppplier information available" %}</em>
+            <em>{% trans "No supplier information available" %}</em>
             {% endif %}
         </td>
     </tr>
@@ -238,7 +252,7 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-{% if order.status == PurchaseOrderStatus.PENDING %}
+{% if order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.ON_HOLD %}
 $("#place-order").click(function() {
 
     issuePurchaseOrder(
@@ -281,6 +295,7 @@ $("#complete-order").click(function() {
     );
 });
 
+{% if order.can_cancel %}
 $("#cancel-order").click(function() {
 
     cancelPurchaseOrder(
@@ -292,6 +307,21 @@ $("#cancel-order").click(function() {
         },
     );
 });
+{% endif %}
+
+{% if order.can_hold %}
+$("#hold-order").click(function() {
+
+    holdOrder(
+        '{% url "api-po-hold" order.pk %}',
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        }
+    );
+});
+{% endif %}
 
 {% endif %}
 
@@ -312,7 +342,7 @@ $("#export-order").click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Purchase Order QR Code" escape %}',
-        '{{ order.barcode }}'
+        `{% clean_barcode order.barcode %}`
     );
 });
 

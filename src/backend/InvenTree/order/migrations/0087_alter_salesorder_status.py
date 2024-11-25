@@ -2,6 +2,8 @@
 
 from django.db import migrations, models
 
+from order.status_codes import SalesOrderStatus
+
 
 class Migration(migrations.Migration):
 
@@ -13,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='salesorder',
             name='status',
-            field=models.PositiveIntegerField(choices=[(10, 'Pending'), (15, 'In Progress'), (20, 'Shipped'), (40, 'Cancelled'), (50, 'Lost'), (60, 'Returned')], default=10, help_text='Purchase order status', verbose_name='Status'),
+            field=models.PositiveIntegerField(
+                choices=SalesOrderStatus.items(),
+                default=SalesOrderStatus.PENDING.value,
+                help_text='Sales order status', verbose_name='Status'
+            ),
         ),
     ]

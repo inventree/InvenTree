@@ -23,7 +23,7 @@ export function setApiDefaults() {
   api.defaults.xsrfHeaderName = 'X-CSRFToken';
 
   if (token) {
-    api.defaults.headers['Authorization'] = `Token ${token}`;
+    api.defaults.headers.Authorization = `Token ${token}`;
   } else {
     delete api.defaults.headers['Authorization'];
   }

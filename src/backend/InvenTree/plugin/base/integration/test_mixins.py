@@ -341,7 +341,10 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
 
 class PanelMixinTests(InvenTreeTestCase):
-    """Test that the PanelMixin plugin operates correctly."""
+    """Test that the PanelMixin plugin operates correctly.
+
+    TODO: This class will be removed in the future, as the PanelMixin is deprecated.
+    """
 
     fixtures = ['category', 'part', 'location', 'stock']
 

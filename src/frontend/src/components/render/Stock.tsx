@@ -1,10 +1,11 @@
 import { t } from '@lingui/macro';
-import { ReactNode } from 'react';
+import { Text } from '@mantine/core';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
 import { ApiIcon } from '../items/ApiIcon';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -17,8 +18,14 @@ export function RenderStockLocation(
   return (
     <RenderInlineModel
       {...props}
-      prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      primary={instance.name}
+      tooltip={instance.pathstring}
+      prefix={
+        <>
+          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
+          {instance.icon && <ApiIcon name={instance.icon} />}
+        </>
+      }
+      primary={instance.pathstring}
       secondary={instance.description}
       url={
         props.link
@@ -39,7 +46,7 @@ export function RenderStockLocationType({
     <RenderInlineModel
       primary={instance.name}
       prefix={instance.icon && <ApiIcon name={instance.icon} />}
-      secondary={instance.description + ` (${instance.location_count})`}
+      secondary={`${instance.description} (${instance.location_count})`}
     />
   );
 }
@@ -51,16 +58,16 @@ export function RenderStockItem(
   let quantity_string = '';
 
   if (instance?.serial !== null && instance?.serial !== undefined) {
-    quantity_string += t`Serial Number` + `: ${instance.serial}`;
+    quantity_string += `${t`Serial Number`}: ${instance.serial}`;
   } else if (instance?.quantity) {
-    quantity_string = t`Quantity` + `: ${instance.quantity}`;
+    quantity_string = `${t`Quantity`}: ${instance.quantity}`;
   }
 
   return (
     <RenderInlineModel
       {...props}
       primary={instance.part_detail?.full_name}
-      suffix={quantity_string}
+      suffix={<Text size='sm'>{quantity_string}</Text>}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined

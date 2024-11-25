@@ -70,7 +70,7 @@ class URLTest(TestCase):
 
         pattern = '{% url [\'"]([^\'"]+)[\'"]([^%]*)%}'
 
-        with open(input_file, 'r') as f:
+        with open(input_file, encoding='utf-8') as f:
             data = f.read()
 
             results = re.findall(pattern, data)

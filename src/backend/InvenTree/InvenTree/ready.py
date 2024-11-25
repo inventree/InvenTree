@@ -11,43 +11,37 @@ def isInTestMode():
 
 def isImportingData():
     """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
-    return any((x in sys.argv for x in ['flush', 'loaddata', 'dumpdata']))
+    return any(x in sys.argv for x in ['flush', 'loaddata', 'dumpdata'])
 
 
 def isRunningMigrations():
     """Return True if the database is currently running migrations."""
     return any(
-        (
-            x in sys.argv
-            for x in ['migrate', 'makemigrations', 'showmigrations', 'runmigrations']
-        )
+        x in sys.argv
+        for x in ['migrate', 'makemigrations', 'showmigrations', 'runmigrations']
     )
 
 
 def isRebuildingData():
     """Return true if any of the rebuilding commands are being executed."""
     return any(
-        (
-            x in sys.argv
-            for x in ['prerender', 'rebuild_models', 'rebuild_thumbnails', 'rebuild']
-        )
+        x in sys.argv
+        for x in ['prerender', 'rebuild_models', 'rebuild_thumbnails', 'rebuild']
     )
 
 
 def isRunningBackup():
     """Return true if any of the backup commands are being executed."""
     return any(
-        (
-            x in sys.argv
-            for x in [
-                'backup',
-                'restore',
-                'dbbackup',
-                'dbresotore',
-                'mediabackup',
-                'mediarestore',
-            ]
-        )
+        x in sys.argv
+        for x in [
+            'backup',
+            'restore',
+            'dbbackup',
+            'dbresotore',
+            'mediabackup',
+            'mediarestore',
+        ]
     )
 
 
@@ -64,10 +58,7 @@ def isInServerThread():
     if 'runserver' in sys.argv:
         return True
 
-    if 'gunicorn' in sys.argv[0]:
-        return True
-
-    return False
+    return 'gunicorn' in sys.argv[0]
 
 
 def isInMainThread():
@@ -128,11 +119,7 @@ def canAppAccessDatabase(
     if not allow_plugins:
         excluded_commands.extend(['collectplugins'])
 
-    for cmd in excluded_commands:
-        if cmd in sys.argv:
-            return False
-
-    return True
+    return all(cmd not in sys.argv for cmd in excluded_commands)
 
 
 def isPluginRegistryLoaded():

@@ -11,43 +11,102 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
-import { LocationColumn, PartColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableColumn } from '../Column';
+import {
+  LocationColumn,
+  PartColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../ColumnRenderers';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Render a table of allocated stock for a build.
  */
 export default function BuildAllocatedStockTable({
-  buildId
-}: {
-  buildId: number;
-}) {
+  buildId,
+  stockId,
+  partId,
+  showBuildInfo,
+  showPartInfo,
+  allowEdit,
+  modelTarget,
+  modelField
+}: Readonly<{
+  buildId?: number;
+  stockId?: number;
+  partId?: number;
+  showPartInfo?: boolean;
+  showBuildInfo?: boolean;
+  allowEdit?: boolean;
+  modelTarget?: ModelType;
+  modelField?: string;
+}>) {
   const user = useUserState();
-  const table = useTable('build-allocated-stock');
+  const table = useTable(
+    !!partId ? 'buildallocatedstock-part' : 'buildallocatedstock'
+  );
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    const filters: TableFilter[] = [
       {
         name: 'tracked',
         label: t`Allocated to Output`,
         description: t`Show items allocated to a build output`
       }
     ];
-  }, []);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      ReferenceColumn({
+        accessor: 'build_detail.reference',
+        title: t`Build Order`,
+        switchable: false,
+        hidden: showBuildInfo != true
+      }),
+      {
+        accessor: 'build_detail.title',
+        title: t`Description`,
+        hidden: showBuildInfo != true
+      },
+      StatusColumn({
+        accessor: 'build_detail.status',
+        model: ModelType.build,
+        title: t`Order Status`,
+        hidden: showBuildInfo != true
+      }),
       {
         accessor: 'part',
+        hidden: !showPartInfo,
         title: t`Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record.part_detail)
+        render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
+        accessor: 'part_detail.IPN',
+        ordering: 'IPN',
+        hidden: !showPartInfo,
+        title: t`IPN`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        hidden: !showPartInfo,
         accessor: 'bom_reference',
         title: t`Reference`,
         sortable: true,
@@ -102,8 +161,11 @@ export default function BuildAllocatedStockTable({
   const editItem = useEditApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Edit Build Item`,
+    title: t`Edit Stock Allocation`,
     fields: {
+      stock_item: {
+        disabled: true
+      },
       quantity: {}
     },
     table: table
@@ -112,12 +174,12 @@ export default function BuildAllocatedStockTable({
   const deleteItem = useDeleteApiFormModal({
     pk: selectedItem,
     url: ApiEndpoints.build_item_list,
-    title: t`Delete Build Item`,
+    title: t`Delete Stock Allocation`,
     table: table
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.build),
@@ -149,18 +211,21 @@ export default function BuildAllocatedStockTable({
         props={{
           params: {
             build: buildId,
-            part_detail: true,
+            part: partId,
+            stock_item: stockId,
+            build_detail: showBuildInfo ?? false,
+            part_detail: showPartInfo ?? false,
             location_detail: true,
             stock_detail: true,
             supplier_detail: true
           },
-          enableBulkDelete: true,
+          enableBulkDelete: allowEdit && user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
-          enableSelection: true,
+          enableSelection: allowEdit && user.hasDeleteRole(UserRoles.build),
           rowActions: rowActions,
           tableFilters: tableFilters,
-          modelField: 'stock_item',
-          modelType: ModelType.stockitem
+          modelField: modelField ?? 'stock_item',
+          modelType: modelTarget ?? ModelType.stockitem
         }}
       />
     </>

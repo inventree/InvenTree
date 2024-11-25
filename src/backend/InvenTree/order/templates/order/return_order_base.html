@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load generic %}
 
@@ -74,11 +75,14 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
-        {% if order.is_open %}
+        {% if order.can_hold %}
+        <li><a class='dropdown-item' href='#' id='hold-order'><span class='fas fa-hand-paper icon-yellow'></span> {% trans "Hold order" %}</a></li>
+        {% endif %}
+        {% if order.can_cancel %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
-    {% if order.status == ReturnOrderStatus.PENDING %}
+    {% if order.can_issue %}
     <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
         <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
     </button>
@@ -112,7 +116,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
         <td>
-            {% status_label 'return_order' order.status %}
+            {% display_status_label 'return_order' order.status_custom_key order.status %}
             {% if order.is_overdue %}
             <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
@@ -211,7 +215,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% if roles.return_order.change %}
 
-{% if order.status == ReturnOrderStatus.PENDING %}
+{% if order.can_issue %}
 $('#issue-order').click(function() {
     issueReturnOrder({{ order.pk }}, {
         reload: true,
@@ -234,7 +238,7 @@ $('#edit-order').click(function() {
     });
 });
 
-{% if order.is_open %}
+{% if order.can_cancel %}
 $('#cancel-order').click(function() {
     cancelReturnOrder(
         {{ order.pk }},
@@ -243,6 +247,17 @@ $('#cancel-order').click(function() {
         }
     );
 });
+{% endif %}
+
+{% if order.can_hold %}
+$("#hold-order").click(function() {
+    holdOrder(
+        '{% url "api-ro-hold" order.pk %}',
+        {
+            reload: true,
+        }
+        );
+    });
 {% endif %}
 {% endif %}
 
@@ -257,7 +272,7 @@ $('#print-order-report').click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Return Order QR Code" escape %}',
-        '{{ order.barcode }}'
+        `{% clean_barcode order.barcode %}`
     );
 });
 

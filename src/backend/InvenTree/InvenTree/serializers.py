@@ -89,7 +89,7 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
         )
 
         if allow_blank:
-            choices = [('', '---------')] + choices
+            choices = [('', '---------'), *choices]
 
         kwargs['choices'] = choices
 
@@ -379,7 +379,7 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
         tag_object = super().update(instance, validated_data)
 
-        for key in to_be_tagged.keys():
+        for key in to_be_tagged:
             # re-add the tagmanager
             new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
             setattr(tag_object, key, getattr(new_tagobject, key))
@@ -389,8 +389,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
 class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
     """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
-
-    pass
 
 
 class UserSerializer(InvenTreeModelSerializer):
@@ -402,21 +400,24 @@ class UserSerializer(InvenTreeModelSerializer):
         model = User
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
 
-        read_only_fields = ['username']
+        read_only_fields = ['username', 'email']
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
+
     first_name = serializers.CharField(
-        label=_('First Name'), help_text=_('First name of the user')
+        label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
     )
+
     last_name = serializers.CharField(
-        label=_('Last Name'), help_text=_('Last name of the user')
+        label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
     )
+
     email = serializers.EmailField(
-        label=_('Email'), help_text=_('Email address of the user')
+        label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
     )
 
 
-class ExendedUserSerializer(UserSerializer):
+class ExtendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
 
     from users.serializers import GroupSerializer
@@ -426,21 +427,24 @@ class ExendedUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
 
-        fields = UserSerializer.Meta.fields + [
+        fields = [
+            *UserSerializer.Meta.fields,
             'groups',
             'is_staff',
             'is_superuser',
             'is_active',
         ]
 
-        read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
 
     is_staff = serializers.BooleanField(
         label=_('Staff'), help_text=_('Does this user have staff permissions')
     )
+
     is_superuser = serializers.BooleanField(
         label=_('Superuser'), help_text=_('Is this user a superuser')
     )
+
     is_active = serializers.BooleanField(
         label=_('Active'), help_text=_('Is this user account active')
     )
@@ -465,8 +469,32 @@ class ExendedUserSerializer(UserSerializer):
         return super().validate(attrs)
 
 
-class UserCreateSerializer(ExendedUserSerializer):
+class MeUserSerializer(ExtendedUserSerializer):
+    """API serializer specifically for the 'me' endpoint."""
+
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options.
+
+        Extends the ExtendedUserSerializer.Meta options,
+        but ensures that certain fields are read-only.
+        """
+
+        read_only_fields = [
+            *ExtendedUserSerializer.Meta.read_only_fields,
+            'is_active',
+            'is_staff',
+            'is_superuser',
+        ]
+
+
+class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
+
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options for the UserCreateSerializer."""
+
+        # Prevent creation of users with superuser or staff permissions
+        read_only_fields = ['groups', 'is_staff', 'is_superuser']
 
     def validate(self, attrs):
         """Expanded valiadation for auth."""
@@ -482,6 +510,7 @@ class UserCreateSerializer(ExendedUserSerializer):
     def create(self, validated_data):
         """Send an e email to the user after creation."""
         from InvenTree.helpers_model import get_base_url
+        from InvenTree.tasks import email_user, offload_task
 
         base_url = get_base_url()
 
@@ -499,8 +528,12 @@ class UserCreateSerializer(ExendedUserSerializer):
         if base_url:
             message += f'\n\nURL: {base_url}'
 
+        subject = _('Welcome to InvenTree')
+
         # Send the user an onboarding email (from current site)
-        instance.email_user(subject=_('Welcome to InvenTree'), message=message)
+        offload_task(
+            email_user, instance.pk, str(subject), str(message), force_async=True
+        )
 
         return instance
 
@@ -596,7 +629,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
 
         if ext not in accepted_file_types:
-            raise serializers.ValidationError(_('Unsupported file type'))
+            raise serializers.ValidationError(_('Unsupported file format'))
 
         # Impose a 50MB limit on uploaded BOM files
         max_upload_file_size = 50 * 1024 * 1024
@@ -704,7 +737,6 @@ class DataFileUploadSerializer(serializers.Serializer):
 
     def save(self):
         """Empty overwrite for save."""
-        ...
 
 
 class DataFileExtractSerializer(serializers.Serializer):
@@ -806,11 +838,10 @@ class DataFileExtractSerializer(serializers.Serializer):
             required = field.get('required', False)
 
             # Check for missing required columns
-            if required:
-                if name not in self.columns:
-                    raise serializers.ValidationError(
-                        _(f"Missing required column: '{name}'")
-                    )
+            if required and name not in self.columns:
+                raise serializers.ValidationError(
+                    _(f"Missing required column: '{name}'")
+                )
 
         for col in self.columns:
             if not col:
@@ -824,7 +855,6 @@ class DataFileExtractSerializer(serializers.Serializer):
 
     def save(self):
         """No "save" action for this serializer."""
-        pass
 
 
 class NotesFieldMixin:
@@ -882,8 +912,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
         try:
             self.remote_image_file = download_image_from_url(url)
-        except Exception as exc:
+        except Exception:
             self.remote_image_file = None
-            raise ValidationError(str(exc))
+            raise ValidationError(_('Failed to download image from remote URL'))
 
         return url

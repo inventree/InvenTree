@@ -4,6 +4,7 @@ import sys
 from decimal import Decimal
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -93,9 +94,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         allow_negative = kwargs.pop('allow_negative', False)
 
         # If no validators are provided, add some "standard" ones
-        if len(validators) == 0:
-            if not allow_negative:
-                validators.append(MinMoneyValidator(0))
+        if len(validators) == 0 and not allow_negative:
+            validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
 
@@ -134,9 +134,9 @@ class DatePickerFormField(forms.DateField):
     def __init__(self, **kwargs):
         """Set up custom values."""
         help_text = kwargs.get('help_text', _('Enter date'))
-        label = kwargs.get('label', None)
+        label = kwargs.get('label')
         required = kwargs.get('required', False)
-        initial = kwargs.get('initial', None)
+        initial = kwargs.get('initial')
 
         widget = forms.DateInput(attrs={'type': 'date'})
 
@@ -153,7 +153,10 @@ class DatePickerFormField(forms.DateField):
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
     if type(value) in [Decimal, float]:
-        value = round(value, places)
+        try:
+            value = round(value, places)
+        except Exception:
+            raise ValidationError(_('Invalid decimal value') + f' ({value})')
 
         if normalize:
             # Remove any trailing zeroes

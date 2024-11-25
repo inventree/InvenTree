@@ -9,6 +9,7 @@ import {
   Title
 } from '@mantine/core';
 import {
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -18,6 +19,7 @@ import {
   IconListDetails,
   IconPackages,
   IconPlugConnected,
+  IconQrcode,
   IconReport,
   IconScale,
   IconSitemap,
@@ -28,8 +30,10 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
+import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
+import type { PanelType } from '../../../../components/panels/Panel';
+import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
@@ -48,6 +52,12 @@ const TaskManagementPanel = Loadable(
   lazy(() => import('./TaskManagementPanel'))
 );
 
+const CurrencyManagmentPanel = Loadable(
+  lazy(() => import('./CurrencyManagmentPanel'))
+);
+
+const UnitManagmentPanel = Loadable(lazy(() => import('./UnitManagmentPanel')));
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
@@ -60,6 +70,10 @@ const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
+const BarcodeScanHistoryTable = Loadable(
+  lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
+);
+
 const ImportSesssionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
@@ -68,8 +82,8 @@ const ProjectCodeTable = Loadable(
   lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
 
-const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
+const CustomStateTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CustomStateTable'))
 );
 
 const PartParameterTemplateTable = Loadable(
@@ -84,9 +98,7 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
-const CurrencyTable = Loadable(
-  lazy(() => import('../../../../tables/settings/CurrencyTable'))
-);
+const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
 
 export default function AdminCenter() {
   const user = useUserState();
@@ -106,6 +118,12 @@ export default function AdminCenter() {
         content: <ImportSesssionTable />
       },
       {
+        name: 'barcode-history',
+        label: t`Barcode Scans`,
+        icon: <IconQrcode />,
+        content: <BarcodeScanHistoryTable />
+      },
+      {
         name: 'background',
         label: t`Background Tasks`,
         icon: <IconCpu />,
@@ -121,14 +139,14 @@ export default function AdminCenter() {
         name: 'currencies',
         label: t`Currencies`,
         icon: <IconCoins />,
-        content: <CurrencyTable />
+        content: <CurrencyManagmentPanel />
       },
       {
         name: 'projectcodes',
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
-          <Stack gap="xs">
+          <Stack gap='xs'>
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <Divider />
             <ProjectCodeTable />
@@ -136,10 +154,16 @@ export default function AdminCenter() {
         )
       },
       {
+        name: 'customstates',
+        label: t`Custom States`,
+        icon: <IconListDetails />,
+        content: <CustomStateTable />
+      },
+      {
         name: 'customunits',
         label: t`Custom Units`,
         icon: <IconScale />,
-        content: <CustomUnitsTable />
+        content: <UnitManagmentPanel />
       },
       {
         name: 'part-parameters',
@@ -152,6 +176,12 @@ export default function AdminCenter() {
         label: t`Category Parameters`,
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardCheck />,
+        content: <StocktakePanel />
       },
       {
         name: 'labels',
@@ -192,17 +222,17 @@ export default function AdminCenter() {
         <Trans>Quick Actions</Trans>
       </Title>
       <SimpleGrid cols={3}>
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <Text>
             <Trans>Add a new user</Trans>
           </Text>
         </Paper>
 
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <PlaceholderPill />
         </Paper>
 
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <PlaceholderPill />
         </Paper>
       </SimpleGrid>
@@ -215,19 +245,21 @@ export default function AdminCenter() {
 
   return (
     <>
+      <PageTitle title={t`Admin Center`} />
       {user.isStaff() ? (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <SettingsHeader
+            label='admin'
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
-            switch_link="/settings/system"
-            switch_text="System Settings"
           />
           <QuickAction />
           <PanelGroup
-            pageKey="admin-center"
+            pageKey='admin-center'
             panels={adminCenterPanels}
             collapsible={true}
+            model='admincenter'
+            id={null}
           />
         </Stack>
       ) : (

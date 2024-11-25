@@ -18,28 +18,27 @@
 */
 
 
-// Construct a dynamic API filter for the "issued by" field
-function constructIssuedByFilter() {
+// Construct a dynamic API filter for an "owner"
+function constructOwnerFilter(title) {
     return {
-        title: '{% trans "Issued By" %}',
+        title: title,
         options: function() {
-            let users = {};
-
-            inventreeGet('{% url "api-user-list" %}', {}, {
+            var ownersList = {};
+            inventreeGet('{% url "api-owner-list" %}', {}, {
                 async: false,
                 success: function(response) {
-                    for (let user of response) {
-                        users[user.pk] = {
-                            key: user.pk,
-                            value: user.username
+                    for (var key in response) {
+                        let owner = response[key];
+                        ownersList[owner.pk] = {
+                            key: owner.pk,
+                            value: `${owner.name} (${owner.label})`,
                         };
                     }
                 }
             });
-
-            return users;
-        }
-    }
+            return ownersList;
+        },
+    };
 }
 
 // Construct a dynamic API filter for the "project" field
@@ -142,6 +141,10 @@ function getVariantsTableFilters() {
             type: 'bool',
             title: '{% trans "Virtual" %}',
         },
+        testable: {
+            type: 'bool',
+            title: '{% trans "Testable" %}',
+        },
         trackable: {
             type: 'bool',
             title: '{% trans "Trackable" %}',
@@ -153,6 +156,10 @@ function getVariantsTableFilters() {
 // Return a dictionary of filters for the BOM table
 function getBOMTableFilters() {
     return {
+        sub_part_testable: {
+            type: 'bool',
+            title: '{% trans "Testable Part" %}',
+        },
         sub_part_trackable: {
             type: 'bool',
             title: '{% trans "Trackable Part" %}',
@@ -414,11 +421,11 @@ function getStockTableFilters() {
             title: '{% trans "Has purchase price" %}',
             description: '{% trans "Show stock items which have a purchase price set" %}',
         },
-        expiry_date_lte: {
+        expiry_before: {
             type: 'date',
             title: '{% trans "Expiry Date before" %}',
         },
-        expiry_date_gte: {
+        expiry_after: {
             type: 'date',
             title: '{% trans "Expiry Date after" %}',
         },
@@ -527,26 +534,8 @@ function getBuildTableFilters() {
             type: 'bool',
             title: '{% trans "Assigned to me" %}',
         },
-        assigned_to: {
-            title: '{% trans "Responsible" %}',
-            options: function() {
-                var ownersList = {};
-                inventreeGet('{% url "api-owner-list" %}', {}, {
-                    async: false,
-                    success: function(response) {
-                        for (var key in response) {
-                            let owner = response[key];
-                            ownersList[owner.pk] = {
-                                key: owner.pk,
-                                value: `${owner.name} (${owner.label})`,
-                            };
-                        }
-                    }
-                });
-                return ownersList;
-            },
-        },
-        issued_by: constructIssuedByFilter(),
+        assigned_to: constructOwnerFilter('{% trans "Responsible" %}'),
+        issued_by: constructOwnerFilter('{% trans "Issued By" %}'),
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
@@ -770,6 +759,10 @@ function getPartTableFilters() {
         is_template: {
             type: 'bool',
             title: '{% trans "Template" %}',
+        },
+        testable: {
+            type: 'bool',
+            title: '{% trans "Testable" %}',
         },
         trackable: {
             type: 'bool',

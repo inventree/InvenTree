@@ -1,16 +1,18 @@
 """Unit tests for the SampleValidatorPlugin class."""
 
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
+import build.models
 import part.models
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from plugin.registry import registry
 
 
-class SampleValidatorPluginTest(InvenTreeTestCase):
+class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
     """Tests for the SampleValidatonPlugin class."""
 
-    fixtures = ['category', 'location']
+    fixtures = ['part', 'category', 'location', 'build']
 
     def setUp(self):
         """Set up the test environment."""
@@ -28,6 +30,7 @@ class SampleValidatorPluginTest(InvenTreeTestCase):
         self.bom_item = part.models.BomItem.objects.create(
             part=self.assembly, sub_part=self.part, quantity=1
         )
+        super().setUp()
 
     def get_plugin(self):
         """Return the SampleValidatorPlugin instance."""
@@ -113,3 +116,40 @@ class SampleValidatorPluginTest(InvenTreeTestCase):
         self.part.IPN = 'LMNOPQ'
 
         self.part.save()
+
+    def test_validate_generate_batch_code(self):
+        """Test the generate_batch_code function."""
+        self.enable_plugin(True)
+        plg = self.get_plugin()
+        self.assertIsNotNone(plg)
+
+        code = plg.generate_batch_code()
+        self.assertIsInstance(code, str)
+        self.assertTrue(code.startswith('SAMPLE-BATCH'))
+
+    def test_api_batch(self):
+        """Test the batch code validation API."""
+        self.enable_plugin(True)
+        url = reverse('api-generate-batch-code')
+
+        response = self.post(url)
+        self.assertIn('batch_code', response.data)
+        self.assertTrue(response.data['batch_code'].startswith('SAMPLE-BATCH'))
+
+        # Use part code
+        part_itm = part.models.Part.objects.first()
+        response = self.post(url, {'part': part_itm.pk})
+        self.assertIn('batch_code', response.data)
+        self.assertTrue(
+            response.data['batch_code'].startswith(part_itm.name + '-SAMPLE-BATCH')
+        )
+
+        # Use build_order
+        build_itm = build.models.Build.objects.first()
+        response = self.post(url, {'build_order': build_itm.pk})
+        self.assertIn('batch_code', response.data)
+        self.assertTrue(
+            response.data['batch_code'].startswith(
+                build_itm.reference + '-SAMPLE-BATCH'
+            )
+        )

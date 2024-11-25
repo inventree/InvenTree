@@ -9,20 +9,32 @@ import {
   Stack,
   Text
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
   IconBuildingWarehouse,
   IconChartDonut,
+  IconCircleCheck,
   IconExclamationCircle,
   IconList,
   IconReportAnalytics,
   IconShoppingCart,
   IconTriangleSquareCircle
 } from '@tabler/icons-react';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 
+import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import {
+  EditItemAction,
+  OptionsActionDropdown
+} from '../../../components/items/ActionDropdown';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { InvenTreeIcon } from '../../../functions/icons';
+import { useEditApiFormModal } from '../../../hooks/UseForm';
+import { apiUrl } from '../../../states/ApiState';
 import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {
@@ -38,12 +50,73 @@ interface PricingOverviewEntry {
 export default function PricingOverviewPanel({
   part,
   pricing,
+  pricingQuery,
   doNavigation
-}: {
+}: Readonly<{
   part: any;
   pricing: any;
+  pricingQuery: UseQueryResult;
   doNavigation: (panel: panelOptions) => void;
-}): ReactNode {
+}>): ReactNode {
+  const refreshPricing = useCallback(() => {
+    const url = apiUrl(ApiEndpoints.part_pricing, part.pk);
+
+    notifications.hide('pricing-refresh');
+
+    notifications.show({
+      message: t`Refreshing pricing data`,
+      color: 'green',
+      id: 'pricing-refresh',
+      loading: true,
+      autoClose: false
+    });
+
+    let success = false;
+
+    api
+      .patch(url, { update: true })
+      .then((response) => {
+        success = response.status === 200;
+      })
+      .catch(() => {})
+      .finally(() => {
+        notifications.hide('pricing-refresh');
+
+        if (success) {
+          notifications.show({
+            message: t`Pricing data updated`,
+            color: 'green',
+            icon: <IconCircleCheck />
+          });
+          pricingQuery.refetch();
+        } else {
+          notifications.show({
+            message: t`Failed to update pricing data`,
+            color: 'red',
+            icon: <IconExclamationCircle />
+          });
+        }
+      });
+  }, [part]);
+
+  const editPricing = useEditApiFormModal({
+    title: t`Edit Pricing`,
+    url: apiUrl(ApiEndpoints.part_pricing, part.pk),
+    fields: {
+      override_min: {},
+      override_min_currency: {},
+      override_max: {},
+      override_max_currency: {},
+      update: {
+        hidden: true,
+        value: true
+      }
+    },
+    onFormSuccess: () => {
+      pricingQuery.refetch();
+    }
+  });
+
   const columns: any[] = useMemo(() => {
     return [
       {
@@ -52,7 +125,7 @@ export default function PricingOverviewPanel({
         render: (record: PricingOverviewEntry) => {
           const is_link = record.name !== panelOptions.overall;
           return (
-            <Group justify="left" gap="xs">
+            <Group justify='left' gap='xs'>
               {record.icon}
               {is_link ? (
                 <Anchor fw={700} onClick={() => doNavigation(record.name)}>
@@ -163,38 +236,70 @@ export default function PricingOverviewPanel({
     });
   }, [part, pricing]);
 
-  // TODO: Add display of "last updated"
-  // TODO: Add "update now" button
-
   return (
-    <Stack gap="xs">
-      <SimpleGrid cols={2}>
-        <Stack gap="xs">
-          {pricing?.updated && (
-            <Paper p="xs">
-              <Alert color="blue" title={t`Last Updated`}>
-                <Text>{formatDate(pricing.updated)}</Text>
-              </Alert>
+    <>
+      {editPricing.modal}
+      <Stack gap='xs'>
+        <SimpleGrid cols={2}>
+          <Stack gap='xs'>
+            <Paper p='xs'>
+              <Group justify='space-between' wrap='nowrap'>
+                {pricing?.updated ? (
+                  <Alert color='blue' title={t`Last Updated`} flex={1}>
+                    <Text>{formatDate(pricing.updated)}</Text>
+                  </Alert>
+                ) : (
+                  <Alert color='orange' title={t`Pricing Not Set`} flex={1}>
+                    <Text>{t`Pricing data has not been calculated for this part`}</Text>
+                  </Alert>
+                )}
+                <OptionsActionDropdown
+                  tooltip={t`Pricing Actions`}
+                  actions={[
+                    {
+                      name: t`Refresh`,
+                      tooltip: t`Refresh pricing data`,
+                      icon: (
+                        <InvenTreeIcon
+                          icon='refresh'
+                          iconProps={{ color: 'green' }}
+                        />
+                      ),
+                      onClick: () => {
+                        refreshPricing();
+                      }
+                    },
+                    EditItemAction({
+                      onClick: () => {
+                        editPricing.open();
+                      },
+                      tooltip: t`Edit pricing data`
+                    })
+                  ]}
+                />
+              </Group>
             </Paper>
-          )}
-          <DataTable
-            idAccessor="name"
-            records={overviewData}
-            columns={columns}
+            <DataTable
+              idAccessor='name'
+              records={overviewData}
+              columns={columns}
+            />
+          </Stack>
+          <BarChart
+            aria-label='pricing-overview-chart'
+            dataKey='title'
+            data={overviewData}
+            title={t`Pricing Overview`}
+            series={[
+              { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
+              { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
+            ]}
+            valueFormatter={(value) =>
+              tooltipFormatter(value, pricing?.currency)
+            }
           />
-        </Stack>
-        <BarChart
-          aria-label="pricing-overview-chart"
-          dataKey="title"
-          data={overviewData}
-          title={t`Pricing Overview`}
-          series={[
-            { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
-            { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
-          ]}
-          valueFormatter={(value) => tooltipFormatter(value, pricing?.currency)}
-        />
-      </SimpleGrid>
-    </Stack>
+        </SimpleGrid>
+      </Stack>
+    </>
   );
 }

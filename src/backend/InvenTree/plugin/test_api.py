@@ -35,7 +35,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'packagename': 'invalid_package_name-asdads-asfd-asdf-asdf-asdf',
             },
             expected_code=400,
-            max_query_time=30,
+            max_query_time=60,
         )
 
         # valid - Pypi
@@ -195,8 +195,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         mixin_dict = plg.mixins()
         self.assertIn('base', mixin_dict)
         self.assertEqual(
-            mixin_dict,
-            {**mixin_dict, **{'base': {'key': 'base', 'human_name': 'base'}}},
+            mixin_dict, {**mixin_dict, 'base': {'key': 'base', 'human_name': 'base'}}
         )
 
         # check reload on save
@@ -233,7 +232,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Activate the 'sample' plugin via the API
         cfg = PluginConfig.objects.filter(key='sample').first()
-        assert cfg is not None
+        self.assertIsNotNone(cfg)
 
         url = reverse('api-plugin-detail-activate', kwargs={'plugin': cfg.key})
         self.client.patch(url, {}, expected_code=200)
@@ -292,3 +291,14 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.data['value'], '456')
+
+    def test_plugin_metadata(self):
+        """Test metadata endpoint for plugin."""
+        self.user.is_superuser = True
+        self.user.save()
+
+        cfg = PluginConfig.objects.filter(key='sample').first()
+        self.assertIsNotNone(cfg)
+
+        url = reverse('api-plugin-metadata', kwargs={'plugin': cfg.key})
+        self.get(url, expected_code=200)

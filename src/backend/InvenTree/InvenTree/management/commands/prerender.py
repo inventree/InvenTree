@@ -19,10 +19,11 @@ def render_file(file_name, source, target, locales, ctx):
 
         target_file = os.path.join(target, locale + '.' + file_name)
 
-        with open(target_file, 'w') as localised_file:
-            with lang_over(locale):
-                rendered = render_to_string(os.path.join(source, file_name), ctx)
-                localised_file.write(rendered)
+        with open(target_file, 'w', encoding='utf-8') as localised_file, lang_over(
+            locale
+        ):
+            rendered = render_to_string(os.path.join(source, file_name), ctx)
+            localised_file.write(rendered)
 
 
 class Command(BaseCommand):

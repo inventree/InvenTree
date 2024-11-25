@@ -13,15 +13,15 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ManufacturerPartParameterTable({
   params
-}: {
+}: Readonly<{
   params: any;
-}) {
+}>) {
   const table = useTable('manufacturer-part-parameter');
   const user = useUserState();
 
@@ -80,7 +80,7 @@ export default function ManufacturerPartParameterTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -104,7 +104,7 @@ export default function ManufacturerPartParameterTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-parameter"
+        key='add-parameter'
         tooltip={t`Add Parameter`}
         onClick={() => {
           createParameter.open();

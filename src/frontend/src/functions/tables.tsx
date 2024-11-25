@@ -20,7 +20,7 @@ export function shortenString({
   }
 
   // Otherwise, shorten it
-  let N = Math.floor(len / 2 - 1);
+  const N = Math.floor(len / 2 - 1);
 
-  return str.slice(0, N) + '...' + str.slice(-N);
+  return `${str.slice(0, N)} ... ${str.slice(-N)}`;
 }

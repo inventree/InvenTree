@@ -25,9 +25,10 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import { useUserState } from '../../states/UserState';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export interface GroupDetailI {
   pk: number;
@@ -37,10 +38,10 @@ export interface GroupDetailI {
 export function GroupDrawer({
   id,
   refreshTable
-}: {
+}: Readonly<{
   id: string;
   refreshTable: () => void;
-}) {
+}>) {
   const {
     instance,
     refreshInstance,
@@ -110,11 +111,11 @@ export function GroupDrawer({
         }}
         id={`group-detail-drawer-${id}`}
       />
-      <Group justify="space-between">
+      <Group justify='space-between'>
         <Title order={5}>
           <Trans>Permission set</Trans>
         </Title>
-        <AdminButton model={ModelType.group} pk={instance.pk} />
+        <AdminButton model={ModelType.group} id={instance.pk} />
       </Group>
       <Group>{permissionsAccordion}</Group>
     </Stack>
@@ -127,10 +128,15 @@ export function GroupDrawer({
 export function GroupTable() {
   const table = useTable('groups');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback(
-    (pk: number) => navigate(`group-${pk}/`),
-    []
+    (pk: number) => {
+      if (user.hasChangePermission(ModelType.group)) {
+        navigate(`group-${pk}/`);
+      }
+    },
+    [user]
   );
 
   const columns: TableColumn<GroupDetailI>[] = useMemo(() => {
@@ -138,24 +144,30 @@ export function GroupTable() {
       {
         accessor: 'name',
         sortable: true,
-        title: t`Name`
+        title: t`Name`,
+        switchable: false
       }
     ];
   }, []);
 
-  const rowActions = useCallback((record: GroupDetailI): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => openDetailDrawer(record.pk)
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          setSelectedGroup(record.pk);
-          deleteGroup.open();
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: GroupDetailI): RowAction[] => {
+      return [
+        RowEditAction({
+          onClick: () => openDetailDrawer(record.pk),
+          hidden: !user.hasChangePermission(ModelType.group)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeletePermission(ModelType.group),
+          onClick: () => {
+            setSelectedGroup(record.pk);
+            deleteGroup.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const [selectedGroup, setSelectedGroup] = useState<number>(-1);
 
@@ -176,18 +188,19 @@ export function GroupTable() {
   });
 
   const tableActions = useMemo(() => {
-    let actions = [];
+    const actions = [];
 
     actions.push(
       <AddItemButton
         key={'add-group'}
         onClick={() => newGroup.open()}
         tooltip={t`Add group`}
+        hidden={!user.hasAddPermission(ModelType.group)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>

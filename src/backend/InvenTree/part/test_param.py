@@ -419,7 +419,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         response = self.get(
             url,
-            {'ordering': 'parameter_{pk}'.format(pk=template.pk), 'parameters': 'true'},
+            {'ordering': f'parameter_{template.pk}', 'parameters': 'true'},
             expected_code=200,
         )
 
@@ -436,10 +436,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         # Next, check reverse ordering
         response = self.get(
             url,
-            {
-                'ordering': '-parameter_{pk}'.format(pk=template.pk),
-                'parameters': 'true',
-            },
+            {'ordering': f'-parameter_{template.pk}', 'parameters': 'true'},
             expected_code=200,
         )
 

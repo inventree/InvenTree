@@ -22,8 +22,8 @@ class UploadFileForm(forms.Form):
 
         if name:
             # Update label and help_text with file name
-            self.fields['file'].label = _(f'{name.title()} File')
-            self.fields['file'].help_text = _(f'Select {name} file to upload')
+            self.fields['file'].label = name.title() + ' ' + _('File')
+            self.fields['file'].help_text = _('Select file to upload')
 
     def clean_file(self):
         """Run tabular file validation.
@@ -65,7 +65,7 @@ class MatchFieldForm(forms.Form):
         for col in columns:
             field_name = col['name']
             self.fields[field_name] = forms.ChoiceField(
-                choices=[('', '-' * 10)] + headers_choices,
+                choices=[('', '-' * 10), *headers_choices],
                 required=False,
                 widget=forms.Select(attrs={'class': 'select fieldselect'}),
             )
@@ -83,10 +83,7 @@ class MatchItemForm(forms.Form):
         if 'file_manager' in kwargs:
             file_manager = kwargs.pop('file_manager')
 
-        if 'row_data' in kwargs:
-            row_data = kwargs.pop('row_data')
-        else:
-            row_data = None
+        row_data = kwargs.pop('row_data') if 'row_data' in kwargs else None
 
         super().__init__(*args, **kwargs)
 
@@ -134,7 +131,7 @@ class MatchItemForm(forms.Form):
                         item_match = row['match_' + col_guess]
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
-                            choices=[('', '-' * 10)] + item_options,
+                            choices=[('', '-' * 10), *item_options],
                             required=False,
                             widget=forms.Select(attrs={'class': 'select bomselect'}),
                         )
@@ -154,7 +151,7 @@ class MatchItemForm(forms.Form):
                         field_name = 'item_select-' + str(row['index'])
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
-                            choices=[('', '-' * 10)] + item_options,
+                            choices=[('', '-' * 10), *item_options],
                             required=False,
                             widget=forms.Select(attrs={'class': 'select bomselect'}),
                         )

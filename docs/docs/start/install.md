@@ -66,14 +66,14 @@ In addition to the location where the InvenTree source code is located, you will
 InvenTree requires a directory for storage of [static files](./config.md#static-file-storage).
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 #### Media Files
 
 InvenTree requires a directory for storage of [user uploaded files](./config.md#uploaded-file-storage)
 
 !!! info "Read More"
-    Refer to the [Serving Files](./serving_files.md) section for more details
+    Refer to the [proxy server documentation](./processes.md#proxy-server) for more details
 
 #### Backup Directory
 
@@ -239,6 +239,7 @@ Run the following command to initialize the database with the required tables.
 cd /home/inventree/src
 invoke update
 ```
+NOTE: If you are on Debian, and get "No module named 'django', it might be that `/usr/bin/invoke` are used. Make sure that the python environment (`/home/inventree/env/bin`) is ahead in the PATH variable.
 
 ### Create Admin Account
 

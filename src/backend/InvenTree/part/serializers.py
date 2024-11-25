@@ -27,7 +27,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
-import part.filters
+import part.filters as part_filters
 import part.helpers as part_helpers
 import part.stocktake
 import part.tasks
@@ -107,12 +107,12 @@ class CategorySerializer(
         """Annotate extra information to the queryset."""
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
         queryset = queryset.annotate(
-            part_count=part.filters.annotate_category_parts(),
-            subcategories=part.filters.annotate_sub_categories(),
+            part_count=part_filters.annotate_category_parts(),
+            subcategories=part_filters.annotate_sub_categories(),
         )
 
         queryset = queryset.annotate(
-            parent_default_location=part.filters.annotate_default_location('parent__')
+            parent_default_location=part_filters.annotate_default_location('parent__')
         )
 
         return queryset
@@ -164,7 +164,7 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with the number of subcategories."""
-        return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
+        return queryset.annotate(subcategories=part_filters.annotate_sub_categories())
 
 
 @register_importer()
@@ -242,6 +242,39 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
         help_text=_('Purchase currency of this stock item')
     )
+
+
+class PartSchedulingSerializer(serializers.Serializer):
+    """Serializer class for a PartScheduling entry."""
+
+    class Meta:
+        """Metaclass options for this serializer."""
+
+        fields = [
+            'date',
+            'quantity',
+            'speculative_quantity',
+            'title',
+            'label',
+            'model',
+            'model_id',
+        ]
+
+    date = serializers.DateField(label=_('Date'), required=True, allow_null=True)
+
+    quantity = serializers.FloatField(label=_('Quantity'), required=True)
+
+    speculative_quantity = serializers.FloatField(
+        label=_('Speculative Quantity'), required=False
+    )
+
+    title = serializers.CharField(label=_('Title'), required=True)
+
+    label = serializers.CharField(label=_('Label'), required=True)
+
+    model = serializers.CharField(label=_('Model'), required=True)
+
+    model_id = serializers.IntegerField(label=_('Model ID'), required=True)
 
 
 class PartThumbSerializer(serializers.Serializer):
@@ -323,6 +356,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'is_template',
             'purchaseable',
             'salable',
+            'testable',
             'trackable',
             'virtual',
             'units',
@@ -346,6 +380,17 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    IPN = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text=_('Internal Part Number'),
+        max_length=100,
+    )
+
+    revision = serializers.CharField(
+        required=False, default='', allow_blank=True, allow_null=True, max_length=100
+    )
 
     # Pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -673,6 +718,7 @@ class PartSerializer(
             'salable',
             'starred',
             'thumbnail',
+            'testable',
             'trackable',
             'units',
             'variant_of',
@@ -781,10 +827,10 @@ class PartSerializer(
         queryset = queryset.annotate(stock_item_count=SubqueryCount('stock_items'))
 
         # Annotate with the total variant stock quantity
-        variant_query = part.filters.variant_stock_query()
+        variant_query = part_filters.variant_stock_query()
 
         queryset = queryset.annotate(
-            variant_stock=part.filters.annotate_variant_quantity(
+            variant_stock=part_filters.annotate_variant_quantity(
                 variant_query, reference='quantity'
             )
         )
@@ -814,10 +860,10 @@ class PartSerializer(
         # TODO: Note that BomItemSerializer and BuildLineSerializer have very similar code
 
         queryset = queryset.annotate(
-            ordering=part.filters.annotate_on_order_quantity(),
-            in_stock=part.filters.annotate_total_stock(),
-            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(),
-            allocated_to_build_orders=part.filters.annotate_build_order_allocations(),
+            ordering=part_filters.annotate_on_order_quantity(),
+            in_stock=part_filters.annotate_total_stock(),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(),
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(),
         )
 
         # Annotate the queryset with the 'total_in_stock' quantity
@@ -829,7 +875,7 @@ class PartSerializer(
         )
 
         queryset = queryset.annotate(
-            external_stock=part.filters.annotate_total_stock(
+            external_stock=part_filters.annotate_total_stock(
                 filter=Q(location__external=True)
             )
         )
@@ -847,12 +893,12 @@ class PartSerializer(
 
         # Annotate with the total 'required for builds' quantity
         queryset = queryset.annotate(
-            required_for_build_orders=part.filters.annotate_build_order_requirements(),
-            required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
+            required_for_build_orders=part_filters.annotate_build_order_requirements(),
+            required_for_sales_orders=part_filters.annotate_sales_order_requirements(),
         )
 
         queryset = queryset.annotate(
-            category_default_location=part.filters.annotate_default_location(
+            category_default_location=part_filters.annotate_default_location(
                 'category__'
             )
         )
@@ -887,6 +933,14 @@ class PartSerializer(
 
     creation_user = serializers.PrimaryKeyRelatedField(
         queryset=users.models.User.objects.all(), required=False, allow_null=True
+    )
+
+    IPN = serializers.CharField(
+        required=False, default='', allow_blank=True, label=_('IPN'), max_length=100
+    )
+
+    revision = serializers.CharField(
+        required=False, default='', allow_blank=True, allow_null=True, max_length=100
     )
 
     # Annotated fields
@@ -1172,6 +1226,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
         model = PartStocktakeReport
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
+        read_only_fields = ['date', 'report', 'part_count', 'user']
 
     user_detail = InvenTree.serializers.UserSerializer(
         source='user', read_only=True, many=False
@@ -1261,6 +1316,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
             exclude_external=data.get('exclude_external', True),
             generate_report=data.get('generate_report', True),
             update_parts=data.get('update_parts', True),
+            group='report',
         )
 
 
@@ -1449,7 +1505,7 @@ class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass defining serializer fields."""
 
         model = PartRelated
-        fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail']
+        fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail', 'note']
 
     part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
     part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
@@ -1490,6 +1546,8 @@ class BomItemSerializer(
 
     import_exclude_fields = ['validated', 'substitutes']
 
+    export_only_fields = ['sub_part_name', 'sub_part_ipn', 'sub_part_description']
+
     class Meta:
         """Metaclass defining serializer fields."""
 
@@ -1497,6 +1555,10 @@ class BomItemSerializer(
         fields = [
             'part',
             'sub_part',
+            # Extra fields only for export
+            'sub_part_name',
+            'sub_part_ipn',
+            'sub_part_description',
             'reference',
             'quantity',
             'overage',
@@ -1537,6 +1599,7 @@ class BomItemSerializer(
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
+        substitutes = kwargs.pop('substitutes', True)
 
         super().__init__(*args, **kwargs)
 
@@ -1545,6 +1608,9 @@ class BomItemSerializer(
 
         if not sub_part_detail:
             self.fields.pop('sub_part_detail', None)
+
+        if not substitutes:
+            self.fields.pop('substitutes', None)
 
         if not pricing:
             self.fields.pop('pricing_min', None)
@@ -1563,15 +1629,30 @@ class BomItemSerializer(
         return quantity
 
     part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.filter(assembly=True)
+        queryset=Part.objects.filter(assembly=True),
+        label=_('Assembly'),
+        help_text=_('Select the parent assembly'),
     )
 
     substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
+    # Extra fields only for export
+    sub_part_name = serializers.CharField(
+        source='sub_part.name', read_only=True, label=_('Component Name')
+    )
+    sub_part_ipn = serializers.CharField(
+        source='sub_part.IPN', read_only=True, label=_('Component IPN')
+    )
+    sub_part_description = serializers.CharField(
+        source='sub_part.description', read_only=True, label=_('Component Description')
+    )
+
     sub_part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.filter(component=True)
+        queryset=Part.objects.filter(component=True),
+        label=_('Component'),
+        help_text=_('Select the component part'),
     )
 
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
@@ -1627,6 +1708,10 @@ class BomItemSerializer(
             'sub_part__stock_items__sales_order_allocations',
         )
 
+        queryset = queryset.select_related(
+            'part__pricing_data', 'sub_part__pricing_data'
+        )
+
         queryset = queryset.prefetch_related(
             'substitutes', 'substitutes__part__stock_items'
         )
@@ -1663,30 +1748,23 @@ class BomItemSerializer(
 
         # Annotate with the total "on order" amount for the sub-part
         queryset = queryset.annotate(
-            on_order=part.filters.annotate_on_order_quantity(ref)
+            on_order=part_filters.annotate_on_order_quantity(ref)
         )
 
         # Annotate with the total "building" amount for the sub-part
         queryset = queryset.annotate(
-            building=Coalesce(
-                SubquerySum(
-                    'sub_part__builds__quantity',
-                    filter=Q(status__in=BuildStatusGroups.ACTIVE_CODES),
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
+            building=part_filters.annotate_in_production_quantity(ref)
         )
 
         # Calculate "total stock" for the referenced sub_part
         # Calculate the "build_order_allocations" for the sub_part
         # Note that these fields are only aliased, not annotated
         queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference=ref),
-            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(
+            total_stock=part_filters.annotate_total_stock(reference=ref),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
                 reference=ref
             ),
-            allocated_to_build_orders=part.filters.annotate_build_order_allocations(
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
                 reference=ref
             ),
         )
@@ -1703,7 +1781,7 @@ class BomItemSerializer(
 
         # Calculate 'external_stock'
         queryset = queryset.annotate(
-            external_stock=part.filters.annotate_total_stock(
+            external_stock=part_filters.annotate_total_stock(
                 reference=ref, filter=Q(location__external=True)
             )
         )
@@ -1712,11 +1790,11 @@ class BomItemSerializer(
 
         # Extract similar information for any 'substitute' parts
         queryset = queryset.alias(
-            substitute_stock=part.filters.annotate_total_stock(reference=ref),
-            substitute_build_allocations=part.filters.annotate_build_order_allocations(
+            substitute_stock=part_filters.annotate_total_stock(reference=ref),
+            substitute_build_allocations=part_filters.annotate_build_order_allocations(
                 reference=ref
             ),
-            substitute_sales_allocations=part.filters.annotate_sales_order_allocations(
+            substitute_sales_allocations=part_filters.annotate_sales_order_allocations(
                 reference=ref
             ),
         )
@@ -1732,16 +1810,16 @@ class BomItemSerializer(
         )
 
         # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
+        variant_stock_query = part_filters.variant_stock_query(reference='sub_part__')
 
         queryset = queryset.alias(
-            variant_stock_total=part.filters.annotate_variant_quantity(
+            variant_stock_total=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='quantity'
             ),
-            variant_bo_allocations=part.filters.annotate_variant_quantity(
+            variant_bo_allocations=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='sales_order_allocations__quantity'
             ),
-            variant_so_allocations=part.filters.annotate_variant_quantity(
+            variant_so_allocations=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='allocations__quantity'
             ),
         )
@@ -1963,9 +2041,8 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
 
         if part is None:
             row['errors']['part'] = _('No matching part found')
-        else:
-            if not part.component:
-                row['errors']['part'] = _('Part is not designated as a component')
+        elif not part.component:
+            row['errors']['part'] = _('Part is not designated as a component')
 
         # Update the 'part' value in the row
         row['part'] = part.pk if part is not None else None

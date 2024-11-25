@@ -3,6 +3,7 @@
 import io
 import logging
 from decimal import Decimal
+from typing import Optional
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -36,8 +37,6 @@ def get_base_url(request=None):
     3. If settings.SITE_URL is set (e.g. in the Django settings), use that
     4. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     """
-    import common.models
-
     # Check if a request is provided
     if request:
         return request.build_absolute_uri('/')
@@ -104,8 +103,6 @@ def download_image_from_url(remote_url, timeout=2.5):
         ValueError: Server responded with invalid 'Content-Length' value
         TypeError: Response is not a valid image
     """
-    import common.models
-
     # Check that the provided URL at least looks valid
     validator = URLValidator()
     validator(remote_url)
@@ -118,10 +115,7 @@ def download_image_from_url(remote_url, timeout=2.5):
     # Add user specified user-agent to request (if specified)
     user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
 
-    if user_agent:
-        headers = {'User-Agent': user_agent}
-    else:
-        headers = None
+    headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
         response = requests.get(
@@ -134,7 +128,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         # Throw an error if anything goes wrong
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
-        raise Exception(_('Connection error') + f': {str(exc)}')
+        raise Exception(_('Connection error') + f': {exc!s}')
     except requests.exceptions.Timeout as exc:
         raise exc
     except requests.exceptions.HTTPError:
@@ -142,7 +136,7 @@ def download_image_from_url(remote_url, timeout=2.5):
             _('Server responded with invalid status code') + f': {response.status_code}'
         )
     except Exception as exc:
-        raise Exception(_('Exception occurred') + f': {str(exc)}')
+        raise Exception(_('Exception occurred') + f': {exc!s}')
 
     if response.status_code != 200:
         raise Exception(
@@ -186,12 +180,12 @@ def download_image_from_url(remote_url, timeout=2.5):
 
 
 def render_currency(
-    money,
-    decimal_places=None,
-    currency=None,
-    min_decimal_places=None,
-    max_decimal_places=None,
-    include_symbol=True,
+    money: Money,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    min_decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
@@ -203,8 +197,6 @@ def render_currency(
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
     """
-    import common.models
-
     if money in [None, '']:
         return '-'
 
@@ -219,9 +211,6 @@ def render_currency(
         except Exception:
             pass
 
-    if decimal_places is None:
-        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
-
     if min_decimal_places is None:
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
@@ -231,17 +220,19 @@ def render_currency(
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if '.' in value:
-        decimals = len(value.split('.')[-1])
-
-        decimals = max(decimals, min_decimal_places)
-        decimals = min(decimals, decimal_places)
-
-        decimal_places = decimals
+    if decimal_places is not None:
+        # Decimal place count is provided, use it
+        pass
+    elif '.' in value:
+        # If the value has a decimal point, use the number of decimal places in the value
+        decimal_places = len(value.split('.')[-1])
     else:
-        decimal_places = max(decimal_places, 2)
+        # No decimal point, use 2 as a default
+        decimal_places = 2
 
-    decimal_places = max(decimal_places, max_decimal_places)
+    # Clip the decimal places to the specified range
+    decimal_places = max(decimal_places, min_decimal_places)
+    decimal_places = min(decimal_places, max_decimal_places)
 
     return format_money(
         money, decimal_places=decimal_places, include_symbol=include_symbol

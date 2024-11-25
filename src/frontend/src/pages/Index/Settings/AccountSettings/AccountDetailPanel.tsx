@@ -1,12 +1,14 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useToggle } from '@mantine/hooks';
+import { Group, Stack, Table, Title } from '@mantine/core';
+import { IconKey, IconUser } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
-import { api } from '../../../../App';
-import { EditButton } from '../../../../components/buttons/EditButton';
+import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
+import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
+import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../../states/ApiState';
+import { notYetImplemented } from '../../../../functions/notifications';
+import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
@@ -14,62 +16,89 @@ export function AccountDetailPanel() {
     state.user,
     state.fetchUserState
   ]);
-  const form = useForm({ initialValues: user });
-  const [editing, setEditing] = useToggle([false, true] as const);
-  function SaveData(values: any) {
-    api
-      .put(apiUrl(ApiEndpoints.user_me), values)
-      .then((res) => {
-        if (res.status === 200) {
-          setEditing();
-          fetchUserState();
-        }
-      })
-      .catch(() => {
-        console.error('ERR: Error saving user data');
-      });
-  }
+
+  const userFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      first_name: {},
+      last_name: {}
+    };
+  }, []);
+
+  const editUser = useEditApiFormModal({
+    title: t`Edit User Information`,
+    url: ApiEndpoints.user_me,
+    onFormSuccess: fetchUserState,
+    fields: userFields,
+    successMessage: t`User details updated`
+  });
 
   return (
-    <form onSubmit={form.onSubmit((values) => SaveData(values))}>
-      <Group>
-        <Title order={3}>
-          <Trans>Account Details</Trans>
-        </Title>
-        <EditButton setEditing={setEditing} editing={editing} />
-      </Group>
-      <Group>
-        {editing ? (
-          <Stack gap="xs">
-            <TextInput
-              label="first name"
-              placeholder={t`First name`}
-              {...form.getInputProps('first_name')}
-            />
-            <TextInput
-              label="Last name"
-              placeholder={t`Last name`}
-              {...form.getInputProps('last_name')}
-            />
-            <Group justify="right" mt="md">
-              <Button type="submit">
-                <Trans>Submit</Trans>
-              </Button>
-            </Group>
-          </Stack>
-        ) : (
-          <Stack gap="0">
-            <Text>
-              <Trans>First name: </Trans>
-              {form.values.first_name}
-            </Text>
-            <Text>
-              <Trans>Last name: </Trans>
-              {form.values.last_name}
-            </Text>
-          </Stack>
-        )}
-      </Group>
-    </form>
+    <>
+      {editUser.modal}
+      <Stack gap='xs'>
+        <Group justify='space-between'>
+          <Title order={3}>
+            <Trans>User Details</Trans>
+          </Title>
+          <ActionDropdown
+            tooltip={t`User Actions`}
+            icon={<IconUser />}
+            actions={[
+              {
+                name: t`Edit User`,
+                icon: <IconUser />,
+                tooltip: t`Edit User Information`,
+                onClick: editUser.open
+              },
+              {
+                name: t`Set Password`,
+                icon: <IconKey />,
+                tooltip: t`Set User Password`,
+                onClick: notYetImplemented
+              }
+            ]}
+          />
+        </Group>
+
+        <Table>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Username</Trans>
+              </Table.Td>
+              <Table.Td>{user?.username}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>First Name</Trans>
+              </Table.Td>
+              <Table.Td>{user?.first_name}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Last Name</Trans>
+              </Table.Td>
+              <Table.Td>{user?.last_name}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Staff Access</Trans>
+              </Table.Td>
+              <Table.Td>
+                <YesNoUndefinedButton value={user?.is_staff} />
+              </Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <Trans>Superuser</Trans>
+              </Table.Td>
+              <Table.Td>
+                <YesNoUndefinedButton value={user?.is_superuser} />
+              </Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+      </Stack>
+    </>
   );
 }

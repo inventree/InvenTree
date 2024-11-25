@@ -4,11 +4,27 @@ import os
 
 from django.core.files.base import ContentFile
 
-from importer.models import DataImportSession
-from InvenTree.unit_test import InvenTreeTestCase
+from importer.models import DataImportRow, DataImportSession
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 
 
-class ImporterTest(InvenTreeTestCase):
+class ImporterMixin:
+    """Helpers for import tests."""
+
+    def helper_file(self):
+        """Return test data."""
+        fn = os.path.join(os.path.dirname(__file__), 'test_data', 'companies.csv')
+
+        with open(fn, encoding='utf-8') as input_file:
+            data = input_file.read()
+        return data
+
+    def helper_content(self):
+        """Return content file."""
+        return ContentFile(self.helper_file(), 'companies.csv')
+
+
+class ImporterTest(ImporterMixin, InvenTreeTestCase):
     """Basic tests for file imports."""
 
     def test_import_session(self):
@@ -17,13 +33,8 @@ class ImporterTest(InvenTreeTestCase):
 
         n = Company.objects.count()
 
-        fn = os.path.join(os.path.dirname(__file__), 'test_data', 'companies.csv')
-
-        with open(fn, 'r') as input_file:
-            data = input_file.read()
-
         session = DataImportSession.objects.create(
-            data_file=ContentFile(data, 'companies.csv'), model_type='company'
+            data_file=self.helper_content(), model_type='company'
         )
 
         session.extract_columns()
@@ -61,4 +72,15 @@ class ImporterTest(InvenTreeTestCase):
 
     def test_field_defaults(self):
         """Test default field values."""
-        ...
+
+
+class AdminTest(ImporterMixin, AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        session = self.helper(
+            model=DataImportSession,
+            model_kwargs={'data_file': self.helper_content(), 'model_type': 'company'},
+        )
+        self.helper(model=DataImportRow, model_kwargs={'session_id': session.id})

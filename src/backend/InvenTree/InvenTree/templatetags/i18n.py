@@ -80,7 +80,7 @@ def do_translate(parser, token):
     """
     bits = token.split_contents()
     if len(bits) < 2:
-        raise TemplateSyntaxError("'%s' takes at least one argument" % bits[0])
+        raise TemplateSyntaxError(f"'{bits[0]}' takes at least one argument")
     message_string = parser.compile_filter(bits[1])
     remaining = bits[2:]
 
@@ -95,7 +95,7 @@ def do_translate(parser, token):
         option = remaining.pop(0)
         if option in seen:
             raise TemplateSyntaxError(
-                "The '%s' option was specified more than once." % option
+                f"The '{option}' option was specified more than once."
             )
         elif option == 'noop':
             noop = True
@@ -104,13 +104,12 @@ def do_translate(parser, token):
                 value = remaining.pop(0)
             except IndexError:
                 raise TemplateSyntaxError(
-                    "No argument provided to the '%s' tag for the context option."
-                    % bits[0]
+                    f"No argument provided to the '{bits[0]}' tag for the context option."
                 )
             if value in invalid_context:
                 raise TemplateSyntaxError(
-                    "Invalid argument '%s' provided to the '%s' tag for the context "
-                    'option' % (value, bits[0])
+                    f"Invalid argument '{value}' provided to the '{bits[0]}' tag for the context "
+                    'option'
                 )
             message_context = parser.compile_filter(value)
         elif option == 'as':
@@ -118,16 +117,15 @@ def do_translate(parser, token):
                 value = remaining.pop(0)
             except IndexError:
                 raise TemplateSyntaxError(
-                    "No argument provided to the '%s' tag for the as option." % bits[0]
+                    f"No argument provided to the '{bits[0]}' tag for the as option."
                 )
             asvar = value
         elif option == 'escape':
             escape = True
         else:
             raise TemplateSyntaxError(
-                "Unknown argument for '%s' tag: '%s'. The only options "
+                f"Unknown argument for '{bits[0]}' tag: '{option}'. The only options "
                 "available are 'noop', 'context' \"xxx\", and 'as VAR'."
-                % (bits[0], option)
             )
         seen.add(option)
 

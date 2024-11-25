@@ -1,26 +1,8 @@
 import { systemKey, test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
-test('PUI - Quick Command', async ({ page }) => {
+test('Quick Command', async ({ page }) => {
   await doQuickLogin(page);
-
-  // Open Spotlight with Keyboard Shortcut
-  await page.locator('body').press(`${systemKey}+k`);
-  await page.waitForTimeout(200);
-  await page
-    .getByRole('button', { name: 'Go to the InvenTree dashboard' })
-    .click();
-  await page.locator('p').filter({ hasText: 'Dashboard' }).waitFor();
-  await page.waitForURL('**/platform/dashboard');
-
-  // Open Spotlight with Button
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Home Go to the home page' }).click();
-  await page
-    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
-    .click();
-  await page.waitForURL('**/platform');
 
   // Open Spotlight with Keyboard Shortcut and Search
   await page.locator('body').press(`${systemKey}+k`);
@@ -28,47 +10,55 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.getByPlaceholder('Search...').fill('Dashboard');
   await page.getByPlaceholder('Search...').press('Tab');
   await page.getByPlaceholder('Search...').press('Enter');
-  await page.waitForURL('**/platform/dashboard');
+  await page.waitForURL('**/platform/home');
 });
 
-test('PUI - Quick Command - No Keys', async ({ page }) => {
+test('Quick Command - No Keys', async ({ page }) => {
   await doQuickLogin(page);
 
   // Open Spotlight with Button
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Home Go to the home page' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
-    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
+    .getByRole('button', { name: 'Dashboard Go to the InvenTree' })
     .click();
-  await page.waitForURL('**/platform');
+
+  await page.getByText('InvenTree Demo Server - ').waitFor();
+  await page.waitForURL('**/platform/home');
 
   // Use navigation menu
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', { name: 'Open Navigation Open the main' })
     .click();
-  // assert the nav headers are visible
-  await page.getByRole('heading', { name: 'Navigation' }).waitFor();
-  await page.getByRole('heading', { name: 'Pages' }).waitFor();
-  await page.getByRole('heading', { name: 'Documentation' }).waitFor();
-  await page.getByRole('heading', { name: 'About' }).waitFor();
 
+  await page.waitForTimeout(1000);
+
+  // assert the nav headers are visible
+  await page.getByText('Navigation').waitFor();
+  await page.getByText('Documentation').waitFor();
+  await page.getByText('About').first().waitFor();
+  await page
+    .getByRole('button', { name: 'Notifications', exact: true })
+    .waitFor();
+  await page.getByRole('button', { name: 'Dashboard', exact: true }).waitFor();
+
+  // close the nav
   await page.keyboard.press('Escape');
 
   // use server info
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
-      name: 'Server Information About this Inventree instance'
+      name: 'Server Information About this InvenTree instance'
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
-  await page.getByRole('button', { name: 'Dismiss' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
 
-  await page.waitForURL('**/platform');
+  await page.waitForURL('**/platform/home');
 
   // use license info
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
       name: 'License Information Licenses for dependencies of the service'
@@ -76,11 +66,12 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
     .click();
   await page.getByText('License Information').first().waitFor();
   await page.getByRole('tab', { name: 'backend Packages' }).waitFor();
+  await page.getByRole('button', { name: 'Django BSD License' }).click();
 
-  await page.getByLabel('License Information').getByRole('button').click();
+  await page.keyboard.press('Escape');
 
   // use about
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
     .click();
@@ -89,7 +80,7 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
   await page.getByLabel('About InvenTree').getByRole('button').click();
 
   // use documentation
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
       name: 'Documentation Visit the documentation to learn more about InvenTree'
@@ -97,24 +88,5 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
     .click();
   await page.waitForURL('https://docs.inventree.org/**');
 
-  // Test addition of new actions
-  await page.goto(`${baseUrl}/playground`);
-  await page.locator('p').filter({ hasText: 'Playground' }).waitFor();
-  await page.getByRole('button', { name: 'Spotlight actions' }).click();
-  await page.getByRole('button', { name: 'Register extra actions' }).click();
-  /*
-  await page.getByPlaceholder('Search...').fill('secret');
-  await page.getByRole('button', { name: 'Secret action It was' }).click();
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByPlaceholder('Search...').fill('Another secret action');
-  await page
-    .getByRole('button', {
-      name: 'Another secret action You can register multiple actions with just one command'
-    })
-    .click();
-  await page.getByRole('tab', { name: 'Home' }).click();
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
-  */
-  await page.getByPlaceholder('Search...').fill('secret');
-  await page.getByText('Nothing found...').click();
+  // TODO: Test addition of new actions
 });

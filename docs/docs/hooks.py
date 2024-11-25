@@ -57,7 +57,7 @@ def fetch_rtd_versions():
     versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
 
     # Add "latest" version first
-    if not any((x['title'] == 'latest' for x in versions)):
+    if not any(x['title'] == 'latest' for x in versions):
         versions.insert(
             0,
             {
@@ -70,7 +70,7 @@ def fetch_rtd_versions():
     # Ensure we have the 'latest' version
     current_version = os.environ.get('READTHEDOCS_VERSION', None)
 
-    if current_version and not any((x['title'] == current_version for x in versions)):
+    if current_version and not any(x['title'] == current_version for x in versions):
         versions.append({
             'version': current_version,
             'title': current_version,
@@ -82,7 +82,7 @@ def fetch_rtd_versions():
     print('Discovered the following versions:')
     print(versions)
 
-    with open(output_filename, 'w') as file:
+    with open(output_filename, 'w', encoding='utf-8') as file:
         json.dump(versions, file, indent=2)
 
 
@@ -100,7 +100,7 @@ def get_release_data():
         # Release information has been cached to file
 
         print("Loading release information from 'releases.json'")
-        with open(json_file) as f:
+        with open(json_file, encoding='utf-8') as f:
             return json.loads(f.read())
 
     # Download release information via the GitHub API
@@ -127,7 +127,7 @@ def get_release_data():
         page += 1
 
     # Cache these results to file
-    with open(json_file, 'w') as f:
+    with open(json_file, 'w', encoding='utf-8') as f:
         print("Saving release information to 'releases.json'")
         f.write(json.dumps(releases))
 
@@ -173,7 +173,7 @@ def on_config(config, *args, **kwargs):
         # Add *all* readthedocs related keys
         readthedocs = {}
 
-        for key in os.environ.keys():
+        for key in os.environ:
             if key.startswith('READTHEDOCS_'):
                 k = key.replace('READTHEDOCS_', '').lower()
                 readthedocs[k] = os.environ[key]

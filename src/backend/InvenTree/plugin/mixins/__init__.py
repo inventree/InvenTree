@@ -17,26 +17,28 @@ from plugin.base.integration.UrlsMixin import UrlsMixin
 from plugin.base.integration.ValidationMixin import ValidationMixin
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.base.locate.mixins import LocateMixin
+from plugin.base.ui.mixins import UserInterfaceMixin
 
 __all__ = [
     'APICallMixin',
+    'ActionMixin',
     'AppMixin',
+    'BarcodeMixin',
+    'BulkNotificationMethod',
     'CurrencyExchangeMixin',
     'EventMixin',
     'IconPackMixin',
     'LabelPrintingMixin',
+    'LocateMixin',
     'NavigationMixin',
+    'PanelMixin',
     'ReportMixin',
     'ScheduleMixin',
     'SettingsContentMixin',
     'SettingsMixin',
-    'UrlsMixin',
-    'PanelMixin',
-    'ActionMixin',
-    'BarcodeMixin',
-    'SupplierBarcodeMixin',
-    'LocateMixin',
-    'ValidationMixin',
     'SingleNotificationMethod',
-    'BulkNotificationMethod',
+    'SupplierBarcodeMixin',
+    'UrlsMixin',
+    'UserInterfaceMixin',
+    'ValidationMixin',
 ]

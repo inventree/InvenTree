@@ -326,10 +326,10 @@ function loadReturnOrderTable(table, options={}) {
             },
             {
                 sortable: true,
-                field: 'status',
+                field: 'status_custom_key',
                 title: '{% trans "Status" %}',
                 formatter: function(value, row) {
-                    return returnOrderStatusDisplay(row.status);
+                    return returnOrderStatusDisplay(row.status_custom_key);
                 }
             },
             {

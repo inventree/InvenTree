@@ -3,7 +3,6 @@
 import io
 import logging
 import time
-from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
@@ -46,7 +45,7 @@ def perform_stocktake(
     In this case, the stocktake *report* will be limited to the specified location.
     """
     # Determine which locations are "valid" for the generated report
-    location = kwargs.get('location', None)
+    location = kwargs.get('location')
     locations = location.get_descendants(include_self=True) if location else []
 
     # Grab all "available" stock items for the Part
@@ -170,24 +169,24 @@ def generate_stocktake_report(**kwargs):
     )
 
     parts = part.models.Part.objects.all()
-    user = kwargs.get('user', None)
+    user = kwargs.get('user')
 
     generate_report = kwargs.get('generate_report', True)
     update_parts = kwargs.get('update_parts', True)
 
     # Filter by 'Part' instance
-    if p := kwargs.get('part', None):
+    if p := kwargs.get('part'):
         variants = p.get_descendants(include_self=True)
         parts = parts.filter(pk__in=[v.pk for v in variants])
 
     # Filter by 'Category' instance (cascading)
-    if category := kwargs.get('category', None):
+    if category := kwargs.get('category'):
         categories = category.get_descendants(include_self=True)
         parts = parts.filter(category__in=categories)
 
     # Filter by 'Location' instance (cascading)
     # Stocktake report will be limited to parts which have stock items within this location
-    if location := kwargs.get('location', None):
+    if location := kwargs.get('location'):
         # Extract flat list of all sublocations
         locations = list(location.get_descendants(include_self=True))
 

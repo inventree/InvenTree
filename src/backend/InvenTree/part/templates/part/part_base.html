@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load i18n %}
+{% load barcode %}
 {% load inventree_extras %}
 
 {% block sidebar %}
@@ -209,6 +210,13 @@
             <td><span class='fas fa-shopping-cart'></span></td>
             <td>{% trans "On Order" %}</td>
             <td>{% decimal on_order %} {% include "part/part_units.html" %}</td>
+        </tr>
+        {% endif %}
+        {% if required > 0 %}
+        <tr>
+            <td><span class='fas fa-clipboard-check'></span></td>
+            <td>{% trans "Required for Orders" %}</td>
+            <td>{% decimal required %}</td>
         </tr>
         {% endif %}
         {% if part.component %}
@@ -451,7 +459,7 @@
     $("#show-qr-code").click(function() {
         showQRDialog(
             '{% trans "Part QR Code" escape %}',
-            '{{ part.barcode }}',
+            `{% clean_barcode part.barcode %}`
         );
     });
 

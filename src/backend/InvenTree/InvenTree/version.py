@@ -18,7 +18,7 @@ from django.conf import settings
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '0.16.0 dev'
+INVENTREE_SW_VERSION = '0.17.0 dev'
 
 
 logger = logging.getLogger('inventree')
@@ -117,7 +117,7 @@ def inventreeDocUrl():
 
 def inventreeAppUrl():
     """Return URL for InvenTree app site."""
-    return f'https://docs.inventree.org/app/'
+    return 'https://docs.inventree.org/app/'
 
 
 def inventreeCreditsUrl():

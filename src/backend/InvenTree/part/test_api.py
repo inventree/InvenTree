@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
-from pathlib import Path
 from random import randint
 
 from django.core.exceptions import ValidationError
@@ -13,7 +12,6 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
-from rest_framework import status
 from rest_framework.test import APIClient
 
 import build.models
@@ -371,7 +369,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 params['delete_parts'] = '1'
             if delete_child_categories:
                 params['delete_child_categories'] = '1'
-            response = self.delete(url, params, expected_code=204)
+            self.delete(url, params, expected_code=204)
 
             if delete_parts:
                 if i == Target.delete_subcategories_delete_parts:
@@ -504,6 +502,82 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             self.assertEqual(item['name'], category.name)
             self.assertEqual(item['parent'], parent)
             self.assertEqual(item['subcategories'], subcategories)
+
+    def test_part_category_default_location(self):
+        """Test default location propagation through location trees."""
+        """Making a tree structure like this:
+        main
+        loc 2
+            sub1
+                sub2
+                loc 3
+                    sub3
+                    loc 4
+                        sub4
+                    sub5
+        Expected behaviour:
+        main parent loc: Out of test scope. Parent category data not controlled by the test
+        sub1 parent loc: loc 2
+        sub2 parent loc: loc 2
+        sub3 parent loc: loc 3
+        sub4 parent loc: loc 4
+        sub5 parent loc: loc 3
+        """
+        main = PartCategory.objects.create(
+            name='main',
+            parent=PartCategory.objects.first(),
+            default_location=StockLocation.objects.get(id=2),
+        )
+        sub1 = PartCategory.objects.create(name='sub1', parent=main)
+        sub2 = PartCategory.objects.create(
+            name='sub2', parent=sub1, default_location=StockLocation.objects.get(id=3)
+        )
+        sub3 = PartCategory.objects.create(
+            name='sub3', parent=sub2, default_location=StockLocation.objects.get(id=4)
+        )
+        sub4 = PartCategory.objects.create(name='sub4', parent=sub3)
+        sub5 = PartCategory.objects.create(name='sub5', parent=sub2)
+        Part.objects.create(name='test', category=sub4)
+        PartCategory.objects.rebuild()
+
+        # This query will trigger an internal server error if annotation results are not limited to 1
+        url = reverse('api-part-list')
+        response = self.get(url, expected_code=200)
+
+        # sub1, expect main to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub1.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], main.default_location.pk
+        )
+
+        # sub2, expect main to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub2.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], main.default_location.pk
+        )
+
+        # sub3, expect sub2 to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub3.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], sub2.default_location.pk
+        )
+
+        # sub4, expect sub3 to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub4.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], sub3.default_location.pk
+        )
+
+        # sub5, expect sub2 to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub5.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], sub2.default_location.pk
+        )
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
@@ -897,7 +971,7 @@ class PartAPITest(PartAPITestBase):
         """Return list of part thumbnails."""
         url = reverse('api-part-thumbs')
 
-        response = self.get(url)
+        self.get(url)
 
     def test_paginate(self):
         """Test pagination of the Part list API."""
@@ -1544,7 +1618,7 @@ class PartDetailTests(PartAPITestBase):
 
         # Try to upload a non-image file
         test_path = BASE_DIR / '_testfolder' / 'dummy_image'
-        with open(f'{test_path}.txt', 'w') as dummy_image:
+        with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
             dummy_image.write('hello world')
 
         with open(f'{test_path}.txt', 'rb') as dummy_image:
@@ -2922,7 +2996,7 @@ class PartTestTemplateTest(PartAPITestBase):
             expected_code=400,
         )
 
-        # Try to post a new test against a non-trackable part (should fail)
+        # Try to post a new test against a non-testable part (should fail)
         response = self.post(
             url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
         )

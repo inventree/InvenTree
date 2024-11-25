@@ -3,6 +3,7 @@
 {% load static %}
 {% load i18n %}
 {% load generic %}
+{% load barcode %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -69,22 +70,30 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='build-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit Build" %}</a></li>
-        {% if build.is_active %}
-        <li><a class='dropdown-item' href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
-        {% endif %}
         {% if roles.build.add %}
         <li><a class='dropdown-item' href='#' id='build-duplicate'><span class='fas fa-clone'></span> {% trans "Duplicate Build" %}</a></li>
+        {% endif %}
+        {% if build.can_hold %}
+        <li><a class='dropdown-item' href='#' id='build-hold'><span class='fas fa-hand-paper icon-yellow'></span> {% trans "Hold Build" %}</a></li>
+        {% endif %}
+        {% if build.is_active %}
+        <li><a class='dropdown-item' href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
         {% endif %}
         {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
         <li><a class='dropdown-item' href='#' id='build-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Build" %}</a>
         {% endif %}
     </ul>
 </div>
-{% if build.active %}
+{% if build.can_issue %}
+<button id='build-issue' title='{% trans "Issue Build" %}' class='btn btn-primary'>
+    <span class='fas fa-paper-plane'></span> {% trans "Issue Build" %}
+</button>
+{% elif build.active %}
 <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Build" %}
 </button>
 {% endif %}
+
 {% endif %}
 {% endblock actions %}
 
@@ -150,7 +159,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
         <td>
-            {% status_label 'build' build.status %}
+            {% display_status_label 'build' build.status_custom_key build.status %}
         </td>
     </tr>
     {% if build.target_date %}
@@ -217,7 +226,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_data %}
 <h3>
-    {% status_label 'build' build.status large=True %}
+    {% display_status_label 'build' build.status_custom_key build.status large=True %}
     {% if build.is_overdue %}
     <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}
@@ -242,6 +251,31 @@ src="{% static 'img/blank_image.png' %}"
                 reload: true,
             }
         );
+    });
+
+    $('#build-hold').click(function() {
+        holdOrder(
+            '{% url "api-build-hold" build.pk %}',
+            {
+                reload: true,
+            }
+        );
+    });
+
+    $('#build-issue').click(function() {
+        constructForm('{% url "api-build-issue" build.pk %}', {
+            method: 'POST',
+            title: '{% trans "Issue Build Order" %}',
+            confirm: true,
+            preFormContent: `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Issue this Build Order?" %}
+                </div>
+            `,
+            onSuccess: function(response) {
+                window.location.reload();
+            }
+        });
     });
 
     $("#build-complete").on('click', function() {
@@ -277,7 +311,7 @@ src="{% static 'img/blank_image.png' %}"
     $('#show-qr-code').click(function() {
         showQRDialog(
             '{% trans "Build Order QR Code" escape %}',
-            '{{ build.barcode }}'
+            `{% clean_barcode build.barcode %}`
         );
     });
 
@@ -298,6 +332,7 @@ src="{% static 'img/blank_image.png' %}"
             build: {{ build.pk }},
         });
     });
+
     {% endif %}
     {% endif %}
 

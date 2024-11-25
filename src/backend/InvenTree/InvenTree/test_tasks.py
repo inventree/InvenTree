@@ -4,12 +4,13 @@ import os
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
-from django_q.models import Schedule
+from django_q.models import Schedule, Task
 from error_report.models import Error
 
 import InvenTree.tasks
@@ -142,6 +143,13 @@ class InvenTreeTaskTests(TestCase):
         os.environ['INVENTREE_AUTO_UPDATE'] = 'True'
         InvenTree.tasks.check_for_migrations()
 
+        # List all current migrations for the InvenTree app
+        migration_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'migrations'
+        )
+
+        migration_files = os.listdir(migration_dir)
+
         # Create migration
         self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
         call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
@@ -163,3 +171,52 @@ class InvenTreeTaskTests(TestCase):
             migration_path.unlink()
         except IndexError:  # pragma: no cover
             pass
+
+        # Let's remove the newly created migration file
+        for fn in os.listdir(migration_dir):
+            fn = os.path.join(migration_dir, fn)
+
+            if (
+                os.path.isfile(fn)
+                and fn not in migration_files
+                and 'auto' in fn
+                and fn.endswith('.py')
+            ):
+                print('Removing dummy migration file:', fn)
+                os.remove(fn)
+
+    def test_failed_task_notification(self):
+        """Test that a failed task will generate a notification."""
+        from common.models import NotificationEntry, NotificationMessage
+
+        # Create a staff user (to ensure notifications are sent)
+        User.objects.create_user(username='staff', password='staffpass', is_staff=True)
+
+        n_tasks = Task.objects.count()
+        n_entries = NotificationEntry.objects.count()
+        n_messages = NotificationMessage.objects.count()
+
+        # Create a 'failed' task in the database
+        # Note: The 'attempt count' is set to 10 to ensure that the task is properly marked as 'failed'
+        Task.objects.create(
+            id=n_tasks + 1,
+            name='failed_task',
+            func='InvenTree.tasks.failed_task',
+            group='test',
+            success=False,
+            started=timezone.now(),
+            stopped=timezone.now(),
+            attempt_count=10,
+        )
+
+        # A new notification entry should be created
+        self.assertEqual(NotificationEntry.objects.count(), n_entries + 1)
+        self.assertEqual(NotificationMessage.objects.count(), n_messages + 1)
+
+        msg = NotificationMessage.objects.last()
+
+        self.assertEqual(msg.name, 'Task Failure')
+        self.assertEqual(
+            msg.message,
+            "Background worker task 'InvenTree.tasks.failed_task' failed after 10 attempts",
+        )

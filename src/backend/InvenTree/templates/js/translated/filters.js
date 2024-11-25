@@ -15,6 +15,9 @@
 
 /* exported
    setupFilterList,
+   addTableFilter,
+   removeTableFilter,
+   reloadTableFilters
 */
 
 /**

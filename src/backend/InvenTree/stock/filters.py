@@ -3,8 +3,6 @@
 from django.db.models import F, Func, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
 
-from sql_util.utils import SubqueryCount
-
 import stock.models
 
 

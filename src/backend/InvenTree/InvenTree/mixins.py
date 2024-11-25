@@ -6,7 +6,11 @@ from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 from InvenTree.fields import InvenTreeNotesField
-from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
+from InvenTree.helpers import (
+    clean_markdown,
+    remove_non_printable_characters,
+    strip_html_tags,
+)
 
 
 class CleanMixin:
@@ -57,6 +61,7 @@ class CleanMixin:
 
         # By default, newline characters are removed
         remove_newline = True
+        is_markdown = False
 
         try:
             if hasattr(self, 'serializer_class'):
@@ -64,11 +69,12 @@ class CleanMixin:
                 field = model._meta.get_field(field)
 
                 # The following field types allow newline characters
-                allow_newline = [InvenTreeNotesField]
+                allow_newline = [(InvenTreeNotesField, True)]
 
                 for field_type in allow_newline:
-                    if issubclass(type(field), field_type):
+                    if issubclass(type(field), field_type[0]):
                         remove_newline = False
+                        is_markdown = field_type[1]
                         break
 
         except AttributeError:
@@ -79,6 +85,9 @@ class CleanMixin:
         cleaned = remove_non_printable_characters(
             cleaned, remove_newline=remove_newline
         )
+
+        if is_markdown:
+            cleaned = clean_markdown(cleaned)
 
         return cleaned
 
@@ -128,13 +137,9 @@ class CreateAPI(CleanMixin, generics.CreateAPIView):
 class RetrieveAPI(generics.RetrieveAPIView):
     """View for retrieve API."""
 
-    pass
-
 
 class RetrieveUpdateAPI(CleanMixin, generics.RetrieveUpdateAPIView):
     """View for retrieve and update API."""
-
-    pass
 
 
 class CustomDestroyModelMixin:
@@ -182,6 +187,10 @@ class CustomRetrieveUpdateDestroyAPI(CleanMixin, CustomRetrieveUpdateDestroyAPIV
 
 class RetrieveUpdateDestroyAPI(CleanMixin, generics.RetrieveUpdateDestroyAPIView):
     """View for retrieve, update and destroy API."""
+
+
+class RetrieveDestroyAPI(generics.RetrieveDestroyAPIView):
+    """View for retrieve and destroy API."""
 
 
 class UpdateAPI(CleanMixin, generics.UpdateAPIView):

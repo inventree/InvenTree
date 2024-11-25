@@ -1,8 +1,9 @@
-import { ReactNode } from 'react';
+import { Text } from '@mantine/core';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Address instance
@@ -10,7 +11,7 @@ import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 export function RenderAddress({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {
-  let text = [
+  const text = [
     instance.country,
     instance.postal_code,
     instance.postal_city,
@@ -70,7 +71,9 @@ export function RenderSupplierPart(
       primary={supplier?.name}
       secondary={instance.SKU}
       image={part?.thumbnail ?? part?.image}
-      suffix={part.full_name}
+      suffix={
+        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
+      }
       url={
         props.link
           ? getDetailUrl(ModelType.supplierpart, instance.pk)
@@ -95,7 +98,9 @@ export function RenderManufacturerPart(
       {...props}
       primary={manufacturer.name}
       secondary={instance.MPN}
-      suffix={part.full_name}
+      suffix={
+        part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
+      }
       image={manufacturer?.thumnbnail ?? manufacturer.image}
       url={
         props.link

@@ -2,19 +2,19 @@ import { DateInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useCallback, useId, useMemo } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 dayjs.extend(customParseFormat);
 
 export default function DateField({
   controller,
   definition
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
-}) {
+}>) {
   const fieldId = useId();
 
   const {
@@ -39,11 +39,18 @@ export default function DateField({
     [field.onChange, definition]
   );
 
-  const dateValue = useMemo(() => {
+  const dateValue: Date | null = useMemo(() => {
+    let dv: Date | null = null;
+
     if (field.value) {
-      return new Date(field.value);
+      dv = new Date(field.value);
+    }
+
+    // Ensure that the date is valid
+    if (dv instanceof Date && !Number.isNaN(dv.getTime())) {
+      return dv;
     } else {
-      return undefined;
+      return null;
     }
   }, [field.value]);
 
@@ -51,11 +58,11 @@ export default function DateField({
     <DateInput
       id={fieldId}
       aria-label={`date-field-${field.name}`}
-      radius="sm"
+      radius='sm'
       ref={field.ref}
       type={undefined}
       error={error?.message}
-      value={dateValue}
+      value={dateValue ?? null}
       clearable={!definition.required}
       onChange={onChange}
       valueFormat={valueFormat}

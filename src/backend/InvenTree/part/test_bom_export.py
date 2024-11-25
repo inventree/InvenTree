@@ -49,7 +49,7 @@ class BomExportTest(InvenTreeTestCase):
         with open(filename, 'wb') as f:
             f.write(response.getvalue())
 
-        with open(filename, 'r') as f:
+        with open(filename, encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
 
             for line in reader:
@@ -96,7 +96,7 @@ class BomExportTest(InvenTreeTestCase):
             f.write(response.getvalue())
 
         # Read the file
-        with open(filename, 'r') as f:
+        with open(filename, encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
 
             for line in reader:
@@ -151,22 +151,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
         content = response.headers['Content-Disposition']
-        self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xls"')
-
-    def test_export_xlsx(self):
-        """Test BOM download in XLSX format."""
-        params = {
-            'format': 'xlsx',
-            'cascade': True,
-            'parameter_data': True,
-            'stock_data': True,
-            'supplier_data': True,
-            'manufacturer_data': True,
-        }
-
-        response = self.client.get(self.url, data=params)
-
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xlsx"')
 
     def test_export_json(self):
         """Test BOM download in JSON format."""

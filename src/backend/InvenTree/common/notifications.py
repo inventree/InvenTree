@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 import common.models
 import InvenTree.helpers
-from InvenTree.ready import isImportingData
+from InvenTree.ready import isImportingData, isRebuildingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
 from users.models import Owner
@@ -143,11 +143,7 @@ class NotificationMethod:
 
         # Check if method globally enabled
         plg_instance = registry.get_plugin(plg_cls.NAME.lower())
-        if plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING):
-            return True
-
-        # Lets go!
-        return False
+        return plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING)
 
     def usersetting(self, target):
         """Returns setting for this method for a given user."""
@@ -185,8 +181,19 @@ class MethodStorageClass:
     Is initialized on startup as one instance named `storage` in this file.
     """
 
-    liste = None
+    methods_list = None
     user_settings = {}
+
+    @property
+    def methods(self):
+        """Return all available methods.
+
+        This is cached, and stored internally.
+        """
+        if self.methods_list is None:
+            self.collect()
+
+        return self.methods_list
 
     def collect(self, selected_classes=None):
         """Collect all classes in the environment that are notification methods.
@@ -196,7 +203,8 @@ class MethodStorageClass:
         Args:
             selected_classes (class, optional): References to the classes that should be registered. Defaults to None.
         """
-        logger.debug('Collecting notification methods')
+        logger.debug('Collecting notification methods...')
+
         current_method = (
             InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
         )
@@ -219,8 +227,12 @@ class MethodStorageClass:
             item.plugin = plugin() if plugin else None
             filtered_list[ref] = item
 
-        storage.liste = list(filtered_list.values())
-        logger.info('Found %s notification methods', len(storage.liste))
+        storage.methods_list = list(filtered_list.values())
+
+        logger.info('Found %s notification methods', len(storage.methods_list))
+
+        for item in storage.methods_list:
+            logger.debug(' - %s', str(item))
 
     def get_usersettings(self, user) -> list:
         """Returns all user settings for a specific user.
@@ -234,7 +246,8 @@ class MethodStorageClass:
             list: All applicablae notification settings.
         """
         methods = []
-        for item in storage.liste:
+
+        for item in storage.methods:
             if item.USER_SETTING:
                 new_key = f'NOTIFICATION_METHOD_{item.METHOD_NAME.upper()}'
 
@@ -250,6 +263,7 @@ class MethodStorageClass:
                     'icon': getattr(item, 'METHOD_ICON', ''),
                     'method': item.METHOD_NAME,
                 })
+
         return methods
 
 
@@ -343,29 +357,33 @@ class InvenTreeNotificationBodies:
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""
-    targets = kwargs.get('targets', None)
-    target_fnc = kwargs.get('target_fnc', None)
+    targets = kwargs.get('targets')
+    target_fnc = kwargs.get('target_fnc')
     target_args = kwargs.get('target_args', [])
     target_kwargs = kwargs.get('target_kwargs', {})
-    target_exclude = kwargs.get('target_exclude', None)
+    target_exclude = kwargs.get('target_exclude')
     context = kwargs.get('context', {})
-    delivery_methods = kwargs.get('delivery_methods', None)
+    delivery_methods = kwargs.get('delivery_methods')
 
     # Check if data is importing currently
-    if isImportingData():
+    if isImportingData() or isRebuildingData():
         return
 
     # Resolve object reference
-    obj_ref_value = getattr(obj, obj_ref)
+    refs = [obj_ref, 'pk', 'id', 'uid']
+
+    obj_ref_value = None
+
+    # Find the first reference that is available
+    for ref in refs:
+        if hasattr(obj, ref):
+            obj_ref_value = getattr(obj, ref)
+            break
 
     # Try with some defaults
     if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'pk', None)
-    if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'id', None)
-    if not obj_ref_value:
         raise KeyError(
-            f"Could not resolve an object reference for '{str(obj)}' with {obj_ref}, pk, id"
+            f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
         )
 
     # Check if we have notified recently...
@@ -422,7 +440,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
         # Collect possible methods
         if delivery_methods is None:
-            delivery_methods = storage.liste or []
+            delivery_methods = storage.methods or []
         else:
             delivery_methods = delivery_methods - IGNORED_NOTIFICATION_CLS
 
@@ -432,14 +450,14 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
                 deliver_notification(method, obj, category, target_users, context)
             except NotImplementedError as error:
                 # Allow any single notification method to fail, without failing the others
-                logger.error(error)  # noqa: LOG005
+                logger.error(error)
             except Exception as error:
-                logger.error(error)  # noqa: LOG005
+                logger.error(error)
 
         # Set delivery flag
         common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
-        logger.debug("No possible users for notification '%s'", category)
+        logger.info("No possible users for notification '%s'", category)
 
 
 def trigger_superuser_notification(plugin: PluginConfig, msg: str):

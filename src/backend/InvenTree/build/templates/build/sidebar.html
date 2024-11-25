@@ -20,6 +20,8 @@
 {% include "sidebar_item.html" with label='consumed' text=text icon="fa-tasks" %}
 {% trans "Child Build Orders" as text %}
 {% include "sidebar_item.html" with label='children' text=text icon="fa-sitemap" %}
+{% if build.part.testable %}
+{% endif %}
 {% trans "Attachments" as text %}
 {% include "sidebar_item.html" with label='attachments' text=text icon="fa-paperclip" %}
 {% trans "Notes" as text %}

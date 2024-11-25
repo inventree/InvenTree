@@ -31,7 +31,7 @@ The installer creates the following directories:
 | --- | --- |
 | `/etc/inventree/` | Configuration files |
 | `/opt/inventree/` | InvenTree application files |
-| `/opt/inventree/data/` | Inventree data files |
+| `/opt/inventree/data/` | InvenTree data files |
 
 #### Performed steps
 
@@ -132,11 +132,14 @@ To update InvenTree run `apt install --only-upgrade inventree` - this might need
 ## Controlling InvenTree
 
 ### Services
+
 InvenTree installs multiple services that can be controlled with your local system runner (`service` or `systemctl`).
-The service `inventree` controls everything, `inventree-web` the (internal) webserver and `inventree-worker` the background worker(s).
+The service `inventree` controls everything, `inventree-web` (the [InvenTree web server](./processes.md#web-server)) and `inventree-worker` the [background worker(s)](./processes.md#background-worker).
 
 More instances of the worker can be instantiated from the command line. This is only meant for advanced users.
+
 This sample script launches 3 services. By default, 1 is launched.
+
 ```bash
 inventree scale worker=3
 ```

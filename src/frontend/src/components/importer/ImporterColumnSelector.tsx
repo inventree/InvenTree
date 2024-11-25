@@ -15,12 +15,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ImportSessionState } from '../../hooks/UseImportSession';
+import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
 import { StandaloneField } from '../forms/StandaloneField';
-import { ApiFormFieldType } from '../forms/fields/ApiFormField';
+import type { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
-function ImporterColumn({ column, options }: { column: any; options: any[] }) {
+function ImporterColumn({
+  column,
+  options
+}: Readonly<{ column: any; options: any[] }>) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const [selectedColumn, setSelectedColumn] = useState<string>(
@@ -78,7 +81,7 @@ function ImporterDefaultField({
   const onChange = useCallback(
     (value: any) => {
       // Update the default value for the field
-      let defaults = {
+      const defaults = {
         ...session.fieldDefaults,
         [fieldName]: value
       };
@@ -122,27 +125,27 @@ function ImporterColumnTableRow({
   session,
   column,
   options
-}: {
+}: Readonly<{
   session: ImportSessionState;
   column: any;
   options: any;
-}) {
+}>) {
   return (
     <Table.Tr key={column.label ?? column.field}>
       <Table.Td>
-        <Group gap="xs">
+        <Group gap='xs'>
           <Text fw={column.required ? 700 : undefined}>
             {column.label ?? column.field}
           </Text>
           {column.required && (
-            <Text c="red" fw={700}>
+            <Text c='red' fw={700}>
               *
             </Text>
           )}
         </Group>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{column.description}</Text>
+        <Text size='sm'>{column.description}</Text>
       </Table.Td>
       <Table.Td>
         <ImporterColumn column={column} options={options} />
@@ -156,9 +159,9 @@ function ImporterColumnTableRow({
 
 export default function ImporterColumnSelector({
   session
-}: {
+}: Readonly<{
   session: ImportSessionState;
-}) {
+}>) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const acceptMapping = useCallback(() => {
@@ -190,12 +193,12 @@ export default function ImporterColumnSelector({
   }, [session.availableColumns]);
 
   return (
-    <Stack gap="xs">
-      <Paper shadow="xs" p="xs">
-        <Group grow justify="apart">
-          <Text size="lg">{t`Mapping data columns to database fields`}</Text>
+    <Stack gap='xs'>
+      <Paper shadow='xs' p='xs'>
+        <Group grow justify='apart'>
+          <Text size='lg'>{t`Mapping data columns to database fields`}</Text>
           <Space />
-          <Button color="green" variant="filled" onClick={acceptMapping}>
+          <Button color='green' variant='filled' onClick={acceptMapping}>
             <Group>
               <IconCheck />
               {t`Accept Column Mapping`}
@@ -204,7 +207,7 @@ export default function ImporterColumnSelector({
         </Group>
       </Paper>
       {errorMessage && (
-        <Alert color="red" title={t`Error`}>
+        <Alert color='red' title={t`Error`}>
           <Text>{errorMessage}</Text>
         </Alert>
       )}
@@ -221,6 +224,7 @@ export default function ImporterColumnSelector({
           {session.columnMappings.map((column: any) => {
             return (
               <ImporterColumnTableRow
+                key={`import-${column.field}}`}
                 session={session}
                 column={column}
                 options={columnOptions}

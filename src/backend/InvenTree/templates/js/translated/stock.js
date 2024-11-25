@@ -4,6 +4,7 @@
 
 /* globals
     addCachedAlert,
+    addTableFilter,
     baseCurrency,
     calculateTotalPrice,
     clearFormInput,
@@ -38,8 +39,11 @@
     makeIconBadge,
     makeIconButton,
     makeRemoveButton,
+    moment,
     orderParts,
     partDetail,
+    reloadTableFilters,
+    removeTableFilter,
     renderClipboard,
     renderDate,
     renderLink,
@@ -374,7 +378,7 @@ function stockItemFields(options={}) {
         batch: {
             icon: 'fa-layer-group',
         },
-        status: {},
+        status_custom_key: {},
         expiry_date: {
             icon: 'fa-calendar-alt',
         },
@@ -611,7 +615,7 @@ function findStockItemBySerialNumber(part_id) {
                 handleFormErrors(
                     {
                         'serial': [
-                            '{% trans "Enter a serial number" %}',
+                            '{% trans "Enter serial number" %}',
                         ]
                     }, fields, opts
                 );
@@ -692,7 +696,7 @@ function assignStockToCustomer(items, options={}) {
 
         var thumbnail = thumbnailImage(part.thumbnail || part.image);
 
-        var status = stockStatusDisplay(item.status, {classes: 'float-right'});
+        var status = stockStatusDisplay(item.status_custom_key, {classes: 'float-right'});
 
         var quantity = '';
 
@@ -873,7 +877,7 @@ function mergeStockItems(items, options={}) {
             quantity = `{% trans "Quantity" %}: ${item.quantity}`;
         }
 
-        quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
+        quantity += stockStatusDisplay(item.status_custom_key, {classes: 'float-right'});
 
         let buttons = wrapButtons(
             makeIconButton(
@@ -1107,7 +1111,7 @@ function adjustStock(action, items, options={}) {
 
         var thumb = thumbnailImage(item.part_detail.thumbnail || item.part_detail.image);
 
-        var status = stockStatusDisplay(item.status, {
+        var status = stockStatusDisplay(item.status_custom_key, {
             classes: 'float-right'
         });
 
@@ -1439,14 +1443,14 @@ function removeStockRow(e) {
 function passFailBadge(result) {
 
     if (result) {
-        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "PASS" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "Pass" %}</span>`;
     } else {
-        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Fail" %}</span>`;
     }
 }
 
 function noResultBadge() {
-    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
+    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "No result" %}</span>`;
 }
 
 function formatDate(row, date, options={}) {
@@ -1916,7 +1920,8 @@ function makeStockActions(table) {
             }
         },
         {
-            label: 'status',
+
+            label: 'status_custom_key',
             icon: 'fa-info-circle icon-blue',
             title: '{% trans "Change stock status" %}',
             permission: 'stock.change',
@@ -2251,7 +2256,7 @@ function loadStockTable(table, options) {
     columns.push(col);
 
     col = {
-        field: 'status',
+        field: 'status_custom_key',
         title: '{% trans "Status" %}',
         formatter: function(value) {
             return stockStatusDisplay(value);
@@ -3069,11 +3074,11 @@ function loadStockTrackingTable(table, options) {
             }
 
             // Status information
-            if (details.status) {
+            if (details.status_custom_key) {
                 html += `<tr><th>{% trans "Status" %}</td>`;
 
                 html += '<td>';
-                html += stockStatusDisplay(details.status);
+                html += stockStatusDisplay(details.status_custom_key);
                 html += '</td></tr>';
 
             }
@@ -3194,7 +3199,7 @@ function loadInstalledInTable(table, options) {
                 }
             },
             {
-                field: 'status',
+                field: 'status_custom_key',
                 title: '{% trans "Status" %}',
                 formatter: function(value) {
                     return stockStatusDisplay(value);
@@ -3395,7 +3400,7 @@ function setStockStatus(items, options={}) {
         method: 'POST',
         preFormContent: html,
         fields: {
-            status: {},
+            status_custom_key: {},
             note: {},
         },
         processBeforeUpload: function(data) {

@@ -58,9 +58,9 @@ export function SecurityContent() {
         <SsoContent dataProvider={dataProvider} />
       ) : (
         <Alert
-          icon={<IconAlertCircle size="1rem" />}
+          icon={<IconAlertCircle size='1rem' />}
           title={t`Not enabled`}
-          color="yellow"
+          color='yellow'
         >
           <Trans>Single Sign On is not enabled for this server </Trans>
         </Alert>
@@ -76,9 +76,9 @@ export function SecurityContent() {
             <MfaContent />
           ) : (
             <Alert
-              icon={<IconAlertCircle size="1rem" />}
+              icon={<IconAlertCircle size='1rem' />}
               title={t`Not enabled`}
-              color="yellow"
+              color='yellow'
             >
               <Trans>
                 Multifactor authentication is not configured for your account{' '}
@@ -135,28 +135,28 @@ function EmailContent() {
         <Radio.Group
           value={value}
           onChange={setValue}
-          name="email_accounts"
+          name='email_accounts'
           label={t`The following email addresses are associated with your account:`}
         >
-          <Stack mt="xs">
+          <Stack mt='xs'>
             {data.map((link: any) => (
               <Radio
                 key={link.id}
                 value={String(link.id)}
                 label={
-                  <Group justify="space-between">
+                  <Group justify='space-between'>
                     {link.email}
                     {link.primary && (
-                      <Badge color="blue">
+                      <Badge color='blue'>
                         <Trans>Primary</Trans>
                       </Badge>
                     )}
                     {link.verified ? (
-                      <Badge color="green">
+                      <Badge color='green'>
                         <Trans>Verified</Trans>
                       </Badge>
                     ) : (
-                      <Badge color="yellow">
+                      <Badge color='yellow'>
                         <Trans>Unverified</Trans>
                       </Badge>
                     )}
@@ -209,7 +209,7 @@ function EmailContent() {
   );
 }
 
-function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
+function SsoContent({ dataProvider }: Readonly<{ dataProvider: any }>) {
   const [value, setValue] = useState<string>('');
   const [currentProviders, setCurrentProviders] = useState<[]>();
   const { isLoading, data } = useQuery({
@@ -249,16 +249,16 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   /* renderer */
   if (isLoading) return <Loader />;
 
-  function ProviderButton({ provider }: { provider: any }) {
+  function ProviderButton({ provider }: Readonly<{ provider: any }>) {
     const button = (
       <Button
         key={provider.id}
-        component="a"
+        component='a'
         href={provider.connect}
-        variant="outline"
+        variant='outline'
         disabled={!provider.configured}
       >
-        <Group justify="space-between">
+        <Group justify='space-between'>
           {provider.display_name}
           {provider.configured == false && <IconAlertCircle />}
         </Group>
@@ -276,9 +276,9 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
       <Grid.Col span={6}>
         {data.length == 0 ? (
           <Alert
-            icon={<IconAlertCircle size="1rem" />}
+            icon={<IconAlertCircle size='1rem' />}
             title={t`Not configured`}
-            color="yellow"
+            color='yellow'
           >
             <Trans>
               There are no social network accounts connected to this account.{' '}
@@ -289,10 +289,10 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
             <Radio.Group
               value={value}
               onChange={setValue}
-              name="sso_accounts"
+              name='sso_accounts'
               label={t`You can sign in to your account using any of the following third party accounts`}
             >
-              <Stack mt="xs">
+              <Stack mt='xs'>
                 {data.map((link: any) => (
                   <Radio
                     key={link.id}
@@ -315,7 +315,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
             {currentProviders === undefined ? (
               <Trans>Loading</Trans>
             ) : (
-              <Stack gap="xs">
+              <Stack gap='xs'>
                 {currentProviders.map((provider: any) => (
                   <ProviderButton key={provider.id} provider={provider} />
                 ))}
@@ -369,7 +369,7 @@ function TokenContent() {
           ) : (
             <Button
               onClick={() => revokeToken(token.id)}
-              color="red"
+              color='red'
               disabled={!token.active}
             >
               <Trans>Revoke</Trans>
@@ -385,7 +385,7 @@ function TokenContent() {
 
   if (data.length == 0)
     return (
-      <Alert icon={<IconAlertCircle size="1rem" />} color="green">
+      <Alert icon={<IconAlertCircle size='1rem' />} color='green'>
         <Trans>No tokens configured</Trans>
       </Alert>
     );

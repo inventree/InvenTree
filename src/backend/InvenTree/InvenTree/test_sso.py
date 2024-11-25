@@ -9,7 +9,6 @@ from allauth.socialaccount.models import SocialAccount, SocialLogin
 from common.models import InvenTreeSetting
 from InvenTree import sso
 from InvenTree.forms import RegistratonMixin
-from InvenTree.unit_test import InvenTreeTestCase
 
 
 class Dummy:

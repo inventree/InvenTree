@@ -1,7 +1,8 @@
-import { Badge, Center, MantineSize } from '@mantine/core';
+import { Badge, Center, type MantineSize } from '@mantine/core';
 
 import { colorMap } from '../../defaults/backendMappings';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
+import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
 interface StatusCodeInterface {
@@ -17,6 +18,7 @@ export interface StatusCodeListInterface {
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
+  hidden?: boolean;
 }
 
 /*
@@ -31,8 +33,8 @@ function renderStatusLabel(
   let color = null;
 
   // Find the entry which matches the provided key
-  for (let name in codes) {
-    let entry = codes[name];
+  for (const name in codes) {
+    const entry = codes[name];
 
     if (entry.key == key) {
       text = entry.label;
@@ -57,7 +59,7 @@ function renderStatusLabel(
   }
 
   return (
-    <Badge color={color} variant="filled" size={size}>
+    <Badge color={color} variant='filled' size={size}>
       {text}
     </Badge>
   );
@@ -94,8 +96,8 @@ export function getStatusCodeName(
     return null;
   }
 
-  for (let name in statusCodes) {
-    let entry = statusCodes[name];
+  for (const name in statusCodes) {
+    const entry = statusCodes[name];
 
     if (entry.key == key) {
       return entry.name;
@@ -120,6 +122,10 @@ export const StatusRenderer = ({
 }) => {
   const statusCodes = getStatusCodes(type);
 
+  if (options?.hidden) {
+    return null;
+  }
+
   if (statusCodes === undefined || statusCodes === null) {
     console.warn('StatusRenderer: statusCodes is undefined');
     return null;
@@ -132,10 +138,16 @@ export const StatusRenderer = ({
  * Render the status badge in a table
  */
 export function TableStatusRenderer(
-  type: ModelType
+  type: ModelType,
+  accessor?: string
 ): ((record: any) => any) | undefined {
-  return (record: any) =>
-    record.status && (
-      <Center>{StatusRenderer({ status: record.status, type: type })}</Center>
+  return (record: any) => {
+    const status = resolveItem(record, accessor ?? 'status');
+
+    return (
+      status && (
+        <Center>{StatusRenderer({ status: status, type: type })}</Center>
+      )
     );
+  };
 }

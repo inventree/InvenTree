@@ -5,7 +5,6 @@ import math
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 import weasyprint

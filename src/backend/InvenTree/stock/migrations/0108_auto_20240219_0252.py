@@ -43,7 +43,7 @@ def update_templates(apps, schema_editor):
 
     # For each bad result, attempt to find a matching template
     # Here, a matching template must point to a part *above* the part in the tree
-    # Annotate the queryset with a "mathching template"
+    # Annotate the queryset with a "matching template"
 
     template_query = PartTestTemplate.objects.filter(
         part__tree_id=OuterRef('stock_item__part__tree_id'),

@@ -139,7 +139,7 @@ class BaseDriver(
         Arguments:
             error: Exception or string
         """
-        self.set_shared_state('errors', self.errors + [error])
+        self.set_shared_state('errors', [*self.errors, error])
 
     # --- state getters/setters
     @property
@@ -260,7 +260,7 @@ class BaseMachineType(
                     error_parts.append(
                         f'{config_type.name} settings: ' + ', '.join(missing)
                     )
-            self.handle_error(f"Missing {' and '.join(error_parts)}")
+            self.handle_error(f'Missing {" and ".join(error_parts)}')
             return
 
         try:
@@ -317,7 +317,7 @@ class BaseMachineType(
         Arguments:
             error: Exception or string
         """
-        self.set_shared_state('errors', self.errors + [error])
+        self.set_shared_state('errors', [*self.errors, error])
 
     def reset_errors(self):
         """Helper function for resetting the error list for a machine."""

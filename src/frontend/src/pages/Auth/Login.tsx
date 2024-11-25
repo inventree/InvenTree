@@ -13,7 +13,11 @@ import {
 } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
-import { checkLoginState, doBasicLogin } from '../../functions/auth';
+import {
+  checkLoginState,
+  doBasicLogin,
+  followRedirect
+} from '../../functions/auth';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
@@ -49,7 +53,7 @@ export default function Login() {
       ChangeHost(defaultHostKey);
     }
 
-    checkLoginState(navigate, location?.state?.redirectFrom, true);
+    checkLoginState(navigate, location?.state, true);
 
     // check if we got login params (login and password)
     if (searchParams.has('login') && searchParams.has('password')) {
@@ -57,7 +61,7 @@ export default function Login() {
         searchParams.get('login') ?? '',
         searchParams.get('password') ?? ''
       ).then(() => {
-        navigate(location?.state?.redirectFrom ?? '/home');
+        followRedirect(navigate, location?.state);
       });
     }
   }, []);
@@ -71,8 +75,8 @@ export default function Login() {
 
   // Main rendering block
   return (
-    <Center mih="100vh">
-      <Container w="md" miw={400}>
+    <Center mih='100vh'>
+      <Container w='md' miw={400}>
         {hostEdit ? (
           <InstanceOptions
             hostKey={hostKey}
@@ -81,8 +85,8 @@ export default function Login() {
           />
         ) : (
           <>
-            <Paper radius="md" p="xl" withBorder>
-              <Text size="lg" fw={500}>
+            <Paper radius='md' p='xl' withBorder>
+              <Text size='lg' fw={500}>
                 {loginMode ? (
                   <Trans>Welcome, log in below</Trans>
                 ) : (

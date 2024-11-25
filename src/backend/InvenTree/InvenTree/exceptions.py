@@ -1,7 +1,6 @@
 """Custom exception handling for the DRF API."""
 
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import logging
 import sys
@@ -9,7 +8,6 @@ import traceback
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db.utils import IntegrityError, OperationalError
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.views as drfviews
@@ -42,10 +40,7 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
     if kind in settings.IGNORED_ERRORS:
         return
 
-    if error_name:
-        kind = error_name
-    else:
-        kind = getattr(kind, '__name__', 'Unknown Error')
+    kind = error_name or getattr(kind, '__name__', 'Unknown Error')
 
     if error_info:
         info = error_info

@@ -14,7 +14,8 @@ import {
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
-import React, { Suspense, useEffect, useState } from 'react';
+import type React from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { api } from '../../App';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -78,15 +79,15 @@ function PartThumbComponent({
     <Paper
       withBorder
       style={{ backgroundColor: color }}
-      p="sm"
+      p='sm'
       ref={ref}
       onClick={() => selectImage(element.image)}
     >
-      <Stack justify="space-between">
+      <Stack justify='space-between'>
         <AspectRatio ratio={1}>
-          <Thumbnail size={120} src={src} align="center"></Thumbnail>
+          <Thumbnail size={120} src={src} align='center' />
         </AspectRatio>
-        <Text size="xs">
+        <Text size='xs'>
           {element.image.split('/')[1]} ({element.count})
         </Text>
       </Stack>
@@ -127,7 +128,7 @@ export function PartThumbTable({
   search = '',
   pk,
   setImage
-}: ThumbTableProps) {
+}: Readonly<ThumbTableProps>) {
   const [thumbImage, setThumbImage] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
   const [filterQuery, setFilterQuery] = useState<string>(search);
@@ -159,7 +160,7 @@ export function PartThumbTable({
     <>
       <Suspense>
         <Divider />
-        <Paper p="sm">
+        <Paper p='sm'>
           <SimpleGrid cols={8}>
             {!thumbQuery.isFetching
               ? thumbQuery.data?.data.map(
@@ -176,7 +177,7 @@ export function PartThumbTable({
                   <Skeleton
                     height={150}
                     width={150}
-                    radius="sm"
+                    radius='sm'
                     key={idx}
                     style={{ padding: '5px' }}
                   />
@@ -186,8 +187,8 @@ export function PartThumbTable({
       </Suspense>
 
       <Divider />
-      <Paper p="sm">
-        <Group justify="space-between">
+      <Paper p='sm'>
+        <Group justify='space-between'>
           <TextInput
             placeholder={t`Search...`}
             onChange={(event) => {

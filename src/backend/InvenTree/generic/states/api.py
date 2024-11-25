@@ -2,12 +2,22 @@
 
 import inspect
 
+from django.urls import include, path
+
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+import common.models
+import common.serializers
+from generic.states.custom import get_status_api_response
+from importer.mixins import DataExportViewMixin
+from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
+from machine.machine_type import MachineStatus
 
 from .states import StatusCode
 
@@ -73,18 +83,52 @@ class AllStatusViews(StatusView):
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        data = {}
-
-        def discover_status_codes(parent_status_class, prefix=None):
-            """Recursively discover status classes."""
-            for status_class in parent_status_class.__subclasses__():
-                name = '__'.join([*(prefix or []), status_class.__name__])
-                data[name] = {
-                    'class': status_class.__name__,
-                    'values': status_class.dict(),
-                }
-                discover_status_codes(status_class, [name])
-
-        discover_status_codes(StatusCode)
-
+        data = get_status_api_response()
+        # Extend with MachineStatus classes
+        data.update(get_status_api_response(MachineStatus, prefix=['MachineStatus']))
         return Response(data)
+
+
+# Custom states
+class CustomStateList(DataExportViewMixin, ListCreateAPI):
+    """List view for all custom states."""
+
+    queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
+    serializer_class = common.serializers.CustomStateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['key']
+    search_fields = ['key', 'name', 'label', 'reference_status']
+
+
+class CustomStateDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular custom states."""
+
+    queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
+    serializer_class = common.serializers.CustomStateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
+urlpattern = [
+    # Custom state
+    path(
+        'custom/',
+        include([
+            path(
+                '<int:pk>/', CustomStateDetail.as_view(), name='api-custom-state-detail'
+            ),
+            path('', CustomStateList.as_view(), name='api-custom-state-list'),
+        ]),
+    ),
+    # Generic status views
+    path(
+        '',
+        include([
+            path(
+                f'<str:{StatusView.MODEL_REF}>/',
+                include([path('', StatusView.as_view(), name='api-status')]),
+            ),
+            path('', AllStatusViews.as_view(), name='api-status-all'),
+        ]),
+    ),
+]

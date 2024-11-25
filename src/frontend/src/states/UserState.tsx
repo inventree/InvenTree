@@ -2,15 +2,16 @@ import { create } from 'zustand';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { UserPermissions, UserRoles } from '../enums/Roles';
+import type { ModelType } from '../enums/ModelType';
+import { UserPermissions, type UserRoles } from '../enums/Roles';
 import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { UserProps } from './states';
+import type { UserProps } from './states';
 
-interface UserStateProps {
+export interface UserStateProps {
   user: UserProps | undefined;
   token: string | undefined;
+  userId: () => number | undefined;
   username: () => string;
   setUser: (newUser: UserProps) => void;
   setToken: (newToken: string) => void;
@@ -50,6 +51,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     set({ token: undefined });
     setApiDefaults();
   },
+  userId: () => {
+    const user: UserProps = get().user as UserProps;
+    return user.pk;
+  },
   username: () => {
     const user: UserProps = get().user as UserProps;
 
@@ -67,6 +72,15 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     setApiDefaults();
   },
   fetchUserToken: async () => {
+    // If neither the csrf or session cookies are available, we cannot fetch a token
+    if (
+      !document.cookie.includes('csrftoken') &&
+      !document.cookie.includes('sessionid')
+    ) {
+      get().clearToken();
+      return;
+    }
+
     await api
       .get(apiUrl(ApiEndpoints.user_token))
       .then((response) => {
@@ -83,6 +97,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   fetchUserState: async () => {
     if (!get().token) {
       await get().fetchUserToken();
+    }
+
+    // If we still don't have a token, clear the user state and return
+    if (!get().token) {
+      get().clearUserState();
+      return;
     }
 
     // Fetch user data

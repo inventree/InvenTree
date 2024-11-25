@@ -410,10 +410,7 @@ def progress_bar(val, max_val, *args, **kwargs):
     else:
         style = ''
 
-    if max_val != 0:
-        percent = float(val / max_val) * 100
-    else:
-        percent = 0
+    percent = float(val / max_val) * 100 if max_val != 0 else 0
 
     if percent > 100:
         percent = 100
@@ -422,7 +419,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
     style_tags = []
 
-    max_width = kwargs.get('max_width', None)
+    max_width = kwargs.get('max_width')
 
     if max_width:
         style_tags.append(f'max-width: {max_width};')
@@ -498,7 +495,7 @@ def primitive_to_javascript(primitive):
     elif type(primitive) in [int, float]:
         return primitive
     # Wrap with quotes
-    return format_html("'{}'", primitive)  # noqa: P103
+    return format_html("'{}'", primitive)
 
 
 @register.simple_tag()
@@ -670,3 +667,15 @@ def admin_url(user, table, pk):
             pass
 
     return url
+
+
+@register.simple_tag()
+def cui_enabled():
+    """Return True if the CUI is enabled."""
+    return settings.ENABLE_CLASSIC_FRONTEND
+
+
+@register.simple_tag()
+def pui_enabled():
+    """Return True if the PUI is enabled."""
+    return settings.ENABLE_PLATFORM_FRONTEND
