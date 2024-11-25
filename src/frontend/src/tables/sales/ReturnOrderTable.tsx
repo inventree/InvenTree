@@ -14,8 +14,8 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
   CreationDateColumn,
-  DateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
@@ -129,9 +129,8 @@ export function ReturnOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
-      DateColumn({
-        accessor: 'complete_date',
-        title: t`Completion Date`
+      CompletionDateColumn({
+        accessor: 'complete_date'
       }),
       ResponsibleColumn({}),
       {

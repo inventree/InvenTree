@@ -1371,6 +1371,7 @@ class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
         'line_items',
         'status',
         'target_date',
+        'complete_date',
         'project_code',
     ]
 
