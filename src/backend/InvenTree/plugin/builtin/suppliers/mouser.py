@@ -1,4 +1,4 @@
-"""The MouserPlugin is meant to integrate the Mouser API into Inventree.
+"""The MouserPlugin is meant to integrate the Mouser API into InvenTree.
 
 This plugin currently only match Mouser barcodes to supplier parts.
 """
@@ -10,7 +10,7 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 
 class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
-    """Plugin to integrate the Mouser API into Inventree."""
+    """Plugin to integrate the Mouser API into InvenTree."""
 
     NAME = 'MouserPlugin'
     TITLE = _('Supplier Integration - Mouser')
