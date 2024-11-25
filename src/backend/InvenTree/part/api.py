@@ -1159,10 +1159,10 @@ class PartFilter(rest_filters.FilterSet):
 
     # Created date filters
     created_before = InvenTreeDateFilter(
-        label='Updated before', field_name='creation_date', lookup_expr='lte'
+        label='Updated before', field_name='creation_date', lookup_expr='lt'
     )
     created_after = InvenTreeDateFilter(
-        label='Updated after', field_name='creation_date', lookup_expr='gte'
+        label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
 
