@@ -802,7 +802,7 @@ def remove_non_printable_characters(value: str, remove_newline=True):
 
     # Remove ASCII control characters
     # Note that we do not sub out 0x0A (\n) here, it is done separately below
-    regex = re.compile(r'[\u0000-\u001F\u007F-\u009F]')
+    regex = re.compile(r'[\u0000-\u0009\u000B-\u001F\u007F-\u009F]')
     cleaned = regex.sub('', cleaned)
 
     # Remove Unicode control characters
