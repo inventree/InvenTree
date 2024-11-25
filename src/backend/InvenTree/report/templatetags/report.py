@@ -61,7 +61,10 @@ def filter_db_model(model_name, **kwargs) -> list:
     """
     app_name, model_name = model_name.split('.')
 
-    model = apps.get_model(app_name, model_name)
+    try:
+        model = apps.get_model(app_name, model_name)
+    except Exception:
+        return []
 
     if model is None:
         return []
