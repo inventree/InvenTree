@@ -21,7 +21,11 @@ import company.models
 from generic.states.api import StatusView
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
-from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
+from InvenTree.filters import (
+    SEARCH_ORDER_FILTER,
+    SEARCH_ORDER_FILTER_ALIAS,
+    InvenTreeDateFilter,
+)
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
@@ -138,6 +142,22 @@ class OrderFilter(rest_filters.FilterSet):
 
     assigned_to = rest_filters.ModelChoiceFilter(
         queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
+    )
+
+    created_before = InvenTreeDateFilter(
+        label=_('Created Before'), field_name='creation_date', lookup_expr='lt'
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created After'), field_name='creation_date', lookup_expr='gt'
+    )
+
+    target_date_before = InvenTreeDateFilter(
+        label=_('Target Date Before'), field_name='target_date', lookup_expr='lt'
+    )
+
+    target_date_after = InvenTreeDateFilter(
+        label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
 

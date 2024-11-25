@@ -27,13 +27,17 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  type TableFilter
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -63,6 +67,10 @@ export function SalesOrderTable({
       AssignedToMeFilter(),
       MinDateFilter(),
       MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,

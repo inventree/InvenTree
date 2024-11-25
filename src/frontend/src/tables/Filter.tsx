@@ -137,6 +137,42 @@ export function MaxDateFilter(): TableFilter {
   };
 }
 
+export function CreatedBeforeFilter(): TableFilter {
+  return {
+    name: 'created_before',
+    label: t`Created Before`,
+    description: t`Show items created before this date`,
+    type: 'date'
+  };
+}
+
+export function CreatedAfterFilter(): TableFilter {
+  return {
+    name: 'created_after',
+    label: t`Created After`,
+    description: t`Show items created after this date`,
+    type: 'date'
+  };
+}
+
+export function TargetDateBeforeFilter(): TableFilter {
+  return {
+    name: 'target_date_before',
+    label: t`Target Date Before`,
+    description: t`Show items with a target date before this date`,
+    type: 'date'
+  };
+}
+
+export function TargetDateAfterFilter(): TableFilter {
+  return {
+    name: 'target_date_after',
+    label: t`Target Date After`,
+    description: t`Show items with a target date after this date`,
+    type: 'date'
+  };
+}
+
 export function HasProjectCodeFilter(): TableFilter {
   return {
     name: 'has_project_code',
