@@ -286,7 +286,11 @@ function stockItemTableColumns(): TableColumn[] {
 /**
  * Construct a list of available filters for the stock item table
  */
-function stockItemTableFilters(): TableFilter[] {
+function stockItemTableFilters({
+  enableExpiry
+}: {
+  enableExpiry: boolean;
+}): TableFilter[] {
   return [
     {
       name: 'active',
@@ -373,10 +377,56 @@ function stockItemTableFilters(): TableFilter[] {
       label: t`Has Purchase Price`,
       description: t`Show items which have a purchase price`
     },
-    // TODO: Expired
-    // TODO: stale
-    // TODO: expiry_date_lte
-    // TODO: expiry_date_gte
+    {
+      name: 'expired',
+      label: t`Expired`,
+      description: t`Show items which have expired`,
+      active: enableExpiry
+    },
+    {
+      name: 'stale',
+      label: t`Stale`,
+      description: t`Show items which are stale`,
+      active: enableExpiry
+    },
+    {
+      name: 'expiry_before',
+      label: t`Expired Before`,
+      description: t`Show items which have expired before a given date`,
+      type: 'date',
+      active: enableExpiry
+    },
+    {
+      name: 'expiry_after',
+      label: t`Expired After`,
+      description: t`Show items which have expired after a given date`,
+      type: 'date',
+      active: enableExpiry
+    },
+    {
+      name: 'updated_before',
+      label: t`Updated Before`,
+      description: t`Show items which have been updated before a given date`,
+      type: 'date'
+    },
+    {
+      name: 'updated_after',
+      label: t`Updated After`,
+      description: t`Show items which have been updated after a given date`,
+      type: 'date'
+    },
+    {
+      name: 'stocktake_before',
+      label: t`Stocktake Before`,
+      description: t`Show items which have been counted before a given date`,
+      type: 'date'
+    },
+    {
+      name: 'stocktake_after',
+      label: t`Stocktake After`,
+      description: t`Show items which have been counted after a given date`,
+      type: 'date'
+    },
     {
       name: 'external',
       label: t`External Location`,
@@ -397,11 +447,24 @@ export function StockItemTable({
   allowAdd?: boolean;
   tableName: string;
 }>) {
-  const tableColumns = useMemo(() => stockItemTableColumns(), []);
-  const tableFilters = useMemo(() => stockItemTableFilters(), []);
-
   const table = useTable(tableName);
   const user = useUserState();
+
+  const settings = useGlobalSettingsState();
+
+  const stockExpiryEnabled = useMemo(
+    () => settings.isSet('STOCK_ENABLE_EXPIRY'),
+    [settings]
+  );
+
+  const tableColumns = useMemo(() => stockItemTableColumns(), []);
+  const tableFilters = useMemo(
+    () =>
+      stockItemTableFilters({
+        enableExpiry: stockExpiryEnabled
+      }),
+    [stockExpiryEnabled]
+  );
 
   const tableActionParams: StockOperationProps = useMemo(() => {
     return {
