@@ -206,6 +206,9 @@ function FilterAddGroup({
       };
 
       tableState.setActiveFilters([...filters, newFilter]);
+
+      // Clear selected filter
+      setSelectedFilter(null);
     },
     [selectedFilter]
   );
