@@ -52,6 +52,7 @@ test('PUI - Admin - Parameter', async ({ page }) => {
 
   // Add parameter
   await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: 'Part Parameter Template' }).click();
   await page.getByLabel('action-button-add-parameter').waitFor();
   await page.getByLabel('action-button-add-parameter').click();
   await page.getByLabel('text-field-name').fill('my custom parameter');
