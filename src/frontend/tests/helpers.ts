@@ -36,3 +36,11 @@ export const clearTableFilters = async (page) => {
   await clickButtonIfVisible(page, 'Clear Filters');
   await page.getByLabel('filter-drawer-close').click();
 };
+
+/**
+ * Return the parent 'row' element for a given 'cell' element
+ * @param cell - The cell element
+ */
+export const getRowFromCell = async (cell) => {
+  return cell.locator('xpath=ancestor::tr').first();
+};
