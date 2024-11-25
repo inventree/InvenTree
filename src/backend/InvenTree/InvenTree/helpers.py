@@ -791,11 +791,6 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
     # If the length changed, it means that HTML tags were removed!
     if len(cleaned) != len(value) and raise_error:
         field = field_name or 'non_field_errors'
-
-        print('HTML tags detected in field:', field)
-        print('- original:', value, '->', len(value), ':', bytes(value, 'utf-8'))
-        print('-  cleaned:', cleaned, '->', len(cleaned), ':', bytes(cleaned, 'utf-8'))
-
         raise ValidationError({field: [_('Remove HTML tags from this value')]})
 
     return cleaned
