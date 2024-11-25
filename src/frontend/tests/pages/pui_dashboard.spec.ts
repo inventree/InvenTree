@@ -2,7 +2,7 @@ import { test } from '../baseFixtures.js';
 import { doQuickLogin } from '../login.js';
 import { setPluginState } from '../settings.js';
 
-test('Pages - Dashboard - Basic', async ({ page }) => {
+test('Dashboard - Basic', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByText('Use the menu to add widgets').waitFor();
@@ -35,7 +35,7 @@ test('Pages - Dashboard - Basic', async ({ page }) => {
   await page.getByLabel('dashboard-accept-layout').click();
 });
 
-test('Pages - Dashboard - Plugins', async ({ page, request }) => {
+test('Dashboard - Plugins', async ({ page, request }) => {
   // Ensure that the "SampleUI" plugin is enabled
   await setPluginState({
     request,

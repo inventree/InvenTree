@@ -14,6 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -25,13 +26,19 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  type TableFilter
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -64,6 +71,12 @@ export function PurchaseOrderTable({
       AssignedToMeFilter(),
       MinDateFilter(),
       MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
@@ -108,6 +121,9 @@ export function PurchaseOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
+      CompletionDateColumn({
+        accessor: 'complete_date'
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,

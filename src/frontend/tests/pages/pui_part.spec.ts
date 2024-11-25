@@ -1,5 +1,6 @@
 import { test } from '../baseFixtures';
 import { baseUrl } from '../defaults';
+import { getRowFromCell } from '../helpers';
 import { doQuickLogin } from '../login';
 
 /**
@@ -129,9 +130,7 @@ test('Parts - Allocations', async ({ page }) => {
 
   // Check "progress" bar of BO0001
   const build_order_cell = await page.getByRole('cell', { name: 'BO0001' });
-  const build_order_row = await build_order_cell
-    .locator('xpath=ancestor::tr')
-    .first();
+  const build_order_row = await getRowFromCell(build_order_cell);
   await build_order_row.getByText('11 / 75').waitFor();
 
   // Expand allocations against BO0001
@@ -147,9 +146,7 @@ test('Parts - Allocations', async ({ page }) => {
 
   // Check "progress" bar of SO0025
   const sales_order_cell = await page.getByRole('cell', { name: 'SO0025' });
-  const sales_order_row = await sales_order_cell
-    .locator('xpath=ancestor::tr')
-    .first();
+  const sales_order_row = await getRowFromCell(sales_order_cell);
   await sales_order_row.getByText('3 / 10').waitFor();
 
   // Expand allocations against SO0025

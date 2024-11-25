@@ -286,7 +286,11 @@ function stockItemTableColumns(): TableColumn[] {
 /**
  * Construct a list of available filters for the stock item table
  */
-function stockItemTableFilters(): TableFilter[] {
+function stockItemTableFilters({
+  enableExpiry
+}: {
+  enableExpiry: boolean;
+}): TableFilter[] {
   return [
     {
       name: 'active',
@@ -354,15 +358,35 @@ function stockItemTableFilters(): TableFilter[] {
       label: t`Is Serialized`,
       description: t`Show items which have a serial number`
     },
-    // TODO: serial
-    // TODO: serial_gte
-    // TODO: serial_lte
+    {
+      name: 'batch',
+      label: t`Batch Code`,
+      description: t`Filter items by batch code`,
+      type: 'text'
+    },
+    {
+      name: 'serial',
+      label: t`Serial Number`,
+      description: t`Filter items by serial number`,
+      type: 'text'
+    },
+    {
+      name: 'serial_lte',
+      label: t`Serial Number LTE`,
+      description: t`Show items with serial numbers less than or equal to a given value`,
+      type: 'text'
+    },
+    {
+      name: 'serial_gte',
+      label: t`Serial Number GTE`,
+      description: t`Show items with serial numbers greater than or equal to a given value`,
+      type: 'text'
+    },
     {
       name: 'has_batch',
       label: t`Has Batch Code`,
       description: t`Show items which have a batch code`
     },
-    // TODO: batch
     {
       name: 'tracked',
       label: t`Tracked`,
@@ -373,10 +397,56 @@ function stockItemTableFilters(): TableFilter[] {
       label: t`Has Purchase Price`,
       description: t`Show items which have a purchase price`
     },
-    // TODO: Expired
-    // TODO: stale
-    // TODO: expiry_date_lte
-    // TODO: expiry_date_gte
+    {
+      name: 'expired',
+      label: t`Expired`,
+      description: t`Show items which have expired`,
+      active: enableExpiry
+    },
+    {
+      name: 'stale',
+      label: t`Stale`,
+      description: t`Show items which are stale`,
+      active: enableExpiry
+    },
+    {
+      name: 'expiry_before',
+      label: t`Expired Before`,
+      description: t`Show items which expired before this date`,
+      type: 'date',
+      active: enableExpiry
+    },
+    {
+      name: 'expiry_after',
+      label: t`Expired After`,
+      description: t`Show items which expired after this date`,
+      type: 'date',
+      active: enableExpiry
+    },
+    {
+      name: 'updated_before',
+      label: t`Updated Before`,
+      description: t`Show items updated before this date`,
+      type: 'date'
+    },
+    {
+      name: 'updated_after',
+      label: t`Updated After`,
+      description: t`Show items updated after this date`,
+      type: 'date'
+    },
+    {
+      name: 'stocktake_before',
+      label: t`Stocktake Before`,
+      description: t`Show items counted before this date`,
+      type: 'date'
+    },
+    {
+      name: 'stocktake_after',
+      label: t`Stocktake After`,
+      description: t`Show items counted after this date`,
+      type: 'date'
+    },
     {
       name: 'external',
       label: t`External Location`,
@@ -397,11 +467,24 @@ export function StockItemTable({
   allowAdd?: boolean;
   tableName: string;
 }>) {
-  const tableColumns = useMemo(() => stockItemTableColumns(), []);
-  const tableFilters = useMemo(() => stockItemTableFilters(), []);
-
   const table = useTable(tableName);
   const user = useUserState();
+
+  const settings = useGlobalSettingsState();
+
+  const stockExpiryEnabled = useMemo(
+    () => settings.isSet('STOCK_ENABLE_EXPIRY'),
+    [settings]
+  );
+
+  const tableColumns = useMemo(() => stockItemTableColumns(), []);
+  const tableFilters = useMemo(
+    () =>
+      stockItemTableFilters({
+        enableExpiry: stockExpiryEnabled
+      }),
+    [stockExpiryEnabled]
+  );
 
   const tableActionParams: StockOperationProps = useMemo(() => {
     return {
