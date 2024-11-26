@@ -39,7 +39,7 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
         queryset: The queryset to filter
 
     Keyword Arguments:
-        Any keyword arguments will be used to filter the queryset
+        field (any): Filter the queryset based on the provided field
 
     Example:
         {% filter_queryset companies is_supplier=True as suppliers %}
@@ -55,7 +55,7 @@ def filter_db_model(model_name: str, **kwargs) -> QuerySet:
         model_name: The name of the Django model - including app name (e.g. 'part.partcategory')
 
     Keyword Arguments:
-        Any keyword arguments will be used to filter the model
+        field (any): Filter the queryset based on the provided field
 
     Example:
         {% filter_db_model 'part.partcategory' is_template=True as template_parts %}
