@@ -1541,7 +1541,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['item', 'quantity']
+        fields = ['pk', 'quantity', 'batch', 'status', 'packaging']
 
     pk = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -1551,6 +1551,17 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         label='stock_item',
         help_text=_('StockItem primary key value'),
     )
+
+    def validate_pk(self, pk):
+        """Ensure the stock item is valid."""
+        allow_out_of_stock_transfer = get_global_setting(
+            'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
+        )
+
+        if not allow_out_of_stock_transfer and not pk.is_in_stock(check_status=False):
+            raise ValidationError(_('Stock item is not in stock'))
+
+        return pk
 
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, min_value=Decimal(0), required=True

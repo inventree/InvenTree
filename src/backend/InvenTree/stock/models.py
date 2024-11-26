@@ -1477,12 +1477,15 @@ class StockItem(
         """
         return self.children.count()
 
-    @property
-    def in_stock(self) -> bool:
-        """Returns True if this item is in stock.
+    def is_in_stock(self, check_status: bool = True):
+        """Return True if this StockItem is "in stock".
 
-        See also: StockItem.IN_STOCK_FILTER for the db optimized version of this check.
+        Args:
+            check_status: If True, check the status of the StockItem. Defaults to True.
         """
+        if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
+            return False
+
         return all([
             self.quantity > 0,  # Quantity must be greater than zero
             self.sales_order is None,  # Not assigned to a SalesOrder
@@ -1490,8 +1493,15 @@ class StockItem(
             self.customer is None,  # Not assigned to a customer
             self.consumed_by is None,  # Not consumed by a build
             not self.is_building,  # Not part of an active build
-            self.status in StockStatusGroups.AVAILABLE_CODES,  # Status is "available"
         ])
+
+    @property
+    def in_stock(self) -> bool:
+        """Returns True if this item is in stock.
+
+        See also: StockItem.IN_STOCK_FILTER for the db optimized version of this check.
+        """
+        return self.is_in_stock(check_status=True)
 
     @property
     def can_adjust_location(self):
@@ -2061,15 +2071,14 @@ class StockItem(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not self.in_stock:
+        if not allow_out_of_stock_transfer and not self.is_in_stock(check_status=False):
             raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
             return False
 
         if location is None:
-            # TODO - Raise appropriate error (cannot move to blank location)
-            return False
+            raise ValidationError({'location': _('Location must be specified')})
 
         # Test for a partial movement
         if quantity < self.quantity:
