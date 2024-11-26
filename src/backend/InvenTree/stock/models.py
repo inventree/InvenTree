@@ -2078,7 +2078,7 @@ class StockItem(
             return False
 
         if location is None:
-            raise ValidationError({'location': _('Location must be specified')})
+            return False
 
         # Test for a partial movement
         if quantity < self.quantity:
