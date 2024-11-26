@@ -156,7 +156,11 @@ class InvenTreeCustomStatusSerializerMixin:
             ):
                 setattr(self.instance, follower_field_name, self.initial_data[field])
 
-        # Mirror values from follower to leader
+        self.mirror_follower(validated_data)
+        return super().update(instance, validated_data)
+
+    def mirror_follower(self, validated_data):
+        """Mirror the follower fields to the leader fields."""
         for field in self._custom_fields_follower:
             leader_field_name = field.replace('_custom_key', '')
             if field in validated_data and leader_field_name not in self.initial_data:
@@ -171,7 +175,6 @@ class InvenTreeCustomStatusSerializerMixin:
                         validated_data[leader_field_name] = validated_data[field]
                     else:
                         raise serializers.ValidationError('Invalid choice')
-        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         """Ensure custom state fields are not served empty."""
