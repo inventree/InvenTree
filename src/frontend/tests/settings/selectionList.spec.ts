@@ -27,6 +27,8 @@ test('PUI - Admin - Parameter', async ({ page }) => {
     .catch(() => {});
 
   // clean old data if exists
+  await page.getByRole('button', { name: 'Part Parameter Template' }).click();
+  await page.waitForLoadState('networkidle');
   await page
     .getByRole('cell', { name: 'my custom parameter' })
     .waitFor({ timeout: 200 })
@@ -42,6 +44,8 @@ test('PUI - Admin - Parameter', async ({ page }) => {
     .catch(() => {});
 
   // Add selection list
+  await page.getByRole('button', { name: 'Selection Lists' }).click();
+  await page.waitForLoadState('networkidle');
   await page.getByLabel('action-button-add-selection-').waitFor();
   await page.getByLabel('action-button-add-selection-').click();
   await page.getByLabel('text-field-name').fill('some list');
