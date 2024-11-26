@@ -48,6 +48,7 @@ import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   useAddStockItem,
+  useAssignStockItem,
   useCountStockItem,
   useRemoveStockItem,
   useStockFields,
@@ -588,7 +589,7 @@ export default function StockDetail() {
 
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
-      items: stockitem,
+      items: [stockitem],
       model: ModelType.stockitem,
       refresh: refreshInstance,
       filters: {
@@ -601,6 +602,7 @@ export default function StockDetail() {
   const addStockItem = useAddStockItem(stockActionProps);
   const removeStockItem = useRemoveStockItem(stockActionProps);
   const transferStockItem = useTransferStockItem(stockActionProps);
+  const assignToCustomer = useAssignStockItem(stockActionProps);
 
   const serializeStockFields = useStockItemSerializeFields({
     partId: stockitem.part,
@@ -731,7 +733,7 @@ export default function StockDetail() {
           {
             name: t`Return`,
             tooltip: t`Return from customer`,
-            hidden: !stockitem.sales_order,
+            hidden: !stockitem.customer,
             icon: (
               <InvenTreeIcon
                 icon='return_orders'
@@ -740,6 +742,17 @@ export default function StockDetail() {
             ),
             onClick: () => {
               stockitem.pk && returnStockItem.open();
+            }
+          },
+          {
+            name: t`Assign to Customer`,
+            tooltip: t`Assign to a customer`,
+            hidden: !!stockitem.customer,
+            icon: (
+              <InvenTreeIcon icon='customer' iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && assignToCustomer.open();
             }
           }
         ]}
@@ -874,6 +887,7 @@ export default function StockDetail() {
         {transferStockItem.modal}
         {serializeStockItem.modal}
         {returnStockItem.modal}
+        {assignToCustomer.modal}
       </Stack>
     </InstanceDetail>
   );
