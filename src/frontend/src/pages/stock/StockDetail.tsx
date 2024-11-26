@@ -131,7 +131,7 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
-        name: 'status',
+        name: 'status_custom_key',
         type: 'status',
         label: t`Stock Status`,
         model: ModelType.stockitem
