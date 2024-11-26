@@ -41,7 +41,7 @@ export function SettingList({
   }, []);
 
   const allKeys = useMemo(
-    () => settingsState?.settings?.map((s) => s.key),
+    () => settingsState?.settings?.map((s) => s.key) ?? [],
     [settingsState?.settings]
   );
 
@@ -131,7 +131,7 @@ export function SettingList({
     <>
       {editSettingModal.modal}
       <Stack gap='xs'>
-        {(keys || allKeys).map((key, i) => {
+        {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );

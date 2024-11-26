@@ -4634,6 +4634,13 @@ class PartRelated(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Select Related Part'),
     )
 
+    note = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Note'),
+        help_text=_('Note for this relationship'),
+    )
+
     def __str__(self):
         """Return a string representation of this Part-Part relationship."""
         return f'{self.part_1} <--> {self.part_2}'

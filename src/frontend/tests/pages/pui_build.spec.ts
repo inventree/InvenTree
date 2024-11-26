@@ -1,8 +1,13 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
+import {
+  clickButtonIfVisible,
+  getRowFromCell,
+  openFilterDrawer
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Pages - Build Order', async ({ page }) => {
+test('Build Order - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/`);
@@ -82,7 +87,7 @@ test('Pages - Build Order', async ({ page }) => {
     .waitFor();
 });
 
-test('Pages - Build Order - Build Outputs', async ({ page }) => {
+test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/`);
@@ -140,7 +145,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
 
   // Cancel one of the newly created outputs
   const cell = await page.getByRole('cell', { name: `# ${sn}` });
-  const row = await cell.locator('xpath=ancestor::tr').first();
+  const row = await getRowFromCell(cell);
   await row.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Cancel' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -148,7 +153,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
 
   // Complete the other output
   const cell2 = await page.getByRole('cell', { name: `# ${sn + 1}` });
-  const row2 = await cell2.locator('xpath=ancestor::tr').first();
+  const row2 = await getRowFromCell(cell2);
   await row2.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Complete' }).click();
   await page.getByLabel('related-field-location').click();
@@ -158,7 +163,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   await page.getByText('Build outputs have been completed').waitFor();
 });
 
-test('Pages - Build Order - Allocation', async ({ page }) => {
+test('Build Order - Allocation', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/manufacturing/build-order/1/line-items`);
@@ -170,7 +175,7 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
 
   // The capacitor stock should be fully allocated
   const cell = await page.getByRole('cell', { name: /C_1uF_0805/ });
-  const row = await cell.locator('xpath=ancestor::tr').first();
+  const row = await getRowFromCell(cell);
 
   await row.getByText(/150 \/ 150/).waitFor();
 
@@ -237,7 +242,7 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
     const item = data[idx];
 
     const cell = await page.getByRole('cell', { name: item.name });
-    const row = await cell.locator('xpath=ancestor::tr').first();
+    const row = await getRowFromCell(cell);
     const progress = `${item.allocated} / ${item.required}`;
 
     await row.getByRole('cell', { name: item.ipn }).first().waitFor();
@@ -256,4 +261,15 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
+});
+
+test('Build Order - Filters', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/manufacturing/index/buildorders`);
+
+  await openFilterDrawer(page);
+  await clickButtonIfVisible(page, 'Clear Filters');
+
+  await page.waitForTimeout(2500);
 });

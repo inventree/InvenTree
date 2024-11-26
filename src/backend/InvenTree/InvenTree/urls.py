@@ -48,7 +48,7 @@ from .social_auth_urls import (
     EmailRemoveView,
     EmailVerifyView,
     SocialProviderListView,
-    social_auth_urlpatterns,
+    get_provider_urls,
 )
 from .views import auth_request
 
@@ -143,7 +143,7 @@ apipatterns = [
                     path('', EmailListView.as_view(), name='email-list'),
                 ]),
             ),
-            path('social/', include(social_auth_urlpatterns)),
+            path('social/', include(get_provider_urls())),
             path(
                 'social/', SocialAccountListView.as_view(), name='social_account_list'
             ),

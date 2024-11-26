@@ -869,6 +869,7 @@ class Build(
                 part=self.part,
                 build=self,
                 batch=batch,
+                location=location,
                 is_building=True
             )
 
@@ -1747,6 +1748,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         else:
             # Mark the item as "consumed" by the build order
             item.consumed_by = self.build
+            item.location = None
             item.save(add_note=False)
 
             item.add_tracking_entry(

@@ -283,12 +283,10 @@ export default function ParametricPartTable({
             if (column?.accessor?.toString()?.startsWith('parameter_')) {
               const col = column as any;
               onParameterClick(col.extra.template, record);
-            } else {
+            } else if (record?.pk) {
               // Navigate through to the part detail page
-              if (record?.pk) {
-                const url = getDetailUrl(ModelType.part, record.pk);
-                navigateToLink(url, navigate, event);
-              }
+              const url = getDetailUrl(ModelType.part, record.pk);
+              navigateToLink(url, navigate, event);
             }
           }
         }}

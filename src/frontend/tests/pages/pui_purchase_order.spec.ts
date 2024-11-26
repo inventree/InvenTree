@@ -1,4 +1,5 @@
 import { test } from '../baseFixtures.ts';
+import { clickButtonIfVisible, openFilterDrawer } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
 test('Purchase Orders - General', async ({ page }) => {
@@ -49,6 +50,30 @@ test('Purchase Orders - General', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).waitFor();
+});
+
+test('Purchase Orders - Filters', async ({ page }) => {
+  await doQuickLogin(page, 'reader', 'readonly');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
+  // Open filters drawer
+  await openFilterDrawer(page);
+  await clickButtonIfVisible(page, 'Clear Filters');
+
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+
+  // Check for expected filter options
+  await page.getByPlaceholder('Select filter').fill('before');
+  await page.getByRole('option', { name: 'Created Before' }).waitFor();
+  await page.getByRole('option', { name: 'Completed Before' }).waitFor();
+  await page.getByRole('option', { name: 'Target Date Before' }).waitFor();
+
+  await page.getByPlaceholder('Select filter').fill('after');
+  await page.getByRole('option', { name: 'Created After' }).waitFor();
+  await page.getByRole('option', { name: 'Completed After' }).waitFor();
+  await page.getByRole('option', { name: 'Target Date After' }).waitFor();
 });
 
 /**

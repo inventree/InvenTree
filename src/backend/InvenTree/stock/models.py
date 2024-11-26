@@ -1399,6 +1399,7 @@ class StockItem(
         # Assign the other stock item into this one
         stock_item.belongs_to = self
         stock_item.consumed_by = build
+        stock_item.location = None
         stock_item.save(add_note=False)
 
         deltas = {'stockitem': self.pk}
@@ -2416,7 +2417,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if created and not InvenTree.ready.isImportingData():
+    if not InvenTree.ready.isImportingData():
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             InvenTree.tasks.offload_task(
                 part_tasks.notify_low_stock_if_required,

@@ -1,23 +1,23 @@
 import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
+import {
+  clearTableFilters,
+  closeFilterDrawer,
+  openFilterDrawer
+} from './helpers.js';
 import { doQuickLogin } from './login.js';
 
 // Helper function to set the value of a specific table filter
 const setFilter = async (page, name: string, value: string) => {
-  await page.getByLabel('table-select-filters').click();
+  await openFilterDrawer(page);
+
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByPlaceholder('Select filter').click();
   await page.getByRole('option', { name: name, exact: true }).click();
   await page.getByPlaceholder('Select filter value').click();
   await page.getByRole('option', { name: value, exact: true }).click();
-  await page.getByLabel('filter-drawer-close').click();
-};
 
-// Helper function to clear table filters
-const clearFilters = async (page) => {
-  await page.getByLabel('table-select-filters').click();
-  await page.getByRole('button', { name: 'Clear Filters' }).click();
-  await page.getByLabel('filter-drawer-close').click();
+  await closeFilterDrawer(page);
 };
 
 test('Tables - Filters', async ({ page }) => {
@@ -30,14 +30,14 @@ test('Tables - Filters', async ({ page }) => {
   await setFilter(page, 'Responsible', 'allaccess');
   await setFilter(page, 'Project Code', 'PRJ-NIM');
 
-  await clearFilters(page);
+  await clearTableFilters(page);
 
   // Head to the "part list" page
   await page.goto(`${baseUrl}/part/category/index/parts/`);
 
   await setFilter(page, 'Assembly', 'Yes');
 
-  await clearFilters(page);
+  await clearTableFilters(page);
 
   // Head to the "purchase order list" page
   await page.goto(`${baseUrl}/purchasing/index/purchaseorders/`);
@@ -47,7 +47,7 @@ test('Tables - Filters', async ({ page }) => {
   await setFilter(page, 'Assigned to me', 'No');
   await setFilter(page, 'Project Code', 'PRO-ZEN');
 
-  await clearFilters(page);
+  await clearTableFilters(page);
 });
 
 test('Tables - Columns', async ({ page }) => {

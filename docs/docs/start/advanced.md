@@ -63,7 +63,7 @@ Next you can start configuring the connection. Either use the config file or set
 | `ldap.user_dn_template` | `INVENTREE_LDAP_USER_DN_TEMPLATE` | use direct bind as auth user, `ldap.bind_dn` and `ldap.bin_password` is not necessary then, e.g. `uid=%(user)s,dc=example,dc=org` |
 | `ldap.global_options` | `INVENTREE_LDAP_GLOBAL_OPTIONS` | set advanced options as dict, e.g. TLS settings. For a list of all available options, see [python-ldap docs](https://www.python-ldap.org/en/latest/reference/ldap.html#ldap-options). (keys and values starting with OPT_ get automatically converted to `python-ldap` keys) |
 | `ldap.search_filter_str`| `INVENTREE_LDAP_SEARCH_FILTER_STR` | LDAP search filter str, default: `uid=%(user)s` |
-| `ldap.user_attr_map` | `INVENTREE_LDAP_USER_ATTR_MAP` | LDAP <-> Inventree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
+| `ldap.user_attr_map` | `INVENTREE_LDAP_USER_ATTR_MAP` | LDAP <-> InvenTree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
 | `ldap.always_update_user` | `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | Always update the user on each login, default: `true` |
 | `ldap.cache_timeout` | `INVENTREE_LDAP_CACHE_TIMEOUT` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |
 | `ldap.group_search` | `INVENTREE_LDAP_GROUP_SEARCH` | Base LDAP DN for group searching; required to enable group features |

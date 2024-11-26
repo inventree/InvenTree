@@ -8,8 +8,10 @@ from decimal import Decimal
 from typing import Any, Optional
 
 from django import template
+from django.apps.registry import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -27,6 +29,50 @@ register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+@register.simple_tag()
+def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
+    """Filter a database queryset based on the provided keyword arguments.
+
+    Arguments:
+        queryset: The queryset to filter
+
+    Keyword Arguments:
+        field (any): Filter the queryset based on the provided field
+
+    Example:
+        {% filter_queryset companies is_supplier=True as suppliers %}
+    """
+    return queryset.filter(**kwargs)
+
+
+@register.simple_tag()
+def filter_db_model(model_name: str, **kwargs) -> QuerySet:
+    """Filter a database model based on the provided keyword arguments.
+
+    Arguments:
+        model_name: The name of the Django model - including app name (e.g. 'part.partcategory')
+
+    Keyword Arguments:
+        field (any): Filter the queryset based on the provided field
+
+    Example:
+        {% filter_db_model 'part.partcategory' is_template=True as template_parts %}
+    """
+    app_name, model_name = model_name.split('.')
+
+    try:
+        model = apps.get_model(app_name, model_name)
+    except Exception:
+        return None
+
+    if model is None:
+        return None
+
+    queryset = model.objects.all()
+
+    return filter_queryset(queryset, **kwargs)
 
 
 @register.simple_tag()
@@ -425,8 +471,6 @@ def format_number(
 
     # Normalize the number (remove trailing zeroes)
     number = number.normalize()
-
-    decimal_places
 
     if decimal_places is not None:
         try:

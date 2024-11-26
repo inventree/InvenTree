@@ -157,7 +157,7 @@ jobs:
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
+        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # pin@v5.6.1
         with:
           images: |
             inventree/inventree
