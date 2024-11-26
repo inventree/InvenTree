@@ -2186,11 +2186,10 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             for field in StockItem.optional_transfer_fields():
                 if field in kwargs:
-                    print('- field:', field, '->', kwargs[field])
                     setattr(self, field, kwargs[field])
                     tracking_info[field] = kwargs[field]
 
-            self.save()
+            self.save(add_note=False)
 
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_COUNT,
@@ -2202,11 +2201,16 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def add_stock(self, quantity, user, notes=''):
-        """Add items to stock.
+    def add_stock(self, quantity, user, **kwargs):
+        """Add a specified quantity of stock to this item.
 
-        This function can be called by initiating a ProjectRun,
-        or by manually adding the items to the stock location
+        Arguments:
+            quantity: The quantity to add
+            user: The user performing the action
+
+        Keyword Arguments:
+            notes: Optional notes for the stock addition
+            status: Optionally adjust the stock status
         """
         # Cannot add items to a serialized part
         if self.serialized:
@@ -2222,20 +2226,38 @@ class StockItem(
             return False
 
         if self.updateQuantity(self.quantity + quantity):
+            tracking_info = {'added': float(quantity), 'quantity': float(self.quantity)}
+
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    tracking_info[field] = kwargs[field]
+
+            self.save(add_note=False)
+
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
                 user,
-                notes=notes,
-                deltas={'added': float(quantity), 'quantity': float(self.quantity)},
+                notes=kwargs.get('notes', ''),
+                deltas=tracking_info,
             )
 
         return True
 
     @transaction.atomic
-    def take_stock(
-        self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs
-    ):
-        """Remove items from stock."""
+    def take_stock(self, quantity, user, code=StockHistoryCode.STOCK_REMOVE, **kwargs):
+        """Remove the specified quantity from this StockItem.
+
+        Arguments:
+            quantity: The quantity to remove
+            user: The user performing the action
+
+        Keyword Arguments:
+            code: The stock history code to use
+            notes: Optional notes for the stock removal
+            status: Optionally adjust the stock status
+        """
         # Cannot remove items from a serialized part
         if self.serialized:
             return False
@@ -2257,7 +2279,17 @@ class StockItem(
             if stockitem := kwargs.get('stockitem'):
                 deltas['stockitem'] = stockitem.pk
 
-            self.add_tracking_entry(code, user, notes=notes, deltas=deltas)
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    deltas[field] = kwargs[field]
+
+            self.save(add_note=False)
+
+            self.add_tracking_entry(
+                code, user, notes=kwargs.get('notes', ''), deltas=deltas
+            )
 
         return True
 

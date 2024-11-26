@@ -701,6 +701,7 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
           <StockOperationsRow
             props={row}
             setMax
+            changeStatus
             add
             key={record.pk}
             record={record}
@@ -730,7 +731,13 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
         const record = records[row.item.pk];
 
         return (
-          <StockOperationsRow props={row} add key={record.pk} record={record} />
+          <StockOperationsRow
+            changeStatus
+            props={row}
+            add
+            key={record.pk}
+            record={record}
+          />
         );
       },
       headers: [t`Part`, t`Location`, t`In Stock`, t`Add`, t`Actions`]

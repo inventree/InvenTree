@@ -1639,13 +1639,13 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 quantity = item['quantity']
 
                 # Optional fields
-                kwargs = {}
+                extra = {}
 
                 for field_name in StockItem.optional_transfer_fields():
                     if field_value := item.get(field_name, None):
-                        kwargs[field_name] = field_value
+                        extra[field_name] = field_value
 
-                stock_item.stocktake(quantity, request.user, notes=notes, **kwargs)
+                stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 
 
 class StockAddSerializer(StockAdjustmentSerializer):
@@ -1663,7 +1663,14 @@ class StockAddSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.add_stock(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.add_stock(quantity, request.user, notes=notes, **extra)
 
 
 class StockRemoveSerializer(StockAdjustmentSerializer):
@@ -1681,7 +1688,14 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.take_stock(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.take_stock(quantity, request.user, notes=notes, **extra)
 
 
 class StockTransferSerializer(StockAdjustmentSerializer):
