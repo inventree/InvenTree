@@ -871,6 +871,7 @@ class Build(
                 part=self.part,
                 build=self,
                 batch=batch,
+                location=location,
                 is_building=True
             )
 
