@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Flex, Group, Skeleton, Table, Text } from '@mantine/core';
+import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
@@ -481,14 +481,21 @@ function StockOperationsRow({
     <>
       <Table.Tr>
         <Table.Td>
-          <Flex gap='sm' align='center'>
-            <Thumbnail
-              size={40}
-              src={record.part_detail?.thumbnail}
-              align='center'
-            />
-            <div>{record.part_detail?.name}</div>
-          </Flex>
+          <Stack gap='xs'>
+            <Flex gap='sm' align='center'>
+              <Thumbnail
+                size={40}
+                src={record.part_detail?.thumbnail}
+                align='center'
+              />
+              <div>{record.part_detail?.name}</div>
+            </Flex>
+            {props.rowErrors?.pk?.message && (
+              <Text c='red' size='xs'>
+                {props.rowErrors.pk.message}
+              </Text>
+            )}
+          </Stack>
         </Table.Td>
         <Table.Td>
           {record.location ? record.location_detail?.pathstring : '-'}
