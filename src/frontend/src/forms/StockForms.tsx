@@ -937,7 +937,7 @@ function stockOperationModal({
 }
 
 export type StockOperationProps = {
-  items?: object;
+  items?: any[];
   pk?: number;
   filters?: any;
   model: ModelType.stockitem | 'location' | ModelType.part;
@@ -999,8 +999,14 @@ export function useMergeStockItem(props: StockOperationProps) {
 }
 
 export function useAssignStockItem(props: StockOperationProps) {
+  // Filter items - only allow 'salable' items
+  const items = useMemo(() => {
+    return props.items?.filter((item) => item?.part_detail?.salable);
+  }, [props.items]);
+
   return stockOperationModal({
     ...props,
+    items: items,
     fieldGenerator: stockAssignFields,
     endpoint: ApiEndpoints.stock_assign,
     title: t`Assign Stock to Customer`
