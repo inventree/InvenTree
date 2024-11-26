@@ -1638,7 +1638,14 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.stocktake(quantity, request.user, notes=notes)
+                # Optional fields
+                kwargs = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        kwargs[field_name] = field_value
+
+                stock_item.stocktake(quantity, request.user, notes=notes, **kwargs)
 
 
 class StockAddSerializer(StockAdjustmentSerializer):

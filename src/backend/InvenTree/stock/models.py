@@ -2158,11 +2158,16 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def stocktake(self, count, user, notes=''):
+    def stocktake(self, count, user, **kwargs):
         """Perform item stocktake.
 
-        When the quantity of an item is counted,
-        record the date of stocktake
+        Arguments:
+            count: The new quantity of the item
+            user: The user performing the stocktake
+
+        Keyword Arguments:
+            notes: Optional notes for the stocktake
+            status: Optionally adjust the stock status
         """
         try:
             count = Decimal(count)
@@ -2172,15 +2177,26 @@ class StockItem(
         if count < 0:
             return False
 
-        self.stocktake_date = InvenTree.helpers.current_date()
-        self.stocktake_user = user
-
         if self.updateQuantity(count):
+            tracking_info = {'quantity': float(count)}
+
+            self.stocktake_date = InvenTree.helpers.current_date()
+            self.stocktake_user = user
+
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    print('- field:', field, '->', kwargs[field])
+                    setattr(self, field, kwargs[field])
+                    tracking_info[field] = kwargs[field]
+
+            self.save()
+
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_COUNT,
                 user,
-                notes=notes,
-                deltas={'quantity': float(self.quantity)},
+                notes=kwargs.get('notes', ''),
+                deltas=tracking_info,
             )
 
         return True
