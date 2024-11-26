@@ -780,6 +780,8 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
+    value = str(value).strip()
+
     cleaned = clean(value, strip=True, tags=[], attributes=[])
 
     # Add escaped characters back in
@@ -796,7 +798,7 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
     return cleaned
 
 
-def remove_non_printable_characters(value: str, remove_newline=True):
+def remove_non_printable_characters(value: str, remove_newline=True) -> str:
     """Remove non-printable / control characters from the provided string."""
     cleaned = value
 
@@ -816,7 +818,7 @@ def remove_non_printable_characters(value: str, remove_newline=True):
     return cleaned
 
 
-def clean_markdown(value: str):
+def clean_markdown(value: str) -> str:
     """Clean a markdown string.
 
     This function will remove javascript and other potentially harmful content from the markdown string.
@@ -875,7 +877,7 @@ def clean_markdown(value: str):
     return value
 
 
-def hash_barcode(barcode_data):
+def hash_barcode(barcode_data: str) -> str:
     """Calculate a 'unique' hash for a barcode string.
 
     This hash is used for comparison / lookup.
