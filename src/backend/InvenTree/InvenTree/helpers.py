@@ -25,7 +25,6 @@ import bleach
 import pytz
 from bleach import clean
 from djmoney.money import Money
-from PIL import Image
 
 from common.currency import currency_code_default
 
@@ -139,6 +138,8 @@ def getStaticUrl(filename):
 
 def TestIfImage(img):
     """Test if an image file is indeed an image."""
+    from PIL import Image
+
     try:
         Image.open(img).verify()
         return True
