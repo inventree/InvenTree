@@ -23,6 +23,11 @@ export type ApiFormAdjustFilterType = {
   data: FieldValues;
 };
 
+export type ApiFormFieldChoice = {
+  value: any;
+  display_name: string;
+};
+
 /** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
@@ -82,7 +87,7 @@ export type ApiFormFieldType = {
   child?: ApiFormFieldType;
   children?: { [key: string]: ApiFormFieldType };
   required?: boolean;
-  choices?: any[];
+  choices?: ApiFormFieldChoice[];
   hidden?: boolean;
   disabled?: boolean;
   exclude?: boolean;

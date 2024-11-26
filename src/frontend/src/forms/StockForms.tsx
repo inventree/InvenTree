@@ -19,6 +19,7 @@ import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import type {
   ApiFormAdjustFilterType,
+  ApiFormFieldChoice,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 import {
@@ -43,6 +44,7 @@ import {
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
+import { StatusFilterOptions } from '../tables/Filter';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -430,6 +432,7 @@ type StockRow = {
 function StockOperationsRow({
   props,
   transfer = false,
+  changeStatus = false,
   add = false,
   setMax = false,
   merge = false,
@@ -437,14 +440,28 @@ function StockOperationsRow({
 }: {
   props: TableFieldRowProps;
   transfer?: boolean;
+  changeStatus?: boolean;
   add?: boolean;
   setMax?: boolean;
   merge?: boolean;
   record?: any;
 }) {
+  const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
+    return (
+      StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
+        return {
+          value: choice.value,
+          display_name: choice.label
+        };
+      }) ?? []
+    );
+  }, []);
+
   const [quantity, setQuantity] = useState<StockItemQuantity>(
     add ? 0 : (props.item?.quantity ?? 0)
   );
+
+  const [status, setStatus] = useState<number | undefined>(undefined);
 
   const removeAndRefresh = () => {
     props.removeFn(props.idx);
@@ -460,6 +477,17 @@ function StockOperationsRow({
       if (transfer) {
         props.changeFn(props.idx, 'packaging', undefined);
       }
+    }
+  });
+
+  const [statusOpen, statusHandlers] = useDisclosure(false, {
+    onOpen: () => {
+      setStatus(record?.status || undefined);
+      props.changeFn(props.idx, 'status', record?.status || undefined);
+    },
+    onClose: () => {
+      setStatus(undefined);
+      props.changeFn(props.idx, 'status', undefined);
     }
   });
 
@@ -538,6 +566,15 @@ function StockOperationsRow({
                 }
               />
             )}
+            {changeStatus && (
+              <ActionButton
+                size='sm'
+                icon={<InvenTreeIcon icon='status' />}
+                tooltip={t`Change Status`}
+                onClick={() => statusHandlers.toggle()}
+                variant={statusOpen ? 'filled' : 'transparent'}
+              />
+            )}
             {transfer && (
               <ActionButton
                 size='sm'
@@ -551,6 +588,22 @@ function StockOperationsRow({
           </Flex>
         </Table.Td>
       </Table.Tr>
+      {changeStatus && (
+        <TableFieldExtraRow
+          visible={statusOpen}
+          onValueChange={(value: any) => {
+            setStatus(value);
+            props.changeFn(props.idx, 'status', value || undefined);
+          }}
+          fieldDefinition={{
+            field_type: 'choice',
+            label: t`Status`,
+            choices: statusOptions,
+            value: status
+          }}
+          defaultValue={status}
+        />
+      )}
       {transfer && (
         <TableFieldExtraRow
           visible={transfer && packagingOpen}
@@ -611,19 +664,19 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
           <StockOperationsRow
             props={row}
             transfer
+            changeStatus
             setMax
             key={record.pk}
             record={record}
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Move`, t`Actions`]
+      headers: [t`Part`, t`Location`, t`Stock`, t`Move`, t`Actions`]
     },
     location: {
       filters: {
         structural: false
       }
-      // TODO: icon
     },
     notes: {}
   };
@@ -703,6 +756,7 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
+            changeStatus
             key={row.item.pk}
             record={records[row.item.pk]}
           />
@@ -770,6 +824,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
             props={row}
             key={row.item.item}
             merge
+            changeStatus
             record={records[row.item.item]}
           />
         );
