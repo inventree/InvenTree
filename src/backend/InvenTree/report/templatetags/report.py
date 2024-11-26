@@ -11,6 +11,7 @@ from django import template
 from django.apps.registry import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -31,7 +32,7 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
-def filter_queryset(queryset, **kwargs) -> list:
+def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
     """Filter a database queryset based on the provided keyword arguments.
 
     Arguments:
@@ -47,7 +48,7 @@ def filter_queryset(queryset, **kwargs) -> list:
 
 
 @register.simple_tag()
-def filter_db_model(model_name, **kwargs) -> list:
+def filter_db_model(model_name: str, **kwargs) -> QuerySet:
     """Filter a database model based on the provided keyword arguments.
 
     Arguments:
@@ -64,10 +65,10 @@ def filter_db_model(model_name, **kwargs) -> list:
     try:
         model = apps.get_model(app_name, model_name)
     except Exception:
-        return []
+        return None
 
     if model is None:
-        return []
+        return None
 
     queryset = model.objects.all()
 
