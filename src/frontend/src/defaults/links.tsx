@@ -115,7 +115,7 @@ export function AboutLinks(): MenuLinkItem[] {
     {
       id: 'instance',
       title: t`System Information`,
-      description: t`About this Inventree instance`,
+      description: t`About this InvenTree instance`,
       icon: 'info',
       action: serverInfo
     },

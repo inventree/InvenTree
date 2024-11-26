@@ -92,7 +92,7 @@ export interface SettingChoice {
 }
 
 export enum SettingTyp {
-  Inventree = 'inventree',
+  InvenTree = 'inventree',
   Plugin = 'plugin',
   User = 'user',
   Notification = 'notification'
