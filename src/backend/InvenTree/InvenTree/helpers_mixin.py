@@ -99,7 +99,7 @@ class ClassProviderMixin:
 
     @classmethod
     def get_is_builtin(cls):
-        """Is this Class build in the Inventree source code?"""
+        """Is this Class build in the InvenTree source code?"""
         try:
             Path(cls.get_provider_file()).relative_to(settings.BASE_DIR)
             return True
