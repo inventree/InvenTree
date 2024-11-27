@@ -595,6 +595,7 @@ function StockOperationsRow({
             setStatus(value);
             props.changeFn(props.idx, 'status', value || undefined);
           }}
+          fieldName='status'
           fieldDefinition={{
             field_type: 'choice',
             label: t`Status`,
@@ -610,6 +611,7 @@ function StockOperationsRow({
           onValueChange={(value: any) => {
             props.changeFn(props.idx, 'packaging', value || undefined);
           }}
+          fieldName='packaging'
           fieldDefinition={{
             field_type: 'string',
             label: t`Packaging`
