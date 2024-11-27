@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 286
+INVENTREE_API_VERSION = 287
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v287 - 2024-11-27 : https://github.com/inventree/InvenTree/pull/8571
+    - Adds ability to set stock status when returning items from a customer
 
 v286 - 2024-11-26 : https://github.com/inventree/InvenTree/pull/8054
     - Adds "SelectionList" and "SelectionListEntry" API endpoints
