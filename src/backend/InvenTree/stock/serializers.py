@@ -968,7 +968,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['location', 'note']
+        fields = ['location', 'status', 'notes']
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -977,6 +977,15 @@ class ReturnStockItemSerializer(serializers.Serializer):
         allow_null=False,
         label=_('Location'),
         help_text=_('Destination location for returned item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=stock.status_codes.StockStatus.items(),
+        default=None,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False,
+        allow_blank=True,
     )
 
     notes = serializers.CharField(
@@ -994,9 +1003,13 @@ class ReturnStockItemSerializer(serializers.Serializer):
         data = self.validated_data
 
         location = data['location']
-        notes = data.get('notes', '')
 
-        item.return_from_customer(location, user=request.user, notes=notes)
+        item.return_from_customer(
+            location,
+            user=request.user,
+            notes=data.get('notes', ''),
+            status=data.get('status', None),
+        )
 
 
 class StockChangeStatusSerializer(serializers.Serializer):

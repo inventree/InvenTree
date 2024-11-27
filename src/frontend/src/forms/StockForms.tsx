@@ -941,6 +941,7 @@ function stockOperationModal({
   endpoint,
   filters,
   title,
+  successMessage,
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
@@ -951,6 +952,7 @@ function stockOperationModal({
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
   title: string;
+  successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
   const baseParams: any = {
@@ -1003,12 +1005,13 @@ function stockOperationModal({
     fields: fields,
     title: title,
     size: '80%',
+    successMessage: successMessage,
     onFormSuccess: () => refresh()
   });
 }
 
 export type StockOperationProps = {
-  items?: object;
+  items?: any[];
   pk?: number;
   filters?: any;
   model: ModelType.stockitem | 'location' | ModelType.part;
@@ -1020,7 +1023,8 @@ export function useAddStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
-    title: t`Add Stock`
+    title: t`Add Stock`,
+    successMessage: t`Stock added`
   });
 }
 
@@ -1029,7 +1033,8 @@ export function useRemoveStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
-    title: t`Remove Stock`
+    title: t`Remove Stock`,
+    successMessage: t`Stock removed`
   });
 }
 
@@ -1038,7 +1043,8 @@ export function useTransferStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
-    title: t`Transfer Stock`
+    title: t`Transfer Stock`,
+    successMessage: t`Stock transferred`
   });
 }
 
@@ -1047,7 +1053,8 @@ export function useCountStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
-    title: t`Count Stock`
+    title: t`Count Stock`,
+    successMessage: t`Stock counted`
   });
 }
 
@@ -1056,7 +1063,8 @@ export function useChangeStockStatus(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
-    title: t`Change Stock Status`
+    title: t`Change Stock Status`,
+    successMessage: t`Stock status changed`
   });
 }
 
@@ -1065,16 +1073,24 @@ export function useMergeStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
-    title: t`Merge Stock`
+    title: t`Merge Stock`,
+    successMessage: t`Stock merged`
   });
 }
 
 export function useAssignStockItem(props: StockOperationProps) {
+  // Filter items - only allow 'salable' items
+  const items = useMemo(() => {
+    return props.items?.filter((item) => item?.part_detail?.salable);
+  }, [props.items]);
+
   return stockOperationModal({
     ...props,
+    items: items,
     fieldGenerator: stockAssignFields,
     endpoint: ApiEndpoints.stock_assign,
-    title: t`Assign Stock to Customer`
+    title: t`Assign Stock to Customer`,
+    successMessage: t`Stock assigned to customer`
   });
 }
 
@@ -1084,7 +1100,8 @@ export function useDeleteStockItem(props: StockOperationProps) {
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
     modalFunc: useDeleteApiFormModal,
-    title: t`Delete Stock Items`
+    title: t`Delete Stock Items`,
+    successMessage: t`Stock deleted`
   });
 }
 
