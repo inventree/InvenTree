@@ -47,6 +47,7 @@ from InvenTree.status_codes import (
 )
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock.events import StockEvents
 from stock.generators import generate_batch_code
 from users.models import Owner
 
@@ -1205,7 +1206,7 @@ class StockItem(
         item.add_tracking_entry(code, user, deltas, notes=notes)
 
         trigger_event(
-            'stockitem.assignedtocustomer',
+            StockEvents.ITEM_ASSIGNED_TO_CUSTOMER,
             id=self.id,
             customer=customer.id if customer else None,
         )
@@ -1243,7 +1244,7 @@ class StockItem(
         self.location = location
         self.clearAllocations()
 
-        trigger_event('stockitem.returnedfromcustomer', id=self.id)
+        trigger_event(StockEvents.ITEM_RETURNED_FROM_CUSTOMER, id=self.id)
 
         """If new location is the same as the parent location, merge this stock back in the parent"""
         if self.parent and self.location == self.parent.location:
@@ -1402,7 +1403,10 @@ class StockItem(
 
         # Assign the other stock item into this one
         stock_item.belongs_to = self
-        stock_item.consumed_by = build
+
+        if build is not None:
+            stock_item.consumed_by = build
+
         stock_item.location = None
         stock_item.save(add_note=False)
 
@@ -1422,6 +1426,12 @@ class StockItem(
             user,
             notes=notes,
             deltas={'stockitem': stock_item.pk},
+        )
+
+        trigger_event(
+            StockEvents.ITEM_INSTALLED_INTO_ASSEMBLY,
+            id=stock_item.pk,
+            assembly_id=self.pk,
         )
 
     @transaction.atomic
@@ -2020,7 +2030,7 @@ class StockItem(
         except Exception:
             pass
 
-        trigger_event('stockitem.split', id=new_stock.id, parent=self.id)
+        trigger_event(StockEvents.ITEM_SPLIT, id=new_stock.id, parent=self.id)
 
         # Return a copy of the "new" stock item
         return new_stock
@@ -2108,7 +2118,7 @@ class StockItem(
 
         # Trigger event for the plugin system
         trigger_event(
-            'stockitem.moved',
+            StockEvents.ITEM_MOVED,
             id=self.id,
             old_location=current_location.id if current_location else None,
             new_location=location.id if location else None,
@@ -2146,6 +2156,11 @@ class StockItem(
             return False
 
         self.save()
+
+        trigger_event(
+            StockEvents.ITEM_QUANTITY_UPDATED, id=self.id, quantity=float(self.quantity)
+        )
+
         return True
 
     @transaction.atomic
@@ -2173,6 +2188,13 @@ class StockItem(
                 notes=notes,
                 deltas={'quantity': float(self.quantity)},
             )
+
+        trigger_event(
+            StockEvents.ITEM_COUNTED,
+            'stockitem.counted',
+            id=self.id,
+            quantity=float(self.quantity),
+        )
 
         return True
 

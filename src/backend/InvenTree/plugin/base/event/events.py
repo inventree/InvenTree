@@ -9,6 +9,7 @@ from django.dispatch.dispatcher import receiver
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
+from generic.events import BaseEventEnum
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
@@ -16,11 +17,15 @@ from plugin.registry import registry
 logger = logging.getLogger('inventree')
 
 
-def trigger_event(event, *args, **kwargs):
+def trigger_event(event: BaseEventEnum, *args, **kwargs) -> None:
     """Trigger an event with optional arguments.
 
-    This event will be stored in the database,
-    and the worker will respond to it later on.
+    Arguments:
+        event: The event to trigger
+        *args: Additional arguments to pass to the event handler
+        **kwargs: Additional keyword arguments to pass to the event handler
+
+    This event will be stored in the database, and the worker will respond to it later on.
     """
     if not get_global_setting('ENABLE_PLUGINS_EVENTS', False):
         # Do nothing if plugin events are not enabled
