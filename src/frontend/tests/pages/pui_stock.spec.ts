@@ -189,7 +189,7 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Find an item which has been sent to a customer
-  await page.goto(`${baseUrl}/stock/item/1012/details`);
+  await page.goto(`${baseUrl}/stock/item/1014/details`);
   await page.getByText('Batch Code: 2022-11-12').waitFor();
   await page.getByText('Unavailable').waitFor();
   await page.getByLabel('action-menu-stock-operations').click();
