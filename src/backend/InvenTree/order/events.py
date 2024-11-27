@@ -11,6 +11,8 @@ class PurchaseOrderEvents(BaseEventEnum):
     CANCELLED = 'purchaseorder.cancelled'
     HOLD = 'purchaseorder.hold'
 
+    OVERDUE = 'order.overdue_purchase_order'
+
 
 class SalesOrderEvents(BaseEventEnum):
     """Event enumeration for the SalesOrder models."""
@@ -19,6 +21,8 @@ class SalesOrderEvents(BaseEventEnum):
     HOLD = 'salesorder.onhold'
     COMPLETED = 'salesorder.completed'
     CANCELLED = 'salesorder.cancelled'
+
+    OVERDUE = 'order.overdue_sales_order'
 
     SHIPMENT_COMPLETE = 'salesordershipment.completed'
 
