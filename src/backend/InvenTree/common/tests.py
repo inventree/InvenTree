@@ -29,7 +29,7 @@ from InvenTree.unit_test import (
     InvenTreeTestCase,
     PluginMixin,
 )
-from part.models import Part
+from part.models import Part, PartParameterTemplate
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
@@ -45,6 +45,8 @@ from .models import (
     NotificationEntry,
     NotificationMessage,
     ProjectCode,
+    SelectionList,
+    SelectionListEntry,
     WebhookEndpoint,
     WebhookMessage,
 )
@@ -434,7 +436,7 @@ class SettingsTest(InvenTreeTestCase):
 
             try:
                 InvenTreeSetting.set_setting(key, value, change_user=self.user)
-            except Exception as exc:
+            except Exception as exc:  # pragma: no cover
                 print(f"test_defaults: Failed to set default value for setting '{key}'")
                 raise exc
 
@@ -1681,6 +1683,161 @@ class CustomStatusTest(TestCase):
         self.assertEqual(
             instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
         )
+
+
+class SelectionListTest(InvenTreeAPITestCase):
+    """Tests for the SelectionList and SelectionListEntry model and API endpoints."""
+
+    fixtures = ['category', 'part', 'location', 'params', 'test_templates']
+
+    def setUp(self):
+        """Setup for all tests."""
+        super().setUp()
+
+        self.list = SelectionList.objects.create(name='Test List')
+        self.entry1 = SelectionListEntry.objects.create(
+            list=self.list,
+            value='test1',
+            label='Test Entry',
+            description='Test Description',
+        )
+        self.entry2 = SelectionListEntry.objects.create(
+            list=self.list,
+            value='test2',
+            label='Test Entry 2',
+            description='Test Description 2',
+            active=False,
+        )
+        self.list2 = SelectionList.objects.create(name='Test List 2', active=False)
+
+        # Urls
+        self.list_url = reverse('api-selectionlist-detail', kwargs={'pk': self.list.pk})
+        self.entry_url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'entrypk': self.entry1.pk, 'pk': self.list.pk},
+        )
+
+    def test_api(self):
+        """Test the SelectionList and SelctionListEntry API endpoints."""
+        url = reverse('api-selectionlist-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 2)
+
+        response = self.get(self.list_url, expected_code=200)
+        self.assertEqual(response.data['name'], 'Test List')
+        self.assertEqual(len(response.data['choices']), 2)
+        self.assertEqual(response.data['choices'][0]['value'], 'test1')
+        self.assertEqual(response.data['choices'][0]['label'], 'Test Entry')
+
+        response = self.get(self.entry_url, expected_code=200)
+        self.assertEqual(response.data['value'], 'test1')
+        self.assertEqual(response.data['label'], 'Test Entry')
+        self.assertEqual(response.data['description'], 'Test Description')
+
+    def test_api_update(self):
+        """Test adding and editing via the SelectionList."""
+        # Test adding a new list via the API
+        response = self.post(
+            reverse('api-selectionlist-list'),
+            {
+                'name': 'New List',
+                'active': True,
+                'choices': [{'value': '1', 'label': 'Test Entry'}],
+            },
+            expected_code=201,
+        )
+        list_pk = response.data['pk']
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '1')
+
+        # Test editing the list choices via the API (remove and add in same call)
+        response = self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            {'choices': [{'value': '2', 'label': 'New Label'}]},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '2')
+        self.assertEqual(response.data['choices'][0]['label'], 'New Label')
+        entry_id = response.data['choices'][0]['id']
+
+        # Test changing an entry via list API
+        response = self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            {'choices': [{'id': entry_id, 'value': '2', 'label': 'New Label Text'}]},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['name'], 'New List')
+        self.assertTrue(response.data['active'])
+        self.assertEqual(len(response.data['choices']), 1)
+        self.assertEqual(response.data['choices'][0]['value'], '2')
+        self.assertEqual(response.data['choices'][0]['label'], 'New Label Text')
+
+    def test_api_locked(self):
+        """Test editing with locked/unlocked list."""
+        # Lock list
+        self.list.locked = True
+        self.list.save()
+        response = self.patch(self.entry_url, {'label': 'New Label'}, expected_code=400)
+        self.assertIn('Selection list is locked', response.data['list'])
+        response = self.patch(self.list_url, {'name': 'New Name'}, expected_code=400)
+        self.assertIn('Selection list is locked', response.data['locked'])
+
+        # Unlock the list
+        self.list.locked = False
+        self.list.save()
+        response = self.patch(self.entry_url, {'label': 'New Label'}, expected_code=200)
+        self.assertEqual(response.data['label'], 'New Label')
+        response = self.patch(self.list_url, {'name': 'New Name'}, expected_code=200)
+        self.assertEqual(response.data['name'], 'New Name')
+
+    def test_model_meta(self):
+        """Test model meta functions."""
+        # Models str
+        self.assertEqual(str(self.list), 'Test List')
+        self.assertEqual(str(self.list2), 'Test List 2 (Inactive)')
+        self.assertEqual(str(self.entry1), 'Test Entry')
+        self.assertEqual(str(self.entry2), 'Test Entry 2 (Inactive)')
+
+        # API urls
+        self.assertEqual(self.list.get_api_url(), '/api/selection/')
+
+    def test_parameter(self):
+        """Test the SelectionList parameter."""
+        self.assertEqual(self.list.get_choices(), ['test1'])
+        self.user.is_superuser = True
+        self.user.save()
+
+        # Add to parameter
+        part = Part.objects.get(pk=1)
+        template = PartParameterTemplate.objects.create(
+            name='test_parameter', units='', selectionlist=self.list
+        )
+        rsp = self.get(
+            reverse('api-part-parameter-template-detail', kwargs={'pk': template.pk})
+        )
+        self.assertEqual(rsp.data['name'], 'test_parameter')
+        self.assertEqual(rsp.data['choices'], '')
+
+        # Add to part
+        url = reverse('api-part-parameter-list')
+        response = self.post(
+            url,
+            {'part': part.pk, 'template': template.pk, 'data': 70},
+            expected_code=400,
+        )
+        self.assertIn('Invalid choice for parameter value', response.data['data'])
+
+        response = self.post(
+            url,
+            {'part': part.pk, 'template': template.pk, 'data': self.entry1.value},
+            expected_code=201,
+        )
+        self.assertEqual(response.data['data'], self.entry1.value)
 
 
 class AdminTest(AdminTestCase):
