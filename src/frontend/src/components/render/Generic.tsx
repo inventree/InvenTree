@@ -34,3 +34,16 @@ export function RenderImportSession({
 }): ReactNode {
   return instance && <RenderInlineModel primary={instance.data_file} />;
 }
+
+export function RenderSelectionList({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    instance && (
+      <RenderInlineModel
+        primary={instance.name}
+        secondary={instance.description}
+      />
+    )
+  );
+}
