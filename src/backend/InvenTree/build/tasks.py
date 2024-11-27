@@ -273,7 +273,8 @@ def notify_overdue_build_order(bo: build_models.Build):
         }
     }
 
-    event_name = BuildEvents.BUILD_OVERDUE
+    event_name = BuildEvents.OVERDUE
+
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(
         bo,

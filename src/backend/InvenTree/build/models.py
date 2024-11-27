@@ -652,7 +652,7 @@ class Build(
             raise ValidationError(_("Failed to offload task to complete build allocations"))
 
         # Register an event
-        trigger_event(BuildEvents.BUILD_COMPLETED, id=self.pk)
+        trigger_event(BuildEvents.COMPLETED, id=self.pk)
 
         # Notify users that this build has been completed
         targets = [
@@ -719,7 +719,7 @@ class Build(
             self.status = BuildStatus.PRODUCTION.value
             self.save()
 
-            trigger_event(BuildEvents.BUILD_ISSUED, id=self.pk)
+            trigger_event(BuildEvents.ISSUED, id=self.pk)
 
     @transaction.atomic
     def hold_build(self):
@@ -744,7 +744,7 @@ class Build(
             self.status = BuildStatus.ON_HOLD.value
             self.save()
 
-            trigger_event(BuildEvents.BUILD_HOLD, id=self.pk)
+            trigger_event(BuildEvents.HOLD, id=self.pk)
 
     @transaction.atomic
     def cancel_build(self, user, **kwargs):
@@ -803,7 +803,7 @@ class Build(
             content=InvenTreeNotificationBodies.OrderCanceled
         )
 
-        trigger_event(BuildEvents.BUILD_CANCELLED, id=self.pk)
+        trigger_event(BuildEvents.CANCELLED, id=self.pk)
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):

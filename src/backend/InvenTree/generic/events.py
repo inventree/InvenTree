@@ -3,5 +3,9 @@
 import enum
 
 
-class BaseEventEnum(enum.StrEnum):
+class BaseEventEnum(str, enum.Enum):
     """Base class for representing a set of 'events'."""
+
+    def __str__(self):
+        """Return the string representation of the event."""
+        return str(self.value)
