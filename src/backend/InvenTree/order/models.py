@@ -2364,14 +2364,23 @@ class ReturnOrder(TotalPriceMixin, Order):
     # endregion
 
     @transaction.atomic
-    def receive_line_item(self, line, location, user, note='', **kwargs):
+    def receive_line_item(self, line, location, user, **kwargs):
         """Receive a line item against this ReturnOrder.
 
-        Rules:
-        - Transfers the StockItem to the specified location
-        - Marks the StockItem as "quarantined"
-        - Adds a tracking entry to the StockItem
-        - Removes the 'customer' reference from the StockItem
+        Arguments:
+            line: ReturnOrderLineItem to receive
+            location: StockLocation to receive the item to
+            user: User performing the action
+
+        Keyword Arguments:
+            note: Additional notes to add to the tracking entry
+            status: Status to set the StockItem to (default: StockStatus.QUARANTINED)
+
+        Performs the following actions:
+            - Transfers the StockItem to the specified location
+            - Marks the StockItem as "quarantined"
+            - Adds a tracking entry to the StockItem
+            - Removes the 'customer' reference from the StockItem
         """
         # Prevent an item from being "received" multiple times
         if line.received_date is not None:
@@ -2380,17 +2389,18 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         stock_item = line.item
 
-        deltas = {
-            'status': StockStatus.QUARANTINED.value,
-            'returnorder': self.pk,
-            'location': location.pk,
-        }
+        status = kwargs.get('status')
+
+        if status is None:
+            status = StockStatus.QUARANTINED.value
+
+        deltas = {'status': status, 'returnorder': self.pk, 'location': location.pk}
 
         if stock_item.customer:
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = kwargs.get('status', StockStatus.QUARANTINED.value)
+        stock_item.status = status
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
@@ -2401,7 +2411,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         stock_item.add_tracking_entry(
             StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER,
             user,
-            notes=note,
+            notes=kwargs.get('note', ''),
             deltas=deltas,
             location=location,
             returnorder=self,
