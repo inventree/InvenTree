@@ -18,8 +18,6 @@ from taggit.serializers import TagListSerializerField
 import build.models
 import company.models
 import company.serializers as company_serializers
-import generic.states.fields
-import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.serializers
 import order.models
@@ -1001,15 +999,13 @@ class ReturnStockItemSerializer(serializers.Serializer):
         item.return_from_customer(location, user=request.user, notes=notes)
 
 
-class StockChangeStatusSerializer(
-    InvenTreeCustomStatusSerializerMixin, serializers.Serializer
-):
+class StockChangeStatusSerializer(serializers.Serializer):
     """Serializer for changing status of multiple StockItem objects."""
 
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'status', 'status_custom_key', 'note']
+        fields = ['items', 'status', 'note']
 
     items = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -1033,14 +1029,6 @@ class StockChangeStatusSerializer(
         label=_('Status'),
     )
 
-    status_custom_key = generic.states.fields.ExtraCustomChoiceField(
-        choices=stock.status_codes.StockStatus.items(),
-        default=status.default,
-        choice_mdl=StockItem,
-        choice_field='status',
-        is_custom=True,
-    )
-
     note = serializers.CharField(
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
@@ -1053,12 +1041,8 @@ class StockChangeStatusSerializer(
         """Save the serializer to change the status of the selected stock items."""
         data = self.validated_data
 
-        self.gather_custom_fields()
-        self.mirror_follower(data)
-
         items = data['items']
         status = data['status']
-        status_custom_key = data['status_custom_key']
 
         request = self.context['request']
         user = getattr(request, 'user', None)
@@ -1068,7 +1052,7 @@ class StockChangeStatusSerializer(
         items_to_update = []
         transaction_notes = []
 
-        deltas = {'status': status, 'status_custom_key': status_custom_key}
+        deltas = {'status': status}
 
         now = InvenTree.helpers.current_time()
 
@@ -1077,12 +1061,11 @@ class StockChangeStatusSerializer(
 
         for item in items:
             # Ignore items which are already in the desired status
-            if item.status == status and item.status_custom_key == status_custom_key:
+            if item.status == status:
                 continue
 
             item.updated = now
             item.status = status
-            item.status_custom_key = status_custom_key
             items_to_update.append(item)
 
             # Create a new transaction note for each item
@@ -1098,9 +1081,7 @@ class StockChangeStatusSerializer(
             )
 
         # Update status
-        StockItem.objects.bulk_update(
-            items_to_update, ['status', 'status_custom_key', 'updated']
-        )
+        StockItem.objects.bulk_update(items_to_update, ['status', 'updated'])
 
         # Create entries
         StockItemTracking.objects.bulk_create(transaction_notes)
