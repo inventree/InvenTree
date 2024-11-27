@@ -1217,8 +1217,16 @@ class StockItem(
     def return_from_customer(self, location, user=None, **kwargs):
         """Return stock item from customer, back into the specified location.
 
+        Arguments:
+            location: The location to return the stock item to
+            user: The user performing the action
+
+        Keyword Arguments:
+            notes: Additional notes to add to the tracking entry
+            status: Optionally set the status of the stock item
+
         If the selected location is the same as the parent, merge stock back into the parent.
-        Otherwise create the stock in the new location
+        Otherwise create the stock in the new location.
         """
         notes = kwargs.get('notes', '')
 
@@ -1228,6 +1236,17 @@ class StockItem(
             tracking_info['customer'] = self.customer.id
             tracking_info['customer_name'] = self.customer.name
 
+        # Clear out allocation information for the stock item
+        self.customer = None
+        self.belongs_to = None
+        self.sales_order = None
+        self.location = location
+        self.clearAllocations()
+
+        if status := kwargs.get('status'):
+            self.status = status
+            tracking_info['status'] = status
+
         self.add_tracking_entry(
             StockHistoryCode.RETURNED_FROM_CUSTOMER,
             user,
@@ -1235,13 +1254,6 @@ class StockItem(
             deltas=tracking_info,
             location=location,
         )
-
-        # Clear out allocation information for the stock item
-        self.customer = None
-        self.belongs_to = None
-        self.sales_order = None
-        self.location = location
-        self.clearAllocations()
 
         trigger_event('stockitem.returnedfromcustomer', id=self.id)
 

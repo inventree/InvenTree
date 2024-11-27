@@ -4,6 +4,7 @@ import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -11,8 +12,10 @@ import type {
 import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+import { StatusFilterOptions } from '../tables/Filter';
 
 export function useReturnOrderFields({
   duplicateOrderId
@@ -133,6 +136,17 @@ function ReturnOrderLineItemFormRow({
   props: TableFieldRowProps;
   record: any;
 }>) {
+  const statusOptions = useMemo(() => {
+    return (
+      StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
+        return {
+          value: choice.value,
+          display_name: choice.label
+        };
+      }) ?? []
+    );
+  }, []);
+
   return (
     <>
       <Table.Tr>
@@ -146,7 +160,21 @@ function ReturnOrderLineItemFormRow({
             <div>{record.part_detail.name}</div>
           </Flex>
         </Table.Td>
-        <Table.Td>{record.item_detail.serial}</Table.Td>
+        <Table.Td># {record.item_detail.serial}</Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldDefinition={{
+              field_type: 'choice',
+              label: t`Status`,
+              choices: statusOptions,
+              onValueChange: (value) => {
+                props.changeFn(props.idx, 'status', value);
+              }
+            }}
+            defaultValue={record.item_detail?.status}
+            error={props.rowErrors?.status?.message}
+          />
+        </Table.Td>
         <Table.Td>
           <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
         </Table.Td>
@@ -181,7 +209,7 @@ export function useReceiveReturnOrderLineItems(
           />
         );
       },
-      headers: [t`Part`, t`Serial Number`]
+      headers: [t`Part`, t`Stock Item`, t`Status`]
     },
     location: {
       filters: {

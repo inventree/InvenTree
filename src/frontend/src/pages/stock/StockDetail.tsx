@@ -639,10 +639,12 @@ export default function StockDetail() {
     ),
     fields: {
       location: {},
+      status: {},
       notes: {}
     },
     initialData: {
-      location: stockitem.location ?? stockitem.part_detail?.default_location
+      location: stockitem.location ?? stockitem.part_detail?.default_location,
+      status: stockitem.status_custom_key ?? stockitem.status
     },
     successMessage: t`Item returned to stock`,
     onFormSuccess: () => {
