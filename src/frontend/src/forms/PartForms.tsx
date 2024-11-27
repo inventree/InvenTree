@@ -2,7 +2,10 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
+import { api } from '../App';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
@@ -204,7 +207,7 @@ export function usePartParameterFields({
               setChoices(
                 _choices.map((choice) => {
                   return {
-                    label: choice.trim(),
+                    display_name: choice.trim(),
                     value: choice.trim()
                   };
                 })
@@ -214,6 +217,22 @@ export function usePartParameterFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else if (record?.selectionlist) {
+            api
+              .get(
+                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
+              )
+              .then((res) => {
+                setChoices(
+                  res.data.choices.map((item: any) => {
+                    return {
+                      value: item.value,
+                      display_name: item.label
+                    };
+                  })
+                );
+                setFieldType('choice');
+              });
           } else {
             setChoices([]);
             setFieldType('string');
