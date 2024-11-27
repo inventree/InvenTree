@@ -26,6 +26,7 @@ import part.filters as part_filters
 import part.models as part_models
 import stock.models
 import stock.serializers
+import stock.status_codes
 from common.serializers import ProjectCodeSerializer
 from company.serializers import (
     AddressBriefSerializer,
@@ -1923,7 +1924,7 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['item']
+        fields = ['item', 'status']
 
     item = serializers.PrimaryKeyRelatedField(
         queryset=order.models.ReturnOrderLineItem.objects.all(),
@@ -1931,6 +1932,15 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
         allow_null=False,
         required=True,
         label=_('Return order line item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=stock.status_codes.StockStatus.items(),
+        default=None,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False,
+        allow_blank=True,
     )
 
     def validate_line_item(self, item):
@@ -1950,7 +1960,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'location']
+        fields = ['items', 'location', 'note']
 
     items = ReturnOrderLineItemReceiveSerializer(many=True)
 
@@ -1961,6 +1971,14 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         required=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
+    )
+
+    note = serializers.CharField(
+        label=_('Note'),
+        help_text=_('Additional note for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
     )
 
     def validate(self, data):
@@ -1993,7 +2011,14 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in items:
                 line_item = item['item']
-                order.receive_line_item(line_item, location, request.user)
+
+                order.receive_line_item(
+                    line_item,
+                    location,
+                    request.user,
+                    note=data.get('note', ''),
+                    status=item.get('status', None),
+                )
 
 
 @register_importer()
