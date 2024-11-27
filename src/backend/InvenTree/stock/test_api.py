@@ -1797,7 +1797,7 @@ class StocktakeTest(StockAPITestCase):
         # First attempt should *fail* - stock item is quarantined
         response = self.post(url, data, expected_code=400)
 
-        self.assertIn('cannot be moved as it is not in stock', str(response.data))
+        self.assertIn('Stock item is not in stock', str(response.data))
 
         # Now, allow transfer of "out of stock" items
         InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', True)
