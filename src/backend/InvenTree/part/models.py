@@ -3678,6 +3678,7 @@ class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         description: Description of the parameter [string]
         checkbox: Boolean flag to indicate whether the parameter is a checkbox [bool]
         choices: List of valid choices for the parameter [string]
+        selectionlist: SelectionList that should be used for choices [selectionlist]
     """
 
     class Meta:
@@ -3759,6 +3760,9 @@ class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
 
     def get_choices(self):
         """Return a list of choices for this parameter template."""
+        if self.selectionlist:
+            return self.selectionlist.get_choices()
+
         if not self.choices:
             return []
 
@@ -3797,6 +3801,16 @@ class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Choices'),
         help_text=_('Valid choices for this parameter (comma-separated)'),
         blank=True,
+    )
+
+    selectionlist = models.ForeignKey(
+        common.models.SelectionList,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='parameter_templates',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list for this parameter'),
     )
 
 

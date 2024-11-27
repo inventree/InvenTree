@@ -273,6 +273,12 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.content_type_list,
     icon: 'list_details'
   },
+  selectionlist: {
+    label: () => t`Selection List`,
+    label_multiple: () => t`Selection Lists`,
+    api_endpoint: ApiEndpoints.selectionlist_list,
+    icon: 'list_details'
+  },
   error: {
     label: () => t`Error`,
     label_multiple: () => t`Errors`,

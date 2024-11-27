@@ -346,6 +346,8 @@ class RuleSet(models.Model):
             'common_webhookendpoint',
             'common_webhookmessage',
             'common_inventreecustomuserstatemodel',
+            'common_selectionlistentry',
+            'common_selectionlist',
             'users_owner',
             # Third-party tables
             'error_report_error',

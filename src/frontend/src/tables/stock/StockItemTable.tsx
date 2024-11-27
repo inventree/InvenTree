@@ -604,7 +604,7 @@ export function StockItemTable({
           {
             name: t`Assign to customer`,
             icon: <InvenTreeIcon icon='customer' />,
-            tooltip: t`Order new stock`,
+            tooltip: t`Assign items to a customer`,
             disabled: !can_add_stock,
             onClick: () => {
               assignStock.open();
