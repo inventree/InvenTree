@@ -28,7 +28,6 @@ from django.utils.translation import gettext_lazy as _
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
-from plugin.events import PluginEvents
 
 from .helpers import (
     IntegrationPluginError,
@@ -238,7 +237,7 @@ class PluginsRegistry:
 
         # Trigger plugins_loaded event
         if canAppAccessDatabase():
-            from plugin.events import trigger_event
+            from plugin.events import PluginEvents, trigger_event
 
             trigger_event(PluginEvents.PLUGINS_LOADED)
 
