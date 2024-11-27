@@ -30,7 +30,7 @@ There are a number of *generic* events which are generated on certain database a
 
 #### Object Created
 
-When a new object is created in the database, an event is generated with the following event name: `<model>.created`, where `<model>` is the name of the model class (e.g. `part`, `stockitem`, etc).
+When a new object is created in the database, an event is generated with the following event name: `<app>_<model>.created`, where `<model>` is the name of the model class (e.g. `part`, `stockitem`, etc).
 
 The event is called with the following keywords arguments:
 
@@ -42,12 +42,12 @@ The event is called with the following keywords arguments:
 A new `Part` object is created with primary key `123`, resulting in the following event being generated:
 
 ```python
-trigger_event('part.created', model='part', id=123)
+trigger_event('part_part.created', model='part', id=123)
 ```
 
 ### Object Updated
 
-When an object is updated in the database, an event is generated with the following event name: `<model>.saved`, where `<model>` is the name of the model class (e.g. `part`, `stockitem`, etc).
+When an object is updated in the database, an event is generated with the following event name: `<app>_<model>.saved`, where `<model>` is the name of the model class (e.g. `part`, `stockitem`, etc).
 
 The event is called with the following keywords arguments:
 
@@ -59,12 +59,12 @@ The event is called with the following keywords arguments:
 A `Part` object with primary key `123` is updated, resulting in the following event being generated:
 
 ```python
-trigger_event('part.saved', model='part', id=123)
+trigger_event('part_part.saved', model='part', id=123)
 ```
 
 ### Object Deleted
 
-When an object is deleted from the database, an event is generated with the following event name: `<model>.deleted`, where `<model>` is the name of the model class (e.g. `part`, `stockitem`, etc).
+When an object is deleted from the database, an event is generated with the following event name: `<app>_<model>.deleted`, where `<model>` is the name of the model class (e.g. `part`, `stockitem`, etc).
 
 The event is called with the following keywords arguments:
 
@@ -76,7 +76,7 @@ The event is called with the following keywords arguments:
 A `Part` object with primary key `123` is deleted, resulting in the following event being generated:
 
 ```python
-trigger_event('part.deleted', model='part', id=123)
+trigger_event('part_part.deleted', model='part', id=123)
 ```
 
 !!! warning "Object Deleted"
