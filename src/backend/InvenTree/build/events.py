@@ -11,6 +11,7 @@ class BuildEvents(BaseEventEnum):
     BUILD_ISSUED = 'build.issued'
     BUILD_CANCELLED = 'build.cancelled'
     BUILD_COMPLETED = 'build.completed'
+    BUILD_OVERDUE = 'build.overdue_build_order'
 
     # Build output events
     OUTPUT_CREATED = 'buildoutput.created'

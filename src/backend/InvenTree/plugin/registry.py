@@ -15,7 +15,7 @@ from collections import OrderedDict
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
-from typing import Any
+from typing import Any, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -28,6 +28,7 @@ from django.utils.translation import gettext_lazy as _
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
+from plugin.events import PluginEvents
 
 from .helpers import (
     IntegrationPluginError,
@@ -104,7 +105,7 @@ class PluginsRegistry:
 
         return plg
 
-    def get_plugin_config(self, slug: str, name: [str, None] = None):
+    def get_plugin_config(self, slug: str, name: Union[str, None] = None):
         """Return the matching PluginConfig instance for a given plugin.
 
         Args:
@@ -239,7 +240,7 @@ class PluginsRegistry:
         if canAppAccessDatabase():
             from plugin.events import trigger_event
 
-            trigger_event('plugins_loaded')
+            trigger_event(PluginEvents.PLUGINS_LOADED)
 
     def _unload_plugins(self, force_reload: bool = False):
         """Unload and deactivate all IntegrationPlugins.
