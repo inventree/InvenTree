@@ -4,7 +4,7 @@ from generic.events import BaseEventEnum
 
 
 class StockEvents(BaseEventEnum):
-    """Events for the Stock app."""
+    """Event enumeration for the Stock app."""
 
     # StockItem events
     ITEM_ASSIGNED_TO_CUSTOMER = 'stockitem.assignedtocustomer'
