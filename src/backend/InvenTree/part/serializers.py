@@ -316,7 +316,16 @@ class PartParameterTemplateSerializer(
         """Metaclass defining serializer fields."""
 
         model = PartParameterTemplate
-        fields = ['pk', 'name', 'units', 'description', 'parts', 'checkbox', 'choices']
+        fields = [
+            'pk',
+            'name',
+            'units',
+            'description',
+            'parts',
+            'checkbox',
+            'choices',
+            'selectionlist',
+        ]
 
     parts = serializers.IntegerField(
         read_only=True,

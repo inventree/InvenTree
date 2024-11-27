@@ -84,7 +84,7 @@ export const getPluginTemplateEditor = (
     useEffect(() => {
       (async () => {
         try {
-          await func({
+          func({
             ref: elRef.current!,
             registerHandlers: ({ getCode, setCode }) => {
               setCodeRef.current = setCode;
@@ -136,7 +136,7 @@ export const getPluginTemplatePreview = (
     useEffect(() => {
       (async () => {
         try {
-          await func({
+          func({
             ref: elRef.current!,
             registerHandlers: ({ updatePreview }) => {
               updatePreviewRef.current = updatePreview;

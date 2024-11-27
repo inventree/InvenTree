@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  ActionIcon,
   Badge,
   Button,
   CloseButton,
@@ -10,12 +11,14 @@ import {
   Select,
   Stack,
   Text,
+  TextInput,
   Tooltip
 } from '@mantine/core';
 import { DateInput, type DateValue } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { IconCheck } from '@tabler/icons-react';
 import { StylishText } from '../components/items/StylishText';
 import type { TableState } from '../hooks/UseTable';
 import {
@@ -60,6 +63,77 @@ function FilterItem({
   );
 }
 
+function FilterElement({
+  filterType,
+  valueOptions,
+  onValueChange
+}: {
+  filterType: TableFilterType;
+  valueOptions: TableFilterChoice[];
+  onValueChange: (value: string | null) => void;
+}) {
+  const setDateValue = useCallback(
+    (value: DateValue) => {
+      if (value) {
+        const date = value.toString();
+        onValueChange(dayjs(date).format('YYYY-MM-DD'));
+      } else {
+        onValueChange('');
+      }
+    },
+    [onValueChange]
+  );
+
+  const [textValue, setTextValue] = useState<string>('');
+
+  switch (filterType) {
+    case 'text':
+      return (
+        <TextInput
+          label={t`Value`}
+          value={textValue}
+          placeholder={t`Enter filter value`}
+          rightSection={
+            <ActionIcon
+              aria-label='apply-text-filter'
+              variant='transparent'
+              onClick={() => onValueChange(textValue)}
+            >
+              <IconCheck />
+            </ActionIcon>
+          }
+          onChange={(e) => setTextValue(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onValueChange(textValue);
+            }
+          }}
+        />
+      );
+    case 'date':
+      return (
+        <DateInput
+          label={t`Value`}
+          placeholder={t`Select date value`}
+          onChange={setDateValue}
+        />
+      );
+    case 'choice':
+    case 'boolean':
+    default:
+      return (
+        <Select
+          data={valueOptions}
+          searchable={filterType != 'boolean'}
+          label={t`Value`}
+          placeholder={t`Select filter value`}
+          onChange={(value: string | null) => onValueChange(value)}
+          maxDropdownHeight={800}
+        />
+      );
+  }
+}
+
 function FilterAddGroup({
   tableState,
   availableFilters
@@ -79,6 +153,7 @@ function FilterAddGroup({
     return (
       availableFilters
         ?.filter((flt) => !activeFilterNames.includes(flt.name))
+        ?.sort((a, b) => a.label.localeCompare(b.label))
         ?.map((flt) => ({
           value: flt.name,
           label: flt.label,
@@ -133,20 +208,11 @@ function FilterAddGroup({
       };
 
       tableState.setActiveFilters([...filters, newFilter]);
+
+      // Clear selected filter
+      setSelectedFilter(null);
     },
     [selectedFilter]
-  );
-
-  const setDateValue = useCallback(
-    (value: DateValue) => {
-      if (value) {
-        const date = value.toString();
-        setSelectedValue(dayjs(date).format('YYYY-MM-DD'));
-      } else {
-        setSelectedValue('');
-      }
-    },
-    [setSelectedValue]
   );
 
   return (
@@ -160,23 +226,13 @@ function FilterAddGroup({
         onChange={(value: string | null) => setSelectedFilter(value)}
         maxDropdownHeight={800}
       />
-      {selectedFilter &&
-        (filterType === 'date' ? (
-          <DateInput
-            label={t`Value`}
-            placeholder={t`Select date value`}
-            onChange={setDateValue}
-          />
-        ) : (
-          <Select
-            data={valueOptions}
-            label={t`Value`}
-            searchable={true}
-            placeholder={t`Select filter value`}
-            onChange={(value: string | null) => setSelectedValue(value)}
-            maxDropdownHeight={800}
-          />
-        ))}
+      {selectedFilter && (
+        <FilterElement
+          filterType={filterType}
+          valueOptions={valueOptions}
+          onValueChange={setSelectedValue}
+        />
+      )}
     </Stack>
   );
 }

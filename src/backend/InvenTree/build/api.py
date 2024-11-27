@@ -23,7 +23,7 @@ import build.serializers
 from build.models import Build, BuildLine, BuildItem
 import part.models
 from users.models import Owner
-from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
+from InvenTree.filters import InvenTreeDateFilter, SEARCH_ORDER_FILTER_ALIAS
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -178,6 +178,36 @@ class BuildFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(project_code=None)
         return queryset.filter(project_code=None)
+
+    created_before = InvenTreeDateFilter(
+        label=_('Created before'),
+        field_name='creation_date', lookup_expr='lt'\
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created after'),
+        field_name='creation_date', lookup_expr='gt'
+    )
+
+    target_date_before = InvenTreeDateFilter(
+        label=_('Target date before'),
+        field_name='target_date', lookup_expr='lt'
+    )
+
+    target_date_after = InvenTreeDateFilter(
+        label=_('Target date after'),
+        field_name='target_date', lookup_expr='gt'
+    )
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed before'),
+        field_name='completion_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed after'),
+        field_name='completion_date', lookup_expr='gt'
+    )
 
 
 class BuildMixin:

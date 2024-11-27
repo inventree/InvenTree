@@ -49,6 +49,8 @@ export enum ApiEndpoints {
   owner_list = 'user/owner/',
   content_type_list = 'contenttype/',
   icons = 'icons/',
+  selectionlist_list = 'selection/',
+  selectionlist_detail = 'selection/:id/',
 
   // Barcode API endpoints
   barcode = 'barcode/',

@@ -1,4 +1,4 @@
-"""The DigiKeyPlugin is meant to integrate the DigiKey API into Inventree.
+"""The DigiKeyPlugin is meant to integrate the DigiKey API into InvenTree.
 
 This plugin can currently only match DigiKey barcodes to supplier parts.
 """
@@ -10,7 +10,7 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 
 class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
-    """Plugin to integrate the DigiKey API into Inventree."""
+    """Plugin to integrate the DigiKey API into InvenTree."""
 
     NAME = 'DigiKeyPlugin'
     TITLE = _('Supplier Integration - DigiKey')

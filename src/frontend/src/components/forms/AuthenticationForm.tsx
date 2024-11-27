@@ -107,12 +107,14 @@ export function AuthenticationForm() {
             <TextInput
               required
               label={t`Username`}
+              aria-label='login-username'
               placeholder={t`Your username`}
               {...classicForm.getInputProps('username')}
             />
             <PasswordInput
               required
               label={t`Password`}
+              aria-label='login-password'
               placeholder={t`Your password`}
               {...classicForm.getInputProps('password')}
             />
@@ -228,12 +230,14 @@ export function RegistrationForm() {
             <TextInput
               required
               label={t`Username`}
+              aria-label='register-username'
               placeholder={t`Your username`}
               {...registrationForm.getInputProps('username')}
             />
             <TextInput
               required
               label={t`Email`}
+              aria-label='register-email'
               description={t`This will be used for a confirmation`}
               placeholder='email@example.org'
               {...registrationForm.getInputProps('email')}
@@ -241,12 +245,14 @@ export function RegistrationForm() {
             <PasswordInput
               required
               label={t`Password`}
+              aria-label='register-password'
               placeholder={t`Your password`}
               {...registrationForm.getInputProps('password1')}
             />
             <PasswordInput
               required
               label={t`Password repeat`}
+              aria-label='register-password-repeat'
               placeholder={t`Repeat password`}
               {...registrationForm.getInputProps('password2')}
             />
