@@ -1403,6 +1403,7 @@ class StockItem(
         # Assign the other stock item into this one
         stock_item.belongs_to = self
         stock_item.consumed_by = build
+        stock_item.location = None
         stock_item.save(add_note=False)
 
         deltas = {'stockitem': self.pk}
