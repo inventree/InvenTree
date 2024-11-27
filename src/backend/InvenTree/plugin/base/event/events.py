@@ -9,7 +9,6 @@ from django.dispatch.dispatcher import receiver
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
-from generic.events import BaseEventEnum
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
@@ -17,7 +16,7 @@ from plugin.registry import registry
 logger = logging.getLogger('inventree')
 
 
-def trigger_event(event: BaseEventEnum, *args, **kwargs) -> None:
+def trigger_event(event: str, *args, **kwargs) -> None:
     """Trigger an event with optional arguments.
 
     Arguments:
