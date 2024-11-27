@@ -1780,8 +1780,8 @@ class StocktakeTest(StockAPITestCase):
         """Test stock transfers."""
         stock_item = StockItem.objects.get(pk=1234)
 
-        # Mark this stock item as "quarantined" (cannot be moved)
-        stock_item.status = StockStatus.QUARANTINED.value
+        # Mark the item as 'out of stock' by assigning a customer
+        stock_item.customer = company.models.Company.objects.first()
         stock_item.save()
 
         InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', False)
@@ -1797,7 +1797,7 @@ class StocktakeTest(StockAPITestCase):
         # First attempt should *fail* - stock item is quarantined
         response = self.post(url, data, expected_code=400)
 
-        self.assertIn('cannot be moved as it is not in stock', str(response.data))
+        self.assertIn('Stock item is not in stock', str(response.data))
 
         # Now, allow transfer of "out of stock" items
         InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', True)
