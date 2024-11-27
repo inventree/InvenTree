@@ -3,8 +3,6 @@ import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -278,12 +276,6 @@ export default function Stock() {
     () => [
       <AdminButton model={ModelType.stocklocation} id={location.pk} />,
       <LocateItemButton locationId={location.pk} />,
-      <ActionButton
-        icon={<InvenTreeIcon icon='stocktake' />}
-        onClick={notYetImplemented}
-        variant='outline'
-        size='lg'
-      />,
       location.pk ? (
         <BarcodeActionDropdown
           model={ModelType.stocklocation}

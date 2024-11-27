@@ -51,7 +51,7 @@ jobs:
           git reset --hard
           git reset HEAD~
       - name: crowdin action
-        uses: crowdin/github-action@2d540f18b0a416b1fbf2ee5be35841bd380fc1da # pin@v2
+        uses: crowdin/github-action@a9ffb7d5ac46eca1bb1f06656bf888b39462f161 # pin@v2
         with:
           upload_sources: true
           upload_translations: false

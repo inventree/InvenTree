@@ -67,6 +67,22 @@ For more information, refer to the installation guides:
 
 Before performing an update, check the release notes! Any *breaking changes* (changes which require user intervention) will be clearly noted.
 
+### Cannot import name get_storage_class
+
+When running an install or update, you may see an error similar to:
+
+```python
+ImportError: cannot import name 'get_storage_class' from 'django.core.files.storage'
+```
+
+In such a situation, it is likely that the automatic backup procedure is unable to run, as the required python packages are not yet installed or are unavailable.
+
+To proceed in this case, you can skip the backup procedure by running the `invoke update` command with the `--skip-backup` flag:
+
+```bash
+invoke update --skip-backup
+```
+
 ### Feature *x* does not work after update
 
 If a particular menu / item is not visible after updating InvenTree, or a certain function no longer seems to work, it may be due to your internet browser caching old versions of CSS and JavaScript files.

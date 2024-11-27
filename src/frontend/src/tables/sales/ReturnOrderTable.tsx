@@ -14,8 +14,8 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
   CreationDateColumn,
-  DateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
@@ -26,13 +26,19 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  type TableFilter
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -62,6 +68,12 @@ export function ReturnOrderTable({
       AssignedToMeFilter(),
       MinDateFilter(),
       MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
@@ -117,9 +129,8 @@ export function ReturnOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
-      DateColumn({
-        accessor: 'complete_date',
-        title: t`Completion Date`
+      CompletionDateColumn({
+        accessor: 'complete_date'
       }),
       ResponsibleColumn({}),
       {
@@ -141,6 +152,9 @@ export function ReturnOrderTable({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: returnOrderFields,
+    initialData: {
+      customer: customerId
+    },
     follow: true,
     modelType: ModelType.returnorder
   });
