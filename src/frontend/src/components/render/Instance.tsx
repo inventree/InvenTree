@@ -20,7 +20,8 @@ import {
   RenderContentType,
   RenderError,
   RenderImportSession,
-  RenderProjectCode
+  RenderProjectCode,
+  RenderSelectionList
 } from './Generic';
 import { ModelInformationDict } from './ModelType';
 import {
@@ -94,6 +95,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
+  [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.error]: RenderError
 };
 

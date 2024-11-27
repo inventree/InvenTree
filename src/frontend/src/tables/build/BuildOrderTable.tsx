@@ -25,12 +25,18 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
   OverdueFilter,
   StatusFilterOptions,
-  type TableFilter
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -130,6 +136,12 @@ export function BuildOrderTable({
       AssignedToMeFilter(),
       MinDateFilter(),
       MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,

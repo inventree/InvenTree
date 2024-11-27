@@ -1,4 +1,4 @@
-"""The LCSCPlugin is meant to integrate the LCSC API into Inventree.
+"""The LCSCPlugin is meant to integrate the LCSC API into InvenTree.
 
 This plugin can currently only match LCSC barcodes to supplier parts.
 """
@@ -12,7 +12,7 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 
 
 class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
-    """Plugin to integrate the LCSC API into Inventree."""
+    """Plugin to integrate the LCSC API into InvenTree."""
 
     NAME = 'LCSCPlugin'
     TITLE = _('Supplier Integration - LCSC')

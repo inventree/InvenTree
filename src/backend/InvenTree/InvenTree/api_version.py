@@ -1,12 +1,28 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 283
+INVENTREE_API_VERSION = 287
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v287 - 2024-11-27 : https://github.com/inventree/InvenTree/pull/8571
+    - Adds ability to set stock status when returning items from a customer
+
+v286 - 2024-11-26 : https://github.com/inventree/InvenTree/pull/8054
+    - Adds "SelectionList" and "SelectionListEntry" API endpoints
+
+v285 - 2024-11-25 : https://github.com/inventree/InvenTree/pull/8559
+    - Adds better description for registration endpoints
+
+v284 - 2024-11-25 : https://github.com/inventree/InvenTree/pull/8544
+    - Adds new date filters to the StockItem API
+    - Adds new date filters to the BuildOrder API
+    - Adds new date filters to the SalesOrder API
+    - Adds new date filters to the PurchaseOrder API
+    - Adds new date filters to the ReturnOrder API
 
 v283 - 2024-11-20 : https://github.com/inventree/InvenTree/pull/8524
     - Adds "note" field to the PartRelated API endpoint

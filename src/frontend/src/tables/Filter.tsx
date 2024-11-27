@@ -21,8 +21,9 @@ export type TableFilterChoice = {
  * boolean: A simple true/false filter
  * choice: A filter which allows selection from a list of (supplied)
  * date: A filter which allows selection from a date input
+ * text: A filter which allows raw text input
  */
-export type TableFilterType = 'boolean' | 'choice' | 'date';
+export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
 
 /**
  * Interface for the table filter type. Provides a number of options for selecting filter value:
@@ -138,6 +139,60 @@ export function MaxDateFilter(): TableFilter {
     name: 'max_date',
     label: t`Maximum Date`,
     description: t`Show items before this date`,
+    type: 'date'
+  };
+}
+
+export function CreatedBeforeFilter(): TableFilter {
+  return {
+    name: 'created_before',
+    label: t`Created Before`,
+    description: t`Show items created before this date`,
+    type: 'date'
+  };
+}
+
+export function CreatedAfterFilter(): TableFilter {
+  return {
+    name: 'created_after',
+    label: t`Created After`,
+    description: t`Show items created after this date`,
+    type: 'date'
+  };
+}
+
+export function TargetDateBeforeFilter(): TableFilter {
+  return {
+    name: 'target_date_before',
+    label: t`Target Date Before`,
+    description: t`Show items with a target date before this date`,
+    type: 'date'
+  };
+}
+
+export function TargetDateAfterFilter(): TableFilter {
+  return {
+    name: 'target_date_after',
+    label: t`Target Date After`,
+    description: t`Show items with a target date after this date`,
+    type: 'date'
+  };
+}
+
+export function CompletedBeforeFilter(): TableFilter {
+  return {
+    name: 'completed_before',
+    label: t`Completed Before`,
+    description: t`Show items completed before this date`,
+    type: 'date'
+  };
+}
+
+export function CompletedAfterFilter(): TableFilter {
+  return {
+    name: 'completed_after',
+    label: t`Completed After`,
+    description: t`Show items completed after this date`,
     type: 'date'
   };
 }

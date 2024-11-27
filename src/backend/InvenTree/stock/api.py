@@ -807,19 +807,28 @@ class StockFilter(rest_filters.FilterSet):
 
     # Update date filters
     updated_before = InvenTreeDateFilter(
-        label='Updated before', field_name='updated', lookup_expr='lte'
+        label=_('Updated before'), field_name='updated', lookup_expr='lt'
     )
+
     updated_after = InvenTreeDateFilter(
-        label='Updated after', field_name='updated', lookup_expr='gte'
+        label=_('Updated after'), field_name='updated', lookup_expr='gt'
+    )
+
+    stocktake_before = InvenTreeDateFilter(
+        label=_('Stocktake Before'), field_name='stocktake_date', lookup_expr='lt'
+    )
+
+    stocktake_after = InvenTreeDateFilter(
+        label=_('Stocktake After'), field_name='stocktake_date', lookup_expr='gt'
     )
 
     # Stock "expiry" filters
-    expiry_date_lte = InvenTreeDateFilter(
-        label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lte'
+    expiry_before = InvenTreeDateFilter(
+        label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lt'
     )
 
-    expiry_date_gte = InvenTreeDateFilter(
-        label=_('Expiry date after'), field_name='expiry_date', lookup_expr='gte'
+    expiry_after = InvenTreeDateFilter(
+        label=_('Expiry date after'), field_name='expiry_date', lookup_expr='gt'
     )
 
     stale = rest_filters.BooleanFilter(label=_('Stale'), method='filter_stale')

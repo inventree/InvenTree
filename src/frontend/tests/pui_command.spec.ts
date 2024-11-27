@@ -49,7 +49,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
-      name: 'Server Information About this Inventree instance'
+      name: 'Server Information About this InvenTree instance'
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();

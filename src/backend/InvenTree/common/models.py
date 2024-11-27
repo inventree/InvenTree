@@ -3542,6 +3542,169 @@ class InvenTreeCustomUserStateModel(models.Model):
                 return cls
 
 
+class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents a list of selectable items for parameters.
+
+    A lists selection options can be either manually defined, or sourced from a plugin.
+
+    Attributes:
+        name: The name of the selection list
+        description: A description of the selection list
+        locked: Is this selection list locked (i.e. cannot be modified)?
+        active: Is this selection list active?
+        source_plugin: The plugin which provides the selection list
+        source_string: The string representation of the selection list
+        default: The default value for the selection list
+        created: The date/time that the selection list was created
+        last_updated: The date/time that the selection list was last updated
+    """
+
+    class Meta:
+        """Meta options for SelectionList."""
+
+        verbose_name = _('Selection List')
+        verbose_name_plural = _('Selection Lists')
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Name of the selection list'),
+        unique=True,
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the selection list'),
+        blank=True,
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Is this selection list locked?'),
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Can this selection list be used?'),
+    )
+
+    source_plugin = models.ForeignKey(
+        'plugin.PluginConfig',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Source Plugin'),
+        help_text=_('Plugin which provides the selection list'),
+    )
+
+    source_string = models.CharField(
+        max_length=1000,
+        verbose_name=_('Source String'),
+        help_text=_('Optional string identifying the source used for this list'),
+        blank=True,
+    )
+
+    default = models.ForeignKey(
+        'SelectionListEntry',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Default Entry'),
+        help_text=_('Default entry for this selection list'),
+    )
+
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the selection list was created'),
+    )
+
+    last_updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Last Updated'),
+        help_text=_('Date and time that the selection list was last updated'),
+    )
+
+    def __str__(self):
+        """Return string representation of the selection list."""
+        if not self.active:
+            return f'{self.name} (Inactive)'
+        return self.name
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the SelectionList model."""
+        return reverse('api-selectionlist-list')
+
+    def get_choices(self):
+        """Return the choices for the selection list."""
+        choices = self.entries.filter(active=True)
+        return [c.value for c in choices]
+
+
+class SelectionListEntry(models.Model):
+    """Class which represents a single entry in a SelectionList.
+
+    Attributes:
+        list: The SelectionList to which this entry belongs
+        value: The value of the selection list entry
+        label: The label for the selection list entry
+        description: A description of the selection list entry
+        active: Is this selection list entry active?
+    """
+
+    class Meta:
+        """Meta options for SelectionListEntry."""
+
+        verbose_name = _('Selection List Entry')
+        verbose_name_plural = _('Selection List Entries')
+        unique_together = [['list', 'value']]
+
+    list = models.ForeignKey(
+        SelectionList,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='entries',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list to which this entry belongs'),
+    )
+
+    value = models.CharField(
+        max_length=255,
+        verbose_name=_('Value'),
+        help_text=_('Value of the selection list entry'),
+    )
+
+    label = models.CharField(
+        max_length=255,
+        verbose_name=_('Label'),
+        help_text=_('Label for the selection list entry'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the selection list entry'),
+        blank=True,
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this selection list entry active?'),
+    )
+
+    def __str__(self):
+        """Return string representation of the selection list entry."""
+        if not self.active:
+            return f'{self.label} (Inactive)'
+        return self.label
+
+
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
     """Model for storing barcode scans results."""
 
