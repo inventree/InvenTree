@@ -49,6 +49,7 @@ export type ApiFormAdjustFilterType = {
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
+ * @param addRow : Callback function to add a new row to a table field
  * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
  */
 export type ApiFormFieldType = {
@@ -94,6 +95,7 @@ export type ApiFormFieldType = {
   adjustValue?: (value: any) => any;
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
+  addRow?: () => any;
   headers?: string[];
   depends_on?: string[];
 };
