@@ -30,6 +30,9 @@ def trigger_event(event: str, *args, **kwargs) -> None:
         # Do nothing if plugin events are not enabled
         return
 
+    # Ensure event name is stringified
+    event = str(event).strip()
+
     # Make sure the database can be accessed and is not being tested rn
     if (
         not canAppAccessDatabase(allow_shell=True)
@@ -183,4 +186,9 @@ def after_delete(sender, instance, **kwargs):
     if not allow_table_event(table):
         return
 
-    trigger_event(f'{table}.deleted', model=sender.__name__)
+    instance_id = None
+
+    if instance:
+        instance_id = getattr(instance, 'id', None)
+
+    trigger_event(f'{table}.deleted', model=sender.__name__, id=instance_id)
