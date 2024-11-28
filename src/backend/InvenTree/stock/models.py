@@ -1506,12 +1506,15 @@ class StockItem(
         """
         return self.children.count()
 
-    @property
-    def in_stock(self) -> bool:
-        """Returns True if this item is in stock.
+    def is_in_stock(self, check_status: bool = True):
+        """Return True if this StockItem is "in stock".
 
-        See also: StockItem.IN_STOCK_FILTER for the db optimized version of this check.
+        Args:
+            check_status: If True, check the status of the StockItem. Defaults to True.
         """
+        if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
+            return False
+
         return all([
             self.quantity > 0,  # Quantity must be greater than zero
             self.sales_order is None,  # Not assigned to a SalesOrder
@@ -1519,8 +1522,15 @@ class StockItem(
             self.customer is None,  # Not assigned to a customer
             self.consumed_by is None,  # Not consumed by a build
             not self.is_building,  # Not part of an active build
-            self.status in StockStatusGroups.AVAILABLE_CODES,  # Status is "available"
         ])
+
+    @property
+    def in_stock(self) -> bool:
+        """Returns True if this item is in stock.
+
+        See also: StockItem.IN_STOCK_FILTER for the db optimized version of this check.
+        """
+        return self.is_in_stock(check_status=True)
 
     @property
     def can_adjust_location(self):
@@ -2090,14 +2100,13 @@ class StockItem(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not self.in_stock:
+        if not allow_out_of_stock_transfer and not self.is_in_stock(check_status=False):
             raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
             return False
 
         if location is None:
-            # TODO - Raise appropriate error (cannot move to blank location)
             return False
 
         # Test for a partial movement
@@ -2183,11 +2192,16 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def stocktake(self, count, user, notes=''):
+    def stocktake(self, count, user, **kwargs):
         """Perform item stocktake.
 
-        When the quantity of an item is counted,
-        record the date of stocktake
+        Arguments:
+            count: The new quantity of the item
+            user: The user performing the stocktake
+
+        Keyword Arguments:
+            notes: Optional notes for the stocktake
+            status: Optionally adjust the stock status
         """
         try:
             count = Decimal(count)
@@ -2197,15 +2211,25 @@ class StockItem(
         if count < 0:
             return False
 
-        self.stocktake_date = InvenTree.helpers.current_date()
-        self.stocktake_user = user
-
         if self.updateQuantity(count):
+            tracking_info = {'quantity': float(count)}
+
+            self.stocktake_date = InvenTree.helpers.current_date()
+            self.stocktake_user = user
+
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    tracking_info[field] = kwargs[field]
+
+            self.save(add_note=False)
+
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_COUNT,
                 user,
-                notes=notes,
-                deltas={'quantity': float(self.quantity)},
+                notes=kwargs.get('notes', ''),
+                deltas=tracking_info,
             )
 
         trigger_event(
@@ -2218,11 +2242,16 @@ class StockItem(
         return True
 
     @transaction.atomic
-    def add_stock(self, quantity, user, notes=''):
-        """Add items to stock.
+    def add_stock(self, quantity, user, **kwargs):
+        """Add a specified quantity of stock to this item.
 
-        This function can be called by initiating a ProjectRun,
-        or by manually adding the items to the stock location
+        Arguments:
+            quantity: The quantity to add
+            user: The user performing the action
+
+        Keyword Arguments:
+            notes: Optional notes for the stock addition
+            status: Optionally adjust the stock status
         """
         # Cannot add items to a serialized part
         if self.serialized:
@@ -2238,20 +2267,38 @@ class StockItem(
             return False
 
         if self.updateQuantity(self.quantity + quantity):
+            tracking_info = {'added': float(quantity), 'quantity': float(self.quantity)}
+
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    tracking_info[field] = kwargs[field]
+
+            self.save(add_note=False)
+
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
                 user,
-                notes=notes,
-                deltas={'added': float(quantity), 'quantity': float(self.quantity)},
+                notes=kwargs.get('notes', ''),
+                deltas=tracking_info,
             )
 
         return True
 
     @transaction.atomic
-    def take_stock(
-        self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs
-    ):
-        """Remove items from stock."""
+    def take_stock(self, quantity, user, code=StockHistoryCode.STOCK_REMOVE, **kwargs):
+        """Remove the specified quantity from this StockItem.
+
+        Arguments:
+            quantity: The quantity to remove
+            user: The user performing the action
+
+        Keyword Arguments:
+            code: The stock history code to use
+            notes: Optional notes for the stock removal
+            status: Optionally adjust the stock status
+        """
         # Cannot remove items from a serialized part
         if self.serialized:
             return False
@@ -2273,7 +2320,17 @@ class StockItem(
             if stockitem := kwargs.get('stockitem'):
                 deltas['stockitem'] = stockitem.pk
 
-            self.add_tracking_entry(code, user, notes=notes, deltas=deltas)
+            # Optional fields which can be supplied in a 'stocktake' call
+            for field in StockItem.optional_transfer_fields():
+                if field in kwargs:
+                    setattr(self, field, kwargs[field])
+                    deltas[field] = kwargs[field]
+
+            self.save(add_note=False)
+
+            self.add_tracking_entry(
+                code, user, notes=kwargs.get('notes', ''), deltas=deltas
+            )
 
         return True
 

@@ -344,6 +344,11 @@ function stockItemTableFilters({
       description: t`Include stock items for variant parts`
     },
     {
+      name: 'consumed',
+      label: t`Consumed`,
+      description: t`Show items which have been consumed by a build order`
+    },
+    {
       name: 'installed',
       label: t`Installed`,
       description: t`Show stock items which are installed in other items`
