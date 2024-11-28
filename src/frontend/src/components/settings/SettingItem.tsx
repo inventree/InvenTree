@@ -11,7 +11,7 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { Setting } from '../../states/states';
+import type { Setting } from '../../states/states';
 import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
 
@@ -22,11 +22,11 @@ function SettingValue({
   setting,
   onEdit,
   onToggle
-}: {
+}: Readonly<{
   setting: Setting;
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
-}) {
+}>) {
   // Determine the text to display for the setting value
   const valueText: string = useMemo(() => {
     let value = setting.value;
@@ -48,8 +48,8 @@ function SettingValue({
     case 'boolean':
       return (
         <Switch
-          size="sm"
-          radius="lg"
+          size='sm'
+          radius='lg'
           checked={setting.value.toLowerCase() == 'true'}
           onChange={(event) => onToggle(setting, event.currentTarget.checked)}
           style={{
@@ -59,14 +59,14 @@ function SettingValue({
       );
     default:
       return valueText ? (
-        <Group gap="xs" justify="right">
+        <Group gap='xs' justify='right'>
           <Space />
-          <Button variant="subtle" onClick={() => onEdit(setting)}>
+          <Button variant='subtle' onClick={() => onEdit(setting)}>
             {valueText}
           </Button>
         </Group>
       ) : (
-        <Button variant="subtle" onClick={() => onEdit(setting)}>
+        <Button variant='subtle' onClick={() => onEdit(setting)}>
           <IconEdit />
         </Button>
       );
@@ -81,12 +81,12 @@ export function SettingItem({
   shaded,
   onEdit,
   onToggle
-}: {
+}: Readonly<{
   setting: Setting;
   shaded: boolean;
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
-}) {
+}>) {
   const { colorScheme } = useMantineColorScheme();
 
   const style: Record<string, string> = { paddingLeft: '8px' };
@@ -97,13 +97,13 @@ export function SettingItem({
 
   return (
     <Paper style={style}>
-      <Group justify="space-between" p="3">
-        <Stack gap="2" p="4px">
+      <Group justify='space-between' p='3'>
+        <Stack gap='2' p='4px'>
           <Text>
             {setting.name}
             {setting.required ? ' *' : ''}
           </Text>
-          <Text size="xs">{setting.description}</Text>
+          <Text size='xs'>{setting.description}</Text>
         </Stack>
         <Boundary label={`setting-value-${setting.key}`}>
           <SettingValue setting={setting} onEdit={onEdit} onToggle={onToggle} />

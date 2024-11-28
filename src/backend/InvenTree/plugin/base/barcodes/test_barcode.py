@@ -4,6 +4,8 @@ from django.urls import reverse
 
 import company.models
 import order.models
+from common.models import BarcodeScanResult
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem
@@ -89,6 +91,11 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Test that we can lookup a stock item based on ID."""
         item = StockItem.objects.first()
 
+        # Save barcode scan results to database
+        set_global_setting('BARCODE_STORE_RESULTS', True)
+
+        n = BarcodeScanResult.objects.count()
+
         response = self.post(
             self.scan_url, {'barcode': item.format_barcode()}, expected_code=200
         )
@@ -96,6 +103,20 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertIn('stockitem', response.data)
         self.assertIn('barcode_data', response.data)
         self.assertEqual(response.data['stockitem']['pk'], item.pk)
+
+        self.assertEqual(BarcodeScanResult.objects.count(), n + 1)
+
+        result = BarcodeScanResult.objects.last()
+
+        self.assertTrue(result.result)
+        self.assertEqual(result.data, item.format_barcode())
+
+        response = result.response
+
+        self.assertEqual(response['plugin'], 'InvenTreeBarcode')
+
+        for k in ['barcode_data', 'stockitem', 'success']:
+            self.assertIn(k, response)
 
     def test_invalid_item(self):
         """Test response for invalid stock item."""
@@ -309,7 +330,7 @@ class SOAllocateTest(InvenTreeAPITestCase):
             '123456789', sales_order=self.sales_order.pk, expected_code=400
         )
 
-        self.assertIn('No match found for barcode', str(result['error']))
+        self.assertIn('No matching plugin found for barcode data', str(result['error']))
 
         # Test with a barcode that matches a *different* stock item
         item = StockItem.objects.exclude(pk=self.stock_item.pk).first()

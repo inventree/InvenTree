@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
-import { UiSizeType } from '../../defaults/formatters';
+import type { UiSizeType } from '../../defaults/formatters';
 import { useLocalState } from '../../states/LocalState';
 import * as classes from './DetailDrawer.css';
 
@@ -57,7 +57,7 @@ function DetailDrawerComponent({
         <Group>
           {detailDrawerStack > 0 && (
             <ActionIcon
-              variant="outline"
+              variant='outline'
               onClick={() => {
                 navigate(-1);
                 addDetailDrawer(-1);
@@ -66,7 +66,7 @@ function DetailDrawerComponent({
               <IconChevronLeft />
             </ActionIcon>
           )}
-          <Text size="xl" fw={600} variant="gradient">
+          <Text size='xl' fw={600} variant='gradient'>
             {title}
           </Text>
         </Group>
@@ -83,12 +83,15 @@ function DetailDrawerComponent({
 export function DetailDrawer(props: Readonly<DrawerProps>) {
   return (
     <Routes>
-      <Route path=":id?/" element={<DetailDrawerComponent {...props} />} />
+      <Route path=':id?/' element={<DetailDrawerComponent {...props} />} />
     </Routes>
   );
 }
 
-export function DetailDrawerLink({ to, text }: { to: To; text: string }) {
+export function DetailDrawerLink({
+  to,
+  text
+}: Readonly<{ to: To; text: string }>) {
   const addDetailDrawer = useLocalState((state) => state.addDetailDrawer);
 
   const onNavigate = useCallback(() => {

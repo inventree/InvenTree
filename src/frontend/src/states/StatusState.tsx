@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { api } from '../App';
-import { StatusCodeListInterface } from '../components/render/StatusRenderer';
+import type { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 

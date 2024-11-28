@@ -166,6 +166,10 @@ class CompanySerializer(
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
+    email = serializers.EmailField(
+        required=False, default='', allow_blank=True, allow_null=True
+    )
+
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
     address_count = serializers.IntegerField(read_only=True)
@@ -507,6 +511,13 @@ class SupplierPriceBreakSerializer(
 
         if not part_detail:
             self.fields.pop('part_detail', None)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Prefetch related fields for the queryset."""
+        queryset = queryset.select_related('part', 'part__supplier', 'part__part')
+
+        return queryset
 
     quantity = InvenTreeDecimalField()
 

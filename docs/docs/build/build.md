@@ -221,6 +221,10 @@ To create a build order for your part, you have two options:
 
 Fill-out the form as required, then click the "Submit" button to create the build.
 
+### Create Child Builds
+
+When creating a new build order, you have the option to automatically generate build orders for any subassembly parts. This can be useful to create a complete tree of build orders for a complex assembly. *However*, it must be noted that any build orders created for subassemblies will use the default BOM quantity for that part. Any child build orders created in this manner must be manually reviewed, to ensure that the correct quantity is being built as per your production requirements.
+
 ## Complete Build Order
 
 To complete a build, click on <span class='fas fa-tools'></span> icon on the build detail page, the `Complete Build` form will be displayed.

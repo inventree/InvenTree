@@ -79,6 +79,11 @@ class StockDetailTest(StockViewTestCase):
         for act in actions:
             self.assertIn(act, html)
 
+        # Check with a wrong pk
+        response = self.client.get(reverse('stock-item-detail', kwargs={'pk': 99}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('stock-index'))
+
 
 class StockOwnershipTest(StockViewTestCase):
     """Tests for stock ownership views."""

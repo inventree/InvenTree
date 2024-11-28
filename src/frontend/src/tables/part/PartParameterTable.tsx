@@ -5,7 +5,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { usePartParameterFields } from '../../forms/PartForms';
@@ -17,10 +18,10 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -29,10 +30,10 @@ import { TableHoverCard } from '../TableHoverCard';
 export function PartParameterTable({
   partId,
   partLocked
-}: {
+}: Readonly<{
   partId: any;
   partLocked?: boolean;
-}) {
+}>) {
   const table = useTable('part-parameters');
 
   const user = useUserState();
@@ -42,7 +43,7 @@ export function PartParameterTable({
       {
         accessor: 'part',
         sortable: true,
-        render: (record: any) => PartColumn(record?.part_detail)
+        render: (record: any) => PartColumn({ part: record?.part_detail })
       },
       {
         accessor: 'part_detail.IPN',
@@ -55,7 +56,7 @@ export function PartParameterTable({
         sortable: true,
         ordering: 'name',
         render: (record) => {
-          let variant = String(partId) != String(record.part);
+          const variant = String(partId) != String(record.part);
 
           return (
             <Text style={{ fontStyle: variant ? 'italic' : 'inherit' }}>
@@ -72,20 +73,21 @@ export function PartParameterTable({
         switchable: false,
         sortable: true,
         render: (record) => {
-          let template = record.template_detail;
+          const template = record.template_detail;
 
           if (template?.checkbox) {
             return <YesNoButton value={record.data} />;
           }
 
-          let extra: any[] = [];
+          const extra: any[] = [];
 
           if (
             template.units &&
             record.data_numeric &&
             record.data_numeric != record.data
           ) {
-            extra.push(`${record.data_numeric} [${template.units}]`);
+            const numeric = formatDecimal(record.data_numeric, { digits: 15 });
+            extra.push(`${numeric} [${template.units}]`);
           }
 
           return (
@@ -105,7 +107,7 @@ export function PartParameterTable({
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields({});
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
@@ -140,7 +142,7 @@ export function PartParameterTable({
 
   // Callback for row actions
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       // Actions not allowed for "variant" rows
       if (String(partId) != String(record.part)) {
         return [];
@@ -172,7 +174,7 @@ export function PartParameterTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-parameter"
+        key='add-parameter'
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add parameter`}
         onClick={() => newParameter.open()}
@@ -185,13 +187,13 @@ export function PartParameterTable({
       {newParameter.modal}
       {editParameter.modal}
       {deleteParameter.modal}
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="orange"
+            color='orange'
             icon={<IconLock />}
-            p="xs"
+            p='xs'
           >
             <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
           </Alert>

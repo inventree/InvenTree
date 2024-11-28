@@ -1,7 +1,7 @@
 """JSON serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import OuterRef, Subquery
+from django.db.models import Count, OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +14,7 @@ from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
 import common.validators
+import generic.states.custom
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
@@ -233,12 +234,17 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                 request = self.context['request']
                 if request.user and request.user.is_staff:
                     meta = obj.target_object._meta
-                    target['link'] = construct_absolute_url(
-                        reverse(
-                            f'admin:{meta.db_table}_change',
-                            kwargs={'object_id': obj.target_object_id},
+
+                    try:
+                        target['link'] = construct_absolute_url(
+                            reverse(
+                                f'admin:{meta.db_table}_change',
+                                kwargs={'object_id': obj.target_object_id},
+                            )
                         )
-                    )
+                    except Exception:
+                        # Do not crash if the reverse lookup fails
+                        pass
 
         return target
 
@@ -308,6 +314,32 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
 
+@register_importer()
+class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the custom state model."""
+
+    class Meta:
+        """Meta options for CustomStateSerializer."""
+
+        model = common_models.InvenTreeCustomUserStateModel
+        fields = [
+            'pk',
+            'key',
+            'name',
+            'label',
+            'color',
+            'logical_key',
+            'model',
+            'model_name',
+            'reference_status',
+        ]
+
+    model_name = serializers.CharField(read_only=True, source='model.name')
+    reference_status = serializers.ChoiceField(
+        choices=generic.states.custom.state_reference_mappings()
+    )
+
+
 class FlagSerializer(serializers.Serializer):
     """Serializer for feature flags."""
 
@@ -353,6 +385,22 @@ class CustomUnitSerializer(DataImportExportSerializerMixin, InvenTreeModelSerial
 
         model = common_models.CustomUnit
         fields = ['pk', 'name', 'symbol', 'definition']
+
+
+class AllUnitListResponseSerializer(serializers.Serializer):
+    """Serializer for the AllUnitList."""
+
+    class Unit(serializers.Serializer):
+        """Serializer for the AllUnitListResponseSerializer."""
+
+        name = serializers.CharField()
+        is_alias = serializers.BooleanField()
+        compatible_units = serializers.ListField(child=serializers.CharField())
+        isdimensionless = serializers.BooleanField()
+
+    default_system = serializers.CharField()
+    available_systems = serializers.ListField(child=serializers.CharField())
+    available_units = Unit(many=True)
 
 
 class ErrorMessageSerializer(InvenTreeModelSerializer):
@@ -547,9 +595,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
 
         model_type = self.validated_data.get('model_type', None)
 
-        if model_type is None:
-            if self.instance:
-                model_type = self.instance.model_type
+        if model_type is None and self.instance:
+            model_type = self.instance.model_type
 
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user
@@ -591,3 +638,123 @@ class IconPackageSerializer(serializers.Serializer):
     prefix = serializers.CharField()
     fonts = serializers.DictField(child=serializers.CharField())
     icons = serializers.DictField(child=IconSerializer())
+
+
+class SelectionEntrySerializer(InvenTreeModelSerializer):
+    """Serializer for a selection entry."""
+
+    class Meta:
+        """Meta options for SelectionEntrySerializer."""
+
+        model = common_models.SelectionListEntry
+        fields = '__all__'
+
+    def validate(self, attrs):
+        """Ensure that the selection list is not locked."""
+        ret = super().validate(attrs)
+        if self.instance and self.instance.list.locked:
+            raise serializers.ValidationError({'list': _('Selection list is locked')})
+        return ret
+
+
+class SelectionListSerializer(InvenTreeModelSerializer):
+    """Serializer for a selection list."""
+
+    _choices_validated: dict = {}
+
+    class Meta:
+        """Meta options for SelectionListSerializer."""
+
+        model = common_models.SelectionList
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'active',
+            'locked',
+            'source_plugin',
+            'source_string',
+            'default',
+            'created',
+            'last_updated',
+            'choices',
+            'entry_count',
+        ]
+
+    default = SelectionEntrySerializer(read_only=True, many=False)
+    choices = SelectionEntrySerializer(source='entries', many=True, required=False)
+    entry_count = serializers.IntegerField(read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add count of entries for each selection list."""
+        return queryset.annotate(entry_count=Count('entries'))
+
+    def is_valid(self, *, raise_exception=False):
+        """Validate the selection list. Choices are validated separately."""
+        choices = (
+            self.initial_data.pop('choices')
+            if self.initial_data.get('choices') is not None
+            else []
+        )
+
+        # Validate the choices
+        _choices_validated = []
+        db_entries = (
+            {a.id: a for a in self.instance.entries.all()} if self.instance else {}
+        )
+
+        for choice in choices:
+            current_inst = db_entries.get(choice.get('id'))
+            serializer = SelectionEntrySerializer(
+                instance=current_inst,
+                data={'list': current_inst.list.pk if current_inst else None, **choice},
+            )
+            serializer.is_valid(raise_exception=raise_exception)
+            _choices_validated.append({
+                **serializer.validated_data,
+                'id': choice.get('id'),
+            })
+        self._choices_validated = _choices_validated
+
+        return super().is_valid(raise_exception=raise_exception)
+
+    def create(self, validated_data):
+        """Create a new selection list. Save the choices separately."""
+        list_entry = common_models.SelectionList.objects.create(**validated_data)
+        for choice_data in self._choices_validated:
+            common_models.SelectionListEntry.objects.create(**{
+                **choice_data,
+                'list': list_entry,
+            })
+        return list_entry
+
+    def update(self, instance, validated_data):
+        """Update an existing selection list. Save the choices separately."""
+        inst_mapping = {inst.id: inst for inst in instance.entries.all()}
+        exsising_ids = {a.get('id') for a in self._choices_validated}
+
+        # Perform creations and updates.
+        ret = []
+        for data in self._choices_validated:
+            list_inst = data.get('list', None)
+            inst = inst_mapping.get(data.get('id'))
+            if inst is None:
+                if list_inst is None:
+                    data['list'] = instance
+                ret.append(SelectionEntrySerializer().create(data))
+            else:
+                ret.append(SelectionEntrySerializer().update(inst, data))
+
+        # Perform deletions.
+        for entry_id in inst_mapping.keys() - exsising_ids:
+            inst_mapping[entry_id].delete()
+
+        return super().update(instance, validated_data)
+
+    def validate(self, attrs):
+        """Ensure that the selection list is not locked."""
+        ret = super().validate(attrs)
+        if self.instance and self.instance.locked:
+            raise serializers.ValidationError({'locked': _('Selection list is locked')})
+        return ret

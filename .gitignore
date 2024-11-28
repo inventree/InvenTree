@@ -31,6 +31,7 @@ var/
 # Django stuff:
 *.log
 local_settings.py
+*.sqlite
 *.sqlite3
 *.sqlite3-journal
 *.backup
@@ -86,6 +87,10 @@ env/
 # Locale stats file
 src/backend/InvenTree/InvenTree/locale_stats.json
 src/backend/InvenTree/InvenTree/licenses.txt
+
+# Logs
+src/backend/InvenTree/logs.json
+src/backend/InvenTree/logs.log
 
 # node.js
 node_modules/

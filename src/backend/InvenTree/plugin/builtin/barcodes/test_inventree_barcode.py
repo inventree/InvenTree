@@ -289,6 +289,10 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             self.assertEqual(
                 response.data['stocklocation']['web_url'], '/stock/location/5/'
             )
+        else:
+            self.assertEqual(
+                response.data['stocklocation']['web_url'], '/platform/stock/location/5'
+            )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan a Part object
@@ -331,6 +335,10 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(
                 response.data['stocklocation']['web_url'], '/stock/location/5/'
+            )
+        else:
+            self.assertEqual(
+                response.data['stocklocation']['web_url'], '/platform/stock/location/5'
             )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 

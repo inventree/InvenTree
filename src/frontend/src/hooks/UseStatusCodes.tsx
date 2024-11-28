@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { getStatusCodes } from '../components/render/StatusRenderer';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { useGlobalStatusState } from '../states/StatusState';
 
 /**
@@ -33,9 +33,9 @@ export default function useStatusCodes({
   const codes = useMemo(() => {
     const statusCodes = getStatusCodes(modelType) || {};
 
-    let codesMap: Record<any, any> = {};
+    const codesMap: Record<any, any> = {};
 
-    for (let name in statusCodes) {
+    for (const name in statusCodes) {
       codesMap[name] = statusCodes[name].key;
     }
 

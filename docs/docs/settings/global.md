@@ -90,6 +90,8 @@ Configuration of barcode functionality:
 {{ globalsetting("BARCODE_WEBCAM_SUPPORT") }}
 {{ globalsetting("BARCODE_SHOW_TEXT") }}
 {{ globalsetting("BARCODE_GENERATION_PLUGIN") }}
+{{ globalsetting("BARCODE_STORE_RESULTS") }}
+{{ globalsetting("BARCODE_RESULTS_MAX_NUM") }}
 
 ### Pricing and Currency
 
@@ -121,8 +123,6 @@ Configuration of report generation:
 {{ globalsetting("REPORT_DEFAULT_PAGE_SIZE") }}
 {{ globalsetting("REPORT_DEBUG_MODE") }}
 {{ globalsetting("REPORT_LOG_ERRORS") }}
-{{ globalsetting("REPORT_ENABLE_TEST_REPORT") }}
-{{ globalsetting("REPORT_ATTACH_TEST_REPORT") }}
 
 ### Parts
 
@@ -188,6 +188,7 @@ Configuration of stock item options
 {{ globalsetting("STOCK_ENFORCE_BOM_INSTALLATION") }}
 {{ globalsetting("STOCK_ALLOW_OUT_OF_STOCK_TRANSFER") }}
 {{ globalsetting("TEST_STATION_DATA") }}
+{{ globalsetting("TEST_UPLOAD_CREATE_TEMPLATE") }}
 
 ### Build Orders
 
@@ -207,7 +208,6 @@ Refer to the [return order settings](../order/return_order.md#return-order-setti
 
 ### Plugin Settings
 
-
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("PLUGIN_ON_STARTUP") }}
@@ -217,3 +217,4 @@ Refer to the [return order settings](../order/return_order.md#return-order-setti
 {{ globalsetting("ENABLE_PLUGINS_APP") }}
 {{ globalsetting("ENABLE_PLUGINS_SCHEDULE") }}
 {{ globalsetting("ENABLE_PLUGINS_EVENTS") }}
+{{ globalsetting("ENABLE_PLUGINS_INTERFACE") }}

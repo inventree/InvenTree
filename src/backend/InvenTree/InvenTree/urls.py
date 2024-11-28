@@ -35,7 +35,6 @@ from company.urls import company_urls, manufacturer_part_urls, supplier_part_url
 from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
-from stock.api import test_statistics_api_urls
 from stock.urls import stock_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
@@ -55,7 +54,7 @@ from .social_auth_urls import (
     EmailRemoveView,
     EmailVerifyView,
     SocialProviderListView,
-    social_auth_urlpatterns,
+    get_provider_urls,
 )
 from .views import (
     AboutView,
@@ -78,6 +77,71 @@ from .views import (
 )
 
 admin.site.site_header = 'InvenTree Admin'
+
+settings_urls = [
+    path('i18n/', include('django.conf.urls.i18n')),
+    path('appearance/', AppearanceSelectView.as_view(), name='settings-appearance'),
+    # Catch any other urls
+    path(
+        '',
+        SettingsView.as_view(template_name='InvenTree/settings/settings.html'),
+        name='settings',
+    ),
+]
+
+notifications_urls = [
+    # Catch any other urls
+    path('', NotificationsView.as_view(), name='notifications')
+]
+
+classic_frontendpatterns = [
+    # Apps
+    #
+    path('build/', include(build_urls)),
+    path('common/', include(common_urls)),
+    path('company/', include(company_urls)),
+    path('order/', include(order_urls)),
+    path('manufacturer-part/', include(manufacturer_part_urls)),
+    path('part/', include(part_urls)),
+    path('stock/', include(stock_urls)),
+    path('supplier-part/', include(supplier_part_urls)),
+    path('edit-user/', EditUserView.as_view(), name='edit-user'),
+    path('set-password/', SetPasswordView.as_view(), name='set-password'),
+    path('index/', IndexView.as_view(), name='index'),
+    path('notifications/', include(notifications_urls)),
+    path('search/', SearchView.as_view(), name='search'),
+    path('settings/', include(settings_urls)),
+    path('about/', AboutView.as_view(), name='about'),
+    path('stats/', DatabaseStatsView.as_view(), name='stats'),
+    # DB user sessions
+    path(
+        'accounts/sessions/other/delete/',
+        view=CustomSessionDeleteOtherView.as_view(),
+        name='session_delete_other',
+    ),
+    re_path(
+        r'^accounts/sessions/(?P<pk>\w+)/delete/$',
+        view=CustomSessionDeleteView.as_view(),
+        name='session_delete',
+    ),
+    # Single Sign On / allauth
+    # overrides of urlpatterns
+    path('accounts/email/', CustomEmailView.as_view(), name='account_email'),
+    path(
+        'accounts/social/connections/',
+        CustomConnectionsView.as_view(),
+        name='socialaccount_connections',
+    ),
+    re_path(
+        r'^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$',
+        CustomPasswordResetFromKeyView.as_view(),
+        name='account_reset_password_from_key',
+    ),
+    # Override login page
+    path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
+    path('accounts/', include('allauth_2fa.urls')),  # MFA support
+    path('accounts/', include('allauth.urls')),  # included urlpatterns
+]
 
 
 apipatterns = [
@@ -110,7 +174,6 @@ apipatterns = [
             ),
         ]),
     ),
-    path('test-statistics/', include(test_statistics_api_urls)),
     path('user/', include(users.api.user_urls)),
     path('web/', include(web_api_urls)),
     # Plugin endpoints
@@ -169,7 +232,7 @@ apipatterns = [
                     path('', EmailListView.as_view(), name='email-list'),
                 ]),
             ),
-            path('social/', include(social_auth_urlpatterns)),
+            path('social/', include(get_provider_urls())),
             path(
                 'social/', SocialAccountListView.as_view(), name='social_account_list'
             ),
@@ -199,21 +262,6 @@ apipatterns = [
     re_path(r'^.*$', NotFoundView.as_view(), name='api-404'),
 ]
 
-settings_urls = [
-    path('i18n/', include('django.conf.urls.i18n')),
-    path('appearance/', AppearanceSelectView.as_view(), name='settings-appearance'),
-    # Catch any other urls
-    path(
-        '',
-        SettingsView.as_view(template_name='InvenTree/settings/settings.html'),
-        name='settings',
-    ),
-]
-
-notifications_urls = [
-    # Catch any other urls
-    path('', NotificationsView.as_view(), name='notifications')
-]
 
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
@@ -402,61 +450,13 @@ if settings.ENABLE_CLASSIC_FRONTEND:
         re_path(r'^js/i18n/', include(translated_javascript_urls)),
     ]
 
-classic_frontendpatterns = [
-    # Apps
-    #
-    path('build/', include(build_urls)),
-    path('common/', include(common_urls)),
-    path('company/', include(company_urls)),
-    path('order/', include(order_urls)),
-    path('manufacturer-part/', include(manufacturer_part_urls)),
-    path('part/', include(part_urls)),
-    path('stock/', include(stock_urls)),
-    path('supplier-part/', include(supplier_part_urls)),
-    path('edit-user/', EditUserView.as_view(), name='edit-user'),
-    path('set-password/', SetPasswordView.as_view(), name='set-password'),
-    path('index/', IndexView.as_view(), name='index'),
-    path('notifications/', include(notifications_urls)),
-    path('search/', SearchView.as_view(), name='search'),
-    path('settings/', include(settings_urls)),
-    path('about/', AboutView.as_view(), name='about'),
-    path('stats/', DatabaseStatsView.as_view(), name='stats'),
-    # DB user sessions
-    path(
-        'accounts/sessions/other/delete/',
-        view=CustomSessionDeleteOtherView.as_view(),
-        name='session_delete_other',
-    ),
-    re_path(
-        r'^accounts/sessions/(?P<pk>\w+)/delete/$',
-        view=CustomSessionDeleteView.as_view(),
-        name='session_delete',
-    ),
-    # Single Sign On / allauth
-    # overrides of urlpatterns
-    path('accounts/email/', CustomEmailView.as_view(), name='account_email'),
-    path(
-        'accounts/social/connections/',
-        CustomConnectionsView.as_view(),
-        name='socialaccount_connections',
-    ),
-    re_path(
-        r'^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$',
-        CustomPasswordResetFromKeyView.as_view(),
-        name='account_reset_password_from_key',
-    ),
-    # Override login page
-    path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
-    path('accounts/', include('allauth_2fa.urls')),  # MFA support
-    path('accounts/', include('allauth.urls')),  # included urlpatterns
-]
 
 urlpatterns = []
 
 if settings.INVENTREE_ADMIN_ENABLED:
     admin_url = settings.INVENTREE_ADMIN_URL
 
-    if settings.ADMIN_SHELL_ENABLE:  # noqa
+    if settings.ADMIN_SHELL_ENABLE:
         urlpatterns += [path(f'{admin_url}/shell/', include('django_admin_shell.urls'))]
 
     urlpatterns += [
@@ -477,14 +477,16 @@ if settings.ENABLE_PLATFORM_FRONTEND:
         frontendpatterns += [
             path(
                 'accounts/login/',
-                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                RedirectView.as_view(
+                    url=f'/{settings.FRONTEND_URL_BASE}', permanent=False
+                ),
                 name='account_login',
             )
         ]
 
 urlpatterns += frontendpatterns
 
-# Append custom plugin URLs (if plugin support is enabled)
+# Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
 
@@ -504,14 +506,14 @@ urlpatterns.append(
     )
 )
 
-# Send any unknown URLs to the parts page
+# Send any unknown URLs to the index page
 urlpatterns += [
     re_path(
         r'^.*$',
         RedirectView.as_view(
             url='/index/'
             if settings.ENABLE_CLASSIC_FRONTEND
-            else settings.FRONTEND_URL_BASE,
+            else f'/{settings.FRONTEND_URL_BASE}/',
             permanent=False,
         ),
         name='index',

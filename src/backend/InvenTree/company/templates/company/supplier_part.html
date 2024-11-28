@@ -1,6 +1,7 @@
 {% extends "page_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load barcode %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -303,7 +304,7 @@ onPanelLoad('supplier-part-notes', function() {
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Supplier Part QR Code" escape %}',
-        '{{ part.barcode }}'
+        `{% clean_barcode part.barcode %}`
     );
 });
 

@@ -67,6 +67,31 @@ class PluginConfigSerializer(serializers.ModelSerializer):
     mixins = serializers.DictField(read_only=True)
 
 
+class PluginAdminDetailSerializer(serializers.ModelSerializer):
+    """Serializer for a PluginConfig with admin details."""
+
+    class Meta:
+        """Metaclass options for serializer."""
+
+        model = PluginConfig
+
+        fields = ['source', 'context']
+
+    source = serializers.CharField(
+        allow_null=True,
+        label=_('Source File'),
+        help_text=_('Path to the source file for admin integration'),
+        source='admin_source',
+    )
+
+    context = serializers.JSONField(
+        allow_null=True,
+        label=_('Context'),
+        help_text=_('Optional context data for the admin integration'),
+        source='admin_context',
+    )
+
+
 class PluginConfigInstallSerializer(serializers.Serializer):
     """Serializer for installing a new plugin."""
 
@@ -143,8 +168,6 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
 class PluginConfigEmptySerializer(serializers.Serializer):
     """Serializer for a PluginConfig."""
-
-    ...
 
 
 class PluginReloadSerializer(serializers.Serializer):

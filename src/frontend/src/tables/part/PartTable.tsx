@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -12,10 +12,10 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import type { TableFilter } from '../Filter';
+import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -28,7 +28,7 @@ function partTableColumns(): TableColumn[] {
       title: t`Part`,
       sortable: true,
       noWrap: true,
-      render: (record: any) => PartColumn(record)
+      render: (record: any) => PartColumn({ part: record })
     },
     {
       accessor: 'IPN',
@@ -58,14 +58,14 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
 
       render: (record) => {
-        let extra: ReactNode[] = [];
+        const extra: ReactNode[] = [];
 
-        let stock = record?.total_in_stock ?? 0;
-        let allocated =
+        const stock = record?.total_in_stock ?? 0;
+        const allocated =
           (record?.allocated_to_build_orders ?? 0) +
           (record?.allocated_to_sales_orders ?? 0);
-        let available = Math.max(0, stock - allocated);
-        let min_stock = record?.minimum_stock ?? 0;
+        const available = Math.max(0, stock - allocated);
+        const min_stock = record?.minimum_stock ?? 0;
 
         let text = String(stock);
 
@@ -73,8 +73,8 @@ function partTableColumns(): TableColumn[] {
 
         if (min_stock > stock) {
           extra.push(
-            <Text key="min-stock" color="orange">
-              {t`Minimum stock` + `: ${min_stock}`}
+            <Text key='min-stock' c='orange'>
+              {`${t`Minimum stock`}: ${min_stock}`}
             </Text>
           );
 
@@ -83,37 +83,35 @@ function partTableColumns(): TableColumn[] {
 
         if (record.ordering > 0) {
           extra.push(
-            <Text key="on-order">{t`On Order` + `: ${record.ordering}`}</Text>
+            <Text key='on-order'>{`${t`On Order`}: ${record.ordering}`}</Text>
           );
         }
 
         if (record.building) {
           extra.push(
-            <Text key="building">{t`Building` + `: ${record.building}`}</Text>
+            <Text key='building'>{`${t`Building`}: ${record.building}`}</Text>
           );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
-            <Text key="bo-allocations">
-              {t`Build Order Allocations` +
-                `: ${record.allocated_to_build_orders}`}
+            <Text key='bo-allocations'>
+              {`${t`Build Order Allocations`}: ${record.allocated_to_build_orders}`}
             </Text>
           );
         }
 
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
-            <Text key="so-allocations">
-              {t`Sales Order Allocations` +
-                `: ${record.allocated_to_sales_orders}`}
+            <Text key='so-allocations'>
+              {`${t`Sales Order Allocations`}: ${record.allocated_to_sales_orders}`}
             </Text>
           );
         }
 
         if (available != stock) {
           extra.push(
-            <Text key="available">
+            <Text key='available'>
               {t`Available`}: {available}
             </Text>
           );
@@ -121,7 +119,7 @@ function partTableColumns(): TableColumn[] {
 
         if (record.external_stock > 0) {
           extra.push(
-            <Text key="external">
+            <Text key='external'>
               {t`External stock`}: {record.external_stock}
             </Text>
           );
@@ -141,10 +139,10 @@ function partTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group gap="xs" justify="left" wrap="nowrap">
+              <Group gap='xs' justify='left' wrap='nowrap'>
                 <Text c={color}>{text}</Text>
                 {record.units && (
-                  <Text size="xs" color={color}>
+                  <Text size='xs' c={color}>
                     [{record.units}]
                   </Text>
                 )}
@@ -201,6 +199,12 @@ function partTableFilters(): TableFilter[] {
       name: 'component',
       label: t`Component`,
       description: t`Filter by component attribute`,
+      type: 'boolean'
+    },
+    {
+      name: 'testable',
+      label: t`Testable`,
+      description: t`Filter by testable attribute`,
       type: 'boolean'
     },
     {
@@ -306,10 +310,10 @@ function partTableFilters(): TableFilter[] {
 export function PartListTable({
   props,
   defaultPartData
-}: {
+}: Readonly<{
   props: InvenTreeTableProps;
   defaultPartData?: any;
-}) {
+}>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
@@ -332,6 +336,7 @@ export function PartListTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-part'
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add Part`}
         onClick={() => newPart.open()}
@@ -352,6 +357,9 @@ export function PartListTable({
           modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
+          enableSelection: true,
+          enableReports: true,
+          enableLabels: true,
           params: {
             ...props.params,
             category_detail: true,

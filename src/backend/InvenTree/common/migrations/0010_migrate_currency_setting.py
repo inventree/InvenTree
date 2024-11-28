@@ -29,5 +29,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_default_currency),
+        migrations.RunPython(set_default_currency, reverse_code=migrations.RunPython.noop),
     ]

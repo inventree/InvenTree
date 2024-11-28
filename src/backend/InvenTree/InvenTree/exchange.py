@@ -31,10 +31,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         # Find the selected exchange rate plugin
         slug = get_global_setting('CURRENCY_UPDATE_PLUGIN', create=False)
 
-        if slug:
-            plugin = registry.get_plugin(slug)
-        else:
-            plugin = None
+        plugin = registry.get_plugin(slug) if slug else None
 
         if not plugin:
             # Find the first active currency exchange plugin

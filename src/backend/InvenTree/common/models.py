@@ -43,6 +43,7 @@ from taggit.managers import TaggableManager
 import build.validators
 import common.currency
 import common.validators
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -53,6 +54,8 @@ import order.validators
 import plugin.base.barcodes.helper
 import report.helpers
 import users.models
+from generic.states import ColorEnum
+from generic.states.custom import get_custom_classes, state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
@@ -246,7 +249,7 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-        cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
+        cache_key = f'BUILD_DEFAULT_VALUES:{cls.__name__!s}'
 
         try:
             if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
@@ -329,7 +332,7 @@ class BaseInvenTreeSetting(models.Model):
         - The unique KEY string
         - Any key:value kwargs associated with the particular setting type (e.g. user-id)
         """
-        key = f'{str(cls.__name__)}:{setting_key}'
+        key = f'{cls.__name__!s}:{setting_key}'
 
         for k, v in kwargs.items():
             key += f'_{k}:{v}'
@@ -777,10 +780,7 @@ class BaseInvenTreeSetting(models.Model):
             )
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive)'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     value = models.CharField(
@@ -826,6 +826,9 @@ class BaseInvenTreeSetting(models.Model):
         elif self.is_bool():
             self.value = self.as_bool()
 
+        elif self.is_float():
+            self.value = self.as_float()
+
         validator = self.__class__.get_setting_validator(
             self.key, **self.get_filters_for_instance()
         )
@@ -862,6 +865,14 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError, TypeError):
                 raise ValidationError({'value': _('Value must be an integer value')})
 
+        # Floating point validator
+        if validator is float:
+            try:
+                # Coerce into a floating point value
+                value = float(value)
+            except (ValueError, TypeError):
+                raise ValidationError({'value': _('Value must be a valid number')})
+
         # If a list of validators is supplied, iterate through each one
         if type(validator) in [list, tuple]:
             for v in validator:
@@ -873,10 +884,20 @@ class BaseInvenTreeSetting(models.Model):
             if self.is_bool():
                 value = self.as_bool()
 
-            if self.is_int():
+            elif self.is_int():
                 value = self.as_int()
 
-            validator(value)
+            elif self.is_float():
+                value = self.as_float()
+
+            try:
+                validator(value)
+            except ValidationError as e:
+                raise e
+            except Exception:
+                raise ValidationError({
+                    'value': _('Value does not pass validation checks')
+                })
 
     def validate_unique(self, exclude=None):
         """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
@@ -969,6 +990,9 @@ class BaseInvenTreeSetting(models.Model):
 
         if not model_name:
             return None
+
+        # Enforce lower-case model name
+        model_name = str(model_name).strip().lower()
 
         try:
             (app, mdl) = model_name.strip().split('.')
@@ -1068,6 +1092,39 @@ class BaseInvenTreeSetting(models.Model):
                     return True
 
         return False
+
+    def is_float(self):
+        """Check if the setting is required to be a float value."""
+        validator = self.__class__.get_setting_validator(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return self.__class__.validator_is_float(validator)
+
+    @classmethod
+    def validator_is_float(cls, validator):
+        """Return if validator is for float."""
+        if validator == float:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == float:
+                    return True
+
+        return False
+
+    def as_float(self):
+        """Return the value of this setting converted to a float value.
+
+        If an error occurs, return the default value
+        """
+        try:
+            value = float(self.value)
+        except (ValueError, TypeError):
+            value = self.default_value
+
+        return value
 
     def is_int(self):
         """Check if the setting is required to be an integer value."""
@@ -1396,6 +1453,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_STORE_RESULTS': {
+            'name': _('Store Barcode Results'),
+            'description': _('Store barcode scan results in the database'),
+            'default': False,
+            'validator': bool,
+        },
+        'BARCODE_RESULTS_MAX_NUM': {
+            'name': _('Barcode Scans Maximum Count'),
+            'description': _('Maximum number of barcode scan results to store'),
+            'default': 100,
+            'validator': [int, MinValueValidator(1)],
+        },
         'BARCODE_INPUT_DELAY': {
             'name': _('Barcode Input Delay'),
             'description': _('Barcode input processing delay time'),
@@ -1701,20 +1770,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Default page size for PDF reports'),
             'default': 'A4',
             'choices': report.helpers.report_page_size_options,
-        },
-        'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Enable Test Reports'),
-            'description': _('Enable generation of test reports'),
-            'default': True,
-            'validator': bool,
-        },
-        'REPORT_ATTACH_TEST_REPORT': {
-            'name': _('Attach Test Reports'),
-            'description': _(
-                'When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'
-            ),
-            'default': False,
-            'validator': bool,
         },
         'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
             'name': _('Globally Unique Serials'),
@@ -2060,7 +2115,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _(
                 'Check that all plugins are installed on startup - enable in container environments'
             ),
-            'default': str(os.getenv('INVENTREE_DOCKER', False)).lower()
+            'default': str(os.getenv('INVENTREE_DOCKER', 'False')).lower()
             in ['1', 'true'],
             'validator': bool,
             'requires_restart': True,
@@ -2103,6 +2158,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
             'description': _('Enable plugins to respond to internal events'),
+            'default': False,
+            'validator': bool,
+            'after_save': reload_plugin_registry,
+        },
+        'ENABLE_PLUGINS_INTERFACE': {
+            'name': _('Enable interface integration'),
+            'description': _('Enable plugins to integrate into the user interface'),
             'default': False,
             'validator': bool,
             'after_save': reload_plugin_registry,
@@ -2158,15 +2220,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'TEST_UPLOAD_CREATE_TEMPLATE': {
+            'name': _('Create Template on Upload'),
+            'description': _(
+                'Create a new test template when uploading test data which does not match an existing template'
+            ),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     typ = 'inventree'
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=True,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=True, help_text=_('Settings key')
     )
 
     def to_native_value(self):
@@ -2543,10 +2610,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     extra_unique_fields = ['user']
 
     key = models.CharField(
-        max_length=50,
-        blank=False,
-        unique=False,
-        help_text=_('Settings key (must be unique - case insensitive'),
+        max_length=50, blank=False, unique=False, help_text=_('Settings key')
     )
 
     user = models.ForeignKey(
@@ -3090,13 +3154,10 @@ class CustomUnit(models.Model):
         """Ensure that the custom unit is unique."""
         super().validate_unique(exclude)
 
-        if self.symbol:
-            if (
-                CustomUnit.objects.filter(symbol=self.symbol)
-                .exclude(pk=self.pk)
-                .exists()
-            ):
-                raise ValidationError({'symbol': _('Unit symbol must be unique')})
+        if self.symbol and (
+            CustomUnit.objects.filter(symbol=self.symbol).exclude(pk=self.pk).exists()
+        ):
+            raise ValidationError({'symbol': _('Unit symbol must be unique')})
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""
@@ -3339,3 +3400,336 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('Invalid model type specified for attachment'))
 
         return model_class.check_attachment_permission(permission, user)
+
+
+class InvenTreeCustomUserStateModel(models.Model):
+    """Custom model to extends any registered state with extra custom, user defined states."""
+
+    key = models.IntegerField(
+        verbose_name=_('Key'),
+        help_text=_('Value that will be saved in the models database'),
+    )
+    name = models.CharField(
+        max_length=250, verbose_name=_('Name'), help_text=_('Name of the state')
+    )
+    label = models.CharField(
+        max_length=250,
+        verbose_name=_('Label'),
+        help_text=_('Label that will be displayed in the frontend'),
+    )
+    color = models.CharField(
+        max_length=10,
+        choices=state_color_mappings(),
+        default=ColorEnum.secondary.value,
+        verbose_name=_('Color'),
+        help_text=_('Color that will be displayed in the frontend'),
+    )
+    logical_key = models.IntegerField(
+        verbose_name=_('Logical Key'),
+        help_text=_(
+            'State logical key that is equal to this custom state in business logic'
+        ),
+    )
+    model = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('Model'),
+        help_text=_('Model this state is associated with'),
+    )
+    reference_status = models.CharField(
+        max_length=250,
+        verbose_name=_('Reference Status Set'),
+        help_text=_('Status set that is extended with this custom state'),
+    )
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        verbose_name = _('Custom State')
+        verbose_name_plural = _('Custom States')
+        unique_together = [['model', 'reference_status', 'key', 'logical_key']]
+
+    def __str__(self) -> str:
+        """Return string representation of the custom state."""
+        return f'{self.model.name} ({self.reference_status}): {self.name} | {self.key} ({self.logical_key})'
+
+    def save(self, *args, **kwargs) -> None:
+        """Ensure that the custom state is valid before saving."""
+        self.clean()
+        return super().save(*args, **kwargs)
+
+    def clean(self) -> None:
+        """Validate custom state data."""
+        if self.model is None:
+            raise ValidationError({'model': _('Model must be selected')})
+
+        if self.key is None:
+            raise ValidationError({'key': _('Key must be selected')})
+
+        if self.logical_key is None:
+            raise ValidationError({'logical_key': _('Logical key must be selected')})
+
+        # Ensure that the key is not the same as the logical key
+        if self.key == self.logical_key:
+            raise ValidationError({'key': _('Key must be different from logical key')})
+
+        if self.reference_status is None or self.reference_status == '':
+            raise ValidationError({
+                'reference_status': _('Reference status must be selected')
+            })
+
+        # Ensure that the key is not in the range of the logical keys of the reference status
+        ref_set = list(
+            filter(
+                lambda x: x.__name__ == self.reference_status,
+                get_custom_classes(include_custom=False),
+            )
+        )
+        if len(ref_set) == 0:
+            raise ValidationError({
+                'reference_status': _('Reference status set not found')
+            })
+        ref_set = ref_set[0]
+        if self.key in ref_set.keys():  # noqa: SIM118
+            raise ValidationError({
+                'key': _(
+                    'Key must be different from the logical keys of the reference status'
+                )
+            })
+        if self.logical_key not in ref_set.keys():  # noqa: SIM118
+            raise ValidationError({
+                'logical_key': _(
+                    'Logical key must be in the logical keys of the reference status'
+                )
+            })
+
+        return super().clean()
+
+
+class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents a list of selectable items for parameters.
+
+    A lists selection options can be either manually defined, or sourced from a plugin.
+
+    Attributes:
+        name: The name of the selection list
+        description: A description of the selection list
+        locked: Is this selection list locked (i.e. cannot be modified)?
+        active: Is this selection list active?
+        source_plugin: The plugin which provides the selection list
+        source_string: The string representation of the selection list
+        default: The default value for the selection list
+        created: The date/time that the selection list was created
+        last_updated: The date/time that the selection list was last updated
+    """
+
+    class Meta:
+        """Meta options for SelectionList."""
+
+        verbose_name = _('Selection List')
+        verbose_name_plural = _('Selection Lists')
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Name of the selection list'),
+        unique=True,
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the selection list'),
+        blank=True,
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Is this selection list locked?'),
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Can this selection list be used?'),
+    )
+
+    source_plugin = models.ForeignKey(
+        'plugin.PluginConfig',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Source Plugin'),
+        help_text=_('Plugin which provides the selection list'),
+    )
+
+    source_string = models.CharField(
+        max_length=1000,
+        verbose_name=_('Source String'),
+        help_text=_('Optional string identifying the source used for this list'),
+        blank=True,
+    )
+
+    default = models.ForeignKey(
+        'SelectionListEntry',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Default Entry'),
+        help_text=_('Default entry for this selection list'),
+    )
+
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the selection list was created'),
+    )
+
+    last_updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Last Updated'),
+        help_text=_('Date and time that the selection list was last updated'),
+    )
+
+    def __str__(self):
+        """Return string representation of the selection list."""
+        if not self.active:
+            return f'{self.name} (Inactive)'
+        return self.name
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the SelectionList model."""
+        return reverse('api-selectionlist-list')
+
+    def get_choices(self):
+        """Return the choices for the selection list."""
+        choices = self.entries.filter(active=True)
+        return [c.value for c in choices]
+
+
+class SelectionListEntry(models.Model):
+    """Class which represents a single entry in a SelectionList.
+
+    Attributes:
+        list: The SelectionList to which this entry belongs
+        value: The value of the selection list entry
+        label: The label for the selection list entry
+        description: A description of the selection list entry
+        active: Is this selection list entry active?
+    """
+
+    class Meta:
+        """Meta options for SelectionListEntry."""
+
+        verbose_name = _('Selection List Entry')
+        verbose_name_plural = _('Selection List Entries')
+        unique_together = [['list', 'value']]
+
+    list = models.ForeignKey(
+        SelectionList,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='entries',
+        verbose_name=_('Selection List'),
+        help_text=_('Selection list to which this entry belongs'),
+    )
+
+    value = models.CharField(
+        max_length=255,
+        verbose_name=_('Value'),
+        help_text=_('Value of the selection list entry'),
+    )
+
+    label = models.CharField(
+        max_length=255,
+        verbose_name=_('Label'),
+        help_text=_('Label for the selection list entry'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the selection list entry'),
+        blank=True,
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this selection list entry active?'),
+    )
+
+    def __str__(self):
+        """Return string representation of the selection list entry."""
+        if not self.active:
+            return f'{self.label} (Inactive)'
+        return self.label
+
+
+class BarcodeScanResult(InvenTree.models.InvenTreeModel):
+    """Model for storing barcode scans results."""
+
+    BARCODE_SCAN_MAX_LEN = 250
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Barcode Scan')
+
+    data = models.CharField(
+        max_length=BARCODE_SCAN_MAX_LEN,
+        verbose_name=_('Data'),
+        help_text=_('Barcode data'),
+        blank=False,
+        null=False,
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User who scanned the barcode'),
+    )
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Timestamp'),
+        help_text=_('Date and time of the barcode scan'),
+    )
+
+    endpoint = models.CharField(
+        max_length=250,
+        verbose_name=_('Path'),
+        help_text=_('URL endpoint which processed the barcode'),
+        blank=True,
+        null=True,
+    )
+
+    context = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Context'),
+        help_text=_('Context data for the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    response = models.JSONField(
+        max_length=1000,
+        verbose_name=_('Response'),
+        help_text=_('Response data from the barcode scan'),
+        blank=True,
+        null=True,
+    )
+
+    result = models.BooleanField(
+        verbose_name=_('Result'),
+        help_text=_('Was the barcode scan successful?'),
+        default=False,
+    )

@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from rest_framework import serializers
 
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from machine.machine_types.label_printer import LabelPrinterBaseDriver
 from machine.models import MachineConfig
@@ -309,3 +309,11 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
             },
             expected_code=400,
         )
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=MachineConfig)

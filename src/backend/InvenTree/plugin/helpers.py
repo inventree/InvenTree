@@ -44,13 +44,9 @@ class MixinImplementationError(ValueError):
     Mostly raised if constant is missing
     """
 
-    pass
-
 
 class MixinNotImplementedError(NotImplementedError):
     """Error if necessary mixin function was not overwritten."""
-
-    pass
 
 
 def log_error(error, reference: str = 'general'):
@@ -181,7 +177,17 @@ def get_modules(pkg, path=None):
     elif type(path) is not list:
         path = [path]
 
-    for finder, name, _ in pkgutil.walk_packages(path):
+    packages = pkgutil.walk_packages(path)
+
+    while True:
+        try:
+            finder, name, _ = next(packages)
+        except StopIteration:
+            break
+        except Exception as error:
+            log_error({pkg.__name__: str(error)}, 'discovery')
+            continue
+
         try:
             if sys.version_info < (3, 12):
                 module = finder.find_module(name).load_module(name)
@@ -206,9 +212,13 @@ def get_modules(pkg, path=None):
     return [v for k, v in context.items()]
 
 
-def get_classes(module):
+def get_classes(module) -> list:
     """Get all classes in a given module."""
-    return inspect.getmembers(module, inspect.isclass)
+    try:
+        return inspect.getmembers(module, inspect.isclass)
+    except Exception:
+        log_error({module.__name__: 'Could not get classes'}, 'discovery')
+        return []
 
 
 def get_plugins(pkg, baseclass, path=None):

@@ -1,5 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  ActionIcon,
+  Button,
   ColorInput,
   ColorPicker,
   Container,
@@ -9,13 +11,17 @@ import {
   Select,
   Slider,
   Table,
-  Title
+  Title,
+  useMantineTheme
 } from '@mantine/core';
+import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { ColorToggle } from '../../../../components/items/ColorToggle';
+import { LanguageSelect } from '../../../../components/items/LanguageSelect';
 import { SizeMarks } from '../../../../defaults/defaults';
+import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
-import { theme } from '../../../../theme';
 
 function getLkp(color: string) {
   return { [DEFAULT_THEME.colors[color][6]]: color };
@@ -25,19 +31,25 @@ const LOOKUP = Object.assign(
   ...Object.keys(DEFAULT_THEME.colors).map((clr) => getLkp(clr))
 );
 
-export function UserTheme({ height }: { height: number }) {
-  // primary color
-  function changePrimary(color: string) {
-    useLocalState.setState({ primaryColor: LOOKUP[color] });
-  }
+export function UserTheme({ height }: Readonly<{ height: number }>) {
+  const theme = useMantineTheme();
+
+  const [themeLoader, setThemeLoader] = useLocalState((state) => [
+    state.loader,
+    state.setLoader
+  ]);
+
   // white color
   const [whiteColor, setWhiteColor] = useState(theme.white);
+
   function changeWhite(color: string) {
     useLocalState.setState({ whiteColor: color });
     setWhiteColor(color);
   }
+
   // black color
   const [blackColor, setBlackColor] = useState(theme.black);
+
   function changeBlack(color: string) {
     useLocalState.setState({ blackColor: color });
     setBlackColor(color);
@@ -48,6 +60,7 @@ export function UserTheme({ height }: { height: number }) {
     if (obj) return obj;
     return SizeMarks[0];
   }
+
   function getDefaultRadius() {
     const obj = SizeMarks.find(
       (mark) => mark.label === useLocalState.getState().radius
@@ -60,39 +73,77 @@ export function UserTheme({ height }: { height: number }) {
     setRadius(value);
     useLocalState.setState({ radius: getMark(value).label });
   }
-  // loader
+
+  // Set theme primary color
+  function changePrimary(color: string) {
+    useLocalState.setState({ primaryColor: LOOKUP[color] });
+  }
+
+  function enablePseudoLang(): void {
+    useLocalState.setState({ language: 'pseudo-LOCALE' });
+  }
+
+  // Custom loading indicator
   const loaderDate = [
-    { value: 'bars', label: t`bars` },
-    { value: 'oval', label: t`oval` },
-    { value: 'dots', label: t`dots` }
+    { value: 'bars', label: t`Bars` },
+    { value: 'oval', label: t`Oval` },
+    { value: 'dots', label: t`Dots` }
   ];
-  const [themeLoader, setThemeLoader] = useLocalState((state) => [
-    state.loader,
-    state.setLoader
-  ]);
+
   function changeLoader(value: string | null) {
     if (value === null) return;
     setThemeLoader(value);
   }
 
   return (
-    <Container w="100%" mih={height} p={0}>
+    <Container w='100%' mih={height} p={0}>
       <Title order={3}>
-        <Trans>Theme</Trans>
+        <Trans>Display Settings</Trans>
       </Title>
       <Table>
         <Table.Tbody>
           <Table.Tr>
             <Table.Td>
-              <Trans>Primary color</Trans>
+              <Trans>Language</Trans>
+            </Table.Td>
+            <Table.Td>
+              <LanguageSelect width={200} />
+            </Table.Td>
+            <Table.Td>
+              {IS_DEV && (
+                <Button onClick={enablePseudoLang} variant='light'>
+                  <Trans>Use pseudo language</Trans>
+                </Button>
+              )}
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Color Mode</Trans>
+            </Table.Td>
+            <Table.Td>
+              <Group justify='left'>
+                <ColorToggle />
+              </Group>
+            </Table.Td>
+            <Table.Td />
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Highlight color</Trans>
             </Table.Td>
             <Table.Td>
               <ColorPicker
-                format="hex"
+                format='hex'
                 onChange={changePrimary}
                 withPicker={false}
                 swatches={Object.keys(LOOKUP)}
               />
+            </Table.Td>
+            <Table.Td>
+              <Button color={theme.primaryColor} variant='light'>
+                <Trans>Example</Trans>
+              </Button>
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
@@ -102,6 +153,14 @@ export function UserTheme({ height }: { height: number }) {
             <Table.Td>
               <ColorInput value={whiteColor} onChange={changeWhite} />
             </Table.Td>
+            <Table.Td>
+              <ActionIcon
+                variant='default'
+                onClick={() => changeWhite('#FFFFFF')}
+              >
+                <IconRestore />
+              </ActionIcon>
+            </Table.Td>
           </Table.Tr>
           <Table.Tr>
             <Table.Td>
@@ -109,6 +168,14 @@ export function UserTheme({ height }: { height: number }) {
             </Table.Td>
             <Table.Td>
               <ColorInput value={blackColor} onChange={changeBlack} />
+            </Table.Td>
+            <Table.Td>
+              <ActionIcon
+                variant='default'
+                onClick={() => changeBlack('#000000')}
+              >
+                <IconRestore />
+              </ActionIcon>
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
@@ -132,13 +199,17 @@ export function UserTheme({ height }: { height: number }) {
               <Trans>Loader</Trans>
             </Table.Td>
             <Table.Td>
-              <Group align="center">
+              <Group justify='left'>
                 <Select
                   data={loaderDate}
                   value={themeLoader}
                   onChange={changeLoader}
                 />
-                <Loader type={themeLoader} mah={18} />
+              </Group>
+            </Table.Td>
+            <Table.Td>
+              <Group justify='left'>
+                <Loader type={themeLoader} mah={16} size='sm' />
               </Group>
             </Table.Td>
           </Table.Tr>

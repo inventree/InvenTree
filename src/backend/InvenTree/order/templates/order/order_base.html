@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load static %}
+{% load barcode %}
 {% load inventree_extras %}
 {% load generic %}
 
@@ -122,13 +123,21 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
         <td>
-            {% status_label 'purchase_order' order.status %}
+            {% display_status_label 'purchase_order' order.status_custom_key order.status %}
             {% if order.is_overdue %}
             <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
-
+    {% if order.destination %}
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Destination" %}</td>
+        <td>
+            <a href='{% url "stock-location-detail" order.destination.id %}'>{{ order.destination.name }}</a>
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock details %}
@@ -143,7 +152,7 @@ src="{% static 'img/blank_image.png' %}"
             {% if order.supplier %}
             <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html" %}
             {% else %}
-            <em>{% trans "No suppplier information available" %}</em>
+            <em>{% trans "No supplier information available" %}</em>
             {% endif %}
         </td>
     </tr>
@@ -333,7 +342,7 @@ $("#export-order").click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Purchase Order QR Code" escape %}',
-        '{{ order.barcode }}'
+        `{% clean_barcode order.barcode %}`
     );
 });
 

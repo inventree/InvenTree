@@ -3,11 +3,15 @@
 import base64
 import logging
 import os
+from datetime import date, datetime
 from decimal import Decimal
+from typing import Any, Optional
 
 from django import template
+from django.apps.registry import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models.query import QuerySet
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -28,7 +32,51 @@ logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
-def getindex(container: list, index: int):
+def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
+    """Filter a database queryset based on the provided keyword arguments.
+
+    Arguments:
+        queryset: The queryset to filter
+
+    Keyword Arguments:
+        field (any): Filter the queryset based on the provided field
+
+    Example:
+        {% filter_queryset companies is_supplier=True as suppliers %}
+    """
+    return queryset.filter(**kwargs)
+
+
+@register.simple_tag()
+def filter_db_model(model_name: str, **kwargs) -> QuerySet:
+    """Filter a database model based on the provided keyword arguments.
+
+    Arguments:
+        model_name: The name of the Django model - including app name (e.g. 'part.partcategory')
+
+    Keyword Arguments:
+        field (any): Filter the queryset based on the provided field
+
+    Example:
+        {% filter_db_model 'part.partcategory' is_template=True as template_parts %}
+    """
+    app_name, model_name = model_name.split('.')
+
+    try:
+        model = apps.get_model(app_name, model_name)
+    except Exception:
+        return None
+
+    if model is None:
+        return None
+
+    queryset = model.objects.all()
+
+    return filter_queryset(queryset, **kwargs)
+
+
+@register.simple_tag()
+def getindex(container: list, index: int) -> Any:
     """Return the value contained at the specified index of the list.
 
     This function is provideed to get around template rendering limitations.
@@ -55,7 +103,7 @@ def getindex(container: list, index: int):
 
 
 @register.simple_tag()
-def getkey(container: dict, key):
+def getkey(container: dict, key: str) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -82,7 +130,7 @@ def asset(filename):
         filename: Asset filename (relative to the 'assets' media directory)
 
     Raises:
-        FileNotFoundError if file does not exist
+        FileNotFoundError: If file does not exist
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -104,30 +152,31 @@ def asset(filename):
 
 @register.simple_tag()
 def uploaded_image(
-    filename,
-    replace_missing=True,
-    replacement_file='blank_image.png',
-    validate=True,
+    filename: str,
+    replace_missing: bool = True,
+    replacement_file: str = 'blank_image.png',
+    validate: bool = True,
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    rotate: Optional[float] = None,
     **kwargs,
-):
-    """Return a fully-qualified path for an 'uploaded' image.
+) -> str:
+    """Return raw image data from an 'uploaded' image.
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
         replace_missing: Optionally return a placeholder image if the provided filename does not exist (default = True)
         replacement_file: The filename of the placeholder image (default = 'blank_image.png')
-        validate: Optionally validate that the file is a valid image file (default = True)
-
-    kwargs:
-        width: Optional width of the image (default = None)
-        height: Optional height of the image (default = None)
+        validate: Optionally validate that the file is a valid image file
+        width: Optional width of the image
+        height: Optional height of the image
         rotate: Optional rotation to apply to the image
 
     Returns:
-        A fully qualified path to the image
+        Binary image data to be rendered directly in a <img> tag
 
     Raises:
-        FileNotFoundError if the file does not exist
+        FileNotFoundError: If the file does not exist
     """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -169,9 +218,6 @@ def uploaded_image(
         # A placeholder image showing that the image is missing
         img = Image.new('RGB', (64, 64), color='red')
 
-    width = kwargs.get('width', None)
-    height = kwargs.get('height', None)
-
     if width is not None:
         try:
             width = int(width)
@@ -190,16 +236,16 @@ def uploaded_image(
     elif width is not None:
         # Resize the image, width only
         wpercent = width / float(img.size[0])
-        hsize = int((float(img.size[1]) * float(wpercent)))
+        hsize = int(float(img.size[1]) * float(wpercent))
         img = img.resize((width, hsize))
     elif height is not None:
         # Resize the image, height only
         hpercent = height / float(img.size[1])
-        wsize = int((float(img.size[0]) * float(hpercent)))
+        wsize = int(float(img.size[0]) * float(hpercent))
         img = img.resize((wsize, height))
 
     # Optionally rotate the image
-    if rotate := kwargs.get('rotate', None):
+    if rotate is not None:
         try:
             rotate = int(rotate)
             img = img.rotate(rotate)
@@ -213,7 +259,7 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename):
+def encode_svg_image(filename: str) -> str:
     """Return a base64-encoded svg image data string."""
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
@@ -243,7 +289,7 @@ def encode_svg_image(filename):
 
 
 @register.simple_tag()
-def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
+def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwargs):
     """Return a fully-qualified path for a part image.
 
     Arguments:
@@ -252,7 +298,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
         thumbnail: Return the thumbnail image (default = False)
 
     Raises:
-        TypeError if provided part is not a Part instance
+        TypeError: If provided part is not a Part instance
     """
     if type(part) is not Part:
         raise TypeError(_('part_image tag requires a Part instance'))
@@ -268,7 +314,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
 
 
 @register.simple_tag()
-def part_parameter(part: Part, parameter_name: str):
+def part_parameter(part: Part, parameter_name: str) -> str:
     """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
@@ -284,7 +330,9 @@ def part_parameter(part: Part, parameter_name: str):
 
 
 @register.simple_tag()
-def company_image(company, preview=False, thumbnail=False, **kwargs):
+def company_image(
+    company: Company, preview: bool = False, thumbnail: bool = False, **kwargs
+) -> str:
     """Return a fully-qualified path for a company image.
 
     Arguments:
@@ -293,7 +341,7 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
         thumbnail: Return the thumbnail image (default = False)
 
     Raises:
-        TypeError if provided company is not a Company instance
+        TypeError: If provided company is not a Company instance
     """
     if type(company) is not Company:
         raise TypeError(_('company_image tag requires a Company instance'))
@@ -309,7 +357,7 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
 
 
 @register.simple_tag()
-def logo_image(**kwargs):
+def logo_image(**kwargs) -> str:
     """Return a fully-qualified path for the logo image.
 
     - If a custom logo has been provided, return a path to that logo
@@ -322,7 +370,7 @@ def logo_image(**kwargs):
 
 
 @register.simple_tag()
-def internal_link(link, text):
+def internal_link(link, text) -> str:
     """Make a <a></a> href which points to an InvenTree URL.
 
     Uses the InvenTree.helpers_model.construct_absolute_url function to build the URL.
@@ -396,13 +444,20 @@ def render_html_text(text: str, **kwargs):
 
 
 @register.simple_tag
-def format_number(number, **kwargs):
+def format_number(
+    number,
+    decimal_places: Optional[int] = None,
+    integer: bool = False,
+    leading: int = 0,
+    separator: Optional[str] = None,
+) -> str:
     """Render a number with optional formatting options.
 
-    kwargs:
+    Arguments:
         decimal_places: Number of decimal places to render
         integer: Boolean, whether to render the number as an integer
-        leading: Number of leading zeros
+        leading: Number of leading zeros (default = 0)
+        separator: Character to use as a thousands separator (default = None)
     """
     try:
         number = Decimal(str(number))
@@ -410,28 +465,28 @@ def format_number(number, **kwargs):
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
 
-    if kwargs.get('integer', False):
+    if integer:
         # Convert to integer
         number = Decimal(int(number))
 
     # Normalize the number (remove trailing zeroes)
     number = number.normalize()
 
-    decimals = kwargs.get('decimal_places', None)
-
-    if decimals is not None:
+    if decimal_places is not None:
         try:
-            decimals = int(decimals)
-            number = round(number, decimals)
+            decimal_places = int(decimal_places)
+            number = round(number, decimal_places)
         except ValueError:
             pass
 
     # Re-encode, and normalize again
     value = Decimal(number).normalize()
-    value = format(value, 'f')
-    value = str(value)
 
-    leading = kwargs.get('leading', None)
+    if separator:
+        value = f'{value:,}'
+        value = value.replace(',', separator)
+    else:
+        value = f'{value}'
 
     if leading is not None:
         try:
@@ -444,37 +499,39 @@ def format_number(number, **kwargs):
 
 
 @register.simple_tag
-def format_datetime(datetime, timezone=None, format=None):
+def format_datetime(
+    dt: datetime, timezone: Optional[str] = None, fmt: Optional[str] = None
+):
     """Format a datetime object for display.
 
     Arguments:
-        datetime: The datetime object to format
+        dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        format: The format string to use (defaults to ISO formatting)
+        fmt: The format string to use (defaults to ISO formatting)
     """
-    datetime = InvenTree.helpers.to_local_time(datetime, timezone)
+    dt = InvenTree.helpers.to_local_time(dt, timezone)
 
-    if format:
-        return datetime.strftime(format)
+    if fmt:
+        return dt.strftime(fmt)
     else:
-        return datetime.isoformat()
+        return dt.isoformat()
 
 
 @register.simple_tag
-def format_date(date, timezone=None, format=None):
+def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = None):
     """Format a date object for display.
 
     Arguments:
-        date: The date to format
+        dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        format: The format string to use (defaults to ISO formatting)
+        fmt: The format string to use (defaults to ISO formatting)
     """
-    date = InvenTree.helpers.to_local_time(date, timezone).date()
+    dt = InvenTree.helpers.to_local_time(dt, timezone).date()
 
-    if format:
-        return date.strftime(format)
+    if fmt:
+        return dt.strftime(fmt)
     else:
-        return date.isoformat()
+        return dt.isoformat()
 
 
 @register.simple_tag()

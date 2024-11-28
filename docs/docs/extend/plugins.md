@@ -83,7 +83,7 @@ The configuration entries must be enabled via the [InvenTree admin interface](..
 !!! warning "Disabled by Default"
     Newly discovered plugins are disabled by default, and must be manually enabled (in the admin interface) by a user with staff privileges.
 
-### Plugin Mixins
+## Plugin Mixins
 
 Common use cases are covered by pre-supplied modules in the form of *mixins* (similar to how [Django]({% include "django.html" %}/topics/class-based-views/mixins/) does it). Each mixin enables the integration into a specific area of InvenTree. Sometimes it also enhances the plugin with helper functions to supply often used functions out-of-the-box.
 
@@ -106,3 +106,11 @@ Supported mixin classes are:
 | [SettingsMixin](./plugins/settings.md) | Integrate user configurable settings |
 | [UrlsMixin](./plugins/urls.md) | Respond to custom URL endpoints |
 | [ValidationMixin](./plugins/validation.md) | Provide custom validation of database models |
+
+## Static Files
+
+If your plugin requires static files (e.g. CSS, JavaScript, images), these should be placed in the top level `static` directory within the distributed plugin package. These files will be automatically collected by InvenTree when the plugin is installed, and copied to an appropriate location.
+
+These files will be available to the InvenTree web interface, and can be accessed via the URL `/static/plugins/<plugin_name>/<filename>`. Static files are served by the [proxy server](../start/processes.md#proxy-server).
+
+For example, if the plugin is named `my_plugin`, and contains a file `CustomPanel.js`, it can be accessed via the URL `/static/plugins/my_plugin/CustomPanel.js`.

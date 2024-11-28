@@ -2,11 +2,17 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { api } from '../../App';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { RenderUser } from '../../components/render/User';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -15,10 +21,11 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { LocationColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import type { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -27,10 +34,10 @@ import { TableHoverCard } from '../TableHoverCard';
 export default function BuildOrderTestTable({
   buildId,
   partId
-}: {
+}: Readonly<{
   buildId: number;
   partId: number;
-}) {
+}>) {
   const table = useTable('build-tests');
   const user = useUserState();
 
@@ -66,7 +73,8 @@ export default function BuildOrderTestTable({
 
   const testResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
-    itemId: selectedOutput
+    itemId: selectedOutput,
+    templateId: selectedTemplate
   });
 
   const createTestResult = useCreateApiFormModal({
@@ -94,10 +102,10 @@ export default function BuildOrderTestTable({
         sortable: false,
         switchable: true,
         render: (record: any) => {
-          let tests = record.tests || [];
+          const tests = record.tests || [];
 
           // Find the most recent test result (highest primary key)
-          let test = tests
+          const test = tests
             .filter((test: any) => test.template == template.pk)
             .sort((a: any, b: any) => b.pk - a.pk)
             .shift();
@@ -105,13 +113,13 @@ export default function BuildOrderTestTable({
           // No test result recorded
           if (!test || test.result === undefined) {
             return (
-              <Group gap="xs" wrap="nowrap" justify="space-between">
-                <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+              <Group gap='xs' wrap='nowrap' justify='space-between'>
+                <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
                 <Tooltip label={t`Add Test Result`}>
                   <ActionIcon
-                    size="xs"
-                    color="green"
-                    variant="transparent"
+                    size='xs'
+                    color='green'
+                    variant='transparent'
                     onClick={() => {
                       setSelectedOutput(record.pk);
                       setSelectedTemplate(template.pk);
@@ -125,11 +133,11 @@ export default function BuildOrderTestTable({
             );
           }
 
-          let extra: ReactNode[] = [];
+          const extra: ReactNode[] = [];
 
           if (test.value) {
             extra.push(
-              <Text key="value" size="sm">
+              <Text key='value' size='sm'>
                 {t`Value`}: {test.value}
               </Text>
             );
@@ -137,7 +145,7 @@ export default function BuildOrderTestTable({
 
           if (test.notes) {
             extra.push(
-              <Text key="notes" size="sm">
+              <Text key='notes' size='sm'>
                 {t`Notes`}: {test.notes}
               </Text>
             );
@@ -145,14 +153,14 @@ export default function BuildOrderTestTable({
 
           if (test.date) {
             extra.push(
-              <Text key="date" size="sm">
+              <Text key='date' size='sm'>
                 {t`Date`}: {formatDate(test.date)}
               </Text>
             );
           }
 
           if (test.user_detail) {
-            extra.push(<RenderUser key="user" instance={test.user_detail} />);
+            extra.push(<RenderUser key='user' instance={test.user_detail} />);
           }
 
           return (
@@ -169,7 +177,7 @@ export default function BuildOrderTestTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     // Fixed columns
-    let columns: TableColumn[] = [
+    const columns: TableColumn[] = [
       {
         accessor: 'stock',
         title: t`Build Output`,
@@ -179,11 +187,11 @@ export default function BuildOrderTestTable({
           if (record.serial) {
             return `# ${record.serial}`;
           } else {
-            let extra: ReactNode[] = [];
+            const extra: ReactNode[] = [];
 
             if (record.batch) {
               extra.push(
-                <Text key="batch" size="sm">
+                <Text key='batch' size='sm'>
                   {t`Batch Code`}: {record.batch}
                 </Text>
               );
@@ -226,7 +234,7 @@ export default function BuildOrderTestTable({
   }, []);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [];
     },
     [user]

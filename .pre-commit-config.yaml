@@ -10,24 +10,25 @@ exclude: |
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.1
+    rev: v0.7.3
     hooks:
     - id: ruff-format
       args: [--preview]
     - id: ruff
       args: [
         --fix,
+        # --unsafe-fixes,
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.2.13
+    rev: 0.5.1
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -50,7 +51,7 @@ repos:
         args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
-    rev: v1.34.1
+    rev: v1.36.1
     hooks:
       - id: djlint-django
 - repo: https://github.com/codespell-project/codespell
@@ -68,28 +69,14 @@ repos:
           pyproject.toml |
           src/frontend/vite.config.ts |
       )$
-- repo: https://github.com/pre-commit/mirrors-prettier
-  rev: "v4.0.0-alpha.8"
-  hooks:
-    - id: prettier
-      files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
-      additional_dependencies:
-      - "prettier@^2.4.1"
-      - "@trivago/prettier-plugin-sort-imports"
-- repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.6.0"
-  hooks:
-  - id: eslint
-    additional_dependencies:
-      - eslint@^8.41.0
-      - eslint-config-google@^0.14.0
-      - eslint-plugin-react@6.10.3
-      - babel-eslint@6.1.2
-      - "@typescript-eslint/eslint-plugin@latest"
-      - "@typescript-eslint/parser"
-    files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
+-   repo: https://github.com/biomejs/pre-commit
+    rev: "v0.5.0"
+    hooks:
+    -   id: biome-check
+        additional_dependencies: ["@biomejs/biome@1.9.4"]
+        files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.4
+    rev: v8.21.2
     hooks:
     -   id: gitleaks
 #-   repo: https://github.com/jumanjihouse/pre-commit-hooks

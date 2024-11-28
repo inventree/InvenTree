@@ -28,6 +28,10 @@ database:
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Additional debug options
+debug_querycount: False
+debug_shell: False
+
 # Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
 #admin_enabled: True
 
@@ -38,8 +42,13 @@ debug: True
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
+# Configure if logs should be output in JSON format
+# Use environment variable INVENTREE_JSON_LOG
+json_log: False
 # Enable database-level logging, or use the environment variable INVENTREE_DB_LOGGING
 db_logging: False
+# Enable writing a log file, or use the environment variable INVENTREE_WRITE_LOG
+write_log: False
 
 # Select default system language , or use the environment variable INVENTREE_LANGUAGE
 language: en-us
@@ -114,10 +123,10 @@ use_x_forwarded_host: false
 # Override with the environment variable INVENTREE_USE_X_FORWARDED_PORT
 use_x_forwarded_port: false
 
-# Cookie settings
-cookie:
-  secure: false
-  samesite: none
+# Cookie settings (nominally the default settings should be fine)
+#cookie:
+#  secure: false
+#  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:

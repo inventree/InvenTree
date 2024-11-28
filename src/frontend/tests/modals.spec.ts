@@ -1,23 +1,23 @@
 import { test } from './baseFixtures.js';
 import { doQuickLogin } from './login.js';
 
-test('PUI - Modals as admin', async ({ page }) => {
+test('Modals as admin', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
   // use server info
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
-      name: 'Server Information About this Inventree instance'
+      name: 'Server Information About this InvenTree instance'
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
-  await page.getByRole('button', { name: 'Dismiss' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
 
   await page.waitForURL('**/platform/home');
 
   // use license info
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
       name: 'License Information Licenses for dependencies of the service'
@@ -44,7 +44,7 @@ test('PUI - Modals as admin', async ({ page }) => {
     .click();
 
   // use about
-  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
     .click();
@@ -52,12 +52,12 @@ test('PUI - Modals as admin', async ({ page }) => {
 
   await page.goto('./platform/');
 
-  // qr code modal
-  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  // Barcode scanning window
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByRole('banner').getByRole('button').click();
-  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByRole('button', { name: 'Close modal' }).click();
-  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.waitForTimeout(500);
   await page.getByRole('banner').getByRole('button').click();
 });

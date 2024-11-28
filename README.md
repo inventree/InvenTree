@@ -4,7 +4,7 @@
   <p>Open Source Inventory Management System </p>
 
 <!-- Badges -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
@@ -81,11 +81,25 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 </details>
 
 <details>
-  <summary>Client</summary>
+  <summary>Client - CUI</summary>
   <ul>
     <li><a href="https://getbootstrap.com/">Bootstrap</a></li>
     <li><a href="https://jquery.com/">jQuery</a></li>
     <li><a href="https://bootstrap-table.com/">Bootstrap-Table</a></li>
+  </ul>
+</details>
+
+<details>
+  <summary>Client - PUI</summary>
+  <ul>
+    <li><a href="https://react.dev/">React</a></li>
+    <li><a href="https://lingui.dev/">Lingui</a></li>
+    <li><a href="https://reactrouter.com/">React Router</a></li>
+    <li><a href="https://tanstack.com/query/">TanStack Query</a></li>
+    <li><a href="https://github.com/pmndrs/zustand">Zustand</a></li>
+    <li><a href="https://mantine.dev/">Mantine</a></li>
+    <li><a href="https://icflorescu.github.io/mantine-datatable/">Mantine Data Table</a></li>
+    <li><a href="https://codemirror.net/">CodeMirror</a></li>
   </ul>
 </details>
 
@@ -95,7 +109,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
     <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
     <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
     <li><a href="https://app.codecov.io/gh/inventree/InvenTree">Codecov</a></li>
-    <li><a href="https://app.deepsource.com/gh/inventree/InvenTree">DeepSource</a></li>
+    <li><a href="https://sonarcloud.io/project/overview?id=inventree_InvenTree">SonarCloud</a></li>
     <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
   </ul>
 </details>

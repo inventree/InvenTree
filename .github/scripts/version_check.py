@@ -89,7 +89,7 @@ def check_version_number(version_string, allow_duplicate=False):
 
         if release > version_tuple:
             highest_release = False
-            print(f'Found newer release: {str(release)}')
+            print(f'Found newer release: {release!s}')
 
     return highest_release
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     version = None
 
-    with open(version_file, 'r') as f:
+    with open(version_file, encoding='utf-8') as f:
         text = f.read()
 
         # Extract the InvenTree software version
@@ -175,10 +175,7 @@ if __name__ == '__main__':
             print(f"Version number '{version}' does not match tag '{version_tag}'")
             sys.exit
 
-        if highest_release:
-            docker_tags = [version_tag, 'stable']
-        else:
-            docker_tags = [version_tag]
+        docker_tags = [version_tag, 'stable'] if highest_release else [version_tag]
 
     elif GITHUB_REF_TYPE == 'branch':
         # Otherwise we know we are targeting the 'master' branch
@@ -202,7 +199,7 @@ if __name__ == '__main__':
     target_repos = [REPO.lower(), f'ghcr.io/{REPO.lower()}']
 
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
-    with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
+    with open(os.getenv('GITHUB_ENV'), 'a', encoding='utf-8') as env_file:
         # Construct tag string
         tag_list = [[f'{r}:{t}' for t in docker_tags] for r in target_repos]
         tags = ','.join(itertools.chain(*tag_list))

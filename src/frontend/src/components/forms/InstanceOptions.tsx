@@ -5,7 +5,7 @@ import { IconCheck } from '@tabler/icons-react';
 
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { HostList } from '../../states/states';
+import type { HostList } from '../../states/states';
 import { EditButton } from '../buttons/EditButton';
 import { HostOptionsForm } from './HostOptionsForm';
 
@@ -13,11 +13,11 @@ export function InstanceOptions({
   hostKey,
   ChangeHost,
   setHostEdit
-}: {
+}: Readonly<{
   hostKey: string;
   ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
-}) {
+}>) {
   const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);
   const [setHost, setHostList, hostList] = useLocalState((state) => [
     state.setHost,
@@ -85,10 +85,10 @@ export function InstanceOptions({
 function ServerInfo({
   hostList,
   hostKey
-}: {
+}: Readonly<{
   hostList: HostList;
   hostKey: string;
-}) {
+}>) {
   const [server] = useServerApiState((state) => [state.server]);
 
   return (

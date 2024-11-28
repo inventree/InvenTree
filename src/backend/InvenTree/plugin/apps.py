@@ -23,8 +23,6 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         """The ready method is extended to initialize plugins."""
-        # skip loading if we run in a background thread
-
         if not isInMainThread() and not isInWorkerThread():
             return
 

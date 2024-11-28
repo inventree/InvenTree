@@ -60,7 +60,7 @@
                 <tr>
                     <td><span class='fas fa-info'></span></td>
                     <td>{% trans "Status" %}</td>
-                    <td>{% status_label 'build' build.status %}</td>
+                    <td>{% display_status_label 'build' build.status_custom_key build.status %}</td>
                 </tr>
                 <tr>
                     <td><span class='fas fa-check-circle'></span></td>
@@ -267,21 +267,6 @@
     </div>
 </div>
 
-<div class='panel panel-hidden' id='panel-test-statistics'>
-    <div class='panel-heading'>
-        <h4>
-            {% trans "Build test statistics" %}
-        </h4>
-    </div>
-
-    <div class='panel-content'>
-        <div id='teststatistics-button-toolbar'>
-            {% include "filter_list.html" with id="buildteststatistics" %}
-        </div>
-        {% include "test_statistics_table.html" with prefix="build-" %}
-    </div>
-</div>
-
 <div class='panel panel-hidden' id='panel-attachments'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -388,6 +373,7 @@ onPanelLoad('outputs', function() {
         source_location: {{ build.take_from.pk }},
         {% endif %}
         tracked_parts: true,
+        testable: {% js_bool build.part.testable %},
         trackable: {% js_bool build.part.trackable %}
     };
 

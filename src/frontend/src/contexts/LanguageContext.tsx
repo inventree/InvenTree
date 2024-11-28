@@ -36,6 +36,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     it: t`Italian`,
     ja: t`Japanese`,
     ko: t`Korean`,
+    lt: t`Lithuanian`,
     lv: t`Latvian`,
     nl: t`Dutch`,
     no: t`Norwegian`,
@@ -56,7 +57,9 @@ export const getSupportedLanguages = (): Record<string, string> => {
   };
 };
 
-export function LanguageContext({ children }: { children: JSX.Element }) {
+export function LanguageContext({
+  children
+}: Readonly<{ children: JSX.Element }>) {
   const [language] = useLocalState((state) => [state.language]);
   const [server] = useServerApiState((state) => [state.server]);
 
@@ -82,7 +85,7 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
          * - Server default locale
          * - en-us (backup)
          */
-        let locales: (string | undefined)[] = [];
+        const locales: (string | undefined)[] = [];
 
         if (language != 'pseudo-LOCALE') {
           locales.push(language);
@@ -97,7 +100,7 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         }
 
         // Ensure that the locales are properly formatted
-        let new_locales = locales
+        const new_locales = locales
           .map((locale) => locale?.replaceAll('_', '-').toLowerCase())
           .join(', ');
 

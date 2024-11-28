@@ -40,13 +40,14 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { CameraDevice } from 'html5-qrcode/camera/core';
+import type { CameraDevice } from 'html5-qrcode/camera/core';
 import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
+import PageTitle from '../../components/nav/PageTitle';
 import { RenderInstance } from '../../components/render/Instance';
 import { ModelInformationDict } from '../../components/render/ModelType';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -55,7 +56,7 @@ import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 
-interface ScanItem {
+export interface ScanItem {
   id: string;
   ref: string;
   data: any;
@@ -159,10 +160,10 @@ export default function Scan() {
 
         // Fetch instance data
         if (item.model && item.pk) {
-          let model_info = ModelInformationDict[item.model];
+          const model_info = ModelInformationDict[item.model];
 
-          if (model_info && model_info.api_endpoint) {
-            let url = apiUrl(model_info.api_endpoint, item.pk);
+          if (model_info?.api_endpoint) {
+            const url = apiUrl(model_info.api_endpoint, item.pk);
 
             api
               .get(url)
@@ -217,12 +218,26 @@ export default function Scan() {
     { value: InputMethod.ImageBarcode, label: t`Image Barcode` }
   ];
 
-  const inp = (function () {
+  const inp = (() => {
     switch (inputValue) {
       case InputMethod.Manual:
         return <InputManual action={addItems} />;
       case InputMethod.ImageBarcode:
-        return <InputImageBarcode action={addItems} />;
+        return (
+          <InputImageBarcode
+            action={(decodedText: string) => {
+              addItems([
+                {
+                  id: randomId(),
+                  ref: decodedText,
+                  data: decodedText,
+                  timestamp: new Date(),
+                  source: InputMethod.ImageBarcode
+                }
+              ]);
+            }}
+          />
+        );
       default:
         return <Text>No input selected</Text>;
     }
@@ -243,28 +258,28 @@ export default function Scan() {
     if (uniqueObjectTypes.length === 0) {
       return (
         <Group gap={0}>
-          <IconQuestionMark color="orange" />
+          <IconQuestionMark color='orange' />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
     } else if (uniqueObjectTypes.length > 1) {
       return (
         <Group gap={0}>
-          <IconAlertCircle color="orange" />
+          <IconAlertCircle color='orange' />
           <Trans>Multiple object types selected</Trans>
         </Group>
       );
     }
     return (
       <>
-        <Text fz="sm" c="dimmed">
+        <Text fz='sm' c='dimmed'>
           <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
         </Text>
         <Group>
           <ActionIcon
             onClick={notYetImplemented}
             title={t`Count`}
-            variant="default"
+            variant='default'
           >
             <IconNumber />
           </ActionIcon>
@@ -276,8 +291,9 @@ export default function Scan() {
   // rendering
   return (
     <>
-      <Group justify="space-between">
-        <Group justify="left">
+      <PageTitle title={t`Barcode Scanning`} />
+      <Group justify='space-between'>
+        <Group justify='left'>
           <StylishText>
             <Trans>Scan Page</Trans>
           </StylishText>
@@ -287,8 +303,8 @@ export default function Scan() {
         </Group>
         <Button
           onClick={toggleFullscreen}
-          size="sm"
-          variant="subtle"
+          size='sm'
+          variant='subtle'
           title={t`Toggle Fullscreen`}
         >
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
@@ -298,8 +314,8 @@ export default function Scan() {
       <Grid maw={'100%'}>
         <Grid.Col span={4}>
           <Stack>
-            <Stack gap="xs">
-              <Group justify="space-between">
+            <Stack gap='xs'>
+              <Group justify='space-between'>
                 <TitleWithDoc
                   order={3}
                   text={t`Select the input method you want to use to scan items.`}
@@ -333,15 +349,15 @@ export default function Scan() {
                   <Text>
                     <Trans>{selection.length} items selected</Trans>
                   </Text>
-                  <Text fz="sm" c="dimmed">
+                  <Text fz='sm' c='dimmed'>
                     <Trans>General Actions</Trans>
                   </Text>
                   <Group>
                     <ActionIcon
-                      color="red"
+                      color='red'
                       onClick={btnDeleteHistory}
                       title={t`Delete`}
-                      variant="default"
+                      variant='default'
                     >
                       <IconTrash />
                     </ActionIcon>
@@ -349,7 +365,7 @@ export default function Scan() {
                       onClick={btnRunSelectedBarcode}
                       disabled={selection.length > 1}
                       title={t`Lookup part`}
-                      variant="default"
+                      variant='default'
                     >
                       <IconSearch />
                     </ActionIcon>
@@ -357,7 +373,7 @@ export default function Scan() {
                       onClick={btnOpenSelectedLink}
                       disabled={!selectionLinked}
                       title={t`Open Link`}
-                      variant="default"
+                      variant='default'
                     >
                       <IconLink />
                     </ActionIcon>
@@ -369,7 +385,7 @@ export default function Scan() {
           </Stack>
         </Grid.Col>
         <Grid.Col span={8}>
-          <Group justify="space-between">
+          <Group justify='space-between'>
             <TitleWithDoc
               order={3}
               text={t`History is locally kept in this browser.`}
@@ -378,9 +394,9 @@ export default function Scan() {
               <Trans>History</Trans>
             </TitleWithDoc>
             <ActionIcon
-              color="red"
+              color='red'
               onClick={btnDeleteFullHistory}
-              variant="default"
+              variant='default'
               title={t`Delete History`}
             >
               <IconTrash />
@@ -401,11 +417,11 @@ function HistoryTable({
   data,
   selection,
   setSelection
-}: {
+}: Readonly<{
   data: ScanItem[];
   selection: string[];
   setSelection: React.Dispatch<React.SetStateAction<string[]>>;
-}) {
+}>) {
   const toggleRow = (id: string) =>
     setSelection((current) =>
       current.includes(id)
@@ -451,7 +467,7 @@ function HistoryTable({
     );
   return (
     <ScrollArea>
-      <Table miw={800} verticalSpacing="sm">
+      <Table miw={800} verticalSpacing='sm'>
         <thead>
           <tr>
             <th style={{ width: rem(40) }}>
@@ -489,8 +505,13 @@ enum InputMethod {
   ImageBarcode = 'imageBarcode'
 }
 
-interface ScanInputInterface {
+export interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
+}
+
+interface BarcodeInputProps {
+  action: (decodedText: string) => void;
+  notScanningPlaceholder?: string;
 }
 
 function InputManual({ action }: Readonly<ScanInputInterface>) {
@@ -530,13 +551,13 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
           onChange={(event) => setValue(event.currentTarget.value)}
           onKeyDown={getHotkeyHandler([['Enter', btnAddItem]])}
         />
-        <ActionIcon onClick={btnAddItem} w={16} variant="default">
+        <ActionIcon onClick={btnAddItem} w={16} variant='default'>
           <IconPlus />
         </ActionIcon>
       </Group>
 
       {IS_DEV_OR_DEMO && (
-        <Button onClick={btnAddDummyItem} variant="outline">
+        <Button onClick={btnAddDummyItem} variant='outline'>
           <Trans>Add dummy item</Trans>
         </Button>
       )}
@@ -545,7 +566,10 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
+export function InputImageBarcode({
+  action,
+  notScanningPlaceholder = t`Start scanning by selecting a camera and pressing the play button.`
+}: Readonly<BarcodeInputProps>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
@@ -557,7 +581,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
 
-  let lastValue: string = '';
+  let lastValue = '';
 
   // Mount QR code once we are loaded
   useEffect(() => {
@@ -601,15 +625,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
     lastValue = decodedText;
 
     // submit value upstream
-    action([
-      {
-        id: randomId(),
-        ref: decodedText,
-        data: decodedText,
-        timestamp: new Date(),
-        source: InputMethod.ImageBarcode
-      }
-    ]);
+    action(decodedText);
 
     qrCodeScanner?.resume();
   }
@@ -713,30 +729,33 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   }, [cameraValue]);
 
   return (
-    <Stack gap="xs">
-      <Group gap="xs">
+    <Stack gap='xs'>
+      <Group gap='xs' preventGrowOverflow>
         <Select
           value={cameraValue}
           onChange={setCameraValue}
           data={cameras.map((device) => {
             return { value: device.id, label: device.label };
           })}
-          size="sm"
+          maw={200}
+          size='sm'
         />
         {scanningEnabled ? (
           <ActionIcon
+            size='input-sm'
             onClick={btnStopScanning}
             title={t`Stop scanning`}
-            variant="default"
+            variant='default'
           >
             <IconPlayerStopFilled />
           </ActionIcon>
         ) : (
           <ActionIcon
+            size='input-sm'
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
-            variant="default"
+            variant='default'
           >
             <IconPlayerPlayFilled />
           </ActionIcon>
@@ -746,7 +765,13 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           {scanningEnabled ? t`Scanning` : t`Not scanning`}
         </Badge>
       </Group>
-      <Container px={0} id="reader" w={'100%'} mih="300px" />
+      {scanningEnabled ? (
+        <Container px={0} id='reader' w={'100%'} mih='300px' />
+      ) : (
+        <Container px={0} id='reader' w={'100%'} mih='300px'>
+          {notScanningPlaceholder}
+        </Container>
+      )}
       {!camId && (
         <Button onClick={btnSelectCamera}>
           <Trans>Select Camera</Trans>

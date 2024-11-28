@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Sum, Q
+from django.db.models import F, Sum, Q
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -24,6 +24,7 @@ from rest_framework import serializers
 from build.status_codes import BuildStatus, BuildStatusGroups
 from stock.status_codes import StockStatus, StockHistoryCode
 
+from build.filters import annotate_allocated_quantity
 from build.validators import generate_next_build_reference, validate_build_order_reference
 from generic.states import StateTransitionMixin
 
@@ -43,6 +44,7 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
+import generic.states
 
 
 logger = logging.getLogger('inventree')
@@ -123,8 +125,7 @@ class Build(
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
-        self.validate_reference_field(self.reference)
-        self.reference_int = self.rebuild_reference_field(self.reference)
+        self.reference_int = self.validate_reference_field(self.reference)
 
         # Check part when initially creating the build order
         if not self.pk or self.has_field_changed('part'):
@@ -269,8 +270,6 @@ class Build(
         related_name='builds',
         limit_choices_to={
             'assembly': True,
-            'active': True,
-            'virtual': False,
         },
         help_text=_('Select part to build'),
     )
@@ -315,7 +314,7 @@ class Build(
         help_text=_('Number of stock items which have been completed')
     )
 
-    status = models.PositiveIntegerField(
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
         verbose_name=_('Build Status'),
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
@@ -646,7 +645,8 @@ class Build(
         if not InvenTree.tasks.offload_task(
             build.tasks.complete_build_allocations,
             self.pk,
-            user.pk if user else None
+            user.pk if user else None,
+            group='build'
         ):
             raise ValidationError(_("Failed to offload task to complete build allocations"))
 
@@ -773,7 +773,8 @@ class Build(
             if not InvenTree.tasks.offload_task(
                 build.tasks.complete_build_allocations,
                 self.pk,
-                user.pk if user else None
+                user.pk if user else None,
+                group='build',
             ):
                 raise ValidationError(_("Failed to offload task to complete build allocations"))
 
@@ -833,6 +834,16 @@ class Build(
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
         """
+
+        trackable_parts = self.part.get_trackable_parts()
+
+        # Create (and cache) a map of valid parts for allocation
+        valid_parts = {}
+
+        for bom_item in trackable_parts:
+            parts = bom_item.get_valid_parts_for_allocation()
+            valid_parts[bom_item.pk] = list([part.pk for part in parts])
+
         user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
         location = kwargs.get('location', None)
@@ -842,81 +853,56 @@ class Build(
         if location is None:
             location = self.destination or self.part.get_default_location()
 
-        """
-        Determine if we can create a single output (with quantity > 0),
-        or multiple outputs (with quantity = 1)
-        """
+        if self.part.has_trackable_parts and not serials:
+            raise ValidationError({
+                'serials': _("Serial numbers must be provided for trackable parts")
+            })
 
-        def _add_tracking_entry(output, user):
-            """Helper function to add a tracking entry to the newly created output"""
-            deltas = {
-                'quantity': float(output.quantity),
-                'buildorder': self.pk,
-            }
-
-            if output.batch:
-                deltas['batch'] = output.batch
-
-            if output.serial:
-                deltas['serial'] = output.serial
-
-            if output.location:
-                deltas['location'] = output.location.pk
-
-            output.add_tracking_entry(StockHistoryCode.BUILD_OUTPUT_CREATED, user, deltas)
-
-        multiple = False
-
-        # Serial numbers are provided? We need to split!
+        # We are generating multiple serialized outputs
         if serials:
-            multiple = True
-
-        # BOM has trackable parts, so we must split!
-        if self.part.has_trackable_parts:
-            multiple = True
-
-        if multiple:
             """Create multiple build outputs with a single quantity of 1."""
 
-            # Quantity *must* be an integer at this point!
-            quantity = int(quantity)
+            # Create tracking entries for each item
+            tracking = []
+            allocations = []
 
-            for ii in range(quantity):
+            outputs = stock.models.StockItem._create_serial_numbers(
+                serials,
+                part=self.part,
+                build=self,
+                batch=batch,
+                location=location,
+                is_building=True
+            )
 
-                if serials:
-                    serial = serials[ii]
-                else:
-                    serial = None
+            for output in outputs:
+                # Generate a new historical tracking entry
+                if entry := output.add_tracking_entry(
+                    StockHistoryCode.BUILD_OUTPUT_CREATED,
+                    user,
+                    deltas={
+                        'quantity': 1,
+                        'buildorder': self.pk,
+                        'batch': output.batch,
+                        'serial': output.serial,
+                        'location': location.pk if location else None
+                    },
+                    commit=False
+                ):
+                    tracking.append(entry)
 
-                output = stock.models.StockItem.objects.create(
-                    quantity=1,
-                    location=location,
-                    part=self.part,
-                    build=self,
-                    batch=batch,
-                    serial=serial,
-                    is_building=True,
-                )
+                # Auto-allocate stock based on serial number
+                if auto_allocate:
 
-                _add_tracking_entry(output, user)
-
-                if auto_allocate and serial is not None:
-
-                    # Get a list of BomItem objects which point to "trackable" parts
-
-                    for bom_item in self.part.get_trackable_parts():
-
-                        parts = bom_item.get_valid_parts_for_allocation()
+                    for bom_item in trackable_parts:
+                        valid_part_ids = valid_parts.get(bom_item.pk, [])
 
                         items = stock.models.StockItem.objects.filter(
-                            part__in=parts,
-                            serial=str(serial),
+                            part__pk__in=valid_part_ids,
+                            serial=output.serial,
                             quantity=1,
                         ).filter(stock.models.StockItem.IN_STOCK_FILTER)
 
-                        """
-                        Test if there is a matching serial number!
-                        """
                         if items.exists() and items.count() == 1:
                             stock_item = items[0]
 
@@ -928,14 +914,22 @@ class Build(
                                 )
 
                                 # Allocate the stock items against the BuildLine
-                                BuildItem.objects.create(
-                                    build_line=build_line,
-                                    stock_item=stock_item,
-                                    quantity=1,
-                                    install_into=output,
+                                allocations.append(
+                                    BuildItem(
+                                        build_line=build_line,
+                                        stock_item=stock_item,
+                                        quantity=1,
+                                        install_into=output,
+                                    )
                                 )
                             except BuildLine.DoesNotExist:
                                 pass
+
+            # Bulk create tracking entries
+            stock.models.StockItemTracking.objects.bulk_create(tracking)
+
+            # Generate stock allocations
+            BuildItem.objects.bulk_create(allocations)
 
         else:
             """Create a single build output of the given quantity."""
@@ -949,7 +943,16 @@ class Build(
                 is_building=True
             )
 
-            _add_tracking_entry(output, user)
+            output.add_tracking_entry(
+                StockHistoryCode.BUILD_OUTPUT_CREATED,
+                user,
+                deltas={
+                    'quantity': float(quantity),
+                    'buildorder': self.pk,
+                    'batch': batch,
+                    'location': location.pk if location else None
+                }
+            )
 
         if self.status == BuildStatus.PENDING:
             self.status = BuildStatus.PRODUCTION.value
@@ -986,12 +989,13 @@ class Build(
         items_to_save = []
         items_to_delete = []
 
-        lines = self.untracked_line_items
-        lines = lines.prefetch_related('allocations')
+        lines = self.untracked_line_items.all()
+        lines = lines.exclude(bom_item__consumable=True)
+        lines = annotate_allocated_quantity(lines)
 
         for build_line in lines:
 
-            reduce_by = build_line.allocated_quantity() - build_line.quantity
+            reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
                 continue
@@ -1289,18 +1293,20 @@ class Build(
         """Returns a list of BuildLine objects which have not been fully allocated."""
         lines = self.build_lines.all()
 
+        # Remove any 'consumable' line items
+        lines = lines.exclude(bom_item__consumable=True)
+
         if tracked is True:
             lines = lines.filter(bom_item__sub_part__trackable=True)
         elif tracked is False:
             lines = lines.filter(bom_item__sub_part__trackable=False)
 
-        unallocated_lines = []
+        lines = annotate_allocated_quantity(lines)
 
-        for line in lines:
-            if not line.is_fully_allocated():
-                unallocated_lines.append(line)
+        # Filter out any lines which have been fully allocated
+        lines = lines.filter(allocated__lt=F('quantity'))
 
-        return unallocated_lines
+        return lines
 
     def is_fully_allocated(self, tracked=None):
         """Test if the BuildOrder has been fully allocated.
@@ -1313,19 +1319,24 @@ class Build(
         Returns:
             True if the BuildOrder has been fully allocated, otherwise False
         """
-        lines = self.unallocated_lines(tracked=tracked)
-        return len(lines) == 0
+
+        return self.unallocated_lines(tracked=tracked).count() == 0
 
     def is_output_fully_allocated(self, output):
         """Determine if the specified output (StockItem) has been fully allocated for this build
 
         Args:
-            output: StockItem object
+            output: StockItem object (the "in production" output to test against)
 
         To determine if the output has been fully allocated,
         we need to test all "trackable" BuildLine objects
         """
-        for line in self.build_lines.filter(bom_item__sub_part__trackable=True):
+
+        lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
+        lines = lines.exclude(bom_item__consumable=True)
+
+        # Find any lines which have not been fully allocated
+        for line in lines:
             # Grab all BuildItem objects which point to this output
             allocations = BuildItem.objects.filter(
                 build_line=line,
@@ -1349,11 +1360,14 @@ class Build(
         Returns:
             True if any BuildLine has been over-allocated.
         """
-        for line in self.build_lines.all():
-            if line.is_overallocated():
-                return True
 
-        return False
+        lines = self.build_lines.all().exclude(bom_item__consumable=True)
+        lines = annotate_allocated_quantity(lines)
+
+        # Find any lines which have been over-allocated
+        lines = lines.filter(allocated__gt=F('quantity'))
+
+        return lines.count() > 0
 
     @property
     def is_active(self):
@@ -1434,7 +1448,11 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.create_build_line_items()
 
             # Run checks on required parts
-            InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
+            InvenTree.tasks.offload_task(
+                build_tasks.check_build_stock,
+                instance,
+                group='build'
+            )
 
             # Notify the responsible users that the build order has been created
             InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
@@ -1594,12 +1612,19 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
                 })
 
-            # Allocated quantity cannot cause the stock item to be over-allocated
+            # Ensure that we do not 'over allocate' a stock item
             available = decimal.Decimal(self.stock_item.quantity)
-            allocated = decimal.Decimal(self.stock_item.allocation_count())
             quantity = decimal.Decimal(self.quantity)
+            build_allocation_count = decimal.Decimal(self.stock_item.build_allocation_count(
+                exclude_allocations={'pk': self.pk}
+            ))
+            sales_allocation_count = decimal.Decimal(self.stock_item.sales_order_allocation_count())
 
-            if available - allocated + quantity < quantity:
+            total_allocation = (
+                build_allocation_count + sales_allocation_count + quantity
+            )
+
+            if total_allocation > available:
                 raise ValidationError({
                     'quantity': _('Stock item is over-allocated')
                 })
@@ -1691,6 +1716,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
         - If the referenced part is *not* trackable, the stock item will be *consumed* by the build order
+
+        TODO: This is quite expensive (in terms of number of database hits) - and requires some thought
+
         """
         item = self.stock_item
 
@@ -1722,6 +1750,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         else:
             # Mark the item as "consumed" by the build order
             item.consumed_by = self.build
+            item.location = None
             item.save(add_note=False)
 
             item.add_tracking_entry(

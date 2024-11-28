@@ -1,5 +1,6 @@
 """Custom management command to prerender files."""
 
+import logging
 import os
 
 from django.conf import settings
@@ -8,6 +9,8 @@ from django.http.request import HttpRequest
 from django.template.loader import render_to_string
 from django.utils.module_loading import import_string
 from django.utils.translation import override as lang_over
+
+logger = logging.getLogger('inventree')
 
 
 def render_file(file_name, source, target, locales, ctx):
@@ -19,10 +22,11 @@ def render_file(file_name, source, target, locales, ctx):
 
         target_file = os.path.join(target, locale + '.' + file_name)
 
-        with open(target_file, 'w') as localised_file:
-            with lang_over(locale):
-                rendered = render_to_string(os.path.join(source, file_name), ctx)
-                localised_file.write(rendered)
+        with open(target_file, 'w', encoding='utf-8') as localised_file, lang_over(
+            locale
+        ):
+            rendered = render_to_string(os.path.join(source, file_name), ctx)
+            localised_file.write(rendered)
 
 
 class Command(BaseCommand):
@@ -30,6 +34,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Django command to prerender files."""
+        if not settings.ENABLE_CLASSIC_FRONTEND:
+            logger.info('Classic frontend is disabled. Skipping prerendering.')
+            return
+
         # static directories
         LC_DIR = settings.LOCALE_PATHS[0]
         SOURCE_DIR = settings.STATICFILES_I18_SRC

@@ -61,7 +61,7 @@ A *contact* can be assigned to orders, (such as [purchase orders](./purchase_ord
 
 A company can have multiple registered addresses for use with all types of orders.
 An address is broken down to internationally recognised elements that are designed to allow for formatting an address according to user needs.
-Addresses are composed differently across the world, and Inventree reflects this by splitting addresses into components:
+Addresses are composed differently across the world, and InvenTree reflects this by splitting addresses into components:
 - Line 1: Main street address
 - Line 2: Extra street address line
 - Postal Code: Also known as ZIP code, this is normally a number 3-5 digits in length

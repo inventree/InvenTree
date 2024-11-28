@@ -188,6 +188,9 @@ function partFields(options={}) {
             default: global_settings.PART_TEMPLATE,
             group: 'attributes',
         },
+        testable: {
+            group: 'attributes',
+        },
         trackable: {
             default: global_settings.PART_TRACKABLE,
             group: 'attributes',
@@ -1353,6 +1356,19 @@ function partParameterFields(options={}) {
                                         display_name: choice,
                                     });
                                 });
+                            } else if (response.selectionlist) {
+                                // Selection list - get choices from the API
+                                inventreeGet(`{% url "api-selectionlist-list" %}${response.selectionlist}/`, {}, {
+                                    async: false,
+                                    success: function(data) {
+                                        data.choices.forEach(function(item) {
+                                            choices.push({
+                                                value: item.value,
+                                                display_name: item.label,
+                                            });
+                                        });
+                                    }
+                                });
                             }
                         }
                     });
@@ -1573,6 +1589,7 @@ function partParameterTemplateFields() {
             icon: 'fa-th-list',
         },
         checkbox: {},
+        selectionlist: {},
     };
 }
 
@@ -1758,7 +1775,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     var html = renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
-                        order.status,
+                        order.status_custom_key,
                         {
                             classes: 'float-right',
                         }
@@ -3075,10 +3092,26 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         quantity_string += makeIconBadge('fa-question-circle icon-blue', '{% trans "Speculative" %}');
                     }
 
+                    let url = '#';
+
+                    switch (entry.model) {
+                    case 'salesorder':
+                        url = `/order/sales-order/${entry.model_id}/`;
+                        break;
+                    case 'purchaseorder':
+                        url = `/order/purchase-order/${entry.model_id}/`;
+                        break;
+                    case 'build':
+                        url = `/build/${entry.model_id}/`;
+                        break;
+                    default:
+                        break;
+                    }
+
                     // Add an entry to the scheduling table
                     table_html += `
                         <tr>
-                            <td><a href="${entry.url}">${entry.label}</a></td>
+                            <td><a href="${url}">${entry.label}</a></td>
                             <td>${entry.title}</td>
                             <td>${date_string}</td>
                             <td>${quantity_string}</td>

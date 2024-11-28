@@ -15,8 +15,6 @@ else:
     class SettingsKeyType:
         """Dummy class, so that python throws no error."""
 
-        pass
-
 
 class SettingsMixin:
     """Mixin that enables global settings for the plugin."""
@@ -107,3 +105,32 @@ class SettingsMixin:
         return PluginSetting.check_all_settings(
             settings_definition=self.settings, plugin=self.plugin_config()
         )
+
+    def get_settings_dict(self) -> dict:
+        """Return a dictionary of all settings for this plugin.
+
+        - For each setting, return <key>: <value> pair.
+        - If the setting is not defined, return the default value (if defined).
+
+        Returns:
+            dict: Dictionary of all settings for this plugin
+        """
+        from plugin.models import PluginSetting
+
+        keys = self.settings.keys()
+
+        settings = PluginSetting.objects.filter(
+            plugin=self.plugin_config(), key__in=keys
+        )
+
+        settings_dict = {}
+
+        for setting in settings:
+            settings_dict[setting.key] = setting.value
+
+        # Add any missing settings
+        for key in keys:
+            if key not in settings_dict:
+                settings_dict[key] = self.settings[key].get('default')
+
+        return settings_dict

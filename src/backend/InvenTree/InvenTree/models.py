@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime
+from string import Formatter
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -10,8 +11,10 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
+from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
@@ -313,8 +316,9 @@ class ReferenceIndexingMixin(models.Model):
 
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
+        - The '?' key is required to accept our wildcard-with-default syntax {?:default}
         """
-        return {'ref': cls.get_next_reference(), 'date': datetime.now()}
+        return {'ref': cls.get_next_reference(), 'date': datetime.now(), '?': '?'}
 
     @classmethod
     def get_most_recent_item(cls):
@@ -361,8 +365,18 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern."""
-        fmt = cls.get_reference_pattern()
+
+        # Based on https://stackoverflow.com/a/57570269/14488558
+        class ReferenceFormatter(Formatter):
+            def format_field(self, value, format_spec):
+                if isinstance(value, str) and value == '?':
+                    value = format_spec
+                    format_spec = ''
+                return super().format_field(value, format_spec)
+
+        ref_ptn = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
+        fmt = ReferenceFormatter()
 
         reference = None
 
@@ -370,7 +384,7 @@ class ReferenceIndexingMixin(models.Model):
 
         while reference is None:
             try:
-                ref = fmt.format(**ctx)
+                ref = fmt.format(ref_ptn, **ctx)
 
                 if ref in attempts:
                     # We are stuck in a loop!
@@ -390,10 +404,7 @@ class ReferenceIndexingMixin(models.Model):
             except Exception:
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
-                if recent:
-                    reference = recent.reference
-                else:
-                    reference = ''
+                reference = recent.reference if recent else ''
 
         return reference
 
@@ -410,14 +421,14 @@ class ReferenceIndexingMixin(models.Model):
             })
 
         # Check that only 'allowed' keys are provided
-        for key in info.keys():
-            if key not in ctx.keys():
+        for key in info:
+            if key not in ctx:
                 raise ValidationError({
                     'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
-        if 'ref' not in info.keys():
+        if 'ref' not in info:
             raise ValidationError({
                 'value': _('Missing required format key') + ": 'ref'"
             })
@@ -442,7 +453,7 @@ class ReferenceIndexingMixin(models.Model):
             )
 
         # Check that the reference field can be rebuild
-        cls.rebuild_reference_field(value, validate=True)
+        return cls.rebuild_reference_field(value, validate=True)
 
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):
@@ -859,7 +870,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Returns:
             List of category names from the top level to this category
         """
-        return self.parentpath + [self]
+        return [*self.parentpath, self]
 
     def get_path(self):
         """Return a list of element in the item tree.
@@ -1054,6 +1065,71 @@ class InvenTreeBarcodeMixin(models.Model):
         self.save()
 
 
+def notify_staff_users_of_error(instance, label: str, context: dict):
+    """Helper function to notify staff users of an error."""
+    import common.models
+    import common.notifications
+
+    try:
+        # Get all staff users
+        staff_users = get_user_model().objects.filter(is_staff=True)
+
+        target_users = []
+
+        # Send a notification to each staff user (unless they have disabled error notifications)
+        for user in staff_users:
+            if common.models.InvenTreeUserSetting.get_setting(
+                'NOTIFICATION_ERROR_REPORT', True, user=user
+            ):
+                target_users.append(user)
+
+        if len(target_users) > 0:
+            common.notifications.trigger_notification(
+                instance,
+                label,
+                context=context,
+                targets=target_users,
+                delivery_methods={common.notifications.UIMessageNotification},
+            )
+
+    except Exception as exc:
+        # We do not want to throw an exception while reporting an exception!
+        logger.error(exc)
+
+
+@receiver(post_save, sender=Task, dispatch_uid='failure_post_save_notification')
+def after_failed_task(sender, instance: Task, created: bool, **kwargs):
+    """Callback when a new task failure log is generated."""
+    from django.conf import settings
+
+    max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
+    n = instance.attempt_count
+
+    # Only notify once the maximum number of attempts has been reached
+    if not instance.success and n >= max_attempts:
+        try:
+            url = InvenTree.helpers_model.construct_absolute_url(
+                reverse(
+                    'admin:django_q_failure_change', kwargs={'object_id': instance.pk}
+                )
+            )
+        except (ValueError, NoReverseMatch):
+            url = ''
+
+        notify_staff_users_of_error(
+            instance,
+            'inventree.task_failure',
+            {
+                'failure': instance,
+                'name': _('Task Failure'),
+                'message': _(
+                    f"Background worker task '{instance.func}' failed after {n} attempts"
+                ),
+                'link': url,
+            },
+        )
+
+
 @receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')
 def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """Callback when a server error is logged.
@@ -1062,41 +1138,21 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """
     if created:
         try:
-            import common.models
-            import common.notifications
-
-            users = get_user_model().objects.filter(is_staff=True)
-
-            link = InvenTree.helpers_model.construct_absolute_url(
+            url = InvenTree.helpers_model.construct_absolute_url(
                 reverse(
                     'admin:error_report_error_change', kwargs={'object_id': instance.pk}
                 )
             )
+        except NoReverseMatch:
+            url = ''
 
-            context = {
+        notify_staff_users_of_error(
+            instance,
+            'inventree.error_log',
+            {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': link,
-            }
-
-            target_users = []
-
-            for user in users:
-                if common.models.InvenTreeUserSetting.get_setting(
-                    'NOTIFICATION_ERROR_REPORT', True, user=user
-                ):
-                    target_users.append(user)
-
-            if len(target_users) > 0:
-                common.notifications.trigger_notification(
-                    instance,
-                    'inventree.error_log',
-                    context=context,
-                    targets=target_users,
-                    delivery_methods={common.notifications.UIMessageNotification},
-                )
-
-        except Exception as exc:
-            """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)  # noqa: LOG005
+                'link': url,
+            },
+        )

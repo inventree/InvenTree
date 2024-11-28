@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**
@@ -19,7 +19,7 @@ export function RenderBuildOrder(
       primary={instance.reference}
       secondary={instance.title}
       suffix={StatusRenderer({
-        status: instance.status,
+        status: instance.status_custom_key,
         type: ModelType.build
       })}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
@@ -39,7 +39,7 @@ export function RenderBuildLine({
       primary={instance.part_detail.full_name}
       secondary={instance.quantity}
       suffix={StatusRenderer({
-        status: instance.status,
+        status: instance.status_custom_key,
         type: ModelType.build
       })}
       image={instance.part_detail.thumbnail || instance.part_detail.image}

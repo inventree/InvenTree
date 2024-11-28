@@ -1,6 +1,7 @@
 """Provides a JSON API for common components."""
 
 import json
+from typing import Type
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -19,6 +20,7 @@ from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
+from pint._typing import UnitLike
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser
@@ -27,9 +29,10 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+import InvenTree.conversion
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
-from generic.states.api import AllStatusViews, StatusView
+from generic.states.api import urlpattern as generic_states_api_urls
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
@@ -47,7 +50,7 @@ from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
 
-class CsrfExemptMixin(object):
+class CsrfExemptMixin:
     """Exempts the view from CSRF requirements."""
 
     @method_decorator(csrf_exempt)
@@ -136,7 +139,7 @@ class CurrencyExchangeView(APIView):
     serializer_class = None
 
     @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
-    def get(self, request, format=None):
+    def get(self, request, fmt=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
         try:
@@ -244,10 +247,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
         """Attempt to find a global setting object with the provided key."""
         key = str(self.kwargs['key']).upper()
 
-        if (
-            key.startswith('_')
-            or key not in common.models.InvenTreeSetting.SETTINGS.keys()
-        ):
+        if key.startswith('_') or key not in common.models.InvenTreeSetting.SETTINGS:
             raise NotFound()
 
         return common.models.InvenTreeSetting.get_setting_object(
@@ -318,7 +318,7 @@ class UserSettingsDetail(RetrieveUpdateAPI):
 
         if (
             key.startswith('_')
-            or key not in common.models.InvenTreeUserSetting.SETTINGS.keys()
+            or key not in common.models.InvenTreeUserSetting.SETTINGS
         ):
             raise NotFound()
 
@@ -536,6 +536,36 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
+class AllUnitList(ListAPI):
+    """List of all defined units."""
+
+    serializer_class = common.serializers.AllUnitListResponseSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        """Return a list of all available units."""
+        reg = InvenTree.conversion.get_unit_registry()
+        all_units = {k: self.get_unit(reg, k) for k in reg}
+        data = {
+            'default_system': reg.default_system,
+            'available_systems': dir(reg.sys),
+            'available_units': {k: v for k, v in all_units.items() if v},
+        }
+        return Response(data)
+
+    def get_unit(self, reg, k):
+        """Parse a unit from the registry."""
+        if not hasattr(reg, k):
+            return None
+        unit: Type[UnitLike] = getattr(reg, k)
+        return {
+            'name': k,
+            'is_alias': reg.get_name(k) == k,
+            'compatible_units': [str(a) for a in unit.compatible_units()],
+            'isdimensionless': unit.dimensionless,
+        }
+
+
 class ErrorMessageList(BulkDeleteMixin, ListAPI):
     """List view for server error messages."""
 
@@ -566,7 +596,7 @@ class BackgroundTaskOverview(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
     serializer_class = None
 
-    def get(self, request, format=None):
+    def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
 
@@ -655,6 +685,8 @@ class ContentTypeList(ListAPI):
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['app_label', 'model']
 
 
 class ContentTypeDetail(RetrieveAPI):
@@ -776,6 +808,82 @@ class IconList(ListAPI):
         return get_icon_packs().values()
 
 
+class SelectionListList(ListCreateAPI):
+    """List view for SelectionList objects."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """Override the queryset method to include entry count."""
+        return self.serializer_class.annotate_queryset(super().get_queryset())
+
+
+class SelectionListDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a SelectionList object."""
+
+    queryset = common.models.SelectionList.objects.all()
+    serializer_class = common.serializers.SelectionListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class EntryMixin:
+    """Mixin for SelectionEntry views."""
+
+    queryset = common.models.SelectionListEntry.objects.all()
+    serializer_class = common.serializers.SelectionEntrySerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_url_kwarg = 'entrypk'
+
+    def get_queryset(self):
+        """Prefetch related fields."""
+        pk = self.kwargs.get('pk', None)
+        queryset = super().get_queryset().filter(list=pk)
+        queryset = queryset.prefetch_related('list')
+        return queryset
+
+
+class SelectionEntryList(EntryMixin, ListCreateAPI):
+    """List view for SelectionEntry objects."""
+
+
+class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a SelectionEntry object."""
+
+
+selection_urls = [
+    path(
+        '<int:pk>/',
+        include([
+            # Entries
+            path(
+                'entry/',
+                include([
+                    path(
+                        '<int:entrypk>/',
+                        include([
+                            path(
+                                '',
+                                SelectionEntryDetail.as_view(),
+                                name='api-selectionlistentry-detail',
+                            )
+                        ]),
+                    ),
+                    path(
+                        '',
+                        SelectionEntryList.as_view(),
+                        name='api-selectionlistentry-list',
+                    ),
+                ]),
+            ),
+            path('', SelectionListDetail.as_view(), name='api-selectionlist-detail'),
+        ]),
+    ),
+    path('', SelectionListList.as_view(), name='api-selectionlist-list'),
+]
+
+# API URL patterns
 settings_api_urls = [
     # User settings
     path(
@@ -901,6 +1009,7 @@ common_api_urls = [
                     path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
                 ]),
             ),
+            path('all/', AllUnitList.as_view(), name='api-all-unit-list'),
             path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
         ]),
     ),
@@ -965,16 +1074,7 @@ common_api_urls = [
         ]),
     ),
     # Status
-    path(
-        'generic/status/',
-        include([
-            path(
-                f'<str:{StatusView.MODEL_REF}>/',
-                include([path('', StatusView.as_view(), name='api-status')]),
-            ),
-            path('', AllStatusViews.as_view(), name='api-status-all'),
-        ]),
-    ),
+    path('generic/status/', include(generic_states_api_urls)),
     # Contenttype
     path(
         'contenttype/',
@@ -992,6 +1092,8 @@ common_api_urls = [
     ),
     # Icons
     path('icons/', IconList.as_view(), name='api-icon-list'),
+    # Selection lists
+    path('selection/', include(selection_urls)),
 ]
 
 admin_api_urls = [

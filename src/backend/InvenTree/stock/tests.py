@@ -10,10 +10,10 @@ from django.test import override_settings
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
-from stock.status_codes import StockHistoryCode
+from stock.status_codes import StockHistoryCode, StockStatus
 
 from .models import (
     StockItem,
@@ -266,6 +266,9 @@ class StockTest(StockTestBase):
         if settings.ENABLE_CLASSIC_FRONTEND:
             self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
             self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
+        else:
+            self.assertEqual(it.get_absolute_url(), '/platform/stock/item/2')
+            self.assertEqual(self.home.get_absolute_url(), '/platform/stock/location/1')
 
     def test_strings(self):
         """Test str function."""
@@ -441,10 +444,31 @@ class StockTest(StockTestBase):
         self.assertIn('Counted items', track.notes)
 
         n = it.tracking_info.count()
-        self.assertFalse(it.stocktake(-1, None, 'test negative stocktake'))
+        self.assertFalse(
+            it.stocktake(
+                -1,
+                None,
+                notes='test negative stocktake',
+                status=StockStatus.DAMAGED.value,
+            )
+        )
 
         # Ensure tracking info was not added
         self.assertEqual(it.tracking_info.count(), n)
+
+        it.refresh_from_db()
+        self.assertEqual(it.status, StockStatus.OK.value)
+
+        # Next, perform a valid stocktake
+        self.assertTrue(
+            it.stocktake(
+                100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
+            )
+        )
+
+        it.refresh_from_db()
+        self.assertEqual(it.quantity, 100)
+        self.assertEqual(it.status, StockStatus.DAMAGED.value)
 
     def test_add_stock(self):
         """Test adding stock."""
@@ -948,6 +972,45 @@ class StockTest(StockTestBase):
         # Final purchase price should be the weighted average
         self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
 
+    def test_notify_low_stock(self):
+        """Test that the 'notify_low_stock' task is triggered correctly."""
+        FUNC_NAME = 'part.tasks.notify_low_stock_if_required'
+
+        from django_q.models import OrmQ
+
+        # Start from a blank slate
+        OrmQ.objects.all().delete()
+
+        def check_func() -> bool:
+            """Check that the 'notify_low_stock_if_required' task has been triggered."""
+            found = False
+            for task in OrmQ.objects.all():
+                if task.func() == FUNC_NAME:
+                    found = True
+                    break
+
+            # Clear the task queue (for the next test)
+            OrmQ.objects.all().delete()
+
+            return found
+
+        self.assertFalse(check_func())
+
+        part = Part.objects.first()
+
+        # Create a new stock item for this part
+        item = StockItem.objects.create(
+            part=part, quantity=100, location=StockLocation.objects.first()
+        )
+
+        self.assertTrue(check_func())
+        self.assertFalse(check_func())
+
+        # Re-count the stock item
+        item.stocktake(99, None)
+
+        self.assertTrue(check_func())
+
 
 class StockBarcodeTest(StockTestBase):
     """Run barcode tests for the stock app."""
@@ -1229,14 +1292,20 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item2.test_results.count(), 4)
 
         # Test StockItem serialization
-        item2.serializeStock(1, [100], self.user)
+        # Note: This will create a new StockItem with a new serial number
+
+        with self.assertRaises(ValidationError):
+            # Serial number #100 will be rejected by the sample plugin
+            item2.serializeStock(1, [100], self.user)
+
+        item2.serializeStock(1, [101], self.user)
 
         # Add a test result to the parent *after* serialization
         item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
-        item3 = StockItem.objects.get(serial=100, part=item2.part)
+        item3 = StockItem.objects.get(serial=101, part=item2.part)
 
         self.assertEqual(item3.test_results.count(), 4)
 
@@ -1347,3 +1416,11 @@ class StockLocationTest(InvenTreeTestCase):
         loc.location_type = None
         loc.save()
         self.assertEqual(loc.icon, '')
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=StockLocationType)

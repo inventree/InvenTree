@@ -3,7 +3,7 @@
  */
 import { t } from '@lingui/macro';
 import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
-import { IconExclamationCircle, IconLock } from '@tabler/icons-react';
+import { IconBell, IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -11,29 +11,40 @@ import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
-import { TableColumn, TableColumnProps } from './Column';
+import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
-export function PartColumn(part: any, full_name?: boolean) {
+export function PartColumn({
+  part,
+  full_name
+}: {
+  part: any;
+  full_name?: boolean;
+}) {
   return part ? (
-    <Group justify="space-between" wrap="nowrap">
+    <Group justify='space-between' wrap='nowrap'>
       <Thumbnail
         src={part?.thumbnail ?? part?.image}
         text={full_name ? part?.full_name : part?.name}
       />
-      <Group justify="flex-end" wrap="nowrap" gap="xs">
+      <Group justify='flex-end' wrap='nowrap' gap='xs'>
         {part?.active == false && (
           <Tooltip label={t`Part is not active`}>
-            <IconExclamationCircle color="red" size={16} />
+            <IconExclamationCircle color='red' size={16} />
           </Tooltip>
         )}
         {part?.locked && (
-          <Tooltip label={t`Part is locked`}>
+          <Tooltip label={t`Part is Locked`}>
             <IconLock size={16} />
+          </Tooltip>
+        )}
+        {part?.starred && (
+          <Tooltip label={t`You are subscribed to notifications for this part`}>
+            <IconBell size={16} color='green' />
           </Tooltip>
         )}
       </Group>
@@ -50,7 +61,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
     sortable: true,
     ordering: 'location',
     render: (record: any) => {
-      let location = resolveItem(record, props.accessor ?? '');
+      const location = resolveItem(record, props.accessor ?? '');
 
       if (!location) {
         return (
@@ -90,7 +101,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
     accessor: 'link',
     sortable: false,
     render: (record: any) => {
-      let url = resolveItem(record, props.accessor ?? 'link');
+      const url = resolveItem(record, props.accessor ?? 'link');
 
       if (!url) {
         return '-';
@@ -99,8 +110,8 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
       return (
         <Anchor
           href={url}
-          target="_blank"
-          rel="noreferrer noopener"
+          target='_blank'
+          rel='noreferrer noopener'
           onClick={(event: any) => {
             cancelEvent(event);
 
@@ -152,10 +163,16 @@ export function LineItemsProgressColumn(): TableColumn {
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'project_code',
+    ordering: 'project_code',
     sortable: true,
-    render: (record: any) => (
-      <ProjectCodeHoverCard projectCode={record.project_code_detail} />
-    ),
+    title: t`Project Code`,
+    render: (record: any) => {
+      const project_code = resolveItem(
+        record,
+        props.accessor ?? 'project_code_detail'
+      );
+      return <ProjectCodeHoverCard projectCode={project_code} />;
+    },
     ...props
   };
 }
@@ -163,6 +180,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
+  ordering,
   accessor,
   title,
   hidden
@@ -170,15 +188,17 @@ export function StatusColumn({
   model: ModelType;
   sortable?: boolean;
   accessor?: string;
+  ordering?: string;
   hidden?: boolean;
   title?: string;
 }) {
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
+    ordering: ordering,
     title: title,
     hidden: hidden,
-    render: TableStatusRenderer(model, accessor ?? 'status')
+    render: TableStatusRenderer(model, accessor ?? 'status_custom_key')
   };
 }
 
@@ -222,6 +242,14 @@ export function CreationDateColumn(props: TableColumnProps): TableColumn {
   });
 }
 
+export function CompletionDateColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'completion_date',
+    title: t`Completion Date`,
+    ...props
+  });
+}
+
 export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'shipment_date',
@@ -248,7 +276,7 @@ export function CurrencyColumn({
     title: title ?? t`Currency`,
     sortable: sortable ?? true,
     render: (record: any) => {
-      let currency_key = currency_accessor ?? `${accessor}_currency`;
+      const currency_key = currency_accessor ?? `${accessor}_currency`;
       return formatCurrency(resolveItem(record, accessor), {
         currency: currency ?? resolveItem(record, currency_key)
       });

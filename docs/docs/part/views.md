@@ -131,9 +131,9 @@ The *Scheduling* tab provides an overview of the *predicted* future availability
 
 The *Stocktake* tab provide historical stock level information, based on user-provided stocktake data. Refer to the [stocktake documentation](./stocktake.md) for further information.
 
-### Tests
+### Test Templates
 
-If a part is marked as *trackable*, the user can define tests which must be performed on any stock items which are instances of this part. [Read more about testing](./test.md).
+If a part is marked as *testable*, the user can define tests which must be performed on any stock items which are instances of this part. [Read more about testing](./test.md).
 
 ### Related Parts
 

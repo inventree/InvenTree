@@ -2,21 +2,23 @@ import { t } from '@lingui/macro';
 import {
   Anchor,
   Badge,
+  Group,
   Paper,
   Skeleton,
   Stack,
   Table,
   Text
 } from '@mantine/core';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
-import { Suspense, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import type { ModelType } from '../../enums/ModelType';
+import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
@@ -28,28 +30,27 @@ import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 
-export type DetailsField =
-  | {
-      hidden?: boolean;
-      icon?: InvenTreeIconType;
-      name: string;
-      label?: string;
-      badge?: BadgeType;
-      copy?: boolean;
-      value_formatter?: () => ValueFormatterReturn;
-    } & (
-      | StringDetailField
-      | BooleanField
-      | LinkDetailField
-      | ProgressBarField
-      | StatusField
-    );
+export type DetailsField = {
+  hidden?: boolean;
+  icon?: InvenTreeIconType;
+  name: string;
+  label?: string;
+  badge?: BadgeType;
+  copy?: boolean;
+  value_formatter?: () => ValueFormatterReturn;
+} & (
+  | StringDetailField
+  | BooleanField
+  | LinkDetailField
+  | ProgressBarField
+  | StatusField
+);
 
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
-  type: 'string' | 'text';
+  type: 'string' | 'text' | 'date';
   unit?: boolean;
 };
 
@@ -66,6 +67,7 @@ type InternalLinkField = {
   model: ModelType;
   model_field?: string;
   model_formatter?: (value: any) => string;
+  model_filters?: any;
   backup_value?: string;
 };
 
@@ -95,11 +97,14 @@ type FieldProps = {
  * Badge shows username, full name, or group name depending on server settings.
  * Badge appends icon to describe type of Owner
  */
-function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
-  const { data } = useSuspenseQuery({
+function NameBadge({
+  pk,
+  type
+}: Readonly<{ pk: string | number; type: BadgeType }>) {
+  const { data } = useQuery({
     queryKey: ['badge', type, pk],
     queryFn: async () => {
-      let path: string = '';
+      let path = '';
 
       switch (type) {
         case 'owner':
@@ -111,6 +116,8 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
         case 'group':
           path = ApiEndpoints.group_list;
           break;
+        default:
+          return {};
       }
 
       const url = apiUrl(path, pk);
@@ -133,9 +140,13 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 
   const settings = useGlobalSettingsState();
 
+  if (!data || data.isLoading || data.isFetching) {
+    return <Skeleton height={12} radius='md' />;
+  }
+
   // Rendering a user's rame for the badge
   function _render_name() {
-    if (!data) {
+    if (!data || !data.pk) {
       return '';
     } else if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
@@ -151,19 +162,21 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
   }
 
   return (
-    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Badge
-          color="dark"
-          variant="filled"
-          style={{ display: 'flex', alignItems: 'center' }}
-        >
-          {data?.name ?? _render_name()}
-        </Badge>
-        <InvenTreeIcon icon={type === 'user' ? type : data.label} />
-      </div>
-    </Suspense>
+    <Group wrap='nowrap' gap='sm' justify='right'>
+      <Badge
+        color='dark'
+        variant='filled'
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
+        {data?.name ?? _render_name()}
+      </Badge>
+      <InvenTreeIcon icon={type === 'user' ? type : data.label} />
+    </Group>
   );
+}
+
+function DateValue(props: Readonly<FieldProps>) {
+  return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
 }
 
 /**
@@ -172,39 +185,30 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If user is defined, a badge is rendered in addition to main value
  */
 function TableStringValue(props: Readonly<FieldProps>) {
-  let value = props?.field_value;
+  const value = props?.field_value;
 
-  if (props?.field_data?.value_formatter) {
-    value = props.field_data.value_formatter();
-  }
-
-  if (value === undefined) {
-    return '---';
-  }
+  let renderedValue = null;
 
   if (props.field_data?.badge) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
+  } else if (props?.field_data?.value_formatter) {
+    renderedValue = props.field_data.value_formatter();
+  } else if (value === null || value === undefined) {
+    renderedValue = <Text size='sm'>'---'</Text>;
+  } else {
+    renderedValue = <Text size='sm'>{value.toString()}</Text>;
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        wordBreak: 'break-word',
-        alignItems: 'flex-start'
-      }}
-    >
-      <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-        <span>
-          {value ? value : props.field_data?.unit && '0'}{' '}
-          {props.field_data.unit == true && props.unit}
-        </span>
-      </Suspense>
+    <Group wrap='nowrap' gap='xs' justify='space-apart'>
+      <Group wrap='nowrap' gap='xs' justify='left'>
+        {renderedValue}
+        {props.field_data.unit && <Text size='xs'>{props.unit}</Text>}
+      </Group>
       {props.field_data.user && (
-        <NameBadge pk={props.field_data?.user} type="user" />
+        <NameBadge pk={props.field_data?.user} type='user' />
       )}
-    </div>
+    </Group>
   );
 }
 
@@ -215,7 +219,7 @@ function BooleanValue(props: Readonly<FieldProps>) {
 function TableAnchorValue(props: Readonly<FieldProps>) {
   const navigate = useNavigate();
 
-  const { data } = useSuspenseQuery({
+  const { data } = useQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
       if (!props.field_data?.model) {
@@ -231,7 +235,9 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       const url = apiUrl(modelDef.api_endpoint, props.field_value);
 
       return api
-        .get(url)
+        .get(url, {
+          params: props.field_data.model_filters ?? undefined
+        })
         .then((response) => {
           switch (response.status) {
             case 200:
@@ -260,6 +266,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     [detailUrl]
   );
 
+  if (!data || data.isLoading || data.isFetching) {
+    return <Skeleton height={12} radius='md' />;
+  }
+
   if (props.field_data.external) {
     return (
       <Anchor
@@ -269,7 +279,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           <Text>{props.field_value}</Text>
-          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
+          <InvenTreeIcon icon='external' iconProps={{ size: 15 }} />
         </span>
       </Anchor>
     );
@@ -294,19 +304,23 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   return (
-    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
+    <>
       {make_link ? (
-        <Anchor href="#" onClick={handleLinkClick}>
+        <Anchor href='#' onClick={handleLinkClick}>
           <Text>{value}</Text>
         </Anchor>
       ) : (
         <Text>{value}</Text>
       )}
-    </Suspense>
+    </>
   );
 }
 
 function ProgressBarValue(props: Readonly<FieldProps>) {
+  if (props.field_data.total <= 0) {
+    return <Text size='sm'>{props.field_data.progress}</Text>;
+  }
+
   return (
     <ProgressBar
       value={props.field_data.progress}
@@ -322,22 +336,19 @@ function StatusValue(props: Readonly<FieldProps>) {
   );
 }
 
-function CopyField({ value }: { value: string }) {
+function CopyField({ value }: Readonly<{ value: string }>) {
   return <CopyButton value={value} />;
 }
 
 export function DetailsTableField({
   item,
   field
-}: {
+}: Readonly<{
   item: any;
   field: DetailsField;
-}) {
+}>) {
   function getFieldType(type: string) {
     switch (type) {
-      case 'text':
-      case 'string':
-        return TableStringValue;
       case 'boolean':
         return BooleanValue;
       case 'link':
@@ -346,6 +357,10 @@ export function DetailsTableField({
         return ProgressBarValue;
       case 'status':
         return StatusValue;
+      case 'date':
+        return DateValue;
+      case 'text':
+      case 'string':
       default:
         return TableStringValue;
     }
@@ -385,16 +400,16 @@ export function DetailsTable({
   item,
   fields,
   title
-}: {
+}: Readonly<{
   item: any;
   fields: DetailsField[];
   title?: string;
-}) {
+}>) {
   return (
-    <Paper p="xs" withBorder radius="xs">
-      <Stack gap="xs">
-        {title && <StylishText size="lg">{title}</StylishText>}
-        <Table striped verticalSpacing={5} horizontalSpacing="sm">
+    <Paper p='xs' withBorder radius='xs'>
+      <Stack gap='xs'>
+        {title && <StylishText size='lg'>{title}</StylishText>}
+        <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)

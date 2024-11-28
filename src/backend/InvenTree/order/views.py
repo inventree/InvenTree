@@ -294,7 +294,7 @@ class SalesOrderExport(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = f'{str(order)} - {order.customer.name}.{export_format}'
+        filename = f'{order!s} - {order.customer.name}.{export_format}'
 
         dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 
@@ -321,7 +321,7 @@ class PurchaseOrderExport(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = f'{str(order)} - {order.supplier.name}.{export_format}'
+        filename = f'{order!s} - {order.supplier.name}.{export_format}'
 
         dataset = PurchaseOrderLineItemResource().export(queryset=order.lines.all())
 
@@ -353,7 +353,8 @@ class LineItemPricing(PartPricing):
             try:
                 part_id = self.request.POST.get('pk')
                 part = Part.objects.get(id=part_id)
-            except Part.DoesNotExist:
+            except Exception:
+                # Part not found, or invalid ID
                 return None
         else:
             return None

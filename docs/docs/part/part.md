@@ -47,6 +47,10 @@ If a part is designated as an *Assembly* it can be created (or built) from other
 
 If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../build/bom.md)
 
+### Testable
+
+Testable parts can have test templates defined against the part, allowing test results to be recorded against any stock items for that part. For more information on testing, refer to the [testing documentation](./test.md).
+
 ### Trackable
 
 Trackable parts can be assigned batch numbers or serial numbers which uniquely identify a particular stock item. Trackable parts also provide other features (and restrictions) in the InvenTree ecosystem.

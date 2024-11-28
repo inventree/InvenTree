@@ -281,6 +281,15 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             'A\t part\t category\t',
             'A pa\rrt cat\r\r\regory',
             'A part\u200e catego\u200fry\u202e',
+            'A\u0000 part\u0000 category',
+            'A part\u0007 category',
+            'A\u001f part category',
+            'A part\u007f category',
+            '\u0001A part category',
+            'A part\u0085 category',
+            'A part category\u200e',
+            'A part cat\u200fegory',
+            'A\u0006 part\u007f categ\nory\r',
         ]
 
         for val in values:
@@ -1618,7 +1627,7 @@ class PartDetailTests(PartAPITestBase):
 
         # Try to upload a non-image file
         test_path = BASE_DIR / '_testfolder' / 'dummy_image'
-        with open(f'{test_path}.txt', 'w') as dummy_image:
+        with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
             dummy_image.write('hello world')
 
         with open(f'{test_path}.txt', 'rb') as dummy_image:
@@ -2996,7 +3005,7 @@ class PartTestTemplateTest(PartAPITestBase):
             expected_code=400,
         )
 
-        # Try to post a new test against a non-trackable part (should fail)
+        # Try to post a new test against a non-testable part (should fail)
         response = self.post(
             url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
         )

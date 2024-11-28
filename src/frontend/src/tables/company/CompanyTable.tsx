@@ -9,6 +9,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
+import { navigateToLink } from '../../functions/navigation';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -17,9 +18,9 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * A table which displays a list of company records,
@@ -28,10 +29,10 @@ import { RowEditAction } from '../RowActions';
 export function CompanyTable({
   params,
   path
-}: {
+}: Readonly<{
   params?: any;
   path?: string;
-}) {
+}>) {
   const table = useTable('company');
 
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export function CompanyTable({
         sortable: true,
         render: (record: any) => {
           return (
-            <Group gap="xs" wrap="nowrap">
+            <Group gap='xs' wrap='nowrap'>
               <Thumbnail
                 src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}
@@ -120,6 +121,7 @@ export function CompanyTable({
 
     return [
       <AddItemButton
+        key='add-company'
         tooltip={t`Add Company`}
         onClick={() => newCompany.open()}
         hidden={!can_add}
@@ -128,7 +130,7 @@ export function CompanyTable({
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden:
@@ -156,16 +158,17 @@ export function CompanyTable({
           params: {
             ...params
           },
+          onRowClick: (record: any, index: number, event: any) => {
+            if (record.pk) {
+              const base = path ?? 'company';
+              navigateToLink(`/${base}/${record.pk}`, navigate, event);
+            }
+          },
+          modelType: ModelType.company,
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,
-          rowActions: rowActions,
-          onRowClick: (row: any) => {
-            if (row.pk) {
-              let base = path ?? 'company';
-              navigate(`/${base}/${row.pk}`);
-            }
-          }
+          rowActions: rowActions
         }}
       />
     </>
