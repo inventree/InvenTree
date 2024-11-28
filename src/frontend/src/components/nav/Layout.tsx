@@ -3,7 +3,7 @@ import { Container, Flex, Space } from '@mantine/core';
 import { Spotlight, createSpotlight } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';

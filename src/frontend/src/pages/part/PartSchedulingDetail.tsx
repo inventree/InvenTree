@@ -10,7 +10,7 @@ import {
   Text
 } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';

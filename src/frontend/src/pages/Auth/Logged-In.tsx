@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Card, Container, Group, Loader, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 
 import { checkLoginState } from '../../functions/auth';
 

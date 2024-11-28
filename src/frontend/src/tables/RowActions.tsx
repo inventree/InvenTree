@@ -9,7 +9,7 @@ import {
   IconTrash
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
-import type { NavigateFunction } from 'react-router-dom';
+import type { NavigateFunction } from 'react-router';
 
 import type { ModelType } from '../enums/ModelType';
 import { cancelEvent } from '../functions/events';

@@ -2,7 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import { Alert, Badge, Stack, Text } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';

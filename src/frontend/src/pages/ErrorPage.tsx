@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useDocumentTitle } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import { useRouteError } from 'react-router-dom';
+import { useRouteError } from 'react-router';
 
 import GenericErrorPage from '../components/errors/GenericErrorPage';
 import type { ErrorResponse } from '../states/states';

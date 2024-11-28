@@ -9,7 +9,7 @@ import {
   IconSwitch3
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';

@@ -1,6 +1,6 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
-import { type SetURLSearchParams, useSearchParams } from 'react-router-dom';
+import { type SetURLSearchParams, useSearchParams } from 'react-router';
 
 import type { TableFilter } from '../tables/Filter';
 

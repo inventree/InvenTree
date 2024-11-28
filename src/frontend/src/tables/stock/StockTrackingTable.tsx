@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Table, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';

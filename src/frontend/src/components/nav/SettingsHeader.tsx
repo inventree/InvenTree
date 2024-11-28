@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Group, SegmentedControl, Stack, Text } from '@mantine/core';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';

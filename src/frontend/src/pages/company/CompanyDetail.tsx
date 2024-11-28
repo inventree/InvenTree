@@ -13,7 +13,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import {

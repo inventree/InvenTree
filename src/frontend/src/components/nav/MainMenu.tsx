@@ -16,7 +16,7 @@ import {
   IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';

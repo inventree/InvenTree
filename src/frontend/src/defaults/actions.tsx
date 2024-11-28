@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import { IconLink, IconPointer } from '@tabler/icons-react';
-import type { NavigateFunction } from 'react-router-dom';
+import type { NavigateFunction } from 'react-router';
 
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';

@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Card, Container, Group, Loader, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { doLogout } from '../../functions/auth';
 

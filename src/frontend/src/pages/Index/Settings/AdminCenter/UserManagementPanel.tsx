@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Anchor, Divider, Group, Stack, Text, Title } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { GroupTable } from '../../../../tables/settings/GroupTable';

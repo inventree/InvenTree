@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { ActionIcon } from '@mantine/core';
 import { forwardRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 
 import InvenTreeIcon from './inventree.svg';
 

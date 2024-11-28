@@ -24,7 +24,7 @@ import {
   useLocation,
   useNavigate,
   useParams
-} from 'react-router-dom';
+} from 'react-router';
 
 import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';

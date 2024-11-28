@@ -6,7 +6,7 @@ import {
   IconList
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import {

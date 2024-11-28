@@ -6,7 +6,7 @@ import {
 } from '@mantine/core';
 import type { AxiosInstance } from 'axios';
 import { useMemo } from 'react';
-import { type NavigateFunction, useNavigate } from 'react-router-dom';
+import { type NavigateFunction, useNavigate } from 'react-router';
 
 import type { QueryClient } from '@tanstack/react-query';
 import { api, queryClient } from '../../App';
@@ -26,7 +26,7 @@ import { type UserStateProps, useUserState } from '../../states/UserState';
  * @param user - The current user instance (see ../states/UserState.tsx)
  * @param userSettings - The current user settings (see ../states/SettingsState.tsx)
  * @param globalSettings - The global settings (see ../states/SettingsState.tsx)
- * @param navigate - The navigation function (see react-router-dom)
+ * @param navigate - The navigation function (see react-router)
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  * @param context - Any additional context data which may be passed to the plugin
