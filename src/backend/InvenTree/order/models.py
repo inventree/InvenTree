@@ -1176,8 +1176,9 @@ class SalesOrder(TotalPriceMixin, Order):
             self.status = SalesOrderStatus.COMPLETE.value
         else:
             self.status = SalesOrderStatus.SHIPPED.value
-            self.shipped_by = user
-            self.shipment_date = InvenTree.helpers.current_date()
+
+        self.shipped_by = user
+        self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
 
