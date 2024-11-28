@@ -1633,6 +1633,8 @@ class SalesOrderTest(OrderTest):
 
         so.refresh_from_db()
         self.assertEqual(so.status, SalesOrderStatus.SHIPPED.value)
+        self.assertIsNotNone(so.shipment_date)
+        self.assertIsNotNone(so.shipped_by)
 
         # Now, let's try to "complete" the shipment again
         # This time it should get marked as "COMPLETE"
@@ -1648,9 +1650,14 @@ class SalesOrderTest(OrderTest):
 
         # Next, we'll change the setting so that the order status jumps straight to "complete"
         so.status = SalesOrderStatus.PENDING.value
+        so.shipment_date = None
+        so.shipped_by = None
         so.save()
         so.refresh_from_db()
+
         self.assertEqual(so.status, SalesOrderStatus.PENDING.value)
+        self.assertIsNone(so.shipped_by)
+        self.assertIsNone(so.shipment_date)
 
         InvenTreeSetting.set_setting('SALESORDER_SHIP_COMPLETE', True)
 
@@ -1659,6 +1666,9 @@ class SalesOrderTest(OrderTest):
         # The orders status should now be "complete" (not "shipped")
         so.refresh_from_db()
         self.assertEqual(so.status, SalesOrderStatus.COMPLETE.value)
+
+        self.assertIsNotNone(so.shipment_date)
+        self.assertIsNotNone(so.shipped_by)
 
 
 class SalesOrderLineItemTest(OrderTest):

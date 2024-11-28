@@ -182,14 +182,26 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByLabel('action-menu-stock-operations-count').waitFor();
   await page.getByLabel('action-menu-stock-operations-add').waitFor();
   await page.getByLabel('action-menu-stock-operations-remove').waitFor();
+
   await page.getByLabel('action-menu-stock-operations-transfer').click();
   await page.getByLabel('text-field-notes').fill('test notes');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('This field is required.').first().waitFor();
+
+  // Set the status field
+  await page.getByLabel('action-button-change-status').click();
+  await page.getByLabel('choice-field-status').click();
+  await page.getByText('Attention needed').click();
+
+  // Set the packaging field
+  await page.getByLabel('action-button-adjust-packaging').click();
+  await page.getByLabel('text-field-packaging').fill('test packaging');
+
+  // Close the dialog
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Find an item which has been sent to a customer
-  await page.goto(`${baseUrl}/stock/item/1012/details`);
+  await page.goto(`${baseUrl}/stock/item/1014/details`);
   await page.getByText('Batch Code: 2022-11-12').waitFor();
   await page.getByText('Unavailable').waitFor();
   await page.getByLabel('action-menu-stock-operations').click();

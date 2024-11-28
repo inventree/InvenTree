@@ -344,6 +344,11 @@ function stockItemTableFilters({
       description: t`Include stock items for variant parts`
     },
     {
+      name: 'consumed',
+      label: t`Consumed`,
+      description: t`Show items which have been consumed by a build order`
+    },
+    {
       name: 'installed',
       label: t`Installed`,
       description: t`Show stock items which are installed in other items`
@@ -604,7 +609,7 @@ export function StockItemTable({
           {
             name: t`Assign to customer`,
             icon: <InvenTreeIcon icon='customer' />,
-            tooltip: t`Order new stock`,
+            tooltip: t`Assign items to a customer`,
             disabled: !can_add_stock,
             onClick: () => {
               assignStock.open();
