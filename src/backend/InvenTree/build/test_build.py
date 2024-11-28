@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.test.utils import override_settings
 
 from InvenTree import status_codes as status
 from InvenTree.unit_test import findOffloadedEvent
@@ -724,14 +725,17 @@ class BuildTest(BuildTestBase):
 
         self.assertTrue(messages.filter(user__pk=4).exists())
 
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True
+    )
     def test_events(self):
         """Test that build events are triggered correctly."""
 
         from django_q.models import OrmQ
         from build.events import BuildEvents
 
-        settings.TESTING_TABLE_EVENTS = True
-        settings.PLUGIN_TESTING_EVENTS = True
         set_global_setting('ENABLE_PLUGINS_EVENTS', True)
 
         OrmQ.objects.all().delete()
@@ -772,8 +776,7 @@ class BuildTest(BuildTestBase):
 
         self.assertIsNotNone(task)
 
-        settings.TESTING_TABLE_EVENTS = False
-        settings.PLUGIN_TESTING_EVENTS = False
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

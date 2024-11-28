@@ -43,9 +43,13 @@ def trigger_event(event: str, *args, **kwargs) -> None:
 
     logger.debug("Event triggered: '%s'", event)
 
-    # By default, force the event to be processed asynchronously
-    if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
-        kwargs['force_async'] = True
+    force_async = kwargs.pop('force_async', True)
+
+    # If we are running in testing mode, we can enable or disable async processing
+    if settings.PLUGIN_TESTING_EVENTS:
+        force_async = settings.PLUGIN_TESTING_EVENTS_ASYNC
+
+    kwargs['force_async'] = force_async
 
     offload_task(register_event, event, *args, group='plugin', **kwargs)
 
