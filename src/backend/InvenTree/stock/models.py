@@ -1242,11 +1242,14 @@ class StockItem(
         self.belongs_to = None
         self.sales_order = None
         self.location = location
-        self.clearAllocations()
 
         if status := kwargs.get('status'):
             self.status = status
             tracking_info['status'] = status
+
+        self.save()
+
+        self.clearAllocations()
 
         self.add_tracking_entry(
             StockHistoryCode.RETURNED_FROM_CUSTOMER,
@@ -1255,13 +1258,6 @@ class StockItem(
             deltas=tracking_info,
             location=location,
         )
-
-        # Clear out allocation information for the stock item
-        self.customer = None
-        self.belongs_to = None
-        self.sales_order = None
-        self.location = location
-        self.clearAllocations()
 
         trigger_event(StockEvents.ITEM_RETURNED_FROM_CUSTOMER, id=self.id)
 
