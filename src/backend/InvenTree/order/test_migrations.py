@@ -1,7 +1,10 @@
 """Unit tests for the 'order' model data migrations."""
 
+import datetime
+
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
+from InvenTree import unit_test
 from order.status_codes import SalesOrderStatus
 
 
@@ -96,7 +99,7 @@ class TestShipmentMigration(MigratorTestCase):
 
         customer = Company.objects.create(
             name='My customer',
-            description='A customer we sell stuff too',
+            description='A customer we sell stuff to',
             is_customer=True,
         )
 
@@ -198,3 +201,72 @@ class TestAdditionalLineMigration(MigratorTestCase):
         # so = SalesOrder.objects.get(reference=f"{ii}-xyz")
         # self.assertEqual(so.extra_lines, 1)
         # self.assertEqual(so.lines.count(), 1)
+
+
+class TestUpdateShipmentMigration(MigratorTestCase):
+    """Test that the data migration for missing shipment_date values works correctly.
+
+    Ref: 0104_auto_20241128_0431.py
+    """
+
+    migrate_from = ('order', '0102_purchaseorder_destination_and_more')
+    migrate_to = ('order', unit_test.getNewestMigrationFile('order'))
+
+    def prepare(self):
+        """Create multiple sales orders."""
+        Company = self.old_state.apps.get_model('company', 'company')
+        SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
+        SalesOrderShipment = self.old_state.apps.get_model(
+            'order', 'salesordershipment'
+        )
+
+        customer = Company.objects.create(
+            name='A customer',
+            description='A customer we sell stuff to',
+            is_customer=True,
+        )
+
+        # Create multiple sales orders
+        for idx in range(10):
+            # Different status values
+            status = (
+                SalesOrderStatus.COMPLETE.value
+                if idx % 3 == 0
+                else SalesOrderStatus.SHIPPED.value
+            )
+
+            # Some orders have a shipment date, others do not
+            shipment_date = (
+                datetime.datetime(2020, 10, 10).date() if idx % 2 == 0 else None
+            )
+
+            order = SalesOrder.objects.create(
+                reference=f'SO{idx}',
+                customer=customer,
+                description='A sales order for stuffs',
+                status=status,
+                # status_custom_key=None,
+                shipment_date=shipment_date,
+            )
+
+            # Create multiple shipments for each sales order
+            if idx < 8:
+                for jdx in range(3):
+                    SalesOrderShipment.objects.create(
+                        reference=f'SHIP-SO{idx}-{jdx}',
+                        order=order,
+                        shipment_date=datetime.datetime(2022, 12, 12 + jdx).date(),
+                    )
+
+        missing = SalesOrder.objects.filter(shipment_date=None).count()
+        self.assertEqual(missing, 5)
+
+    def test_shipment_date_update(self):
+        """Ensure that the shipment dates are updated correctly."""
+        SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
+
+        missing = SalesOrder.objects.filter(shipment_date=None).count()
+
+        print('Missing:', missing)
+
+        # TODO: Finish this...
