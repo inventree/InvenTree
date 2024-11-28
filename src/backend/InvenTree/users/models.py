@@ -336,7 +336,6 @@ class RuleSet(models.Model):
             'contenttypes_contenttype',
             # Models which currently do not require permissions
             'common_attachment',
-            'common_colortheme',
             'common_customunit',
             'common_inventreesetting',
             'common_inventreeusersetting',

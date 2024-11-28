@@ -25,8 +25,7 @@ def isRunningMigrations():
 def isRebuildingData():
     """Return true if any of the rebuilding commands are being executed."""
     return any(
-        x in sys.argv
-        for x in ['prerender', 'rebuild_models', 'rebuild_thumbnails', 'rebuild']
+        x in sys.argv for x in ['rebuild_models', 'rebuild_thumbnails', 'rebuild']
     )
 
 

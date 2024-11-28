@@ -36,7 +36,6 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install: true
-          npm: true
           apt-dependency: gettext
       - name: Make Translations
         run: invoke dev.translate

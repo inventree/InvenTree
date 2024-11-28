@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Optional
 
 from django.conf import settings
-from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -377,8 +376,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return f'{reverse("settings")}#select-plugin-{self.slug}'
+        # TODO @matmair fix before MErge
+        return ''
+
         config = self.plugin_config()
         if config:
             return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
