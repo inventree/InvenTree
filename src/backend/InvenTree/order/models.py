@@ -2431,7 +2431,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = InvenTree.helpers.current_date()
         line.save()
 
-        trigger_event(ReturnOrderEvents.RECEIVED, id=self.pk)
+        trigger_event(ReturnOrderEvents.RECEIVED, id=self.pk, line_item_id=line.pk)
 
         # Notify responsible users
         notify_responsible(
