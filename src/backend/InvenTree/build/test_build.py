@@ -4,12 +4,15 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.test.utils import override_settings
 
 from InvenTree import status_codes as status
+from InvenTree.unit_test import findOffloadedEvent
 
 import common.models
 from common.settings import set_global_setting
@@ -721,6 +724,59 @@ class BuildTest(BuildTestBase):
         self.assertFalse(messages.filter(user__pk=3).exists())
 
         self.assertTrue(messages.filter(user__pk=4).exists())
+
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True
+    )
+    def test_events(self):
+        """Test that build events are triggered correctly."""
+
+        from django_q.models import OrmQ
+        from build.events import BuildEvents
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
+
+        OrmQ.objects.all().delete()
+
+        # Create a new build
+        build = Build.objects.create(
+            reference='BO-9999',
+            title='Some new build',
+            part=self.assembly,
+            quantity=5,
+            issued_by=get_user_model().objects.get(pk=2),
+            responsible=Owner.create(obj=Group.objects.get(pk=3))
+        )
+
+        # Check that the 'build.created' event was triggered
+        task = findOffloadedEvent(
+            'build_build.created',
+            matching_kwargs=['id', 'model'],
+            reverse=True,
+            clear_after=True,
+        )
+
+        # Assert that the task was found
+        self.assertIsNotNone(task)
+
+        # Check that the Build ID matches
+        self.assertEqual(task.kwargs()['id'], build.pk)
+
+        # Issue the build
+        build.issue_build()
+
+        # Check that the 'build.issued' event was triggered
+        task = findOffloadedEvent(
+            BuildEvents.ISSUED,
+            matching_kwargs=['id'],
+            clear_after=True,
+        )
+
+        self.assertIsNotNone(task)
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
