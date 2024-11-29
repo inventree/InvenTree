@@ -2391,6 +2391,14 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         stock_item = line.item
 
+        if not stock_item.serialized and line.quantity < stock_item.quantity:
+            # Split the stock item if we are returning less than the full quantity
+            stock_item = stock_item.splitStock(line.quantity, user=user)
+
+            # Update the line item to point to the *new* stock item
+            line.item = stock_item
+            line.save()
+
         status = kwargs.get('status')
 
         if status is None:
@@ -2423,7 +2431,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = InvenTree.helpers.current_date()
         line.save()
 
-        trigger_event(ReturnOrderEvents.RECEIVED, id=self.pk)
+        trigger_event(ReturnOrderEvents.RECEIVED, id=self.pk, line_item_id=line.pk)
 
         # Notify responsible users
         notify_responsible(
@@ -2452,9 +2460,22 @@ class ReturnOrderLineItem(OrderLineItem):
         """Perform extra validation steps for the ReturnOrderLineItem model."""
         super().clean()
 
-        if self.item and not self.item.serialized:
+        if not self.item:
+            raise ValidationError({'item': _('Stock item must be specified')})
+
+        if self.quantity > self.item.quantity:
             raise ValidationError({
-                'item': _('Only serialized items can be assigned to a Return Order')
+                'quantity': _('Return quantity exceeds stock quantity')
+            })
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Return quantity must be greater than zero')
+            })
+
+        if self.item.serialized and self.quantity != 1:
+            raise ValidationError({
+                'quantity': _('Invalid quantity for serialized stock item')
             })
 
     order = models.ForeignKey(
@@ -2471,6 +2492,15 @@ class ReturnOrderLineItem(OrderLineItem):
         related_name='return_order_lines',
         verbose_name=_('Item'),
         help_text=_('Select item to return from customer'),
+    )
+
+    quantity = models.DecimalField(
+        verbose_name=('Quantity'),
+        help_text=('Quantity to return'),
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
     )
 
     received_date = models.DateField(
