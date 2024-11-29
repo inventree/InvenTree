@@ -163,7 +163,7 @@ export function BarcodeActionDropdown({
       actions={[
         GeneralBarcodeAction({
           mdl_prop: prop,
-          title: t`View`,
+          title: t`View Barcode`,
           icon: <IconQrcode />,
           tooltip: t`View barcode`,
           ChildItem: InvenTreeQRCode
