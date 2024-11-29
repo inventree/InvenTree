@@ -2394,6 +2394,10 @@ class ReturnOrder(TotalPriceMixin, Order):
             # Split the stock item if we are returning less than the full quantity
             stock_item = stock_item.splitStock(line.quantity, user=user)
 
+            # Update the line item to point to the *new* stock item
+            line.item = stock_item
+            line.save()
+
         status = kwargs.get('status')
 
         if status is None:

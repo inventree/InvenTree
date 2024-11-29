@@ -2072,6 +2072,10 @@ class ReturnOrderLineItemSerializer(
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
 
+    quantity = serializers.FloatField(
+        label=_('Quantity'), help_text=_('Quantity to return')
+    )
+
     item_detail = stock.serializers.StockItemSerializer(
         source='item', many=False, read_only=True
     )
