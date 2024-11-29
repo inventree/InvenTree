@@ -133,8 +133,8 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'outstanding': False}, 2)
 
         # Filter by "status"
-        self.filter({'status': 10}, 3)
-        self.filter({'status': 40}, 1)
+        self.filter({'status': PurchaseOrderStatus.PENDING.value}, 3)
+        self.filter({'status': PurchaseOrderStatus.CANCELLED.value}, 1)
 
         # Filter by "reference"
         self.filter({'reference': 'PO-0001'}, 1)
@@ -1264,8 +1264,8 @@ class SalesOrderTest(OrderTest):
         self.filter({'outstanding': False}, 2)
 
         # Filter by status
-        self.filter({'status': 10}, 3)  # PENDING
-        self.filter({'status': 20}, 1)  # SHIPPED
+        self.filter({'status': SalesOrderStatus.PENDING.value}, 3)  # PENDING
+        self.filter({'status': SalesOrderStatus.SHIPPED.value}, 1)  # SHIPPED
         self.filter({'status': 99}, 0)  # Invalid
 
         # Filter by "reference"
@@ -2229,7 +2229,9 @@ class ReturnOrderTests(InvenTreeAPITestCase):
                 self.assertEqual(result['customer'], cmp_id)
 
         # Filter by status
-        data = self.get(url, {'status': 20}, expected_code=200).data
+        data = self.get(
+            url, {'status': ReturnOrderStatus.IN_PROGRESS.value}, expected_code=200
+        ).data
 
         self.assertEqual(len(data), 2)
 

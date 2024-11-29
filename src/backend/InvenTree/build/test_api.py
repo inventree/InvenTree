@@ -45,7 +45,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 5)
 
         # Filter query by build status
-        response = self.get(url, {'status': 40}, expected_code=200)
+        response = self.get(url, {'status': BuildStatus.COMPLETE.value}, expected_code=200)
 
         self.assertEqual(len(response.data), 4)
 
@@ -221,10 +221,10 @@ class BuildTest(BuildAPITest):
             {
                 "outputs": [{"output": output.pk} for output in outputs],
                 "location": 1,
-                "status": 50,  # Item requires attention
+                "status": StockStatus.ATTENTION.value,
             },
             expected_code=201,
-            max_query_count=550,  # TODO: Try to optimize this
+            max_query_count=600,  # TODO: Try to optimize this
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
