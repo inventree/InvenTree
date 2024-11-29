@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 289
+INVENTREE_API_VERSION = 290
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v290 - 2024-11-29 : https://github.com/inventree/InvenTree/pull/8590
+    - Adds "quantity" field to ReturnOrderLineItem model and API
 
 v289 - 2024-11-27 : https://github.com/inventree/InvenTree/pull/8570
     - Enable status change when transferring stock items
