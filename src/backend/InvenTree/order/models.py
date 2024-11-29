@@ -2390,6 +2390,10 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         stock_item = line.item
 
+        if not stock_item.serialized and line.quantity < stock_item.quantity:
+            # Split the stock item if we are returning less than the full quantity
+            stock_item = stock_item.splitStock(line.quantity, user=user)
+
         status = kwargs.get('status')
 
         if status is None:
