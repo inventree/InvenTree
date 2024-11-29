@@ -21,6 +21,7 @@ import InvenTree.helpers_email
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models
+from build.events import BuildEvents
 from build.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 from plugin.events import trigger_event
@@ -272,7 +273,7 @@ def notify_overdue_build_order(bo: build_models.Build):
         }
     }
 
-    event_name = 'build.overdue_build_order'
+    event_name = BuildEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(

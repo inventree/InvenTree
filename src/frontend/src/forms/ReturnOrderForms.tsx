@@ -106,10 +106,10 @@ export function useReturnOrderLineItemFields({
       item: {
         filters: {
           customer: customerId,
-          part_detail: true,
-          serialized: true
+          part_detail: true
         }
       },
+      quantity: {},
       reference: {},
       outcome: {
         hidden: create == true
@@ -147,6 +147,14 @@ function ReturnOrderLineItemFormRow({
     );
   }, []);
 
+  const quantityDisplay = useMemo(() => {
+    if (record.item_detail?.serial && record.quantity == 1) {
+      return `# ${record.item_detail.serial}`;
+    } else {
+      return record.quantity;
+    }
+  }, [record.quantity, record.item_detail]);
+
   return (
     <>
       <Table.Tr>
@@ -160,7 +168,7 @@ function ReturnOrderLineItemFormRow({
             <div>{record.part_detail.name}</div>
           </Flex>
         </Table.Td>
-        <Table.Td># {record.item_detail.serial}</Table.Td>
+        <Table.Td>{quantityDisplay}</Table.Td>
         <Table.Td>
           <StandaloneField
             fieldDefinition={{
@@ -209,7 +217,7 @@ export function useReceiveReturnOrderLineItems(
           />
         );
       },
-      headers: [t`Part`, t`Stock Item`, t`Status`]
+      headers: [t`Part`, t`Quantity`, t`Status`]
     },
     location: {
       filters: {

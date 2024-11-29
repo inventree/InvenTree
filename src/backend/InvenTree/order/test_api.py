@@ -133,8 +133,8 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'outstanding': False}, 2)
 
         # Filter by "status"
-        self.filter({'status': 10}, 3)
-        self.filter({'status': 40}, 1)
+        self.filter({'status': PurchaseOrderStatus.PENDING.value}, 3)
+        self.filter({'status': PurchaseOrderStatus.CANCELLED.value}, 1)
 
         # Filter by "reference"
         self.filter({'reference': 'PO-0001'}, 1)
@@ -1264,8 +1264,8 @@ class SalesOrderTest(OrderTest):
         self.filter({'outstanding': False}, 2)
 
         # Filter by status
-        self.filter({'status': 10}, 3)  # PENDING
-        self.filter({'status': 20}, 1)  # SHIPPED
+        self.filter({'status': SalesOrderStatus.PENDING.value}, 3)  # PENDING
+        self.filter({'status': SalesOrderStatus.SHIPPED.value}, 1)  # SHIPPED
         self.filter({'status': 99}, 0)  # Invalid
 
         # Filter by "reference"
@@ -2229,7 +2229,9 @@ class ReturnOrderTests(InvenTreeAPITestCase):
                 self.assertEqual(result['customer'], cmp_id)
 
         # Filter by status
-        data = self.get(url, {'status': 20}, expected_code=200).data
+        data = self.get(
+            url, {'status': ReturnOrderStatus.IN_PROGRESS.value}, expected_code=200
+        ).data
 
         self.assertEqual(len(data), 2)
 
@@ -2392,6 +2394,71 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(deltas['customer'], customer.pk)
         self.assertEqual(deltas['location'], 1)
         self.assertEqual(deltas['returnorder'], rma.pk)
+
+    def test_receive_untracked(self):
+        """Test that we can receive untracked items against a ReturnOrder.
+
+        Ref: https://github.com/inventree/InvenTree/pull/8590
+        """
+        self.assignRole('return_order.add')
+        company = Company.objects.get(pk=4)
+
+        # Create a new ReturnOrder
+        rma = models.ReturnOrder.objects.create(
+            customer=company, description='A return order'
+        )
+
+        rma.issue_order()
+
+        # Create some new line items
+        part = Part.objects.get(pk=25)
+
+        n_items = part.stock_entries().count()
+
+        for idx in range(2):
+            stock_item = StockItem.objects.create(
+                part=part, customer=company, quantity=10
+            )
+
+            models.ReturnOrderLineItem.objects.create(
+                order=rma, item=stock_item, quantity=(idx + 1) * 5
+            )
+
+        self.assertEqual(part.stock_entries().count(), n_items + 2)
+
+        line_items = rma.lines.all()
+
+        # Receive items against the order
+        url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+        LOCATION_ID = 1
+
+        self.post(
+            url,
+            {
+                'items': [
+                    {'item': line.pk, 'status': StockStatus.DAMAGED.value}
+                    for line in line_items
+                ],
+                'location': LOCATION_ID,
+            },
+            expected_code=201,
+        )
+
+        # Due to the quantities received, we should have created 1 new stock item
+        self.assertEqual(part.stock_entries().count(), n_items + 3)
+
+        rma.refresh_from_db()
+
+        for line in rma.lines.all():
+            self.assertTrue(line.received)
+            self.assertIsNotNone(line.received_date)
+
+            # Check that the associated StockItem has been updated correctly
+            self.assertEqual(line.item.status, StockStatus.DAMAGED)
+            self.assertIsNone(line.item.customer)
+            self.assertIsNone(line.item.sales_order)
+            self.assertEqual(line.item.location.pk, LOCATION_ID)
 
     def test_ro_calendar(self):
         """Test the calendar export endpoint."""

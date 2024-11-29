@@ -14,6 +14,7 @@ import common.models
 import InvenTree.models
 import plugin.staticfiles
 from plugin import InvenTreePlugin, registry
+from plugin.events import PluginEvents, trigger_event
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -233,6 +234,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         self.active = active
         self.save()
+
+        trigger_event(PluginEvents.PLUGIN_ACTIVATED, slug=self.key, active=active)
 
         if active:
             offload_task(check_for_migrations)
