@@ -41,7 +41,7 @@ class SettingsValueField(serializers.Field):
 
         Protected settings are returned as '***'
         """
-        return '***' if instance.protected else str(instance.value)
+        return '***' if instance.protected else str(instance.value or '')
 
     def to_internal_value(self, data):
         """Return the internal value of the setting."""
