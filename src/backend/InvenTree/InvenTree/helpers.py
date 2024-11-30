@@ -3,7 +3,6 @@
 import datetime
 import hashlib
 import io
-import json
 import logging
 import os
 import os.path
@@ -23,12 +22,9 @@ from django.utils.translation import gettext_lazy as _
 
 import bleach
 import pytz
-import regex
 from bleach import clean
 from djmoney.money import Money
-from PIL import Image
 
-import InvenTree.version
 from common.currency import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
@@ -144,6 +140,8 @@ def getStaticUrl(filename):
 
 def TestIfImage(img):
     """Test if an image file is indeed an image."""
+    from PIL import Image
+
     try:
         Image.open(img).verify()
         return True
@@ -785,28 +783,22 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
     return cleaned
 
 
-def remove_non_printable_characters(
-    value: str, remove_newline=True, remove_ascii=True, remove_unicode=True
-):
+def remove_non_printable_characters(value: str, remove_newline=True) -> str:
     """Remove non-printable / control characters from the provided string."""
     cleaned = value
 
-    if remove_ascii:
-        # Remove ASCII control characters
-        # Note that we do not sub out 0x0A (\n) here, it is done separately below
-        cleaned = regex.sub('[\x00-\x09]+', '', cleaned)
-        cleaned = regex.sub('[\x0b-\x1f\x7f]+', '', cleaned)
+    # Remove ASCII control characters
+    # Note that we do not sub out 0x0A (\n) here, it is done separately below
+    regex = re.compile(r'[\u0000-\u0009\u000B-\u001F\u007F-\u009F]')
+    cleaned = regex.sub('', cleaned)
+
+    # Remove Unicode control characters
+    regex = re.compile(r'[\u200E\u200F\u202A-\u202E]')
+    cleaned = regex.sub('', cleaned)
 
     if remove_newline:
-        cleaned = regex.sub('[\x0a]+', '', cleaned)
-
-    if remove_unicode:
-        # Remove Unicode control characters
-        if remove_newline:
-            cleaned = regex.sub('[^\P{C}]+', '', cleaned)
-        else:
-            # Use 'negative-lookahead' to exclude newline character
-            cleaned = regex.sub('(?![\x0a])[^\P{C}]+', '', cleaned)
+        regex = re.compile(r'[\x0A]')
+        cleaned = regex.sub('', cleaned)
 
     return cleaned
 
