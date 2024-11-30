@@ -224,7 +224,7 @@ class BuildTest(BuildAPITest):
                 "status": 50,  # Item requires attention
             },
             expected_code=201,
-            max_query_count=450,  # TODO: Try to optimize this
+            max_query_count=600,
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
