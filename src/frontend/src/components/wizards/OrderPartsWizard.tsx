@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
-import { NumberInput, Table } from '@mantine/core';
+import { Alert, Group, NumberInput, Table } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import useWizard from '../../hooks/UseWizard';
+import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
+import RemoveRowButton from '../buttons/RemoveRowButton';
+import { StandaloneField } from '../forms/StandaloneField';
 
 enum OrderPartsWizardSteps {
-  SelectParts = 0,
-  SelectSuppliers = 1,
-  SelectOrders = 2
+  SelectSuppliers = 0,
+  SelectOrders = 1
 }
 
 function SelectPartsStep({
@@ -17,6 +21,14 @@ function SelectPartsStep({
   parts: any[];
   onRemovePart: (part: any) => void;
 }) {
+  if (parts.length === 0) {
+    return (
+      <Alert color='red' title={t`No parts selected`}>
+        {t`No purchaseable parts selected`}
+      </Alert>
+    );
+  }
+
   return (
     <Table striped withColumnBorders withTableBorder>
       <Table.Thead>
@@ -24,7 +36,9 @@ function SelectPartsStep({
           <Table.Th>{t`Part`}</Table.Th>
           <Table.Th>{t`IPN`}</Table.Th>
           <Table.Th>{t`Description`}</Table.Th>
+          <Table.Th>{t`Supplier`}</Table.Th>
           <Table.Th>{t`Quantity`}</Table.Th>
+          <Table.Th />
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
@@ -36,12 +50,36 @@ function SelectPartsStep({
             <Table.Td>{part.IPN}</Table.Td>
             <Table.Td>{part.description}</Table.Td>
             <Table.Td>
+              <StandaloneField
+                fieldName='supplier'
+                hideLabels={true}
+                fieldDefinition={{
+                  field_type: 'related field',
+                  api_url: apiUrl(ApiEndpoints.supplier_part_list),
+                  model: ModelType.supplierpart,
+                  onValueChange: (value, record) => {
+                    // TODO
+                  },
+                  filters: {
+                    part: part.pk,
+                    active: true,
+                    supplier_detail: true
+                  }
+                }}
+              />
+            </Table.Td>
+            <Table.Td>
               <NumberInput
                 min={0}
                 max={100}
                 defaultValue={0}
                 placeholder={t`Quantity`}
               />
+            </Table.Td>
+            <Table.Td>
+              <Group gap='xs' wrap='nowrap'>
+                <RemoveRowButton onClick={() => onRemovePart(part)} />
+              </Group>
             </Table.Td>
           </Table.Tr>
         ))}
@@ -74,12 +112,11 @@ export default function OrderPartsWizard({
   const renderStep = useCallback(
     (step: number) => {
       switch (step) {
-        case OrderPartsWizardSteps.SelectParts:
+        default:
+        case OrderPartsWizardSteps.SelectSuppliers:
           return (
             <SelectPartsStep parts={selectedParts} onRemovePart={removePart} />
           );
-        default:
-          return null;
       }
     },
     [selectedParts]
@@ -88,7 +125,7 @@ export default function OrderPartsWizard({
   // Create the wizard manager
   const wizard = useWizard({
     title: t`Order Parts`,
-    steps: [t`Select Parts`, t`Select Suppliers`, t`Select Orders`],
+    steps: [t`Select Suppliers`, t`Select Purchase Orders`],
     renderStep: renderStep
   });
 

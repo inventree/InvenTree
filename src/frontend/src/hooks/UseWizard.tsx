@@ -53,7 +53,7 @@ export default function useWizard(props: WizardProps): WizardState {
 
   const contents = useMemo(() => {
     return props.renderStep(currentStep);
-  }, [currentStep, props.renderStep]);
+  }, [opened, currentStep, props.renderStep]);
 
   return {
     currentStep,
