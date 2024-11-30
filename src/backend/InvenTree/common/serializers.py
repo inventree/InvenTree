@@ -45,7 +45,7 @@ class SettingsValueField(serializers.Field):
 
     def to_internal_value(self, data):
         """Return the internal value of the setting."""
-        return str(data)
+        return str(data or '')
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -65,7 +65,11 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     api_url = serializers.CharField(read_only=True)
 
-    value = SettingsValueField()
+    value = SettingsValueField(allow_null=True)
+
+    def validate_value(self, value):
+        """Validate the value of the setting."""
+        return str(value or '')
 
     units = serializers.CharField(read_only=True)
 
@@ -184,6 +188,10 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 
         # resume operations
         super().__init__(*args, **kwargs)
+
+    def validate_value(self, value):
+        """Validate the value of the setting."""
+        return str(value or '')
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):
