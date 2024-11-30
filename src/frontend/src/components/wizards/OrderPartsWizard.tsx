@@ -95,11 +95,6 @@ export default function OrderPartsWizard({
 }) {
   const [selectedParts, setSelectedParts] = useState<any[]>([]);
 
-  // Reset the selected parts when the parts list changes
-  useEffect(() => {
-    setSelectedParts(parts.filter((part) => part.purchaseable));
-  }, [parts]);
-
   // Remove a part from the selected parts list
   const removePart = useCallback(
     (part: any) => {
@@ -126,6 +121,12 @@ export default function OrderPartsWizard({
 
   const canStepForward = useCallback(
     (step: number): boolean => {
+      if (!selectedParts?.length) {
+        wizard.setError(t`No parts selected`);
+        wizard.setErrorDetail(t`You must select at least one part to order`);
+        return false;
+      }
+
       // TODO: Implement this
       return true;
     },
@@ -134,7 +135,12 @@ export default function OrderPartsWizard({
 
   const canStepBackward = useCallback(
     (step: number): boolean => {
-      // TODO: Implement this
+      if (!selectedParts?.length) {
+        wizard.setError(t`No parts selected`);
+        wizard.setErrorDetail(t`You must select at least one part to order`);
+        return false;
+      }
+
       return true;
     },
     [selectedParts]
@@ -148,6 +154,11 @@ export default function OrderPartsWizard({
     canStepBackward: canStepBackward,
     canStepForward: canStepForward
   });
+
+  // Reset the selected parts when the parts list changes
+  useEffect(() => {
+    setSelectedParts(parts.filter((part) => part.purchaseable));
+  }, [parts, wizard.opened]);
 
   return wizard;
 }
