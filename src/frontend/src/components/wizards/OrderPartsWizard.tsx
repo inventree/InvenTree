@@ -4,6 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import useWizard from '../../hooks/UseWizard';
 import { PartColumn } from '../../tables/ColumnRenderers';
 
+enum OrderPartsWizardSteps {
+  SelectParts = 0,
+  SelectSuppliers = 1,
+  SelectOrders = 2
+}
+
 function SelectPartsStep({
   parts,
   onRemovePart
@@ -64,11 +70,17 @@ export default function OrderPartsWizard({
     [selectedParts]
   );
 
+  // Render the select wizard step
   const renderStep = useCallback(
     (step: number) => {
-      return (
-        <SelectPartsStep parts={selectedParts} onRemovePart={removePart} />
-      );
+      switch (step) {
+        case OrderPartsWizardSteps.SelectParts:
+          return (
+            <SelectPartsStep parts={selectedParts} onRemovePart={removePart} />
+          );
+        default:
+          return null;
+      }
     },
     [selectedParts]
   );
