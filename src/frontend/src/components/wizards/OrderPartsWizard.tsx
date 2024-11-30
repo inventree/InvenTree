@@ -1,8 +1,9 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, NumberInput, Table, Text } from '@mantine/core';
+import { Alert, Group, Table, Text } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { shortenString } from '../../functions/tables';
 import useWizard from '../../hooks/UseWizard';
 import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
@@ -14,14 +15,30 @@ enum OrderPartsWizardSteps {
   SelectOrders = 1
 }
 
+/**
+ * Attributes for each selected part
+ * - part: The part instance
+ * - supplier_part: The selected supplier part instance
+ * - quantity: The quantity of the part to order
+ * - errors: Error messages for each attribute
+ */
+interface PartOrderRecord {
+  part: any;
+  supplier_part: any;
+  quantity: number;
+  errors: any;
+}
+
 function SelectPartsStep({
-  parts,
-  onRemovePart
+  records,
+  onRemovePart,
+  onSelectSupplierPart
 }: {
-  parts: any[];
+  records: PartOrderRecord[];
   onRemovePart: (part: any) => void;
+  onSelectSupplierPart: (part: any, supplierPart: any) => void;
 }) {
-  if (parts.length === 0) {
+  if (records.length === 0) {
     return (
       <Alert color='red' title={t`No parts selected`}>
         {t`No purchaseable parts selected`}
@@ -36,32 +53,37 @@ function SelectPartsStep({
           <Table.Th>{t`Part`}</Table.Th>
           <Table.Th>{t`IPN`}</Table.Th>
           <Table.Th>{t`Description`}</Table.Th>
-          <Table.Th>{t`Supplier`}</Table.Th>
+          <Table.Th>{t`Supplier Part`}</Table.Th>
           <Table.Th>{t`Quantity`}</Table.Th>
           <Table.Th />
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {parts.map((part) => (
-          <Table.Tr key={part.pk}>
+        {records.map((record: PartOrderRecord) => (
+          <Table.Tr key={record.part?.pk}>
             <Table.Td>
-              <PartColumn part={part} />
+              <PartColumn part={record.part} />
             </Table.Td>
-            <Table.Td>{part.IPN}</Table.Td>
-            <Table.Td>{part.description}</Table.Td>
+            <Table.Td>{record.part?.IPN}</Table.Td>
+            <Table.Td>
+              {shortenString({ str: record.part?.description, len: 50 })}
+            </Table.Td>
             <Table.Td>
               <StandaloneField
-                fieldName='supplier'
+                fieldName='supplier_part'
                 hideLabels={true}
+                error={record.errors?.supplier_part}
                 fieldDefinition={{
                   field_type: 'related field',
                   api_url: apiUrl(ApiEndpoints.supplier_part_list),
                   model: ModelType.supplierpart,
-                  onValueChange: (value, record) => {
-                    // TODO
+                  required: true,
+                  value: record.supplier_part?.pk,
+                  onValueChange: (value, instance) => {
+                    onSelectSupplierPart(record.part, instance);
                   },
                   filters: {
-                    part: part.pk,
+                    part: record.part.pk,
                     active: true,
                     supplier_detail: true
                   }
@@ -69,16 +91,23 @@ function SelectPartsStep({
               />
             </Table.Td>
             <Table.Td>
-              <NumberInput
-                min={0}
-                max={100}
-                defaultValue={0}
-                placeholder={t`Quantity`}
+              <StandaloneField
+                fieldName='quantity'
+                hideLabels={true}
+                error={record.errors?.quantity}
+                fieldDefinition={{
+                  field_type: 'number',
+                  required: true,
+                  value: record.quantity,
+                  onValueChange: (value) => {
+                    // TODO
+                  }
+                }}
               />
             </Table.Td>
             <Table.Td>
               <Group gap='xs' wrap='nowrap'>
-                <RemoveRowButton onClick={() => onRemovePart(part)} />
+                <RemoveRowButton onClick={() => onRemovePart(record.part)} />
               </Group>
             </Table.Td>
           </Table.Tr>
@@ -93,12 +122,33 @@ export default function OrderPartsWizard({
 }: {
   parts: any[];
 }) {
-  const [selectedParts, setSelectedParts] = useState<any[]>([]);
+  // Track a list of selected parts
+  const [selectedParts, setSelectedParts] = useState<PartOrderRecord[]>([]);
 
   // Remove a part from the selected parts list
   const removePart = useCallback(
     (part: any) => {
-      setSelectedParts(selectedParts.filter((p) => p.pk !== part.pk));
+      setSelectedParts(
+        selectedParts.filter(
+          (record: PartOrderRecord) => record.part?.pk !== part.pk
+        )
+      );
+    },
+    [selectedParts]
+  );
+
+  // Select a supplier part for a part
+  const selectSupplierPart = useCallback(
+    (part: any, supplierPart: any) => {
+      const records = [...selectedParts];
+
+      records.forEach((record: PartOrderRecord, index: number) => {
+        if (record.part.pk === part.pk) {
+          records[index].supplier_part = supplierPart;
+        }
+      });
+
+      setSelectedParts(records);
     },
     [selectedParts]
   );
@@ -110,7 +160,11 @@ export default function OrderPartsWizard({
         default:
         case OrderPartsWizardSteps.SelectSuppliers:
           return (
-            <SelectPartsStep parts={selectedParts} onRemovePart={removePart} />
+            <SelectPartsStep
+              records={selectedParts}
+              onRemovePart={removePart}
+              onSelectSupplierPart={selectSupplierPart}
+            />
           );
         case OrderPartsWizardSteps.SelectOrders:
           return <Text>Well hello there</Text>;
@@ -155,9 +209,20 @@ export default function OrderPartsWizard({
     canStepForward: canStepForward
   });
 
-  // Reset the selected parts when the parts list changes
+  // Reset the wizard to a known state when opened
   useEffect(() => {
-    setSelectedParts(parts.filter((part) => part.purchaseable));
+    setSelectedParts(
+      parts
+        .filter((part) => part.purchaseable)
+        .map((part) => {
+          return {
+            part: part,
+            supplier_part: undefined,
+            quantity: 1,
+            errors: {}
+          };
+        })
+    );
   }, [parts, wizard.opened]);
 
   return wizard;
