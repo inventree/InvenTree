@@ -1,3 +1,5 @@
+import { Alert } from '@mantine/core';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import {
   type ReactNode,
   useCallback,
@@ -18,6 +20,11 @@ export interface WizardProps {
 export interface WizardState {
   opened: boolean;
   currentStep: number;
+  clearError: () => void;
+  error: string | null;
+  setError: (error: string | null) => void;
+  errorDetail: string | null;
+  setErrorDetail: (errorDetail: string | null) => void;
   openWizard: () => void;
   closeWizard: () => void;
   nextStep: () => void;
@@ -35,10 +42,19 @@ export default function useWizard(props: WizardProps): WizardState {
   const [currentStep, setCurrentStep] = useState(0);
   const [opened, setOpened] = useState(false);
 
-  // Reset the wizard to the first step
+  const [error, setError] = useState<string | null>(null);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
+
+  const clearError = useCallback(() => {
+    setError(null);
+    setErrorDetail(null);
+  }, []);
+
+  // Reset the wizard to an initial state when opened
   useEffect(() => {
     if (opened) {
       setCurrentStep(0);
+      clearError();
     }
   }, [opened]);
 
@@ -82,6 +98,11 @@ export default function useWizard(props: WizardProps): WizardState {
   return {
     currentStep,
     opened,
+    clearError,
+    error,
+    setError,
+    errorDetail,
+    setErrorDetail,
     openWizard,
     closeWizard,
     nextStep,
@@ -96,6 +117,11 @@ export default function useWizard(props: WizardProps): WizardState {
         onNextStep={nextStep}
         onPreviousStep={previousStep}
       >
+        {error && (
+          <Alert color='red' title={error} icon={<IconExclamationCircle />}>
+            {errorDetail}
+          </Alert>
+        )}
         {contents}
       </WizardDrawer>
     )

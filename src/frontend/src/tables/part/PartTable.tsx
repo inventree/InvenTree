@@ -343,6 +343,7 @@ export function PartListTable({
       <ActionButton
         key='order-parts'
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        disabled={!table.hasSelectedRecords}
         tooltip={t`Order Parts`}
         onClick={() => {
           orderPartsWizard.openWizard();
@@ -357,7 +358,7 @@ export function PartListTable({
         onClick={() => newPart.open()}
       />
     ];
-  }, [user, table.selectedRecords]);
+  }, [user, table.hasSelectedRecords]);
 
   return (
     <>
