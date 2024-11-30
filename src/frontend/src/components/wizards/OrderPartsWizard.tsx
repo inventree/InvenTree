@@ -26,9 +26,12 @@ export default function OrderPartsWizard({
     [selectedParts]
   );
 
-  return useWizard({
+  // Create the wizard manager
+  const wizard = useWizard({
     title: t`Order Parts`,
     steps: [t`Select Parts`, t`Select Suppliers`, t`Select Orders`],
     renderStep: renderStep
   });
+
+  return wizard;
 }
