@@ -41,11 +41,19 @@ class SettingsValueField(serializers.Field):
 
         Protected settings are returned as '***'
         """
-        return '***' if instance.protected else str(instance.value or '')
+        if instance.protected:
+            return '***'
+        elif instance.value is None:
+            return ''
+        else:
+            return str(instance.value)
 
     def to_internal_value(self, data):
         """Return the internal value of the setting."""
-        return str(data or '')
+        if data is None:
+            return ''
+        else:
+            return str(data)
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -69,7 +77,9 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     def validate_value(self, value):
         """Validate the value of the setting."""
-        return str(value or '')
+        if value is None:
+            return ''
+        return str(value)
 
     units = serializers.CharField(read_only=True)
 
@@ -191,7 +201,9 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 
     def validate_value(self, value):
         """Validate the value of the setting."""
-        return str(value or '')
+        if value is None:
+            return ''
+        return str(value)
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):
