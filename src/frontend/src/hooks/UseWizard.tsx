@@ -11,6 +11,8 @@ export interface WizardProps {
   title: string;
   steps?: string[];
   renderStep: (step: number) => ReactNode;
+  canStepForward?: (step: number) => boolean;
+  canStepBackward?: (step: number) => boolean;
 }
 
 export interface WizardState {
@@ -35,22 +37,41 @@ export default function useWizard(props: WizardProps): WizardState {
     }
   }, [opened]);
 
+  // Open the wizard
   const openWizard = useCallback(() => {
     setOpened(true);
   }, []);
 
+  // Close the wizard
   const closeWizard = useCallback(() => {
     setOpened(false);
   }, []);
 
+  // Progress the wizard to the next step
   const nextStep = useCallback(() => {
+    if (props.canStepForward && !props.canStepForward(currentStep)) {
+      return;
+    }
+
+    if (props.steps && currentStep < props.steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    }
+
     setCurrentStep((prev) => prev + 1);
-  }, []);
+  }, [props.canStepForward]);
 
+  // Go back to the previous step
   const previousStep = useCallback(() => {
-    setCurrentStep((prev) => prev - 1);
-  }, []);
+    if (props.canStepBackward && !props.canStepBackward(currentStep)) {
+      return;
+    }
 
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  }, [props.canStepBackward]);
+
+  // Render the wizard contents for the current step
   const contents = useMemo(() => {
     return props.renderStep(currentStep);
   }, [opened, currentStep, props.renderStep]);
