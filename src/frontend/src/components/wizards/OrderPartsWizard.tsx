@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, NumberInput, Table } from '@mantine/core';
+import { Alert, Group, NumberInput, Table, Text } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -117,7 +117,25 @@ export default function OrderPartsWizard({
           return (
             <SelectPartsStep parts={selectedParts} onRemovePart={removePart} />
           );
+        case OrderPartsWizardSteps.SelectOrders:
+          return <Text>Well hello there</Text>;
       }
+    },
+    [selectedParts]
+  );
+
+  const canStepForward = useCallback(
+    (step: number): boolean => {
+      // TODO: Implement this
+      return true;
+    },
+    [selectedParts]
+  );
+
+  const canStepBackward = useCallback(
+    (step: number): boolean => {
+      // TODO: Implement this
+      return true;
     },
     [selectedParts]
   );
@@ -126,7 +144,9 @@ export default function OrderPartsWizard({
   const wizard = useWizard({
     title: t`Order Parts`,
     steps: [t`Select Suppliers`, t`Select Purchase Orders`],
-    renderStep: renderStep
+    renderStep: renderStep,
+    canStepBackward: canStepBackward,
+    canStepForward: canStepForward
   });
 
   return wizard;

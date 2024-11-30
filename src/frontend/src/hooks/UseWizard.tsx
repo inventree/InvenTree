@@ -9,7 +9,7 @@ import WizardDrawer from '../components/wizards/WizardDrawer';
 
 export interface WizardProps {
   title: string;
-  steps?: string[];
+  steps: string[];
   renderStep: (step: number) => ReactNode;
   canStepForward?: (step: number) => boolean;
   canStepBackward?: (step: number) => boolean;
@@ -22,10 +22,15 @@ export interface WizardState {
   closeWizard: () => void;
   nextStep: () => void;
   previousStep: () => void;
-  setCurrentStep: (step: number) => void;
   wizard: ReactNode;
 }
 
+/**
+ * Hook for managing a wizard-style multi-step process.
+ * - Manage the current step of the wizard
+ * - Allows opening and closing the wizard
+ * - Handles progression between steps with optional validation
+ */
 export default function useWizard(props: WizardProps): WizardState {
   const [currentStep, setCurrentStep] = useState(0);
   const [opened, setOpened] = useState(false);
@@ -54,11 +59,9 @@ export default function useWizard(props: WizardProps): WizardState {
     }
 
     if (props.steps && currentStep < props.steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
+      setCurrentStep(currentStep + 1);
     }
-
-    setCurrentStep((prev) => prev + 1);
-  }, [props.canStepForward]);
+  }, [currentStep, props.canStepForward]);
 
   // Go back to the previous step
   const previousStep = useCallback(() => {
@@ -67,9 +70,9 @@ export default function useWizard(props: WizardProps): WizardState {
     }
 
     if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
+      setCurrentStep(currentStep - 1);
     }
-  }, [props.canStepBackward]);
+  }, [currentStep, props.canStepBackward]);
 
   // Render the wizard contents for the current step
   const contents = useMemo(() => {
@@ -83,7 +86,6 @@ export default function useWizard(props: WizardProps): WizardState {
     closeWizard,
     nextStep,
     previousStep,
-    setCurrentStep,
     wizard: (
       <WizardDrawer
         title={props.title}
@@ -91,6 +93,8 @@ export default function useWizard(props: WizardProps): WizardState {
         steps={props.steps}
         opened={opened}
         onClose={closeWizard}
+        onNextStep={nextStep}
+        onPreviousStep={previousStep}
       >
         {contents}
       </WizardDrawer>

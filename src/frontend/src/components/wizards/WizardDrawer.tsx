@@ -1,13 +1,22 @@
+import { t } from '@lingui/macro';
 import {
+  ActionIcon,
+  Card,
   Divider,
   Drawer,
   Group,
   Paper,
   Space,
   Stack,
-  Stepper
+  Stepper,
+  Tooltip
 } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconCircleCheck
+} from '@tabler/icons-react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 
@@ -16,27 +25,87 @@ import { StylishText } from '../items/StylishText';
  */
 function WizardProgressStepper({
   currentStep,
-  steps
+  steps,
+  onSelectStep
 }: {
   currentStep: number;
-  steps?: string[];
+  steps: string[];
+  onSelectStep: (step: number) => void;
 }) {
   if (!steps || steps.length == 0) {
     return null;
   }
 
+  // Determine if the user can select a particular step
+  const canSelectStep = useCallback(
+    (step: number) => {
+      if (!steps || steps.length <= 1) {
+        return false;
+      }
+
+      // Only allow single-step progression
+      return Math.abs(step - currentStep) == 1;
+    },
+    [currentStep, steps]
+  );
+
+  const canStepBackward = currentStep > 0;
+  const canStepForward = currentStep < steps.length - 1;
+
   return (
-    <Stepper
-      active={currentStep}
-      onStepClick={undefined}
-      allowNextStepsSelect={false}
-      iconSize={20}
-      size='xs'
-    >
-      {steps.map((step: string) => (
-        <Stepper.Step label={step} key={step} />
-      ))}
-    </Stepper>
+    <Card p='xs' withBorder>
+      <Group justify='space-between' gap='xs' wrap='nowrap'>
+        <Tooltip
+          label={steps[currentStep - 1]}
+          position='top'
+          disabled={!canStepBackward}
+        >
+          <ActionIcon
+            variant='transparent'
+            onClick={() => onSelectStep(currentStep - 1)}
+            disabled={!canStepBackward}
+          >
+            <IconArrowLeft />
+          </ActionIcon>
+        </Tooltip>
+        <Stepper
+          active={currentStep}
+          onStepClick={(stepIndex: number) => onSelectStep(stepIndex)}
+          iconSize={20}
+          size='xs'
+        >
+          {steps.map((step: string, idx: number) => (
+            <Stepper.Step
+              label={step}
+              key={step}
+              aria-label={`wizard-step-${idx}`}
+              allowStepSelect={canSelectStep(idx)}
+            />
+          ))}
+        </Stepper>
+        {canStepForward ? (
+          <Tooltip
+            label={steps[currentStep + 1]}
+            position='top'
+            disabled={!canStepForward}
+          >
+            <ActionIcon
+              variant='transparent'
+              onClick={() => onSelectStep(currentStep + 1)}
+              disabled={!canStepForward}
+            >
+              <IconArrowRight />
+            </ActionIcon>
+          </Tooltip>
+        ) : (
+          <Tooltip label={t`Complete`} position='top'>
+            <ActionIcon color='green' variant='transparent'>
+              <IconCircleCheck />
+            </ActionIcon>
+          </Tooltip>
+        )}
+      </Group>
+    </Card>
   );
 }
 
@@ -49,14 +118,18 @@ export default function WizardDrawer({
   steps,
   children,
   opened,
-  onClose
+  onClose,
+  onNextStep,
+  onPreviousStep
 }: {
   title: string;
   currentStep: number;
-  steps?: string[];
+  steps: string[];
   children: ReactNode;
   opened: boolean;
   onClose: () => void;
+  onNextStep?: () => void;
+  onPreviousStep?: () => void;
 }) {
   const titleBlock: ReactNode = useMemo(() => {
     return (
@@ -68,8 +141,18 @@ export default function WizardDrawer({
           grow
           preventGrowOverflow={false}
         >
-          <StylishText size='lg'>{title}</StylishText>
-          <WizardProgressStepper currentStep={currentStep} steps={steps} />
+          <StylishText size='xl'>{title}</StylishText>
+          <WizardProgressStepper
+            currentStep={currentStep}
+            steps={steps}
+            onSelectStep={(step: number) => {
+              if (step < currentStep) {
+                onPreviousStep?.();
+              } else {
+                onNextStep?.();
+              }
+            }}
+          />
           <Space />
         </Group>
         <Divider />
