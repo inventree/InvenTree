@@ -50,7 +50,7 @@ export default function OrderPartsWizard({
   const [selectedParts, setSelectedParts] = useState<any[]>([]);
 
   useEffect(() => {
-    setSelectedParts(parts);
+    setSelectedParts(parts.filter((part) => part.purchaseable));
   }, [parts]);
 
   const renderStep = useCallback(
