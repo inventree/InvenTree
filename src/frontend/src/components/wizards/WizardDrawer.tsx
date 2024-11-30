@@ -19,7 +19,7 @@ function WizardProgressStepper({
   steps
 }: {
   currentStep: number;
-  steps: string[];
+  steps?: string[];
 }) {
   if (!steps || steps.length == 0) {
     return null;
@@ -53,7 +53,7 @@ export default function WizardDrawer({
 }: {
   title: string;
   currentStep: number;
-  steps: string[];
+  steps?: string[];
   children: ReactNode;
   opened: boolean;
   onClose: () => void;
@@ -80,7 +80,7 @@ export default function WizardDrawer({
   return (
     <Drawer
       position='bottom'
-      size={'50%'}
+      size={'75%'}
       title={titleBlock}
       withCloseButton={true}
       closeOnEscape={false}

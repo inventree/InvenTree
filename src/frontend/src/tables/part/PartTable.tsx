@@ -2,7 +2,10 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
+import { IconShoppingCart } from '@tabler/icons-react';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -333,8 +336,20 @@ export function PartListTable({
     modelType: ModelType.part
   });
 
+  const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
+
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        key='order-parts'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        tooltip={t`Order Parts`}
+        onClick={() => {
+          orderPartsWizard.openWizard();
+        }}
+        icon={<IconShoppingCart />}
+        color='blue'
+      />,
       <AddItemButton
         key='add-part'
         hidden={!user.hasAddRole(UserRoles.part)}
@@ -342,11 +357,12 @@ export function PartListTable({
         onClick={() => newPart.open()}
       />
     ];
-  }, [user]);
+  }, [user, table.selectedRecords]);
 
   return (
     <>
       {newPart.modal}
+      {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}
