@@ -5,9 +5,11 @@ import useWizard from '../../hooks/UseWizard';
 import { PartColumn } from '../../tables/ColumnRenderers';
 
 function SelectPartsStep({
-  parts
+  parts,
+  onRemovePart
 }: {
   parts: any[];
+  onRemovePart: (part: any) => void;
 }) {
   return (
     <Table striped withColumnBorders withTableBorder>
@@ -49,13 +51,24 @@ export default function OrderPartsWizard({
 }) {
   const [selectedParts, setSelectedParts] = useState<any[]>([]);
 
+  // Reset the selected parts when the parts list changes
   useEffect(() => {
     setSelectedParts(parts.filter((part) => part.purchaseable));
   }, [parts]);
 
+  // Remove a part from the selected parts list
+  const removePart = useCallback(
+    (part: any) => {
+      setSelectedParts(selectedParts.filter((p) => p.pk !== part.pk));
+    },
+    [selectedParts]
+  );
+
   const renderStep = useCallback(
     (step: number) => {
-      return <SelectPartsStep parts={selectedParts} />;
+      return (
+        <SelectPartsStep parts={selectedParts} onRemovePart={removePart} />
+      );
     },
     [selectedParts]
   );
