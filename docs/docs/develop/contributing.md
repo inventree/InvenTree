@@ -188,6 +188,19 @@ To see all the available options:
 invoke dev.test --help
 ```
 
+#### Database Permission Issues
+
+For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
+
+For example, in PostgreSQL, run:
+
+```
+alter user myuser createdb;
+```
+
+!!! info "Devcontainer"
+    The default database container which is provided in the devcontainer is already setup with the required permissions
+
 ## Code Style
 
 Code style is automatically checked as part of the project's CI pipeline on GitHub. This means that any pull requests which do not conform to the style guidelines will fail CI checks.
