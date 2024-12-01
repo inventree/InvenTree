@@ -188,6 +188,14 @@ To see all the available options:
 invoke dev.test --help
 ```
 
+For local testing django creates a test database and removes it after testing. So
+the database user in your config.yaml file needs to have the right to create a new database.
+For PostgreeSQL run:
+
+```
+alter user myuser createdb;
+```
+
 ## Code Style
 
 Code style is automatically checked as part of the project's CI pipeline on GitHub. This means that any pull requests which do not conform to the style guidelines will fail CI checks.
