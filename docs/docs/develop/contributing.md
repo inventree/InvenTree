@@ -188,13 +188,18 @@ To see all the available options:
 invoke dev.test --help
 ```
 
-For local testing django creates a test database and removes it after testing. So
-the database user in your config.yaml file needs to have the right to create a new database.
-For PostgreeSQL run:
+#### Database Permission Issues
+
+For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
+
+For example, in PostgreSQL, run:
 
 ```
 alter user myuser createdb;
 ```
+
+!!! info "Devcontainer"
+    The default database container which is provided in the devcontainer is already setup with the required permissions
 
 ## Code Style
 
