@@ -531,7 +531,10 @@ function StockOperationsRow({
         <Table.Td>
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
-            <StatusRenderer status={record.status} type={ModelType.stockitem} />
+            <StatusRenderer
+              status={record.status_custom_key}
+              type={ModelType.stockitem}
+            />
           </Group>
         </Table.Td>
         {!merge && (

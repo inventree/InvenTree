@@ -42,7 +42,13 @@ import { TableHoverCard } from '../TableHoverCard';
 /**
  * Construct a list of columns for the stock item table
  */
-function stockItemTableColumns(): TableColumn[] {
+function stockItemTableColumns({
+  showLocation,
+  showPricing
+}: {
+  showLocation: boolean;
+  showPricing: boolean;
+}): TableColumn[] {
   return [
     {
       accessor: 'part',
@@ -215,6 +221,7 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true
     },
     LocationColumn({
+      hidden: !showLocation,
       accessor: 'location_detail'
     }),
     {
@@ -239,6 +246,7 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Unit Price`,
       sortable: true,
       switchable: true,
+      hidden: !showPricing,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
@@ -248,6 +256,7 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'stock_value',
       title: t`Stock Value`,
       sortable: false,
+      hidden: !showPricing,
       render: (record: any) => {
         const min_price =
           record.purchase_price || record.part_detail?.pricing_min;
@@ -466,10 +475,14 @@ function stockItemTableFilters({
 export function StockItemTable({
   params = {},
   allowAdd = false,
+  showLocation = true,
+  showPricing = true,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
+  showLocation?: boolean;
+  showPricing?: boolean;
   tableName: string;
 }>) {
   const table = useTable(tableName);
@@ -482,7 +495,15 @@ export function StockItemTable({
     [settings]
   );
 
-  const tableColumns = useMemo(() => stockItemTableColumns(), []);
+  const tableColumns = useMemo(
+    () =>
+      stockItemTableColumns({
+        showLocation: showLocation ?? true,
+        showPricing: showPricing ?? true
+      }),
+    [showLocation, showPricing]
+  );
+
   const tableFilters = useMemo(
     () =>
       stockItemTableFilters({

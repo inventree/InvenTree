@@ -313,6 +313,7 @@ export default function BuildDetail() {
           <StockItemTable
             allowAdd={false}
             tableName='build-consumed'
+            showLocation={false}
             params={{
               consumed_by: id
             }}
