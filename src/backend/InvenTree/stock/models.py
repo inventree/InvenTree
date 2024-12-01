@@ -1359,7 +1359,7 @@ class StockItem(
         if self.installed_item_count() > 0:
             return False
 
-        return not self.sales_order is not None
+        return self.sales_order is None
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1542,7 +1542,7 @@ class StockItem(
         if self.belongs_to is not None:
             return False
 
-        return not self.sales_order is not None
+        return self.sales_order is None
 
     @property
     def tracking_info_count(self):
