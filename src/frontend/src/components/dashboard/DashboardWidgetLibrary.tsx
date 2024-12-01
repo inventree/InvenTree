@@ -38,7 +38,13 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       modelType: ModelType.part,
       params: { low_stock: true, active: true }
     }),
-    // TODO: Required for build orders
+    QueryCountDashboardWidget({
+      title: t`Required for Build Orders`,
+      label: 'bld-req',
+      description: t`Show parts which are required for active build orders`,
+      modelType: ModelType.part,
+      params: { stock_to_build: true }
+    }),
     QueryCountDashboardWidget({
       title: t`Expired Stock Items`,
       label: 'exp-stk',
