@@ -1,4 +1,4 @@
-import { Alert } from '@mantine/core';
+import { Alert, Stack } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import {
   type ReactNode,
@@ -76,6 +76,7 @@ export default function useWizard(props: WizardProps): WizardState {
 
     if (props.steps && currentStep < props.steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      clearError();
     }
   }, [currentStep, props.canStepForward]);
 
@@ -87,6 +88,7 @@ export default function useWizard(props: WizardProps): WizardState {
 
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      clearError();
     }
   }, [currentStep, props.canStepBackward]);
 
@@ -117,12 +119,14 @@ export default function useWizard(props: WizardProps): WizardState {
         onNextStep={nextStep}
         onPreviousStep={previousStep}
       >
-        {error && (
-          <Alert color='red' title={error} icon={<IconExclamationCircle />}>
-            {errorDetail}
-          </Alert>
-        )}
-        {contents}
+        <Stack gap='xs'>
+          {error && (
+            <Alert color='red' title={error} icon={<IconExclamationCircle />}>
+              {errorDetail}
+            </Alert>
+          )}
+          {contents}
+        </Stack>
       </WizardDrawer>
     )
   };

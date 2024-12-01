@@ -32,11 +32,13 @@ interface PartOrderRecord {
 function SelectPartsStep({
   records,
   onRemovePart,
-  onSelectSupplierPart
+  onSelectSupplierPart,
+  onSelectQuantity
 }: {
   records: PartOrderRecord[];
   onRemovePart: (part: any) => void;
-  onSelectSupplierPart: (part: any, supplierPart: any) => void;
+  onSelectSupplierPart: (partId: number, supplierPart: any) => void;
+  onSelectQuantity: (partId: number, quantity: number) => void;
 }) {
   if (records.length === 0) {
     return (
@@ -80,7 +82,7 @@ function SelectPartsStep({
                   required: true,
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
-                    onSelectSupplierPart(record.part, instance);
+                    onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
                     part: record.part.pk,
@@ -100,7 +102,8 @@ function SelectPartsStep({
                   required: true,
                   value: record.quantity,
                   onValueChange: (value) => {
-                    // TODO
+                    // TODO: This is very inefficient due to re-rendering
+                    // onSelectQuantity(record.part.pk, value);
                   }
                 }}
               />
@@ -139,12 +142,28 @@ export default function OrderPartsWizard({
 
   // Select a supplier part for a part
   const selectSupplierPart = useCallback(
-    (part: any, supplierPart: any) => {
+    (partId: number, supplierPart: any) => {
       const records = [...selectedParts];
 
       records.forEach((record: PartOrderRecord, index: number) => {
-        if (record.part.pk === part.pk) {
+        if (record.part.pk === partId) {
           records[index].supplier_part = supplierPart;
+        }
+      });
+
+      setSelectedParts(records);
+    },
+    [selectedParts]
+  );
+
+  // Select quantity for a part
+  const selectQuantity = useCallback(
+    (partId: number, quantity: number) => {
+      const records = [...selectedParts];
+
+      records.forEach((record: PartOrderRecord, index: number) => {
+        if (record.part.pk === partId) {
+          records[index].quantity = quantity;
         }
       });
 
@@ -164,6 +183,7 @@ export default function OrderPartsWizard({
               records={selectedParts}
               onRemovePart={removePart}
               onSelectSupplierPart={selectSupplierPart}
+              onSelectQuantity={selectQuantity}
             />
           );
         case OrderPartsWizardSteps.SelectOrders:
@@ -181,21 +201,37 @@ export default function OrderPartsWizard({
         return false;
       }
 
-      // TODO: Implement this
-      return true;
-    },
-    [selectedParts]
-  );
+      let result = true;
+      const records = [...selectedParts];
 
-  const canStepBackward = useCallback(
-    (step: number): boolean => {
-      if (!selectedParts?.length) {
-        wizard.setError(t`No parts selected`);
-        wizard.setErrorDetail(t`You must select at least one part to order`);
-        return false;
+      // Check for errors in each part
+      selectedParts.forEach((record: PartOrderRecord, index: number) => {
+        records[index].errors = {
+          supplier_part: !record.supplier_part
+            ? t`Supplier part is required`
+            : null,
+          quantity:
+            !record.quantity || record.quantity <= 0
+              ? t`Quantity is required`
+              : null
+        };
+
+        // If any errors are found, set the result to false
+        if (Object.values(records[index].errors).some((error) => error)) {
+          result = false;
+        }
+      });
+
+      setSelectedParts(records);
+
+      if (!result) {
+        wizard.setError(t`Invalid part selection`);
+        wizard.setErrorDetail(
+          t`Please correct the errors in the selected parts`
+        );
       }
 
-      return true;
+      return result;
     },
     [selectedParts]
   );
@@ -205,7 +241,6 @@ export default function OrderPartsWizard({
     title: t`Order Parts`,
     steps: [t`Select Suppliers`, t`Select Purchase Orders`],
     renderStep: renderStep,
-    canStepBackward: canStepBackward,
     canStepForward: canStepForward
   });
 
