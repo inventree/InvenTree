@@ -246,18 +246,25 @@ export default function OrderPartsWizard({
 
   // Reset the wizard to a known state when opened
   useEffect(() => {
-    setSelectedParts(
-      parts
-        .filter((part) => part.purchaseable && part.active)
-        .map((part) => {
-          return {
+    const _parts: PartOrderRecord[] = [];
+
+    parts
+      .filter((part) => part.purchaseable && part.active)
+      .forEach((part) => {
+        // Prevent duplicate entries based on pk
+        if (
+          !_parts.find((record: PartOrderRecord) => record.part?.pk === part.pk)
+        ) {
+          _parts.push({
             part: part,
             supplier_part: undefined,
             quantity: 1,
             errors: {}
-          };
-        })
-    );
+          });
+        }
+      });
+
+    setSelectedParts(_parts);
   }, [parts, wizard.opened]);
 
   return wizard;
