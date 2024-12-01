@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Card, Center, Divider, Loader, Text } from '@mantine/core';
+import { Alert, Card, Center, Loader, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -275,7 +275,6 @@ export default function DashboardLayout() {
         editing={editing}
         removing={removing}
       />
-      <Divider p='xs' />
       {layouts && loaded && availableWidgets.loaded ? (
         <>
           {widgetLabels.length == 0 ? (
