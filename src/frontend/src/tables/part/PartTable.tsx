@@ -3,14 +3,15 @@ import { Group, Text } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 
 import { IconShoppingCart } from '@tabler/icons-react';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -340,16 +341,20 @@ export function PartListTable({
 
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='order-parts'
-        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      <ActionDropdown
+        tooltip={t`Part Actions`}
+        icon={<InvenTreeIcon icon='part' />}
         disabled={!table.hasSelectedRecords}
-        tooltip={t`Order Parts`}
-        onClick={() => {
-          orderPartsWizard.openWizard();
-        }}
-        icon={<IconShoppingCart />}
-        color='blue'
+        actions={[
+          {
+            name: t`Order Parts`,
+            icon: <IconShoppingCart color='blue' />,
+            tooltip: t`Order selected parts`,
+            onClick: () => {
+              orderPartsWizard.openWizard();
+            }
+          }
+        ]}
       />,
       <AddItemButton
         key='add-part'

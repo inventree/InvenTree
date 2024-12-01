@@ -569,6 +569,17 @@ export function StockItemTable({
         disabled={table.selectedRecords.length === 0}
         actions={[
           {
+            name: t`Count Stock`,
+            icon: (
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: t`Count Stock`,
+            disabled: !can_add_stocktake,
+            onClick: () => {
+              countStock.open();
+            }
+          },
+          {
             name: t`Add Stock`,
             icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             tooltip: t`Add a new stock item`,
@@ -584,17 +595,6 @@ export function StockItemTable({
             disabled: !can_add_stock,
             onClick: () => {
               removeStock.open();
-            }
-          },
-          {
-            name: t`Count Stock`,
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Count Stock`,
-            disabled: !can_add_stocktake,
-            onClick: () => {
-              countStock.open();
             }
           },
           {
