@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Table, Text } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { Alert, Group, Text } from '@mantine/core';
+import { DataTable } from 'mantine-datatable';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { shortenString } from '../../functions/tables';
@@ -48,76 +49,82 @@ function SelectPartsStep({
     );
   }
 
-  return (
-    <Table striped withColumnBorders withTableBorder>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>{t`Part`}</Table.Th>
-          <Table.Th>{t`IPN`}</Table.Th>
-          <Table.Th>{t`Description`}</Table.Th>
-          <Table.Th>{t`Supplier Part`}</Table.Th>
-          <Table.Th>{t`Quantity`}</Table.Th>
-          <Table.Th />
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {records.map((record: PartOrderRecord) => (
-          <Table.Tr key={record.part?.pk}>
-            <Table.Td>
-              <PartColumn part={record.part} />
-            </Table.Td>
-            <Table.Td>{record.part?.IPN}</Table.Td>
-            <Table.Td>
-              {shortenString({ str: record.part?.description, len: 50 })}
-            </Table.Td>
-            <Table.Td>
-              <StandaloneField
-                fieldName='supplier_part'
-                hideLabels={true}
-                error={record.errors?.supplier_part}
-                fieldDefinition={{
-                  field_type: 'related field',
-                  api_url: apiUrl(ApiEndpoints.supplier_part_list),
-                  model: ModelType.supplierpart,
-                  required: true,
-                  value: record.supplier_part?.pk,
-                  onValueChange: (value, instance) => {
-                    onSelectSupplierPart(record.part.pk, instance);
-                  },
-                  filters: {
-                    part: record.part.pk,
-                    active: true,
-                    supplier_detail: true
-                  }
-                }}
-              />
-            </Table.Td>
-            <Table.Td>
-              <StandaloneField
-                fieldName='quantity'
-                hideLabels={true}
-                error={record.errors?.quantity}
-                fieldDefinition={{
-                  field_type: 'number',
-                  required: true,
-                  value: record.quantity,
-                  onValueChange: (value) => {
-                    // TODO: This is very inefficient due to re-rendering
-                    // onSelectQuantity(record.part.pk, value);
-                  }
-                }}
-              />
-            </Table.Td>
-            <Table.Td>
-              <Group gap='xs' wrap='nowrap'>
-                <RemoveRowButton onClick={() => onRemovePart(record.part)} />
-              </Group>
-            </Table.Td>
-          </Table.Tr>
-        ))}
-      </Table.Tbody>
-    </Table>
-  );
+  const columns: any[] = useMemo(() => {
+    return [
+      {
+        accessor: 'part',
+        title: t`Part`,
+        render: (record: PartOrderRecord) => <PartColumn part={record.part} />
+      },
+      {
+        accessor: 'part.IPN',
+        title: t`IPN`
+      },
+      {
+        accessor: 'part.description',
+        title: t`Description`,
+        render: (record: PartOrderRecord) =>
+          shortenString({ str: record.part?.description, len: 50 })
+      },
+      {
+        accessor: 'supplier_part',
+        title: t`Supplier Part`,
+        render: (record: PartOrderRecord) => (
+          <StandaloneField
+            fieldName='supplier_part'
+            hideLabels={true}
+            error={record.errors?.supplier_part}
+            fieldDefinition={{
+              field_type: 'related field',
+              api_url: apiUrl(ApiEndpoints.supplier_part_list),
+              model: ModelType.supplierpart,
+              required: true,
+              value: record.supplier_part?.pk,
+              onValueChange: (value, instance) => {
+                onSelectSupplierPart(record.part.pk, instance);
+              },
+              filters: {
+                part: record.part.pk,
+                active: true,
+                supplier_detail: true
+              }
+            }}
+          />
+        )
+      },
+      {
+        accessor: 'quantity',
+        title: t`Quantity`,
+        render: (record: PartOrderRecord) => (
+          <StandaloneField
+            fieldName='quantity'
+            hideLabels={true}
+            error={record.errors?.quantity}
+            fieldDefinition={{
+              field_type: 'number',
+              required: true,
+              value: record.quantity,
+              onValueChange: (value) => {
+                // TODO: This is very inefficient due to re-rendering
+                // onSelectQuantity(record.part.pk, value);
+              }
+            }}
+          />
+        )
+      },
+      {
+        accessor: 'actions',
+        title: ' ',
+        render: (record: PartOrderRecord) => (
+          <Group gap='xs' wrap='nowrap'>
+            <RemoveRowButton onClick={() => onRemovePart(record.part)} />
+          </Group>
+        )
+      }
+    ];
+  }, [onRemovePart]);
+
+  return <DataTable idAccessor='part.pk' columns={columns} records={records} />;
 }
 
 export default function OrderPartsWizard({
