@@ -421,11 +421,11 @@ function getStockTableFilters() {
             title: '{% trans "Has purchase price" %}',
             description: '{% trans "Show stock items which have a purchase price set" %}',
         },
-        expiry_date_lte: {
+        expiry_before: {
             type: 'date',
             title: '{% trans "Expiry Date before" %}',
         },
-        expiry_date_gte: {
+        expiry_after: {
             type: 'date',
             title: '{% trans "Expiry Date after" %}',
         },

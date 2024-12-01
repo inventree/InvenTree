@@ -113,6 +113,10 @@ def construct_format_regex(fmt_string: str) -> str:
             # TODO: Introspect required width
             w = '+'
 
+            # replace invalid regex group name '?' with a valid name
+            if name == '?':
+                name = 'wild'
+
             pattern += f'(?P<{name}>{c}{w})'
 
     pattern += '$'

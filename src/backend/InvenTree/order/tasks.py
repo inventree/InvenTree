@@ -11,6 +11,7 @@ import common.notifications
 import InvenTree.helpers_model
 import order.models
 from InvenTree.tasks import ScheduledTask, scheduled_task
+from order.events import PurchaseOrderEvents, SalesOrderEvents
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from plugin.events import trigger_event
 
@@ -37,7 +38,7 @@ def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
         'template': {'html': 'email/overdue_purchase_order.html', 'subject': name},
     }
 
-    event_name = 'order.overdue_purchase_order'
+    event_name = PurchaseOrderEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(
@@ -87,7 +88,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
         'template': {'html': 'email/overdue_sales_order.html', 'subject': name},
     }
 
-    event_name = 'order.overdue_sales_order'
+    event_name = SalesOrderEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(

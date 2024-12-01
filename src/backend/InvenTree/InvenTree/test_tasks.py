@@ -143,6 +143,13 @@ class InvenTreeTaskTests(TestCase):
         os.environ['INVENTREE_AUTO_UPDATE'] = 'True'
         InvenTree.tasks.check_for_migrations()
 
+        # List all current migrations for the InvenTree app
+        migration_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'migrations'
+        )
+
+        migration_files = os.listdir(migration_dir)
+
         # Create migration
         self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
         call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
@@ -164,6 +171,19 @@ class InvenTreeTaskTests(TestCase):
             migration_path.unlink()
         except IndexError:  # pragma: no cover
             pass
+
+        # Let's remove the newly created migration file
+        for fn in os.listdir(migration_dir):
+            fn = os.path.join(migration_dir, fn)
+
+            if (
+                os.path.isfile(fn)
+                and fn not in migration_files
+                and 'auto' in fn
+                and fn.endswith('.py')
+            ):
+                print('Removing dummy migration file:', fn)
+                os.remove(fn)
 
     def test_failed_task_notification(self):
         """Test that a failed task will generate a notification."""

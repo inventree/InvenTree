@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Code,
+  Divider,
   Group,
   Image,
   Select,
@@ -96,6 +97,8 @@ export const InvenTreeQRCode = ({
 
   return (
     <Stack>
+      <Divider />
+
       {mdl_prop.hash ? (
         <Alert variant='outline' color='red' title={t`Custom barcode`}>
           <Trans>
@@ -106,6 +109,8 @@ export const InvenTreeQRCode = ({
       ) : null}
 
       <QRCode data={data} ecl={ecl} {...props} />
+
+      <Divider />
 
       {data && settings.getSetting('BARCODE_SHOW_TEXT', 'false') && (
         <Group
@@ -163,13 +168,16 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   };
 
   return (
-    <BarcodeInput
-      value={barcode}
-      onChange={(event) => setBarcode(event.currentTarget.value)}
-      onScan={actionSubmit}
-      onAction={handleLinkBarcode}
-      actionText={t`Link`}
-    />
+    <Stack gap='xs'>
+      <Divider />
+      <BarcodeInput
+        value={barcode}
+        onChange={(event) => setBarcode(event.currentTarget.value)}
+        onScan={actionSubmit}
+        onAction={handleLinkBarcode}
+        actionText={t`Link`}
+      />
+    </Stack>
   );
 };
 
@@ -186,12 +194,17 @@ export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   }
   return (
     <Box>
-      <Text>
-        <Trans>This will remove the link to the associated barcode</Trans>
-      </Text>
-      <Button color='red' onClick={unlinkBarcode}>
-        <Trans>Unlink Barcode</Trans>
-      </Button>
+      <Stack gap='xs'>
+        <Divider />
+        <Text>
+          <Trans>This will remove the link to the associated barcode</Trans>
+        </Text>
+        <Group grow>
+          <Button color='red' onClick={unlinkBarcode}>
+            <Trans>Unlink Barcode</Trans>
+          </Button>
+        </Group>
+      </Stack>
     </Box>
   );
 };

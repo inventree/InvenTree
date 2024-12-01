@@ -968,7 +968,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['location', 'note']
+        fields = ['location', 'status', 'notes']
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -977,6 +977,15 @@ class ReturnStockItemSerializer(serializers.Serializer):
         allow_null=False,
         label=_('Location'),
         help_text=_('Destination location for returned item'),
+    )
+
+    status = serializers.ChoiceField(
+        choices=stock.status_codes.StockStatus.items(),
+        default=None,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False,
+        allow_blank=True,
     )
 
     notes = serializers.CharField(
@@ -994,9 +1003,13 @@ class ReturnStockItemSerializer(serializers.Serializer):
         data = self.validated_data
 
         location = data['location']
-        notes = data.get('notes', '')
 
-        item.return_from_customer(location, user=request.user, notes=notes)
+        item.return_from_customer(
+            location,
+            user=request.user,
+            notes=data.get('notes', ''),
+            status=data.get('status', None),
+        )
 
 
 class StockChangeStatusSerializer(serializers.Serializer):
@@ -1541,7 +1554,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['item', 'quantity']
+        fields = ['pk', 'quantity', 'batch', 'status', 'packaging']
 
     pk = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -1551,6 +1564,17 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         label='stock_item',
         help_text=_('StockItem primary key value'),
     )
+
+    def validate_pk(self, pk):
+        """Ensure the stock item is valid."""
+        allow_out_of_stock_transfer = get_global_setting(
+            'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
+        )
+
+        if not allow_out_of_stock_transfer and not pk.is_in_stock(check_status=False):
+            raise ValidationError(_('Stock item is not in stock'))
+
+        return pk
 
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
@@ -1627,7 +1651,14 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.stocktake(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 
 
 class StockAddSerializer(StockAdjustmentSerializer):
@@ -1645,7 +1676,14 @@ class StockAddSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.add_stock(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.add_stock(quantity, request.user, notes=notes, **extra)
 
 
 class StockRemoveSerializer(StockAdjustmentSerializer):
@@ -1663,7 +1701,14 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.take_stock(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.take_stock(quantity, request.user, notes=notes, **extra)
 
 
 class StockTransferSerializer(StockAdjustmentSerializer):

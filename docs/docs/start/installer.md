@@ -31,7 +31,7 @@ The installer creates the following directories:
 | --- | --- |
 | `/etc/inventree/` | Configuration files |
 | `/opt/inventree/` | InvenTree application files |
-| `/opt/inventree/data/` | Inventree data files |
+| `/opt/inventree/data/` | InvenTree data files |
 
 #### Performed steps
 

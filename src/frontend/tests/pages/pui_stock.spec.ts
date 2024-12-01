@@ -1,8 +1,9 @@
 import { test } from '../baseFixtures.js';
 import { baseUrl } from '../defaults.js';
+import { clickButtonIfVisible, openFilterDrawer } from '../helpers.js';
 import { doQuickLogin } from '../login.js';
 
-test('Stock', async ({ page }) => {
+test('Stock - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/stock/location/index/`);
@@ -47,6 +48,45 @@ test('Stock - Location Tree', async ({ page }) => {
   await page.getByLabel('breadcrumb-1-factory').click();
 
   await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
+});
+
+test('Stock - Filters', async ({ page }) => {
+  await doQuickLogin(page, 'steven', 'wizardstaff');
+
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.getByRole('tab', { name: 'Stock Items' }).click();
+
+  await openFilterDrawer(page);
+  await clickButtonIfVisible(page, 'Clear Filters');
+
+  // Filter by updated date
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByPlaceholder('Select filter').fill('updated');
+  await page.getByText('Updated After').click();
+  await page.getByPlaceholder('Select date value').fill('2010-01-01');
+  await page.getByText('Show items updated after this date').waitFor();
+
+  // Filter by batch code
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByPlaceholder('Select filter').fill('batch');
+  await page
+    .getByRole('option', { name: 'Batch Code', exact: true })
+    .locator('span')
+    .click();
+  await page.getByPlaceholder('Enter filter value').fill('TABLE-B02');
+  await page.getByLabel('apply-text-filter').click();
+
+  // Close dialog
+  await page.keyboard.press('Escape');
+
+  // Ensure correct result is displayed
+  await page
+    .getByRole('cell', { name: 'A round table - with blue paint' })
+    .waitFor();
+
+  // Clear filters (ready for next set of tests)
+  await openFilterDrawer(page);
+  await clickButtonIfVisible(page, 'Clear Filters');
 });
 
 test('Stock - Serial Numbers', async ({ page }) => {
@@ -142,14 +182,26 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByLabel('action-menu-stock-operations-count').waitFor();
   await page.getByLabel('action-menu-stock-operations-add').waitFor();
   await page.getByLabel('action-menu-stock-operations-remove').waitFor();
+
   await page.getByLabel('action-menu-stock-operations-transfer').click();
   await page.getByLabel('text-field-notes').fill('test notes');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('This field is required.').first().waitFor();
+
+  // Set the status field
+  await page.getByLabel('action-button-change-status').click();
+  await page.getByLabel('choice-field-status').click();
+  await page.getByText('Attention needed').click();
+
+  // Set the packaging field
+  await page.getByLabel('action-button-adjust-packaging').click();
+  await page.getByLabel('text-field-packaging').fill('test packaging');
+
+  // Close the dialog
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Find an item which has been sent to a customer
-  await page.goto(`${baseUrl}/stock/item/1012/details`);
+  await page.goto(`${baseUrl}/stock/item/1014/details`);
   await page.getByText('Batch Code: 2022-11-12').waitFor();
   await page.getByText('Unavailable').waitFor();
   await page.getByLabel('action-menu-stock-operations').click();
