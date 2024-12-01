@@ -248,7 +248,7 @@ export default function OrderPartsWizard({
   useEffect(() => {
     setSelectedParts(
       parts
-        .filter((part) => part.purchaseable)
+        .filter((part) => part.purchaseable && part.active)
         .map((part) => {
           return {
             part: part,
