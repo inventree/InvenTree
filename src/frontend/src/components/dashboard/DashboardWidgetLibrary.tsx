@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 
 import { ModelType } from '../../enums/ModelType';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import type { DashboardWidgetProps } from './DashboardWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
@@ -13,6 +14,8 @@ import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
  * @returns A list of built-in dashboard widgets which display the number of results for a particular query
  */
 export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
+  const globalSettings = useGlobalSettingsState.getState();
+
   return [
     QueryCountDashboardWidget({
       label: 'sub-prt',
@@ -50,16 +53,16 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'exp-stk',
       description: t`Show the number of stock items which have expired`,
       modelType: ModelType.stockitem,
-      params: { expired: true }
-      // TODO: Hide if expiry is disabled
+      params: { expired: true },
+      enabled: globalSettings.isSet('STOCK_ENABLE_EXPIRY')
     }),
     QueryCountDashboardWidget({
       title: t`Stale Stock Items`,
       label: 'stl-stk',
       description: t`Show the number of stock items which are stale`,
       modelType: ModelType.stockitem,
-      params: { stale: true }
-      // TODO: Hide if expiry is disabled
+      params: { stale: true },
+      enabled: globalSettings.isSet('STOCK_ENABLE_EXPIRY')
     }),
     QueryCountDashboardWidget({
       title: t`Active Build Orders`,
