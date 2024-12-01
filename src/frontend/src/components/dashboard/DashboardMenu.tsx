@@ -76,7 +76,7 @@ export default function DashboardMenu({
             <Menu.Target>
               <Indicator
                 color='red'
-                position='bottom-start'
+                position='bottom-center'
                 processing
                 disabled={!editing}
               >
