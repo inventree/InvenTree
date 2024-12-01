@@ -68,6 +68,7 @@ export function SettingList({
     fields: {
       value: {
         field_type: fieldType,
+        required: setting?.required ?? false,
         label: setting?.name,
         description: setting?.description,
         api_url: setting?.api_url ?? '',
