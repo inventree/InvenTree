@@ -8,7 +8,7 @@ offers a framework for testing. Please refer to [Unit Tests](../../develop/contr
 for more information.
 
 ### Prerequisites
-For plugin testing the following environmant variables must be set:
+For plugin testing the following environment variables must be set:
 
 - INVENTREE_PLUGINS_ENABLED: True
 This will add external plugins to the registry. Otherwise they are not found by the tests.
@@ -19,7 +19,7 @@ This enables testing of plugins.
 - INVENTREE_PLUGIN_TESTING_SETUP: True
 
 
-### Test programm
+### Test program
 
 A file called test_plugin_name.py should be added to the plugin directory. It can have the
 following structure:
