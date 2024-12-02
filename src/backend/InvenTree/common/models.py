@@ -93,42 +93,6 @@ class MetaMixin(models.Model):
     )
 
 
-class BaseURLValidator(URLValidator):
-    """Validator for the InvenTree base URL.
-
-    Rules:
-    - Allow empty value
-    - Allow value without specified TLD (top level domain)
-    """
-
-    def __init__(self, schemes=None, **kwargs):
-        """Custom init routine."""
-        super().__init__(schemes, **kwargs)
-
-        # Override default host_re value - allow optional tld regex
-        self.host_re = (
-            '('
-            + self.hostname_re
-            + self.domain_re
-            + f'({self.tld_re})?'
-            + '|localhost)'
-        )
-
-    def __call__(self, value):
-        """Make sure empty values pass."""
-        value = str(value).strip()
-
-        # If a configuration level value has been specified, prevent change
-        if django_settings.SITE_URL and value != django_settings.SITE_URL:
-            raise ValidationError(_('Site URL is locked by configuration'))
-
-        if len(value) == 0:
-            pass
-
-        else:
-            super().__call__(value)
-
-
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
@@ -169,6 +133,43 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('User or group responsible for this project'),
         related_name='project_codes',
     )
+
+
+# region Settings
+class BaseURLValidator(URLValidator):
+    """Validator for the InvenTree base URL.
+
+    Rules:
+    - Allow empty value
+    - Allow value without specified TLD (top level domain)
+    """
+
+    def __init__(self, schemes=None, **kwargs):
+        """Custom init routine."""
+        super().__init__(schemes, **kwargs)
+
+        # Override default host_re value - allow optional tld regex
+        self.host_re = (
+            '('
+            + self.hostname_re
+            + self.domain_re
+            + f'({self.tld_re})?'
+            + '|localhost)'
+        )
+
+    def __call__(self, value):
+        """Make sure empty values pass."""
+        value = str(value).strip()
+
+        # If a configuration level value has been specified, prevent change
+        if django_settings.SITE_URL and value != django_settings.SITE_URL:
+            raise ValidationError(_('Site URL is locked by configuration'))
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
 
 
 class SettingsKeyType(TypedDict, total=False):
@@ -2627,6 +2628,9 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         return self.__class__.get_setting(self.key, user=self.user)
 
 
+# endregion
+
+
 class PriceBreak(MetaMixin):
     """Represents a PriceBreak model."""
 
@@ -2722,6 +2726,9 @@ class ColorTheme(models.Model):
                 return True
 
         return False
+
+
+# region Webhooks
 
 
 class VerificationMethod(Enum):
@@ -2949,6 +2956,8 @@ class WebhookMessage(models.Model):
     )
 
 
+# endregion
+# region Notifications
 class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notification was sent out.
 
@@ -3056,6 +3065,9 @@ class NotificationMessage(models.Model):
     def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
+
+
+# endregion
 
 
 class NewsFeedEntry(models.Model):
@@ -3219,6 +3231,9 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+# region Files
 
 
 def rename_attachment(instance, filename):
@@ -3402,6 +3417,9 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         return model_class.check_attachment_permission(permission, user)
 
 
+# endregion
+
+
 class InvenTreeCustomUserStateModel(models.Model):
     """Custom model to extends any registered state with extra custom, user defined states."""
 
@@ -3506,6 +3524,9 @@ class InvenTreeCustomUserStateModel(models.Model):
             })
 
         return super().clean()
+
+
+# region Linked data
 
 
 class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
@@ -3669,6 +3690,9 @@ class SelectionListEntry(models.Model):
         if not self.active:
             return f'{self.label} (Inactive)'
         return self.label
+
+
+# endregion
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
