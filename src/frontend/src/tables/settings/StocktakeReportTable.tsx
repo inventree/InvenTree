@@ -28,7 +28,8 @@ export default function StocktakeReportTable() {
         title: t`Report`,
         sortable: false,
         switchable: false,
-        render: (record: any) => <AttachmentLink attachment={record.report} />
+        render: (record: any) => <AttachmentLink attachment={record.report} />,
+        noContext: true
       },
       {
         accessor: 'part_count',
