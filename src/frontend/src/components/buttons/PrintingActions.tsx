@@ -116,8 +116,8 @@ export function PrintingActions({
 
       if (response.output) {
         // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
+        const url = new URL(response.output, host);
+        window.open(url.toString(), '_blank');
       }
     }
   });
@@ -154,8 +154,8 @@ export function PrintingActions({
 
       if (response.output) {
         // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
+        const url = new URL(response.output, host);
+        window.open(url.toString(), '_blank');
       }
     }
   });

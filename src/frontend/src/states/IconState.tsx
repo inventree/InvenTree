@@ -44,9 +44,7 @@ export const useIconState = create<IconState>()((set, get) => ({
         const src = Object.entries(pack.fonts as Record<string, string>)
           .map(
             ([format, url]) =>
-              `url(${
-                url.startsWith('/') ? host + url : url
-              }) format("${format}")`
+              `url(${new URL(url, host).toString()}) format("${format}")`
           )
           .join(',\n');
         const font = new FontFace(fontName, `${src};`);

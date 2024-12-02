@@ -63,7 +63,10 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
       }
 
       // Generate the URL for the admin interface
-      const url = `${host}/${server.server.django_admin}${modelDef.admin_url}${props.id}/`;
+      const url = new URL(
+        `${server.server.django_admin}${modelDef.admin_url}${props.id}/`,
+        host
+      );
 
       if (event?.ctrlKey || event?.shiftKey) {
         // Open the link in a new tab
