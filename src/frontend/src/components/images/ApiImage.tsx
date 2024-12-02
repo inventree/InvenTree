@@ -19,7 +19,7 @@ export function ApiImage(props: Readonly<ApiImageProps>) {
   const { host } = useLocalState.getState();
 
   const imageUrl = useMemo(() => {
-    return `${host}${props.src}`;
+    return new URL(props.src, host).toString();
   }, [host, props.src]);
 
   return (
