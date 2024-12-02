@@ -298,6 +298,9 @@ jobs:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+      - name: re-install reps
+        if: ${{matrix.python_version == '3.12'}}
+        run: uv pip install --require-hashes -r src/backend/requirements-3-12.txt
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
