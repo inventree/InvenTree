@@ -137,7 +137,7 @@ export function AboutInvenTreeModal({
               {
                 ref: 'api',
                 title: <Trans>API Version</Trans>,
-                link: `${host}api-doc/`,
+                link: new URL('/api-doc/', host).toString(),
                 copy: true
               },
               {
