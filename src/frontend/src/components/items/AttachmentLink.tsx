@@ -68,7 +68,8 @@ export function AttachmentLink({
       return attachment;
     }
 
-    return `${host}${attachment}`;
+    const u = new URL(attachment, host);
+    return u.toString();
   }, [host, attachment, external]);
 
   return (

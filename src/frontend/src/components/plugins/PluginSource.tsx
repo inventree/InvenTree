@@ -13,14 +13,11 @@ export async function loadExternalPluginSource(source: string) {
     return null;
   }
 
-  // If the source is a relative URL, prefix it with the host URL
-  if (source.startsWith('/')) {
-    source = `${host}${source}`;
-  }
+  const url = new URL(source, host).toString();
 
-  const module = await import(/* @vite-ignore */ source)
+  const module = await import(/* @vite-ignore */ url)
     .catch((error) => {
-      console.error(`ERR: Failed to load plugin from ${source}:`, error);
+      console.error(`ERR: Failed to load plugin from ${url}:`, error);
       return null;
     })
     .then((module) => {
