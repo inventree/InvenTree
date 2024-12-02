@@ -219,7 +219,8 @@ export function TemplateTable({
           }
 
           return <AttachmentLink attachment={record.template} />;
-        }
+        },
+        noContext: true
       },
       {
         accessor: 'model_type',
