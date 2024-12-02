@@ -4,11 +4,11 @@ Title: Unit Tests
 
 ## Unit Tests
 For complicated plugins it makes sense to add unit tests to your code. InvenTree
-offers a framework for testing. Please refer to [Unit Tests](../../develop/contributing.md) 
-for more information. 
+offers a framework for testing. Please refer to [Unit Tests](../../develop/contributing.md)
+for more information.
 
 ### Prerequisites
-For plugin testing the following environmant variables must be set: 
+For plugin testing the following environmant variables must be set:
 
 - INVENTREE_PLUGINS_ENABLED: True
 This will add external plugins to the registry. Otherwise they are not found by the tests.
@@ -36,13 +36,12 @@ class TestMyPlugin(InvenTreeTestCase):
 The test can be executed using invoke:
 
 ```
-invoke dev.test -r module.file.class 
+invoke dev.test -r module.file.class
 ```
 
 Plugins are usually installed outside of the InventTree directory, e.g. in .local/lib/...
-I that case module must be omitted. 
+I that case module must be omitted.
 
 ```
 invoke dev.test -r plugin_directory.test_plugin_name.TestMyPlugin
 ```
-
