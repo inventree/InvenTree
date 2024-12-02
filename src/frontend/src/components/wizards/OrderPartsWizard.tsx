@@ -5,6 +5,8 @@ import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
 import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
@@ -12,6 +14,8 @@ import { ActionButton } from '../buttons/ActionButton';
 import { AddItemButton } from '../buttons/AddItemButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
+import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import Expand from '../items/Expand';
 
 /**
  * Attributes for each selected part
@@ -50,6 +54,51 @@ function SelectPartsStep({
     );
   }
 
+  const [selectedRecord, setSelectedRecord] = useState<PartOrderRecord | null>(
+    null
+  );
+
+  const purchaseOrderFields = usePurchaseOrderFields({
+    supplierId: selectedRecord?.supplier_part?.supplier
+  });
+
+  const newPurchaseOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_list),
+    title: t`New Purchase Order`,
+    fields: purchaseOrderFields,
+    successMessage: t`Purchase order created`,
+    onFormSuccess: (response: any) => {
+      onSelectPurchaseOrder(selectedRecord?.part.pk, response);
+    }
+  });
+
+  const addToOrderFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      order: {
+        value: selectedRecord?.purchase_order?.pk,
+        disabled: true
+      },
+      part: {
+        value: selectedRecord?.supplier_part?.pk,
+        disabled: true
+      },
+      quantity: {
+        // TODO: Auto-fill with the desired quantity
+      }
+    };
+  }, [selectedRecord]);
+
+  const addToOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_line_list),
+    title: t`Add to Purchase Order`,
+    fields: addToOrderFields,
+    onFormSuccess: (response: any) => {
+      // Remove the row from the list
+      onRemovePart(selectedRecord?.part);
+    },
+    successMessage: t`Part added to purchase order`
+  });
+
   const columns: any[] = useMemo(() => {
     return [
       {
@@ -78,47 +127,38 @@ function SelectPartsStep({
         title: t`Supplier Part`,
         width: '40%',
         render: (record: PartOrderRecord) => (
-          <StandaloneField
-            fieldName='supplier_part'
-            hideLabels={true}
-            error={record.errors?.supplier_part}
-            fieldDefinition={{
-              field_type: 'related field',
-              api_url: apiUrl(ApiEndpoints.supplier_part_list),
-              model: ModelType.supplierpart,
-              required: true,
-              value: record.supplier_part?.pk,
-              onValueChange: (value, instance) => {
-                onSelectSupplierPart(record.part.pk, instance);
-              },
-              filters: {
-                part: record.part.pk,
-                active: true,
-                supplier_detail: true
-              }
-            }}
-          />
-        )
-      },
-      {
-        accessor: 'quantity',
-        title: t`Quantity`,
-        width: 125,
-        render: (record: PartOrderRecord) => (
-          <StandaloneField
-            fieldName='quantity'
-            hideLabels={true}
-            error={record.errors?.quantity}
-            fieldDefinition={{
-              field_type: 'number',
-              required: true,
-              value: record.quantity,
-              onValueChange: (value) => {
-                // TODO: This is very inefficient due to re-rendering
-                onSelectQuantity(record.part.pk, value);
-              }
-            }}
-          />
+          <Group gap='xs' wrap='nowrap' justify='left'>
+            <Expand>
+              <StandaloneField
+                fieldName='supplier_part'
+                hideLabels={true}
+                error={record.errors?.supplier_part}
+                fieldDefinition={{
+                  field_type: 'related field',
+                  api_url: apiUrl(ApiEndpoints.supplier_part_list),
+                  model: ModelType.supplierpart,
+                  required: true,
+                  value: record.supplier_part?.pk,
+                  onValueChange: (value, instance) => {
+                    onSelectSupplierPart(record.part.pk, instance);
+                  },
+                  filters: {
+                    part: record.part.pk,
+                    active: true,
+                    supplier_detail: true
+                  }
+                }}
+              />
+            </Expand>
+            {/* TODO: View selected supplier part */}
+            <AddItemButton
+              tooltip={t`New supplier part`}
+              tooltipAlignment='top'
+              onClick={() => {
+                // TODO: Open the new supplier part modal
+              }}
+            />
+          </Group>
         )
       },
       {
@@ -126,25 +166,38 @@ function SelectPartsStep({
         title: t`Purchase Order`,
         width: '40%',
         render: (record: PartOrderRecord) => (
-          <StandaloneField
-            fieldName='purchase_order'
-            hideLabels={true}
-            fieldDefinition={{
-              field_type: 'related field',
-              api_url: apiUrl(ApiEndpoints.purchase_order_list),
-              model: ModelType.purchaseorder,
-              disabled: !record.supplier_part?.supplier,
-              value: record.purchase_order?.pk,
-              filters: {
-                supplier: record.supplier_part?.supplier,
-                outstanding: true
-              },
-              onValueChange: (value, instance) => {
-                // TODO: This is very inefficient due to re-rendering
-                onSelectPurchaseOrder(record.part.pk, instance);
-              }
-            }}
-          />
+          <Group gap='xs' wrap='nowrap' justify='left'>
+            <Expand>
+              <StandaloneField
+                fieldName='purchase_order'
+                hideLabels={true}
+                fieldDefinition={{
+                  field_type: 'related field',
+                  api_url: apiUrl(ApiEndpoints.purchase_order_list),
+                  model: ModelType.purchaseorder,
+                  disabled: !record.supplier_part?.supplier,
+                  value: record.purchase_order?.pk,
+                  filters: {
+                    supplier: record.supplier_part?.supplier,
+                    outstanding: true
+                  },
+                  onValueChange: (value, instance) => {
+                    onSelectPurchaseOrder(record.part.pk, instance);
+                  }
+                }}
+              />
+            </Expand>
+            {/* TODO: View selected purchase order */}
+            <AddItemButton
+              tooltip={t`New purchase order`}
+              tooltipAlignment='top'
+              disabled={!record.supplier_part?.pk}
+              onClick={() => {
+                setSelectedRecord(record);
+                newPurchaseOrder.open();
+              }}
+            />
+          </Group>
         )
       },
       {
@@ -152,18 +205,11 @@ function SelectPartsStep({
         title: ' ',
         width: '1%',
         render: (record: PartOrderRecord) => (
-          <Group gap='xs' wrap='nowrap' justify='right'>
-            <AddItemButton
-              tooltip={t`New purchase order`}
-              tooltipAlignment='top'
-              disabled={!record.supplier_part?.pk}
-              onClick={() => {
-                // TODO
-              }}
-            />
+          <Group grow gap='xs' wrap='nowrap' justify='right'>
             <ActionButton
               onClick={() => {
-                // TODO
+                setSelectedRecord(record);
+                addToOrder.open();
               }}
               disabled={
                 !record.supplier_part?.pk ||
@@ -181,7 +227,13 @@ function SelectPartsStep({
     ];
   }, [onRemovePart]);
 
-  return <DataTable idAccessor='part.pk' columns={columns} records={records} />;
+  return (
+    <>
+      <DataTable idAccessor='part.pk' columns={columns} records={records} />
+      {newPurchaseOrder.modal}
+      {addToOrder.modal}
+    </>
+  );
 }
 
 export default function OrderPartsWizard({
