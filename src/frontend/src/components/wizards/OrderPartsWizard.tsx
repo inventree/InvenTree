@@ -1,31 +1,30 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Text } from '@mantine/core';
+import { Alert, Group, Paper, Tooltip } from '@mantine/core';
+import { IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { shortenString } from '../../functions/tables';
 import useWizard from '../../hooks/UseWizard';
 import { apiUrl } from '../../states/ApiState';
 import { PartColumn } from '../../tables/ColumnRenderers';
+import { ActionButton } from '../buttons/ActionButton';
+import { AddItemButton } from '../buttons/AddItemButton';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
-
-enum OrderPartsWizardSteps {
-  SelectSuppliers = 0,
-  SelectOrders = 1
-}
 
 /**
  * Attributes for each selected part
  * - part: The part instance
  * - supplier_part: The selected supplier part instance
+ * - purchase_order: The selected purchase order instance
  * - quantity: The quantity of the part to order
  * - errors: Error messages for each attribute
  */
 interface PartOrderRecord {
   part: any;
   supplier_part: any;
+  purchase_order: any;
   quantity: number;
   errors: any;
 }
@@ -34,12 +33,14 @@ function SelectPartsStep({
   records,
   onRemovePart,
   onSelectSupplierPart,
-  onSelectQuantity
+  onSelectQuantity,
+  onSelectPurchaseOrder
 }: {
   records: PartOrderRecord[];
   onRemovePart: (part: any) => void;
   onSelectSupplierPart: (partId: number, supplierPart: any) => void;
   onSelectQuantity: (partId: number, quantity: number) => void;
+  onSelectPurchaseOrder: (partId: number, purchaseOrder: any) => void;
 }) {
   if (records.length === 0) {
     return (
@@ -52,23 +53,30 @@ function SelectPartsStep({
   const columns: any[] = useMemo(() => {
     return [
       {
+        accessor: 'left_actions',
+        title: ' ',
+        width: '1%',
+        render: (record: PartOrderRecord) => (
+          <Group gap='xs' wrap='nowrap' justify='left'>
+            <RemoveRowButton onClick={() => onRemovePart(record.part)} />
+          </Group>
+        )
+      },
+      {
         accessor: 'part',
         title: t`Part`,
-        render: (record: PartOrderRecord) => <PartColumn part={record.part} />
-      },
-      {
-        accessor: 'part.IPN',
-        title: t`IPN`
-      },
-      {
-        accessor: 'part.description',
-        title: t`Description`,
-        render: (record: PartOrderRecord) =>
-          shortenString({ str: record.part?.description, len: 50 })
+        render: (record: PartOrderRecord) => (
+          <Tooltip label={record.part?.description}>
+            <Paper p='xs'>
+              <PartColumn part={record.part} />
+            </Paper>
+          </Tooltip>
+        )
       },
       {
         accessor: 'supplier_part',
         title: t`Supplier Part`,
+        width: '40%',
         render: (record: PartOrderRecord) => (
           <StandaloneField
             fieldName='supplier_part'
@@ -95,6 +103,7 @@ function SelectPartsStep({
       {
         accessor: 'quantity',
         title: t`Quantity`,
+        width: 125,
         render: (record: PartOrderRecord) => (
           <StandaloneField
             fieldName='quantity'
@@ -106,18 +115,66 @@ function SelectPartsStep({
               value: record.quantity,
               onValueChange: (value) => {
                 // TODO: This is very inefficient due to re-rendering
-                // onSelectQuantity(record.part.pk, value);
+                onSelectQuantity(record.part.pk, value);
               }
             }}
           />
         )
       },
       {
-        accessor: 'actions',
-        title: ' ',
+        accessor: 'purchase_order',
+        title: t`Purchase Order`,
+        width: '40%',
         render: (record: PartOrderRecord) => (
-          <Group gap='xs' wrap='nowrap'>
-            <RemoveRowButton onClick={() => onRemovePart(record.part)} />
+          <StandaloneField
+            fieldName='purchase_order'
+            hideLabels={true}
+            fieldDefinition={{
+              field_type: 'related field',
+              api_url: apiUrl(ApiEndpoints.purchase_order_list),
+              model: ModelType.purchaseorder,
+              disabled: !record.supplier_part?.supplier,
+              value: record.purchase_order?.pk,
+              filters: {
+                supplier: record.supplier_part?.supplier,
+                outstanding: true
+              },
+              onValueChange: (value, instance) => {
+                // TODO: This is very inefficient due to re-rendering
+                onSelectPurchaseOrder(record.part.pk, instance);
+              }
+            }}
+          />
+        )
+      },
+      {
+        accessor: 'right_actions',
+        title: ' ',
+        width: '1%',
+        render: (record: PartOrderRecord) => (
+          <Group gap='xs' wrap='nowrap' justify='right'>
+            <AddItemButton
+              tooltip={t`New purchase order`}
+              tooltipAlignment='top'
+              disabled={!record.supplier_part?.pk}
+              onClick={() => {
+                // TODO
+              }}
+            />
+            <ActionButton
+              onClick={() => {
+                // TODO
+              }}
+              disabled={
+                !record.supplier_part?.pk ||
+                !record.quantity ||
+                !record.purchase_order?.pk
+              }
+              icon={<IconShoppingCart />}
+              tooltip={t`Add to selected purchase order`}
+              tooltipAlignment='top'
+              color='blue'
+            />
           </Group>
         )
       }
@@ -179,23 +236,34 @@ export default function OrderPartsWizard({
     [selectedParts]
   );
 
+  // Select purchase order for a part
+  const selectPurchaseOrder = useCallback(
+    (partId: number, purchaseOrder: any) => {
+      const records = [...selectedParts];
+
+      records.forEach((record: PartOrderRecord, index: number) => {
+        if (record.part.pk === partId) {
+          records[index].purchase_order = purchaseOrder;
+        }
+      });
+
+      setSelectedParts(records);
+    },
+    [selectedParts]
+  );
+
   // Render the select wizard step
   const renderStep = useCallback(
     (step: number) => {
-      switch (step) {
-        default:
-        case OrderPartsWizardSteps.SelectSuppliers:
-          return (
-            <SelectPartsStep
-              records={selectedParts}
-              onRemovePart={removePart}
-              onSelectSupplierPart={selectSupplierPart}
-              onSelectQuantity={selectQuantity}
-            />
-          );
-        case OrderPartsWizardSteps.SelectOrders:
-          return <Text>Well hello there</Text>;
-      }
+      return (
+        <SelectPartsStep
+          records={selectedParts}
+          onRemovePart={removePart}
+          onSelectSupplierPart={selectSupplierPart}
+          onSelectQuantity={selectQuantity}
+          onSelectPurchaseOrder={selectPurchaseOrder}
+        />
+      );
     },
     [selectedParts]
   );
@@ -246,32 +314,35 @@ export default function OrderPartsWizard({
   // Create the wizard manager
   const wizard = useWizard({
     title: t`Order Parts`,
-    steps: [t`Select Suppliers`, t`Select Purchase Orders`],
+    steps: [],
     renderStep: renderStep,
     canStepForward: canStepForward
   });
 
   // Reset the wizard to a known state when opened
   useEffect(() => {
-    const _parts: PartOrderRecord[] = [];
+    const records: PartOrderRecord[] = [];
 
     parts
       .filter((part) => part.purchaseable && part.active)
       .forEach((part) => {
         // Prevent duplicate entries based on pk
         if (
-          !_parts.find((record: PartOrderRecord) => record.part?.pk === part.pk)
+          !records.find(
+            (record: PartOrderRecord) => record.part?.pk === part.pk
+          )
         ) {
-          _parts.push({
+          records.push({
             part: part,
             supplier_part: undefined,
+            purchase_order: undefined,
             quantity: 1,
             errors: {}
           });
         }
       });
 
-    setSelectedParts(_parts);
+    setSelectedParts(records);
   }, [parts, wizard.opened]);
 
   return wizard;
