@@ -36,7 +36,7 @@ export default function DashboardWidget({
   removing: boolean;
   onRemove: () => void;
 }>) {
-  if (!item.enabled) {
+  if (item.enabled == false) {
     return null;
   }
 
