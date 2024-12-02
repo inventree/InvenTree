@@ -5,6 +5,7 @@ import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useWizard from '../../hooks/UseWizard';
@@ -72,6 +73,20 @@ function SelectPartsStep({
     }
   });
 
+  const supplierPartFields = useSupplierPartFields({
+    partId: selectedRecord?.part.pk
+  });
+
+  const newSupplierPart = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.supplier_part_list),
+    title: t`New Supplier Part`,
+    fields: supplierPartFields,
+    successMessage: t`Supplier part created`,
+    onFormSuccess: (response: any) => {
+      onSelectSupplierPart(selectedRecord?.part.pk, response);
+    }
+  });
+
   const addToOrderFields: ApiFormFieldSet = useMemo(() => {
     return {
       order: {
@@ -92,6 +107,11 @@ function SelectPartsStep({
     url: apiUrl(ApiEndpoints.purchase_order_line_list),
     title: t`Add to Purchase Order`,
     fields: addToOrderFields,
+    initialData: {
+      order: selectedRecord?.purchase_order?.pk,
+      part: selectedRecord?.supplier_part?.pk,
+      quantity: selectedRecord?.quantity
+    },
     onFormSuccess: (response: any) => {
       // Remove the row from the list
       onRemovePart(selectedRecord?.part);
@@ -155,7 +175,8 @@ function SelectPartsStep({
               tooltip={t`New supplier part`}
               tooltipAlignment='top'
               onClick={() => {
-                // TODO: Open the new supplier part modal
+                setSelectedRecord(record);
+                newSupplierPart.open();
               }}
             />
           </Group>
@@ -231,6 +252,7 @@ function SelectPartsStep({
     <>
       <DataTable idAccessor='part.pk' columns={columns} records={records} />
       {newPurchaseOrder.modal}
+      {newSupplierPart.modal}
       {addToOrder.modal}
     </>
   );
