@@ -293,43 +293,35 @@ class SupplierPartFilter(rest_filters.FilterSet):
         lookup_expr='iexact',
     )
 
+    # Filter by 'manufacturer'
+    manufacturer = rest_filters.ModelChoiceFilter(
+        label=_('Manufacturer'),
+        queryset=Company.objects.all(),
+        field_name='manufacturer_part__manufacturer',
+    )
 
-class SupplierPartList(DataExportViewMixin, ListCreateDestroyAPIView):
-    """API endpoint for list view of SupplierPart object.
+    # Filter by 'company' (either manufacturer or supplier)
+    company = rest_filters.ModelChoiceFilter(
+        label=_('Company'), queryset=Company.objects.all(), method='filter_company'
+    )
 
-    - GET: Return list of SupplierPart objects
-    - POST: Create a new SupplierPart object
-    """
+    def filter_company(self, queryset, name, value):
+        """Filter the queryset by either manufacturer or supplier."""
+        return queryset.filter(
+            Q(manufacturer_part__manufacturer=value) | Q(supplier=value)
+        ).distinct()
+
+
+class SupplierPartMixin:
+    """Mixin class for SupplierPart API endpoints."""
 
     queryset = SupplierPart.objects.all().prefetch_related('tags')
-    filterset_class = SupplierPartFilter
+    serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryest object for the SupplierPart list."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-    def filter_queryset(self, queryset):
-        """Custom filtering for the queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by manufacturer
-        manufacturer = params.get('manufacturer', None)
-
-        if manufacturer is not None:
-            queryset = queryset.filter(manufacturer_part__manufacturer=manufacturer)
-
-        # Filter by EITHER manufacturer or supplier
-        company = params.get('company', None)
-
-        if company is not None:
-            queryset = queryset.filter(
-                Q(manufacturer_part__manufacturer=company) | Q(supplier=company)
-            ).distinct()
 
         return queryset
 
@@ -351,7 +343,17 @@ class SupplierPartList(DataExportViewMixin, ListCreateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    serializer_class = SupplierPartSerializer
+
+class SupplierPartList(
+    DataExportViewMixin, SupplierPartMixin, ListCreateDestroyAPIView
+):
+    """API endpoint for list view of SupplierPart object.
+
+    - GET: Return list of SupplierPart objects
+    - POST: Create a new SupplierPart object
+    """
+
+    filterset_class = SupplierPartFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -391,18 +393,13 @@ class SupplierPartList(DataExportViewMixin, ListCreateDestroyAPIView):
     ]
 
 
-class SupplierPartDetail(RetrieveUpdateDestroyAPI):
+class SupplierPartDetail(SupplierPartMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of SupplierPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
     - DELETE: Delete object
     """
-
-    queryset = SupplierPart.objects.all()
-    serializer_class = SupplierPartSerializer
-
-    read_only_fields = []
 
 
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
