@@ -778,3 +778,25 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         if self.instance and self.instance.locked:
             raise serializers.ValidationError({'locked': _('Selection list is locked')})
         return ret
+
+
+class ReferenceSourceSerializer(InvenTreeModelSerializer):
+    """Serializer for the ReferenceSource model."""
+
+    class Meta:
+        """Meta options for ReferenceSourceSerializer."""
+
+        model = common_models.ReferenceSource
+        fields = '__all__'
+
+
+class ReferenceSerializer(InvenTreeModelSerializer):
+    """Serializer for the Reference model."""
+
+    class Meta:
+        """Meta options for ReferenceSerializer."""
+
+        model = common_models.Reference
+        fields = '__all__'
+
+    source = ReferenceSourceSerializer(read_only=True)
