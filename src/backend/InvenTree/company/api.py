@@ -335,6 +335,8 @@ class SupplierPartMixin:
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
+
         return queryset
 
     def get_serializer(self, *args, **kwargs):
