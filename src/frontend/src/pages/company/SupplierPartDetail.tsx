@@ -192,6 +192,13 @@ export default function SupplierPartDetail() {
       },
       {
         type: 'string',
+        name: 'on_order',
+        label: t`On Order`,
+        copy: true,
+        icon: 'purchase_orders'
+      },
+      {
+        type: 'string',
         name: 'available',
         label: t`Supplier Availability`,
         hidden: !data.availability_updated,
@@ -376,6 +383,12 @@ export default function SupplierPartDetail() {
         color={'red'}
         visible={supplierPart.active && supplierPart.in_stock == 0}
         key='no_stock'
+      />,
+      <DetailsBadge
+        label={`${t`On Order`}: ${supplierPart.on_order}`}
+        color='blue'
+        visible={supplierPart.on_order > 0}
+        key='on_order'
       />
     ];
   }, [supplierPart]);
