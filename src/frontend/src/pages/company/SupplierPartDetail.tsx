@@ -185,8 +185,16 @@ export default function SupplierPartDetail() {
     const br: DetailsField[] = [
       {
         type: 'string',
+        name: 'in_stock',
+        label: t`In Stock`,
+        copy: true,
+        icon: 'stock'
+      },
+      {
+        type: 'string',
         name: 'available',
         label: t`Supplier Availability`,
+        hidden: !data.availability_updated,
         copy: true,
         icon: 'packages'
       },
@@ -357,9 +365,9 @@ export default function SupplierPartDetail() {
         label={`${t`In Stock`}: ${supplierPart.in_stock}`}
         color={'green'}
         visible={
-          supplierPart.active &&
-          supplierPart.in_stock &&
-          supplierPart.in_stock > 0
+          supplierPart?.active &&
+          supplierPart?.in_stock &&
+          supplierPart?.in_stock > 0
         }
         key='in_stock'
       />,
