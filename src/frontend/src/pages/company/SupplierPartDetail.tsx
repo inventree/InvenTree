@@ -352,6 +352,22 @@ export default function SupplierPartDetail() {
         label={t`Inactive`}
         color='red'
         visible={supplierPart.active == false}
+      />,
+      <DetailsBadge
+        label={`${t`In Stock`}: ${supplierPart.in_stock}`}
+        color={'green'}
+        visible={
+          supplierPart.active &&
+          supplierPart.in_stock &&
+          supplierPart.in_stock > 0
+        }
+        key='in_stock'
+      />,
+      <DetailsBadge
+        label={t`No Stock`}
+        color={'red'}
+        visible={supplierPart.active && supplierPart.in_stock == 0}
+        key='no_stock'
       />
     ];
   }, [supplierPart]);
