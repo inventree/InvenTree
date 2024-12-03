@@ -8,16 +8,13 @@ offers a framework for testing. Please refer to [Unit Tests](../../develop/contr
 for more information.
 
 ### Prerequisites
-For plugin testing the following environment variables must be set:
+For plugin testing the following environment variables must be set to True:
 
-- INVENTREE_PLUGINS_ENABLED: True
-This will add external plugins to the registry. Otherwise they are not found by the tests.
-
-- INVENTREE_PLUGIN_TESTING: True
-This enables testing of plugins.
-
-- INVENTREE_PLUGIN_TESTING_SETUP: True
-
+| Name | Function | Value |
+| --- | --- | --- | --- |
+| INVENTREE_PLUGINS_ENABLED | Add external plugins to the registry | True |
+| INVENTREE_PLUGIN_TESTING | Enable testing of plugins | True |
+| INVENTREE_PLUGIN_TESTING_SETUP |  | True |
 
 ### Test program
 
