@@ -282,6 +282,7 @@ class SupplierPartFilter(rest_filters.FilterSet):
         field_name='part__active', label=_('Internal Part is Active')
     )
 
+    # Filter by 'active' status of linked supplier
     supplier_active = rest_filters.BooleanFilter(
         field_name='supplier__active', label=_('Supplier is Active')
     )
@@ -310,6 +311,17 @@ class SupplierPartFilter(rest_filters.FilterSet):
         return queryset.filter(
             Q(manufacturer_part__manufacturer=value) | Q(supplier=value)
         ).distinct()
+
+    has_stock = rest_filters.BooleanFilter(
+        label=_('Has Stock'), method='filter_has_stock'
+    )
+
+    def filter_has_stock(self, queryset, name, value):
+        """Filter the queryset based on whether the SupplierPart has stock available."""
+        if value:
+            return queryset.filter(in_stock__gt=0)
+        else:
+            return queryset.exclude(in_stock__gt=0)
 
 
 class SupplierPartMixin:
