@@ -11,7 +11,7 @@ for more information.
 For plugin testing the following environment variables must be set to True:
 
 | Name | Function | Value |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | INVENTREE_PLUGINS_ENABLED | Add external plugins to the registry | True |
 | INVENTREE_PLUGIN_TESTING | Enable testing of plugins | True |
 | INVENTREE_PLUGIN_TESTING_SETUP |  | True |
