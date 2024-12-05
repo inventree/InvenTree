@@ -789,6 +789,15 @@ class ReferenceSourceSerializer(InvenTreeModelSerializer):
         model = common_models.ReferenceSource
         fields = '__all__'
 
+    def validate(self, attrs):
+        """Ensure that the reference source is not locked."""
+        ret = super().validate(attrs)
+        if self.instance and self.instance.locked:
+            raise serializers.ValidationError({
+                'locked': _('Reference source is locked')
+            })
+        return ret
+
 
 class ReferenceSerializer(InvenTreeModelSerializer):
     """Serializer for the Reference model."""
@@ -797,6 +806,21 @@ class ReferenceSerializer(InvenTreeModelSerializer):
         """Meta options for ReferenceSerializer."""
 
         model = common_models.Reference
-        fields = '__all__'
+        fields = [
+            'pk',
+            'value',
+            'source',
+            'target',
+            'locked',
+            'created',
+            'last_updated',
+            'checked',
+            'last_checked',
+        ]
 
-    source = ReferenceSourceSerializer(read_only=True)
+    source = ReferenceSourceSerializer(many=False, read_only=True)
+    target = serializers.SerializerMethodField(read_only=True)
+
+    def get_target(self, obj) -> dict:
+        """Function to resolve generic object reference to target."""
+        return get_objectreference(obj, 'target_content_type', 'target_object_id')

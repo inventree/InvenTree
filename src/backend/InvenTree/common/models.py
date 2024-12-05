@@ -9,6 +9,7 @@ import hmac
 import json
 import logging
 import os
+import re
 import sys
 import uuid
 from datetime import timedelta, timezone
@@ -3714,7 +3715,6 @@ class ReferenceSource(InvenTree.models.MetadataMixin, InvenTree.models.InvenTree
     - reference_is_link: Are references required to be valid URIs as per RFC 3986?
     """
 
-    # TODO Add validation for reference (validation_pattern, max_length, reference_is_unique_global, reference_is_link)
     class Meta:
         """Meta options for SelectionList."""
 
@@ -3808,6 +3808,16 @@ class ReferenceSource(InvenTree.models.MetadataMixin, InvenTree.models.InvenTree
             return f'{self.name} (Inactive)'
         return self.name
 
+    def clean(self):
+        """Ensure that the reference source is valid before saving."""
+        if self.validation_pattern:
+            try:
+                re.compile(self.validation_pattern)
+            except re.error as exc:
+                raise ValidationError({'validation_pattern': str(exc)})
+
+        return super().clean()
+
 
 class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """Reference to a specific model.
@@ -3880,6 +3890,36 @@ class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel)
         verbose_name=_('Last Checked'),
         help_text=_('Date and time that the reference was last checked'),
     )
+
+    def clean_value(self, *args, **kwargs):
+        """Ensure that the reference is valid before saving."""
+        reference = self.value
+        source = self.source
+
+        if source.max_length and len(reference) > source.max_length:
+            raise ValidationError({
+                'value': _(f'Value longer than max_length of {source.max_length}')
+            })
+
+        if source.validation_pattern:
+            comp = re.compile(source.validation_pattern)
+            if not comp.fullmatch(reference):
+                raise ValidationError({
+                    'value': _('Value does not match validation pattern')
+                })
+
+        if source.reference_is_link:
+            validator = URLValidator()
+            try:
+                validator(reference)
+            except ValidationError:
+                raise ValidationError({'value': _('Value is not a valid URL')})
+
+        if source.reference_is_unique_global:
+            if Reference.objects.filter(source=source, value=reference).exists():
+                raise ValidationError({'value': _('Value is not unique globally')})
+
+        return super().clean(*args, **kwargs)
 
 
 # endregion
