@@ -318,7 +318,7 @@ export default function SupplierPartDetail() {
     ];
   }, [user, supplierPart]);
 
-  const supplierPartFields = useSupplierPartFields();
+  const supplierPartFields = useSupplierPartFields({});
 
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
