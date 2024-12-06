@@ -15,8 +15,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { generateUrl } from '../../functions/urls';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
@@ -35,7 +35,6 @@ export function AboutInvenTreeModal({
   modalBody: string;
 }>) {
   const [user] = useUserState((state) => [state.user]);
-  const { host } = useLocalState.getState();
   const [server] = useServerApiState((state) => [state.server]);
 
   if (user?.is_staff != true)
@@ -137,7 +136,7 @@ export function AboutInvenTreeModal({
               {
                 ref: 'api',
                 title: <Trans>API Version</Trans>,
-                link: new URL('/api-doc/', host).toString(),
+                link: generateUrl('/api-doc/'),
                 copy: true
               },
               {

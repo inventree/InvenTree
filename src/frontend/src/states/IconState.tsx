@@ -2,8 +2,8 @@ import { create } from 'zustand';
 
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { generateUrl } from '../functions/urls';
 import { apiUrl } from './ApiState';
-import { useLocalState } from './LocalState';
 
 type IconPackage = {
   name: string;
@@ -34,8 +34,6 @@ export const useIconState = create<IconState>()((set, get) => ({
   fetchIcons: async () => {
     if (get().hasLoaded) return;
 
-    const host = useLocalState.getState().host;
-
     const packs = await api.get(apiUrl(ApiEndpoints.icons));
 
     await Promise.all(
@@ -43,8 +41,7 @@ export const useIconState = create<IconState>()((set, get) => ({
         const fontName = `inventree-icon-font-${pack.prefix}`;
         const src = Object.entries(pack.fonts as Record<string, string>)
           .map(
-            ([format, url]) =>
-              `url(${new URL(url, host).toString()}) format("${format}")`
+            ([format, url]) => `url(${generateUrl(url)}) format("${format}")`
           )
           .join(',\n');
         const font = new FontFace(fontName, `${src};`);
