@@ -76,6 +76,6 @@ def test_reformat_price(self):
     self.assertEqual(MySupplier.reformat_price(self, 'Mumpitz'), 0)
 ```
 
-assertEqual flags an error in case the two arguments are not equal. In equal case
+The function assertEqual flags an error in case the two arguments are not equal. In equal case
 no error is flagged and the test passes. The test function tests five different
-input variations. More might be added base on the requirements.
+input variations. More might be added based on the requirements.
