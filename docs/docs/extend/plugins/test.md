@@ -48,7 +48,7 @@ invoke dev.test -r plugin_directory.test_plugin_name.TestMyPlugin
 
 ### do some work here... A simple Example
 A simple example is shown here. Assume the plugin has a function that converts a price string
-that comes from a supplier API  to a float value. The price might have the form "1.456,34 €". 
+that comes from a supplier API to a float value. The price might have the form "1.456,34 €". 
 It can be different based on country and local settings.
 The function in the plugin will convert it to a float 1456.34. It is in the class MySupplier
 and has the following structure:
