@@ -54,10 +54,12 @@ The function in the plugin will convert it to a float 1456.34. It is in the clas
 and has the following structure:
 
 ```
-def reformat_price(self, string_price):
+class MySupplier():
 
-    ...
-    return float_price
+    def reformat_price(self, string_price):
+
+        ...
+        return float_price
 ```
 
 This function needs to be tested. The test can look like this:
