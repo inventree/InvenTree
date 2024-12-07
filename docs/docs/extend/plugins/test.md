@@ -45,3 +45,35 @@ I that case module must be omitted.
 ```
 invoke dev.test -r plugin_directory.test_plugin_name.TestMyPlugin
 ```
+
+### do some work here... A simple Example
+A simple example is shown here. Assume the plugin has a function that converts a price string
+that comes from a supplier API  to a float value. The price might have the form "1.456,34 €". 
+It can be different based on country and local settings.
+The function in the plugin will convert it to a float 1456.34. It is in the class MySupplier
+and has the following structure:
+
+```
+def reformat_price(self, string_price):
+
+    ...
+    return float_price
+```
+
+This function needs to be tested. The test can look like this:
+
+```
+from .myplugin import MySupplier
+
+def test_reformat_price(self):
+
+    self.assertEqual(MySupplier.reformat_price(self, '1.456,34 €'), 1456.34)
+    self.assertEqual(MySupplier.reformat_price(self, '1,45645 €'), 1.45645)
+    self.assertEqual(MySupplier.reformat_price(self, '1,56 $'), 1.56)
+    self.assertEqual(MySupplier.reformat_price(self, ''), 0)
+    self.assertEqual(MySupplier.reformat_price(self, 'Mumpitz'), 0)
+```
+
+assertEqual flags an error in case the two arguments are not equal. In equal case
+no error is flagged and the test passes. The test function tests five different
+input variations. More might be added base on the requirements.
