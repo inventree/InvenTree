@@ -933,6 +933,16 @@ class ReferenceList(ListCreateAPI):
     ]
     search_fields = ['source', 'target', 'value']
 
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related('target_content_type', 'target_object_id')
+        )
+
+        return queryset
+
 
 class ReferenceDetail(RetrieveUpdateDestroyAPI):
     """Detail view for a particular reference."""
@@ -940,6 +950,16 @@ class ReferenceDetail(RetrieveUpdateDestroyAPI):
     queryset = common.models.Reference.objects.all()
     serializer_class = common.serializers.ReferenceSerializer
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related('target_content_type', 'target_object_id')
+        )
+
+        return queryset
 
 
 reference_urls = [

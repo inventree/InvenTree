@@ -3891,6 +3891,10 @@ class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel)
         help_text=_('Date and time that the reference was last checked'),
     )
 
+    def __str__(self):
+        """Return string representation of the reference."""
+        return f'{self.source.name}|{self.target}: {self.value}'
+
     def clean_value(self, *args, **kwargs):
         """Ensure that the reference is valid before saving."""
         reference = self.value

@@ -1894,7 +1894,6 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 0)
 
         # Add reference
-        url = reverse('api-reference-list')
         response = self.post(
             url,
             {
@@ -1914,9 +1913,11 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
 
     def test_Reference_validation(self):
         """Test the Reference validation."""
+        url = reverse('api-reference-list')
+
         # Valid reference
         response = self.post(
-            reverse('api-reference-list'),
+            url,
             {
                 'source': self.source1.pk,
                 'target': self.source1.pk,
@@ -1927,7 +1928,6 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['value'], 'Test Reference')
 
         # No empty value
-        url = reverse('api-reference-list')
         response = self.post(
             url, {'source': self.source1.pk, 'value': ''}, expected_code=400
         )

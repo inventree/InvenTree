@@ -818,8 +818,10 @@ class ReferenceSerializer(InvenTreeModelSerializer):
             'last_checked',
         ]
 
-    source = ReferenceSourceSerializer(many=False, read_only=True)
-    target = serializers.SerializerMethodField(read_only=True)
+    source = serializers.PrimaryKeyRelatedField(
+        queryset=common_models.Reference.objects.all(), many=False
+    )
+    target = serializers.SerializerMethodField()  # read_only=True)
 
     def get_target(self, obj) -> dict:
         """Function to resolve generic object reference to target."""
