@@ -1231,7 +1231,9 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # Updating via the external exchange may not work every time
         for _idx in range(5):
-            self.post(reverse('api-currency-refresh'), expected_code=200)
+            self.post(
+                reverse('api-currency-refresh'), expected_code=200, max_query_time=30
+            )
 
             # There should be some new exchange rate objects now
             if Rate.objects.all().exists():

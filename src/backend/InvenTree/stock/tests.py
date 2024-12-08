@@ -12,7 +12,7 @@ from company.models import Company
 from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
-from stock.status_codes import StockHistoryCode
+from stock.status_codes import StockHistoryCode, StockStatus
 
 from .models import (
     StockItem,
@@ -439,10 +439,31 @@ class StockTest(StockTestBase):
         self.assertIn('Counted items', track.notes)
 
         n = it.tracking_info.count()
-        self.assertFalse(it.stocktake(-1, None, 'test negative stocktake'))
+        self.assertFalse(
+            it.stocktake(
+                -1,
+                None,
+                notes='test negative stocktake',
+                status=StockStatus.DAMAGED.value,
+            )
+        )
 
         # Ensure tracking info was not added
         self.assertEqual(it.tracking_info.count(), n)
+
+        it.refresh_from_db()
+        self.assertEqual(it.status, StockStatus.OK.value)
+
+        # Next, perform a valid stocktake
+        self.assertTrue(
+            it.stocktake(
+                100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
+            )
+        )
+
+        it.refresh_from_db()
+        self.assertEqual(it.quantity, 100)
+        self.assertEqual(it.status, StockStatus.DAMAGED.value)
 
     def test_add_stock(self):
         """Test adding stock."""

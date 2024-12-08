@@ -48,7 +48,8 @@ function attachmentTableColumns(): TableColumn[] {
         } else {
           return '-';
         }
-      }
+      },
+      noContext: true
     },
     {
       accessor: 'comment',

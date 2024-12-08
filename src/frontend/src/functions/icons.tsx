@@ -126,6 +126,7 @@ const icons = {
   units: IconRulerMeasure,
   keywords: IconTag,
   status: IconInfoCircle,
+  status_custom_key: IconInfoCircle,
   edit: IconEdit,
   info: IconInfoCircle,
   exclamation: IconExclamationCircle,
@@ -290,7 +291,4 @@ export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   }
 
   return <Icon {...props.iconProps} />;
-}
-function IconShapes(props: TablerIconProps): Element {
-  throw new Error('Function not implemented.');
 }

@@ -24,6 +24,7 @@ from rest_framework import serializers
 from build.status_codes import BuildStatus, BuildStatusGroups
 from stock.status_codes import StockStatus, StockHistoryCode
 
+from build.events import BuildEvents
 from build.filters import annotate_allocated_quantity
 from build.validators import generate_next_build_reference, validate_build_order_reference
 from generic.states import StateTransitionMixin
@@ -649,7 +650,7 @@ class Build(
             raise ValidationError(_("Failed to offload task to complete build allocations"))
 
         # Register an event
-        trigger_event('build.completed', id=self.pk)
+        trigger_event(BuildEvents.COMPLETED, id=self.pk)
 
         # Notify users that this build has been completed
         targets = [
@@ -716,7 +717,7 @@ class Build(
             self.status = BuildStatus.PRODUCTION.value
             self.save()
 
-            trigger_event('build.issued', id=self.pk)
+            trigger_event(BuildEvents.ISSUED, id=self.pk)
 
     @transaction.atomic
     def hold_build(self):
@@ -741,7 +742,7 @@ class Build(
             self.status = BuildStatus.ON_HOLD.value
             self.save()
 
-            trigger_event('build.hold', id=self.pk)
+            trigger_event(BuildEvents.HOLD, id=self.pk)
 
     @transaction.atomic
     def cancel_build(self, user, **kwargs):
@@ -800,7 +801,7 @@ class Build(
             content=InvenTreeNotificationBodies.OrderCanceled
         )
 
-        trigger_event('build.cancelled', id=self.pk)
+        trigger_event(BuildEvents.CANCELLED, id=self.pk)
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):
@@ -1153,6 +1154,12 @@ class Build(
             user,
             notes=notes,
             deltas=deltas
+        )
+
+        trigger_event(
+            BuildEvents.OUTPUT_COMPLETED,
+            id=output.pk,
+            build_id=self.pk,
         )
 
         # Increase the completed quantity for this build
