@@ -26,5 +26,25 @@
     {% include "filter_list.html" with id="bom" %}
 </div>
 
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" id="include_consumables_in_bom_pricing" checked>
+    <label class="form-check-label" for="flexCheckChecked">
+        {% trans "Include consumables in BOM pricing" %}
+    </label>
+  </div>
+
 <table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>
 </table>
+
+
+<script>
+    // Add listener to the include consumables in pricing checkbox
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var checkbox = document.getElementById('include_consumables_in_bom_pricing');
+
+        checkbox.addEventListener('change', function() {
+            reloadBootstrapTable('#bom-table');
+        });
+    });
+</script>
