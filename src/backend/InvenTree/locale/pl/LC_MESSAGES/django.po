@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-03 04:22+0000\n"
-"PO-Revision-Date: 2024-12-03 04:25\n"
+"PO-Revision-Date: 2024-12-08 20:41\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1258,7 +1258,7 @@ msgstr "Wymagana ilość dla zlecenia produkcji"
 
 #: build/models.py:1610
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Element kompilacji musi określać dane wyjściowe kompilacji, ponieważ część główna jest oznaczona jako możliwa do śledzenia"
 
 #: build/models.py:1619
 #, python-brace-format

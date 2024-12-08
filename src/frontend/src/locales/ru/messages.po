@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-04 07:01\n"
+"PO-Revision-Date: 2024-12-06 03:48\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -30,7 +30,7 @@ msgstr "Произошла ошибка при отрисовки этого к�
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/buttons/AdminButton.tsx:87
+#: src/components/buttons/AdminButton.tsx:85
 msgid "Open in admin interface"
 msgstr "Открыть в панели администратора"
 
@@ -46,20 +46,20 @@ msgstr "Скопировано"
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/components/buttons/PrintingActions.tsx:97
+#: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
 msgstr "Печать этикеток"
 
-#: src/components/buttons/PrintingActions.tsx:103
+#: src/components/buttons/PrintingActions.tsx:101
 msgid "Print"
 msgstr "Печать"
 
-#: src/components/buttons/PrintingActions.tsx:104
+#: src/components/buttons/PrintingActions.tsx:102
 msgid "Label printing completed successfully"
 msgstr "Печать этикеток успешно завершена"
 
-#: src/components/buttons/PrintingActions.tsx:110
-#: src/components/buttons/PrintingActions.tsx:148
+#: src/components/buttons/PrintingActions.tsx:108
+#: src/components/buttons/PrintingActions.tsx:146
 #: src/components/editors/NotesEditor.tsx:73
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
 #: src/components/forms/fields/ApiFormField.tsx:336
@@ -77,35 +77,35 @@ msgstr "Печать этикеток успешно завершена"
 msgid "Error"
 msgstr "Ошибка"
 
-#: src/components/buttons/PrintingActions.tsx:111
+#: src/components/buttons/PrintingActions.tsx:109
 msgid "The label could not be generated"
 msgstr "Ошибка при создании этикетки"
 
-#: src/components/buttons/PrintingActions.tsx:126
+#: src/components/buttons/PrintingActions.tsx:124
 msgid "Print Report"
 msgstr "Печать отчета"
 
-#: src/components/buttons/PrintingActions.tsx:142
+#: src/components/buttons/PrintingActions.tsx:140
 msgid "Generate"
 msgstr "Создать"
 
-#: src/components/buttons/PrintingActions.tsx:143
+#: src/components/buttons/PrintingActions.tsx:141
 msgid "Report printing completed successfully"
 msgstr "Печать отчета успешно завершена"
 
-#: src/components/buttons/PrintingActions.tsx:149
+#: src/components/buttons/PrintingActions.tsx:147
 msgid "The report could not be generated"
 msgstr "Ошибка при создании отчета"
 
-#: src/components/buttons/PrintingActions.tsx:177
+#: src/components/buttons/PrintingActions.tsx:175
 msgid "Printing Actions"
 msgstr "Действия печати"
 
-#: src/components/buttons/PrintingActions.tsx:182
+#: src/components/buttons/PrintingActions.tsx:180
 msgid "Print Labels"
 msgstr "Печать этикеток"
 
-#: src/components/buttons/PrintingActions.tsx:188
+#: src/components/buttons/PrintingActions.tsx:186
 msgid "Print Reports"
 msgstr "Печать отчетов"
 
@@ -1000,7 +1000,7 @@ msgid "Search"
 msgstr "Поиск"
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
-#: src/components/modals/AboutInvenTreeModal.tsx:77
+#: src/components/modals/AboutInvenTreeModal.tsx:76
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:316
 msgid "Loading"
 msgstr "Загрузка"
@@ -1170,7 +1170,7 @@ msgstr "Данные успешно импортированы"
 
 #: src/components/importer/ImporterDrawer.tsx:112
 #: src/components/importer/ImporterDrawer.tsx:121
-#: src/components/modals/AboutInvenTreeModal.tsx:187
+#: src/components/modals/AboutInvenTreeModal.tsx:186
 #: src/components/modals/ServerInfoModal.tsx:132
 msgid "Close"
 msgstr "Закрыть"
@@ -1311,7 +1311,7 @@ msgid "InvenTree Logo"
 msgstr "Логотип InvenTree"
 
 #: src/components/items/OnlyStaff.tsx:9
-#: src/components/modals/AboutInvenTreeModal.tsx:44
+#: src/components/modals/AboutInvenTreeModal.tsx:43
 msgid "This information is only available for staff users"
 msgstr "Эта информация доступна только для сотрудников"
 
@@ -1372,90 +1372,90 @@ msgstr "Ссылка"
 msgid "This will remove the link to the associated barcode"
 msgstr "Это удалит ссылку на связанный штрих-код"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:96
+#: src/components/modals/AboutInvenTreeModal.tsx:95
 msgid "Version Information"
 msgstr "Информация о версии"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:100
+#: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Development Version"
 msgstr "Версия разработки"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:103
+msgid "Up to Date"
+msgstr "Последняя версия"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 #~ msgid "Your InvenTree version status is"
 #~ msgstr "Your InvenTree version status is"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:104
-msgid "Up to Date"
-msgstr "Последняя версия"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:108
+#: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Update Available"
 msgstr "Доступно обновление"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:118
+#: src/components/modals/AboutInvenTreeModal.tsx:117
 msgid "InvenTree Version"
 msgstr "Версия InvenTree"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:124
+#: src/components/modals/AboutInvenTreeModal.tsx:123
 msgid "Commit Hash"
 msgstr "Хеш коммита"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:129
+#: src/components/modals/AboutInvenTreeModal.tsx:128
 msgid "Commit Date"
 msgstr "Дата коммита"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:134
+#: src/components/modals/AboutInvenTreeModal.tsx:133
 msgid "Commit Branch"
 msgstr "Ветка коммита"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:139
+#: src/components/modals/AboutInvenTreeModal.tsx:138
 #: src/components/modals/ServerInfoModal.tsx:37
 msgid "API Version"
 msgstr "Версия API"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:145
+#: src/components/modals/AboutInvenTreeModal.tsx:144
 msgid "Python Version"
 msgstr "Версия Python"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:150
+#: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Django Version"
 msgstr "Версия Django"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:161
+#: src/components/modals/AboutInvenTreeModal.tsx:160
 msgid "Links"
 msgstr "Ссылки"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:167
+#: src/components/modals/AboutInvenTreeModal.tsx:166
 #: src/components/nav/NavigationDrawer.tsx:202
 #: src/defaults/actions.tsx:24
 msgid "Documentation"
 msgstr "Документация"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:168
+#: src/components/modals/AboutInvenTreeModal.tsx:167
 msgid "Source Code"
 msgstr "Исходный код"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:168
+msgid "Credits"
+msgstr "Авторы"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 #~ msgid "InvenTree Documentation"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
-msgid "Credits"
-msgstr "Авторы"
+msgid "Mobile App"
+msgstr "Мобильное Приложение"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 #~ msgid "View Code on GitHub"
 #~ msgstr "View Code on GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
-msgid "Mobile App"
-msgstr "Мобильное Приложение"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Submit Bug Report"
 msgstr "Сообщить об ошибке"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:180
+#: src/components/modals/AboutInvenTreeModal.tsx:179
 msgid "Copy version information"
 msgstr "Копировать информацию о версии"
 
