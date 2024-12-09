@@ -4,7 +4,7 @@ import sys
 from typing import Any, Callable, TypedDict, Union
 
 if sys.version_info >= (3, 11):
-    from typing import NotRequired
+    from typing import NotRequired  # pragma: no cover
 else:
 
     class NotRequired:  # pragma: no cover

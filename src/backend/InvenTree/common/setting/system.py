@@ -112,7 +112,7 @@ def barcode_plugins() -> list:
         from plugin import registry
 
         plugins = registry.with_mixin('barcode', active=True)
-    except Exception:
+    except Exception:  # pragma: no cover
         plugins = []
 
     return [
