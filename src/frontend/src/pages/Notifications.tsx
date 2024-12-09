@@ -18,7 +18,7 @@ import { PanelGroup } from '../components/panels/PanelGroup';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
-import { NotificationTable } from '../tables/notifications/NotificationsTable';
+import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {
   const unreadTable = useTable('unreadnotifications');
