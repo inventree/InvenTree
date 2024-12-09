@@ -3,7 +3,21 @@
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
+from backend.InvenTree.plugin import registry
+
 import common.models
+
+
+def label_printer_options():
+    """Build a list of available label printer options."""
+    printers = []
+    label_printer_plugins = registry.with_mixin('labels')
+    if label_printer_plugins:
+        printers.extend([
+            (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
+        ])
+    return printers
+
 
 USER_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
     'HOMEPAGE_HIDE_INACTIVE': {
@@ -132,7 +146,7 @@ USER_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
         'name': _('Default label printer'),
         'description': _('Configure which label printer should be selected by default'),
         'default': '',
-        'choices': common.models.label_printer_options,
+        'choices': label_printer_options,
     },
     'REPORT_INLINE': {
         'name': _('Inline report display'),

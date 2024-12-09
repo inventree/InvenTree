@@ -19,7 +19,7 @@ from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -55,7 +55,6 @@ from common.setting.user import USER_SETTINGS
 from generic.states import ColorEnum
 from generic.states.custom import get_custom_classes, state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
-from plugin import registry
 
 logger = logging.getLogger('inventree')
 
@@ -1183,62 +1182,6 @@ class BaseInvenTreeSetting(models.Model):
 
 
 # region settings helpers
-def settings_group_options():
-    """Build up group tuple for settings based on your choices."""
-    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
-
-
-def update_instance_url(setting):
-    """Update the first site objects domain to url."""
-    if not django_settings.SITE_MULTI:
-        return
-
-    try:
-        from django.contrib.sites.models import Site
-    except (ImportError, RuntimeError):
-        # Multi-site support not enabled
-        return
-
-    site_obj = Site.objects.all().order_by('id').first()
-    site_obj.domain = setting.value
-    site_obj.save()
-
-
-def update_instance_name(setting):
-    """Update the first site objects name to instance name."""
-    if not django_settings.SITE_MULTI:
-        return
-
-    try:
-        from django.contrib.sites.models import Site
-    except (ImportError, RuntimeError):
-        # Multi-site support not enabled
-        return
-
-    site_obj = Site.objects.all().order_by('id').first()
-    site_obj.name = setting.value
-    site_obj.save()
-
-
-def reload_plugin_registry(setting):
-    """When a core plugin setting is changed, reload the plugin registry."""
-    from plugin import registry
-
-    logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
-
-    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
-
-
-def label_printer_options():
-    """Build a list of available label printer options."""
-    printers = []
-    label_printer_plugins = registry.with_mixin('labels')
-    if label_printer_plugins:
-        printers.extend([
-            (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
-        ])
-    return printers
-
 
 # endregion
 

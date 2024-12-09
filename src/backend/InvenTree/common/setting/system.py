@@ -2,18 +2,122 @@
 
 import json
 import os
+import re
 
+from django.conf import settings as django_settings
+from django.contrib.auth.models import Group
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
+
+from backend.InvenTree.common.models import logger
+from jinja2 import Template
 
 import build.validators
 import common.currency
 import common.models
 import common.validators
-import InvenTree.validators
 import order.validators
-import plugin.base.barcodes.helper
 import report.helpers
+
+
+def validate_part_name_format(value):
+    """Validate part name format.
+
+    Make sure that each template container has a field of Part Model
+    """
+    # Make sure that the field_name exists in Part model
+    from part.models import Part
+
+    jinja_template_regex = re.compile('{{.*?}}')
+    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
+
+    for jinja_template in jinja_template_regex.findall(str(value)):
+        # make sure at least one and only one field is present inside the parser
+        field_names = field_name_regex.findall(jinja_template)
+        if len(field_names) < 1:
+            raise ValidationError({
+                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
+            })
+
+        for field_name in field_names:
+            try:
+                Part._meta.get_field(field_name)
+            except FieldDoesNotExist:
+                raise ValidationError({
+                    'value': f'{field_name} does not exist in Part Model'
+                })
+
+    # Attempt to render the template with a dummy Part instance
+    p = Part(name='test part', description='some test part')
+
+    try:
+        Template(value).render({'part': p})
+    except Exception as exc:
+        raise ValidationError({'value': str(exc)})
+
+    return True
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    if not django_settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.name = setting.value
+    site_obj.save()
+
+
+def update_instance_url(setting):
+    """Update the first site objects domain to url."""
+    if not django_settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.domain = setting.value
+    site_obj.save()
+
+
+def settings_group_options():
+    """Build up group tuple for settings based on your choices."""
+    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
+
+
+def reload_plugin_registry(setting):
+    """When a core plugin setting is changed, reload the plugin registry."""
+    from plugin import registry
+
+    logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
+
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+
+def barcode_plugins() -> list:
+    """Return a list of plugin choices which can be used for barcode generation."""
+    try:
+        from plugin import registry
+
+        plugins = registry.with_mixin('barcode', active=True)
+    except Exception:
+        plugins = []
+
+    return [
+        (plug.slug, plug.human_name) for plug in plugins if plug.has_barcode_generation
+    ]
+
 
 SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
     'SERVER_RESTART_REQUIRED': {
@@ -33,7 +137,7 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
         'name': _('Server Instance Name'),
         'default': 'InvenTree',
         'description': _('String descriptor for the server instance'),
-        'after_save': common.models.update_instance_name,
+        'after_save': update_instance_name,
     },
     'INVENTREE_INSTANCE_TITLE': {
         'name': _('Use instance name'),
@@ -57,7 +161,7 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
         'description': _('Base URL for server instance'),
         'validator': common.models.BaseURLValidator(),
         'default': '',
-        'after_save': common.models.update_instance_url,
+        'after_save': update_instance_url,
     },
     'INVENTREE_DEFAULT_CURRENCY': {
         'name': _('Default Currency'),
@@ -211,7 +315,7 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
     'BARCODE_GENERATION_PLUGIN': {
         'name': _('Barcode Generation Plugin'),
         'description': _('Plugin to use for internal barcode data generation'),
-        'choices': plugin.base.barcodes.helper.barcode_plugins,
+        'choices': barcode_plugins,
         'default': 'inventreebarcode',
     },
     'PART_ENABLE_REVISION': {
@@ -345,7 +449,7 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
         'description': _('Format to display the part name'),
         'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
         '{{ part.revision if part.revision }}',
-        'validator': InvenTree.validators.validate_part_name_format,
+        'validator': validate_part_name_format,
     },
     'PART_CATEGORY_DEFAULT_ICON': {
         'name': _('Part Category Default Icon'),
@@ -810,7 +914,7 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
             'Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP.'
         ),
         'default': '',
-        'choices': common.models.settings_group_options,
+        'choices': settings_group_options,
     },
     'LOGIN_ENFORCE_MFA': {
         'name': _('Enforce MFA'),
@@ -839,42 +943,42 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
         'description': _('Enable plugins to add URL routes'),
         'default': False,
         'validator': bool,
-        'after_save': common.models.reload_plugin_registry,
+        'after_save': reload_plugin_registry,
     },
     'ENABLE_PLUGINS_NAVIGATION': {
         'name': _('Enable navigation integration'),
         'description': _('Enable plugins to integrate into navigation'),
         'default': False,
         'validator': bool,
-        'after_save': common.models.reload_plugin_registry,
+        'after_save': reload_plugin_registry,
     },
     'ENABLE_PLUGINS_APP': {
         'name': _('Enable app integration'),
         'description': _('Enable plugins to add apps'),
         'default': False,
         'validator': bool,
-        'after_save': common.models.reload_plugin_registry,
+        'after_save': reload_plugin_registry,
     },
     'ENABLE_PLUGINS_SCHEDULE': {
         'name': _('Enable schedule integration'),
         'description': _('Enable plugins to run scheduled tasks'),
         'default': False,
         'validator': bool,
-        'after_save': common.models.reload_plugin_registry,
+        'after_save': reload_plugin_registry,
     },
     'ENABLE_PLUGINS_EVENTS': {
         'name': _('Enable event integration'),
         'description': _('Enable plugins to respond to internal events'),
         'default': False,
         'validator': bool,
-        'after_save': common.models.reload_plugin_registry,
+        'after_save': reload_plugin_registry,
     },
     'ENABLE_PLUGINS_INTERFACE': {
         'name': _('Enable interface integration'),
         'description': _('Enable plugins to integrate into the user interface'),
         'default': False,
         'validator': bool,
-        'after_save': common.models.reload_plugin_registry,
+        'after_save': reload_plugin_registry,
     },
     'PROJECT_CODES_ENABLED': {
         'name': _('Enable project codes'),
