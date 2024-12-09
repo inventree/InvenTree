@@ -9,13 +9,12 @@ import hmac
 import json
 import logging
 import os
-import sys
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, TypedDict, Union
+from typing import Any, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -26,7 +25,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
-from django.core.validators import MinValueValidator, URLValidator
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -50,24 +49,12 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import users.models
-from common.setting.system import SYSTEM_SETTINGS
-from common.setting.user import USER_SETTINGS
+from common.setting import InvenTreeSettingsKeyType, SettingsKeyType
 from generic.states import ColorEnum
 from generic.states.custom import get_custom_classes, state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
-
-if sys.version_info >= (3, 11):
-    from typing import NotRequired
-else:
-
-    class NotRequired:  # pragma: no cover
-        """NotRequired type helper is only supported with Python 3.11+."""
-
-        def __class_getitem__(cls, item):
-            """Return the item."""
-            return item
 
 
 class MetaMixin(models.Model):
@@ -88,42 +75,6 @@ class MetaMixin(models.Model):
         auto_now=True,
         null=True,
     )
-
-
-class BaseURLValidator(URLValidator):
-    """Validator for the InvenTree base URL.
-
-    Rules:
-    - Allow empty value
-    - Allow value without specified TLD (top level domain)
-    """
-
-    def __init__(self, schemes=None, **kwargs):
-        """Custom init routine."""
-        super().__init__(schemes, **kwargs)
-
-        # Override default host_re value - allow optional tld regex
-        self.host_re = (
-            '('
-            + self.hostname_re
-            + self.domain_re
-            + f'({self.tld_re})?'
-            + '|localhost)'
-        )
-
-    def __call__(self, value):
-        """Make sure empty values pass."""
-        value = str(value).strip()
-
-        # If a configuration level value has been specified, prevent change
-        if django_settings.SITE_URL and value != django_settings.SITE_URL:
-            raise ValidationError(_('Site URL is locked by configuration'))
-
-        if len(value) == 0:
-            pass
-
-        else:
-            super().__call__(value)
 
 
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
@@ -166,38 +117,6 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('User or group responsible for this project'),
         related_name='project_codes',
     )
-
-
-class SettingsKeyType(TypedDict, total=False):
-    """Type definitions for a SettingsKeyType.
-
-    Attributes:
-        name: Translatable string name of the setting (required)
-        description: Translatable string description of the setting (required)
-        units: Units of the particular setting (optional)
-        validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
-        default: Default value or function that returns default value (optional)
-        choices: Function that returns or value of list[tuple[str: key, str: display value]] (optional)
-        hidden: Hide this setting from settings page (optional)
-        before_save: Function that gets called after save with *args, **kwargs (optional)
-        after_save: Function that gets called after save with *args, **kwargs (optional)
-        protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
-        required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
-        model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
-    """
-
-    name: str
-    description: str
-    units: str
-    validator: Union[Callable, list[Callable], tuple[Callable]]
-    default: Union[Callable, Any]
-    choices: Union[list[tuple[str, str]], Callable[[], list[tuple[str, str]]]]
-    hidden: bool
-    before_save: Callable[..., None]
-    after_save: Callable[..., None]
-    protected: bool
-    required: bool
-    model: str
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -1181,21 +1100,6 @@ class BaseInvenTreeSetting(models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-# region settings helpers
-
-# endregion
-
-
-class InvenTreeSettingsKeyType(SettingsKeyType):
-    """InvenTreeSettingsKeyType has additional properties only global settings support.
-
-    Attributes:
-        requires_restart: If True, a server restart is required after changing the setting
-    """
-
-    requires_restart: NotRequired[bool]
-
-
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -1238,6 +1142,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     The keys must be upper-case
     """
+    from common.setting.system import SYSTEM_SETTINGS
+
     SETTINGS = SYSTEM_SETTINGS
 
     typ = 'inventree'
@@ -1262,6 +1168,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a user context."""
 
+    import common.setting.user
+
     CHECK_SETTING_KEY = True
 
     class Meta:
@@ -1273,7 +1181,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
 
-    SETTINGS = USER_SETTINGS
+    SETTINGS = common.setting.user.USER_SETTINGS
 
     typ = 'user'
     extra_unique_fields = ['user']

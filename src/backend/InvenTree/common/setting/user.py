@@ -3,7 +3,7 @@
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-import common.models
+from common.setting import InvenTreeSettingsKeyType
 from plugin import registry
 
 
@@ -18,7 +18,7 @@ def label_printer_options():
     return printers
 
 
-USER_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
+USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'HOMEPAGE_HIDE_INACTIVE': {
         'name': _('Hide inactive parts'),
         'description': _('Hide inactive parts in results displayed on the homepage'),

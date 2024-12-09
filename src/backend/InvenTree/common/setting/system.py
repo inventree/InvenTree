@@ -7,7 +7,7 @@ import re
 from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import FieldDoesNotExist, ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 
 from jinja2 import Template
@@ -18,7 +18,7 @@ import common.models
 import common.validators
 import order.validators
 import report.helpers
-from common.models import logger
+from common.setting import InvenTreeSettingsKeyType
 
 
 def validate_part_name_format(value):
@@ -98,6 +98,7 @@ def settings_group_options():
 
 def reload_plugin_registry(setting):
     """When a core plugin setting is changed, reload the plugin registry."""
+    from common.models import logger
     from plugin import registry
 
     logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
@@ -119,7 +120,43 @@ def barcode_plugins() -> list:
     ]
 
 
-SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
+class BaseURLValidator(URLValidator):
+    """Validator for the InvenTree base URL.
+
+    Rules:
+    - Allow empty value
+    - Allow value without specified TLD (top level domain)
+    """
+
+    def __init__(self, schemes=None, **kwargs):
+        """Custom init routine."""
+        super().__init__(schemes, **kwargs)
+
+        # Override default host_re value - allow optional tld regex
+        self.host_re = (
+            '('
+            + self.hostname_re
+            + self.domain_re
+            + f'({self.tld_re})?'
+            + '|localhost)'
+        )
+
+    def __call__(self, value):
+        """Make sure empty values pass."""
+        value = str(value).strip()
+
+        # If a configuration level value has been specified, prevent change
+        if django_settings.SITE_URL and value != django_settings.SITE_URL:
+            raise ValidationError(_('Site URL is locked by configuration'))
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
+
+
+SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'SERVER_RESTART_REQUIRED': {
         'name': _('Restart required'),
         'description': _('A setting has been changed which requires a server restart'),
@@ -159,7 +196,7 @@ SYSTEM_SETTINGS: dict[str, common.models.InvenTreeSettingsKeyType] = {
     'INVENTREE_BASE_URL': {
         'name': _('Base URL'),
         'description': _('Base URL for server instance'),
-        'validator': common.models.BaseURLValidator(),
+        'validator': BaseURLValidator(),
         'default': '',
         'after_save': update_instance_url,
     },
