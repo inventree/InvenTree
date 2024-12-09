@@ -50,8 +50,8 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import users.models
-from common.settings.system import SYSTEM_SETTINGS
-from common.settings.user import USER_SETTINGS
+from common.setting.system import SYSTEM_SETTINGS
+from common.setting.user import USER_SETTINGS
 from generic.states import ColorEnum
 from generic.states.custom import get_custom_classes, state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
