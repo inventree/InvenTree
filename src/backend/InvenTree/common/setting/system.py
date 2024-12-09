@@ -10,7 +10,6 @@ from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-from backend.InvenTree.common.models import logger
 from jinja2 import Template
 
 import build.validators
@@ -19,6 +18,7 @@ import common.models
 import common.validators
 import order.validators
 import report.helpers
+from common.models import logger
 
 
 def validate_part_name_format(value):

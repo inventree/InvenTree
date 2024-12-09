@@ -3,9 +3,8 @@
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-from backend.InvenTree.plugin import registry
-
 import common.models
+from plugin import registry
 
 
 def label_printer_options():
