@@ -201,6 +201,11 @@ export function SupplierPartTable({
         name: 'supplier_active',
         label: t`Active Supplier`,
         description: t`Show active suppliers`
+      },
+      {
+        name: 'has_stock',
+        label: t`In Stock`,
+        description: t`Show supplier parts with stock`
       }
     ];
   }, []);

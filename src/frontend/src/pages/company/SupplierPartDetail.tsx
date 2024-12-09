@@ -185,8 +185,23 @@ export default function SupplierPartDetail() {
     const br: DetailsField[] = [
       {
         type: 'string',
+        name: 'in_stock',
+        label: t`In Stock`,
+        copy: true,
+        icon: 'stock'
+      },
+      {
+        type: 'string',
+        name: 'on_order',
+        label: t`On Order`,
+        copy: true,
+        icon: 'purchase_orders'
+      },
+      {
+        type: 'string',
         name: 'available',
         label: t`Supplier Availability`,
+        hidden: !data.availability_updated,
         copy: true,
         icon: 'packages'
       },
@@ -352,6 +367,28 @@ export default function SupplierPartDetail() {
         label={t`Inactive`}
         color='red'
         visible={supplierPart.active == false}
+      />,
+      <DetailsBadge
+        label={`${t`In Stock`}: ${supplierPart.in_stock}`}
+        color={'green'}
+        visible={
+          supplierPart?.active &&
+          supplierPart?.in_stock &&
+          supplierPart?.in_stock > 0
+        }
+        key='in_stock'
+      />,
+      <DetailsBadge
+        label={t`No Stock`}
+        color={'red'}
+        visible={supplierPart.active && supplierPart.in_stock == 0}
+        key='no_stock'
+      />,
+      <DetailsBadge
+        label={`${t`On Order`}: ${supplierPart.on_order}`}
+        color='blue'
+        visible={supplierPart.on_order > 0}
+        key='on_order'
       />
     ];
   }, [supplierPart]);

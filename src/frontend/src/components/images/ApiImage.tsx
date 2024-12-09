@@ -6,6 +6,7 @@
 import { Image, type ImageProps, Skeleton, Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { generateUrl } from '../../functions/urls';
 import { useLocalState } from '../../states/LocalState';
 
 interface ApiImageProps extends ImageProps {
@@ -19,7 +20,7 @@ export function ApiImage(props: Readonly<ApiImageProps>) {
   const { host } = useLocalState.getState();
 
   const imageUrl = useMemo(() => {
-    return new URL(props.src, host).toString();
+    return generateUrl(props.src, host);
   }, [host, props.src]);
 
   return (

@@ -1,11 +1,9 @@
-import { useLocalState } from '../../states/LocalState';
+import { generateUrl } from '../../functions/urls';
 
 /*
  * Load an external plugin source from a URL.
  */
 export async function loadExternalPluginSource(source: string) {
-  const host = useLocalState.getState().host;
-
   source = source.trim();
 
   // If no source is provided, clear the plugin content
@@ -13,7 +11,7 @@ export async function loadExternalPluginSource(source: string) {
     return null;
   }
 
-  const url = new URL(source, host).toString();
+  const url = generateUrl(source);
 
   const module = await import(/* @vite-ignore */ url)
     .catch((error) => {

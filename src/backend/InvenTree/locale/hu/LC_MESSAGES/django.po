@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-28 04:49+0000\n"
-"PO-Revision-Date: 2024-11-28 04:51\n"
+"POT-Creation-Date: 2024-12-03 04:22+0000\n"
+"PO-Revision-Date: 2024-12-03 04:25\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -52,7 +52,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "{original} átváltása {unit}-ra sikertelen"
 
 #: InvenTree/conversion.py:207 InvenTree/conversion.py:221
-#: InvenTree/helpers.py:505 order/models.py:589 order/models.py:832
+#: InvenTree/helpers.py:505 order/models.py:590 order/models.py:833
 msgid "Invalid quantity provided"
 msgstr "Nem megfelelő mennyiség"
 
@@ -73,13 +73,13 @@ msgstr ""
 #: company/models.py:833
 #: company/templates/company/manufacturer_part_sidebar.html:11
 #: company/templates/company/sidebar.html:37
-#: company/templates/company/supplier_part_sidebar.html:11 order/models.py:1426
+#: company/templates/company/supplier_part_sidebar.html:11 order/models.py:1427
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:59
 #: part/models.py:3348 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/admin.py:231 stock/models.py:2562 stock/models.py:2686
+#: stock/admin.py:231 stock/models.py:2587 stock/models.py:2711
 #: stock/serializers.py:725 stock/serializers.py:887 stock/serializers.py:992
 #: stock/serializers.py:1046 stock/serializers.py:1357
 #: stock/serializers.py:1446 stock/serializers.py:1622
@@ -435,10 +435,10 @@ msgid "Invalid choice"
 msgstr "Érvénytelen választás"
 
 #: InvenTree/models.py:781 common/models.py:2766 common/models.py:3193
-#: common/models.py:3413 common/models.py:3536 common/serializers.py:460
+#: common/models.py:3413 common/models.py:3536 common/serializers.py:480
 #: company/models.py:590 machine/models.py:24 part/models.py:1044
-#: part/models.py:3819 plugin/models.py:51 report/models.py:149
-#: stock/models.py:81 templates/InvenTree/settings/mixins/urls.html:13
+#: part/models.py:3819 plugin/models.py:52 report/models.py:149
+#: stock/models.py:82 templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:83
 #: templates/InvenTree/settings/plugin_settings.html:22
@@ -454,19 +454,19 @@ msgstr "Érvénytelen választás"
 msgid "Name"
 msgstr "Név"
 
-#: InvenTree/models.py:787 build/models.py:251
+#: InvenTree/models.py:787 build/models.py:252
 #: build/templates/build/detail.html:24 common/models.py:159
 #: common/models.py:3543 common/models.py:3656 company/models.py:518
 #: company/models.py:824 company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:75
-#: company/templates/company/supplier_part.html:108 order/models.py:295
-#: order/models.py:1459 part/admin.py:305 part/admin.py:411 part/models.py:1067
+#: company/templates/company/supplier_part.html:108 order/models.py:296
+#: order/models.py:1460 part/admin.py:305 part/admin.py:411 part/models.py:1067
 #: part/models.py:3834 part/templates/part/category.html:79
 #: part/templates/part/part_base.html:171
 #: part/templates/part/part_scheduling.html:12 report/models.py:155
 #: report/models.py:517 report/models.py:543
 #: report/templates/report/inventree_build_order_report.html:117
-#: stock/admin.py:54 stock/models.py:87 stock/templates/stock/location.html:123
+#: stock/admin.py:54 stock/models.py:88 stock/templates/stock/location.html:123
 #: templates/InvenTree/settings/notifications.html:19
 #: templates/InvenTree/settings/plugin_settings.html:27
 #: templates/InvenTree/settings/settings_staff_js.html:170
@@ -491,7 +491,7 @@ msgstr "Név"
 msgid "Description"
 msgstr "Leírás"
 
-#: InvenTree/models.py:788 stock/models.py:88
+#: InvenTree/models.py:788 stock/models.py:89
 msgid "Description (optional)"
 msgstr "Leírás (opcionális)"
 
@@ -599,7 +599,7 @@ msgstr "A felhasználó rendszergazda-e"
 #: InvenTree/serializers.py:449 common/models.py:2771 common/models.py:3556
 #: common/models.py:3663 company/models.py:160 company/models.py:798
 #: machine/models.py:39 part/admin.py:88 part/models.py:1250
-#: plugin/models.py:66 stock/api.py:560 templates/js/translated/company.js:524
+#: plugin/models.py:67 stock/api.py:560 templates/js/translated/company.js:524
 #: templates/js/translated/table_filters.js:134
 #: templates/js/translated/table_filters.js:226
 #: templates/js/translated/table_filters.js:499
@@ -743,7 +743,7 @@ msgstr "Rendszerinformáció"
 msgid "About InvenTree"
 msgstr "Verzió információk"
 
-#: build/api.py:54 build/models.py:262
+#: build/api.py:54 build/models.py:263
 #: build/templates/build/build_base.html:192
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
@@ -842,11 +842,11 @@ msgstr "Követett"
 msgid "Testable"
 msgstr "Ellenőrizhető"
 
-#: build/api.py:392 build/api.py:703 build/models.py:268
+#: build/api.py:392 build/api.py:703 build/models.py:269
 #: build/serializers.py:1346 build/templates/build/build_base.html:106
 #: build/templates/build/detail.html:29 company/models.py:1043 order/api.py:197
-#: order/api.py:813 order/api.py:1052 order/models.py:1548 order/models.py:1703
-#: order/models.py:1704 part/api.py:1440 part/api.py:1508 part/api.py:1815
+#: order/api.py:813 order/api.py:1052 order/models.py:1549 order/models.py:1704
+#: order/models.py:1705 part/api.py:1440 part/api.py:1508 part/api.py:1815
 #: part/models.py:419 part/models.py:3177 part/models.py:3321
 #: part/models.py:3469 part/models.py:3490 part/models.py:3512
 #: part/models.py:3648 part/models.py:4009 part/models.py:4172
@@ -906,7 +906,7 @@ msgstr ""
 msgid "Allocated"
 msgstr "Lefoglalva"
 
-#: build/api.py:415 company/models.py:888 company/serializers.py:399
+#: build/api.py:415 company/models.py:888 company/serializers.py:403
 #: company/templates/company/supplier_part.html:115
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
@@ -920,7 +920,7 @@ msgstr "Lefoglalva"
 msgid "Available"
 msgstr "Elérhető"
 
-#: build/api.py:725 build/models.py:88 build/templates/build/build_base.html:10
+#: build/api.py:725 build/models.py:89 build/templates/build/build_base.html:10
 #: build/templates/build/build_base.html:28
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:85 templates/email/build_order_completed.html:16
@@ -929,7 +929,7 @@ msgstr "Elérhető"
 msgid "Build Order"
 msgstr "Gyártási utasítás"
 
-#: build/models.py:89 build/templates/build/build_base.html:14
+#: build/models.py:90 build/templates/build/build_base.html:14
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
 #: order/templates/order/sales_order_detail.html:111
 #: order/templates/order/so_sidebar.html:13
@@ -940,36 +940,36 @@ msgstr "Gyártási utasítás"
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
-#: build/models.py:136
+#: build/models.py:137
 msgid "Assembly BOM has not been validated"
 msgstr "Az alkatrészjegyzék még nincs jóváhagyva"
 
-#: build/models.py:143
+#: build/models.py:144
 msgid "Build order cannot be created for an inactive part"
 msgstr "Nem lehet inaktív alkatrészre Gyártást kezdeményezni"
 
-#: build/models.py:150
+#: build/models.py:151
 msgid "Build order cannot be created for an unlocked part"
 msgstr "Nem lehet lezáratlan alkatrészre Gyártást kezdeményezni"
 
-#: build/models.py:164
+#: build/models.py:165
 msgid "Invalid choice for parent build"
 msgstr "Hibás választás a szülő gyártásra"
 
-#: build/models.py:175 order/models.py:236
+#: build/models.py:176 order/models.py:237
 msgid "Responsible user or group must be specified"
 msgstr "Meg kell adni felelős felhasználót vagy csoportot"
 
-#: build/models.py:181
+#: build/models.py:182
 msgid "Build order part cannot be changed"
 msgstr "Gyártási rendelés alkatrész nem változtatható"
 
-#: build/models.py:242
+#: build/models.py:243
 msgid "Build Order Reference"
 msgstr "Gyártási utasítás azonosító"
 
-#: build/models.py:243 build/serializers.py:1357 order/models.py:479
-#: order/models.py:1005 order/models.py:1419 order/models.py:2205
+#: build/models.py:244 build/serializers.py:1357 order/models.py:480
+#: order/models.py:1006 order/models.py:1420 order/models.py:2206
 #: part/admin.py:414 part/models.py:4351 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
@@ -984,114 +984,114 @@ msgstr "Gyártási utasítás azonosító"
 msgid "Reference"
 msgstr "Azonosító"
 
-#: build/models.py:254
+#: build/models.py:255
 msgid "Brief description of the build (optional)"
 msgstr "Gyártás rövid leírása (opcionális)"
 
-#: build/models.py:263
+#: build/models.py:264
 msgid "BuildOrder to which this build is allocated"
 msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 
-#: build/models.py:274
+#: build/models.py:275
 msgid "Select part to build"
 msgstr "Válassz alkatrészt a gyártáshoz"
 
-#: build/models.py:279
+#: build/models.py:280
 msgid "Sales Order Reference"
 msgstr "Vevői rendelés azonosító"
 
-#: build/models.py:283
+#: build/models.py:284
 msgid "SalesOrder to which this build is allocated"
 msgstr "Vevői rendelés amihez ez a gyártás hozzá van rendelve"
 
-#: build/models.py:288 build/serializers.py:1092
+#: build/models.py:289 build/serializers.py:1092
 #: templates/js/translated/build.js:1907
 #: templates/js/translated/sales_order.js:1189
 msgid "Source Location"
 msgstr "Forrás hely"
 
-#: build/models.py:292
+#: build/models.py:293
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Válassz helyet ahonnan készletet vegyünk el ehhez a gyártáshoz (hagyd üresen ha bárhonnan)"
 
-#: build/models.py:297
+#: build/models.py:298
 msgid "Destination Location"
 msgstr "Cél hely"
 
-#: build/models.py:301
+#: build/models.py:302
 msgid "Select location where the completed items will be stored"
 msgstr "Válassz helyet ahol a kész tételek tárolva lesznek"
 
-#: build/models.py:305
+#: build/models.py:306
 msgid "Build Quantity"
 msgstr "Gyártási mennyiség"
 
-#: build/models.py:308
+#: build/models.py:309
 msgid "Number of stock items to build"
 msgstr "Gyártandó készlet tételek száma"
 
-#: build/models.py:312
+#: build/models.py:313
 msgid "Completed items"
 msgstr "Kész tételek"
 
-#: build/models.py:314
+#: build/models.py:315
 msgid "Number of stock items which have been completed"
 msgstr "Elkészült készlet tételek száma"
 
-#: build/models.py:318
+#: build/models.py:319
 msgid "Build Status"
 msgstr "Gyártási állapot"
 
-#: build/models.py:322
+#: build/models.py:323
 msgid "Build status code"
 msgstr "Gyártás státusz kód"
 
-#: build/models.py:331 build/serializers.py:349 build/serializers.py:1243
-#: order/serializers.py:756 stock/models.py:934 stock/serializers.py:77
+#: build/models.py:332 build/serializers.py:349 build/serializers.py:1243
+#: order/serializers.py:756 stock/models.py:935 stock/serializers.py:77
 #: stock/serializers.py:1587 templates/js/translated/purchase_order.js:1112
 #: templates/js/translated/stock.js:1197
 msgid "Batch Code"
 msgstr "Batch kód"
 
-#: build/models.py:335 build/serializers.py:350
+#: build/models.py:336 build/serializers.py:350
 msgid "Batch code for this build output"
 msgstr "Batch kód a gyártás kimenetéhez"
 
-#: build/models.py:338 order/models.py:322 order/serializers.py:158
+#: build/models.py:339 order/models.py:323 order/serializers.py:158
 #: part/models.py:1290 part/templates/part/part_base.html:327
 #: templates/js/translated/return_order.js:338
 #: templates/js/translated/sales_order.js:824
 msgid "Creation Date"
 msgstr "Létrehozás dátuma"
 
-#: build/models.py:342
+#: build/models.py:343
 msgid "Target completion date"
 msgstr "Befejezés cél dátuma"
 
-#: build/models.py:343
+#: build/models.py:344
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Cél dátum a gyártás befejezéséhez. Ez után késettnek számít majd."
 
-#: build/models.py:346 order/models.py:538 order/models.py:2250
+#: build/models.py:347 order/models.py:539 order/models.py:2251
 #: templates/js/translated/build.js:2422
 msgid "Completion Date"
 msgstr "Befejezés dátuma"
 
-#: build/models.py:352
+#: build/models.py:353
 msgid "completed by"
 msgstr "elkészítette"
 
-#: build/models.py:360 templates/js/translated/build.js:2382
+#: build/models.py:361 templates/js/translated/build.js:2382
 msgid "Issued by"
 msgstr "Indította"
 
-#: build/models.py:361
+#: build/models.py:362
 msgid "User who issued this build order"
 msgstr "Felhasználó aki ezt a gyártási utasítást kiállította"
 
-#: build/models.py:369 build/templates/build/build_base.html:213
+#: build/models.py:370 build/templates/build/build_base.html:213
 #: build/templates/build/detail.html:122 common/models.py:168 order/api.py:144
-#: order/models.py:340 order/templates/order/order_base.html:231
+#: order/models.py:341 order/templates/order/order_base.html:231
 #: order/templates/order/return_order_base.html:192
 #: order/templates/order/sales_order_base.html:236 part/models.py:1307
 #: part/templates/part/part_base.html:407
@@ -1104,37 +1104,37 @@ msgstr "Felhasználó aki ezt a gyártási utasítást kiállította"
 msgid "Responsible"
 msgstr "Felelős"
 
-#: build/models.py:370
+#: build/models.py:371
 msgid "User or group responsible for this build order"
 msgstr "Felhasználó vagy csoport aki felelős ezért a gyártásért"
 
-#: build/models.py:375 build/templates/build/detail.html:108
+#: build/models.py:376 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
 #: company/templates/company/supplier_part.html:195
 #: order/templates/order/order_base.html:181
 #: order/templates/order/return_order_base.html:149
 #: order/templates/order/sales_order_base.html:188
-#: part/templates/part/part_base.html:400 stock/models.py:930
+#: part/templates/part/part_base.html:400 stock/models.py:931
 #: stock/templates/stock/item_base.html:197
 #: templates/js/translated/company.js:1020
 msgid "External Link"
 msgstr "Külső link"
 
-#: build/models.py:376 common/models.py:3334 part/models.py:1119
-#: stock/models.py:930
+#: build/models.py:377 common/models.py:3334 part/models.py:1119
+#: stock/models.py:931
 msgid "Link to external URL"
 msgstr "Link külső URL-re"
 
-#: build/models.py:380
+#: build/models.py:381
 msgid "Build Priority"
 msgstr "Priorítás"
 
-#: build/models.py:383
+#: build/models.py:384
 msgid "Priority of this build order"
 msgstr "Gyártási utasítás priorítása"
 
-#: build/models.py:390 common/models.py:138 common/models.py:152
-#: order/admin.py:18 order/api.py:130 order/models.py:304
+#: build/models.py:391 common/models.py:138 common/models.py:152
+#: order/admin.py:18 order/api.py:130 order/models.py:305
 #: templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2319
 #: templates/js/translated/purchase_order.js:1764
@@ -1145,68 +1145,69 @@ msgstr "Gyártási utasítás priorítása"
 msgid "Project Code"
 msgstr "Projektszám"
 
-#: build/models.py:391
+#: build/models.py:392
 msgid "Project code for this build order"
 msgstr "Projekt kód a gyártáshoz"
 
-#: build/models.py:651 build/models.py:779
+#: build/models.py:652 build/models.py:780
 msgid "Failed to offload task to complete build allocations"
 msgstr "A gyártási foglalások teljesítése háttérfeladat elvégzése nem sikerült"
 
-#: build/models.py:673
+#: build/models.py:674
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "A {build} gyártási utasítás elkészült"
 
-#: build/models.py:679
+#: build/models.py:680
 msgid "A build order has been completed"
 msgstr "Gyártási utasítás elkészült"
 
-#: build/models.py:858 build/serializers.py:393
+#: build/models.py:859 build/serializers.py:393
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "Egyedi követésre jelölt alkatrészeknél kötelező sorozatszámot megadni"
 
-#: build/models.py:970 build/models.py:1059
+#: build/models.py:971 build/models.py:1060
 msgid "No build output specified"
 msgstr "Nincs gyártási kimenet megadva"
 
-#: build/models.py:973
+#: build/models.py:974
 msgid "Build output is already completed"
 msgstr "Gyártási kimenet már kész"
 
-#: build/models.py:976
+#: build/models.py:977
 msgid "Build output does not match Build Order"
 msgstr "Gyártási kimenet nem egyezik a gyártási utasítással"
 
-#: build/models.py:1063 build/serializers.py:282 build/serializers.py:331
-#: build/serializers.py:959 order/models.py:586 order/serializers.py:585
+#: build/models.py:1064 build/serializers.py:282 build/serializers.py:331
+#: build/serializers.py:959 order/models.py:587 order/serializers.py:585
 #: order/serializers.py:751 part/serializers.py:1636 part/serializers.py:2069
-#: stock/models.py:775 stock/models.py:1630 stock/serializers.py:696
+#: stock/models.py:776 stock/models.py:1643 stock/serializers.py:696
 msgid "Quantity must be greater than zero"
 msgstr "Mennyiségnek nullánál többnek kell lennie"
 
-#: build/models.py:1068 build/serializers.py:287
+#: build/models.py:1069 build/serializers.py:287
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "A mennyiség nem lehet több mint a gyártási mennyiség"
 
-#: build/models.py:1128 build/serializers.py:607
+#: build/models.py:1129 build/serializers.py:607
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "A {serial} gyártási kimenet nem felelt meg az összes kötelező teszten"
 
-#: build/models.py:1483
+#: build/models.py:1490
 msgid "Build Order Line Item"
 msgstr "Gyártási Rendelés Sor Tétel"
 
-#: build/models.py:1508
+#: build/models.py:1515
 msgid "Build object"
 msgstr "Gyártás objektum"
 
-#: build/models.py:1522 build/models.py:1789 build/serializers.py:269
+#: build/models.py:1529 build/models.py:1796 build/serializers.py:269
 #: build/serializers.py:316 build/serializers.py:1365
 #: build/templates/build/build_base.html:111
 #: build/templates/build/detail.html:34 common/models.py:2643
-#: order/models.py:1402 order/models.py:2105 order/serializers.py:1616
+#: order/models.py:1403 order/models.py:2106 order/serializers.py:1616
+#: order/serializers.py:2076
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:413
 #: part/forms.py:48 part/models.py:3335 part/models.py:4324
 #: part/serializers.py:265 part/templates/part/part_pricing.html:16
@@ -1251,39 +1252,39 @@ msgstr "Gyártás objektum"
 msgid "Quantity"
 msgstr "Mennyiség"
 
-#: build/models.py:1523
+#: build/models.py:1530
 msgid "Required quantity for build order"
 msgstr "Gyártáshoz szükséges mennyiség"
 
-#: build/models.py:1603
+#: build/models.py:1610
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Gyártási tételnek meg kell adnia a gyártási kimenetet, mivel a fő darab egyedi követésre kötelezett"
 
-#: build/models.py:1612
+#: build/models.py:1619
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "A lefoglalt mennyiség ({q}) nem lépheti túl a szabad készletet ({a})"
 
-#: build/models.py:1629 order/models.py:2054
+#: build/models.py:1636 order/models.py:2055
 msgid "Stock item is over-allocated"
 msgstr "Készlet túlfoglalva"
 
-#: build/models.py:1635 order/models.py:2057
+#: build/models.py:1642 order/models.py:2058
 msgid "Allocation quantity must be greater than zero"
 msgstr "Lefoglalt mennyiségnek nullánál többnek kell lennie"
 
-#: build/models.py:1641
+#: build/models.py:1648
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Egyedi követésre kötelezett tételeknél a menyiség 1 kell legyen"
 
-#: build/models.py:1700
+#: build/models.py:1707
 msgid "Selected stock item does not match BOM line"
 msgstr "A készlet tétel nem egyezik az alkatrészjegyzékkel"
 
-#: build/models.py:1776 build/serializers.py:939 order/serializers.py:1453
+#: build/models.py:1783 build/serializers.py:939 order/serializers.py:1453
 #: order/serializers.py:1474
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
-#: stock/models.py:380 stock/serializers.py:94 stock/serializers.py:794
+#: stock/models.py:381 stock/serializers.py:94 stock/serializers.py:794
 #: stock/serializers.py:1295 stock/serializers.py:1407
 #: stock/templates/stock/item_base.html:11
 #: stock/templates/stock/item_base.html:24
@@ -1299,19 +1300,19 @@ msgstr "A készlet tétel nem egyezik az alkatrészjegyzékkel"
 msgid "Stock Item"
 msgstr "Készlet tétel"
 
-#: build/models.py:1777
+#: build/models.py:1784
 msgid "Source stock item"
 msgstr "Forrás készlet tétel"
 
-#: build/models.py:1790
+#: build/models.py:1797
 msgid "Stock quantity to allocate to build"
 msgstr "Készlet mennyiség amit foglaljunk a gyártáshoz"
 
-#: build/models.py:1798
+#: build/models.py:1805
 msgid "Install into"
 msgstr "Beépítés ebbe"
 
-#: build/models.py:1799
+#: build/models.py:1806
 msgid "Destination stock item"
 msgstr "Cél készlet tétel"
 
@@ -1413,7 +1414,7 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Szükséges tételek automatikus hozzárendelése a megfelelő sorozatszámokkal"
 
 #: build/serializers.py:415 order/serializers.py:859 stock/api.py:1039
-#: stock/models.py:1653
+#: stock/models.py:1666
 msgid "The following serial numbers already exist or are invalid"
 msgstr "A következő sorozatszámok már léteznek vagy nem megfelelőek"
 
@@ -1442,8 +1443,8 @@ msgid "Location for completed build outputs"
 msgstr "A kész gyártási kimenetek helye"
 
 #: build/serializers.py:579 build/templates/build/build_base.html:160
-#: build/templates/build/detail.html:62 order/models.py:488
-#: order/models.py:1029 order/models.py:2229 order/serializers.py:772
+#: build/templates/build/detail.html:62 order/models.py:489
+#: order/models.py:1030 order/models.py:2230 order/serializers.py:772
 #: order/serializers.py:1940 stock/admin.py:165 stock/serializers.py:581
 #: stock/serializers.py:985 stock/serializers.py:1042 stock/serializers.py:1594
 #: stock/templates/stock/item_base.html:424
@@ -1646,7 +1647,7 @@ msgstr "Alkatrészjegyzék Hivatkozás"
 
 #: build/serializers.py:1231 company/models.py:849
 #: company/templates/company/supplier_part.html:161 order/serializers.py:776
-#: stock/admin.py:229 stock/models.py:893 stock/serializers.py:1604
+#: stock/admin.py:229 stock/models.py:894 stock/serializers.py:1604
 #: stock/templates/stock/item_base.html:237
 #: templates/js/translated/company.js:1647
 #: templates/js/translated/purchase_order.js:1152
@@ -1682,7 +1683,7 @@ msgstr "Alkatrészjegyzék Alkatrész Név"
 #: build/serializers.py:1244
 #: report/templates/report/inventree_return_order_report.html:25
 #: report/templates/report/inventree_sales_order_shipment_report.html:45
-#: report/templates/report/inventree_test_report.html:88 stock/models.py:920
+#: report/templates/report/inventree_test_report.html:88 stock/models.py:921
 #: stock/serializers.py:152 stock/templates/stock/item_base.html:308
 #: templates/js/translated/build.js:523 templates/js/translated/build.js:1543
 #: templates/js/translated/build.js:2534
@@ -1741,8 +1742,9 @@ msgstr "Alkatrészjegyzék tétel"
 msgid "Allocated Stock"
 msgstr "Lefoglalt készlet"
 
-#: build/serializers.py:1392 order/serializers.py:1226 part/admin.py:132
-#: part/bom.py:186 part/serializers.py:960 part/serializers.py:1669
+#: build/serializers.py:1392 company/serializers.py:401
+#: order/serializers.py:1226 part/admin.py:132 part/bom.py:186
+#: part/serializers.py:960 part/serializers.py:1669
 #: part/templates/part/part_base.html:211 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2822 templates/js/translated/part.js:712
 #: templates/js/translated/part.js:2169
@@ -1803,15 +1805,15 @@ msgstr "Törölve"
 msgid "Complete"
 msgstr "Kész"
 
-#: build/tasks.py:184
+#: build/tasks.py:185
 msgid "Stock required for build order"
 msgstr "A gyártási utasításhoz készlet szükséges"
 
-#: build/tasks.py:260
+#: build/tasks.py:261
 msgid "Overdue Build Order"
 msgstr "Késésben lévő gyártás"
 
-#: build/tasks.py:265
+#: build/tasks.py:266
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "A {bo} gyártás most már késésben van"
@@ -1937,8 +1939,8 @@ msgid "Stock has not been fully allocated to this Build Order"
 msgstr "Még nincs lefoglalva a szükséges készlet"
 
 #: build/templates/build/build_base.html:169
-#: build/templates/build/detail.html:138 order/models.py:315
-#: order/models.py:1437 order/serializers.py:255
+#: build/templates/build/detail.html:138 order/models.py:316
+#: order/models.py:1438 order/serializers.py:255
 #: order/templates/order/order_base.html:200
 #: order/templates/order/return_order_base.html:168
 #: order/templates/order/sales_order_base.html:200
@@ -1976,8 +1978,8 @@ msgid "Completed Outputs"
 msgstr "Befejezett kimenetek"
 
 #: build/templates/build/build_base.html:199
-#: build/templates/build/detail.html:101 order/api.py:1609 order/models.py:914
-#: order/models.py:1695 order/models.py:1823 order/models.py:1986
+#: build/templates/build/detail.html:101 order/api.py:1609 order/models.py:915
+#: order/models.py:1696 order/models.py:1824 order/models.py:1987
 #: order/templates/order/sales_order_base.html:10
 #: order/templates/order/sales_order_base.html:29
 #: report/templates/report/inventree_build_order_report.html:135
@@ -2029,8 +2031,8 @@ msgstr "Készlet forrás"
 msgid "Stock can be taken from any available location."
 msgstr "Készlet bármely rendelkezésre álló helyről felhasználható."
 
-#: build/templates/build/detail.html:49 order/models.py:548
-#: order/models.py:1577 order/templates/order/order_base.html:135
+#: build/templates/build/detail.html:49 order/models.py:549
+#: order/models.py:1578 order/templates/order/order_base.html:135
 #: templates/js/translated/purchase_order.js:2243
 msgid "Destination"
 msgstr "Cél"
@@ -3780,8 +3782,8 @@ msgstr "Az utoljára használt nyomtató tárolása a felhasználóhoz"
 #: common/models.py:2780 common/models.py:3025 common/models.py:3026
 #: common/models.py:3349 common/models.py:3350 common/models.py:3697
 #: importer/models.py:89 part/models.py:3358 part/models.py:3445
-#: part/models.py:3519 part/models.py:3547 plugin/models.py:313
-#: plugin/models.py:314 report/templates/report/inventree_test_report.html:105
+#: part/models.py:3519 part/models.py:3547 plugin/models.py:316
+#: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
 #: templates/js/translated/stock.js:3119 users/models.py:111
 msgid "User"
 msgstr "Felhasználó"
@@ -3790,8 +3792,8 @@ msgstr "Felhasználó"
 msgid "Price break quantity"
 msgstr "Ársáv mennyiség"
 
-#: common/models.py:2651 company/serializers.py:524 order/admin.py:42
-#: order/models.py:1476 order/models.py:2497
+#: common/models.py:2651 company/serializers.py:532 order/admin.py:42
+#: order/models.py:1477 order/models.py:2528
 #: templates/js/translated/company.js:1824 templates/js/translated/part.js:1906
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:739
@@ -3889,7 +3891,7 @@ msgstr "Cím"
 
 #: common/models.py:3078 common/models.py:3333 company/models.py:146
 #: company/models.py:443 company/models.py:509 company/models.py:815
-#: order/models.py:309 order/models.py:1431 order/models.py:1875
+#: order/models.py:310 order/models.py:1432 order/models.py:1876
 #: part/admin.py:55 part/models.py:1118
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_report.html:164
@@ -3979,7 +3981,7 @@ msgstr "Definíció"
 msgid "Unit definition"
 msgstr "Mértékegység definíció"
 
-#: common/models.py:3267 common/models.py:3324 stock/models.py:2681
+#: common/models.py:3267 common/models.py:3324 stock/models.py:2706
 #: stock/serializers.py:244 templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:345
 msgid "Attachment"
@@ -4022,11 +4024,11 @@ msgstr "Fájl mérete"
 msgid "File size in bytes"
 msgstr "Fájlméret bájtban"
 
-#: common/models.py:3400 common/serializers.py:609
+#: common/models.py:3400 common/serializers.py:629
 msgid "Invalid model type specified for attachment"
 msgstr "A melléklet model típusa érvénytelen"
 
-#: common/models.py:3409 plugin/models.py:43 users/models.py:100
+#: common/models.py:3409 plugin/models.py:44 users/models.py:100
 msgid "Key"
 msgstr "Kulcs"
 
@@ -4201,7 +4203,7 @@ msgid "Selection list to which this entry belongs"
 msgstr ""
 
 #: common/models.py:3644 company/models.py:597
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2673
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:2698
 #: templates/js/translated/company.js:1167
 #: templates/js/translated/company.js:1420 templates/js/translated/part.js:1512
 #: templates/js/translated/stock.js:1605
@@ -4252,7 +4254,7 @@ msgstr ""
 msgid "URL endpoint which processed the barcode"
 msgstr ""
 
-#: common/models.py:3717 order/models.py:1466 plugin/serializers.py:89
+#: common/models.py:3717 order/models.py:1467 plugin/serializers.py:89
 msgid "Context"
 msgstr "Kontextus"
 
@@ -4269,7 +4271,7 @@ msgid "Response data from the barcode scan"
 msgstr ""
 
 #: common/models.py:3732 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2667
+#: stock/models.py:2692
 msgid "Result"
 msgstr "Eredmény"
 
@@ -4311,79 +4313,79 @@ msgstr "Készlet érkezett vissza egy visszavétel miatt"
 msgid "Error raised by plugin"
 msgstr "Plugin hiba"
 
-#: common/serializers.py:423
+#: common/serializers.py:443
 msgid "Is Running"
 msgstr "Folyamatban"
 
-#: common/serializers.py:429
+#: common/serializers.py:449
 msgid "Pending Tasks"
 msgstr "Folyamatban lévő feladatok"
 
-#: common/serializers.py:435
+#: common/serializers.py:455
 msgid "Scheduled Tasks"
 msgstr "Ütemezett Feladatok"
 
-#: common/serializers.py:441
+#: common/serializers.py:461
 msgid "Failed Tasks"
 msgstr "Hibás feladatok"
 
-#: common/serializers.py:456
+#: common/serializers.py:476
 msgid "Task ID"
 msgstr "Feladat ID"
 
-#: common/serializers.py:456
+#: common/serializers.py:476
 msgid "Unique task ID"
 msgstr "Egyedi feladat ID"
 
-#: common/serializers.py:458
+#: common/serializers.py:478
 msgid "Lock"
 msgstr "Zárol"
 
-#: common/serializers.py:458
+#: common/serializers.py:478
 msgid "Lock time"
 msgstr "Zárolási idő"
 
-#: common/serializers.py:460
+#: common/serializers.py:480
 msgid "Task name"
 msgstr "Feladat neve"
 
-#: common/serializers.py:462
+#: common/serializers.py:482
 msgid "Function"
 msgstr "Funkció"
 
-#: common/serializers.py:462
+#: common/serializers.py:482
 msgid "Function name"
 msgstr "Funkció neve"
 
-#: common/serializers.py:464
+#: common/serializers.py:484
 msgid "Arguments"
 msgstr "Paraméterek"
 
-#: common/serializers.py:464
+#: common/serializers.py:484
 msgid "Task arguments"
 msgstr "Feladat paraméterei"
 
-#: common/serializers.py:467
+#: common/serializers.py:487
 msgid "Keyword Arguments"
 msgstr "Kulcsszó paraméterek"
 
-#: common/serializers.py:467
+#: common/serializers.py:487
 msgid "Task keyword arguments"
 msgstr "Feladat kulcsszó paraméterek"
 
-#: common/serializers.py:577
+#: common/serializers.py:597
 msgid "Filename"
 msgstr "Fájlnév"
 
-#: common/serializers.py:584 report/api.py:100 report/serializers.py:54
+#: common/serializers.py:604 report/api.py:100 report/serializers.py:54
 msgid "Model Type"
 msgstr "Modell típusa"
 
-#: common/serializers.py:612
+#: common/serializers.py:632
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "A felhasználónak nincs joga létrehozni vagy módosítani ehhez a modelhez tartozó mellékleteket"
 
-#: common/serializers.py:656 common/serializers.py:759
+#: common/serializers.py:676 common/serializers.py:779
 msgid "Selection list is locked"
 msgstr ""
 
@@ -4466,16 +4468,33 @@ msgstr "A Szállítói Alkatrész Aktív"
 msgid "Internal Part is Active"
 msgstr "A saját alkatrész Aktív"
 
-#: company/api.py:286
+#: company/api.py:287
 msgid "Supplier is Active"
 msgstr "A Beszállító Aktív"
 
-#: company/models.py:97 company/models.py:368
+#: company/api.py:299 company/models.py:495
+#: company/templates/company/company_base.html:82
+#: company/templates/company/manufacturer_part.html:90
+#: company/templates/company/supplier_part.html:146 part/serializers.py:607
+#: stock/templates/stock/item_base.html:204
+#: templates/js/translated/company.js:508
+#: templates/js/translated/company.js:1119
+#: templates/js/translated/company.js:1297
+#: templates/js/translated/company.js:1612
+#: templates/js/translated/table_filters.js:798
+msgid "Manufacturer"
+msgstr "Gyártó"
+
+#: company/api.py:306 company/models.py:97 company/models.py:368
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12 stock/api.py:812
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:497
 msgid "Company"
 msgstr "Cég"
+
+#: company/api.py:316
+msgid "Has Stock"
+msgstr ""
 
 #: company/models.py:98 company/views.py:51
 #: templates/js/translated/search.js:192
@@ -4513,7 +4532,7 @@ msgid "Contact email address"
 msgstr "Kapcsolattartó email címe"
 
 #: company/models.py:139 company/models.py:272
-#: company/templates/company/company_base.html:145 order/models.py:349
+#: company/templates/company/company_base.html:145 order/models.py:350
 #: order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:178
 #: order/templates/order/sales_order_base.html:222
@@ -4561,7 +4580,7 @@ msgid "Default currency used for this company"
 msgstr "Cég által használt alapértelmezett pénznem"
 
 #: company/models.py:311 company/templates/company/company_base.html:124
-#: order/models.py:359 order/templates/order/order_base.html:224
+#: order/models.py:360 order/templates/order/order_base.html:224
 #: order/templates/order/return_order_base.html:185
 #: order/templates/order/sales_order_base.html:229
 msgid "Address"
@@ -4665,7 +4684,7 @@ msgstr "Link a címinformációkhoz (külső)"
 msgid "Manufacturer Part"
 msgstr "Gyártói alkatrész"
 
-#: company/models.py:484 company/models.py:776 stock/models.py:862
+#: company/models.py:484 company/models.py:776 stock/models.py:863
 #: stock/serializers.py:455 stock/templates/stock/item_base.html:139
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
@@ -4674,18 +4693,6 @@ msgstr "Kiindulási alkatrész"
 #: company/models.py:486 company/models.py:778
 msgid "Select part"
 msgstr "Válassz alkatrészt"
-
-#: company/models.py:495 company/templates/company/company_base.html:82
-#: company/templates/company/manufacturer_part.html:90
-#: company/templates/company/supplier_part.html:146 part/serializers.py:607
-#: stock/templates/stock/item_base.html:204
-#: templates/js/translated/company.js:508
-#: templates/js/translated/company.js:1119
-#: templates/js/translated/company.js:1297
-#: templates/js/translated/company.js:1612
-#: templates/js/translated/table_filters.js:798
-msgid "Manufacturer"
-msgstr "Gyártó"
 
 #: company/models.py:496
 msgid "Select manufacturer"
@@ -4736,7 +4743,7 @@ msgstr "Paraméter mértékegység"
 
 #: company/models.py:659 company/templates/company/supplier_part.html:8
 #: company/templates/company/supplier_part.html:25 order/api.py:209
-#: order/api.py:422 order/serializers.py:577 stock/models.py:873
+#: order/api.py:422 order/serializers.py:577 stock/models.py:874
 #: stock/templates/stock/item_base.html:230
 #: templates/js/translated/build.js:1055
 #: templates/js/translated/company.js:1601
@@ -4758,7 +4765,7 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr "Kapcsolódó gyártói alkatrésznek ugyanarra a kiindulási alkatrészre kell hivatkoznia"
 
 #: company/models.py:786 company/templates/company/company_base.html:87
-#: company/templates/company/supplier_part.html:130 order/models.py:503
+#: company/templates/company/supplier_part.html:130 order/models.py:504
 #: order/templates/order/order_base.html:150 part/bom.py:279 part/bom.py:314
 #: part/serializers.py:591 plugin/builtin/suppliers/digikey.py:25
 #: plugin/builtin/suppliers/lcsc.py:26 plugin/builtin/suppliers/mouser.py:24
@@ -4862,15 +4869,15 @@ msgstr "Utolsó elérhetőségi adat frissítés"
 msgid "Supplier Price Break"
 msgstr "Beszállítói Ár Kedvezmény"
 
-#: company/serializers.py:178
+#: company/serializers.py:179
 msgid "Default currency used for this supplier"
 msgstr "Beszállító által használt alapértelmezett pénznem"
 
-#: company/serializers.py:214
+#: company/serializers.py:215
 msgid "Company Name"
 msgstr "Cégnév"
 
-#: company/serializers.py:397 part/admin.py:126 part/serializers.py:959
+#: company/serializers.py:399 part/admin.py:126 part/serializers.py:959
 #: part/templates/part/part_base.html:198 stock/serializers.py:474
 #: templates/js/translated/company.js:1690
 #: templates/js/translated/table_filters.js:362
@@ -4941,10 +4948,10 @@ msgstr "Kép letöltése URL-ről"
 msgid "Delete image"
 msgstr "Kép törlése"
 
-#: company/templates/company/company_base.html:92 order/models.py:1017
-#: order/models.py:2217 order/templates/order/return_order_base.html:135
-#: order/templates/order/sales_order_base.html:152 stock/models.py:915
-#: stock/models.py:916 stock/serializers.py:1343
+#: company/templates/company/company_base.html:92 order/models.py:1018
+#: order/models.py:2218 order/templates/order/return_order_base.html:135
+#: order/templates/order/sales_order_base.html:152 stock/models.py:916
+#: stock/models.py:917 stock/serializers.py:1343
 #: stock/templates/stock/item_base.html:402
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:504
@@ -5615,7 +5622,7 @@ msgstr "Gép konfiguráció"
 msgid "Config type"
 msgstr "Konfiguráció típusa"
 
-#: order/admin.py:30 order/models.py:89
+#: order/admin.py:30 order/models.py:90
 #: report/templates/report/inventree_purchase_order_report.html:31
 #: report/templates/report/inventree_sales_order_report.html:31
 #: templates/js/translated/order.js:352
@@ -5678,9 +5685,9 @@ msgstr ""
 msgid "Completed After"
 msgstr ""
 
-#: order/api.py:405 order/api.py:809 order/api.py:1035 order/models.py:1529
-#: order/models.py:1643 order/models.py:1694 order/models.py:1822
-#: order/models.py:1985 order/models.py:2463 order/models.py:2519
+#: order/api.py:405 order/api.py:809 order/api.py:1035 order/models.py:1530
+#: order/models.py:1644 order/models.py:1695 order/models.py:1823
+#: order/models.py:1986 order/models.py:2485 order/models.py:2550
 #: templates/js/translated/sales_order.js:1492
 msgid "Order"
 msgstr "Rendelés"
@@ -5697,8 +5704,8 @@ msgstr "A rendelés függőben"
 msgid "Has Shipment"
 msgstr ""
 
-#: order/api.py:1607 order/models.py:386 order/models.py:1530
-#: order/models.py:1644 order/templates/order/order_base.html:10
+#: order/api.py:1607 order/models.py:387 order/models.py:1531
+#: order/models.py:1645 order/templates/order/order_base.html:10
 #: order/templates/order/order_base.html:19
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:121 stock/templates/stock/item_base.html:173
@@ -5710,8 +5717,8 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Beszerzési rendelés"
 
-#: order/api.py:1611 order/models.py:2155 order/models.py:2464
-#: order/models.py:2520 order/templates/order/return_order_base.html:10
+#: order/api.py:1611 order/models.py:2156 order/models.py:2486
+#: order/models.py:2551 order/templates/order/return_order_base.html:10
 #: order/templates/order/return_order_base.html:29
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/js/translated/return_order.js:280
@@ -5719,194 +5726,194 @@ msgstr "Beszerzési rendelés"
 msgid "Return Order"
 msgstr "Visszavétel"
 
-#: order/models.py:90
+#: order/models.py:91
 msgid "Total price for this order"
 msgstr "A rendelés teljes ára"
 
-#: order/models.py:95 order/serializers.py:74
+#: order/models.py:96 order/serializers.py:74
 msgid "Order Currency"
 msgstr "Rendelés pénzneme"
 
-#: order/models.py:98 order/serializers.py:75
+#: order/models.py:99 order/serializers.py:75
 msgid "Currency for this order (leave blank to use company default)"
 msgstr "Megrendeléshez használt pénznem (hagyd üresen a cégnél alapértelmezetthez)"
 
-#: order/models.py:243
+#: order/models.py:244
 msgid "Contact does not match selected company"
 msgstr "A kapcsolattartó nem egyezik a kiválasztott céggel"
 
-#: order/models.py:296
+#: order/models.py:297
 msgid "Order description (optional)"
 msgstr "Rendelés leírása (opcionális)"
 
-#: order/models.py:305
+#: order/models.py:306
 msgid "Select project code for this order"
 msgstr "Válassz projektszámot ehhez a rendeléshez"
 
-#: order/models.py:309 order/models.py:1431 order/models.py:1875
+#: order/models.py:310 order/models.py:1432 order/models.py:1876
 msgid "Link to external page"
 msgstr "Link külső weboldalra"
 
-#: order/models.py:317
+#: order/models.py:318
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr "Várt teljesítési dátuma a megrendelésnek. Ezután már késésben lévőnek számít majd."
 
-#: order/models.py:331
+#: order/models.py:332
 msgid "Created By"
 msgstr "Készítette"
 
-#: order/models.py:339
+#: order/models.py:340
 msgid "User or group responsible for this order"
 msgstr "Felhasználó vagy csoport aki felelőse ennek a rendelésnek"
 
-#: order/models.py:350
+#: order/models.py:351
 msgid "Point of contact for this order"
 msgstr "Kapcsolattartó ehhez a rendeléshez"
 
-#: order/models.py:360
+#: order/models.py:361
 msgid "Company address for this order"
 msgstr "Cég címei ehhez a rendeléshez"
 
-#: order/models.py:480 order/models.py:1006
+#: order/models.py:481 order/models.py:1007
 msgid "Order reference"
 msgstr "Rendelés azonosító"
 
-#: order/models.py:489
+#: order/models.py:490
 msgid "Purchase order status"
 msgstr "Beszerzési rendelés állapota"
 
-#: order/models.py:504
+#: order/models.py:505
 msgid "Company from which the items are being ordered"
 msgstr "Cég akitől a tételek beszerzésre kerülnek"
 
-#: order/models.py:515 order/templates/order/order_base.html:162
+#: order/models.py:516 order/templates/order/order_base.html:162
 #: templates/js/translated/purchase_order.js:1756
 msgid "Supplier Reference"
 msgstr "Beszállítói azonosító"
 
-#: order/models.py:516
+#: order/models.py:517
 msgid "Supplier order reference code"
 msgstr "Beszállítói rendelés azonosító kód"
 
-#: order/models.py:525
+#: order/models.py:526
 msgid "received by"
 msgstr "érkeztette"
 
-#: order/models.py:531 order/models.py:2243
+#: order/models.py:532 order/models.py:2244
 msgid "Issue Date"
 msgstr "Kiállítás dátuma"
 
-#: order/models.py:532 order/models.py:2244
+#: order/models.py:533 order/models.py:2245
 msgid "Date order was issued"
 msgstr "Kiállítás dátuma"
 
-#: order/models.py:539 order/models.py:2251
+#: order/models.py:540 order/models.py:2252
 msgid "Date order was completed"
 msgstr "Rendelés teljesítési dátuma"
 
-#: order/models.py:549 order/models.py:1581
+#: order/models.py:550 order/models.py:1582
 msgid "Destination for received items"
 msgstr ""
 
-#: order/models.py:593
+#: order/models.py:594
 msgid "Part supplier must match PO supplier"
 msgstr "Az alkatrész beszállítója meg kell egyezzen a beszerzési rendelés beszállítójával"
 
-#: order/models.py:828
+#: order/models.py:829
 msgid "Quantity must be a positive number"
 msgstr "Mennyiség pozitív kell legyen"
 
-#: order/models.py:1018
+#: order/models.py:1019
 msgid "Company to which the items are being sold"
 msgstr "Cég akinek a tételek értékesítésre kerülnek"
 
-#: order/models.py:1030
+#: order/models.py:1031
 msgid "Sales order status"
 msgstr "Értékesítési rendelés állapot"
 
-#: order/models.py:1041 order/models.py:2236
+#: order/models.py:1042 order/models.py:2237
 msgid "Customer Reference "
 msgstr "Vevői azonosító "
 
-#: order/models.py:1042 order/models.py:2237
+#: order/models.py:1043 order/models.py:2238
 msgid "Customer order reference code"
 msgstr "Megrendelés azonosító kódja a vevőnél"
 
-#: order/models.py:1046 order/models.py:1829
+#: order/models.py:1047 order/models.py:1830
 #: templates/js/translated/sales_order.js:840
 #: templates/js/translated/sales_order.js:1028
 msgid "Shipment Date"
 msgstr "Kiszállítás dátuma"
 
-#: order/models.py:1055
+#: order/models.py:1056
 msgid "shipped by"
 msgstr "szállította"
 
-#: order/models.py:1094
+#: order/models.py:1095
 msgid "Order is already complete"
 msgstr "Rendelés már teljesítve"
 
-#: order/models.py:1097
+#: order/models.py:1098
 msgid "Order is already cancelled"
 msgstr "Rendelés már visszavonva"
 
-#: order/models.py:1101
+#: order/models.py:1102
 msgid "Only an open order can be marked as complete"
 msgstr "Csak nyitott rendelés jelölhető késznek"
 
-#: order/models.py:1105
+#: order/models.py:1106
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "A rendelés nem jelölhető késznek mivel függő szállítmányok vannak"
 
-#: order/models.py:1110
+#: order/models.py:1111
 msgid "Order cannot be completed as there are incomplete allocations"
 msgstr ""
 
-#: order/models.py:1115
+#: order/models.py:1116
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "A rendelés nem jelölhető késznek mivel nem teljesített sortételek vannak"
 
-#: order/models.py:1403
+#: order/models.py:1404
 msgid "Item quantity"
 msgstr "Tétel mennyiség"
 
-#: order/models.py:1420
+#: order/models.py:1421
 msgid "Line item reference"
 msgstr "Sortétel azonosító"
 
-#: order/models.py:1427
+#: order/models.py:1428
 msgid "Line item notes"
 msgstr "Sortétel megjegyzései"
 
-#: order/models.py:1439
+#: order/models.py:1440
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr "Cél dátuma ennek a sortételnek (hagyd üresen a rendelés céldátum használatához)"
 
-#: order/models.py:1460
+#: order/models.py:1461
 msgid "Line item description (optional)"
 msgstr "Sortétel leírása (opcionális)"
 
-#: order/models.py:1467
+#: order/models.py:1468
 msgid "Additional context for this line"
 msgstr "További kontextus ehhez a sorhoz"
 
-#: order/models.py:1477
+#: order/models.py:1478
 msgid "Unit price"
 msgstr "Egységár"
 
-#: order/models.py:1491
+#: order/models.py:1492
 msgid "Purchase Order Line Item"
 msgstr "Vevői Rendelés Sortétel"
 
-#: order/models.py:1515
+#: order/models.py:1516
 msgid "Supplier part must match supplier"
 msgstr "Beszállítói alkatrésznek egyeznie kell a beszállítóval"
 
-#: order/models.py:1549
+#: order/models.py:1550
 msgid "Supplier part"
 msgstr "Beszállítói alkatrész"
 
-#: order/models.py:1556 order/templates/order/order_base.html:210
+#: order/models.py:1557 order/templates/order/order_base.html:210
 #: templates/js/translated/part.js:1890 templates/js/translated/part.js:1922
 #: templates/js/translated/purchase_order.js:1352
 #: templates/js/translated/purchase_order.js:2223
@@ -5916,81 +5923,81 @@ msgstr "Beszállítói alkatrész"
 msgid "Received"
 msgstr "Beérkezett"
 
-#: order/models.py:1557
+#: order/models.py:1558
 msgid "Number of items received"
 msgstr "Érkezett tételek száma"
 
-#: order/models.py:1565 stock/models.py:1034 stock/serializers.py:637
+#: order/models.py:1566 stock/models.py:1035 stock/serializers.py:637
 #: stock/templates/stock/item_base.html:180
 #: templates/js/translated/stock.js:2395
 msgid "Purchase Price"
 msgstr "Beszerzési ár"
 
-#: order/models.py:1566
+#: order/models.py:1567
 msgid "Unit purchase price"
 msgstr "Beszerzési egységár"
 
-#: order/models.py:1632
+#: order/models.py:1633
 msgid "Purchase Order Extra Line"
 msgstr "Vevői Rendelés Extra Sor"
 
-#: order/models.py:1661
+#: order/models.py:1662
 msgid "Sales Order Line Item"
 msgstr "Vevői Rendelés Sortétel"
 
-#: order/models.py:1682
+#: order/models.py:1683
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr "Virtuális alkatrészt nem lehet vevői rendeléshez adni"
 
-#: order/models.py:1687
+#: order/models.py:1688
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "Csak értékesíthető alkatrészeket lehet vevői rendeléshez adni"
 
-#: order/models.py:1713 part/templates/part/part_pricing.html:107
+#: order/models.py:1714 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:139 templates/js/translated/pricing.js:955
 msgid "Sale Price"
 msgstr "Eladási ár"
 
-#: order/models.py:1714
+#: order/models.py:1715
 msgid "Unit sale price"
 msgstr "Eladási egységár"
 
-#: order/models.py:1723 order/status_codes.py:50
+#: order/models.py:1724 order/status_codes.py:50
 #: templates/js/translated/sales_order.js:1527
 #: templates/js/translated/sales_order.js:1687
 #: templates/js/translated/sales_order.js:2000
 msgid "Shipped"
 msgstr "Kiszállítva"
 
-#: order/models.py:1724
+#: order/models.py:1725
 msgid "Shipped quantity"
 msgstr "Szállított mennyiség"
 
-#: order/models.py:1798
+#: order/models.py:1799
 msgid "Sales Order Shipment"
 msgstr "Vevői Rendelés Szállítása"
 
-#: order/models.py:1830
+#: order/models.py:1831
 msgid "Date of shipment"
 msgstr "Szállítás dátuma"
 
-#: order/models.py:1836 templates/js/translated/sales_order.js:1040
+#: order/models.py:1837 templates/js/translated/sales_order.js:1040
 msgid "Delivery Date"
 msgstr "Szállítási dátum"
 
-#: order/models.py:1837
+#: order/models.py:1838
 msgid "Date of delivery of shipment"
 msgstr "Kézbesítés dátuma"
 
-#: order/models.py:1845
+#: order/models.py:1846
 msgid "Checked By"
 msgstr "Ellenőrizte"
 
-#: order/models.py:1846
+#: order/models.py:1847
 msgid "User who checked this shipment"
 msgstr "Felhasználó aki ellenőrizte ezt a szállítmányt"
 
-#: order/models.py:1853 order/models.py:2082 order/serializers.py:1631
+#: order/models.py:1854 order/models.py:2083 order/serializers.py:1631
 #: order/serializers.py:1755
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 #: templates/js/translated/model_renderers.js:460
@@ -5998,137 +6005,149 @@ msgstr "Felhasználó aki ellenőrizte ezt a szállítmányt"
 msgid "Shipment"
 msgstr "Szállítmány"
 
-#: order/models.py:1854
+#: order/models.py:1855
 msgid "Shipment number"
 msgstr "Szállítmány száma"
 
-#: order/models.py:1862
+#: order/models.py:1863
 msgid "Tracking Number"
 msgstr "Nyomkövetési szám"
 
-#: order/models.py:1863
+#: order/models.py:1864
 msgid "Shipment tracking information"
 msgstr "Szállítmány nyomkövetési információ"
 
-#: order/models.py:1870
+#: order/models.py:1871
 msgid "Invoice Number"
 msgstr "Számlaszám"
 
-#: order/models.py:1871
+#: order/models.py:1872
 msgid "Reference number for associated invoice"
 msgstr "Hozzátartozó számla referencia száma"
 
-#: order/models.py:1891
+#: order/models.py:1892
 msgid "Shipment has already been sent"
 msgstr "Szállítmány már elküldve"
 
-#: order/models.py:1894
+#: order/models.py:1895
 msgid "Shipment has no allocated stock items"
 msgstr "Szállítmány nem tartalmaz foglalt készlet tételeket"
 
-#: order/models.py:1974
+#: order/models.py:1975
 msgid "Sales Order Extra Line"
 msgstr "Vevői Rendelés Extra Sor"
 
-#: order/models.py:2003
+#: order/models.py:2004
 msgid "Sales Order Allocation"
 msgstr "Vevői rendeléshez foglalások"
 
-#: order/models.py:2026 order/models.py:2028
+#: order/models.py:2027 order/models.py:2029
 msgid "Stock item has not been assigned"
 msgstr "Készlet tétel nincs hozzárendelve"
 
-#: order/models.py:2035
+#: order/models.py:2036
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Nem foglalható készlet egy másik fajta alkatrész sortételéhez"
 
-#: order/models.py:2038
+#: order/models.py:2039
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Nem foglalható készlet egy olyan sorhoz amiben nincs alkatrész"
 
-#: order/models.py:2041
+#: order/models.py:2042
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "A lefoglalandó mennyiség nem haladhatja meg a készlet mennyiségét"
 
-#: order/models.py:2060 order/serializers.py:1501
+#: order/models.py:2061 order/serializers.py:1501
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Egyedi követésre kötelezett tételeknél a menyiség 1 kell legyen"
 
-#: order/models.py:2063
+#: order/models.py:2064
 msgid "Sales order does not match shipment"
 msgstr "Vevői rendelés nem egyezik a szállítmánnyal"
 
-#: order/models.py:2064 plugin/base/barcodes/api.py:629
+#: order/models.py:2065 plugin/base/barcodes/api.py:629
 msgid "Shipment does not match sales order"
 msgstr "Szállítmány nem egyezik a vevői rendeléssel"
 
-#: order/models.py:2072
+#: order/models.py:2073
 msgid "Line"
 msgstr "Sor"
 
-#: order/models.py:2083
+#: order/models.py:2084
 msgid "Sales order shipment reference"
 msgstr "Vevői rendelés szállítmány azonosító"
 
-#: order/models.py:2096 order/models.py:2471
+#: order/models.py:2097 order/models.py:2493
 #: templates/js/translated/return_order.js:720
 msgid "Item"
 msgstr "Tétel"
 
-#: order/models.py:2097
+#: order/models.py:2098
 msgid "Select stock item to allocate"
 msgstr "Válaszd ki a foglalásra szánt készlet tételt"
 
-#: order/models.py:2106
+#: order/models.py:2107
 msgid "Enter stock allocation quantity"
 msgstr "Készlet foglalási mennyiség megadása"
 
-#: order/models.py:2206
+#: order/models.py:2207
 msgid "Return Order reference"
 msgstr "Visszavétel azonosító"
 
-#: order/models.py:2218
+#: order/models.py:2219
 msgid "Company from which items are being returned"
 msgstr "Cég akitől a tételek visszavételre kerülnek"
 
-#: order/models.py:2230
+#: order/models.py:2231
 msgid "Return order status"
 msgstr "Visszavétel állapota"
 
-#: order/models.py:2442
+#: order/models.py:2451
 msgid "Return Order Line Item"
 msgstr "Visszavétel sortétel"
 
-#: order/models.py:2456
-msgid "Only serialized items can be assigned to a Return Order"
-msgstr "Csak szériaszámos tételek rendelhetők visszaszállítási utasításhoz"
+#: order/models.py:2464
+msgid "Stock item must be specified"
+msgstr ""
 
-#: order/models.py:2472
+#: order/models.py:2468
+msgid "Return quantity exceeds stock quantity"
+msgstr ""
+
+#: order/models.py:2473
+msgid "Return quantity must be greater than zero"
+msgstr ""
+
+#: order/models.py:2478
+msgid "Invalid quantity for serialized stock item"
+msgstr ""
+
+#: order/models.py:2494
 msgid "Select item to return from customer"
 msgstr "Válaszd ki a vevőtől visszavenni kívánt tételt"
 
-#: order/models.py:2478
+#: order/models.py:2509
 msgid "Received Date"
 msgstr "Visszavétel dátuma"
 
-#: order/models.py:2479
+#: order/models.py:2510
 msgid "The date this this return item was received"
 msgstr "Mikor lett visszavéve a tétel"
 
-#: order/models.py:2490 templates/js/translated/return_order.js:731
+#: order/models.py:2521 templates/js/translated/return_order.js:731
 #: templates/js/translated/table_filters.js:122
 msgid "Outcome"
 msgstr "Kimenetel"
 
-#: order/models.py:2491
+#: order/models.py:2522
 msgid "Outcome for this line item"
 msgstr "Sortétel végső kimenetele"
 
-#: order/models.py:2498
+#: order/models.py:2529
 msgid "Cost associated with return or repair for this line item"
 msgstr "Sortétel visszaküldésének vagy javításának költsége"
 
-#: order/models.py:2508
+#: order/models.py:2539
 msgid "Return Order Extra Line"
 msgstr "Visszavétel extra tétel"
 
@@ -6363,7 +6382,11 @@ msgstr "A sortétel már beérkezett"
 msgid "Items can only be received against orders which are in progress"
 msgstr "Csak folyamatban lévő megrendelés tételeit lehet bevételezni"
 
-#: order/serializers.py:2079
+#: order/serializers.py:2076
+msgid "Quantity to return"
+msgstr ""
+
+#: order/serializers.py:2086
 msgid "Line price currency"
 msgstr "Sortétel pénzneme"
 
@@ -6399,20 +6422,20 @@ msgstr "Visszatérítés"
 msgid "Reject"
 msgstr "Elutasított"
 
-#: order/tasks.py:30
+#: order/tasks.py:31
 msgid "Overdue Purchase Order"
 msgstr "Késésben lévő beszerzés"
 
-#: order/tasks.py:35
+#: order/tasks.py:36
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr "A {po} beszerzési rendelés most már késésben van"
 
-#: order/tasks.py:80
+#: order/tasks.py:81
 msgid "Overdue Sales Order"
 msgstr "Késésben lévő vevői rendelés"
 
-#: order/tasks.py:85
+#: order/tasks.py:86
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr "A {so} vevői rendelés most már késésben van"
@@ -7040,7 +7063,7 @@ msgstr "Alkatrész kategóriák"
 msgid "Default location for parts in this category"
 msgstr "Ebben a kategóriában lévő alkatrészek helye alapban"
 
-#: part/models.py:115 stock/models.py:191 templates/js/translated/part.js:2842
+#: part/models.py:115 stock/models.py:192 templates/js/translated/part.js:2842
 #: templates/js/translated/stock.js:2855
 #: templates/js/translated/table_filters.js:246
 #: templates/js/translated/table_filters.js:290
@@ -7059,13 +7082,13 @@ msgstr "Alapértelmezett kulcsszavak"
 msgid "Default keywords for parts in this category"
 msgstr "Ebben a kategóriában évő alkatrészek kulcsszavai alapban"
 
-#: part/models.py:133 stock/models.py:94 stock/models.py:173
+#: part/models.py:133 stock/models.py:95 stock/models.py:174
 #: templates/InvenTree/settings/settings_staff_js.html:445
 msgid "Icon"
 msgstr "Ikon"
 
 #: part/models.py:134 part/serializers.py:143 part/serializers.py:161
-#: stock/models.py:174
+#: stock/models.py:175
 msgid "Icon (optional)"
 msgstr "Ikon (opcionális)"
 
@@ -7766,7 +7789,7 @@ msgstr "Ezt az alkatrészjegyzék tételt az alkatrész változatok alkatrészje
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Alkatrészváltozatok készlet tételei használhatók ehhez az alkatrészjegyzék tételhez"
 
-#: part/models.py:4470 stock/models.py:760
+#: part/models.py:4470 stock/models.py:761
 msgid "Quantity must be integer value for trackable parts"
 msgstr "A mennyiség egész szám kell legyen a követésre kötelezett alkatrészek esetén"
 
@@ -9377,58 +9400,58 @@ msgstr ""
 msgid "Uninstalled plugin successfully"
 msgstr "Plugin eltávolítása sikeres"
 
-#: plugin/models.py:36
+#: plugin/models.py:37
 msgid "Plugin Configuration"
 msgstr "Plugin beállítás"
 
-#: plugin/models.py:37
+#: plugin/models.py:38
 msgid "Plugin Configurations"
 msgstr "Plugin beállítások"
 
-#: plugin/models.py:44
+#: plugin/models.py:45
 msgid "Key of plugin"
 msgstr "Plugin kulcsa"
 
-#: plugin/models.py:52
+#: plugin/models.py:53
 msgid "PluginName of the plugin"
 msgstr "PluginNeve a pluginnak"
 
-#: plugin/models.py:59 plugin/serializers.py:115
+#: plugin/models.py:60 plugin/serializers.py:115
 msgid "Package Name"
 msgstr "Csomag neve"
 
-#: plugin/models.py:61
+#: plugin/models.py:62
 msgid "Name of the installed package, if the plugin was installed via PIP"
 msgstr "A telepített csomag neve, ha a plugin a PIP-el lett telepítve"
 
-#: plugin/models.py:66
+#: plugin/models.py:67
 msgid "Is the plugin active"
 msgstr "Aktív-e a plugin"
 
-#: plugin/models.py:157 templates/js/translated/table_filters.js:377
+#: plugin/models.py:158 templates/js/translated/table_filters.js:377
 #: templates/js/translated/table_filters.js:511
 msgid "Installed"
 msgstr "Beépítve"
 
-#: plugin/models.py:166
+#: plugin/models.py:167
 msgid "Sample plugin"
 msgstr "Példa plugin"
 
-#: plugin/models.py:174
+#: plugin/models.py:175
 msgid "Builtin Plugin"
 msgstr "Beépített plugin"
 
-#: plugin/models.py:182
+#: plugin/models.py:183
 msgid "Package Plugin"
 msgstr "Csomag plugin"
 
-#: plugin/models.py:259 report/models.py:482
+#: plugin/models.py:262 report/models.py:482
 #: templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
 msgid "Plugin"
 msgstr "Bővítmény"
 
-#: plugin/models.py:306
+#: plugin/models.py:309
 msgid "Method"
 msgstr "Módszer"
 
@@ -10011,7 +10034,7 @@ msgstr "Beszállító ID"
 msgid "Customer ID"
 msgstr "Vevő ID"
 
-#: stock/admin.py:206 stock/models.py:900
+#: stock/admin.py:206 stock/models.py:901
 #: stock/templates/stock/item_base.html:351
 msgid "Installed In"
 msgstr "Beépítve ebbe"
@@ -10036,7 +10059,7 @@ msgstr "Felülvizsgálat szükséges"
 msgid "Delete on Deplete"
 msgstr "Törlés ha kimerül"
 
-#: stock/admin.py:261 stock/models.py:994
+#: stock/admin.py:261 stock/models.py:995
 #: stock/templates/stock/item_base.html:430
 #: templates/js/translated/stock.js:2314 users/models.py:124
 msgid "Expiry Date"
@@ -10160,316 +10183,316 @@ msgstr "A beszállítói alkatrészhez van megadva csomagolási mennyiség, de a
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Sorozatszámot nem lehet megadni nem követésre kötelezett alkatrész esetén"
 
-#: stock/models.py:68
+#: stock/models.py:69
 msgid "Stock Location type"
 msgstr "Készlethely típus"
 
-#: stock/models.py:69
+#: stock/models.py:70
 msgid "Stock Location types"
 msgstr "Készlethely típusok"
 
-#: stock/models.py:95
+#: stock/models.py:96
 msgid "Default icon for all locations that have no icon set (optional)"
 msgstr "Alapértelmezett ikon azokhoz a helyekhez, melyeknek nincs ikonja beállítva (válaszható)"
 
-#: stock/models.py:135 stock/models.py:882
+#: stock/models.py:136 stock/models.py:883
 #: stock/templates/stock/location.html:18
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
 msgstr "Készlet hely"
 
-#: stock/models.py:136 stock/templates/stock/location.html:184
+#: stock/models.py:137 stock/templates/stock/location.html:184
 #: templates/InvenTree/search.html:166 templates/js/translated/search.js:178
 #: users/models.py:205
 msgid "Stock Locations"
 msgstr "Készlethelyek"
 
-#: stock/models.py:184 stock/models.py:1043
+#: stock/models.py:185 stock/models.py:1044
 #: stock/templates/stock/item_base.html:244
 msgid "Owner"
 msgstr "Tulajdonos"
 
-#: stock/models.py:185 stock/models.py:1044
+#: stock/models.py:186 stock/models.py:1045
 msgid "Select Owner"
 msgstr "Tulajdonos kiválasztása"
 
-#: stock/models.py:193
+#: stock/models.py:194
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
 msgstr "A szerkezeti raktári helyekre nem lehet direktben raktározni, csak az al-helyekre."
 
-#: stock/models.py:200 templates/js/translated/stock.js:2864
+#: stock/models.py:201 templates/js/translated/stock.js:2864
 #: templates/js/translated/table_filters.js:250
 msgid "External"
 msgstr "Külső"
 
-#: stock/models.py:201
+#: stock/models.py:202
 msgid "This is an external stock location"
 msgstr "Ez egy külső készlethely"
 
-#: stock/models.py:207 templates/js/translated/stock.js:2873
+#: stock/models.py:208 templates/js/translated/stock.js:2873
 #: templates/js/translated/table_filters.js:253
 msgid "Location type"
 msgstr "Helyszín típusa"
 
-#: stock/models.py:211
+#: stock/models.py:212
 msgid "Stock location type of this location"
 msgstr "Tárolóhely típus"
 
-#: stock/models.py:283
+#: stock/models.py:284
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
 msgstr "Nem lehet ezt a raktári helyet szerkezetivé tenni, mert már vannak itt tételek!"
 
-#: stock/models.py:490
+#: stock/models.py:491
 msgid "Part must be specified"
 msgstr ""
 
-#: stock/models.py:739
+#: stock/models.py:740
 msgid "Stock items cannot be located into structural stock locations!"
 msgstr "A szerkezeti raktári helyre nem lehet készletet felvenni!"
 
-#: stock/models.py:766 stock/serializers.py:492
+#: stock/models.py:767 stock/serializers.py:492
 msgid "Stock item cannot be created for virtual parts"
 msgstr "Virtuális alkatrészből nem lehet készletet létrehozni"
 
-#: stock/models.py:783
+#: stock/models.py:784
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
 msgstr "A beszállítói alkatrész típusa ('{self.supplier_part.part}') mindenképpen {self.part} kellene, hogy legyen"
 
-#: stock/models.py:793 stock/models.py:806
+#: stock/models.py:794 stock/models.py:807
 msgid "Quantity must be 1 for item with a serial number"
 msgstr "Mennyiség 1 kell legyen a sorozatszámmal rendelkező tételnél"
 
-#: stock/models.py:796
+#: stock/models.py:797
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr "Nem lehet sorozatszámot megadni ha a mennyiség több mint egy"
 
-#: stock/models.py:818
+#: stock/models.py:819
 msgid "Item cannot belong to itself"
 msgstr "A tétel nem tartozhat saját magához"
 
-#: stock/models.py:823
+#: stock/models.py:824
 msgid "Item must have a build reference if is_building=True"
 msgstr "A tételnek kell legyen gyártási azonosítója ha az is_bulding igaz"
 
-#: stock/models.py:836
+#: stock/models.py:837
 msgid "Build reference does not point to the same part object"
 msgstr "Gyártási azonosító nem ugyanarra az alkatrész objektumra mutat"
 
-#: stock/models.py:852
+#: stock/models.py:853
 msgid "Parent Stock Item"
 msgstr "Szülő készlet tétel"
 
-#: stock/models.py:864
+#: stock/models.py:865
 msgid "Base part"
 msgstr "Kiindulási alkatrész"
 
-#: stock/models.py:874
+#: stock/models.py:875
 msgid "Select a matching supplier part for this stock item"
 msgstr "Válassz egy egyező beszállítói alkatrészt ehhez a készlet tételhez"
 
-#: stock/models.py:886
+#: stock/models.py:887
 msgid "Where is this stock item located?"
 msgstr "Hol található ez az alkatrész?"
 
-#: stock/models.py:894 stock/serializers.py:1605
+#: stock/models.py:895 stock/serializers.py:1605
 msgid "Packaging this stock item is stored in"
 msgstr "A csomagolása ennek a készlet tételnek itt van tárolva"
 
-#: stock/models.py:905
+#: stock/models.py:906
 msgid "Is this item installed in another item?"
 msgstr "Ez a tétel be van építve egy másik tételbe?"
 
-#: stock/models.py:924
+#: stock/models.py:925
 msgid "Serial number for this item"
 msgstr "Sorozatszám ehhez a tételhez"
 
-#: stock/models.py:938 stock/serializers.py:1588
+#: stock/models.py:939 stock/serializers.py:1588
 msgid "Batch code for this stock item"
 msgstr "Batch kód ehhez a készlet tételhez"
 
-#: stock/models.py:943
+#: stock/models.py:944
 msgid "Stock Quantity"
 msgstr "Készlet mennyiség"
 
-#: stock/models.py:953
+#: stock/models.py:954
 msgid "Source Build"
 msgstr "Forrás gyártás"
 
-#: stock/models.py:956
+#: stock/models.py:957
 msgid "Build for this stock item"
 msgstr "Gyártás ehhez a készlet tételhez"
 
-#: stock/models.py:963 stock/templates/stock/item_base.html:360
+#: stock/models.py:964 stock/templates/stock/item_base.html:360
 msgid "Consumed By"
 msgstr "Felhasználva ebben"
 
-#: stock/models.py:966
+#: stock/models.py:967
 msgid "Build order which consumed this stock item"
 msgstr "Felhasználva ebben a gyártásban"
 
-#: stock/models.py:975
+#: stock/models.py:976
 msgid "Source Purchase Order"
 msgstr "Forrás beszerzési rendelés"
 
-#: stock/models.py:979
+#: stock/models.py:980
 msgid "Purchase order for this stock item"
 msgstr "Beszerzés ehhez a készlet tételhez"
 
-#: stock/models.py:985
+#: stock/models.py:986
 msgid "Destination Sales Order"
 msgstr "Cél vevői rendelés"
 
-#: stock/models.py:996
+#: stock/models.py:997
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr "Készlet tétel lejárati dátuma. A készlet lejártnak tekinthető ezután a dátum után"
 
-#: stock/models.py:1014
+#: stock/models.py:1015
 msgid "Delete on deplete"
 msgstr "Törlés ha kimerül"
 
-#: stock/models.py:1015
+#: stock/models.py:1016
 msgid "Delete this Stock Item when stock is depleted"
 msgstr "Készlet tétel törlése ha kimerül"
 
-#: stock/models.py:1035
+#: stock/models.py:1036
 msgid "Single unit purchase price at time of purchase"
 msgstr "Egy egység beszerzési ára a beszerzés időpontjában"
 
-#: stock/models.py:1066
+#: stock/models.py:1067
 msgid "Converted to part"
 msgstr "Alkatrésszé alakítva"
 
-#: stock/models.py:1621
+#: stock/models.py:1634
 msgid "Part is not set as trackable"
 msgstr "Az alkatrész nem követésre kötelezett"
 
-#: stock/models.py:1627
+#: stock/models.py:1640
 msgid "Quantity must be integer"
 msgstr "Mennyiség egész szám kell legyen"
 
-#: stock/models.py:1635
+#: stock/models.py:1648
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "A mennyiség nem haladhatja meg az elérhető készletet ({self.quantity})"
 
-#: stock/models.py:1641
+#: stock/models.py:1654
 msgid "Serial numbers must be provided as a list"
 msgstr ""
 
-#: stock/models.py:1646
+#: stock/models.py:1659
 msgid "Quantity does not match serial numbers"
 msgstr "A mennyiség nem egyezik a megadott sorozatszámok számával"
 
-#: stock/models.py:1768 stock/models.py:2631
+#: stock/models.py:1781 stock/models.py:2656
 msgid "Test template does not exist"
 msgstr "Ez a Teszt sablon nem létezik"
 
-#: stock/models.py:1786
+#: stock/models.py:1799
 msgid "Stock item has been assigned to a sales order"
 msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
 
-#: stock/models.py:1790
+#: stock/models.py:1803
 msgid "Stock item is installed in another item"
 msgstr "Készlet tétel beépül egy másikba"
 
-#: stock/models.py:1793
+#: stock/models.py:1806
 msgid "Stock item contains other items"
 msgstr "A készlet tétel más tételeket tartalmaz"
 
-#: stock/models.py:1796
+#: stock/models.py:1809
 msgid "Stock item has been assigned to a customer"
 msgstr "Készlet tétel hozzárendelve egy vevőhöz"
 
-#: stock/models.py:1799
+#: stock/models.py:1812
 msgid "Stock item is currently in production"
 msgstr "Készlet tétel gyártás alatt"
 
-#: stock/models.py:1802
+#: stock/models.py:1815
 msgid "Serialized stock cannot be merged"
 msgstr "Követésre kötelezett készlet nem vonható össze"
 
-#: stock/models.py:1809 stock/serializers.py:1483
+#: stock/models.py:1822 stock/serializers.py:1483
 msgid "Duplicate stock items"
 msgstr "Duplikált készlet tételek vannak"
 
-#: stock/models.py:1813
+#: stock/models.py:1826
 msgid "Stock items must refer to the same part"
 msgstr "A készlet tétel ugyanarra az alkatrészre kell vonatkozzon"
 
-#: stock/models.py:1821
+#: stock/models.py:1834
 msgid "Stock items must refer to the same supplier part"
 msgstr "A készlet tétel ugyanarra a beszállítói alkatrészre kell vonatkozzon"
 
-#: stock/models.py:1826
+#: stock/models.py:1839
 msgid "Stock status codes must match"
 msgstr "Készlet tételek állapotainak egyeznie kell"
 
-#: stock/models.py:2087
+#: stock/models.py:2100
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Készlet tétel nem mozgatható mivel nincs készleten"
 
-#: stock/models.py:2530
+#: stock/models.py:2555
 msgid "Stock Item Tracking"
 msgstr "Készlettörténet"
 
-#: stock/models.py:2563
+#: stock/models.py:2588
 msgid "Entry notes"
 msgstr "Bejegyzés megjegyzései"
 
-#: stock/models.py:2603
+#: stock/models.py:2628
 msgid "Stock Item Test Result"
 msgstr "Készlet Tétel Ellenőrzés Eredménye"
 
-#: stock/models.py:2634
+#: stock/models.py:2659
 msgid "Value must be provided for this test"
 msgstr "Ehhez a teszthez meg kell adni értéket"
 
-#: stock/models.py:2638
+#: stock/models.py:2663
 msgid "Attachment must be uploaded for this test"
 msgstr "Ehhez a teszthez fel kell tölteni mellékletet"
 
-#: stock/models.py:2643
+#: stock/models.py:2668
 msgid "Invalid value for this test"
 msgstr "A teszt eredménye érvénytelen"
 
-#: stock/models.py:2667
+#: stock/models.py:2692
 msgid "Test result"
 msgstr "Teszt eredménye"
 
-#: stock/models.py:2674
+#: stock/models.py:2699
 msgid "Test output value"
 msgstr "Teszt kimeneti értéke"
 
-#: stock/models.py:2682 stock/serializers.py:245
+#: stock/models.py:2707 stock/serializers.py:245
 msgid "Test result attachment"
 msgstr "Teszt eredmény melléklet"
 
-#: stock/models.py:2686
+#: stock/models.py:2711
 msgid "Test notes"
 msgstr "Tesztek megjegyzései"
 
-#: stock/models.py:2694 templates/js/translated/stock.js:1631
+#: stock/models.py:2719 templates/js/translated/stock.js:1631
 msgid "Test station"
 msgstr "Teszt állomás"
 
-#: stock/models.py:2695
+#: stock/models.py:2720
 msgid "The identifier of the test station where the test was performed"
 msgstr "A tesztet elvégző tesztállomás azonosítója"
 
-#: stock/models.py:2701
+#: stock/models.py:2726
 msgid "Started"
 msgstr "Elkezdődött"
 
-#: stock/models.py:2702
+#: stock/models.py:2727
 msgid "The timestamp of the test start"
 msgstr "A teszt indításának időpontja"
 
-#: stock/models.py:2708
+#: stock/models.py:2733
 msgid "Finished"
 msgstr "Befejezve"
 
-#: stock/models.py:2709
+#: stock/models.py:2734
 msgid "The timestamp of the test finish"
 msgstr "A teszt befejezésének időpontja"
 

@@ -61,7 +61,8 @@ export default function ImportSesssionTable() {
         render: (record: any) => (
           <AttachmentLink attachment={record.data_file} />
         ),
-        sortable: false
+        sortable: false,
+        noContext: true
       },
       DateColumn({
         accessor: 'timestamp',
