@@ -3,6 +3,7 @@
 import logging
 from importlib import reload
 from pathlib import Path
+from typing import Optional
 
 from django.apps import apps
 from django.conf import settings
@@ -28,7 +29,14 @@ class AppMixin:
 
     @classmethod
     def _activate_mixin(
-        cls, registry, plugins, force_reload=False, full_reload: bool = False
+        cls,
+        registry,
+        plugins,
+        force_reload=False,
+        full_reload: bool = False,
+        _internal: Optional[list] = None,
+        *args,
+        **kwargs,
     ):
         """Activate AppMixin plugins - add custom apps and reload.
 
@@ -37,6 +45,7 @@ class AppMixin:
             plugins (dict): List of IntegrationPlugins that should be installed
             force_reload (bool, optional): Only reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            _internal (dict, optional): Internal use only (for testing). Defaults to None.
         """
         from common.settings import get_global_setting
 
@@ -61,9 +70,11 @@ class AppMixin:
                 # first startup or force loading of base apps -> registry is prob false
                 if registry.apps_loading or force_reload:
                     registry.apps_loading = False
-                    registry._reload_apps(force_reload=True, full_reload=full_reload)
+                    registry._reload_apps(
+                        force_reload=True, full_reload=full_reload, _internal=_internal
+                    )
                 else:
-                    registry._reload_apps(full_reload=full_reload)
+                    registry._reload_apps(full_reload=full_reload, _internal=_internal)
 
                 # rediscover models/ admin sites
                 cls._reregister_contrib_apps(cls, registry)
