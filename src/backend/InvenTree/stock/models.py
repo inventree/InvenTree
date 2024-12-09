@@ -2138,7 +2138,7 @@ class StockItem(
 
         self.add_tracking_entry(tracking_code, user, notes=notes, deltas=tracking_info)
 
-        self.save()
+        self.save(add_note=False)
 
         # Trigger event for the plugin system
         trigger_event(

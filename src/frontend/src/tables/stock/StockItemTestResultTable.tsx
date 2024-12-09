@@ -195,7 +195,10 @@ export default function StockItemTestResultTable({
         accessor: 'attachment',
         title: t`Attachment`,
         render: (record: any) =>
-          record.attachment && <AttachmentLink attachment={record.attachment} />
+          record.attachment && (
+            <AttachmentLink attachment={record.attachment} />
+          ),
+        noContext: true
       },
       NoteColumn({}),
       DateColumn({}),
