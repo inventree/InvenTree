@@ -6,7 +6,7 @@ from django.test import TestCase
 import common.setting.system
 
 
-class SettingsvalidatiorTests(TestCase):
+class SettingsValidatorTests(TestCase):
     """Tests settings validators."""
 
     def test_validate_part_name_format(self):
@@ -43,8 +43,8 @@ class SettingsvalidatiorTests(TestCase):
 
     def test_update_instance_name_no_multi(self):
         """Test valid cases for update_instance_name."""
-        self.assertTrue(common.setting.system.update_instance_name('abc'))
+        self.assertIsNone(common.setting.system.update_instance_name('abc'))
 
     def test_update_instance_url_no_multi(self):
         """Test update_instance_url."""
-        self.assertTrue(common.setting.system.update_instance_url('abc.com'))
+        self.assertIsNone(common.setting.system.update_instance_url('abc.com'))
