@@ -49,7 +49,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import users.models
-from common.setting import InvenTreeSettingsKeyType, SettingsKeyType
+from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from generic.states import ColorEnum
 from generic.states.custom import get_custom_classes, state_color_mappings
 from InvenTree.sanitizer import sanitize_svg

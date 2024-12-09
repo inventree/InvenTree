@@ -18,7 +18,7 @@ import common.models
 import common.validators
 import order.validators
 import report.helpers
-from common.setting import InvenTreeSettingsKeyType
+from common.setting.type import InvenTreeSettingsKeyType
 
 
 def validate_part_name_format(value):

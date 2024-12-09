@@ -3,7 +3,7 @@
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-from common.setting import InvenTreeSettingsKeyType
+from common.setting.type import InvenTreeSettingsKeyType
 from plugin import registry
 
 
