@@ -68,7 +68,7 @@ python3 -m venv env
 
 The virtual environment needs to be activated to ensure the correct python binaries and libraries are used. The InvenTree instructions assume that the virtual environment is always correctly activated.
 
-To configure Inventree inside a virtual environment, ``cd`` into the inventree base directory and run the following command:
+To configure InvenTree inside a virtual environment, ``cd`` into the inventree base directory and run the following command:
 
 ```
 source env/bin/activate

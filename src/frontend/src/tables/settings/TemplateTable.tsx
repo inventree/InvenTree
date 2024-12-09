@@ -219,7 +219,8 @@ export function TemplateTable({
           }
 
           return <AttachmentLink attachment={record.template} />;
-        }
+        },
+        noContext: true
       },
       {
         accessor: 'model_type',
@@ -236,7 +237,7 @@ export function TemplateTable({
         sortable: false,
         switchable: true
       },
-      ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
+      ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,
         ...field,
         title: field.label,

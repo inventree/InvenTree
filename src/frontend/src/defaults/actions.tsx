@@ -38,7 +38,7 @@ export function getActions(navigate: NavigateFunction) {
     {
       id: 'server-info',
       label: t`Server Information`,
-      description: t`About this Inventree instance`,
+      description: t`About this InvenTree instance`,
       onClick: () => serverInfo(),
       leftSection: <IconLink size='1.2rem' />
     },

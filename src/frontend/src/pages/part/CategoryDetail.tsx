@@ -4,6 +4,7 @@ import {
   IconCategory,
   IconInfoCircle,
   IconListDetails,
+  IconPackages,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
@@ -40,6 +41,7 @@ import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import { PartListTable } from '../../tables/part/PartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -253,6 +255,12 @@ export default function CategoryDetail() {
         content: detailsPanel
       },
       {
+        name: 'subcategories',
+        label: t`Subcategories`,
+        icon: <IconSitemap />,
+        content: <PartCategoryTable parentId={id} />
+      },
+      {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
@@ -267,10 +275,19 @@ export default function CategoryDetail() {
         )
       },
       {
-        name: 'subcategories',
-        label: t`Part Categories`,
-        icon: <IconSitemap />,
-        content: <PartCategoryTable parentId={id} />
+        name: 'stockitem',
+        label: t`Stock Items`,
+        icon: <IconPackages />,
+        hidden: !id,
+        content: (
+          <StockItemTable
+            params={{
+              category: id
+            }}
+            allowAdd={false}
+            tableName='category-stockitems'
+          />
+        )
       },
       {
         name: 'parameters',

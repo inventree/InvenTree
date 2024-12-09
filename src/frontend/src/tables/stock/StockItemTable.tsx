@@ -42,7 +42,13 @@ import { TableHoverCard } from '../TableHoverCard';
 /**
  * Construct a list of columns for the stock item table
  */
-function stockItemTableColumns(): TableColumn[] {
+function stockItemTableColumns({
+  showLocation,
+  showPricing
+}: {
+  showLocation: boolean;
+  showPricing: boolean;
+}): TableColumn[] {
   return [
     {
       accessor: 'part',
@@ -215,6 +221,7 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true
     },
     LocationColumn({
+      hidden: !showLocation,
       accessor: 'location_detail'
     }),
     {
@@ -239,6 +246,7 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Unit Price`,
       sortable: true,
       switchable: true,
+      hidden: !showPricing,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
@@ -248,6 +256,7 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'stock_value',
       title: t`Stock Value`,
       sortable: false,
+      hidden: !showPricing,
       render: (record: any) => {
         const min_price =
           record.purchase_price || record.part_detail?.pricing_min;
@@ -286,7 +295,11 @@ function stockItemTableColumns(): TableColumn[] {
 /**
  * Construct a list of available filters for the stock item table
  */
-function stockItemTableFilters(): TableFilter[] {
+function stockItemTableFilters({
+  enableExpiry
+}: {
+  enableExpiry: boolean;
+}): TableFilter[] {
   return [
     {
       name: 'active',
@@ -340,6 +353,11 @@ function stockItemTableFilters(): TableFilter[] {
       description: t`Include stock items for variant parts`
     },
     {
+      name: 'consumed',
+      label: t`Consumed`,
+      description: t`Show items which have been consumed by a build order`
+    },
+    {
       name: 'installed',
       label: t`Installed`,
       description: t`Show stock items which are installed in other items`
@@ -354,15 +372,35 @@ function stockItemTableFilters(): TableFilter[] {
       label: t`Is Serialized`,
       description: t`Show items which have a serial number`
     },
-    // TODO: serial
-    // TODO: serial_gte
-    // TODO: serial_lte
+    {
+      name: 'batch',
+      label: t`Batch Code`,
+      description: t`Filter items by batch code`,
+      type: 'text'
+    },
+    {
+      name: 'serial',
+      label: t`Serial Number`,
+      description: t`Filter items by serial number`,
+      type: 'text'
+    },
+    {
+      name: 'serial_lte',
+      label: t`Serial Number LTE`,
+      description: t`Show items with serial numbers less than or equal to a given value`,
+      type: 'text'
+    },
+    {
+      name: 'serial_gte',
+      label: t`Serial Number GTE`,
+      description: t`Show items with serial numbers greater than or equal to a given value`,
+      type: 'text'
+    },
     {
       name: 'has_batch',
       label: t`Has Batch Code`,
       description: t`Show items which have a batch code`
     },
-    // TODO: batch
     {
       name: 'tracked',
       label: t`Tracked`,
@@ -373,10 +411,56 @@ function stockItemTableFilters(): TableFilter[] {
       label: t`Has Purchase Price`,
       description: t`Show items which have a purchase price`
     },
-    // TODO: Expired
-    // TODO: stale
-    // TODO: expiry_date_lte
-    // TODO: expiry_date_gte
+    {
+      name: 'expired',
+      label: t`Expired`,
+      description: t`Show items which have expired`,
+      active: enableExpiry
+    },
+    {
+      name: 'stale',
+      label: t`Stale`,
+      description: t`Show items which are stale`,
+      active: enableExpiry
+    },
+    {
+      name: 'expiry_before',
+      label: t`Expired Before`,
+      description: t`Show items which expired before this date`,
+      type: 'date',
+      active: enableExpiry
+    },
+    {
+      name: 'expiry_after',
+      label: t`Expired After`,
+      description: t`Show items which expired after this date`,
+      type: 'date',
+      active: enableExpiry
+    },
+    {
+      name: 'updated_before',
+      label: t`Updated Before`,
+      description: t`Show items updated before this date`,
+      type: 'date'
+    },
+    {
+      name: 'updated_after',
+      label: t`Updated After`,
+      description: t`Show items updated after this date`,
+      type: 'date'
+    },
+    {
+      name: 'stocktake_before',
+      label: t`Stocktake Before`,
+      description: t`Show items counted before this date`,
+      type: 'date'
+    },
+    {
+      name: 'stocktake_after',
+      label: t`Stocktake After`,
+      description: t`Show items counted after this date`,
+      type: 'date'
+    },
     {
       name: 'external',
       label: t`External Location`,
@@ -391,17 +475,42 @@ function stockItemTableFilters(): TableFilter[] {
 export function StockItemTable({
   params = {},
   allowAdd = false,
+  showLocation = true,
+  showPricing = true,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
+  showLocation?: boolean;
+  showPricing?: boolean;
   tableName: string;
 }>) {
-  const tableColumns = useMemo(() => stockItemTableColumns(), []);
-  const tableFilters = useMemo(() => stockItemTableFilters(), []);
-
   const table = useTable(tableName);
   const user = useUserState();
+
+  const settings = useGlobalSettingsState();
+
+  const stockExpiryEnabled = useMemo(
+    () => settings.isSet('STOCK_ENABLE_EXPIRY'),
+    [settings]
+  );
+
+  const tableColumns = useMemo(
+    () =>
+      stockItemTableColumns({
+        showLocation: showLocation ?? true,
+        showPricing: showPricing ?? true
+      }),
+    [showLocation, showPricing]
+  );
+
+  const tableFilters = useMemo(
+    () =>
+      stockItemTableFilters({
+        enableExpiry: stockExpiryEnabled
+      }),
+    [stockExpiryEnabled]
+  );
 
   const tableActionParams: StockOperationProps = useMemo(() => {
     return {
@@ -521,7 +630,7 @@ export function StockItemTable({
           {
             name: t`Assign to customer`,
             icon: <InvenTreeIcon icon='customer' />,
-            tooltip: t`Order new stock`,
+            tooltip: t`Assign items to a customer`,
             disabled: !can_add_stock,
             onClick: () => {
               assignStock.open();

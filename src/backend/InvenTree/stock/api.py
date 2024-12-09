@@ -524,6 +524,7 @@ class StockFilter(rest_filters.FilterSet):
         field_name='part__name',
         lookup_expr='iexact',
     )
+
     name_contains = rest_filters.CharFilter(
         label=_('Part name contains (case insensitive)'),
         field_name='part__name',
@@ -540,11 +541,13 @@ class StockFilter(rest_filters.FilterSet):
         field_name='part__IPN',
         lookup_expr='iexact',
     )
+
     IPN_contains = rest_filters.CharFilter(
         label=_('Part IPN contains (case insensitive)'),
         field_name='part__IPN',
         lookup_expr='icontains',
     )
+
     IPN_regex = rest_filters.CharFilter(
         label=_('Part IPN (regex)'), field_name='part__IPN', lookup_expr='iregex'
     )
@@ -553,12 +556,14 @@ class StockFilter(rest_filters.FilterSet):
     assembly = rest_filters.BooleanFilter(
         label=_('Assembly'), field_name='part__assembly'
     )
+
     active = rest_filters.BooleanFilter(label=_('Active'), field_name='part__active')
     salable = rest_filters.BooleanFilter(label=_('Salable'), field_name='part__salable')
 
     min_stock = rest_filters.NumberFilter(
         label=_('Minimum stock'), field_name='quantity', lookup_expr='gte'
     )
+
     max_stock = rest_filters.NumberFilter(
         label=_('Maximum stock'), field_name='quantity', lookup_expr='lte'
     )
@@ -695,8 +700,18 @@ class StockFilter(rest_filters.FilterSet):
 
         return queryset.filter(q_batch).filter(q_serial).distinct()
 
+    consumed = rest_filters.BooleanFilter(
+        label=_('Consumed by Build Order'), method='filter_consumed'
+    )
+
+    def filter_consumed(self, queryset, name, value):
+        """Filter by whether the stock item has been consumed by a build order."""
+        if str2bool(value):
+            return queryset.filter(consumed_by__isnull=False)
+        return queryset.filter(consumed_by__isnull=True)
+
     installed = rest_filters.BooleanFilter(
-        label='Installed in other stock item', method='filter_installed'
+        label=_('Installed in other stock item'), method='filter_installed'
     )
 
     def filter_installed(self, queryset, name, value):
@@ -807,19 +822,28 @@ class StockFilter(rest_filters.FilterSet):
 
     # Update date filters
     updated_before = InvenTreeDateFilter(
-        label='Updated before', field_name='updated', lookup_expr='lte'
+        label=_('Updated before'), field_name='updated', lookup_expr='lt'
     )
+
     updated_after = InvenTreeDateFilter(
-        label='Updated after', field_name='updated', lookup_expr='gte'
+        label=_('Updated after'), field_name='updated', lookup_expr='gt'
+    )
+
+    stocktake_before = InvenTreeDateFilter(
+        label=_('Stocktake Before'), field_name='stocktake_date', lookup_expr='lt'
+    )
+
+    stocktake_after = InvenTreeDateFilter(
+        label=_('Stocktake After'), field_name='stocktake_date', lookup_expr='gt'
     )
 
     # Stock "expiry" filters
-    expiry_date_lte = InvenTreeDateFilter(
-        label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lte'
+    expiry_before = InvenTreeDateFilter(
+        label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lt'
     )
 
-    expiry_date_gte = InvenTreeDateFilter(
-        label=_('Expiry date after'), field_name='expiry_date', lookup_expr='gte'
+    expiry_after = InvenTreeDateFilter(
+        label=_('Expiry date after'), field_name='expiry_date', lookup_expr='gt'
     )
 
     stale = rest_filters.BooleanFilter(label=_('Stale'), method='filter_stale')

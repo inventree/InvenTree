@@ -37,7 +37,10 @@ function post(path: string, params: any, method = 'post') {
   form.action = path;
 
   for (const key in params) {
-    if (params.hasOwn(key)) {
+    if (
+      params.hasOwn?.(key) ||
+      Object.prototype.hasOwnProperty.call(params, key)
+    ) {
       const hiddenField = document.createElement('input');
       hiddenField.type = 'hidden';
       hiddenField.name = key;

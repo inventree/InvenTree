@@ -50,7 +50,7 @@ export default function DashboardMenu({
   }, [user, instanceName]);
 
   return (
-    <Paper p='sm' shadow='xs'>
+    <Paper p='sm' pr={0}>
       <Group justify='space-between' wrap='nowrap'>
         {title}
 
@@ -76,7 +76,7 @@ export default function DashboardMenu({
             <Menu.Target>
               <Indicator
                 color='red'
-                position='bottom-start'
+                position='bottom-center'
                 processing
                 disabled={!editing}
               >
