@@ -15,7 +15,7 @@ def update_shipment_date(apps, schema_editor):
     # Find any orders which are "complete" but missing a shipment date
     orders = SalesOrder.objects.filter(
         status__in=SalesOrderStatusGroups.COMPLETE,
-        shipment_date=None
+        shipment_date__isnull=True
     )
 
     updated_orders = 0
