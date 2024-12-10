@@ -883,6 +883,97 @@ selection_urls = [
     path('', SelectionListList.as_view(), name='api-selectionlist-list'),
 ]
 
+
+class ReferenceSourceList(ListCreateAPI):
+    """List view for all reference sources."""
+
+    queryset = common.models.ReferenceSource.objects.all()
+    serializer_class = common.serializers.ReferenceSourceSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'name',
+        'description',
+        'slug',
+        'locked',
+        'active',
+        'source_plugin',
+        'created',
+        'last_updated',
+    ]
+    search_fields = ['name', 'description', 'slug']
+
+
+class ReferenceSourceDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular reference source."""
+
+    queryset = common.models.ReferenceSource.objects.all()
+    serializer_class = common.serializers.ReferenceSourceSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
+class ReferenceList(ListCreateAPI):
+    """List view for all references."""
+
+    queryset = common.models.Reference.objects.all()
+    serializer_class = common.serializers.ReferenceSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'source',
+        'target',
+        'value',
+        'locked',
+        'created',
+        'last_updated',
+        'checked',
+        'last_checked',
+    ]
+    search_fields = ['source', 'target', 'value']
+
+
+class ReferenceDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular reference."""
+
+    queryset = common.models.Reference.objects.all()
+    serializer_class = common.serializers.ReferenceSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
+reference_urls = [
+    path(
+        'source/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        '',
+                        ReferenceSourceDetail.as_view(),
+                        name='api-reference-source-detail',
+                    )
+                ]),
+            ),
+            path('', ReferenceSourceList.as_view(), name='api-reference-source-list'),
+        ]),
+    ),
+    # TODO add api endpoint to get all references for a target
+    path(
+        '',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path('', ReferenceDetail.as_view(), name='api-reference-detail')
+                ]),
+            ),
+            path('', ReferenceList.as_view(), name='api-reference-list'),
+        ]),
+    ),
+]
+
 # API URL patterns
 settings_api_urls = [
     # User settings
@@ -1094,6 +1185,8 @@ common_api_urls = [
     path('icons/', IconList.as_view(), name='api-icon-list'),
     # Selection lists
     path('selection/', include(selection_urls)),
+    # References
+    path('reference/', include(reference_urls)),
 ]
 
 admin_api_urls = [
