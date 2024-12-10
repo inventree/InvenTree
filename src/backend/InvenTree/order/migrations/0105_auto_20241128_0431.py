@@ -41,7 +41,7 @@ def update_shipment_date(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0103_alter_salesorderallocation_shipment'),
+        ('order', '0104_alter_returnorderlineitem_quantity'),
     ]
 
     operations = [
