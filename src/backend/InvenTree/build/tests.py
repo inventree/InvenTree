@@ -1,6 +1,5 @@
 """Basic unit tests for the BuildOrder app"""
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import tag
 from django.urls import reverse
@@ -13,7 +12,7 @@ from .models import Build
 from part.models import Part, BomItem
 from stock.models import StockItem
 
-from common.settings import get_global_setting, set_global_setting
+from common.settings import set_global_setting
 from build.status_codes import BuildStatus
 
 
@@ -45,10 +44,7 @@ class BuildTestSimple(InvenTreeTestCase):
     def test_url(self):
         """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(b1.get_absolute_url(), '/build/1/')
-        else:
-            self.assertEqual(b1.get_absolute_url(), '/platform/manufacturing/build-order/1')
+        self.assertEqual(b1.get_absolute_url(), '/platform/manufacturing/build-order/1')
 
     def test_is_complete(self):
         """Test build completion status"""
@@ -166,53 +162,3 @@ class BuildTestSimple(InvenTreeTestCase):
 
         # Check that expected quantity of new builds is created
         self.assertEqual(Build.objects.count(), n + 4)
-
-class TestBuildViews(InvenTreeTestCase):
-    """Tests for Build app views."""
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'build',
-    ]
-
-    roles = [
-        'build.change',
-        'build.add',
-        'build.delete',
-    ]
-
-    def setUp(self):
-        """Fixturing for this suite of unit tests"""
-        super().setUp()
-
-        # Create a build output for build # 1
-        self.build = Build.objects.get(pk=1)
-
-        self.output = StockItem.objects.create(
-            part=self.build.part,
-            quantity=self.build.quantity,
-            build=self.build,
-            is_building=True,
-        )
-
-    @tag('cui')
-    def test_build_index(self):
-        """Test build index view."""
-        response = self.client.get(reverse('build-index'))
-        self.assertEqual(response.status_code, 200)
-
-    @tag('cui')
-    def test_build_detail(self):
-        """Test the detail view for a Build object."""
-        pk = 1
-
-        response = self.client.get(reverse('build-detail', args=(pk,)))
-        self.assertEqual(response.status_code, 200)
-
-        build = Build.objects.get(pk=pk)
-
-        content = str(response.content)
-
-        self.assertIn(build.title, content)

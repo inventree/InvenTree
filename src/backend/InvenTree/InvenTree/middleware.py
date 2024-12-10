@@ -39,7 +39,6 @@ def get_token_from_request(request):
 # List of target URL endpoints where *do not* want to redirect to
 urls = [
     reverse_lazy('account_login'),
-    reverse_lazy('account_logout'),
     reverse_lazy('admin:login'),
     reverse_lazy('admin:logout'),
 ]

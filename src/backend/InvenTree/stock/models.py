@@ -289,8 +289,6 @@ class StockLocation(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('stock-location-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/stock/location/{self.id}')
 
     def get_stock_items(self, cascade=True):
@@ -839,8 +837,6 @@ class StockItem(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('stock-item-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/stock/item/{self.id}')
 
     def get_part_name(self):
@@ -2561,8 +2557,6 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return f'/stock/track/{self.id}'
         return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):
