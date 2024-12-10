@@ -17,6 +17,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
+import { NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -64,6 +65,15 @@ export function RelatedPartTable({
         }
       },
       {
+        accessor: 'ipn',
+        title: t`IPN`,
+        switchable: true,
+        render: (record: any) => {
+          const part = getPart(record);
+          return part.IPN;
+        }
+      },
+      {
         accessor: 'description',
         title: t`Part Description`,
         ellipsis: true,
@@ -71,11 +81,7 @@ export function RelatedPartTable({
           return getPart(record).description;
         }
       },
-      {
-        accessor: 'note',
-        title: t`Note`,
-        sortable: false
-      }
+      NoteColumn({})
     ];
   }, [partId]);
 
