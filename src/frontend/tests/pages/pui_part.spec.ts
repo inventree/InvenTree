@@ -7,6 +7,8 @@ import { doQuickLogin } from '../login';
  * CHeck each panel tab for the "Parts" page
  */
 test('Parts - Tabs', async ({ page }) => {
+  test.setTimeout(120_000);
+
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);

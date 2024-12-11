@@ -12,7 +12,7 @@ test('Settings - Language / Color', async ({ page }) => {
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
   await page.getByRole('button', { name: 'Send me an email' }).click();
-  await page.getByRole('button').nth(3).click();
+  await page.getByLabel('Open language options').getByRole('button').click();
   await page.getByLabel('Select language').first().click();
   await page.getByRole('option', { name: 'German' }).click();
   await page.waitForTimeout(200);

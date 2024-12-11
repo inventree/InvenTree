@@ -37,6 +37,9 @@ test('Label Printing', async ({ page }) => {
 
   await page.waitForTimeout(100);
 
+  await page.getByLabel('related-field-plugin').click();
+  await page.getByText('InvenTreeLabelSheet').click();
+
   // Submit the print form (second time should result in success)
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
