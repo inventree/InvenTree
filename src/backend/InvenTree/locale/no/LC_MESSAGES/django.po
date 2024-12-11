@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-10 20:22+0000\n"
-"PO-Revision-Date: 2024-12-10 20:25\n"
+"POT-Creation-Date: 2024-12-11 04:45+0000\n"
+"PO-Revision-Date: 2024-12-11 04:48\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -749,8 +749,8 @@ msgstr "Om InvenTree"
 msgid "Parent Build"
 msgstr "Overordnet produksjon"
 
-#: build/api.py:58 build/api.py:688 order/api.py:426 order/api.py:641
-#: order/api.py:1039 order/api.py:1259 stock/api.py:491
+#: build/api.py:58 build/api.py:688 order/api.py:426 order/api.py:643
+#: order/api.py:1041 order/api.py:1261 stock/api.py:491
 #: templates/js/translated/table_filters.js:372
 msgid "Include Variants"
 msgstr ""
@@ -845,7 +845,7 @@ msgstr ""
 #: build/api.py:392 build/api.py:703 build/models.py:269
 #: build/serializers.py:1346 build/templates/build/build_base.html:106
 #: build/templates/build/detail.html:29 company/models.py:1043 order/api.py:197
-#: order/api.py:813 order/api.py:1052 order/models.py:1553 order/models.py:1708
+#: order/api.py:815 order/api.py:1054 order/models.py:1553 order/models.py:1708
 #: order/models.py:1709 part/api.py:1440 part/api.py:1508 part/api.py:1815
 #: part/models.py:419 part/models.py:3177 part/models.py:3321
 #: part/models.py:3469 part/models.py:3490 part/models.py:3512
@@ -895,11 +895,11 @@ msgstr ""
 msgid "Part"
 msgstr "Del"
 
-#: build/api.py:397 order/api.py:858
+#: build/api.py:397 order/api.py:860
 msgid "Order Outstanding"
 msgstr ""
 
-#: build/api.py:407 order/api.py:817 part/admin.py:144
+#: build/api.py:407 order/api.py:819 part/admin.py:144
 #: templates/js/translated/build.js:1920 templates/js/translated/build.js:2838
 #: templates/js/translated/sales_order.js:1972
 #: templates/js/translated/table_filters.js:560
@@ -1977,7 +1977,7 @@ msgid "Completed Outputs"
 msgstr "Fullførte byggeresultater"
 
 #: build/templates/build/build_base.html:199
-#: build/templates/build/detail.html:101 order/api.py:1609 order/models.py:919
+#: build/templates/build/detail.html:101 order/api.py:1611 order/models.py:919
 #: order/models.py:1700 order/models.py:1828 order/models.py:1991
 #: order/templates/order/sales_order_base.html:10
 #: order/templates/order/sales_order_base.html:29
@@ -2069,7 +2069,7 @@ msgstr "Opprettet"
 msgid "No target date set"
 msgstr "Ingen måldato satt"
 
-#: build/templates/build/detail.html:149 order/api.py:832
+#: build/templates/build/detail.html:149 order/api.py:834
 #: order/templates/order/sales_order_base.html:210
 #: templates/js/translated/table_filters.js:678
 msgid "Completed"
@@ -5532,7 +5532,7 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:233 order/api.py:1613
+#: machine/machine_types/label_printer.py:233 order/api.py:1615
 #: templates/js/translated/sales_order.js:1046
 msgid "Unknown"
 msgstr "Ukjent"
@@ -5643,7 +5643,7 @@ msgstr "Ordrestatus"
 msgid "Order Reference"
 msgstr "Ordrereferanse"
 
-#: order/api.py:118 order/api.py:1071
+#: order/api.py:118 order/api.py:1073
 #: templates/js/translated/table_filters.js:93
 #: templates/js/translated/table_filters.js:611
 #: templates/js/translated/table_filters.js:637
@@ -5676,22 +5676,22 @@ msgstr ""
 msgid "Has Pricing"
 msgstr ""
 
-#: order/api.py:222 order/api.py:682 order/api.py:1299
+#: order/api.py:222 order/api.py:684 order/api.py:1301
 msgid "Completed Before"
 msgstr ""
 
-#: order/api.py:226 order/api.py:686 order/api.py:1303
+#: order/api.py:226 order/api.py:688 order/api.py:1305
 msgid "Completed After"
 msgstr ""
 
-#: order/api.py:405 order/api.py:809 order/api.py:1035 order/models.py:1534
+#: order/api.py:405 order/api.py:811 order/api.py:1037 order/models.py:1534
 #: order/models.py:1648 order/models.py:1699 order/models.py:1827
 #: order/models.py:1990 order/models.py:2489 order/models.py:2554
 #: templates/js/translated/sales_order.js:1492
 msgid "Order"
 msgstr "Ordre"
 
-#: order/api.py:409 order/api.py:847
+#: order/api.py:409 order/api.py:849
 msgid "Order Complete"
 msgstr ""
 
@@ -5699,11 +5699,11 @@ msgstr ""
 msgid "Order Pending"
 msgstr ""
 
-#: order/api.py:1087
+#: order/api.py:1089
 msgid "Has Shipment"
 msgstr ""
 
-#: order/api.py:1607 order/models.py:387 order/models.py:1535
+#: order/api.py:1609 order/models.py:387 order/models.py:1535
 #: order/models.py:1649 order/templates/order/order_base.html:10
 #: order/templates/order/order_base.html:19
 #: report/templates/report/inventree_purchase_order_report.html:14
@@ -5716,7 +5716,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Innkjøpsordre"
 
-#: order/api.py:1611 order/models.py:2160 order/models.py:2490
+#: order/api.py:1613 order/models.py:2160 order/models.py:2490
 #: order/models.py:2555 order/templates/order/return_order_base.html:10
 #: order/templates/order/return_order_base.html:29
 #: report/templates/report/inventree_return_order_report.html:13
