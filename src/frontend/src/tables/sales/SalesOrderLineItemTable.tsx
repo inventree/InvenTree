@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -24,7 +25,6 @@ import {
   useSalesOrderAllocateSerialsFields,
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -285,6 +285,12 @@ export default function SalesOrderLineItemTable({
     }
   });
 
+  const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: partsToOrder
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -312,6 +318,18 @@ export default function SalesOrderLineItemTable({
           newLine.open();
         }}
         hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
+      />,
+      <ActionButton
+        key='order-parts'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        disabled={!table.hasSelectedRecords}
+        tooltip={t`Order Parts`}
+        icon={<IconShoppingCart />}
+        color='blue'
+        onClick={() => {
+          setPartsToOrder(table.selectedRecords.map((r) => r.part_detail));
+          orderPartsWizard.openWizard();
+        }}
       />,
       <ActionButton
         key='allocate-stock'
@@ -396,7 +414,10 @@ export default function SalesOrderLineItemTable({
           title: t`Order stock`,
           icon: <IconShoppingCart />,
           color: 'blue',
-          onClick: notYetImplemented
+          onClick: () => {
+            setPartsToOrder([record.part_detail]);
+            orderPartsWizard.openWizard();
+          }
         },
         RowEditAction({
           hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),
@@ -455,6 +476,7 @@ export default function SalesOrderLineItemTable({
       {newBuildOrder.modal}
       {allocateBySerials.modal}
       {allocateStock.modal}
+      {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}

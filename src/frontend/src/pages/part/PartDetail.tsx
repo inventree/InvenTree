@@ -35,6 +35,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -62,6 +63,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -970,6 +972,10 @@ export default function PartDetail() {
   const countStockItems = useCountStockItem(stockActionProps);
   const transferStockItems = useTransferStockItem(stockActionProps);
 
+  const orderPartsWizard = OrderPartsWizard({
+    parts: [part]
+  });
+
   const partActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.part} id={part.pk} />,
@@ -985,6 +991,18 @@ export default function PartDetail() {
         items={[part.pk]}
         enableReports
         enableLabels
+      />,
+      <ActionButton
+        tooltip={t`Order Parts`}
+        icon={<IconShoppingCart />}
+        hidden={
+          !part.active ||
+          !part.purchaseable ||
+          !user.hasAddRole(UserRoles.purchase_order)
+        }
+        onClick={() => {
+          orderPartsWizard.openWizard();
+        }}
       />,
       <ActionDropdown
         tooltip={t`Stock Actions`}
@@ -1047,6 +1065,7 @@ export default function PartDetail() {
       {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
+      {orderPartsWizard.wizard}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap='xs'>
           <NavigationTree

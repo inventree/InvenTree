@@ -139,8 +139,10 @@ export function usePurchaseOrderLineItemFields({
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
 export function usePurchaseOrderFields({
+  supplierId,
   duplicateOrderId
 }: {
+  supplierId?: number;
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
   return useMemo(() => {
@@ -150,7 +152,8 @@ export function usePurchaseOrderFields({
       },
       description: {},
       supplier: {
-        disabled: duplicateOrderId !== undefined,
+        value: supplierId,
+        disabled: !!duplicateOrderId || !!supplierId,
         filters: {
           is_supplier: true,
           active: true
@@ -213,7 +216,7 @@ export function usePurchaseOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, supplierId]);
 }
 
 /**
