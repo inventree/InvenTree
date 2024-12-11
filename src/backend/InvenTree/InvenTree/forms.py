@@ -101,16 +101,6 @@ class HelperForm(forms.ModelForm):
         self.helper.layout = Layout(*layouts)
 
 
-class EditUserForm(HelperForm):
-    """Form for editing user information."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = ['first_name', 'last_name']
-
-
 class SetPasswordForm(HelperForm):
     """Form for setting user password."""
 

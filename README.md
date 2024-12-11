@@ -81,16 +81,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 </details>
 
 <details>
-  <summary>Client - CUI</summary>
-  <ul>
-    <li><a href="https://getbootstrap.com/">Bootstrap</a></li>
-    <li><a href="https://jquery.com/">jQuery</a></li>
-    <li><a href="https://bootstrap-table.com/">Bootstrap-Table</a></li>
-  </ul>
-</details>
-
-<details>
-  <summary>Client - PUI</summary>
+  <summary>Client</summary>
   <ul>
     <li><a href="https://react.dev/">React</a></li>
     <li><a href="https://lingui.dev/">Lingui</a></li>

@@ -100,7 +100,6 @@ Supported mixin classes are:
 | [LabelPrintingMixin](./plugins/label.md) | Custom label printing support |
 | [LocateMixin](./plugins/locate.md) | Locate and identify stock items |
 | [NavigationMixin](./plugins/navigation.md) | Add custom pages to the web interface |
-| [PanelMixin](./plugins/panel.md) | Add custom panels to web views |
 | [ReportMixin](./plugins/report.md) | Add custom context data to reports |
 | [ScheduleMixin](./plugins/schedule.md) | Schedule periodic tasks |
 | [SettingsMixin](./plugins/settings.md) | Integrate user configurable settings |
