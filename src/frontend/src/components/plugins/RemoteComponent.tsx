@@ -26,7 +26,7 @@ export default function RemoteComponent({
   defaultFunctionName: string;
   context: InvenTreeContext;
 }>) {
-  const componentRef = useRef<HTMLDivElement>();
+  const componentRef = useRef<HTMLDivElement>(undefined);
 
   const [renderingError, setRenderingError] = useState<string | undefined>(
     undefined

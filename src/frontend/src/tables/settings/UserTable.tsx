@@ -12,6 +12,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useShallow } from 'zustand/shallow';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import {
@@ -64,7 +65,7 @@ export function UserDrawer({
     throwError: true
   });
 
-  const currentUserPk = useUserState((s) => s.user?.pk);
+  const currentUserPk = useUserState(useShallow((s) => s.user?.pk));
   const isCurrentUser = useMemo(
     () => currentUserPk === Number.parseInt(id, 10),
     [currentUserPk, id]

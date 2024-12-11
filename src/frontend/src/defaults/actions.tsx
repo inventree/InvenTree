@@ -3,12 +3,15 @@ import type { SpotlightActionData } from '@mantine/spotlight';
 import { IconLink, IconPointer } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
+import { useShallow } from 'zustand/shallow';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
 export function getActions(navigate: NavigateFunction) {
-  const setNavigationOpen = useLocalState((state) => state.setNavigationOpen);
+  const setNavigationOpen = useLocalState(
+    useShallow((state) => state.setNavigationOpen)
+  );
   const { user } = useUserState();
 
   const actions: SpotlightActionData[] = [

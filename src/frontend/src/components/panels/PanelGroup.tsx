@@ -26,6 +26,7 @@ import {
   useParams
 } from 'react-router-dom';
 
+import { useShallow } from 'zustand/shallow';
 import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { cancelEvent } from '../../functions/events';
@@ -244,19 +245,21 @@ function IndexPanelComponent({
   selectedPanel,
   panels
 }: Readonly<PanelProps>) {
-  const lastUsedPanel = useLocalState((state) => {
-    const panelName =
-      selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+  const lastUsedPanel = useLocalState(
+    useShallow((state) => {
+      const panelName =
+        selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
 
-    const panel = panels.findIndex(
-      (p) => p.name === panelName && !p.disabled && !p.hidden
-    );
-    if (panel === -1) {
-      return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
-    }
+      const panel = panels.findIndex(
+        (p) => p.name === panelName && !p.disabled && !p.hidden
+      );
+      if (panel === -1) {
+        return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
+      }
 
-    return panelName;
-  });
+      return panelName;
+    })
+  );
 
   return <Navigate to={lastUsedPanel} replace />;
 }

@@ -3,6 +3,7 @@ import { Accordion, Alert, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { lazy } from 'react';
 
+import { useShallow } from 'zustand/shallow';
 import { StylishText } from '../../../../components/items/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -19,7 +20,7 @@ const PluginErrorTable = Loadable(
 
 export default function PluginManagementPanel() {
   const pluginsEnabled = useServerApiState(
-    (state) => state.server.plugins_enabled
+    useShallow((state) => state.server.plugins_enabled)
   );
 
   const user = useUserState();

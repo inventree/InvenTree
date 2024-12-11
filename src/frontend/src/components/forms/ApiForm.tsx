@@ -13,7 +13,7 @@ import {
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type FieldValues,
   FormProvider,

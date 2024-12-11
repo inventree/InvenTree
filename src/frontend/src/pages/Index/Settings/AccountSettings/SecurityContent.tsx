@@ -18,6 +18,7 @@ import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
+import { useShallow } from 'zustand/shallow';
 import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
@@ -99,7 +100,7 @@ export function SecurityContent() {
 function EmailContent() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
-  const [user] = useUserState((state) => [state.user]);
+  const [user] = useUserState(useShallow((state) => [state.user]));
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () =>

@@ -15,6 +15,7 @@ export function LanguageToggle() {
         margin: open === true ? 2 : 12,
         padding: open === true ? 8 : 0
       }}
+      aria-label='Open language options'
     >
       <ActionIcon
         onClick={() => toggle.toggle()}

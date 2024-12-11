@@ -17,6 +17,7 @@ import {
 import { IconRestore } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { useShallow } from 'zustand/shallow';
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
 import { SizeMarks } from '../../../../defaults/defaults';
@@ -34,10 +35,9 @@ const LOOKUP = Object.assign(
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
 
-  const [themeLoader, setThemeLoader] = useLocalState((state) => [
-    state.loader,
-    state.setLoader
-  ]);
+  const [themeLoader, setThemeLoader] = useLocalState(
+    useShallow((state) => [state.loader, state.setLoader])
+  );
 
   // white color
   const [whiteColor, setWhiteColor] = useState(theme.white);

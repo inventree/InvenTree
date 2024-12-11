@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useShallow } from 'zustand/shallow';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
@@ -24,10 +25,9 @@ import { AccountContent } from './AccountSettings/UserPanel';
  * User settings page
  */
 export default function UserSettings() {
-  const [user, isLoggedIn] = useUserState((state) => [
-    state.user,
-    state.isLoggedIn
-  ]);
+  const [user, isLoggedIn] = useUserState(
+    useShallow((state) => [state.user, state.isLoggedIn])
+  );
 
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [

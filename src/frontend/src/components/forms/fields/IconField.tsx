@@ -20,6 +20,7 @@ import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
+import { useShallow } from 'zustand/shallow';
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';
 import type { ApiFormFieldType } from './ApiFormField';
@@ -118,7 +119,7 @@ function ComboboxDropdown({
   onChange: (newVal: string | null) => void;
   open: boolean;
 }>) {
-  const iconPacks = useIconState((s) => s.packages);
+  const iconPacks = useIconState(useShallow((s) => s.packages));
   const icons = useMemo<RenderIconType[]>(() => {
     return iconPacks.flatMap((pack) =>
       Object.entries(pack.icons).flatMap(([name, icon]) =>

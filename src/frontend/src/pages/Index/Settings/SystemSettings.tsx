@@ -17,6 +17,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useShallow } from 'zustand/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import PageTitle from '../../../components/nav/PageTitle';
@@ -296,7 +297,7 @@ export default function SystemSettings() {
 
   const user = useUserState();
 
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   if (!user.isLoggedIn()) {
     return <Skeleton />;

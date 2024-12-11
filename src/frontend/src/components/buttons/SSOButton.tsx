@@ -20,6 +20,8 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import type { Provider } from '../../states/states';
 
+import type { JSX } from 'react';
+
 const brandIcons: { [key: string]: JSX.Element } = {
   google: <IconBrandGoogle />,
   github: <IconBrandGithub />,

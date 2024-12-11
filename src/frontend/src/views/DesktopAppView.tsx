@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
+import { useShallow } from 'zustand/shallow';
 import { queryClient } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
@@ -10,7 +11,7 @@ import { routes } from '../router';
 import { useLocalState } from '../states/LocalState';
 
 export default function DesktopAppView() {
-  const [hostList] = useLocalState((state) => [state.hostList]);
+  const [hostList] = useLocalState(useShallow((state) => [state.hostList]));
 
   useEffect(() => {
     if (Object.keys(hostList).length === 0) {

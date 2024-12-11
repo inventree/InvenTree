@@ -21,6 +21,9 @@ import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
 
+import type { JSX } from 'react';
+import { useShallow } from 'zustand/shallow';
+
 type AboutLookupRef = {
   ref: string;
   title: JSX.Element;
@@ -34,8 +37,8 @@ export function AboutInvenTreeModal({
 }: ContextModalProps<{
   modalBody: string;
 }>) {
-  const [user] = useUserState((state) => [state.user]);
-  const [server] = useServerApiState((state) => [state.server]);
+  const [user] = useUserState(useShallow((state) => [state.user]));
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   if (user?.is_staff != true)
     return (
