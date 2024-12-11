@@ -9,9 +9,10 @@ from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
-from company.models import Company, SupplierPart
+from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder, PurchaseOrderStatus
+from part.models import Part
 from plugin.base.integration.SettingsMixin import SettingsMixin
 from stock.models import StockLocation
 
@@ -112,6 +113,11 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         return fields.get(key, backup_value)
 
+    def get_part(self) -> Part | None:
+        """Extract the Part object from the barcode fields."""
+        # TODO: Implement this
+        return None
+
     @property
     def quantity(self):
         """Return the quantity from the barcode fields."""
@@ -122,10 +128,47 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the supplier part number from the barcode fields."""
         return self.get_field_value(self.SUPPLIER_PART_NUMBER)
 
+    def get_supplier_part(self) -> SupplierPart | None:
+        """Return the SupplierPart object for the scanned barcode.
+
+        Returns:
+            SupplierPart object or None
+        """
+        sku = self.supplier_part_number
+
+        if not sku:
+            return None
+
+        supplier_parts = SupplierPart.objects.filter(SKU=sku)
+
+        if supplier := self.get_supplier(cache=True):
+            supplier_parts = supplier_parts.filter(supplier=supplier)
+
+        # Requires a unique match
+        if len(supplier_parts) == 1:
+            return supplier_parts.first()
+
     @property
     def manufacturer_part_number(self):
         """Return the manufacturer part number from the barcode fields."""
         return self.get_field_value(self.MANUFACTURER_PART_NUMBER)
+
+    def get_manufacturer_part(self) -> ManufacturerPart | None:
+        """Return the ManufacturerPart object for the scanned barcode.
+
+        Returns:
+            ManufacturerPart object or None
+        """
+        mpn = self.manufacturer_part_number
+
+        if not mpn:
+            return None
+
+        parts = ManufacturerPart.objects.filter(MPN=mpn)
+
+        # Requires a unique match
+        if len(parts) == 1:
+            return parts.first()
 
     @property
     def customer_order_number(self):
@@ -137,7 +180,38 @@ class SupplierBarcodeMixin(BarcodeMixin):
         """Return the supplier order number from the barcode fields."""
         return self.get_field_value(self.SUPPLIER_ORDER_NUMBER)
 
-    def extract_barcode_fields(self, barcode_data) -> dict[str, str]:
+    def get_purchase_order(self) -> PurchaseOrder | None:
+        """Extract the PurchaseOrder object from the barcode fields.
+
+        Inspect the customer_order_number and supplier_order_number fields,
+        and try to find a matching PurchaseOrder object.
+
+        Returns:
+            PurchaseOrder object or None
+        """
+        customer_order_number = self.customer_order_number
+        supplier_order_number = self.supplier_order_number
+
+        if not (customer_order_number or supplier_order_number):
+            return None
+
+        # First, attempt lookup based on the customer_order_number
+
+        if customer_order_number:
+            orders = PurchaseOrder.objects.filter(reference=customer_order_number)
+        elif supplier_order_number:
+            orders = PurchaseOrder.objects.filter(
+                supplier_reference=supplier_order_number
+            )
+
+        if supplier := self.get_supplier(cache=True):
+            orders = orders.filter(supplier=supplier)
+
+        # Requires a unique match
+        if len(orders) == 1:
+            return orders.first()
+
+    def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
         """Method to extract barcode fields from barcode data.
 
         This method should return a dict object where the keys are the field names,
@@ -153,35 +227,48 @@ class SupplierBarcodeMixin(BarcodeMixin):
             'extract_barcode_fields must be implemented by each plugin'
         )
 
-    def scan(self, barcode_data):
-        """Try to match a supplier barcode to a supplier part."""
+    def scan(self, barcode_data: str) -> dict:
+        """Perform a generic 'scan' operation on a supplier barcode.
+
+        The supplier barcode may provide sufficient information to match against
+        one of the following model types:
+
+        - SupplierPart
+        - ManufacturerPart
+        - PurchaseOrder
+        - PurchaseOrderLineItem (todo)
+        - StockItem (todo)
+        - Part (todo)
+
+        If any matches are made, return a dict object containing the relevant information.
+        """
         barcode_data = str(barcode_data).strip()
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
 
-        if self.supplier_part_number is None and self.manufacturer_part_number is None:
-            return None
-
-        supplier_parts = self.get_supplier_parts(
-            sku=self.supplier_part_number,
-            mpn=self.manufacturer_part_number,
-            supplier=self.get_supplier(),
-        )
-
-        if len(supplier_parts) > 1:
-            return {'error': _('Found multiple matching supplier parts for barcode')}
-        elif not supplier_parts:
-            return None
-
-        supplier_part = supplier_parts[0]
-
-        data = {
-            'pk': supplier_part.pk,
-            'api_url': f'{SupplierPart.get_api_url()}{supplier_part.pk}/',
-            'web_url': supplier_part.get_absolute_url(),
+        matches = {
+            Part.barcode_model_type(): self.get_part(),
+            PurchaseOrder.barcode_model_type(): self.get_purchase_order(),
+            SupplierPart.barcode_model_type(): self.get_supplier_part(),
+            ManufacturerPart.barcode_model_type(): self.get_manufacturer_part(),
         }
 
-        return {SupplierPart.barcode_model_type(): data}
+        data = {}
+
+        # At least one matching item was found
+        has_match = False
+
+        for k, v in matches.items():
+            if v and hasattr(v, 'pk'):
+                has_match = True
+                data[k] = v.format_matched_response()
+
+        if has_match:
+            data['success'] = _('Found matching item')
+        else:
+            data['error'] = _('No matching item found')
+
+        return data
 
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Try to scan a supplier barcode to receive a purchase order item."""
@@ -239,7 +326,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
             barcode=barcode_data,
         )
 
-    def get_supplier(self) -> Company | None:
+    def get_supplier(self, cache: bool = False) -> Company | None:
         """Get the supplier for the SUPPLIER_ID set in the plugin settings.
 
         If it's not defined, try to guess it and set it if possible.
@@ -247,29 +334,32 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if not isinstance(self, SettingsMixin):
             return None
 
+        def _cache_supplier(supplier):
+            """Cache and return the supplier object."""
+            if cache:
+                self._supplier = supplier
+            return supplier
+
+        # Cache the supplier object, so we don't have to look it up every time
+        if cache and hasattr(self, '_supplier'):
+            return self._supplier
+
         if supplier_pk := self.get_setting('SUPPLIER_ID'):
-            try:
-                return Company.objects.get(pk=supplier_pk)
-            except Company.DoesNotExist:
-                logger.error(
-                    'No company with pk %d (set "SUPPLIER_ID" setting to a valid value)',
-                    supplier_pk,
-                )
-                return None
+            return _cache_supplier(Company.objects.filter(pk=supplier_pk).first())
 
         if not (supplier_name := getattr(self, 'DEFAULT_SUPPLIER_NAME', None)):
-            return None
+            return _cache_supplier(None)
 
         suppliers = Company.objects.filter(
             name__icontains=supplier_name, is_supplier=True
         )
 
         if len(suppliers) != 1:
-            return None
+            return _cache_supplier(None)
 
         self.set_setting('SUPPLIER_ID', suppliers.first().pk)
 
-        return suppliers.first()
+        return _cache_supplier(suppliers.first())
 
     @classmethod
     def ecia_field_map(cls):

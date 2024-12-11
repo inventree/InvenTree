@@ -168,7 +168,10 @@ class BarcodeView(CreateAPIView):
             else:
                 plugin = current_plugin
                 response = result
-                break
+
+                # Break on the first successful match
+                if 'success' in response:
+                    break
 
         response['plugin'] = plugin.name if plugin else None
         response['barcode_data'] = barcode
