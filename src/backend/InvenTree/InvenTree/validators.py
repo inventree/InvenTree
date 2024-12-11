@@ -1,15 +1,13 @@
 """Custom field validators for InvenTree."""
 
-import re
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.core import validators
-from django.core.exceptions import FieldDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import pint
-from jinja2 import Template
 from moneyed import CURRENCIES
 
 import InvenTree.conversion
@@ -137,41 +135,3 @@ def validate_overage(value):
             pass
 
     raise ValidationError(_('Invalid value for overage'))
-
-
-def validate_part_name_format(value):
-    """Validate part name format.
-
-    Make sure that each template container has a field of Part Model
-    """
-    # Make sure that the field_name exists in Part model
-    from part.models import Part
-
-    jinja_template_regex = re.compile('{{.*?}}')
-    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
-
-    for jinja_template in jinja_template_regex.findall(str(value)):
-        # make sure at least one and only one field is present inside the parser
-        field_names = field_name_regex.findall(jinja_template)
-        if len(field_names) < 1:
-            raise ValidationError({
-                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
-            })
-
-        for field_name in field_names:
-            try:
-                Part._meta.get_field(field_name)
-            except FieldDoesNotExist:
-                raise ValidationError({
-                    'value': f'{field_name} does not exist in Part Model'
-                })
-
-    # Attempt to render the template with a dummy Part instance
-    p = Part(name='test part', description='some test part')
-
-    try:
-        Template(value).render({'part': p})
-    except Exception as exc:
-        raise ValidationError({'value': str(exc)})
-
-    return True

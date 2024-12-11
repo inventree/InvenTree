@@ -27,7 +27,13 @@ class UrlsMixin:
 
     @classmethod
     def _activate_mixin(
-        cls, registry, plugins, force_reload=False, full_reload: bool = False
+        cls,
+        registry,
+        plugins,
+        force_reload=False,
+        full_reload: bool = False,
+        *args,
+        **kwargs,
     ):
         """Activate UrlsMixin plugins - add custom urls .
 
