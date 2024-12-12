@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from company.models import Company, ManufacturerPart, SupplierPart
+from InvenTree.exceptions import log_error
 from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder
 from part.models import Part
@@ -360,22 +361,22 @@ class SupplierBarcodeMixin(BarcodeMixin):
         # Extract quantity information
         quantity = self.quantity
 
-        action_required = auto_allocate or location is None or quantity is None
-
-        # At this stage, we have enough information to attempt to receive the item
+        # At this stage, we *should* have enough information to attempt to receive the item
         # If auto_allocate is True, attempt to receive the item automatically
         # Otherwise, return the required information to the client
+        action_required = not auto_allocate or location is None or quantity is None
+
+        if quantity is None:
+            quantity = line_item.quantity - line_item.received
+
+        quantity = float(quantity)
+
+        if quantity > line_item.remaining():
+            quantity = line_item.remaining()
+
         if action_required:
             # Further information is required
             # Provide as much of the 'guesswork' as possible
-
-            if quantity is None:
-                quantity = line_item.quantity - line_item.received
-
-            quantity = float(quantity)
-
-            if quantity > line_item.remaining():
-                quantity = line_item.remaining()
 
             return {
                 'action_required': _(
@@ -396,6 +397,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 line_item, location, quantity, user, barcode=barcode_data
             )
         except ValidationError:
+            log_error('scan_receive_item')
             return {'error': _('Error receiving purchase order line item')}
 
         return {'success': _('Received purchase order line item')}
