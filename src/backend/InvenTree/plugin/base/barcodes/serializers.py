@@ -177,6 +177,19 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
 
         return location
 
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrderLineItem.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text=_('Purchase order line item to receive items against'),
+    )
+
+    auto_allocate = serializers.BooleanField(
+        required=False,
+        default=True,
+        help_text=_('Automatically allocate stock items to the purchase order'),
+    )
+
 
 class BarcodeSOAllocateSerializer(BarcodeSerializer):
     """Serializr for allocating stock items to a sales order.
