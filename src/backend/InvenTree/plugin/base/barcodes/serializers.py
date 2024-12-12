@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 import common.models
+import company.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
@@ -148,6 +149,13 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
     - purchase_order: PurchaseOrder object to receive items against
     - location: Location to receive items into
     """
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text=_('Supplier to receive items from'),
+    )
 
     purchase_order = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrder.objects.all(),

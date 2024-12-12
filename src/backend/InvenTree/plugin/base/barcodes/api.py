@@ -500,8 +500,11 @@ class BarcodePOReceive(BarcodeView):
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
+        supplier = kwargs.get('supplier')
         purchase_order = kwargs.get('purchase_order')
         location = kwargs.get('location')
+        line_item = kwargs.get('line_item')
+        auto_allocate = kwargs.get('auto_allocate', False)
 
         # Extract location from PurchaseOrder, if available
         if not location and purchase_order:
@@ -536,7 +539,13 @@ class BarcodePOReceive(BarcodeView):
 
         for current_plugin in plugins:
             result = current_plugin.scan_receive_item(
-                barcode, request.user, purchase_order=purchase_order, location=location
+                barcode,
+                request.user,
+                supplier=supplier,
+                purchase_order=purchase_order,
+                location=location,
+                line_item=line_item,
+                auto_allocate=auto_allocate,
             )
 
             if result is None:
