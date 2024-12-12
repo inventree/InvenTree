@@ -504,7 +504,7 @@ class BarcodePOReceive(BarcodeView):
         purchase_order = kwargs.get('purchase_order')
         location = kwargs.get('location')
         line_item = kwargs.get('line_item')
-        auto_allocate = kwargs.get('auto_allocate', False)
+        auto_allocate = kwargs.get('auto_allocate', True)
 
         # Extract location from PurchaseOrder, if available
         if not location and purchase_order:
@@ -572,7 +572,7 @@ class BarcodePOReceive(BarcodeView):
 
         # A plugin has not been found!
         if plugin is None:
-            response['error'] = _('No match for supplier barcode')
+            response['error'] = _('No plugin match for supplier barcode')
 
         self.log_scan(request, response, 'success' in response)
 
