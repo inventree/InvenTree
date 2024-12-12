@@ -246,6 +246,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
 
+        # Generate possible matches for this barcode
+        # Note: Each of these functions can be overridden by the plugin (if necessary)
         matches = {
             Part.barcode_model_type(): self.get_part(),
             PurchaseOrder.barcode_model_type(): self.get_purchase_order(),
