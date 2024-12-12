@@ -591,9 +591,8 @@ jobs:
 
   zizmor:
     name: Security [Zizmor]
-    need: ['pre-commit']
     runs-on: ubuntu-20.04
-    needs: paths-filter
+    needs: ['pre-commit', 'paths-filter']
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
     permissions:
