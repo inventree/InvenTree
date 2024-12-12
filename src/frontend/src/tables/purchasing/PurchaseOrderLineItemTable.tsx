@@ -129,12 +129,14 @@ export function PurchaseOrderLineItemTable({
         accessor: 'part',
         title: t`Part`,
         sortable: true,
+        ordering: 'part_name',
         switchable: false,
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
         accessor: 'part_detail.IPN',
-        sortable: false
+        sortable: true,
+        ordering: 'IPN'
       },
       {
         accessor: 'part_detail.description',

@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-04 07:01\n"
+"PO-Revision-Date: 2024-12-10 10:27\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -30,7 +30,7 @@ msgstr "Hiba történt ennek a komponensnek a renderelése közben. Nézze a kon
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/buttons/AdminButton.tsx:87
+#: src/components/buttons/AdminButton.tsx:85
 msgid "Open in admin interface"
 msgstr "Megnyitás adminisztrátori felületen"
 
@@ -46,20 +46,20 @@ msgstr "Másolva"
 msgid "Copy"
 msgstr "Másolás"
 
-#: src/components/buttons/PrintingActions.tsx:97
+#: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
 msgstr "Címke Nyomtatás"
 
-#: src/components/buttons/PrintingActions.tsx:103
+#: src/components/buttons/PrintingActions.tsx:101
 msgid "Print"
 msgstr "Nyomtatás"
 
-#: src/components/buttons/PrintingActions.tsx:104
+#: src/components/buttons/PrintingActions.tsx:102
 msgid "Label printing completed successfully"
 msgstr "Címke nyomtatás sikeres"
 
-#: src/components/buttons/PrintingActions.tsx:110
-#: src/components/buttons/PrintingActions.tsx:148
+#: src/components/buttons/PrintingActions.tsx:108
+#: src/components/buttons/PrintingActions.tsx:146
 #: src/components/editors/NotesEditor.tsx:73
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
 #: src/components/forms/fields/ApiFormField.tsx:336
@@ -77,35 +77,35 @@ msgstr "Címke nyomtatás sikeres"
 msgid "Error"
 msgstr "Hiba"
 
-#: src/components/buttons/PrintingActions.tsx:111
+#: src/components/buttons/PrintingActions.tsx:109
 msgid "The label could not be generated"
 msgstr "Címkét nem sikerült generálni"
 
-#: src/components/buttons/PrintingActions.tsx:126
+#: src/components/buttons/PrintingActions.tsx:124
 msgid "Print Report"
 msgstr "Jelentés Nyomtatása"
 
-#: src/components/buttons/PrintingActions.tsx:142
+#: src/components/buttons/PrintingActions.tsx:140
 msgid "Generate"
 msgstr "Generálás"
 
-#: src/components/buttons/PrintingActions.tsx:143
+#: src/components/buttons/PrintingActions.tsx:141
 msgid "Report printing completed successfully"
 msgstr "Jelentés nyomtatása sikeres"
 
-#: src/components/buttons/PrintingActions.tsx:149
+#: src/components/buttons/PrintingActions.tsx:147
 msgid "The report could not be generated"
 msgstr "Jelentés generálása sikertelen"
 
-#: src/components/buttons/PrintingActions.tsx:177
+#: src/components/buttons/PrintingActions.tsx:175
 msgid "Printing Actions"
 msgstr "Nyomtatási műveletek"
 
-#: src/components/buttons/PrintingActions.tsx:182
+#: src/components/buttons/PrintingActions.tsx:180
 msgid "Print Labels"
 msgstr "Címkék Nyomtatása"
 
-#: src/components/buttons/PrintingActions.tsx:188
+#: src/components/buttons/PrintingActions.tsx:186
 msgid "Print Reports"
 msgstr "Jelentések nyomtatása"
 
@@ -1000,7 +1000,7 @@ msgid "Search"
 msgstr "Keresés"
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
-#: src/components/modals/AboutInvenTreeModal.tsx:77
+#: src/components/modals/AboutInvenTreeModal.tsx:76
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:316
 msgid "Loading"
 msgstr "Betöltés"
@@ -1170,7 +1170,7 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:112
 #: src/components/importer/ImporterDrawer.tsx:121
-#: src/components/modals/AboutInvenTreeModal.tsx:187
+#: src/components/modals/AboutInvenTreeModal.tsx:186
 #: src/components/modals/ServerInfoModal.tsx:132
 msgid "Close"
 msgstr "Bezárás"
@@ -1311,7 +1311,7 @@ msgid "InvenTree Logo"
 msgstr "InvenTree logó"
 
 #: src/components/items/OnlyStaff.tsx:9
-#: src/components/modals/AboutInvenTreeModal.tsx:44
+#: src/components/modals/AboutInvenTreeModal.tsx:43
 msgid "This information is only available for staff users"
 msgstr "Ez az információ csak a személyzet számára elérhető"
 
@@ -1372,90 +1372,90 @@ msgstr "Link"
 msgid "This will remove the link to the associated barcode"
 msgstr ""
 
-#: src/components/modals/AboutInvenTreeModal.tsx:96
+#: src/components/modals/AboutInvenTreeModal.tsx:95
 msgid "Version Information"
 msgstr "Verzióinformáció"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:100
+#: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Development Version"
 msgstr "Fejlesztői verzió"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:103
+msgid "Up to Date"
+msgstr "Naprakész"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 #~ msgid "Your InvenTree version status is"
 #~ msgstr "Your InvenTree version status is"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:104
-msgid "Up to Date"
-msgstr "Naprakész"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:108
+#: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Update Available"
 msgstr "Frissítés elérhető"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:118
+#: src/components/modals/AboutInvenTreeModal.tsx:117
 msgid "InvenTree Version"
 msgstr "InvenTree verzió"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:124
+#: src/components/modals/AboutInvenTreeModal.tsx:123
 msgid "Commit Hash"
 msgstr "Commit hash"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:129
+#: src/components/modals/AboutInvenTreeModal.tsx:128
 msgid "Commit Date"
 msgstr "Commit dátuma"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:134
+#: src/components/modals/AboutInvenTreeModal.tsx:133
 msgid "Commit Branch"
 msgstr "Commit branch"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:139
+#: src/components/modals/AboutInvenTreeModal.tsx:138
 #: src/components/modals/ServerInfoModal.tsx:37
 msgid "API Version"
 msgstr "API verzió"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:145
+#: src/components/modals/AboutInvenTreeModal.tsx:144
 msgid "Python Version"
 msgstr "Python verzió"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:150
+#: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Django Version"
 msgstr "Django verzió"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:161
+#: src/components/modals/AboutInvenTreeModal.tsx:160
 msgid "Links"
 msgstr "Linkek"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:167
+#: src/components/modals/AboutInvenTreeModal.tsx:166
 #: src/components/nav/NavigationDrawer.tsx:202
 #: src/defaults/actions.tsx:24
 msgid "Documentation"
 msgstr "Dokumentáció"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:168
+#: src/components/modals/AboutInvenTreeModal.tsx:167
 msgid "Source Code"
 msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:168
+msgid "Credits"
+msgstr "Készítők"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 #~ msgid "InvenTree Documentation"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
-msgid "Credits"
-msgstr "Készítők"
+msgid "Mobile App"
+msgstr "MobilApp"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 #~ msgid "View Code on GitHub"
 #~ msgstr "View Code on GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
-msgid "Mobile App"
-msgstr "MobilApp"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Submit Bug Report"
 msgstr "Hibajegy beküldése"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:180
+#: src/components/modals/AboutInvenTreeModal.tsx:179
 msgid "Copy version information"
 msgstr "Verzió információk másolása"
 
@@ -2004,7 +2004,7 @@ msgstr "Ismeretlen model: {model}"
 #: src/tables/build/BuildAllocatedStockTable.tsx:95
 #: src/tables/build/BuildLineTable.tsx:71
 #: src/tables/part/PartTable.tsx:28
-#: src/tables/part/RelatedPartTable.tsx:48
+#: src/tables/part/RelatedPartTable.tsx:49
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:130
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:100
 #: src/tables/sales/SalesOrderAllocationTable.tsx:118
@@ -3550,7 +3550,6 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:613
 #: src/pages/company/SupplierPartDetail.tsx:118
 #: src/tables/ColumnRenderers.tsx:143
-#: src/tables/part/RelatedPartTable.tsx:76
 msgid "Note"
 msgstr ""
 
@@ -4884,6 +4883,7 @@ msgstr ""
 #: src/tables/build/BuildAllocatedStockTable.tsx:104
 #: src/tables/build/BuildLineTable.tsx:324
 #: src/tables/build/BuildOrderTable.tsx:70
+#: src/tables/part/RelatedPartTable.tsx:69
 #: src/tables/sales/SalesOrderLineItemTable.tsx:86
 #: src/tables/stock/StockItemTable.tsx:60
 msgid "IPN"
@@ -5341,7 +5341,7 @@ msgid "ManufacturerPart"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:102
-#: src/tables/part/RelatedPartTable.tsx:68
+#: src/tables/part/RelatedPartTable.tsx:78
 msgid "Part Description"
 msgstr "Alkatrész leírása"
 
@@ -8216,20 +8216,20 @@ msgstr "Virtuális változatok megjelenítése"
 msgid "Show trackable variants"
 msgstr "Követhető változatok megjelenítése"
 
-#: src/tables/part/RelatedPartTable.tsx:93
-#: src/tables/part/RelatedPartTable.tsx:126
+#: src/tables/part/RelatedPartTable.tsx:99
+#: src/tables/part/RelatedPartTable.tsx:132
 msgid "Add Related Part"
 msgstr "Kapcsolódó alkatrész hozzáadása"
-
-#: src/tables/part/RelatedPartTable.tsx:108
-msgid "Delete Related Part"
-msgstr "Kapcsolódó alkatrész törlése"
 
 #: src/tables/part/RelatedPartTable.tsx:109
 #~ msgid "Add related part"
 #~ msgstr "Add related part"
 
-#: src/tables/part/RelatedPartTable.tsx:115
+#: src/tables/part/RelatedPartTable.tsx:114
+msgid "Delete Related Part"
+msgstr "Kapcsolódó alkatrész törlése"
+
+#: src/tables/part/RelatedPartTable.tsx:121
 msgid "Edit Related Part"
 msgstr ""
 
