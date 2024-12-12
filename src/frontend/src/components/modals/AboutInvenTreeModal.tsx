@@ -39,6 +39,10 @@ export function AboutInvenTreeModal({
 }>) {
   const [user] = useUserState(useShallow((state) => [state.user]));
   const [server] = useServerApiState(useShallow((state) => [state.server]));
+  const { isLoading, data } = useQuery({
+    queryKey: ['version'],
+    queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
+  });
 
   if (user?.is_staff != true)
     return (
@@ -46,11 +50,6 @@ export function AboutInvenTreeModal({
         <Trans>This information is only available for staff users</Trans>
       </Text>
     );
-
-  const { isLoading, data } = useQuery({
-    queryKey: ['version'],
-    queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
-  });
 
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup.map((map: AboutLookupRef, idx) => (
