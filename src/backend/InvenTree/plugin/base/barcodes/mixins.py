@@ -3,18 +3,15 @@
 from __future__ import annotations
 
 import logging
-from decimal import Decimal, InvalidOperation
 
-from django.contrib.auth.models import User
-from django.db.models import F, Q
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.models import InvenTreeBarcodeMixin
-from order.models import PurchaseOrder, PurchaseOrderStatus
+from order.models import PurchaseOrder
 from part.models import Part
 from plugin.base.integration.SettingsMixin import SettingsMixin
-from stock.models import StockLocation
 
 logger = logging.getLogger('inventree')
 
@@ -135,14 +132,26 @@ class SupplierBarcodeMixin(BarcodeMixin):
             SupplierPart object or None
         """
         sku = self.supplier_part_number
+        mpn = self.manufacturer_part_number
 
-        if not sku:
+        # Require at least SKU or MPN for lookup
+        if not sku and not mpn:
             return None
 
-        supplier_parts = SupplierPart.objects.filter(SKU=sku)
+        supplier_parts = SupplierPart.objects.all()
 
+        # Filter by supplier
         if supplier := self.get_supplier(cache=True):
             supplier_parts = supplier_parts.filter(supplier=supplier)
+
+        if sku:
+            supplier_parts = supplier_parts.filter(SKU=sku)
+
+        if mpn:
+            manufacturer_parts = ManufacturerPart.objects.filter(MPN=mpn)
+            supplier_parts = supplier_parts.filter(
+                manufacturer_part__in=manufacturer_parts
+            )
 
         # Requires a unique match
         if len(supplier_parts) == 1:
@@ -272,61 +281,124 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         return data
 
-    def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
-        """Try to scan a supplier barcode to receive a purchase order item."""
+    def scan_receive_item(
+        self,
+        barcode_data: str,
+        user,
+        supplier=None,
+        purchase_order=None,
+        location=None,
+        line_item=None,
+        auto_allocate: bool = True,
+        **kwargs,
+    ) -> dict | None:
+        """Attempt to receive an item against a PurchaseOrder via barcode scanning.
+
+        Arguments:
+            barcode_data: The raw barcode data
+            user: The User performing the action
+            supplier: The Company object to receive against (or None)
+            purchase_order: The PurchaseOrder object to receive against (or None)
+            line_item: The PurchaseOrderLineItem object to receive against (or None)
+            location: The StockLocation object to receive into (or None)
+            auto_allocate: If True, automatically receive the item (if possible)
+
+        Returns:
+            A dict object containing the result of the action.
+
+        The more "context" data that can be provided, the better the chances of a successful match.
+        """
         barcode_data = str(barcode_data).strip()
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
 
-        if self.supplier_part_number is None and self.manufacturer_part_number is None:
+        # Extract supplier information
+        supplier = supplier or self.get_supplier(cache=True)
+
+        if not supplier:
+            # No supplier information available
             return None
 
-        supplier = self.get_supplier()
+        # Extract purchase order information
+        purchase_order = purchase_order or self.get_purchase_order()
 
-        supplier_parts = self.get_supplier_parts(
-            sku=self.supplier_part_number,
-            mpn=self.manufacturer_part_number,
-            supplier=supplier,
+        if not purchase_order or purchase_order.supplier != supplier:
+            # Purchase order does not match supplier
+            return None
+
+        # Extract supplier part information
+        if line_item:
+            supplier_part = line_item.part
+        else:
+            supplier_part = self.get_supplier_part()
+
+            # Attempt to find matching line item
+            if supplier_part:
+                line_items = purchase_order.lines.filter(part=supplier_part)
+                if line_items.count() == 1:
+                    line_item = line_items.first()
+
+        if not supplier_part:
+            # No supplier part information available
+            return None
+
+        if not line_item:
+            # No line item information available
+            return None
+
+        if line_item.is_completed():
+            return {'error': _('Line item is already completed')}
+
+        # Extract location information for the line item
+        location = (
+            location
+            or line_item.destination
+            or purchase_order.destination
+            or line_item.part.part.get_default_location()
         )
 
-        if len(supplier_parts) > 1:
-            return {'error': _('Found multiple matching supplier parts for barcode')}
-        elif not supplier_parts:
-            return None
+        # Extract quantity information
+        quantity = self.quantity
 
-        supplier_part = supplier_parts[0]
+        action_required = auto_allocate or location is None or quantity is None
 
-        # If a purchase order is not provided, extract it from the provided data
-        if not purchase_order:
-            matching_orders = self.get_purchase_orders(
-                self.customer_order_number,
-                self.supplier_order_number,
-                supplier=supplier,
+        # At this stage, we have enough information to attempt to receive the item
+        # If auto_allocate is True, attempt to receive the item automatically
+        # Otherwise, return the required information to the client
+        if action_required:
+            # Further information is required
+            # Provide as much of the 'guesswork' as possible
+
+            if quantity is None:
+                quantity = line_item.quantity - line_item.received
+
+            quantity = float(quantity)
+
+            if quantity > line_item.remaining():
+                quantity = line_item.remaining()
+
+            return {
+                'action_required': _(
+                    'Further information required to receive line item'
+                ),
+                'lineitem': {
+                    'pk': line_item.pk,
+                    'quantity': quantity,
+                    'supplier_part': supplier_part.pk,
+                    'purchase_order': purchase_order.pk,
+                    'location': location.pk if location else None,
+                },
+            }
+
+        # Use the information we have to attempt to receive the item into stock
+        try:
+            purchase_order.receive_line_item(
+                line_item, location, quantity, user, barcode=barcode_data
             )
+        except ValidationError:
+            return {'error': _('Error receiving purchase order line item')}
 
-            order = self.customer_order_number or self.supplier_order_number
-
-            if len(matching_orders) > 1:
-                return {
-                    'error': _(f"Found multiple purchase orders matching '{order}'")
-                }
-
-            if len(matching_orders) == 0:
-                return {'error': _(f"No matching purchase order for '{order}'")}
-
-            purchase_order = matching_orders.first()
-
-        if supplier and purchase_order and purchase_order.supplier != supplier:
-            return {'error': _('Purchase order does not match supplier')}
-
-        return self.receive_purchase_order_item(
-            supplier_part,
-            user,
-            quantity=self.quantity,
-            purchase_order=purchase_order,
-            location=location,
-            barcode=barcode_data,
-        )
+        return {'success': _('Received purchase order line item')}
 
     def get_supplier(self, cache: bool = False) -> Company | None:
         """Get the supplier for the SUPPLIER_ID set in the plugin settings.
@@ -450,150 +522,3 @@ class SupplierBarcodeMixin(BarcodeMixin):
         return SupplierBarcodeMixin.split_fields(
             barcode_data, delimiter=DELIMITER, header=HEADER, trailer=TRAILER
         )
-
-    @staticmethod
-    def get_purchase_orders(
-        customer_order_number, supplier_order_number, supplier: Company = None
-    ):
-        """Attempt to find a purchase order from the extracted customer and supplier order numbers."""
-        orders = PurchaseOrder.objects.filter(status=PurchaseOrderStatus.PLACED.value)
-
-        if supplier:
-            orders = orders.filter(supplier=supplier)
-
-        # this works because reference and supplier_reference are not nullable, so if
-        # customer_order_number or supplier_order_number is None, the query won't return anything
-        reference_filter = Q(reference__iexact=customer_order_number)
-        supplier_reference_filter = Q(supplier_reference__iexact=supplier_order_number)
-
-        orders_union = orders.filter(reference_filter | supplier_reference_filter)
-        if orders_union.count() == 1:
-            return orders_union
-        else:
-            orders_intersection = orders.filter(
-                reference_filter & supplier_reference_filter
-            )
-            return orders_intersection if orders_intersection else orders_union
-
-    @staticmethod
-    def get_supplier_parts(
-        sku: str | None = None, supplier: Company = None, mpn: str | None = None
-    ):
-        """Get a supplier part from SKU or by supplier and MPN."""
-        if not (sku or supplier or mpn):
-            return SupplierPart.objects.none()
-
-        supplier_parts = SupplierPart.objects.all()
-
-        if sku:
-            supplier_parts = supplier_parts.filter(SKU__iexact=sku)
-            if len(supplier_parts) == 1:
-                return supplier_parts
-
-        if supplier:
-            supplier_parts = supplier_parts.filter(supplier=supplier.pk)
-            if len(supplier_parts) == 1:
-                return supplier_parts
-
-        if mpn:
-            supplier_parts = supplier_parts.filter(manufacturer_part__MPN__iexact=mpn)
-            if len(supplier_parts) == 1:
-                return supplier_parts
-
-        logger.warning(
-            "Found %d supplier parts for SKU '%s', supplier '%s', MPN '%s'",
-            supplier_parts.count(),
-            sku,
-            supplier.name if supplier else None,
-            mpn,
-        )
-
-        return supplier_parts
-
-    @staticmethod
-    def receive_purchase_order_item(
-        supplier_part: SupplierPart,
-        user: User,
-        quantity: Decimal | str | None = None,
-        purchase_order: PurchaseOrder = None,
-        location: StockLocation = None,
-        barcode: str | None = None,
-    ) -> dict:
-        """Try to receive a purchase order item.
-
-        Returns:
-            A dict object containing:
-                - on success: a "success" message
-                - on partial success: the "lineitem" with quantity and location (both can be None)
-                - on failure: an "error" message
-        """
-        if quantity:
-            try:
-                quantity = Decimal(quantity)
-            except InvalidOperation:
-                logger.warning("Failed to parse quantity '%s'", quantity)
-                quantity = None
-
-        #  find incomplete line_items that match the supplier_part
-        line_items = purchase_order.lines.filter(
-            part=supplier_part.pk, quantity__gt=F('received')
-        )
-        if len(line_items) == 1 or not quantity:
-            line_item = line_items[0]
-        else:
-            # if there are multiple line items and the barcode contains a quantity:
-            # 1. return the first line_item where line_item.quantity == quantity
-            # 2. return the first line_item where line_item.quantity > quantity
-            # 3. return the first line_item
-            for line_item in line_items:
-                if line_item.quantity == quantity:
-                    break
-            else:
-                for line_item in line_items:
-                    if line_item.quantity > quantity:
-                        break
-                else:
-                    line_item = line_items.first()
-
-        if not line_item:
-            return {'error': _('Failed to find pending line item for supplier part')}
-
-        no_stock_locations = False
-        if not location:
-            # try to guess the destination were the stock_part should go
-            # 1. check if it's defined on the line_item
-            # 2. check if it's defined on the part
-            # 3. check if there's 1 or 0 stock locations defined in InvenTree
-            #    -> assume all stock is going into that location (or no location)
-            if (location := line_item.destination) or (
-                location := supplier_part.part.get_default_location()
-            ):
-                pass
-            elif StockLocation.objects.count() <= 1:
-                if not (location := StockLocation.objects.first()):
-                    no_stock_locations = True
-
-        response = {
-            'lineitem': {'pk': line_item.pk, 'purchase_order': purchase_order.pk}
-        }
-
-        if quantity:
-            response['lineitem']['quantity'] = quantity
-        if location:
-            response['lineitem']['location'] = location.pk
-
-        # if either the quantity is missing or no location is defined/found
-        # -> return the line_item found, so the client can gather the missing
-        #    information and complete the action with an 'api-po-receive' call
-        if not quantity or (not location and not no_stock_locations):
-            response['action_required'] = _(
-                'Further information required to receive line item'
-            )
-            return response
-
-        purchase_order.receive_line_item(
-            line_item, location, quantity, user, barcode=barcode
-        )
-
-        response['success'] = _('Received purchase order line item')
-        return response
