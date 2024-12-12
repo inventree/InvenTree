@@ -287,9 +287,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
         barcode_data: str,
         user,
         supplier=None,
+        line_item=None,
         purchase_order=None,
         location=None,
-        line_item=None,
         auto_allocate: bool = True,
         **kwargs,
     ) -> dict | None:
@@ -327,25 +327,24 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # Purchase order does not match supplier
             return None
 
-        # Extract supplier part information
-        if line_item:
-            supplier_part = line_item.part
-        else:
-            supplier_part = self.get_supplier_part()
-
-            # Attempt to find matching line item
-            if supplier_part:
-                line_items = purchase_order.lines.filter(part=supplier_part)
-                if line_items.count() == 1:
-                    line_item = line_items.first()
+        supplier_part = self.get_supplier_part()
 
         if not supplier_part:
             # No supplier part information available
             return None
 
+        # Attempt to find matching line item
+        if not line_item:
+            line_items = purchase_order.lines.filter(part=supplier_part)
+            if line_items.count() == 1:
+                line_item = line_items.first()
+
         if not line_item:
             # No line item information available
             return None
+
+        if line_item.part != supplier_part:
+            return {'error': _('Supplier part does not match line item')}
 
         if line_item.is_completed():
             return {'error': _('Line item is already completed')}
