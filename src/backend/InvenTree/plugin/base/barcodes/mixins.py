@@ -374,33 +374,34 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if quantity > line_item.remaining():
             quantity = line_item.remaining()
 
-        if action_required:
-            # Further information is required
-            # Provide as much of the 'guesswork' as possible
-
-            return {
-                'action_required': _(
-                    'Further information required to receive line item'
-                ),
-                'lineitem': {
-                    'pk': line_item.pk,
-                    'quantity': quantity,
-                    'supplier_part': supplier_part.pk,
-                    'purchase_order': purchase_order.pk,
-                    'location': location.pk if location else None,
-                },
+        # Construct a response object
+        response = {
+            'lineitem': {
+                'pk': line_item.pk,
+                'quantity': quantity,
+                'supplier_part': supplier_part.pk,
+                'purchase_order': purchase_order.pk,
+                'location': location.pk if location else None,
             }
+        }
 
-        # Use the information we have to attempt to receive the item into stock
-        try:
-            purchase_order.receive_line_item(
-                line_item, location, quantity, user, barcode=barcode_data
+        if action_required:
+            # Further information is required to receive the item
+            response['action_required'] = _(
+                'Further information required to receive line item'
             )
-        except ValidationError:
-            log_error('scan_receive_item')
-            return {'error': _('Error receiving purchase order line item')}
+        else:
+            # Use the information we have to attempt to receive the item into stock
+            try:
+                purchase_order.receive_line_item(
+                    line_item, location, quantity, user, barcode=barcode_data
+                )
+                response['success'] = _('Received purchase order line item')
+            except ValidationError:
+                log_error('scan_receive_item')
+                response['error'] = _('Error receiving purchase order line item')
 
-        return {'success': _('Received purchase order line item')}
+        return response
 
     def get_supplier(self, cache: bool = False) -> Company | None:
         """Get the supplier for the SUPPLIER_ID set in the plugin settings.
