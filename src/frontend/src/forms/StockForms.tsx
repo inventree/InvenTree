@@ -467,19 +467,19 @@ function StockOperationsRow({
     props.removeFn(props.idx);
   };
 
-  const useChangeFn = (idx: number, key: string, value: any) => {
+  const callChangeFn = (idx: number, key: string, value: any) => {
     setTimeout(() => props.changeFn(idx, key, value), 0);
   };
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onOpen: () => {
       if (transfer) {
-        useChangeFn(props.idx, 'packaging', record?.packaging || undefined);
+        callChangeFn(props.idx, 'packaging', record?.packaging || undefined);
       }
     },
     onClose: () => {
       if (transfer) {
-        useChangeFn(props.idx, 'packaging', undefined);
+        callChangeFn(props.idx, 'packaging', undefined);
       }
     }
   });
@@ -487,11 +487,11 @@ function StockOperationsRow({
   const [statusOpen, statusHandlers] = useDisclosure(false, {
     onOpen: () => {
       setStatus(record?.status || undefined);
-      useChangeFn(props.idx, 'status', record?.status || undefined);
+      callChangeFn(props.idx, 'status', record?.status || undefined);
     },
     onClose: () => {
       setStatus(undefined);
-      useChangeFn(props.idx, 'status', undefined);
+      callChangeFn(props.idx, 'status', undefined);
     }
   });
 
