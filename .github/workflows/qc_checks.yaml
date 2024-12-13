@@ -132,7 +132,7 @@ jobs:
           pip install --require-hashes -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
+        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # pin@v1
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
@@ -184,7 +184,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3  # pin@main
+        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
         with:
           base: 'api.yaml'
           revision: 'src/backend/InvenTree/schema.yml'
@@ -535,7 +535,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -595,14 +595,14 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses:  actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
         with:
           persist-credentials: false
-      - uses: hynek/setup-cached-uv@v2
+      - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
       - name: Run zizmor
         run: uvx zizmor --format sarif . > results.sarif
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@df409f7d9260372bd5f19e5b04e83cb3c43714ae # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor
