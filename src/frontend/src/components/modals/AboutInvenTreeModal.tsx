@@ -33,23 +33,36 @@ type AboutLookupRef = {
 
 export function AboutInvenTreeModal({
   context,
-  id
-}: ContextModalProps<{
-  modalBody: string;
-}>) {
+  id,
+  innerProps
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) {
   const [user] = useUserState(useShallow((state) => [state.user]));
-  const [server] = useServerApiState(useShallow((state) => [state.server]));
-  const { isLoading, data } = useQuery({
-    queryKey: ['version'],
-    queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
-  });
-
-  if (user?.is_staff != true)
+  if (!user?.is_staff)
     return (
       <Text>
         <Trans>This information is only available for staff users</Trans>
       </Text>
     );
+  return <AboutContent context={context} id={id} innerProps={innerProps} />;
+}
+
+const AboutContent = ({
+  context,
+  id
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) => {
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
+  const { isLoading, data } = useQuery({
+    queryKey: ['version'],
+    queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
+  });
 
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup.map((map: AboutLookupRef, idx) => (
@@ -190,4 +203,4 @@ export function AboutInvenTreeModal({
       </Group>
     </Stack>
   );
-}
+};
