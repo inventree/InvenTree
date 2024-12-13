@@ -40,6 +40,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -74,6 +76,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -96,6 +100,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
@@ -117,6 +123,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
@@ -153,6 +161,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -219,6 +229,7 @@ jobs:
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
+          persist-credentials: false
       - name: Download schema artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
@@ -254,6 +265,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -296,6 +309,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -350,6 +365,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -394,6 +411,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -433,6 +452,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -464,6 +485,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -521,6 +544,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -569,6 +594,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
