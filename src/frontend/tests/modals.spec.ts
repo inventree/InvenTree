@@ -31,9 +31,9 @@ test('Modals as admin', async ({ page }) => {
     .waitFor();
 
   await page.getByRole('tab', { name: 'frontend Packages' }).click();
-  await page.getByRole('button', { name: '@sentry/utils MIT' }).click();
+  await page.getByRole('button', { name: '@sentry/core MIT' }).click();
   await page
-    .getByLabel('@sentry/utilsMIT')
+    .getByLabel('@sentry/coreMIT')
     .getByText('Copyright (c) 2019')
     .waitFor();
 
