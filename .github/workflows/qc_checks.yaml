@@ -171,9 +171,11 @@ jobs:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
+        env:
+          API: ${{ needs.paths-filter.outputs.api }}
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version ${{ needs.paths-filter.outputs.api }} 2>&1)"
+          version="$(python3 .github/scripts/version_check.py only_version ${API} 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
@@ -190,7 +192,9 @@ jobs:
           revision: 'src/backend/InvenTree/schema.yml'
           format: 'html'
       - name: Echoing diff to step
-        run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
+        env:
+          DIFF: ${{ steps.breaking_changes.outputs.diff }}
+        run: echo "${DIFF}" >> $GITHUB_STEP_SUMMARY
 
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
