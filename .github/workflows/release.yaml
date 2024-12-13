@@ -57,7 +57,9 @@ jobs:
       - name: Write version file - SHA
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Write version file - TAG
-        run: cd src/backend/InvenTree/web/static/web/.vite && echo "${{ github.ref_name }}" > tag.txt
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "${REF_NAME}" > tag.txt
+        env:
+          REF_NAME: ${{ github.ref_name }}
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static/web

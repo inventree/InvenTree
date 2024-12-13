@@ -246,7 +246,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
-      wrapper_name: inventree-python
+      WRAPPER_NAME: inventree-python
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
       INVENTREE_ADMIN_USER: testuser
@@ -265,17 +265,17 @@ jobs:
           dev-install: true
           update: true
           npm: true
-      - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+      - name: Download Python Code For `${WRAPPER_NAME}`
+        run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
         run: |
           invoke dev.delete-data -f
           invoke dev.import-fixtures
           invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
-      - name: Run Tests For `${{ env.wrapper_name }}`
+      - name: Run Tests For `${WRAPPER_NAME}`
         run: |
-          cd ${{ env.wrapper_name }}
+          cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
 
