@@ -160,6 +160,9 @@ class BarcodeView(CreateAPIView):
             if result is None:
                 continue
 
+            if len(result) == 0:
+                continue
+
             if 'error' in result:
                 logger.info(
                     '%s.scan(...) returned an error: %s',
@@ -170,12 +173,10 @@ class BarcodeView(CreateAPIView):
                     plugin = current_plugin
                     response = result
             else:
+                # Return the first successful match
                 plugin = current_plugin
                 response = result
-
-                # Break on the first successful match
-                if 'success' in response:
-                    break
+                break
 
         response['plugin'] = plugin.name if plugin else None
         response['barcode_data'] = barcode

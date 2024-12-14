@@ -9,6 +9,8 @@ from typing import TypedDict
 from django.core.exceptions import ValidationError
 from django.templatetags.static import static
 
+from InvenTree.exceptions import log_error
+
 logger = logging.getLogger('inventree')
 
 _icon_packs = None
@@ -77,6 +79,7 @@ def get_icon_packs():
             try:
                 icon_packs.extend(plugin.icon_packs())
             except Exception as e:
+                log_error('get_icon_packs')
                 logger.warning('Error loading icon pack from plugin %s: %s', plugin, e)
 
         _icon_packs = {pack.prefix: pack for pack in icon_packs}

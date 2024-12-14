@@ -376,12 +376,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
         action_required = not auto_allocate or location is None or quantity is None
 
         if quantity is None:
-            quantity = line_item.quantity - line_item.received
+            quantity = line_item.remaining()
 
         quantity = float(quantity)
-
-        if quantity > line_item.remaining():
-            quantity = line_item.remaining()
 
         # Construct a response object
         response = {
@@ -406,9 +403,13 @@ class SupplierBarcodeMixin(BarcodeMixin):
                     line_item, location, quantity, user, barcode=barcode_data
                 )
                 response['success'] = _('Received purchase order line item')
-            except ValidationError:
+            except ValidationError as e:
+                # Pass a ValidationError back to the client
+                response['error'] = e.message
+            except Exception:
+                # Handle any other exceptions
                 log_error('scan_receive_item')
-                response['error'] = _('Error receiving purchase order line item')
+                response['error'] = _('Failed to receive line item')
 
         return response
 
