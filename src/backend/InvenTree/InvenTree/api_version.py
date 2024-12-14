@@ -9,7 +9,7 @@ INVENTREE_API_VERSION = 293
 INVENTREE_API_TEXT = """
 
 v293 - 2024-12-14 : https://github.com/inventree/InvenTree/pull/8658
-    - Adds additional fields to the supplier barcode API endpoints
+    - Adds new fields to the supplier barcode API endpoints
 
 v292 - 2024-12-03 : https://github.com/inventree/InvenTree/pull/8625
     - Add "on_order" and "in_stock" annotations to SupplierPart API
