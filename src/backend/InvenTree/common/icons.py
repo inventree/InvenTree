@@ -9,8 +9,6 @@ from typing import TypedDict
 from django.core.exceptions import ValidationError
 from django.templatetags.static import static
 
-from InvenTree.exceptions import log_error
-
 logger = logging.getLogger('inventree')
 
 _icon_packs = None
@@ -73,6 +71,7 @@ def get_icon_packs():
             )
         ]
 
+        from InvenTree.exceptions import log_error
         from plugin import registry
 
         for plugin in registry.with_mixin('icon_pack', active=True):
