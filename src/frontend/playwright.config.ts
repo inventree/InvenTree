@@ -3,9 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
-  timeout: 60000,
+  timeout: 90000,
   forbidOnly: !!process.env.CI,
-  retries: 1,
+  retries: 0,
   workers: process.env.CI ? 3 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
