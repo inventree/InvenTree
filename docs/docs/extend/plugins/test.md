@@ -79,3 +79,94 @@ def test_reformat_price(self):
 The function assertEqual flags an error in case the two arguments are not equal. In equal case
 no error is flagged and the test passes. The test function tests five different
 input variations. More might be added based on the requirements.
+
+### Involve the database
+Now we test a function that uses InvenTree database objects. The Function checks if a part
+should be updated with latest data from a supplier. Parts that are not purchasable or inactive
+should not be updated. The function in the plugin has the following form:
+
+```
+class MySupplier():
+
+    def should_be_updated(self, my_part):
+
+        ...
+        return True/False
+```
+
+To test this function parts are needed in the database. The test framework creates
+a dummy database for each run which is empty. Parts for testing need to be added.
+The test function looks like:
+
+```
+from part.models import Part, PartCategory
+
+
+def test_should_be_updated(self):
+        test_cat = PartCategory.objects.create(name='test_cat')
+        active_part = Part.objects.create(
+            name='Part1',
+            IPN='IPN1',
+            category=test_cat,
+            active=True,
+            purchaseable=True,
+            component=True,
+            virtual=False)
+        inactive_part = Part.objects.create(
+            name='Part2',
+            IPN='IPN2',
+            category=test_cat,
+            active=False,
+            purchaseable=True,
+            component=True,
+            virtual=False)
+        non_purchasable_part = Part.objects.create(
+            name='Part3',
+            IPN='IPN3',
+            category=test_cat,
+            active=True,
+            purchaseable=False,
+            component=True,
+            virtual=False)
+
+        self.assertEqual(MySupplier.should_be_updated(self, active_part, True, 'Active part')
+        self.assertEqual(MySupplier.should_be_updated(self, inactive_part, False, 'Inactive part')
+        self.assertEqual(MySupplier.should_be_updated(self, non_purchasable_part, False, 'Non purchasable part')
+```
+
+A category with three parts are created. One part is active, one is inactive and one is not
+purchasable. The function should_be_updated is tested with all
+three parts. The first test should return True, the others False. A message was added to the assert
+function for better clarity of test results.
+
+The dummy database is completely separate from the one that you might use for development
+and it is deleted after the test. There is no danger for your development database.
+
+In case everything if OK, the result looks like:
+
+```
+----------------------------------------------------------------------
+Ran 1 tests in 0.809s
+
+OK
+Destroying test database for alias 'default'...
+```
+
+In case of a problem you will see something like:
+
+```
+======================================================================
+FAIL: test_should_be_updated (inventree_supplier_sync.test_supplier_sync.TestSyncPlugin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/michael/.local/lib/python3.10/site-packages/inventree_supplier_sync/test_supplier_sync.py", line 73, in test_should_be_updated
+    self.assertEqual(SupplierSyncPlugin.should_be_updated(test_class, part_ignore_not_pur), False, 'Part not purchasable')
+AssertionError: True != False : Part not purchasable
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.679s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+
+```
