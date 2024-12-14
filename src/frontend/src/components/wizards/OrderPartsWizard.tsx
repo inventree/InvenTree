@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Alert, Group, Paper, Tooltip } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -38,13 +39,11 @@ function SelectPartsStep({
   records,
   onRemovePart,
   onSelectSupplierPart,
-  onSelectQuantity,
   onSelectPurchaseOrder
 }: {
   records: PartOrderRecord[];
   onRemovePart: (part: any) => void;
   onSelectSupplierPart: (partId: number, supplierPart: any) => void;
-  onSelectQuantity: (partId: number, quantity: number) => void;
   onSelectPurchaseOrder: (partId: number, purchaseOrder: any) => void;
 }) {
   if (records.length === 0) {
@@ -88,6 +87,10 @@ function SelectPartsStep({
   });
 
   const addToOrderFields: ApiFormFieldSet = useMemo(() => {
+    console.log('fields:', selectedRecord);
+    // console.log("instance:", partInstance.instance);
+    console.log('records:', records);
+
     return {
       order: {
         value: selectedRecord?.purchase_order?.pk,
@@ -97,9 +100,11 @@ function SelectPartsStep({
         value: selectedRecord?.supplier_part?.pk,
         disabled: true
       },
+      reference: {},
       quantity: {
         // TODO: Auto-fill with the desired quantity
-      }
+      },
+      merge_items: {}
     };
   }, [selectedRecord]);
 
@@ -107,6 +112,7 @@ function SelectPartsStep({
     url: apiUrl(ApiEndpoints.purchase_order_line_list),
     title: t`Add to Purchase Order`,
     fields: addToOrderFields,
+    focus: 'quantity',
     initialData: {
       order: selectedRecord?.purchase_order?.pk,
       part: selectedRecord?.supplier_part?.pk,
@@ -170,7 +176,6 @@ function SelectPartsStep({
                 }}
               />
             </Expand>
-            {/* TODO: View selected supplier part */}
             <AddItemButton
               tooltip={t`New supplier part`}
               tooltipAlignment='top'
@@ -208,7 +213,6 @@ function SelectPartsStep({
                 }}
               />
             </Expand>
-            {/* TODO: View selected purchase order */}
             <AddItemButton
               tooltip={t`New purchase order`}
               tooltipAlignment='top'
@@ -269,11 +273,21 @@ export default function OrderPartsWizard({
   // Remove a part from the selected parts list
   const removePart = useCallback(
     (part: any) => {
-      setSelectedParts(
-        selectedParts.filter(
-          (record: PartOrderRecord) => record.part?.pk !== part.pk
-        )
+      const records = selectedParts.filter(
+        (record: PartOrderRecord) => record.part?.pk !== part.pk
       );
+
+      setSelectedParts(records);
+
+      // If no parts remain, close the wizard
+      if (records.length === 0) {
+        wizard.closeWizard();
+        showNotification({
+          title: t`Parts Added`,
+          message: t`All selected parts added to a purchase order`,
+          color: 'green'
+        });
+      }
     },
     [selectedParts]
   );
@@ -286,22 +300,6 @@ export default function OrderPartsWizard({
       records.forEach((record: PartOrderRecord, index: number) => {
         if (record.part.pk === partId) {
           records[index].supplier_part = supplierPart;
-        }
-      });
-
-      setSelectedParts(records);
-    },
-    [selectedParts]
-  );
-
-  // Select quantity for a part
-  const selectQuantity = useCallback(
-    (partId: number, quantity: number) => {
-      const records = [...selectedParts];
-
-      records.forEach((record: PartOrderRecord, index: number) => {
-        if (record.part.pk === partId) {
-          records[index].quantity = quantity;
         }
       });
 
@@ -334,7 +332,6 @@ export default function OrderPartsWizard({
           records={selectedParts}
           onRemovePart={removePart}
           onSelectSupplierPart={selectSupplierPart}
-          onSelectQuantity={selectQuantity}
           onSelectPurchaseOrder={selectPurchaseOrder}
         />
       );
