@@ -131,6 +131,11 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         Returns:
             SupplierPart object or None
+
+        - Filter by the Supplier ID associated with the plugin
+        - Filter by SKU (if available)
+        - If more than one match is found, filter by MPN (if available)
+
         """
         sku = self.supplier_part_number
         mpn = self.manufacturer_part_number
@@ -148,11 +153,12 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if sku:
             supplier_parts = supplier_parts.filter(SKU=sku)
 
-        if mpn:
+        if mpn and supplier_parts.count() > 1:
             manufacturer_parts = ManufacturerPart.objects.filter(MPN=mpn)
-            supplier_parts = supplier_parts.filter(
-                manufacturer_part__in=manufacturer_parts
-            )
+            if manufacturer_parts.count() > 0:
+                supplier_parts = supplier_parts.filter(
+                    manufacturer_part__in=manufacturer_parts
+                )
 
         # Requires a unique match
         if len(supplier_parts) == 1:
@@ -275,10 +281,14 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 has_match = True
                 data[k] = v.format_matched_response()
 
-        if has_match:
-            data['success'] = _('Found matching item')
-        else:
-            data['error'] = _('No matching item found')
+        if not has_match:
+            return None
+
+        # Add in supplier information (if available)
+        if supplier := self.get_supplier():
+            data['company'] = supplier.format_matched_response()
+
+        data['success'] = _('Found matching item')
 
         return data
 

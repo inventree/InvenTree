@@ -151,7 +151,11 @@ class BarcodeView(CreateAPIView):
         response = {}
 
         for current_plugin in plugins:
-            result = current_plugin.scan(barcode)
+            try:
+                result = current_plugin.scan(barcode)
+            except Exception:
+                log_error('BarcodeView.scan_barcode')
+                continue
 
             if result is None:
                 continue
@@ -538,15 +542,19 @@ class BarcodePOReceive(BarcodeView):
         plugin_response = None
 
         for current_plugin in plugins:
-            result = current_plugin.scan_receive_item(
-                barcode,
-                request.user,
-                supplier=supplier,
-                purchase_order=purchase_order,
-                location=location,
-                line_item=line_item,
-                auto_allocate=auto_allocate,
-            )
+            try:
+                result = current_plugin.scan_receive_item(
+                    barcode,
+                    request.user,
+                    supplier=supplier,
+                    purchase_order=purchase_order,
+                    location=location,
+                    line_item=line_item,
+                    auto_allocate=auto_allocate,
+                )
+            except Exception:
+                log_error('BarcodePOReceive.handle_barcode')
+                continue
 
             if result is None:
                 continue
