@@ -33,18 +33,32 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
             part=part, manufacturer=manufacturer, MPN='LDK320ADU33R'
         )
 
-        supplier = Company.objects.create(name='Supplier', is_supplier=True)
-        mouser = Company.objects.create(name='Mouser Test', is_supplier=True)
+        digikey_supplier = Company.objects.create(name='Supplier', is_supplier=True)
+        mouser_supplier = Company.objects.create(name='Mouser Test', is_supplier=True)
 
         supplier_parts = [
-            SupplierPart(SKU='296-LM358BIDDFRCT-ND', part=part, supplier=supplier),
-            SupplierPart(SKU='1', part=part, manufacturer_part=mpart1, supplier=mouser),
-            SupplierPart(SKU='2', part=part, manufacturer_part=mpart2, supplier=mouser),
-            SupplierPart(SKU='C312270', part=part, supplier=supplier),
-            SupplierPart(SKU='WBP-302', part=part, supplier=supplier),
+            SupplierPart(
+                SKU='296-LM358BIDDFRCT-ND', part=part, supplier=digikey_supplier
+            ),
+            SupplierPart(SKU='C312270', part=part, supplier=digikey_supplier),
+            SupplierPart(SKU='WBP-302', part=part, supplier=digikey_supplier),
+            SupplierPart(
+                SKU='1', part=part, manufacturer_part=mpart1, supplier=mouser_supplier
+            ),
+            SupplierPart(
+                SKU='2', part=part, manufacturer_part=mpart2, supplier=mouser_supplier
+            ),
         ]
 
         SupplierPart.objects.bulk_create(supplier_parts)
+
+        # Assign supplier information to the plugins
+        # Add supplier information to each custom plugin
+        digikey_plugin = registry.get_plugin('digikeyplugin')
+        digikey_plugin.set_setting('SUPPLIER_ID', digikey_supplier.pk)
+
+        mouser_plugin = registry.get_plugin('mouserplugin')
+        mouser_plugin.set_setting('SUPPLIER_ID', mouser_supplier.pk)
 
     def test_digikey_barcode(self):
         """Test digikey barcode."""
@@ -64,6 +78,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         result = self.post(
             self.SCAN_URL, data={'barcode': DIGIKEY_BARCODE_2}, expected_code=200
         )
+
         self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
 
         supplier_part_data = result.data.get('supplierpart')
@@ -255,10 +270,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         self.assertIn('action_required', response.data)
         item = response.data['lineitem']
         self.assertEqual(item['quantity'], 10.0)
-        self.assertEqual(item['pk'], 3)
         self.assertEqual(item['supplier_part'], 3)
-        self.assertEqual(item['purchase_order'], 1)
-        self.assertEqual(item['location'], 2)
+        self.assertEqual(item['purchase_order'], self.purchase_order2.pk)
+        self.assertEqual(item['location'], self.loc_2.pk)
 
     def test_receive_custom_order_number(self):
         """Test receiving an item from a barcode with a custom order number."""

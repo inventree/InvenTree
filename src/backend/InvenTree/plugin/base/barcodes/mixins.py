@@ -286,7 +286,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         # Add in supplier information (if available)
         if supplier := self.get_supplier():
-            data['company'] = supplier.format_matched_response()
+            data['company'] = {'pk': supplier.pk}
 
         data['success'] = _('Found matching item')
 
