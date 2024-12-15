@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from company.models import Company, ManufacturerPart, SupplierPart
@@ -153,6 +154,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if sku:
             supplier_parts = supplier_parts.filter(SKU=sku)
 
+        # Attempt additional filtering by MPN if multiple matches are found
         if mpn and supplier_parts.count() > 1:
             manufacturer_parts = ManufacturerPart.objects.filter(MPN=mpn)
             if manufacturer_parts.count() > 0:
@@ -181,6 +183,20 @@ class SupplierBarcodeMixin(BarcodeMixin):
             return None
 
         parts = ManufacturerPart.objects.filter(MPN=mpn)
+
+        if supplier := self.get_supplier(cache=True):
+            # Manufacturer part must be associated with the supplier
+            # Case 1: Manufactured by this supplier
+            q1 = Q(manufacturer=supplier)
+            # Case 2: Supplied by this supplier
+            m = (
+                SupplierPart.objects.filter(supplier=supplier)
+                .values_list('manufacturer_part', flat=True)
+                .distinct()
+            )
+            q2 = Q(pk__in=m)
+
+            parts = parts.filter(q1 | q2).distinct()
 
         # Requires a unique match
         if len(parts) == 1:

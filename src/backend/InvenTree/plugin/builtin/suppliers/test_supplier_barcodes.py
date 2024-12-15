@@ -270,8 +270,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         self.assertIn('action_required', response.data)
         item = response.data['lineitem']
         self.assertEqual(item['quantity'], 10.0)
-        self.assertEqual(item['supplier_part'], 3)
-        self.assertEqual(item['purchase_order'], self.purchase_order2.pk)
+        self.assertEqual(item['purchase_order'], self.purchase_order1.pk)
         self.assertEqual(item['location'], self.loc_2.pk)
 
     def test_receive_custom_order_number(self):
