@@ -356,7 +356,7 @@ export default function StockDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [stockitem, instanceQuery, enableExpiry]);
+  }, [stockitem, instanceQuery.isFetching, enableExpiry]);
 
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
@@ -751,6 +751,7 @@ export default function StockDetail() {
             tooltip: t`Order Stock`,
             hidden:
               !user.hasAddRole(UserRoles.purchase_order) ||
+              !stockitem.part_detail?.active ||
               !stockitem.part_detail?.purchaseable,
             icon: <IconShoppingCart color='blue' />,
             onClick: () => {

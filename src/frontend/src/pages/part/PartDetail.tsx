@@ -35,7 +35,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { api } from '../../App';
-import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -897,18 +896,6 @@ export default function PartDetail() {
         enableReports
         enableLabels
       />,
-      <ActionButton
-        tooltip={t`Order Parts`}
-        icon={<IconShoppingCart />}
-        hidden={
-          !part.active ||
-          !part.purchaseable ||
-          !user.hasAddRole(UserRoles.purchase_order)
-        }
-        onClick={() => {
-          orderPartsWizard.openWizard();
-        }}
-      />,
       <ActionDropdown
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
@@ -933,6 +920,18 @@ export default function PartDetail() {
             hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => {
               part.pk && transferStockItems.open();
+            }
+          },
+          {
+            name: t`Order`,
+            tooltip: t`Order Stock`,
+            hidden:
+              !user.hasAddRole(UserRoles.purchase_order) ||
+              !part?.active ||
+              !part?.purchaseable,
+            icon: <IconShoppingCart color='blue' />,
+            onClick: () => {
+              orderPartsWizard.openWizard();
             }
           }
         ]}
