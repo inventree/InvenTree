@@ -24,7 +24,8 @@ export function NotificationTable({
       {
         accessor: 'age_human',
         title: t`Age`,
-        sortable: true
+        sortable: true,
+        ordering: 'creation'
       },
       {
         accessor: 'category',

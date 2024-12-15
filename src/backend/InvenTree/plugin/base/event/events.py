@@ -160,7 +160,7 @@ def allow_table_event(table_name):
         'part_partstocktakereport',
     ]
 
-    return not table_name in ignore_tables
+    return table_name not in ignore_tables
 
 
 @receiver(post_save)

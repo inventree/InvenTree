@@ -15,6 +15,7 @@ export interface DashboardWidgetProps {
   label: string;
   title: string;
   description: string;
+  enabled?: boolean;
   minWidth?: number;
   minHeight?: number;
   render: () => JSX.Element;
@@ -35,12 +36,9 @@ export default function DashboardWidget({
   removing: boolean;
   onRemove: () => void;
 }>) {
-  // TODO: Implement visibility check
-  //     if (!props?.visible?.() == false) {
-  //     return null;
-  //   }
-
-  // TODO: Add button to remove widget (if "editing")
+  if (item.enabled == false) {
+    return null;
+  }
 
   return (
     <Paper withBorder key={item.label} shadow='sm' p='xs'>

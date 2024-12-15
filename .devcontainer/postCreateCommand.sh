@@ -14,7 +14,7 @@ invoke update -s
 invoke dev.setup-dev
 
 # Install required frontend packages
-invoke dev.frontend-install
+invoke int.frontend-install
 
 # remove existing gitconfig created by "Avoiding Dubious Ownership" step
 # so that it gets copied from host to the container to have your global
