@@ -29,7 +29,7 @@ import {
   IconTruckReturn,
   IconVersions
 } from '@tabler/icons-react';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
@@ -418,41 +418,13 @@ export default function PartDetail() {
     ];
 
     // Add in price range data
-    if (id) {
+    if (part.pricing_min || part.pricing_max) {
       br.push({
         type: 'string',
         name: 'pricing',
         label: t`Price Range`,
         value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['pricing', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_pricing, null, {
-                id: id
-              });
-
-              return api
-                .get(url)
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data;
-                    default:
-                      return {};
-                  }
-                })
-                .catch(() => {
-                  return {};
-                });
-            }
-          });
-
-          return (
-            data.overall_min &&
-            `${formatPriceRange(data.overall_min, data.overall_max)}${
-              part.units && ` / ${part.units}`
-            }`
-          );
+          return formatPriceRange(part.pricing_min, part.pricing_max);
         }
       });
     }
@@ -464,79 +436,6 @@ export default function PartDetail() {
       hidden: !part.trackable || !data.latest_serial_number,
       icon: 'serial'
     });
-
-    // Add in stocktake information
-    if (id && part.last_stocktake) {
-      br.push({
-        type: 'string',
-        name: 'stocktake',
-        label: t`Last Stocktake`,
-        unit: true,
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['stocktake', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-              return api
-                .get(url, { params: { part: id, ordering: 'date' } })
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      if (response.data.length > 0) {
-                        return response.data[response.data.length - 1];
-                      } else {
-                        return {};
-                      }
-                    default:
-                      return {};
-                  }
-                })
-                .catch(() => {
-                  return {};
-                });
-            }
-          });
-
-          if (data?.quantity) {
-            return `${data.quantity} (${data.date})`;
-          } else {
-            return '-';
-          }
-        }
-      });
-
-      br.push({
-        type: 'string',
-        name: 'stocktake_user',
-        label: t`Stocktake By`,
-        badge: 'user',
-        icon: 'user',
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['stocktake', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-              return api
-                .get(url, { params: { part: id, ordering: 'date' } })
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data[response.data.length - 1];
-                    default:
-                      return {};
-                  }
-                })
-                .catch(() => {
-                  return {};
-                });
-            }
-          });
-          return data?.user;
-        }
-      });
-    }
 
     return part ? (
       <ItemDetailsGrid>
@@ -567,7 +466,14 @@ export default function PartDetail() {
     ) : (
       <Skeleton />
     );
-  }, [globalSettings, part, serials, instanceQuery]);
+  }, [
+    globalSettings,
+    part,
+    id,
+    serials,
+    instanceQuery.isFetching,
+    instanceQuery.data
+  ]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -737,7 +643,7 @@ export default function PartDetail() {
         model_id: part?.pk
       })
     ];
-  }, [id, part, user, globalSettings, userSettings]);
+  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
@@ -822,19 +728,18 @@ export default function PartDetail() {
     });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
-  const breadcrumbs = useMemo(
-    () => [
+  const breadcrumbs = useMemo(() => {
+    return [
       { name: t`Parts`, url: '/part' },
       ...(part.category_path ?? []).map((c: any) => ({
         name: c.name,
         url: getDetailUrl(ModelType.partcategory, c.pk)
       }))
-    ],
-    [part]
-  );
+    ];
+  }, [part]);
 
   const badges: ReactNode[] = useMemo(() => {
-    if (instanceQuery.isLoading || instanceQuery.isFetching) {
+    if (instanceQuery.isFetching) {
       return [];
     }
 
@@ -885,7 +790,7 @@ export default function PartDetail() {
         key='inactive'
       />
     ];
-  }, [part, instanceQuery]);
+  }, [part, instanceQuery.isFetching]);
 
   const partFields = usePartFields({ create: false });
 
