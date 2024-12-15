@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-04 07:01\n"
+"PO-Revision-Date: 2024-12-10 10:27\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -30,7 +30,7 @@ msgstr "Ocorreu um erro ao renderizar este componente. Consulte o console para o
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/buttons/AdminButton.tsx:87
+#: src/components/buttons/AdminButton.tsx:85
 msgid "Open in admin interface"
 msgstr "Abrir na interface de administrador"
 
@@ -46,20 +46,20 @@ msgstr "Copiado"
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/components/buttons/PrintingActions.tsx:97
+#: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
 msgstr "Imprimir Etiqueta"
 
-#: src/components/buttons/PrintingActions.tsx:103
+#: src/components/buttons/PrintingActions.tsx:101
 msgid "Print"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:104
+#: src/components/buttons/PrintingActions.tsx:102
 msgid "Label printing completed successfully"
 msgstr "Impressão da etiqueta concluída com sucesso"
 
-#: src/components/buttons/PrintingActions.tsx:110
-#: src/components/buttons/PrintingActions.tsx:148
+#: src/components/buttons/PrintingActions.tsx:108
+#: src/components/buttons/PrintingActions.tsx:146
 #: src/components/editors/NotesEditor.tsx:73
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
 #: src/components/forms/fields/ApiFormField.tsx:336
@@ -77,35 +77,35 @@ msgstr "Impressão da etiqueta concluída com sucesso"
 msgid "Error"
 msgstr "Erro"
 
-#: src/components/buttons/PrintingActions.tsx:111
+#: src/components/buttons/PrintingActions.tsx:109
 msgid "The label could not be generated"
 msgstr "A etiqueta não pôde ser gerada"
 
-#: src/components/buttons/PrintingActions.tsx:126
+#: src/components/buttons/PrintingActions.tsx:124
 msgid "Print Report"
 msgstr "Imprimir Relatório"
 
-#: src/components/buttons/PrintingActions.tsx:142
+#: src/components/buttons/PrintingActions.tsx:140
 msgid "Generate"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:143
+#: src/components/buttons/PrintingActions.tsx:141
 msgid "Report printing completed successfully"
 msgstr "Impressão de relatório concluída com sucesso"
 
-#: src/components/buttons/PrintingActions.tsx:149
+#: src/components/buttons/PrintingActions.tsx:147
 msgid "The report could not be generated"
 msgstr "O relatório não pôde ser gerado"
 
-#: src/components/buttons/PrintingActions.tsx:177
+#: src/components/buttons/PrintingActions.tsx:175
 msgid "Printing Actions"
 msgstr "Opções de Impressão"
 
-#: src/components/buttons/PrintingActions.tsx:182
+#: src/components/buttons/PrintingActions.tsx:180
 msgid "Print Labels"
 msgstr "Imprimir Etiquetas"
 
-#: src/components/buttons/PrintingActions.tsx:188
+#: src/components/buttons/PrintingActions.tsx:186
 msgid "Print Reports"
 msgstr "Imprimir Relatórios"
 
@@ -1001,7 +1001,7 @@ msgid "Search"
 msgstr "Buscar"
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
-#: src/components/modals/AboutInvenTreeModal.tsx:77
+#: src/components/modals/AboutInvenTreeModal.tsx:76
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:316
 msgid "Loading"
 msgstr "A carregar"
@@ -1171,7 +1171,7 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:112
 #: src/components/importer/ImporterDrawer.tsx:121
-#: src/components/modals/AboutInvenTreeModal.tsx:187
+#: src/components/modals/AboutInvenTreeModal.tsx:186
 #: src/components/modals/ServerInfoModal.tsx:132
 msgid "Close"
 msgstr ""
@@ -1312,7 +1312,7 @@ msgid "InvenTree Logo"
 msgstr "Logotipo do InvenTree"
 
 #: src/components/items/OnlyStaff.tsx:9
-#: src/components/modals/AboutInvenTreeModal.tsx:44
+#: src/components/modals/AboutInvenTreeModal.tsx:43
 msgid "This information is only available for staff users"
 msgstr "Esta informação está disponível apenas para utilizadores da equipa"
 
@@ -1373,90 +1373,90 @@ msgstr "Ligação"
 msgid "This will remove the link to the associated barcode"
 msgstr ""
 
-#: src/components/modals/AboutInvenTreeModal.tsx:96
+#: src/components/modals/AboutInvenTreeModal.tsx:95
 msgid "Version Information"
 msgstr "Informação da versão"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:100
+#: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Development Version"
 msgstr "Versão de desenvolvimento"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:103
+msgid "Up to Date"
+msgstr "Atualizado"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 #~ msgid "Your InvenTree version status is"
 #~ msgstr "Your InvenTree version status is"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:104
-msgid "Up to Date"
-msgstr "Atualizado"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:108
+#: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Update Available"
 msgstr "Atualização disponível"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:118
+#: src/components/modals/AboutInvenTreeModal.tsx:117
 msgid "InvenTree Version"
 msgstr "Versão do InvenTree"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:124
+#: src/components/modals/AboutInvenTreeModal.tsx:123
 msgid "Commit Hash"
 msgstr "Hash do Commit"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:129
+#: src/components/modals/AboutInvenTreeModal.tsx:128
 msgid "Commit Date"
 msgstr "Data do Commit"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:134
+#: src/components/modals/AboutInvenTreeModal.tsx:133
 msgid "Commit Branch"
 msgstr "Commit Branch"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:139
+#: src/components/modals/AboutInvenTreeModal.tsx:138
 #: src/components/modals/ServerInfoModal.tsx:37
 msgid "API Version"
 msgstr "Versão da API"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:145
+#: src/components/modals/AboutInvenTreeModal.tsx:144
 msgid "Python Version"
 msgstr "Versão do Python"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:150
+#: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Django Version"
 msgstr "Versão do Django"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:161
+#: src/components/modals/AboutInvenTreeModal.tsx:160
 msgid "Links"
 msgstr "Ligações"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:167
+#: src/components/modals/AboutInvenTreeModal.tsx:166
 #: src/components/nav/NavigationDrawer.tsx:202
 #: src/defaults/actions.tsx:24
 msgid "Documentation"
 msgstr "Documentação"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:168
+#: src/components/modals/AboutInvenTreeModal.tsx:167
 msgid "Source Code"
 msgstr ""
+
+#: src/components/modals/AboutInvenTreeModal.tsx:168
+msgid "Credits"
+msgstr "Créditos"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 #~ msgid "InvenTree Documentation"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
-msgid "Credits"
-msgstr "Créditos"
+msgid "Mobile App"
+msgstr "Aplicação móvel"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 #~ msgid "View Code on GitHub"
 #~ msgstr "View Code on GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
-msgid "Mobile App"
-msgstr "Aplicação móvel"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Submit Bug Report"
 msgstr "Submeter Relatório de Erro"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:180
+#: src/components/modals/AboutInvenTreeModal.tsx:179
 msgid "Copy version information"
 msgstr "Copiar informação da versão"
 
@@ -2005,7 +2005,7 @@ msgstr "Modelo desconhecido: {model}"
 #: src/tables/build/BuildAllocatedStockTable.tsx:95
 #: src/tables/build/BuildLineTable.tsx:71
 #: src/tables/part/PartTable.tsx:28
-#: src/tables/part/RelatedPartTable.tsx:48
+#: src/tables/part/RelatedPartTable.tsx:49
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:130
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:100
 #: src/tables/sales/SalesOrderAllocationTable.tsx:118
@@ -3551,7 +3551,6 @@ msgstr "Embalagem"
 #: src/forms/PurchaseOrderForms.tsx:613
 #: src/pages/company/SupplierPartDetail.tsx:118
 #: src/tables/ColumnRenderers.tsx:143
-#: src/tables/part/RelatedPartTable.tsx:76
 msgid "Note"
 msgstr "Nota"
 
@@ -4885,6 +4884,7 @@ msgstr ""
 #: src/tables/build/BuildAllocatedStockTable.tsx:104
 #: src/tables/build/BuildLineTable.tsx:324
 #: src/tables/build/BuildOrderTable.tsx:70
+#: src/tables/part/RelatedPartTable.tsx:69
 #: src/tables/sales/SalesOrderLineItemTable.tsx:86
 #: src/tables/stock/StockItemTable.tsx:60
 msgid "IPN"
@@ -5342,7 +5342,7 @@ msgid "ManufacturerPart"
 msgstr "Peça do Fabricante"
 
 #: src/pages/company/SupplierPartDetail.tsx:102
-#: src/tables/part/RelatedPartTable.tsx:68
+#: src/tables/part/RelatedPartTable.tsx:78
 msgid "Part Description"
 msgstr "Descrição da Peça"
 
@@ -8217,20 +8217,20 @@ msgstr "Mostrar variantes virtuais"
 msgid "Show trackable variants"
 msgstr "Mostrar variantes rastreáveis"
 
-#: src/tables/part/RelatedPartTable.tsx:93
-#: src/tables/part/RelatedPartTable.tsx:126
+#: src/tables/part/RelatedPartTable.tsx:99
+#: src/tables/part/RelatedPartTable.tsx:132
 msgid "Add Related Part"
 msgstr "Adicionar Peça Relacionada"
-
-#: src/tables/part/RelatedPartTable.tsx:108
-msgid "Delete Related Part"
-msgstr "Excluir Peça Relacionada"
 
 #: src/tables/part/RelatedPartTable.tsx:109
 #~ msgid "Add related part"
 #~ msgstr "Add related part"
 
-#: src/tables/part/RelatedPartTable.tsx:115
+#: src/tables/part/RelatedPartTable.tsx:114
+msgid "Delete Related Part"
+msgstr "Excluir Peça Relacionada"
+
+#: src/tables/part/RelatedPartTable.tsx:121
 msgid "Edit Related Part"
 msgstr ""
 

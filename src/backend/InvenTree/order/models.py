@@ -880,6 +880,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     quantity=float(quantity),
                 )
 
+                trigger_event(
+                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
+                )
+
         # Update the number of parts received against the particular line item
         # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
         line.received += quantity
