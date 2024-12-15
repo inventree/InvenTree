@@ -46,14 +46,6 @@ function SelectPartsStep({
   onSelectSupplierPart: (partId: number, supplierPart: any) => void;
   onSelectPurchaseOrder: (partId: number, purchaseOrder: any) => void;
 }) {
-  if (records.length === 0) {
-    return (
-      <Alert color='red' title={t`No parts selected`}>
-        {t`No purchaseable parts selected`}
-      </Alert>
-    );
-  }
-
   const [selectedRecord, setSelectedRecord] = useState<PartOrderRecord | null>(
     null
   );
@@ -87,10 +79,6 @@ function SelectPartsStep({
   });
 
   const addToOrderFields: ApiFormFieldSet = useMemo(() => {
-    console.log('fields:', selectedRecord);
-    // console.log("instance:", partInstance.instance);
-    console.log('records:', records);
-
     return {
       order: {
         value: selectedRecord?.purchase_order?.pk,
@@ -251,6 +239,14 @@ function SelectPartsStep({
       }
     ];
   }, [onRemovePart]);
+
+  if (records.length === 0) {
+    return (
+      <Alert color='red' title={t`No parts selected`}>
+        {t`No purchaseable parts selected`}
+      </Alert>
+    );
+  }
 
   return (
     <>
