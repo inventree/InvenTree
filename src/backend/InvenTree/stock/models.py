@@ -533,7 +533,13 @@ class StockItem(
         # If a non-null value is returned (by any plugin) we will use that
 
         for plugin in registry.with_mixin('validation'):
-            serial_int = plugin.convert_serial_to_int(serial)
+            try:
+                serial_int = plugin.convert_serial_to_int(serial)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.convert_serial_to_int'
+                )
+                serial_int = None
 
             # Save the first returned result
             if serial_int is not None:
@@ -1359,7 +1365,7 @@ class StockItem(
         if self.installed_item_count() > 0:
             return False
 
-        return not self.sales_order is not None
+        return self.sales_order is None
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1542,7 +1548,7 @@ class StockItem(
         if self.belongs_to is not None:
             return False
 
-        return not self.sales_order is not None
+        return self.sales_order is None
 
     @property
     def tracking_info_count(self):
@@ -2138,7 +2144,7 @@ class StockItem(
 
         self.add_tracking_entry(tracking_code, user, notes=notes, deltas=tracking_info)
 
-        self.save()
+        self.save(add_note=False)
 
         # Trigger event for the plugin system
         trigger_event(

@@ -119,7 +119,7 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     # remove groups not listed by SSO if not disabled
     if get_global_setting('SSO_REMOVE_GROUPS'):
         for group in user.groups.all():
-            if not group.name in group_names:
+            if group.name not in group_names:
                 logger.info(f'Removing group {group.name} from {user}')
                 user.groups.remove(group)
 

@@ -580,6 +580,7 @@ class PurchaseOrderLineItemList(
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
         'SKU': 'part__SKU',
+        'IPN': 'part__part__IPN',
         'part_name': 'part__part__name',
         'order': 'order__reference',
         'status': 'order__status',
@@ -594,6 +595,7 @@ class PurchaseOrderLineItemList(
         'received',
         'reference',
         'SKU',
+        'IPN',
         'total_price',
         'target_date',
         'order',

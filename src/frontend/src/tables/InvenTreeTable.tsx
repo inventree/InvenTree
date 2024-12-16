@@ -88,7 +88,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
-  onRowContextMenu?: (record: T, event: any) => void;
+  onCellContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
   noHeader?: boolean;
 };
@@ -568,16 +568,21 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [props.onRowClick, props.onCellClick]
   );
 
-  // Callback when a row is right-clicked
-  const handleRowContextMenu = ({
+  // Callback when a cell is right-clicked
+  const handleCellContextMenu = ({
     record,
+    column,
     event
   }: {
     record: any;
+    column: any;
     event: any;
   }) => {
-    if (props.onRowContextMenu) {
-      return props.onRowContextMenu(record, event);
+    if (column?.noContext === true) {
+      return;
+    }
+    if (props.onCellContextMenu) {
+      return props.onCellContextMenu(record, event);
     } else if (props.rowActions) {
       const empty = () => {};
       const items = props.rowActions(record).map((action) => ({
@@ -693,7 +698,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   overflow: 'hidden'
                 })
               }}
-              onRowContextMenu={handleRowContextMenu}
+              onCellContextMenu={handleCellContextMenu}
               {...optionalParams}
             />
           </Box>

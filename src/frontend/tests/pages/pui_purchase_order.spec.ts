@@ -1,4 +1,5 @@
 import { test } from '../baseFixtures.ts';
+import { baseUrl } from '../defaults.ts';
 import { clickButtonIfVisible, openFilterDrawer } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
@@ -74,6 +75,83 @@ test('Purchase Orders - Filters', async ({ page }) => {
   await page.getByRole('option', { name: 'Created After' }).waitFor();
   await page.getByRole('option', { name: 'Completed After' }).waitFor();
   await page.getByRole('option', { name: 'Target Date After' }).waitFor();
+});
+
+test('Purchase Orders - Order Parts', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Open "Order Parts" wizard from the "parts" table
+  await page.getByRole('tab', { name: 'Parts' }).click();
+  await page
+    .getByLabel('panel-tabs-partcategory')
+    .getByRole('tab', { name: 'Parts' })
+    .click();
+
+  // Select multiple parts
+  for (let ii = 1; ii < 5; ii++) {
+    await page.getByLabel(`Select record ${ii}`, { exact: true }).click();
+  }
+
+  await page.getByLabel('action-menu-part-actions').click();
+  await page.getByLabel('action-menu-part-actions-order-parts').click();
+  await page
+    .getByRole('heading', { name: 'Order Parts' })
+    .locator('div')
+    .first()
+    .waitFor();
+  await page.getByRole('banner').getByRole('button').click();
+
+  // Open "Order Parts" wizard from the "Stock Items" table
+  await page.getByRole('tab', { name: 'Stock' }).click();
+  await page.getByRole('tab', { name: 'Stock Items' }).click();
+
+  // Select multiple stock items
+  for (let ii = 2; ii < 7; ii += 2) {
+    await page.getByLabel(`Select record ${ii}`, { exact: true }).click();
+  }
+
+  await page
+    .getByLabel('Stock Items')
+    .getByLabel('action-menu-stock-actions')
+    .click();
+  await page.getByLabel('action-menu-stock-actions-order-stock').click();
+  await page.getByRole('banner').getByRole('button').click();
+
+  // Order from the part detail page
+  await page.goto(`${baseUrl}/part/69/`);
+  await page.waitForURL('**/part/69/**');
+
+  await page.getByLabel('action-menu-stock-actions').click();
+  await page.getByLabel('action-menu-stock-actions-order').click();
+
+  // Select supplier part
+  await page.getByLabel('related-field-supplier_part').click();
+  await page.getByText('WM1731-ND').click();
+
+  // Option to create a new supplier part
+  await page.getByLabel('action-button-new-supplier-part').click();
+  await page.getByLabel('related-field-supplier', { exact: true }).click();
+  await page.getByText('Future').click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Select purchase order
+  await page.getByLabel('related-field-purchase_order').click();
+  await page.getByText('PO0001').click();
+
+  // Option to create a new purchase order
+  await page.getByLabel('action-button-new-purchase-order').click();
+  await page.getByLabel('related-field-project_code').click();
+  await page.getByText('PRJ-PHO').click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Add the part to the purchase order
+  await page.getByLabel('action-button-add-to-selected').click();
+  await page.getByLabel('number-field-quantity').fill('100');
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page
+    .getByText('All selected parts added to a purchase order')
+    .waitFor();
 });
 
 /**
