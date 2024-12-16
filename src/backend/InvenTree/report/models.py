@@ -416,7 +416,12 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         for plugin in plugins:
             # Let each plugin add its own context data
-            plugin.add_label_context(self, instance, request, context)
+            try:
+                plugin.add_label_context(self, instance, request, context)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.add_label_context'
+                )
 
         return context
 
