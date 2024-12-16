@@ -36,9 +36,12 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
+      cicd: ${{ steps.filter.outputs.cicd }}
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -56,6 +59,8 @@ jobs:
               - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
+            cicd:
+              - '.github/workflows/**'
       - name: Is CI being forced?
         run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
@@ -71,6 +76,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -93,6 +100,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
@@ -114,6 +123,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
@@ -124,7 +135,7 @@ jobs:
           pip install --require-hashes -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
+        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # pin@v1
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
@@ -150,6 +161,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -164,9 +177,11 @@ jobs:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
+        env:
+          API: ${{ needs.paths-filter.outputs.api }}
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version ${{ needs.paths-filter.outputs.api }} 2>&1)"
+          version="$(python3 .github/scripts/version_check.py only_version ${API} 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
@@ -177,13 +192,15 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3  # pin@main
+        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
         with:
           base: 'api.yaml'
           revision: 'src/backend/InvenTree/schema.yml'
           format: 'html'
       - name: Echoing diff to step
-        run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
+        env:
+          DIFF: ${{ steps.breaking_changes.outputs.diff }}
+        run: echo "${DIFF}" >> $GITHUB_STEP_SUMMARY
 
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
@@ -211,13 +228,14 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
         name: Checkout Code
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
+          persist-credentials: false
       - name: Download schema artifact
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
           name: schema.yml
       - name: Move schema to correct location
@@ -225,7 +243,7 @@ jobs:
           echo "Version: $version"
           mkdir export/${version}
           mv schema.yml export/${version}/api.yaml
-      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # pin@v5.0.1
         name: Commit schema changes
         with:
           commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
@@ -238,7 +256,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
-      wrapper_name: inventree-python
+      WRAPPER_NAME: inventree-python
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
       INVENTREE_ADMIN_USER: testuser
@@ -251,6 +269,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -258,17 +278,17 @@ jobs:
           dev-install: true
           update: true
           npm: true
-      - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+      - name: Download Python Code For `${WRAPPER_NAME}`
+        run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
         run: |
           invoke dev.delete-data -f
           invoke dev.import-fixtures
           invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
-      - name: Run Tests For `${{ env.wrapper_name }}`
+      - name: Run Tests For `${WRAPPER_NAME}`
         run: |
-          cd ${{ env.wrapper_name }}
+          cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
 
@@ -292,6 +312,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -349,6 +371,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -393,6 +417,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -432,6 +458,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -463,6 +491,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -520,6 +550,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -537,7 +569,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -568,6 +600,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -587,3 +621,27 @@ jobs:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
           include-hidden-files: true
+
+  zizmor:
+    name: Security [Zizmor]
+    runs-on: ubuntu-20.04
+    needs: ['pre-commit', 'paths-filter']
+    if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
+
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
+      - name: Run zizmor
+        run: uvx zizmor --format sarif . > results.sarif
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@df409f7d9260372bd5f19e5b04e83cb3c43714ae # pin@v3
+        with:
+          sarif_file: results.sarif
+          category: zizmor
