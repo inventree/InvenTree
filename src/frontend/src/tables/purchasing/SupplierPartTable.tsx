@@ -158,7 +158,9 @@ export function SupplierPartTable({
     ];
   }, [params]);
 
-  const supplierPartFields = useSupplierPartFields();
+  const supplierPartFields = useSupplierPartFields({
+    partId: params?.part
+  });
 
   const addSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
@@ -208,7 +210,7 @@ export function SupplierPartTable({
     ];
   }, []);
 
-  const editSupplierPartFields = useSupplierPartFields();
+  const editSupplierPartFields = useSupplierPartFields({});
 
   const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
 
