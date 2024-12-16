@@ -8,9 +8,9 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
+import { generateUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
@@ -28,8 +28,6 @@ export function PrintingActions({
   enableReports?: boolean;
   modelType?: ModelType;
 }) {
-  const { host } = useLocalState.getState();
-
   const userSettings = useUserSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
@@ -116,8 +114,8 @@ export function PrintingActions({
 
       if (response.output) {
         // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
+        const url = generateUrl(response.output);
+        window.open(url.toString(), '_blank');
       }
     }
   });
@@ -154,8 +152,8 @@ export function PrintingActions({
 
       if (response.output) {
         // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
+        const url = generateUrl(response.output);
+        window.open(url.toString(), '_blank');
       }
     }
   });

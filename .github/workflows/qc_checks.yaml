@@ -308,7 +308,7 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@015f24e6818733317a2da2edd6290ab26238649a # pin@v5.0.7
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -440,7 +440,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@015f24e6818733317a2da2edd6290ab26238649a # pin@v5.0.7
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -545,7 +545,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@015f24e6818733317a2da2edd6290ab26238649a # pin@v5.0.7
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

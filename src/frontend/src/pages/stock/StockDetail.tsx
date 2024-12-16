@@ -7,6 +7,7 @@ import {
   IconHistory,
   IconInfoCircle,
   IconPackages,
+  IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -41,6 +42,7 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -48,6 +50,7 @@ import { UserRoles } from '../../enums/Roles';
 import {
   type StockOperationProps,
   useAddStockItem,
+  useAssignStockItem,
   useCountStockItem,
   useRemoveStockItem,
   useStockFields,
@@ -131,7 +134,7 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
-        name: 'status',
+        name: 'status_custom_key',
         type: 'status',
         label: t`Stock Status`,
         model: ModelType.stockitem
@@ -353,7 +356,7 @@ export default function StockDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [stockitem, instanceQuery, enableExpiry]);
+  }, [stockitem, instanceQuery.isFetching, enableExpiry]);
 
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
@@ -588,7 +591,7 @@ export default function StockDetail() {
 
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
-      items: stockitem,
+      items: [stockitem],
       model: ModelType.stockitem,
       refresh: refreshInstance,
       filters: {
@@ -601,6 +604,7 @@ export default function StockDetail() {
   const addStockItem = useAddStockItem(stockActionProps);
   const removeStockItem = useRemoveStockItem(stockActionProps);
   const transferStockItem = useTransferStockItem(stockActionProps);
+  const assignToCustomer = useAssignStockItem(stockActionProps);
 
   const serializeStockFields = useStockItemSerializeFields({
     partId: stockitem.part,
@@ -637,10 +641,12 @@ export default function StockDetail() {
     ),
     fields: {
       location: {},
+      status: {},
       notes: {}
     },
     initialData: {
-      location: stockitem.location ?? stockitem.part_detail?.default_location
+      location: stockitem.location ?? stockitem.part_detail?.default_location,
+      status: stockitem.status_custom_key ?? stockitem.status
     },
     successMessage: t`Item returned to stock`,
     onFormSuccess: () => {
@@ -648,8 +654,20 @@ export default function StockDetail() {
     }
   });
 
+  const orderPartsWizard = OrderPartsWizard({
+    parts: stockitem.part_detail ? [stockitem.part_detail] : []
+  });
+
   const stockActions = useMemo(() => {
-    const inStock = stockitem.in_stock;
+    const inStock =
+      user.hasChangeRole(UserRoles.stock) &&
+      stockitem.quantity > 0 &&
+      !stockitem.sales_order &&
+      !stockitem.belongs_to &&
+      !stockitem.customer &&
+      !stockitem.consumed_by &&
+      !stockitem.is_building;
+
     const serial = stockitem.serial;
     const serialized =
       serial != null &&
@@ -706,6 +724,17 @@ export default function StockDetail() {
             }
           },
           {
+            name: t`Transfer`,
+            tooltip: t`Transfer Stock`,
+            hidden: !inStock,
+            icon: (
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && transferStockItem.open();
+            }
+          },
+          {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
             hidden:
@@ -718,20 +747,21 @@ export default function StockDetail() {
             }
           },
           {
-            name: t`Transfer`,
-            tooltip: t`Transfer Stock`,
-            hidden: !inStock,
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
+            name: t`Order`,
+            tooltip: t`Order Stock`,
+            hidden:
+              !user.hasAddRole(UserRoles.purchase_order) ||
+              !stockitem.part_detail?.active ||
+              !stockitem.part_detail?.purchaseable,
+            icon: <IconShoppingCart color='blue' />,
             onClick: () => {
-              stockitem.pk && transferStockItem.open();
+              orderPartsWizard.openWizard();
             }
           },
           {
             name: t`Return`,
             tooltip: t`Return from customer`,
-            hidden: !stockitem.sales_order,
+            hidden: !stockitem.customer,
             icon: (
               <InvenTreeIcon
                 icon='return_orders'
@@ -740,6 +770,17 @@ export default function StockDetail() {
             ),
             onClick: () => {
               stockitem.pk && returnStockItem.open();
+            }
+          },
+          {
+            name: t`Assign to Customer`,
+            tooltip: t`Assign to a customer`,
+            hidden: !!stockitem.customer,
+            icon: (
+              <InvenTreeIcon icon='customer' iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && assignToCustomer.open();
             }
           }
         ]}
@@ -874,6 +915,8 @@ export default function StockDetail() {
         {transferStockItem.modal}
         {serializeStockItem.modal}
         {returnStockItem.modal}
+        {assignToCustomer.modal}
+        {orderPartsWizard.wizard}
       </Stack>
     </InstanceDetail>
   );

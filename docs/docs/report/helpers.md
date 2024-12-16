@@ -78,6 +78,78 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
+## Database Helpers
+
+A number of helper functions are available for accessing database objects:
+
+### filter_queryset
+
+The `filter_queryset` function allows for arbitrary filtering of the provided querysert. It takes a queryset and a list of filter arguments, and returns a filtered queryset.
+
+
+
+::: report.templatetags.report.filter_queryset
+    options:
+        show_docstring_description: false
+        show_source: False
+
+!!! info "Provided QuerySet"
+    The provided queryset must be a valid Django queryset object, which is already available in the template context.
+
+!!! warning "Advanced Users"
+    The `filter_queryset` function is a powerful tool, but it is also easy to misuse. It assumes that the user has a good understanding of Django querysets and the underlying database structure.
+
+#### Example
+
+In a report template which has a `PurchaseOrder` object available in its context, fetch any line items which have a received quantity greater than zero:
+
+```html
+{% raw %}
+{% load report %}
+
+{% filter_queryset order.lines.all received__gt=0 as received_lines %}
+
+<ul>
+  {% for line in received_lines %}
+  <li>{{ line.part.part.full_name }} - {{ line.received }} / {{ line.quantity }}</li>
+    {% endfor %}
+</ul>
+
+{% endraw %}
+```
+
+### filter_db_model
+
+The `filter_db_model` function allows for filtering of a database model based on a set of filter arguments. It takes a model class and a list of filter arguments, and returns a filtered queryset.
+
+::: report.templatetags.report.filter_db_model
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
+Generate a list of all active customers:
+
+```html
+{% raw %}
+{% load report %}
+
+{% filter_db_model company.company is_customer=True active=True as active_customers %}
+
+<ul>
+    {% for customer in active_customers %}
+    <li>{{ customer.name }}</li>
+    {% endfor %}
+</ul>
+
+{% endraw %}
+```
+
+### Advanced Database Queries
+
+More advanced database filtering should be achieved using a [report plugin](../extend/plugins/report.md), and adding custom context data to the report template.
+
 ## Number Formatting
 
 ### format_number

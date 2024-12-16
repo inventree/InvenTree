@@ -158,7 +158,9 @@ export function SupplierPartTable({
     ];
   }, [params]);
 
-  const supplierPartFields = useSupplierPartFields();
+  const supplierPartFields = useSupplierPartFields({
+    partId: params?.part
+  });
 
   const addSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
@@ -199,11 +201,16 @@ export function SupplierPartTable({
         name: 'supplier_active',
         label: t`Active Supplier`,
         description: t`Show active suppliers`
+      },
+      {
+        name: 'has_stock',
+        label: t`In Stock`,
+        description: t`Show supplier parts with stock`
       }
     ];
   }, []);
 
-  const editSupplierPartFields = useSupplierPartFields();
+  const editSupplierPartFields = useSupplierPartFields({});
 
   const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
 

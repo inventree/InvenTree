@@ -23,6 +23,11 @@ export type ApiFormAdjustFilterType = {
   data: FieldValues;
 };
 
+export type ApiFormFieldChoice = {
+  value: any;
+  display_name: string;
+};
+
 /** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
@@ -49,6 +54,7 @@ export type ApiFormAdjustFilterType = {
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
  * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
+ * @param addRow : Callback function to add a new row to a table field
  * @param onKeyDown : Callback function to get which key was pressed in the form to handle submission on enter
  */
 export type ApiFormFieldType = {
@@ -82,7 +88,7 @@ export type ApiFormFieldType = {
   child?: ApiFormFieldType;
   children?: { [key: string]: ApiFormFieldType };
   required?: boolean;
-  choices?: any[];
+  choices?: ApiFormFieldChoice[];
   hidden?: boolean;
   disabled?: boolean;
   exclude?: boolean;
@@ -94,6 +100,7 @@ export type ApiFormFieldType = {
   adjustValue?: (value: any) => any;
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
+  addRow?: () => any;
   headers?: string[];
   depends_on?: string[];
 };

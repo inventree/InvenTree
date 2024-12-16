@@ -152,6 +152,9 @@ export function ReturnOrderTable({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: returnOrderFields,
+    initialData: {
+      customer: customerId
+    },
     follow: true,
     modelType: ModelType.returnorder
   });
