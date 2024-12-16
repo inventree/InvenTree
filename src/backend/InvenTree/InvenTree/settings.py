@@ -247,7 +247,9 @@ if DEBUG and 'collectstatic' not in sys.argv:
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
 
         print('-', STATICFILES_DIRS[-1])
-STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
+
+# TODO: Remove static i18n compilation entirely
+STATFILES_I18_PROCESSORS = []
 
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
