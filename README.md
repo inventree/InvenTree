@@ -178,7 +178,7 @@ Find a full list of used third-party libraries in [our documentation](https://do
 <p>With ongoing resources provided by:</p>
 
 <p align="center">
-  <a href="https://depot.dev?utm_source=inventree"><img src="https://depot.dev/badges/built-with-depot.svg" alt="Built with Depot" /></a>  
+  <a href="https://depot.dev?utm_source=inventree"><img src="https://depot.dev/badges/built-with-depot.svg" alt="Built with Depot" /></a>
   <a href="https://inventree.org/digitalocean">
     <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="Servers by Digital Ocean">
   </a>
