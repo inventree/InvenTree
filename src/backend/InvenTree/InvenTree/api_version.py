@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 292
+INVENTREE_API_VERSION = 293
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v293 - 2024-12-14 : https://github.com/inventree/InvenTree/pull/8658
+    - Adds new fields to the supplier barcode API endpoints
 
 v292 - 2024-12-03 : https://github.com/inventree/InvenTree/pull/8625
     - Add "on_order" and "in_stock" annotations to SupplierPart API
