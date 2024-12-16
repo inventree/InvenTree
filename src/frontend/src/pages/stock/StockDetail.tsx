@@ -7,6 +7,7 @@ import {
   IconHistory,
   IconInfoCircle,
   IconPackages,
+  IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -41,6 +42,7 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -354,7 +356,7 @@ export default function StockDetail() {
         <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [stockitem, instanceQuery, enableExpiry]);
+  }, [stockitem, instanceQuery.isFetching, enableExpiry]);
 
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
@@ -652,6 +654,10 @@ export default function StockDetail() {
     }
   });
 
+  const orderPartsWizard = OrderPartsWizard({
+    parts: stockitem.part_detail ? [stockitem.part_detail] : []
+  });
+
   const stockActions = useMemo(() => {
     const inStock =
       user.hasChangeRole(UserRoles.stock) &&
@@ -718,6 +724,17 @@ export default function StockDetail() {
             }
           },
           {
+            name: t`Transfer`,
+            tooltip: t`Transfer Stock`,
+            hidden: !inStock,
+            icon: (
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && transferStockItem.open();
+            }
+          },
+          {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
             hidden:
@@ -730,14 +747,15 @@ export default function StockDetail() {
             }
           },
           {
-            name: t`Transfer`,
-            tooltip: t`Transfer Stock`,
-            hidden: !inStock,
-            icon: (
-              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
-            ),
+            name: t`Order`,
+            tooltip: t`Order Stock`,
+            hidden:
+              !user.hasAddRole(UserRoles.purchase_order) ||
+              !stockitem.part_detail?.active ||
+              !stockitem.part_detail?.purchaseable,
+            icon: <IconShoppingCart color='blue' />,
             onClick: () => {
-              stockitem.pk && transferStockItem.open();
+              orderPartsWizard.openWizard();
             }
           },
           {
@@ -898,6 +916,7 @@ export default function StockDetail() {
         {serializeStockItem.modal}
         {returnStockItem.modal}
         {assignToCustomer.modal}
+        {orderPartsWizard.wizard}
       </Stack>
     </InstanceDetail>
   );

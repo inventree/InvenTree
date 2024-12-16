@@ -555,6 +555,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         group: bool = True,
         reference: str = '',
         purchase_price=None,
+        destination=None,
     ):
         """Add a new line item to this purchase order.
 
@@ -562,12 +563,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         * The supplier part matches the supplier specified for this purchase order
         * The quantity is greater than zero
 
-        Args:
+        Arguments:
             supplier_part: The supplier_part to add
             quantity : The number of items to add
             group (bool, optional): If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists). Defaults to True.
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
+            destination (optional): Destination for item. Defaults to None.
 
         Returns:
             The newly created PurchaseOrderLineItem instance
@@ -616,6 +618,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             quantity=quantity,
             reference=reference,
             purchase_price=purchase_price,
+            destination=destination,
         )
 
         line.save()
@@ -1602,6 +1605,10 @@ class PurchaseOrderLineItem(OrderLineItem):
         """Calculate the number of items remaining to be received."""
         r = self.quantity - self.received
         return max(r, 0)
+
+    def is_completed(self) -> bool:
+        """Determine if this lien item has been fully received."""
+        return self.received >= self.quantity
 
     def update_pricing(self):
         """Update pricing information based on the supplier part data."""

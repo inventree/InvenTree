@@ -531,7 +531,13 @@ class StockItem(
         # If a non-null value is returned (by any plugin) we will use that
 
         for plugin in registry.with_mixin('validation'):
-            serial_int = plugin.convert_serial_to_int(serial)
+            try:
+                serial_int = plugin.convert_serial_to_int(serial)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.convert_serial_to_int'
+                )
+                serial_int = None
 
             # Save the first returned result
             if serial_int is not None:
