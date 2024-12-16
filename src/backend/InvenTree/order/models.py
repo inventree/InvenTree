@@ -45,6 +45,7 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
+from order.events import PurchaseOrderEvents, ReturnOrderEvents, SalesOrderEvents
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -635,7 +636,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('purchaseorder.placed', id=self.pk)
+            trigger_event(PurchaseOrderEvents.PLACED, id=self.pk)
 
             # Notify users that the order has been placed
             notify_responsible(
@@ -661,7 +662,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 if line.part and line.part.part:
                     line.part.part.schedule_pricing_update(create=True)
 
-            trigger_event('purchaseorder.completed', id=self.pk)
+            trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
 
     @transaction.atomic
     def issue_order(self):
@@ -729,7 +730,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
 
-            trigger_event('purchaseorder.cancelled', id=self.pk)
+            trigger_event(PurchaseOrderEvents.CANCELLED, id=self.pk)
 
             # Notify users that the order has been canceled
             notify_responsible(
@@ -753,7 +754,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             self.status = PurchaseOrderStatus.ON_HOLD.value
             self.save()
 
-            trigger_event('purchaseorder.hold', id=self.pk)
+            trigger_event(PurchaseOrderEvents.HOLD, id=self.pk)
 
     # endregion
 
@@ -880,6 +881,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     location=location,
                     purchaseorder=self,
                     quantity=float(quantity),
+                )
+
+                trigger_event(
+                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
                 )
 
         # Update the number of parts received against the particular line item
@@ -1143,7 +1148,7 @@ class SalesOrder(TotalPriceMixin, Order):
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('salesorder.issued', id=self.pk)
+            trigger_event(SalesOrderEvents.ISSUED, id=self.pk)
 
     @property
     def can_hold(self):
@@ -1159,7 +1164,7 @@ class SalesOrder(TotalPriceMixin, Order):
             self.status = SalesOrderStatus.ON_HOLD.value
             self.save()
 
-            trigger_event('salesorder.onhold', id=self.pk)
+            trigger_event(SalesOrderEvents.HOLD, id=self.pk)
 
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
@@ -1176,6 +1181,8 @@ class SalesOrder(TotalPriceMixin, Order):
             self.status = SalesOrderStatus.COMPLETE.value
         else:
             self.status = SalesOrderStatus.SHIPPED.value
+
+        if self.shipment_date is None:
             self.shipped_by = user
             self.shipment_date = InvenTree.helpers.current_date()
 
@@ -1186,7 +1193,7 @@ class SalesOrder(TotalPriceMixin, Order):
             if line.part:
                 line.part.schedule_pricing_update(create=True)
 
-        trigger_event('salesorder.completed', id=self.pk)
+        trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
         return True
 
@@ -1212,7 +1219,7 @@ class SalesOrder(TotalPriceMixin, Order):
             for allocation in line.allocations.all():
                 allocation.delete()
 
-        trigger_event('salesorder.cancelled', id=self.pk)
+        trigger_event(SalesOrderEvents.CANCELLED, id=self.pk)
 
         # Notify users that the order has been canceled
         notify_responsible(
@@ -1954,7 +1961,7 @@ class SalesOrderShipment(
             group='sales_order',
         )
 
-        trigger_event('salesordershipment.completed', id=self.pk)
+        trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=self.pk)
 
 
 class SalesOrderExtraLine(OrderExtraLine):
@@ -2279,7 +2286,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.status = ReturnOrderStatus.ON_HOLD.value
             self.save()
 
-            trigger_event('returnorder.hold', id=self.pk)
+            trigger_event(ReturnOrderEvents.HOLD, id=self.pk)
 
     @property
     def can_cancel(self):
@@ -2292,7 +2299,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 
-            trigger_event('returnorder.cancelled', id=self.pk)
+            trigger_event(ReturnOrderEvents.CANCELLED, id=self.pk)
 
             # Notify users that the order has been canceled
             notify_responsible(
@@ -2309,7 +2316,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.complete_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('returnorder.completed', id=self.pk)
+            trigger_event(ReturnOrderEvents.COMPLETED, id=self.pk)
 
     def place_order(self):
         """Deprecated version of 'issue_order."""
@@ -2330,7 +2337,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('returnorder.issued', id=self.pk)
+            trigger_event(ReturnOrderEvents.ISSUED, id=self.pk)
 
     @transaction.atomic
     def hold_order(self):
@@ -2388,6 +2395,14 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         stock_item = line.item
 
+        if not stock_item.serialized and line.quantity < stock_item.quantity:
+            # Split the stock item if we are returning less than the full quantity
+            stock_item = stock_item.splitStock(line.quantity, user=user)
+
+            # Update the line item to point to the *new* stock item
+            line.item = stock_item
+            line.save()
+
         status = kwargs.get('status')
 
         if status is None:
@@ -2420,7 +2435,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = InvenTree.helpers.current_date()
         line.save()
 
-        trigger_event('returnorder.received', id=self.pk)
+        trigger_event(ReturnOrderEvents.RECEIVED, id=self.pk, line_item_id=line.pk)
 
         # Notify responsible users
         notify_responsible(
@@ -2449,9 +2464,22 @@ class ReturnOrderLineItem(OrderLineItem):
         """Perform extra validation steps for the ReturnOrderLineItem model."""
         super().clean()
 
-        if self.item and not self.item.serialized:
+        if not self.item:
+            raise ValidationError({'item': _('Stock item must be specified')})
+
+        if self.quantity > self.item.quantity:
             raise ValidationError({
-                'item': _('Only serialized items can be assigned to a Return Order')
+                'quantity': _('Return quantity exceeds stock quantity')
+            })
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Return quantity must be greater than zero')
+            })
+
+        if self.item.serialized and self.quantity != 1:
+            raise ValidationError({
+                'quantity': _('Invalid quantity for serialized stock item')
             })
 
     order = models.ForeignKey(
@@ -2468,6 +2496,15 @@ class ReturnOrderLineItem(OrderLineItem):
         related_name='return_order_lines',
         verbose_name=_('Item'),
         help_text=_('Select item to return from customer'),
+    )
+
+    quantity = models.DecimalField(
+        verbose_name=('Quantity'),
+        help_text=('Quantity to return'),
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
     )
 
     received_date = models.DateField(

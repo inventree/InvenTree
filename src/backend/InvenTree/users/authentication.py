@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
-from users.models import ApiToken
+import users.models
 
 
 class ApiTokenAuthentication(TokenAuthentication):
@@ -18,7 +18,7 @@ class ApiTokenAuthentication(TokenAuthentication):
     - Tokens can expire
     """
 
-    model = ApiToken
+    model = users.models.ApiToken
 
     def authenticate_credentials(self, key):
         """Adds additional checks to the default token authentication method."""

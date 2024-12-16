@@ -4,6 +4,7 @@ changelog:
   exclude:
     labels:
       - translation
+      - translations
       - documentation
   categories:
     - title: Breaking Changes
@@ -13,6 +14,9 @@ changelog:
     - title: Security Patches
       labels:
         - security
+    - title: Database Changes
+      labels:
+        - migration
     - title: New Features
       labels:
         - Semver-Minor

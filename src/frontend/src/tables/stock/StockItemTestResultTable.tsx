@@ -195,7 +195,10 @@ export default function StockItemTestResultTable({
         accessor: 'attachment',
         title: t`Attachment`,
         render: (record: any) =>
-          record.attachment && <AttachmentLink attachment={record.attachment} />
+          record.attachment && (
+            <AttachmentLink attachment={record.attachment} />
+          ),
+        noContext: true
       },
       NoteColumn({}),
       DateColumn({}),
@@ -392,6 +395,11 @@ export default function StockItemTestResultTable({
         name: 'result',
         label: t`Passed`,
         description: t`Show only passed tests`
+      },
+      {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Show results for enabled tests`
       }
     ];
   }, []);
@@ -467,8 +475,7 @@ export default function StockItemTestResultTable({
             stock_item: itemId,
             user_detail: true,
             attachment_detail: true,
-            template_detail: true,
-            enabled: true
+            template_detail: true
           }
         }}
       />

@@ -132,7 +132,7 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
-        name: 'status',
+        name: 'status_custom_key',
         type: 'status',
         label: t`Stock Status`,
         model: ModelType.stockitem
@@ -653,7 +653,15 @@ export default function StockDetail() {
   });
 
   const stockActions = useMemo(() => {
-    const inStock = stockitem.in_stock;
+    const inStock =
+      user.hasChangeRole(UserRoles.stock) &&
+      stockitem.quantity > 0 &&
+      !stockitem.sales_order &&
+      !stockitem.belongs_to &&
+      !stockitem.customer &&
+      !stockitem.consumed_by &&
+      !stockitem.is_building;
+
     const serial = stockitem.serial;
     const serialized =
       serial != null &&

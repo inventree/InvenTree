@@ -2040,6 +2040,7 @@ class ReturnOrderLineItemSerializer(
             'order_detail',
             'item',
             'item_detail',
+            'quantity',
             'received_date',
             'outcome',
             'part_detail',
@@ -2070,9 +2071,15 @@ class ReturnOrderLineItemSerializer(
             self.fields.pop('part_detail', None)
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
+
+    quantity = serializers.FloatField(
+        label=_('Quantity'), help_text=_('Quantity to return')
+    )
+
     item_detail = stock.serializers.StockItemSerializer(
         source='item', many=False, read_only=True
     )
+
     part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
 
     price = InvenTreeMoneySerializer(allow_null=True)
