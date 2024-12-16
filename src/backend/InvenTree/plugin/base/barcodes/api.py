@@ -288,6 +288,8 @@ class BarcodeAssign(BarcodeView):
                 result['plugin'] = inventree_barcode_plugin.name
                 result['barcode_data'] = barcode
 
+                result.pop('success', None)
+
                 raise ValidationError(result)
 
         barcode_hash = hash_barcode(barcode)
