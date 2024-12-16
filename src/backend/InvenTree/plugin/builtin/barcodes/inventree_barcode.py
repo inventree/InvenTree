@@ -98,6 +98,8 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
         supported_models = plugin.base.barcodes.helper.get_supported_barcode_models()
 
+        succcess_message = _('Found matching item')
+
         if barcode_dict is not None and type(barcode_dict) is dict:
             # Look for various matches. First good match will be returned
             for model in supported_models:
@@ -107,7 +109,11 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                     try:
                         pk = int(barcode_dict[label])
                         instance = model.objects.get(pk=pk)
-                        return self.format_matched_response(label, model, instance)
+
+                        return {
+                            **self.format_matched_response(label, model, instance),
+                            'success': succcess_message,
+                        }
                     except (ValueError, model.DoesNotExist):
                         pass
 
@@ -122,7 +128,10 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
             instance = model.lookup_barcode(barcode_hash)
 
             if instance is not None:
-                return self.format_matched_response(label, model, instance)
+                return {
+                    **self.format_matched_response(label, model, instance),
+                    'success': succcess_message,
+                }
 
     def generate(self, model_instance: InvenTreeBarcodeMixin):
         """Generate a barcode for a given model instance."""
