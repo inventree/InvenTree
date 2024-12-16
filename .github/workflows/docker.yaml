@@ -162,12 +162,13 @@ jobs:
           images: |
             inventree/inventree
             ghcr.io/${{ github.repository }}
-
+      - uses: depot/setup-action@v1
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@48aba3b46d1b1fec4febb7c5d0c644b249a11355 # pin@v6.10.0
+        uses: depot/build-push-action@v1
         with:
+          project: jczzbjkk68
           context: .
           file: ./contrib/container/Dockerfile
           platforms: linux/amd64,linux/arm64
