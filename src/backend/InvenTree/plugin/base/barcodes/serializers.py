@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 import common.models
+import company.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
@@ -149,6 +150,13 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
     - location: Location to receive items into
     """
 
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text=_('Supplier to receive items from'),
+    )
+
     purchase_order = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrder.objects.all(),
         required=False,
@@ -176,6 +184,19 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
             raise ValidationError(_('Cannot select a structural location'))
 
         return location
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrderLineItem.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text=_('Purchase order line item to receive items against'),
+    )
+
+    auto_allocate = serializers.BooleanField(
+        required=False,
+        default=True,
+        help_text=_('Automatically allocate stock items to the purchase order'),
+    )
 
 
 class BarcodeSOAllocateSerializer(BarcodeSerializer):

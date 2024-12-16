@@ -241,6 +241,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           <StockItemTable
             allowAdd={false}
             tableName='assigned-stock'
+            showLocation={false}
             params={{ customer: company.pk }}
           />
         ) : (

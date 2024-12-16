@@ -10,8 +10,7 @@ import {
   IconPhoto
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-
-import { useLocalState } from '../../states/LocalState';
+import { generateUrl } from '../../functions/urls';
 
 /**
  * Return an icon based on the provided filename
@@ -61,15 +60,13 @@ export function AttachmentLink({
 }>): ReactNode {
   const text = external ? attachment : attachment.split('/').pop();
 
-  const host = useLocalState((s) => s.host);
-
   const url = useMemo(() => {
     if (external) {
       return attachment;
     }
 
-    return `${host}${attachment}`;
-  }, [host, attachment, external]);
+    return generateUrl(attachment);
+  }, [attachment, external]);
 
   return (
     <Group justify='left' gap='sm' wrap='nowrap'>

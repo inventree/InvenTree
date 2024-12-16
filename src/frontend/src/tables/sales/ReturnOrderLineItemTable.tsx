@@ -111,13 +111,21 @@ export default function ReturnOrderLineItemTable({
       },
       {
         accessor: 'item_detail.serial',
-        title: t`Serial Number`,
-        switchable: false
+        title: t`Quantity`,
+        switchable: false,
+        render: (record: any) => {
+          if (record.item_detail.serial && record.quantity == 1) {
+            return `# ${record.item_detail.serial}`;
+          } else {
+            return record.quantity;
+          }
+        }
       },
       StatusColumn({
         model: ModelType.stockitem,
         sortable: false,
-        accessor: 'item_detail.status'
+        accessor: 'item_detail.status',
+        title: t`Status`
       }),
       ReferenceColumn({}),
       StatusColumn({
@@ -201,7 +209,10 @@ export default function ReturnOrderLineItemTable({
 
       return [
         {
-          hidden: received || !user.hasChangeRole(UserRoles.return_order),
+          hidden:
+            received ||
+            !inProgress ||
+            !user.hasChangeRole(UserRoles.return_order),
           title: t`Receive Item`,
           icon: <IconSquareArrowRight />,
           onClick: () => {
@@ -225,7 +236,7 @@ export default function ReturnOrderLineItemTable({
         })
       ];
     },
-    [user]
+    [user, inProgress]
   );
 
   return (
