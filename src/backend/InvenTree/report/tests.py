@@ -187,12 +187,12 @@ class ReportTagTest(TestCase):
 
         # Format a set of tests: timezone, format, expected
         tests = [
-            (None, None, '2024-03-12T22:25:00-04:00'),
+            (None, None, '2024-03-12T21:30:00-04:00'),
             (None, '%d-%m-%y', '12-03-24'),
-            ('UTC', None, '2024-03-13T02:25:00+00:00'),
+            ('UTC', None, '2024-03-13T01:30:00+00:00'),
             ('UTC', '%d-%B-%Y', '13-March-2024'),
-            ('Europe/Amsterdam', None, '2024-03-13T03:25:00+01:00'),
-            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 03:25'),
+            ('Europe/Amsterdam', None, '2024-03-13T02:30:00+01:00'),
+            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 02:30'),
         ]
 
         for tz, fmt, expected in tests:
