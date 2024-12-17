@@ -283,7 +283,6 @@ INSTALLED_APPS = [
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
     'crispy_forms',  # Improved form rendering
-    'import_export',  # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering
@@ -1056,9 +1055,6 @@ DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# Use database transactions when importing / exporting data
-IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
