@@ -5,10 +5,10 @@ from django.test import override_settings
 from django.test.testcases import TransactionTestCase
 
 from allauth.socialaccount.models import SocialAccount, SocialLogin
+from backend.InvenTree.InvenTree.auth_overrides import RegistratonMixin
 
 from common.models import InvenTreeSetting
 from InvenTree import sso
-from InvenTree.forms import RegistratonMixin
 
 
 class Dummy:
