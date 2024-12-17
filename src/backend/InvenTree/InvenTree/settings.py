@@ -211,18 +211,6 @@ PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
-# Translated Template settings
-STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
-STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
-
-# Create the target directory if it does not exist
-if not STATICFILES_I18_TRG.exists():
-    STATICFILES_I18_TRG.mkdir(parents=True)
-
-STATICFILES_DIRS.append(STATICFILES_I18_TRG)
-STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
-
 # Append directory for compiled react files if debug server is running
 if DEBUG and 'collectstatic' not in sys.argv:
     web_dir = BASE_DIR.joinpath('..', 'web', 'static').absolute()
@@ -235,10 +223,6 @@ if DEBUG and 'collectstatic' not in sys.argv:
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
 
         print('-', STATICFILES_DIRS[-1])
-STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
-
-# Color Themes Directory
-STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -553,10 +537,6 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Custom InvenTree context processors
-                'InvenTree.context.health_status',
-                'InvenTree.context.status_codes',
-                'InvenTree.context.user_roles',
             ],
             'loaders': [
                 (
