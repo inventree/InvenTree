@@ -224,7 +224,10 @@ class CustomTOTPDeviceForm(TOTPDeviceForm):
 
 def registration_enabled():
     """Determine whether user registration is enabled."""
-    if get_global_setting('LOGIN_ENABLE_REG') or InvenTree.sso.registration_enabled():
+    if (
+        get_global_setting('LOGIN_ENABLE_REG')
+        or InvenTree.sso.sso_registration_enabled()
+    ):
         if settings.EMAIL_HOST:
             return True
         else:
