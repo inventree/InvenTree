@@ -10,7 +10,6 @@ django-dbbackup                         # Backup / restore of database and media
 django-error-report-2                   # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
 django-flags                            # Feature flags
-django-formtools                        # Form wizard tools
 django-ical                             # iCal export for calendar views
 django-import-export<4.0                # Data import / export for admin interface  # FIXED 2024-06-26 see https://github.com/inventree/InvenTree/pull/7521
 django-maintenance-mode                 # Shut down application while reloading etc.

@@ -306,7 +306,6 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',  # django-money exchange rates
     'error_report',  # Error reporting in the admin interface
     'django_q',
-    'formtools',  # Form wizard tools
     'dbbackup',  # Backups - django-dbbackup
     'taggit',  # Tagging
     'flags',  # Flagging - django-flags
