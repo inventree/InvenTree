@@ -1357,7 +1357,7 @@ def frontend_download(
 
         if not current.exists():
             warning(
-                f'Current frontend information for {ref} is not available - this is expected in some cases'
+                f'Current frontend information for {ref} is not available in {current!s} - this is expected in some cases'
             )
             return False
 
@@ -1439,7 +1439,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
         ).json()
 
         if not (qc_run := find_resource(workflow_runs['workflow_runs'], 'name', 'QC')):
-            error('ERROR: Cannot find any workflow runs for current SHA')
+            error(f'ERROR: Cannot find any workflow runs for current SHA {ref}')
             return
         print(
             f'Found workflow {qc_run["name"]} (run {qc_run["run_number"]}-{qc_run["run_attempt"]})'
