@@ -1,4 +1,4 @@
-"""Helper forms which subclass Django forms to provide additional functionality."""
+"""Overrides for allauth and adjacent packages to enforce InvenTree specific auth settings and restirctions."""
 
 import logging
 from urllib.parse import urlencode
@@ -102,7 +102,10 @@ class CustomTOTPDeviceForm(TOTPDeviceForm):
 
 def registration_enabled():
     """Determine whether user registration is enabled."""
-    if get_global_setting('LOGIN_ENABLE_REG') or InvenTree.sso.registration_enabled():
+    if (
+        get_global_setting('LOGIN_ENABLE_REG')
+        or InvenTree.sso.sso_registration_enabled()
+    ):
         if settings.EMAIL_HOST:
             return True
         else:
@@ -204,10 +207,8 @@ class CustomAccountAdapter(
 
     def get_email_confirmation_url(self, request, emailconfirmation):
         """Construct the email confirmation url."""
-        from InvenTree.helpers_model import construct_absolute_url
-
         url = super().get_email_confirmation_url(request, emailconfirmation)
-        url = construct_absolute_url(url)
+        url = InvenTree.helpers_model.construct_absolute_url(url)
         return url
 
 

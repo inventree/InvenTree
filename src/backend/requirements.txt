@@ -414,7 +414,6 @@ django==4.2.17 \
     #   django-error-report-2
     #   django-filter
     #   django-flags
-    #   django-formtools
     #   django-ical
     #   django-import-export
     #   django-js-asset
@@ -469,10 +468,6 @@ django-filter==24.3 \
 django-flags==5.0.13 \
     --hash=sha256:52df74b86d93f5cb402190ad26b68a5ba0f127e9e016189f1a6f2e8ba3c06a42 \
     --hash=sha256:ff6940cf37e07d6d0c4ac28c5420c8cfc478b62541473dba4aa02d600f7db9fc
-    # via -r src/backend/requirements.in
-django-formtools==2.5.1 \
-    --hash=sha256:47cb34552c6efca088863d693284d04fc36eaaf350eb21e1a1d935e0df523c93 \
-    --hash=sha256:bce9b64eda52cc1eef6961cc649cf75aacd1a707c2fff08d6c3efcbc8e7e761a
     # via -r src/backend/requirements.in
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
