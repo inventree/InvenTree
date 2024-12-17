@@ -592,7 +592,7 @@ REST_AUTH = {
 
 OLD_PASSWORD_FIELD_ENABLED = True
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
+    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.CustomRegisterSerializer'
 }
 
 # JWT settings - rest_framework_simplejwt
@@ -1312,8 +1312,8 @@ REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
-    'login': 'InvenTree.forms.CustomLoginForm',
-    'signup': 'InvenTree.forms.CustomSignupForm',
+    'login': 'InvenTree.auth_overrides.CustomLoginForm',
+    'signup': 'InvenTree.auth_overrides.CustomSignupForm',
     'add_email': 'allauth.account.forms.AddEmailForm',
     'change_password': 'allauth.account.forms.ChangePasswordForm',
     'set_password': 'allauth.account.forms.SetPasswordForm',
@@ -1321,12 +1321,12 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
-ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
+ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
 # Determine if multi-factor authentication is enabled for this server (default = True)
 MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
-SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
-ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
