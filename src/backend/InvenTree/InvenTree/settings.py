@@ -282,7 +282,6 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'crispy_forms',  # Improved form rendering
     'import_export',  # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
@@ -291,7 +290,6 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',  # django-money exchange rates
     'error_report',  # Error reporting in the admin interface
     'django_q',
-    'formtools',  # Form wizard tools
     'dbbackup',  # Backups - django-dbbackup
     'taggit',  # Tagging
     'flags',  # Flagging - django-flags
@@ -1054,9 +1052,6 @@ USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
-# crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
@@ -1321,6 +1316,7 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
+
 ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
 # Determine if multi-factor authentication is enabled for this server (default = True)
 MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
