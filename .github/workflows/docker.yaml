@@ -40,6 +40,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -67,6 +69,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set Up Python ${{ env.python_version }}
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
@@ -162,12 +166,13 @@ jobs:
           images: |
             inventree/inventree
             ghcr.io/${{ github.repository }}
-
+      - uses: depot/setup-action@v1
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@48aba3b46d1b1fec4febb7c5d0c644b249a11355 # pin@v6.10.0
+        uses: depot/build-push-action@v1
         with:
+          project: jczzbjkk68
           context: .
           file: ./contrib/container/Dockerfile
           platforms: linux/amd64,linux/arm64

@@ -248,11 +248,11 @@ class Login(LoginView):
         if user is None:
             return HttpResponse(status=401)
 
-            # Check if user has mfa set up
+        # Check if user has mfa set up
         if not user_has_valid_totp_device(user):
             return super().post(request, *args, **kwargs)
 
-            # Stage login and redirect to 2fa
+        # Stage login and redirect to 2fa
         request.session['allauth_2fa_user_id'] = str(user.id)
         request.session['allauth_2fa_login'] = {
             'email_verification': app_settings.EMAIL_VERIFICATION,

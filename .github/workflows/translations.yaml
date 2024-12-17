@@ -32,11 +32,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           install: true
-          npm: true
           apt-dependency: gettext
       - name: Make Translations
         run: invoke dev.translate
