@@ -211,7 +211,6 @@ nav:
       - Label Printing Mixin: extend/plugins/label.md
       - Locate Mixin: extend/plugins/locate.md
       - Navigation Mixin: extend/plugins/navigation.md
-      - Panel Mixin: extend/plugins/panel.md
       - Report Mixin: extend/plugins/report.md
       - Schedule Mixin: extend/plugins/schedule.md
       - Settings Mixin: extend/plugins/settings.md

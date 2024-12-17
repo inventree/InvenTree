@@ -4,7 +4,6 @@ import logging
 from datetime import datetime
 from decimal import Decimal
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -397,8 +396,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('po-detail', kwargs={'pk': self.pk})
         return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
@@ -932,8 +929,6 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('so-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
@@ -2178,8 +2173,6 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('return-order-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod
