@@ -30,7 +30,7 @@ try:
 
     main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     logger.warning(
         'Warning: Dulwich module not found, git information will not be available.'
     )
