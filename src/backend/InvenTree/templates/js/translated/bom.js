@@ -1095,7 +1095,7 @@ function loadBomTable(table, options={}) {
             );
         },
         footerFormatter: function(data) {
-            // Display overall price range the "footer" of the price_range column
+            // Display overall price range in the "footer" of the price_range column
 
             var min_price = 0;
             var max_price = 0;
@@ -1117,6 +1117,13 @@ function loadBomTable(table, options={}) {
                     complete_pricing = false;
                     continue;
                 }
+
+                // check if it is a consumable and add it only if required
+                var include_consumables_in_pricing = document.getElementById('include_consumables_in_bom_pricing').checked
+                if(row.consumable && !include_consumables_in_pricing){
+                    continue;
+                }
+
 
                 // At this point, we have at least *some* information
                 any_pricing = true;
