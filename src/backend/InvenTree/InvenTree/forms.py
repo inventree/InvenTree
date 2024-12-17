@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -17,9 +17,6 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.forms import TOTPDeviceForm
 from allauth_2fa.utils import user_has_valid_totp_device
-from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 
@@ -29,115 +26,6 @@ from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')
-
-
-class HelperForm(forms.ModelForm):
-    """Provides simple integration of crispy_forms extension."""
-
-    # Custom field decorations can be specified here, per form class
-    field_prefix = {}
-    field_suffix = {}
-    field_placeholder = {}
-
-    def __init__(self, *args, **kwargs):
-        """Setup layout."""
-        super(forms.ModelForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_tag = False
-        self.helper.form_show_errors = True
-
-        """
-        Create a default 'layout' for this form.
-        Ref: https://django-crispy-forms.readthedocs.io/en/latest/layouts.html
-        This is required to do fancy things later (like adding PrependedText, etc).
-
-        Simply create a 'blank' layout for each available field.
-        """
-
-        self.rebuild_layout()
-
-    def rebuild_layout(self):
-        """Build crispy layout out of current fields."""
-        layouts = []
-
-        for field in self.fields:
-            prefix = self.field_prefix.get(field, None)
-            suffix = self.field_suffix.get(field, None)
-            placeholder = self.field_placeholder.get(field, '')
-
-            # Look for font-awesome icons
-            if prefix and prefix.startswith('fa-'):
-                prefix = f"<i class='fas {prefix}'/>"
-
-            if suffix and suffix.startswith('fa-'):
-                suffix = f"<i class='fas {suffix}'/>"
-
-            if prefix and suffix:
-                layouts.append(
-                    Field(
-                        PrependedAppendedText(
-                            field,
-                            prepended_text=prefix,
-                            appended_text=suffix,
-                            placeholder=placeholder,
-                        )
-                    )
-                )
-
-            elif prefix:
-                layouts.append(
-                    Field(PrependedText(field, prefix, placeholder=placeholder))
-                )
-
-            elif suffix:
-                layouts.append(
-                    Field(AppendedText(field, suffix, placeholder=placeholder))
-                )
-
-            else:
-                layouts.append(Field(field, placeholder=placeholder))
-
-        self.helper.layout = Layout(*layouts)
-
-
-class SetPasswordForm(HelperForm):
-    """Form for setting user password."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = ['enter_password', 'confirm_password', 'old_password']
-
-    enter_password = forms.CharField(
-        max_length=100,
-        min_length=8,
-        required=True,
-        initial='',
-        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-        label=_('Enter password'),
-        help_text=_('Enter new password'),
-    )
-
-    confirm_password = forms.CharField(
-        max_length=100,
-        min_length=8,
-        required=True,
-        initial='',
-        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-        label=_('Confirm password'),
-        help_text=_('Confirm new password'),
-    )
-
-    old_password = forms.CharField(
-        label=_('Old password'),
-        strip=False,
-        required=False,
-        widget=forms.PasswordInput(
-            attrs={'autocomplete': 'current-password', 'autofocus': True}
-        ),
-    )
 
 
 # override allauth
