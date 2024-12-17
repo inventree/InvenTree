@@ -1,12 +1,10 @@
 """This module provides template tags for extra functionality, over and above the built-in Django tags."""
 
 import logging
-import os
 from datetime import date, datetime
 
 from django import template
 from django.conf import settings as djangosettings
-from django.templatetags.static import StaticNode
 from django.urls import NoReverseMatch, reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -442,72 +440,6 @@ def mail_configured():
 def inventree_customize(reference, *args, **kwargs):
     """Return customization values for the user interface."""
     return djangosettings.CUSTOMIZE.get(reference, '')
-
-
-class I18nStaticNode(StaticNode):
-    """Custom StaticNode.
-
-    Replaces a variable named *lng* in the path with the current language
-    """
-
-    def render(self, context):  # pragma: no cover
-        """Render this node with the determined locale context."""
-        self.original = getattr(self, 'original', None)
-
-        if not self.original:
-            # Store the original (un-rendered) path template, as it gets overwritten below
-            self.original = self.path.var
-
-        if hasattr(context, 'request'):
-            # Convert the "requested" language code to a standard format
-            language_code = context.request.LANGUAGE_CODE.lower().strip()
-            language_code = language_code.replace('_', '-')
-
-            # Find the first "best" match:
-            # - First, try the original requested code, e.g. 'pt-br'
-            # - Next, try a simpler version of the code e.g. 'pt'
-            # - Finally, fall back to english
-            options = [language_code, language_code.split('-')[0], 'en']
-
-            for lng in options:
-                lng_file = os.path.join(
-                    djangosettings.STATIC_ROOT, self.original.format(lng=lng)
-                )
-
-                if os.path.exists(lng_file):
-                    self.path.var = self.original.format(lng=lng)
-                    break
-
-        ret = super().render(context)
-
-        return ret
-
-
-# use the dynamic url - tag if in Debugging-Mode
-if settings.DEBUG:
-
-    @register.simple_tag()
-    def i18n_static(url_name):
-        """Simple tag to enable {% url %} functionality instead of {% static %}."""
-        return reverse(url_name)
-
-else:  # pragma: no cover
-
-    @register.tag('i18n_static')
-    def do_i18n_static(parser, token):
-        """Overrides normal static, adds language - lookup for prerenderd files #1485.
-
-        Usage (like static):
-        {% i18n_static path [as varname] %}
-        """
-        bits = token.split_contents()
-        loc_name = settings.STATICFILES_I18_PREFIX
-
-        # change path to called resource
-        bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
-        token.contents = ' '.join(bits)
-
-        return I18nStaticNode.handle_token(parser, token)
 
 
 @register.simple_tag()
