@@ -253,20 +253,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': True,
     },
-    'INVENTREE_REQUIRE_CONFIRM': {
-        'name': _('Require confirm'),
-        'description': _('Require explicit user confirmation for certain action.'),
-        'validator': bool,
-        'default': True,
-    },
-    'INVENTREE_TREE_DEPTH': {
-        'name': _('Tree Depth'),
-        'description': _(
-            'Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'
-        ),
-        'default': 1,
-        'validator': [int, MinValueValidator(0)],
-    },
     'INVENTREE_UPDATE_CHECK_INTERVAL': {
         'name': _('Update Check Interval'),
         'description': _('How often to check for updates (set to zero to disable)'),
