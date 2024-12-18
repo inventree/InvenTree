@@ -74,3 +74,31 @@ export function showLoginNotification({
     autoClose: 2500
   });
 }
+
+export function showApiErrorMessage({
+  error,
+  title,
+  message,
+  field
+}: {
+  error: any;
+  title: string;
+  message?: string;
+  field?: string;
+}) {
+  // Extract error description from response
+  const error_data: any = error.response?.data ?? {};
+
+  let error_msg: any =
+    message ?? error_data[field ?? 'error'] ?? error_data['non_field_errors'];
+
+  if (!error_msg) {
+    error_msg = t`An error occurred`;
+  }
+
+  notifications.show({
+    title: title,
+    message: error_msg,
+    color: 'red'
+  });
+}
