@@ -917,13 +917,6 @@ def worker(c):
     manage(c, 'qcluster', pty=True)
 
 
-# Testing tasks
-@task
-def render_js_files(c):
-    """Render templated javascript files (used for static testing)."""
-    manage(c, 'test InvenTree.ci_render_js')
-
-
 @task(post=[translate_stats, static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
@@ -1531,7 +1524,6 @@ internal = Collection(
     frontend_compile,
     frontend_install,
     frontend_trans,
-    render_js_files,
     rebuild_models,
     rebuild_thumbnails,
     showmigrations,
