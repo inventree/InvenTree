@@ -57,7 +57,7 @@ class BarcodeView(CreateAPIView):
             return
 
         # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
-        if type(response) is dict:
+        if isinstance(response, dict):
             response = {key: str(value) for key, value in response.items()}
         elif response is None:
             pass
@@ -65,7 +65,7 @@ class BarcodeView(CreateAPIView):
             response = str(response)
 
         # Ensure that the context data is stringified first, otherwise cannot be JSON encoded
-        if type(context) is dict:
+        if isinstance(context, dict):
             context = {key: str(value) for key, value in context.items()}
         elif context is None:
             pass
