@@ -19,10 +19,12 @@ import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import type { UserRoles } from '../../enums/Roles';
 import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
+import { showApiErrorMessage } from '../../functions/notifications';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -159,12 +161,24 @@ function UploadModal({
     const formData = new FormData();
     formData.append('image', file, file.name);
 
-    const response = await api.patch(apiPath, formData);
-
-    if (response.data.image.includes(file.name)) {
-      setImage(response.data.image);
-      modals.closeAll();
-    }
+    api
+      .patch(apiPath, formData)
+      .then((response) => {
+        setImage(response.data.image);
+        modals.closeAll();
+        showNotification({
+          title: t`Image uploaded`,
+          message: t`Image has been uploaded successfully`,
+          color: 'green'
+        });
+      })
+      .catch((error) => {
+        showApiErrorMessage({
+          error: error,
+          title: t`Upload Error`,
+          field: 'image'
+        });
+      });
   };
 
   const { colorScheme } = useMantineColorScheme();
