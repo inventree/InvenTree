@@ -119,29 +119,6 @@ def to_list(*args):
 
 
 @register.simple_tag()
-def inventree_in_debug_mode(*args, **kwargs):
-    """Return True if the server is running in DEBUG mode."""
-    return djangosettings.DEBUG
-
-
-@register.simple_tag()
-def inventree_show_about(user, *args, **kwargs):
-    """Return True if the about modal should be shown."""
-    if get_global_setting('INVENTREE_RESTRICT_ABOUT'):
-        # Return False if the user is not a superuser, or no user information is provided
-        if not user or not user.is_superuser:
-            return False
-
-    return True
-
-
-@register.simple_tag()
-def inventree_docker_mode(*args, **kwargs):
-    """Return True if the server is running as a Docker image."""
-    return djangosettings.DOCKER
-
-
-@register.simple_tag()
 def plugins_enabled(*args, **kwargs):
     """Return True if plugins are enabled for the server instance."""
     return djangosettings.PLUGINS_ENABLED
