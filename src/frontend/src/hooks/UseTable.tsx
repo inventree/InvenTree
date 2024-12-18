@@ -167,7 +167,10 @@ export function useTable(tableName: string): TableState {
       const index = _records.findIndex((r) => r.pk === record.pk);
 
       if (index >= 0) {
-        _records[index] = record;
+        _records[index] = {
+          ..._records[index],
+          ...record
+        };
       } else {
         _records.push(record);
       }
