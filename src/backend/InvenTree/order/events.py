@@ -13,6 +13,8 @@ class PurchaseOrderEvents(BaseEventEnum):
 
     OVERDUE = 'order.overdue_purchase_order'
 
+    ITEM_RECEIVED = 'purchaseorderitem.received'
+
 
 class SalesOrderEvents(BaseEventEnum):
     """Event enumeration for the SalesOrder models."""

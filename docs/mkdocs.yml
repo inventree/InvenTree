@@ -199,6 +199,7 @@ nav:
       - Developing a Plugin: extend/how_to_plugin.md
       - Model Metadata: extend/plugins/metadata.md
       - Tags: extend/plugins/tags.md
+      - Unit Test: extend/plugins/test.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md
@@ -210,7 +211,6 @@ nav:
       - Label Printing Mixin: extend/plugins/label.md
       - Locate Mixin: extend/plugins/locate.md
       - Navigation Mixin: extend/plugins/navigation.md
-      - Panel Mixin: extend/plugins/panel.md
       - Report Mixin: extend/plugins/report.md
       - Schedule Mixin: extend/plugins/schedule.md
       - Settings Mixin: extend/plugins/settings.md

@@ -4,7 +4,6 @@ import logging
 from datetime import datetime
 from decimal import Decimal
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -397,8 +396,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('po-detail', kwargs={'pk': self.pk})
         return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
@@ -558,6 +555,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         group: bool = True,
         reference: str = '',
         purchase_price=None,
+        destination=None,
     ):
         """Add a new line item to this purchase order.
 
@@ -565,12 +563,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         * The supplier part matches the supplier specified for this purchase order
         * The quantity is greater than zero
 
-        Args:
+        Arguments:
             supplier_part: The supplier_part to add
             quantity : The number of items to add
             group (bool, optional): If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists). Defaults to True.
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
+            destination (optional): Destination for item. Defaults to None.
 
         Returns:
             The newly created PurchaseOrderLineItem instance
@@ -619,6 +618,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             quantity=quantity,
             reference=reference,
             purchase_price=purchase_price,
+            destination=destination,
         )
 
         line.save()
@@ -883,6 +883,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     quantity=float(quantity),
                 )
 
+                trigger_event(
+                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
+                )
+
         # Update the number of parts received against the particular line item
         # Note that this quantity does *not* take the pack_quantity into account, it is "number of packs"
         line.received += quantity
@@ -925,8 +929,6 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('so-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
@@ -1604,6 +1606,10 @@ class PurchaseOrderLineItem(OrderLineItem):
         r = self.quantity - self.received
         return max(r, 0)
 
+    def is_completed(self) -> bool:
+        """Determine if this lien item has been fully received."""
+        return self.received >= self.quantity
+
     def update_pricing(self):
         """Update pricing information based on the supplier part data."""
         if self.part:
@@ -2167,8 +2173,6 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('return-order-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod

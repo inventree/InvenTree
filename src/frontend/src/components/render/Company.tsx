@@ -70,7 +70,9 @@ export function RenderSupplierPart(
       {...props}
       primary={supplier?.name}
       secondary={instance.SKU}
-      image={part?.thumbnail ?? part?.image}
+      image={
+        part?.thumbnail ?? part?.image ?? supplier?.thumbnail ?? supplier?.image
+      }
       suffix={
         part.full_name ? <Text size='sm'>{part.full_name}</Text> : undefined
       }
