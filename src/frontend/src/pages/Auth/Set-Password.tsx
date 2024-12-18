@@ -77,8 +77,8 @@ export default function Set_Password() {
       })
       .catch((err) => {
         if (
-          err.response.status === 400 &&
-          err.response.data?.token == 'Invalid value'
+          err.response?.status === 400 &&
+          err.response?.data?.token == 'Invalid value'
         ) {
           invalidToken();
         } else {
