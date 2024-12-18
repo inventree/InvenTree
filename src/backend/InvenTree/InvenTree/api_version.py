@@ -1,15 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 292
+INVENTREE_API_VERSION = 293
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v292 - 2024-12-04 : https://github.com/inventree/InvenTree/pull/8596
+v293 - 2024-12-04 : https://github.com/inventree/InvenTree/pull/8596
     - Adds ReferenceSource and Reference endpoints to the API
+
+v292 - 2024-12-03 : https://github.com/inventree/InvenTree/pull/8625
+    - Add "on_order" and "in_stock" annotations to SupplierPart API
+    - Enhanced filtering for the SupplierPart API
 
 v291 - 2024-11-30 : https://github.com/inventree/InvenTree/pull/8596
     - Allow null / empty values for plugin settings

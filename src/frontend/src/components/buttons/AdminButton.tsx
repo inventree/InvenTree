@@ -3,8 +3,8 @@ import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import type { ModelType } from '../../enums/ModelType';
+import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { ModelInformationDict } from '../render/ModelType';
 import { ActionButton } from './ActionButton';
@@ -56,16 +56,14 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
   const openAdmin = useCallback(
     (event: any) => {
       const modelDef = ModelInformationDict[props.model];
-      const host = useLocalState.getState().host;
 
       if (!modelDef.admin_url) {
         return;
       }
 
       // Generate the URL for the admin interface
-      const url = new URL(
-        `${server.server.django_admin}${modelDef.admin_url}${props.id}/`,
-        host
+      const url = generateUrl(
+        `${server.server.django_admin}${modelDef.admin_url}${props.id}/`
       );
 
       if (event?.ctrlKey || event?.shiftKey) {
