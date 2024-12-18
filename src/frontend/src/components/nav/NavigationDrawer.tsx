@@ -158,7 +158,10 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     []
   );
 
-  const menuItemsAbout: MenuLinkItem[] = useMemo(() => AboutLinks(), []);
+  const menuItemsAbout: MenuLinkItem[] = useMemo(
+    () => AboutLinks(globalSettings, user),
+    []
+  );
 
   return (
     <Flex direction='column' mih='100vh' p={16}>
