@@ -113,7 +113,7 @@ def validate_overage(value):
             raise ValidationError(_('Overage value must not be negative'))
 
         # Looks like a number
-        return True
+        return
     except (ValueError, InvalidOperation):
         pass
 
@@ -130,7 +130,7 @@ def validate_overage(value):
             elif f > 100:
                 raise ValidationError(_('Overage must not exceed 100%'))
 
-            return True
+            return
         except ValueError:
             pass
 

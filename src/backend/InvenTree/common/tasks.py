@@ -50,7 +50,9 @@ def update_news_feed():
         return
 
     # News feed isn't defined, no need to continue
-    if not settings.INVENTREE_NEWS_URL or type(settings.INVENTREE_NEWS_URL) != str:
+    if not settings.INVENTREE_NEWS_URL or not isinstance(
+        settings.INVENTREE_NEWS_URL, str
+    ):
         return
 
     # Fetch and parse feed
