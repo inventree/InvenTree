@@ -119,12 +119,6 @@ def to_list(*args):
 
 
 @register.simple_tag()
-def part_allocation_count(build, part, *args, **kwargs):
-    """Return the total number of <part> allocated to <build>."""
-    return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
-
-
-@register.simple_tag()
 def inventree_in_debug_mode(*args, **kwargs):
     """Return True if the server is running in DEBUG mode."""
     return djangosettings.DEBUG
