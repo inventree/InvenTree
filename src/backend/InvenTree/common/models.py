@@ -1205,9 +1205,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         return self.__class__.get_setting(self.key, user=self.user)
 
 
-# endregion
-
-
 class PriceBreak(MetaMixin):
     """Represents a PriceBreak model."""
 
@@ -1477,7 +1474,6 @@ class WebhookMessage(models.Model):
     )
 
 
-# endregion
 # region Notifications
 class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notification was sent out.
