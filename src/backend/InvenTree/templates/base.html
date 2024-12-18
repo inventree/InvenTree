@@ -22,28 +22,7 @@
 {% include "favicon.html" %}
 
 <!-- CSS -->
-<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
-<link rel='stylesheet' href='{% static "treegrid/css/jquery.treegrid.css" %}'>
-<link rel="stylesheet" href="{% static 'fontawesome/css/brands.min.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/solid.min.css' %}">
-<link rel="stylesheet" href="{% static 'select2/css/select2.min.css' %}">
-<link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap-5-theme.css' %}">
-<link rel="stylesheet" href="{% static 'fullcalendar/main.min.css' %}">
-<link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
-<link rel="stylesheet" href="{% static 'easymde/easymde.min.css' %}">
-
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
-
-<style>
-    {% block css %}
-    <!-- Custom CSS style goes here -->
-    {% endblock css %}
-</style>
-{% block head %}
-{% endblock head %}
 
 <title>
 {% block page_title %}
@@ -55,7 +34,6 @@
 <body>
 
 <div class='main body wrapper container-fluid inventree-body'>
-
     <div class='row flex-nowrap inventree-body'>
         <div class='col-auto px-1 sidebar-wrapper'>
             <div id='sidebar' class='collapse collapse-horizontal show' style='display: none;'>
@@ -120,11 +98,6 @@
     </div>
 </div>
 
-
-<!-- general JS -->
-{% block js_load %}
-{% endblock js_load %}
-
 <script defer type='text/javascript'>
 
 $(document).ready(function () {
@@ -156,9 +129,6 @@ $(document).ready(function () {
 });
 
 </script>
-
-{% block js %}
-{% endblock js %}
 
 </body>
 </html>

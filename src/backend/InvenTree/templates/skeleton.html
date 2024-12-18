@@ -13,23 +13,7 @@
 {% include "favicon.html" %}
 
 <!-- CSS -->
-<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
-<link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
-<link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap-5-theme.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
-
-{% block head_css %}
-{% endblock head_css %}
-
-<style>
-    {% block css %}
-    {% endblock css %}
-</style>
-
-{% block head %}
-{% endblock head %}
 
 <title>
 {% block page_title %}
@@ -40,33 +24,6 @@
 <body class='{% block body_class %}{% endblock body_class %}'>
 {% block body %}
 {% endblock body %}
-
-<!-- Scripts -->
-<script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/jquery-ui/jquery-ui.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-{% block body_scripts_general %}
-{% endblock body_scripts_general %}
-
-<!-- general JS -->
-<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/message.js' %}"></script>
-{% block body_scripts_inventree %}
-{% endblock body_scripts_inventree %}
-
-<!-- fontawesome -->
-<script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
-
-{% block js_load %}
-{% endblock js_load %}
-
-{% block js_base %}
-{% endblock js_base %}
-
-{% block js %}
-{% endblock js %}
 
 </body>
 </html>
