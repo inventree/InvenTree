@@ -9,6 +9,7 @@ import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
+import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useTable } from '../../../../hooks/UseTable';
 import { apiUrl } from '../../../../states/ApiState';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
@@ -46,10 +47,9 @@ export function CurrencyTable({
         });
       })
       .catch((error) => {
-        showNotification({
-          title: t`Exchange rate update error`,
-          message: error,
-          color: 'red'
+        showApiErrorMessage({
+          error: error,
+          title: t`Exchange rate update error`
         });
       });
   }, []);
