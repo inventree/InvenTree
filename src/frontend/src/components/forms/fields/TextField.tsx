@@ -64,7 +64,13 @@ export default function TextField({
           onChange(event.currentTarget.value);
         }
       }}
-      onKeyDown={(event) => onKeyDown(event.code)}
+      onKeyDown={(event) => {
+        if (event.code === 'Enter') {
+          // Bypass debounce on enter key
+          onChange(event.currentTarget.value);
+        }
+        onKeyDown(event.code);
+      }}
       rightSection={
         value && !definition.required ? (
           <IconX size='1rem' color='red' onClick={() => onTextChange('')} />
