@@ -56,7 +56,7 @@ export default function TextField({
       aria-label={`text-field-${field.name}`}
       type={definition.field_type}
       value={rawText || ''}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       radius='sm'
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
