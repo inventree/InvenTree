@@ -258,7 +258,7 @@ export function TableFieldExtraRow({
               fieldName={fieldName ?? 'field'}
               fieldDefinition={field}
               defaultValue={defaultValue}
-              error={error}
+              error={fieldDefinition.error ?? error}
             />
           </Group>
         </Table.Td>

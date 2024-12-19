@@ -284,7 +284,7 @@ export function RelatedModelField({
   return (
     <Input.Wrapper
       {...fieldDefinition}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Select
