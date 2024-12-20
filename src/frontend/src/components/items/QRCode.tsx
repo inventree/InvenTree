@@ -15,7 +15,7 @@ import {
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -24,6 +24,7 @@ import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import type { QrCodeType } from './ActionDropdown';
 
+import { extractErrorMessage } from '../../functions/api';
 import { BarcodeInput } from '../barcodes/BarcodeInput';
 
 type QRCodeProps = {
@@ -147,27 +148,33 @@ export const InvenTreeQRCode = ({
 };
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
-  const [barcode, setBarcode] = useState('');
+  const [error, setError] = useState<string>('');
 
-  function linkBarcode(value?: string) {
+  const linkBarcode = useCallback((barcode: string) => {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
         [mdl_prop.model]: mdl_prop.pk,
-        barcode: value || barcode
+        barcode: barcode
       })
       .then((response) => {
+        setError('');
         modals.closeAll();
         location.reload();
+      })
+      .catch((error) => {
+        const msg = extractErrorMessage({
+          error: error,
+          field: 'error',
+          defaultMessage: t`Failed to link barcode`
+        });
+        setError(msg);
       });
-  }
-  const actionSubmit = (barcode: string) => {
-    linkBarcode(barcode);
-  };
+  }, []);
 
   return (
     <Stack gap='xs'>
       <Divider />
-      <BarcodeInput onScan={actionSubmit} actionText={t`Link`} />
+      <BarcodeInput onScan={linkBarcode} actionText={t`Link`} error={error} />
     </Stack>
   );
 };
