@@ -61,7 +61,7 @@ export default function DateField({
       radius='sm'
       ref={field.ref}
       type={undefined}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       value={dateValue ?? null}
       clearable={!definition.required}
       onChange={onChange}

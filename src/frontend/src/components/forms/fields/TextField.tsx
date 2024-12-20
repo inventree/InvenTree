@@ -56,7 +56,7 @@ export default function TextField({
       aria-label={`text-field-${field.name}`}
       type={definition.field_type}
       value={rawText || ''}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       radius='sm'
       onChange={(event) => onTextChange(event.currentTarget.value)}
       onBlur={(event) => {
@@ -64,7 +64,13 @@ export default function TextField({
           onChange(event.currentTarget.value);
         }
       }}
-      onKeyDown={(event) => onKeyDown(event.code)}
+      onKeyDown={(event) => {
+        if (event.code === 'Enter') {
+          // Bypass debounce on enter key
+          onChange(event.currentTarget.value);
+        }
+        onKeyDown(event.code);
+      }}
       rightSection={
         value && !definition.required ? (
           <IconX size='1rem' color='red' onClick={() => onTextChange('')} />

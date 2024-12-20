@@ -94,7 +94,7 @@ export interface ApiFormProps {
   postFormContent?: JSX.Element;
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
-  onFormError?: () => void;
+  onFormError?: (response: any) => void;
   processFormData?: (data: any) => any;
   table?: TableState;
   modelType?: ModelType;
@@ -482,7 +482,7 @@ export function ApiForm({
           default:
             // Unexpected state on form success
             invalidResponse(response.status);
-            props.onFormError?.();
+            props.onFormError?.(response);
             break;
         }
 
@@ -534,26 +534,30 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
+              props.onFormError?.(error);
 
               break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);
-              props.onFormError?.();
+              props.onFormError?.(error);
               break;
           }
         } else {
           showTimeoutNotification();
-          props.onFormError?.();
+          props.onFormError?.(error);
         }
 
         return error;
       });
   };
 
-  const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
-    props.onFormError?.();
-  }, [props.onFormError]);
+  const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(
+    (error: any) => {
+      props.onFormError?.(error);
+    },
+    [props.onFormError]
+  );
 
   if (optionsLoading || initialDataQuery.isFetching) {
     return (
