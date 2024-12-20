@@ -1,11 +1,13 @@
 import { t } from '@lingui/macro';
 import { Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { extractErrorMessage } from '../../functions/api';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
 import { ModelInformationDict } from '../render/ModelType';
 import { BarcodeInput } from './BarcodeInput';
