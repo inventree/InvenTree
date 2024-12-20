@@ -50,7 +50,7 @@ export default function IconField({
           label={definition.label}
           description={definition.description}
           required={definition.required}
-          error={error?.message}
+          error={definition.error ?? error?.message}
           ref={field.ref}
           component='button'
           type='button'
