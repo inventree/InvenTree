@@ -295,7 +295,7 @@ export default function SalesOrderShipmentDetail() {
         visible={!!shipment.delivery_date}
       />
     ];
-  }, [shipment, shipmentQuery]);
+  }, [isPending, shipment.deliveryDate, shipmentQuery.isFetching]);
 
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
