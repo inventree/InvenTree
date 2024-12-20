@@ -199,7 +199,7 @@ export function RenderInlineModel({
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
-          <Anchor href={url} onClick={(event: any) => onClick(event)}>
+          <Anchor href='' onClick={(event: any) => onClick(event)}>
             <Text size='sm'>{primary}</Text>
           </Anchor>
         ) : (
