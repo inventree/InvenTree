@@ -1003,12 +1003,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'after_save': reload_plugin_registry,
     },
-    'PROJECT_CODES_ENABLED': {
-        'name': _('Enable project codes'),
-        'description': _('Enable project codes for tracking projects'),
-        'default': False,
-        'validator': bool,
-    },
     'STOCKTAKE_ENABLE': {
         'name': _('Stocktake Functionality'),
         'description': _(
