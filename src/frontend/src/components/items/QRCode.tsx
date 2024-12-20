@@ -23,7 +23,8 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import type { QrCodeType } from './ActionDropdown';
-import { BarcodeInput } from './BarcodeInput';
+
+import { BarcodeInput } from '../barcodes/BarcodeInput';
 
 type QRCodeProps = {
   ecl?: 'L' | 'M' | 'Q' | 'H';
@@ -159,24 +160,14 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
         location.reload();
       });
   }
-  const actionSubmit = (decodedText: string) => {
-    linkBarcode(decodedText);
-  };
-
-  const handleLinkBarcode = () => {
+  const actionSubmit = (barcode: string) => {
     linkBarcode(barcode);
   };
 
   return (
     <Stack gap='xs'>
       <Divider />
-      <BarcodeInput
-        value={barcode}
-        onChange={(event) => setBarcode(event.currentTarget.value)}
-        onScan={actionSubmit}
-        onAction={handleLinkBarcode}
-        actionText={t`Link`}
-      />
+      <BarcodeInput onScan={actionSubmit} actionText={t`Link`} />
     </Stack>
   );
 };
@@ -194,11 +185,12 @@ export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   }
   return (
     <Box>
-      <Stack gap='xs'>
+      <Stack gap='sm'>
         <Divider />
         <Text>
           <Trans>This will remove the link to the associated barcode</Trans>
         </Text>
+        <Divider />
         <Group grow>
           <Button color='red' onClick={unlinkBarcode}>
             <Trans>Unlink Barcode</Trans>

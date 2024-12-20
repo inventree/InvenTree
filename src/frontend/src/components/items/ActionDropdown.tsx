@@ -23,6 +23,7 @@ import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from './QRCode';
+import { StylishText } from './StylishText';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;
@@ -213,7 +214,7 @@ function GeneralBarcodeAction({
 }): ActionDropdownItem {
   const onClick = () => {
     modals.open({
-      title: title,
+      title: <StylishText size='xl'>{title}</StylishText>,
       children: <ChildItem mdl_prop={mdl_prop} />
     });
   };
