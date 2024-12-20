@@ -78,12 +78,13 @@ export const InvenTreeQRCode = ({
   const { data } = useQuery({
     queryKey: ['qr-code', mdl_prop.model, mdl_prop.pk],
     queryFn: async () => {
-      const res = await api.post(apiUrl(ApiEndpoints.barcode_generate), {
-        model: mdl_prop.model,
-        pk: mdl_prop.pk
-      });
-
-      return res.data?.barcode as string;
+      return api
+        .post(apiUrl(ApiEndpoints.barcode_generate), {
+          model: mdl_prop.model,
+          pk: mdl_prop.pk
+        })
+        .then((res) => res.data?.barcode ?? ('' as string))
+        .catch((error) => '');
     }
   });
 
