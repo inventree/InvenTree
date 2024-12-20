@@ -1,11 +1,12 @@
 import { t } from '@lingui/macro';
-import { Divider, Modal } from '@mantine/core';
+import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { extractErrorMessage } from '../../functions/api';
+import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
@@ -26,13 +27,14 @@ export default function BarcodeScanDialog({
 
   const [error, setError] = useState<string>('');
 
-  const onScan = useCallback((barcode: string) => {
-    // TODO
-    console.log(`Scanned barcode: ${barcode}`);
+  const [processing, setProcessing] = useState<boolean>(false);
 
+  const onScan = useCallback((barcode: string) => {
     if (!barcode || barcode.length === 0) {
       return;
     }
+
+    setProcessing(true);
 
     api
       .post(apiUrl(ApiEndpoints.barcode), {
@@ -42,14 +44,27 @@ export default function BarcodeScanDialog({
         setError('');
 
         const data = response.data ?? {};
+        let match = false;
 
         // Find the matching model type
         for (const model_type of Object.keys(ModelInformationDict)) {
-          const model = ModelInformationDict[model_type as ModelType];
-
-          if (data[model_type]?.[model_type]?.['pk']) {
-            // TODO: Found a match!!!
+          console.log('-- checking:', model_type);
+          if (data[model_type]?.['pk']) {
+            if (user.hasViewPermission(model_type as ModelType)) {
+              const url = getDetailUrl(
+                model_type as ModelType,
+                data[model_type]['pk']
+              );
+              onClose();
+              navigate(url);
+              match = true;
+              break;
+            }
           }
+        }
+
+        if (!match) {
+          setError(t`No matching item found`);
         }
       })
       .catch((error) => {
@@ -60,6 +75,9 @@ export default function BarcodeScanDialog({
         });
 
         setError(_error);
+      })
+      .finally(() => {
+        setProcessing(false);
       });
   }, []);
 
@@ -72,7 +90,9 @@ export default function BarcodeScanDialog({
         title={<StylishText size='xl'>{title ?? t`Scan Barcode`}</StylishText>}
       >
         <Divider />
-        <BarcodeInput onScan={onScan} error={error} />
+        <Box>
+          <BarcodeInput onScan={onScan} error={error} processing={processing} />
+        </Box>
       </Modal>
     </>
   );

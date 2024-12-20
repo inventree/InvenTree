@@ -4,6 +4,7 @@ import {
   Box,
   Card,
   Divider,
+  LoadingOverlay,
   SegmentedControl,
   type SegmentedControlItem,
   Stack,
@@ -23,11 +24,13 @@ export type BarcodeInputProps = {
   placeholder?: string;
   label?: string;
   actionText?: string;
+  processing?: boolean;
 };
 
 export function BarcodeInput({
   onScan,
   error,
+  processing,
   label = t`Barcode`,
   actionText = t`Scan`
 }: Readonly<BarcodeInputProps>) {
@@ -94,6 +97,7 @@ export function BarcodeInput({
 
   return (
     <Box>
+      <LoadingOverlay visible={processing} />
       <Stack gap='xs'>
         <SegmentedControl
           size='xs'
