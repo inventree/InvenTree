@@ -31,23 +31,27 @@ repos:
     rev: 0.5.1
     hooks:
       - id: pip-compile
-        name: pip-compile requirements-dev.in
+        name: pip-compile backend requirements-dev.in
         args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --no-strip-extras, --generate-hashes]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile backend requirements.txt
         args: [src/backend/requirements.in, -o, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile backend requirements.txt for 3.12
+        args: [src/backend/requirements.in, -o, src/backend/requirements-3-12.txt, --no-strip-extras, --generate-hashes, --python-version=3.12]
+        files: src/backend/(requirements\.in|requirements-3-12\.txt)$
+      - id: pip-compile
+        name: pip-compile dev requirements.txt
         args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes]
         files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile docs requirements.txt
         args: [docs/requirements.in, -o, docs/requirements.txt, --no-strip-extras, --generate-hashes]
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt
+        name: pip-compile container requirements.txt
         args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
