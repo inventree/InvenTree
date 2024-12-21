@@ -12,7 +12,12 @@ import {
   Text,
   rem
 } from '@mantine/core';
-import { useFullscreen, useListState, useLocalStorage } from '@mantine/hooks';
+import {
+  randomId,
+  useFullscreen,
+  useListState,
+  useLocalStorage
+} from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconArrowsMaximize,
@@ -34,8 +39,11 @@ import PageTitle from '../../components/nav/PageTitle';
 import { RenderInstance } from '../../components/render/Instance';
 import { ModelInformationDict } from '../../components/render/ModelType';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { notYetImplemented } from '../../functions/notifications';
+import type { ModelType } from '../../enums/ModelType';
+import {
+  notYetImplemented,
+  showApiErrorMessage
+} from '../../functions/notifications';
 import { apiUrl } from '../../states/ApiState';
 
 export interface ScanItem {
@@ -50,29 +58,6 @@ export interface ScanItem {
   pk?: string;
 }
 
-/*
- * Match the scanned object to a known internal model type
- */
-function matchObject(rd: any): [ModelType | undefined, string | undefined] {
-  if (rd?.part) {
-    return [ModelType.part, rd?.part.pk];
-  } else if (rd?.stockitem) {
-    return [ModelType.stockitem, rd?.stockitem.pk];
-  } else if (rd?.stocklocation) {
-    return [ModelType.stocklocation, rd?.stocklocation.pk];
-  } else if (rd?.supplierpart) {
-    return [ModelType.supplierpart, rd?.supplierpart.pk];
-  } else if (rd?.purchaseorder) {
-    return [ModelType.purchaseorder, rd?.purchaseorder.pk];
-  } else if (rd?.salesorder) {
-    return [ModelType.salesorder, rd?.salesorder.pk];
-  } else if (rd?.build) {
-    return [ModelType.build, rd?.build.pk];
-  } else {
-    return [undefined, undefined];
-  }
-}
-
 export default function Scan() {
   const { toggle: toggleFullscreen, fullscreen } = useFullscreen();
   const [history, historyHandlers] = useListState<ScanItem>([]);
@@ -81,17 +66,6 @@ export default function Scan() {
     defaultValue: []
   });
   const [selection, setSelection] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useLocalStorage<string | null>({
-    key: 'input-selection',
-    defaultValue: null
-  });
-
-  // button handlers
-  function btnRunSelectedBarcode() {
-    const item = getSelectedItem(selection[0]);
-    if (!item) return;
-    runBarcode(item?.ref, item?.id);
-  }
 
   const selectionLinked =
     selection.length === 1 && getSelectedItem(selection[0])?.link != undefined;
@@ -124,68 +98,78 @@ export default function Scan() {
     return item;
   }
 
-  function runBarcode(value: string, id?: string) {
-    api
-      .post(apiUrl(ApiEndpoints.barcode), { barcode: value })
-      .then((response) => {
-        // update item in history
-        if (!id) return;
-        const item = getSelectedItem(selection[0]);
-        if (!item) return;
+  // Fetch model instance based on scan item
+  const fetchInstance = useCallback(
+    (item: ScanItem) => {
+      if (!item.model || !item.pk) {
+        return;
+      }
 
-        // set link data
-        item.link = response.data?.url;
+      const model_info = ModelInformationDict[item.model];
 
-        const rsp = matchObject(response.data);
-        item.model = rsp[0];
-        item.pk = rsp[1];
+      api
+        .get(apiUrl(model_info.api_endpoint, item.pk))
+        .then((response) => {
+          item.instance = response.data;
+          historyHandlers.append(item);
+        })
+        .catch((error) => {
+          showApiErrorMessage({
+            error: error,
+            title: t`API Error`,
+            message: t`Failed to fetch instance data`
+          });
+        });
+    },
+    [api]
+  );
 
-        // Fetch instance data
-        if (item.model && item.pk) {
-          const model_info = ModelInformationDict[item.model];
+  const scanBarcode = useCallback(
+    (barcode: string) => {
+      api
+        .post(apiUrl(ApiEndpoints.barcode), { barcode: barcode })
+        .then((response) => {
+          const data = response?.data ?? {};
 
-          if (model_info?.api_endpoint) {
-            const url = apiUrl(model_info.api_endpoint, item.pk);
+          let match = false;
 
-            api
-              .get(url)
-              .then((response) => {
-                item.instance = response.data;
-                const list_idx = history.findIndex((i) => i.id === id);
-                historyHandlers.setItem(list_idx, item);
-              })
-              .catch((err) => {
-                console.error('error while fetching instance data at', url);
-                console.info(err);
+          for (const model_type of Object.keys(ModelInformationDict)) {
+            if (data[model_type]?.pk) {
+              match = true;
+              fetchInstance({
+                id: randomId(),
+                ref: barcode,
+                data: data,
+                timestamp: new Date(),
+                source: 'scan',
+                model: model_type as ModelType,
+                pk: data[model_type]?.pk
               });
+            }
           }
-        } else {
-          historyHandlers.setState(history);
-        }
-      })
-      .catch((err) => {
-        // 400 and no plugin means no match
-        if (
-          err.response?.status === 400 &&
-          err.response?.data?.plugin === 'None'
-        )
-          return;
-        // otherwise log error
-        console.log('error while running barcode', err);
-      });
-  }
 
-  const scanBarcode = useCallback((barcode: string) => {
-    // TODO: Fetch via API
-  }, []);
-
-  function addItems(items: ScanItem[]) {
-    for (const item of items) {
-      historyHandlers.append(item);
-      runBarcode(item.ref, item.id);
-    }
-    setSelection(items.map((item) => item.id));
-  }
+          // If no match is found, add an empty result
+          if (!match) {
+            historyHandlers.append({
+              id: randomId(),
+              ref: barcode,
+              data: data,
+              timestamp: new Date(),
+              source: 'scan'
+            });
+          }
+        })
+        .catch((error) => {
+          showApiErrorMessage({
+            error: error,
+            message: t`Failed to scan barcode`,
+            title: t`Scan Error`,
+            field: 'error'
+          });
+        });
+    },
+    [fetchInstance]
+  );
 
   // save history data to session storage
   useEffect(() => {
@@ -299,7 +283,7 @@ export default function Scan() {
                       <IconTrash />
                     </ActionIcon>
                     <ActionIcon
-                      onClick={btnRunSelectedBarcode}
+                      onClick={notYetImplemented}
                       disabled={selection.length > 1}
                       title={t`Lookup part`}
                       variant='default'

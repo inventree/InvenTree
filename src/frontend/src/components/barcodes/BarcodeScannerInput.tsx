@@ -44,7 +44,7 @@ export default function BarcodeScannerInput({
       <Box>
         <Container>
           <Center>
-            <FocusTrap>
+            <FocusTrap active={true}>
               <Stack gap='xs'>
                 <Group justify='space-apart'>
                   <IconScan size={64} />
