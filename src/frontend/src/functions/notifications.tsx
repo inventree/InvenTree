@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
+import { extractErrorMessage } from './api';
 
 /**
  * Show a notification that the feature is not yet implemented
@@ -86,19 +87,15 @@ export function showApiErrorMessage({
   message?: string;
   field?: string;
 }) {
-  // Extract error description from response
-  const error_data: any = error.response?.data ?? {};
-
-  let error_msg: any =
-    message ?? error_data[field ?? 'error'] ?? error_data['non_field_errors'];
-
-  if (!error_msg) {
-    error_msg = t`An error occurred`;
-  }
+  const errorMessage = extractErrorMessage({
+    error: error,
+    field: field,
+    defaultMessage: message
+  });
 
   notifications.show({
     title: title,
-    message: error_msg,
+    message: errorMessage,
     color: 'red'
   });
 }

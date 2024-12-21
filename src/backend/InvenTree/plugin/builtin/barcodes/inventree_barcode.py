@@ -135,15 +135,15 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
     def generate(self, model_instance: InvenTreeBarcodeMixin):
         """Generate a barcode for a given model instance."""
-        barcode_format = self.get_setting('INTERNAL_BARCODE_FORMAT')
-
-        if barcode_format == 'json':
-            return json.dumps({model_instance.barcode_model_type(): model_instance.pk})
+        barcode_format = self.get_setting(
+            'INTERNAL_BARCODE_FORMAT', backup_value='json'
+        )
 
         if barcode_format == 'short':
             prefix = self.get_setting('SHORT_BARCODE_PREFIX')
             model_type_code = model_instance.barcode_model_type_code()
 
             return f'{prefix}{model_type_code}{model_instance.pk}'
-
-        return None
+        else:
+            # Default = JSON format
+            return json.dumps({model_instance.barcode_model_type(): model_instance.pk})
