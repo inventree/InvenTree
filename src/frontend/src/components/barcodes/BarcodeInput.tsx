@@ -87,11 +87,11 @@ export function BarcodeInput({
     switch (inputType) {
       case 'camera':
         return <BarcodeCameraInput onScan={onScanBarcode} />;
-      case 'keyboard':
-        return <BarcodeKeyboardInput onScan={onScanBarcode} />;
       case 'scanner':
-      default:
         return <BarcodeScannerInput onScan={onScanBarcode} />;
+      case 'keyboard':
+      default:
+        return <BarcodeKeyboardInput onScan={onScanBarcode} />;
     }
   }, [inputType, onScan]);
 
