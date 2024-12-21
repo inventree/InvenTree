@@ -1,49 +1,32 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
-  Badge,
   Button,
   Checkbox,
-  Container,
   Grid,
   Group,
   ScrollArea,
-  Select,
   Space,
   Stack,
   Table,
   Text,
-  TextInput,
   rem
 } from '@mantine/core';
-import {
-  getHotkeyHandler,
-  randomId,
-  useDocumentVisibility,
-  useFullscreen,
-  useListState,
-  useLocalStorage
-} from '@mantine/hooks';
-import { showNotification } from '@mantine/notifications';
+import { useFullscreen, useListState, useLocalStorage } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconArrowsMaximize,
   IconArrowsMinimize,
   IconLink,
   IconNumber,
-  IconPlayerPlayFilled,
-  IconPlayerStopFilled,
-  IconPlus,
   IconQuestionMark,
   IconSearch,
-  IconTrash,
-  IconX
+  IconTrash
 } from '@tabler/icons-react';
-import { Html5Qrcode } from 'html5-qrcode';
-import type { CameraDevice } from 'html5-qrcode/camera/core';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
+import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
@@ -53,7 +36,6 @@ import { ModelInformationDict } from '../../components/render/ModelType';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { notYetImplemented } from '../../functions/notifications';
-import { IS_DEV_OR_DEMO } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 
 export interface ScanItem {
@@ -193,6 +175,10 @@ export default function Scan() {
       });
   }
 
+  const scanBarcode = useCallback((barcode: string) => {
+    // TODO: Fetch via API
+  }, []);
+
   function addItems(items: ScanItem[]) {
     for (const item of items) {
       historyHandlers.append(item);
@@ -211,37 +197,6 @@ export default function Scan() {
   if (history.length === 0 && historyStorage.length != 0) {
     historyHandlers.setState(historyStorage);
   }
-
-  // input stuff
-  const inputOptions = [
-    { value: InputMethod.Manual, label: t`Manual input` },
-    { value: InputMethod.ImageBarcode, label: t`Image Barcode` }
-  ];
-
-  const inp = (() => {
-    switch (inputValue) {
-      case InputMethod.Manual:
-        return <InputManual action={addItems} />;
-      case InputMethod.ImageBarcode:
-        return (
-          <InputImageBarcode
-            action={(decodedText: string) => {
-              addItems([
-                {
-                  id: randomId(),
-                  ref: decodedText,
-                  data: decodedText,
-                  timestamp: new Date(),
-                  source: InputMethod.ImageBarcode
-                }
-              ]);
-            }}
-          />
-        );
-      default:
-        return <Text>No input selected</Text>;
-    }
-  })();
 
   // selected actions component
   const SelectedActions = () => {
@@ -313,26 +268,8 @@ export default function Scan() {
       <Space h={'md'} />
       <Grid maw={'100%'}>
         <Grid.Col span={4}>
-          <Stack>
-            <Stack gap='xs'>
-              <Group justify='space-between'>
-                <TitleWithDoc
-                  order={3}
-                  text={t`Select the input method you want to use to scan items.`}
-                >
-                  <Trans>Input</Trans>
-                </TitleWithDoc>
-                <Select
-                  value={inputValue}
-                  onChange={setInputValue}
-                  data={inputOptions}
-                  searchable
-                  placeholder={t`Select input method`}
-                  nothingFoundMessage={t`Nothing found`}
-                />
-              </Group>
-              {inp}
-            </Stack>
+          <Stack gap='xs'>
+            <BarcodeInput onScan={scanBarcode} />
             <Stack gap={0}>
               <TitleWithDoc
                 order={3}
@@ -498,287 +435,3 @@ function HistoryTable({
     </ScrollArea>
   );
 }
-
-// region input stuff
-enum InputMethod {
-  Manual = 'manually',
-  ImageBarcode = 'imageBarcode'
-}
-
-export interface ScanInputInterface {
-  action: (items: ScanItem[]) => void;
-}
-
-interface BarcodeInputProps {
-  action: (decodedText: string) => void;
-  notScanningPlaceholder?: string;
-}
-
-function InputManual({ action }: Readonly<ScanInputInterface>) {
-  const [value, setValue] = useState<string>('');
-
-  function btnAddItem() {
-    if (value === '') return;
-
-    const new_item: ScanItem = {
-      id: randomId(),
-      ref: value,
-      data: { item: value },
-      timestamp: new Date(),
-      source: InputMethod.Manual
-    };
-    action([new_item]);
-    setValue('');
-  }
-
-  function btnAddDummyItem() {
-    const new_item: ScanItem = {
-      id: randomId(),
-      ref: 'Test item',
-      data: {},
-      timestamp: new Date(),
-      source: InputMethod.Manual
-    };
-    action([new_item]);
-  }
-
-  return (
-    <>
-      <Group>
-        <TextInput
-          placeholder={t`Enter item serial or data`}
-          value={value}
-          onChange={(event) => setValue(event.currentTarget.value)}
-          onKeyDown={getHotkeyHandler([['Enter', btnAddItem]])}
-        />
-        <ActionIcon onClick={btnAddItem} w={16} variant='default'>
-          <IconPlus />
-        </ActionIcon>
-      </Group>
-
-      {IS_DEV_OR_DEMO && (
-        <Button onClick={btnAddDummyItem} variant='outline'>
-          <Trans>Add dummy item</Trans>
-        </Button>
-      )}
-    </>
-  );
-}
-
-/* Input that uses QR code detection from images */
-export function InputImageBarcode({
-  action,
-  notScanningPlaceholder = t`Start scanning by selecting a camera and pressing the play button.`
-}: Readonly<BarcodeInputProps>) {
-  const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
-  const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
-    key: 'camId',
-    defaultValue: null
-  });
-  const [cameras, setCameras] = useState<any[]>([]);
-  const [cameraValue, setCameraValue] = useState<string | null>(null);
-  const [scanningEnabled, setScanningEnabled] = useState<boolean>(false);
-  const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
-  const documentState = useDocumentVisibility();
-
-  let lastValue = '';
-
-  // Mount QR code once we are loaded
-  useEffect(() => {
-    setQrCodeScanner(new Html5Qrcode('reader'));
-
-    // load cameras
-    Html5Qrcode.getCameras().then((devices) => {
-      if (devices?.length) {
-        setCameras(devices);
-      }
-    });
-  }, []);
-
-  // set camera value from id
-  useEffect(() => {
-    if (camId) {
-      setCameraValue(camId.id);
-    }
-  }, [camId]);
-
-  // Stop/start when leaving or reentering page
-  useEffect(() => {
-    if (scanningEnabled && documentState === 'hidden') {
-      btnStopScanning();
-      setWasAutoPaused(true);
-    } else if (wasAutoPaused && documentState === 'visible') {
-      btnStartScanning();
-      setWasAutoPaused(false);
-    }
-  }, [documentState]);
-
-  // Scanner functions
-  function onScanSuccess(decodedText: string) {
-    qrCodeScanner?.pause();
-
-    // dedouplication
-    if (decodedText === lastValue) {
-      qrCodeScanner?.resume();
-      return;
-    }
-    lastValue = decodedText;
-
-    // submit value upstream
-    action(decodedText);
-
-    qrCodeScanner?.resume();
-  }
-
-  function onScanFailure(error: string) {
-    if (
-      error !=
-      'QR code parse error, error = NotFoundException: No MultiFormat Readers were able to detect the code.'
-    ) {
-      console.warn(`Code scan error = ${error}`);
-    }
-  }
-
-  // button handlers
-  function btnSelectCamera() {
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices?.length) {
-          setCamId(devices[0]);
-        }
-      })
-      .catch((err) => {
-        showNotification({
-          title: t`Error while getting camera`,
-          message: err,
-          color: 'red',
-          icon: <IconX />
-        });
-      });
-  }
-
-  function btnStartScanning() {
-    if (camId && qrCodeScanner && !scanningEnabled) {
-      qrCodeScanner
-        .start(
-          camId.id,
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            onScanSuccess(decodedText);
-          },
-          (errorMessage) => {
-            onScanFailure(errorMessage);
-          }
-        )
-        .catch((err: string) => {
-          showNotification({
-            title: t`Error while scanning`,
-            message: err,
-            color: 'red',
-            icon: <IconX />
-          });
-        });
-      setScanningEnabled(true);
-    }
-  }
-
-  function btnStopScanning() {
-    if (qrCodeScanner && scanningEnabled) {
-      qrCodeScanner.stop().catch((err: string) => {
-        showNotification({
-          title: t`Error while stopping`,
-          message: err,
-          color: 'red',
-          icon: <IconX />
-        });
-      });
-      setScanningEnabled(false);
-    }
-  }
-
-  // on value change
-  useEffect(() => {
-    if (cameraValue === null) return;
-    if (cameraValue === camId?.id) {
-      return;
-    }
-
-    const cam = cameras.find((cam) => cam.id === cameraValue);
-
-    // stop scanning if cam changed while scanning
-    if (qrCodeScanner && scanningEnabled) {
-      // stop scanning
-      qrCodeScanner.stop().then(() => {
-        // change ID
-        setCamId(cam);
-        // start scanning
-        qrCodeScanner.start(
-          cam.id,
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            onScanSuccess(decodedText);
-          },
-          (errorMessage) => {
-            onScanFailure(errorMessage);
-          }
-        );
-      });
-    } else {
-      setCamId(cam);
-    }
-  }, [cameraValue]);
-
-  return (
-    <Stack gap='xs'>
-      <Group gap='xs' preventGrowOverflow>
-        <Select
-          value={cameraValue}
-          onChange={setCameraValue}
-          data={cameras.map((device) => {
-            return { value: device.id, label: device.label };
-          })}
-          maw={200}
-          size='sm'
-        />
-        {scanningEnabled ? (
-          <ActionIcon
-            size='input-sm'
-            onClick={btnStopScanning}
-            title={t`Stop scanning`}
-            variant='default'
-          >
-            <IconPlayerStopFilled />
-          </ActionIcon>
-        ) : (
-          <ActionIcon
-            size='input-sm'
-            onClick={btnStartScanning}
-            title={t`Start scanning`}
-            disabled={!camId}
-            variant='default'
-          >
-            <IconPlayerPlayFilled />
-          </ActionIcon>
-        )}
-        <Space style={{ flex: 1 }} />
-        <Badge color={scanningEnabled ? 'green' : 'orange'}>
-          {scanningEnabled ? t`Scanning` : t`Not scanning`}
-        </Badge>
-      </Group>
-      {scanningEnabled ? (
-        <Container px={0} id='reader' w={'100%'} mih='300px' />
-      ) : (
-        <Container px={0} id='reader' w={'100%'} mih='300px'>
-          {notScanningPlaceholder}
-        </Container>
-      )}
-      {!camId && (
-        <Button onClick={btnSelectCamera}>
-          <Trans>Select Camera</Trans>
-        </Button>
-      )}
-    </Stack>
-  );
-}
-
-// endregion
