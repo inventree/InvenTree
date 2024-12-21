@@ -18,20 +18,16 @@ export default function BarcodeScannerInput({
 }: Readonly<BarcodeInputProps>) {
   const [barcodeData, setBarcodeData] = useState<string>('');
 
-  const onSubmit = useCallback(() => {
-    console.log('scanned:', barcodeData);
-    setBarcodeData((barcode) => '');
-  }, [barcodeData]);
-
   const onKeyPress = useCallback(
     (event: any) => {
       if (event.key === 'Enter') {
-        onSubmit();
+        onScan(barcodeData);
+        setBarcodeData('');
       } else {
         setBarcodeData((barcode) => barcode + event.key);
       }
     },
-    [onScan, onSubmit]
+    [barcodeData, onScan]
   );
 
   useEffect(() => {
