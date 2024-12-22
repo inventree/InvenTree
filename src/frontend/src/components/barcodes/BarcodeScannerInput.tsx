@@ -7,7 +7,9 @@ import {
   Group,
   Loader,
   Stack,
-  Text
+  Text,
+  TextInput,
+  VisuallyHidden
 } from '@mantine/core';
 import { IconScan } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -46,6 +48,10 @@ export default function BarcodeScannerInput({
           <Center>
             <FocusTrap active={true}>
               <Stack gap='xs'>
+                {/* Hidden input, required for FocusTrap to work */}
+                <VisuallyHidden>
+                  <TextInput hidden />
+                </VisuallyHidden>
                 <Group justify='space-apart'>
                   <IconScan size={64} />
                   <Loader />

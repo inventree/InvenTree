@@ -1,6 +1,8 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
+  Alert,
+  Divider,
   Grid,
   Group,
   Paper,
@@ -198,26 +200,28 @@ export default function Scan() {
           <Paper p='sm' shadow='xs'>
             <Stack gap='xs'>
               <StylishText size='lg'>{t`Barcode Input`}</StylishText>
+              <Divider />
               <BarcodeInput onScan={scanBarcode} />
             </Stack>
           </Paper>
           <Paper p='sm' shadow='xs'>
             <Stack gap='xs'>
-              <Stack gap={0}>
-                <StylishText size='lg'>{t`Action`}</StylishText>
-                {selection.length === 0 ? (
+              <StylishText size='lg'>{t`Action`}</StylishText>
+              <Divider />
+              {selection.length === 0 ? (
+                <Text>
+                  <Alert title={t`No Items Selected`} color='blue'>
+                    <Trans>Scan and select items to perform actions</Trans>
+                  </Alert>
+                </Text>
+              ) : (
+                <>
                   <Text>
-                    <Trans>No selection</Trans>
+                    <Trans>{selection.length} items selected</Trans>
                   </Text>
-                ) : (
-                  <>
-                    <Text>
-                      <Trans>{selection.length} items selected</Trans>
-                    </Text>
-                    {SelectedActions}
-                  </>
-                )}
-              </Stack>
+                  {SelectedActions}
+                </>
+              )}
             </Stack>
           </Paper>
         </Grid.Col>
@@ -227,6 +231,7 @@ export default function Scan() {
               <Group justify='space-between'>
                 <StylishText size='lg'>{t`Scanned Items`}</StylishText>
               </Group>
+              <Divider />
               <BarcodeScanTable
                 records={history}
                 onItemsSelected={(ids: string[]) => {
