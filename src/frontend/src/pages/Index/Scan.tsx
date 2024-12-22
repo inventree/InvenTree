@@ -11,11 +11,8 @@ import {
 import { randomId, useListState, useLocalStorage } from '@mantine/hooks';
 import {
   IconAlertCircle,
-  IconLink,
   IconNumber,
-  IconQuestionMark,
-  IconSearch,
-  IconTrash
+  IconQuestionMark
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -31,7 +28,6 @@ import {
   notYetImplemented,
   showApiErrorMessage
 } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
@@ -44,31 +40,6 @@ export default function Scan() {
     defaultValue: []
   });
   const [selection, setSelection] = useState<string[]>([]);
-
-  function btnOpenSelectedLink() {
-    const item = getSelectedItem(selection[0]);
-    if (!item) return;
-
-    if (item.model && item.pk) {
-      const url = getDetailUrl(item.model, item.pk);
-      window.open(url, '_blank');
-    }
-  }
-
-  function btnDeleteHistory() {
-    historyHandlers.setState(
-      history.filter((item) => !selection.includes(item.id))
-    );
-    setSelection([]);
-  }
-
-  // general functions
-  function getSelectedItem(ref: string): BarcodeScanItem | undefined {
-    if (selection.length === 0) return;
-    const item = history.find((item) => item.id === ref);
-    if (item?.barcode === undefined) return;
-    return item;
-  }
 
   // Fetch model instance based on scan item
   const fetchInstance = useCallback(
@@ -231,35 +202,6 @@ export default function Scan() {
                     <Text>
                       <Trans>{selection.length} items selected</Trans>
                     </Text>
-                    <Text fz='sm' c='dimmed'>
-                      <Trans>General Actions</Trans>
-                    </Text>
-                    <Group>
-                      <ActionIcon
-                        color='red'
-                        onClick={btnDeleteHistory}
-                        title={t`Delete`}
-                        variant='default'
-                      >
-                        <IconTrash />
-                      </ActionIcon>
-                      <ActionIcon
-                        onClick={notYetImplemented}
-                        disabled={selection.length > 1}
-                        title={t`Lookup part`}
-                        variant='default'
-                      >
-                        <IconSearch />
-                      </ActionIcon>
-                      <ActionIcon
-                        onClick={btnOpenSelectedLink}
-                        disabled={false}
-                        title={t`Open Link`}
-                        variant='default'
-                      >
-                        <IconLink />
-                      </ActionIcon>
-                    </Group>
                     <SelectedActions />
                   </>
                 )}
@@ -278,11 +220,12 @@ export default function Scan() {
                 onItemsSelected={(items) =>
                   setSelection(items.map((item) => item.id))
                 }
-                onItemsDeleted={(items) =>
+                onItemsDeleted={(items) => {
+                  const item_ids = items.map((item) => item.id);
                   historyHandlers.setState(
-                    history.filter((item) => !items.includes(item))
-                  )
-                }
+                    history.filter((item) => !item_ids.includes(item.id))
+                  );
+                }}
               />
             </Stack>
           </Paper>
