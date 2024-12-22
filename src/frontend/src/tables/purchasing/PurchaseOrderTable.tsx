@@ -14,6 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -25,10 +26,19 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -38,10 +48,10 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({
   supplierId,
   supplierPartId
-}: {
+}: Readonly<{
   supplierId?: number;
   supplierPartId?: number;
-}) {
+}>) {
   const table = useTable('purchase-order');
   const user = useUserState();
 
@@ -59,17 +69,21 @@ export function PurchaseOrderTable({
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'assigned_to',
         label: t`Responsible`,
@@ -87,8 +101,8 @@ export function PurchaseOrderTable({
         accessor: 'supplier__name',
         title: t`Supplier`,
         sortable: true,
-        render: function (record: any) {
-          let supplier = record.supplier_detail ?? {};
+        render: (record: any) => {
+          const supplier = record.supplier_detail ?? {};
 
           return (
             <Thumbnail
@@ -107,6 +121,9 @@ export function PurchaseOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
+      CompletionDateColumn({
+        accessor: 'complete_date'
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
@@ -121,7 +138,7 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
-  const purchaseOrderFields = usePurchaseOrderFields();
+  const purchaseOrderFields = usePurchaseOrderFields({});
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
@@ -137,6 +154,7 @@ export function PurchaseOrderTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-purchase-order'
         tooltip={t`Add Purchase Order`}
         onClick={() => newPurchaseOrder.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}

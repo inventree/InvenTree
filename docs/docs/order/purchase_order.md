@@ -20,6 +20,7 @@ Each Purchase Order has a specific status code which indicates the current state
 | --- | --- |
 | Pending | The purchase order has been created, but has not been submitted to the supplier |
 | In Progress | The purchase order has been issued to the supplier, and is in progress |
+| On Hold | The purchase order has been placed on hold, but is still active |
 | Complete | The purchase order has been completed, and is now closed |
 | Cancelled | The purchase order was cancelled, and is now closed |
 | Lost | The purchase order was lost, and is now closed |
@@ -36,6 +37,8 @@ Refer to the source code for the Purchase Order status codes:
         show_root_toc_entry: False
         show_source: True
         members: []
+
+Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Purchase Order Currency
 
@@ -90,6 +93,14 @@ There are two options to mark items as "received":
 !!! note "Permissions"
 	Marking line items as received requires the "Purchase order" ADD permission.
 
+### Item Location
+
+When receiving items from a purchase order, the location of the items must be specified. There are multiple ways to specify the location:
+
+* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location.
+
+* **Line Item Location**: Each line item can have a specific location set. When receiving items, the location will default to the line item location. *Note: A destination specified at the line item level will override the destination specified at the order level.*
+
 ### Received Items
 
 Each item marked as "received" is automatically converted into a stock item.
@@ -138,3 +149,14 @@ This view can be accessed externally as an ICS calendar using a URL like the fol
 `http://inventree.example.org/api/order/calendar/purchase-order/calendar.ics`
 
 by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.
+
+## Purchase Order Settings
+
+The following [global settings](../settings/global.md) are available for purchase orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
+{{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}

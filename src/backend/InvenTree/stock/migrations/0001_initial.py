@@ -64,6 +64,9 @@ class Migration(migrations.Migration):
                 ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tracking_info', to='stock.StockItem')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
             ],
+            options={
+                'verbose_name': 'Stock Item Tracking',
+            }
         ),
         migrations.AddField(
             model_name='stockitem',

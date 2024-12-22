@@ -1,7 +1,6 @@
 """Custom exception handling for the DRF API."""
 
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import logging
 import sys
@@ -9,16 +8,12 @@ import traceback
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db.utils import IntegrityError, OperationalError
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.views as drfviews
-from error_report.models import Error
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
-
-import InvenTree.sentry
 
 logger = logging.getLogger('inventree')
 
@@ -36,16 +31,15 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         error_info: The error information (optional, overrides 'info')
         error_data: The error data (optional, overrides 'data')
     """
+    from error_report.models import Error
+
     kind, info, data = sys.exc_info()
 
     # Check if the error is on the ignore list
     if kind in settings.IGNORED_ERRORS:
         return
 
-    if error_name:
-        kind = error_name
-    else:
-        kind = getattr(kind, '__name__', 'Unknown Error')
+    kind = error_name or getattr(kind, '__name__', 'Unknown Error')
 
     if error_info:
         info = error_info
@@ -80,6 +74,8 @@ def exception_handler(exc, context):
 
     If sentry error reporting is enabled, we will also provide the original exception to sentry.io
     """
+    import InvenTree.sentry
+
     response = None
 
     # Pass exception to sentry.io handler

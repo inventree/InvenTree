@@ -1,6 +1,7 @@
 import { ModelInformationDict } from '../components/render/ModelType';
-import { ModelType } from '../enums/ModelType';
+import type { ModelType } from '../enums/ModelType';
 import { base_url } from '../main';
+import { useLocalState } from '../states/LocalState';
 
 /**
  * Returns the detail view URL for a given model type
@@ -17,8 +18,8 @@ export function getDetailUrl(
   }
 
   if (!!pk && modelInfo && modelInfo.url_detail) {
-    let url = modelInfo.url_detail.replace(':pk', pk.toString());
-    let base = base_url;
+    const url = modelInfo.url_detail.replace(':pk', pk.toString());
+    const base = base_url;
 
     if (absolute && base) {
       return `/${base}${url}`;
@@ -29,4 +30,27 @@ export function getDetailUrl(
 
   console.error(`No detail URL found for model ${model} <${pk}>`);
   return '';
+}
+
+/**
+ * Returns the edit view URL for a given model type
+ */
+export function generateUrl(url: string | URL, base?: string): string {
+  const { host } = useLocalState.getState();
+
+  let newUrl: string | URL = url;
+
+  try {
+    if (base) {
+      newUrl = new URL(url, base).toString();
+    } else if (host) {
+      newUrl = new URL(url, host).toString();
+    } else {
+      newUrl = url.toString();
+    }
+  } catch (e: any) {
+    console.error(`ERR: generateURL failed. url='${url}', base='${base}'`);
+  }
+
+  return newUrl.toString();
 }

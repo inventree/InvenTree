@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='pluginsetting',
             name='key',
-            field=models.CharField(help_text='Settings key (must be unique - case insensitive)', max_length=50),
+            field=models.CharField(help_text='Settings key', max_length=50),
         ),
     ]

@@ -35,4 +35,4 @@ class Command(BaseCommand):
             mfa_user[0].staticdevice_set.all().delete()
             # TOTP tokens
             mfa_user[0].totpdevice_set.all().delete()
-            print(f'Removed all MFA methods for user {str(mfa_user[0])}')
+            print(f'Removed all MFA methods for user {mfa_user[0]!s}')

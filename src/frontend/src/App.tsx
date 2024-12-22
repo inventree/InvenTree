@@ -23,10 +23,16 @@ export function setApiDefaults() {
   api.defaults.xsrfHeaderName = 'X-CSRFToken';
 
   if (token) {
-    api.defaults.headers['Authorization'] = `Token ${token}`;
+    api.defaults.headers.Authorization = `Token ${token}`;
   } else {
     delete api.defaults.headers['Authorization'];
   }
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});

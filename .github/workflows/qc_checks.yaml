@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 18
+  node_version: 20
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -36,9 +36,12 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
+      cicd: ${{ steps.filter.outputs.cicd }}
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -56,34 +59,14 @@ jobs:
               - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
+            cicd:
+              - '.github/workflows/**'
       - name: Is CI being forced?
         run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
-
-  javascript:
-    name: Style - Classic UI [JS]
-    runs-on: ubuntu-20.04
-
-    needs: ["pre-commit"]
-
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-          install: true
-      - name: Check Templated JS Files
-        run: |
-          cd .github/scripts
-          python3 check_js_templates.py
-      - name: Lint Javascript Files
-        run: |
-          python src/backend/InvenTree/manage.py prerender
-          cd src/backend && npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
@@ -92,9 +75,11 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -113,9 +98,11 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -124,7 +111,7 @@ jobs:
           pip install --require-hashes -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
+        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # pin@v1
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
@@ -149,7 +136,9 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -157,29 +146,45 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
+        run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
-        if: needs.paths-filter.outputs.api == 'false'
+        env:
+          API: ${{ needs.paths-filter.outputs.api }}
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
+          version="$(python3 .github/scripts/version_check.py only_version ${API} 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
-          curl -s -o api.yaml $url
+          code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
+          if [ "$code" != "200" ]; then
+            exit 1
+          fi
           echo "Downloaded api.yaml"
+      - name: Running OpenAPI Spec diff action
+        id: breaking_changes
+        uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
+        with:
+          base: 'api.yaml'
+          revision: 'src/backend/InvenTree/schema.yml'
+          format: 'html'
+      - name: Echoing diff to step
+        env:
+          DIFF: ${{ steps.breaking_changes.outputs.diff }}
+        run: echo "${DIFF}" >> $GITHUB_STEP_SUMMARY
+
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
           diff --color -u src/backend/InvenTree/schema.yml api.yaml
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
-        run: invoke schema
+        run: invoke dev.schema
         continue-on-error: true
       - name: Extract version for publishing
         id: version
@@ -199,12 +204,14 @@ jobs:
       version: ${{ needs.schema.outputs.version }}
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        name: Checkout Code
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
+          persist-credentials: false
       - name: Download schema artifact
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
           name: schema.yml
       - name: Move schema to correct location
@@ -212,9 +219,10 @@ jobs:
           echo "Version: $version"
           mkdir export/${version}
           mv schema.yml export/${version}/api.yaml
-      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # pin@v5.0.1
+        name: Commit schema changes
         with:
-          commit_message: "Update API schema for ${version}"
+          commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
 
   python:
     name: Tests - inventree-python
@@ -224,7 +232,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
-      wrapper_name: inventree-python
+      WRAPPER_NAME: inventree-python
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
       INVENTREE_ADMIN_USER: testuser
@@ -236,25 +244,26 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
-          npm: true
-      - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+      - name: Download Python Code For `${WRAPPER_NAME}`
+        run: git clone --depth 1 https://github.com/inventree/${WRAPPER_NAME} ./${WRAPPER_NAME}
       - name: Start InvenTree Server
         run: |
-          invoke delete-data -f
-          invoke import-fixtures
-          invoke server -a 127.0.0.1:12345 &
+          invoke dev.delete-data -f
+          invoke dev.import-fixtures
+          invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
-      - name: Run Tests For `${{ env.wrapper_name }}`
+      - name: Run Tests For `${WRAPPER_NAME}`
         run: |
-          cd ${{ env.wrapper_name }}
+          cd ${WRAPPER_NAME}
           invoke check-server
           coverage run -m unittest discover -s test/
 
@@ -267,7 +276,8 @@ jobs:
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
-        python_version: [3.9, 3.12]
+        python_version: [3.9]
+        # python_version: [3.9, 3.12]  # Disabled due to requirement issues
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -277,7 +287,9 @@ jobs:
       python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -287,13 +299,13 @@ jobs:
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke test --coverage
+        run: invoke dev.test --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -331,7 +343,9 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -340,7 +354,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -375,7 +389,9 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -384,7 +400,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -414,7 +430,9 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -423,9 +441,9 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -445,7 +463,9 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -502,7 +522,9 @@ jobs:
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -510,17 +532,17 @@ jobs:
           install: true
           update: true
       - name: Set up test data
-        run: invoke setup-test -i
+        run: invoke dev.setup-test -i
       - name: Rebuild thumbnails
-        run: invoke rebuild-thumbnails
+        run: invoke int.rebuild-thumbnails
       - name: Install dependencies
-        run: inv frontend-compile
+        run: invoke int.frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -530,12 +552,19 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: pui
+      - name: Upload bundler info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          cd src/frontend
+          yarn install
+          yarn run build
 
   platform_ui_build:
     name: Build - UI Platform
@@ -543,7 +572,9 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -552,11 +583,38 @@ jobs:
         run: cd src/frontend && yarn install
       - name: Build frontend
         run: cd src/frontend && yarn run compile && yarn run build
+      - name: Write version file - SHA
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
+          include-hidden-files: true
+
+  zizmor:
+    name: Security [Zizmor]
+    runs-on: ubuntu-20.04
+    needs: ['pre-commit', 'paths-filter']
+    if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
+
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # pin@v2
+      - name: Run zizmor
+        run: uvx zizmor --format sarif . > results.sarif
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@df409f7d9260372bd5f19e5b04e83cb3c43714ae # pin@v3
+        with:
+          sarif_file: results.sarif
+          category: zizmor

@@ -118,10 +118,7 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
                     field = field[1:]
 
                 # Are aliases defined for this field?
-                if field in aliases:
-                    alias = aliases[field]
-                else:
-                    alias = field
+                alias = aliases.get(field, field)
 
                 """
                 Potentially, a single field could be "aliased" to multiple field,

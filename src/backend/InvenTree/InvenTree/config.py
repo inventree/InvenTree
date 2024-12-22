@@ -131,7 +131,7 @@ def load_config_data(set_cache: bool = False) -> map:
 
     cfg_file = get_config_file()
 
-    with open(cfg_file, 'r') as cfg:
+    with open(cfg_file, encoding='utf-8') as cfg:
         data = yaml.safe_load(cfg)
 
     # Set the cache if requested

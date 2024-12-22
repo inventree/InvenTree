@@ -47,6 +47,10 @@ If a part is designated as an *Assembly* it can be created (or built) from other
 
 If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../build/bom.md)
 
+### Testable
+
+Testable parts can have test templates defined against the part, allowing test results to be recorded against any stock items for that part. For more information on testing, refer to the [testing documentation](./test.md).
+
 ### Trackable
 
 Trackable parts can be assigned batch numbers or serial numbers which uniquely identify a particular stock item. Trackable parts also provide other features (and restrictions) in the InvenTree ecosystem.
@@ -73,7 +77,15 @@ A [Purchase Order](../order/purchase_order.md) allows parts to be ordered from a
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
 
-### Active
+## Locked Parts
+
+Parts can be locked to prevent them from being modified. This is useful for parts which are in production and should not be changed. The following restrictions apply to parts which are locked:
+
+- Locked parts cannot be deleted
+- BOM items cannot be created, edited, or deleted when they are part of a locked assembly
+- Part parameters linked to a locked part cannot be created, edited or deleted
+
+## Active Parts
 
 By default, all parts are *Active*. Marking a part as inactive means it is not available for many actions, but the part remains in the database. If a part becomes obsolete, it is recommended that it is marked as inactive, rather than deleting it from the database.
 

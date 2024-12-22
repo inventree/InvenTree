@@ -6,7 +6,13 @@ There is a rendered state for each state value. The rendered state is used for d
 States can be extended with custom options for each InvenTree instance - those options are stored in the database and need to link back to state values.
 """
 
-from .states import StatusCode
+from .states import ColorEnum, StatusCode
 from .transition import StateTransitionMixin, TransitionMethod, storage
 
-__all__ = ['StatusCode', 'storage', 'TransitionMethod', 'StateTransitionMixin']
+__all__ = [
+    'ColorEnum',
+    'StateTransitionMixin',
+    'StatusCode',
+    'TransitionMethod',
+    'storage',
+]

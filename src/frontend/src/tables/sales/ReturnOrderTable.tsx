@@ -7,13 +7,14 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
 import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -25,22 +26,37 @@ import {
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
   OutstandingFilter,
   OverdueFilter,
   StatusFilterOptions,
-  TableFilter
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function ReturnOrderTable({ params }: { params?: any }) {
-  const table = useTable('return-orders');
+export function ReturnOrderTable({
+  partId,
+  customerId
+}: Readonly<{
+  partId?: number;
+  customerId?: number;
+}>) {
+  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
   const user = useUserState();
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    const filters: TableFilter[] = [
       {
         name: 'status',
         label: t`Status`,
@@ -50,17 +66,21 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
       {
         name: 'project_code',
         label: t`Project Code`,
         description: t`Filter by project code`,
         choices: projectCodeFilters.choices
       },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      HasProjectCodeFilter(),
       {
         name: 'assigned_to',
         label: t`Responsible`,
@@ -68,7 +88,18 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         choices: responsibleFilters.choices
       }
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -77,8 +108,8 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer__name',
         title: t`Customer`,
         sortable: true,
-        render: function (record: any) {
-          let customer = record.customer_detail ?? {};
+        render: (record: any) => {
+          const customer = record.customer_detail ?? {};
 
           return (
             <Thumbnail
@@ -98,6 +129,9 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       TargetDateColumn({}),
+      CompletionDateColumn({
+        accessor: 'complete_date'
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',
@@ -112,12 +146,15 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
 
   const newReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: returnOrderFields,
+    initialData: {
+      customer: customerId
+    },
     follow: true,
     modelType: ModelType.returnorder
   });
@@ -125,6 +162,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-return-order'
         tooltip={t`Add Return Order`}
         onClick={() => newReturnOrder.open()}
         hidden={!user.hasAddRole(UserRoles.return_order)}
@@ -141,7 +179,8 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            part: partId,
+            customer: customerId,
             customer_detail: true
           },
           tableFilters: tableFilters,

@@ -15,7 +15,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
@@ -162,6 +161,14 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         verbose_name=_('Revision'),
         help_text=_('Revision number (auto-increments)'),
         editable=False,
+    )
+
+    attach_to_model = models.BooleanField(
+        default=False,
+        verbose_name=_('Attach to Model on Print'),
+        help_text=_(
+            'Save report output as an attachment against linked model instance when printing'
+        ),
     )
 
     def generate_filename(self, context, **kwargs):
@@ -409,7 +416,12 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         for plugin in plugins:
             # Let each plugin add its own context data
-            plugin.add_label_context(self, self.object_to_print, request, context)
+            try:
+                plugin.add_label_context(self, instance, request, context)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.add_label_context'
+                )
 
         return context
 

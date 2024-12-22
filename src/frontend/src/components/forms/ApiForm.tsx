@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import {
   Alert,
   Button,
-  DefaultMantineColor,
+  type DefaultMantineColor,
   Divider,
   Group,
   LoadingOverlay,
@@ -15,33 +15,36 @@ import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  FieldValues,
+  type FieldValues,
   FormProvider,
-  SubmitErrorHandler,
-  SubmitHandler,
+  type SubmitErrorHandler,
+  type SubmitHandler,
   useForm
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { api, queryClient } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ApiEndpoints } from '../../enums/ApiEndpoints';
+import type { ModelType } from '../../enums/ModelType';
 import {
-  NestedDict,
+  type NestedDict,
   constructField,
   constructFormUrl,
   extractAvailableFields,
   mapFields
 } from '../../functions/forms';
-import { invalidResponse } from '../../functions/notifications';
+import {
+  invalidResponse,
+  showTimeoutNotification
+} from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
-import { TableState } from '../../hooks/UseTable';
-import { PathParams } from '../../states/ApiState';
+import type { TableState } from '../../hooks/UseTable';
+import type { PathParams } from '../../states/ApiState';
 import { Boundary } from '../Boundary';
 import {
   ApiFormField,
-  ApiFormFieldSet,
-  ApiFormFieldType
+  type ApiFormFieldSet,
+  type ApiFormFieldType
 } from './fields/ApiFormField';
 
 export interface ApiFormAction {
@@ -67,13 +70,14 @@ export interface ApiFormAction {
  * @param successMessage : Optional message to display on successful form submission
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
+ * @param processFormData : A callback function to process the form data before submission
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
  * @param table : Table to update on success (if provided)
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
-  pk?: number | string | undefined;
+  pk?: number | string;
   pk_field?: string;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -90,7 +94,8 @@ export interface ApiFormProps {
   postFormContent?: JSX.Element;
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
-  onFormError?: () => void;
+  onFormError?: (response: any) => void;
+  processFormData?: (data: any) => any;
   table?: TableState;
   modelType?: ModelType;
   follow?: boolean;
@@ -101,10 +106,10 @@ export interface ApiFormProps {
 export function OptionsApiForm({
   props: _props,
   id: pId
-}: {
+}: Readonly<{
   props: ApiFormProps;
   id?: string;
-}) {
+}>) {
   const props = useMemo(
     () => ({
       ..._props,
@@ -123,7 +128,6 @@ export function OptionsApiForm({
   const optionsQuery = useQuery({
     enabled: true,
     refetchOnMount: false,
-    refetchOnWindowFocus: false,
     queryKey: [
       'form-options-data',
       id,
@@ -133,11 +137,12 @@ export function OptionsApiForm({
       props.pathParams
     ],
     queryFn: async () => {
-      let response = await api.options(url);
+      const response = await api.options(url);
       let fields: Record<string, ApiFormFieldType> | null = {};
       if (!props.ignorePermissionCheck) {
         fields = extractAvailableFields(response, props.method);
       }
+
       return fields;
     },
     throwOnError: (error: any) => {
@@ -168,7 +173,7 @@ export function OptionsApiForm({
       });
 
       // If the user has specified initial data, use that value here
-      let value = _props?.initialData?.[k];
+      const value = _props?.initialData?.[k];
 
       if (value) {
         _props.fields[k].value = value;
@@ -182,7 +187,7 @@ export function OptionsApiForm({
     <ApiForm
       id={id}
       props={formProps}
-      optionsLoading={optionsQuery.isFetching}
+      optionsLoading={optionsQuery.isFetching || !optionsQuery.data}
     />
   );
 }
@@ -195,26 +200,26 @@ export function ApiForm({
   id,
   props,
   optionsLoading
-}: {
+}: Readonly<{
   id: string;
   props: ApiFormProps;
   optionsLoading: boolean;
-}) {
+}>) {
   const navigate = useNavigate();
 
-  const fields: ApiFormFieldSet = useMemo(() => {
-    return props.fields ?? {};
-  }, [props.fields]);
+  const [fields, setFields] = useState<ApiFormFieldSet>(
+    () => props.fields ?? {}
+  );
 
   const defaultValues: FieldValues = useMemo(() => {
-    let defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
+    const defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
     });
 
     // If the user has specified initial data, that overrides default values
     // But, *only* for the fields we have specified
     if (props.initialData) {
-      Object.keys(props.initialData).map((key) => {
+      Object.keys(props.initialData).forEach((key) => {
         if (key in defaultValuesMap) {
           defaultValuesMap[key] =
             props?.initialData?.[key] ?? defaultValuesMap[key];
@@ -247,6 +252,31 @@ export function ApiForm({
     [props.url, props.pk, props.pathParams]
   );
 
+  // Define function to process API response
+  const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
+    const res: NestedDict = {};
+
+    for (const [k, field] of Object.entries(fields)) {
+      const dataValue = data[k];
+
+      if (
+        field.field_type === 'nested object' &&
+        field.children &&
+        typeof dataValue === 'object'
+      ) {
+        res[k] = processFields(field.children, dataValue);
+      } else {
+        res[k] = dataValue;
+
+        if (field.onValueChange) {
+          field.onValueChange(dataValue, data);
+        }
+      }
+    }
+
+    return res;
+  };
+
   // Query manager for retrieving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
@@ -259,66 +289,51 @@ export function ApiForm({
       props.pathParams
     ],
     queryFn: async () => {
-      try {
-        // Await API call
-        let response = await api.get(url);
+      return await api
+        .get(url)
+        .then((response: any) => {
+          // Process API response
+          const fetchedData: any = processFields(fields, response.data);
 
-        // Define function to process API response
-        const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
-          const res: NestedDict = {};
-
-          // TODO: replace with .map()
-          for (const [k, field] of Object.entries(fields)) {
-            const dataValue = data[k];
-
-            if (
-              field.field_type === 'nested object' &&
-              field.children &&
-              typeof dataValue === 'object'
-            ) {
-              res[k] = processFields(field.children, dataValue);
-            } else {
-              res[k] = dataValue;
-
-              if (field.onValueChange) {
-                field.onValueChange(dataValue, data);
-              }
-            }
-          }
-
-          return res;
-        };
-
-        // Process API response
-        const initialData: any = processFields(fields, response.data);
-
-        // Update form values, but only for the fields specified for this form
-        form.reset(initialData);
-
-        // Update the field references, too
-        Object.keys(fields).forEach((fieldName) => {
-          if (fieldName in initialData) {
-            let field = fields[fieldName] ?? {};
-            fields[fieldName] = {
-              ...field,
-              value: initialData[fieldName]
-            };
-          }
+          // Update form values, but only for the fields specified for this form
+          form.reset(fetchedData);
+          return fetchedData;
+        })
+        .catch(() => {
+          return {};
         });
-
-        return response;
-      } catch (error) {
-        console.error('Error fetching initial data:', error);
-        // Re-throw error to allow react-query to handle error
-        throw error;
-      }
     }
   });
+
+  useEffect(() => {
+    const _fields: any = props.fields || {};
+    const _initialData: any = props.initialData || {};
+    const _fetchedData: any = initialDataQuery.data || {};
+
+    for (const k of Object.keys(_fields)) {
+      // Ensure default values override initial field spec
+      if (k in defaultValues) {
+        _fields[k].value = defaultValues[k];
+      }
+
+      // Ensure initial data overrides default values
+      if (_initialData && k in _initialData) {
+        _fields[k].value = _initialData[k];
+      }
+
+      // Ensure fetched data overrides also
+      if (_fetchedData && k in _fetchedData) {
+        _fields[k].value = _fetchedData[k];
+      }
+    }
+
+    setFields(_fields);
+  }, [props.fields, props.initialData, defaultValues, initialDataQuery.data]);
 
   // Fetch initial data on form load
   useEffect(() => {
     // Fetch initial data if the fetchInitialData property is set
-    if (props.fetchInitialData) {
+    if (!optionsLoading && props.fetchInitialData) {
       queryClient.removeQueries({
         queryKey: [
           'form-initial-data',
@@ -331,22 +346,16 @@ export function ApiForm({
       });
       initialDataQuery.refetch();
     }
-  }, [props.fetchInitialData]);
+  }, [props.fetchInitialData, optionsLoading]);
 
-  const isLoading = useMemo(
+  const isLoading: boolean = useMemo(
     () =>
       isFormLoading ||
       initialDataQuery.isFetching ||
       optionsLoading ||
       isSubmitting ||
       !fields,
-    [
-      isFormLoading,
-      initialDataQuery.isFetching,
-      isSubmitting,
-      fields,
-      optionsLoading
-    ]
+    [isFormLoading, initialDataQuery, isSubmitting, fields, optionsLoading]
   );
 
   const [initialFocus, setInitialFocus] = useState<string>('');
@@ -362,34 +371,70 @@ export function ApiForm({
           return;
         }
 
+        // Do not auto-focus on a 'choice' field
+        if (field.field_type == 'choice') {
+          return;
+        }
+
         focusField = fieldName;
       });
     }
 
-    if (isLoading || initialFocus == focusField) {
+    if (isLoading) {
       return;
     }
 
     form.setFocus(focusField);
     setInitialFocus(focusField);
-  }, [props.focus, fields, form.setFocus, isLoading, initialFocus]);
+  }, [props.focus, form.setFocus, isLoading, initialFocus]);
 
   const submitForm: SubmitHandler<FieldValues> = async (data) => {
     setNonFieldErrors([]);
 
-    let method = props.method?.toLowerCase() ?? 'get';
+    const method = props.method?.toLowerCase() ?? 'get';
 
     let hasFiles = false;
-    mapFields(fields, (_path, field) => {
-      if (field.field_type === 'file upload') {
+
+    // Optionally pre-process the data before submitting it
+    if (props.processFormData) {
+      data = props.processFormData(data);
+    }
+
+    const jsonData = { ...data };
+    const formData = new FormData();
+
+    Object.keys(data).forEach((key: string) => {
+      let value: any = data[key];
+      const field_type = fields[key]?.field_type;
+      const exclude = fields[key]?.exclude;
+
+      if (field_type == 'file upload' && !!value) {
         hasFiles = true;
+      }
+
+      // Stringify any JSON objects
+      if (typeof value === 'object') {
+        switch (field_type) {
+          case 'file upload':
+            break;
+          default:
+            value = JSON.stringify(value);
+            break;
+        }
+      }
+
+      if (exclude) {
+        // Remove the field from the data
+        delete jsonData[key];
+      } else if (value != undefined) {
+        formData.append(key, value);
       }
     });
 
     return api({
       method: method,
       url: url,
-      data: data,
+      data: hasFiles ? formData : jsonData,
       timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
@@ -412,7 +457,7 @@ export function ApiForm({
               navigate(getDetailUrl(props.modelType, response.data?.pk));
             } else if (props.table) {
               // If we want to automatically update or reload a linked table
-              let pk_field = props.pk_field ?? 'pk';
+              const pk_field = props.pk_field ?? 'pk';
 
               if (props.pk && response?.data[pk_field]) {
                 props.table.updateRecord(response.data);
@@ -437,7 +482,7 @@ export function ApiForm({
           default:
             // Unexpected state on form success
             invalidResponse(response.status);
-            props.onFormError?.();
+            props.onFormError?.(response);
             break;
         }
 
@@ -453,7 +498,11 @@ export function ApiForm({
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  if (k === 'non_field_errors' || k === '__all__') {
+                  // Determine if field "k" is valid (exists and is visible)
+                  const field = fields[k];
+                  const valid = field && !field.hidden;
+
+                  if (!valid || k === 'non_field_errors' || k === '__all__') {
                     if (Array.isArray(v)) {
                       _nonFieldErrors.push(...v);
                     }
@@ -461,7 +510,22 @@ export function ApiForm({
                   }
 
                   if (typeof v === 'object' && Array.isArray(v)) {
-                    form.setError(path, { message: v.join(', ') });
+                    if (field?.field_type == 'table') {
+                      // Special handling for "table" fields - they have nested errors
+                      v.forEach((item: any, idx: number) => {
+                        for (const [key, value] of Object.entries(item)) {
+                          const path: string = `${k}.${idx}.${key}`;
+                          if (Array.isArray(value)) {
+                            form.setError(path, { message: value.join(', ') });
+                          }
+                        }
+                      });
+                    } else {
+                      // Standard error handling for other fields
+                      form.setError(path, { message: v.join(', ') });
+                    }
+                  } else if (typeof v === 'string') {
+                    form.setError(path, { message: v });
                   } else {
                     processErrors(v, path);
                   }
@@ -470,25 +534,38 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
+              props.onFormError?.(error);
+
               break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);
-              props.onFormError?.();
+              props.onFormError?.(error);
               break;
           }
         } else {
-          invalidResponse(0);
-          props.onFormError?.();
+          showTimeoutNotification();
+          props.onFormError?.(error);
         }
 
         return error;
       });
   };
 
-  const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
-    props.onFormError?.();
-  }, [props.onFormError]);
+  const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(
+    (error: any) => {
+      props.onFormError?.(error);
+    },
+    [props.onFormError]
+  );
+
+  if (optionsLoading || initialDataQuery.isFetching) {
+    return (
+      <Paper mah={'65vh'}>
+        <LoadingOverlay visible zIndex={1010} />
+      </Paper>
+    );
+  }
 
   return (
     <Stack>
@@ -501,43 +578,57 @@ export function ApiForm({
         <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
           <div>
             {/* Form Fields */}
-            <Stack gap="sm">
+            <Stack gap='sm'>
               {(!isValid || nonFieldErrors.length > 0) && (
-                <Alert radius="sm" color="red" title={t`Error`}>
-                  {nonFieldErrors.length > 0 && (
-                    <Stack gap="xs">
+                <Alert radius='sm' color='red' title={t`Form Error`}>
+                  {nonFieldErrors.length > 0 ? (
+                    <Stack gap='xs'>
                       {nonFieldErrors.map((message) => (
                         <Text key={message}>{message}</Text>
                       ))}
                     </Stack>
+                  ) : (
+                    <Text>{t`Errors exist for one or more form fields`}</Text>
                   )}
                 </Alert>
               )}
               <Boundary label={`ApiForm-${id}-PreFormContent`}>
                 {props.preFormContent}
                 {props.preFormSuccess && (
-                  <Alert color="green" radius="sm">
+                  <Alert color='green' radius='sm'>
                     {props.preFormSuccess}
                   </Alert>
                 )}
                 {props.preFormWarning && (
-                  <Alert color="orange" radius="sm">
+                  <Alert color='orange' radius='sm'>
                     {props.preFormWarning}
                   </Alert>
                 )}
               </Boundary>
               <Boundary label={`ApiForm-${id}-FormContent`}>
                 <FormProvider {...form}>
-                  <Stack gap="xs">
-                    {!optionsLoading &&
-                      Object.entries(fields).map(([fieldName, field]) => (
+                  <Stack gap='xs'>
+                    {Object.entries(fields).map(([fieldName, field]) => {
+                      return (
                         <ApiFormField
                           key={fieldName}
                           fieldName={fieldName}
                           definition={field}
                           control={form.control}
+                          url={url}
+                          setFields={setFields}
+                          onKeyDown={(value) => {
+                            if (
+                              value == 'Enter' &&
+                              !isLoading &&
+                              (!props.fetchInitialData || isDirty)
+                            ) {
+                              form.handleSubmit(submitForm, onFormError)();
+                            }
+                          }}
                         />
-                      ))}
+                      );
+                    })}
                   </Stack>
                 </FormProvider>
               </Boundary>
@@ -551,13 +642,13 @@ export function ApiForm({
         {/* Footer with Action Buttons */}
         <Divider />
         <div>
-          <Group justify="right">
+          <Group justify='right'>
             {props.actions?.map((action, i) => (
               <Button
-                key={i}
+                key={`${i}-${action.text}`}
                 onClick={action.onClick}
                 variant={action.variant ?? 'outline'}
-                radius="sm"
+                radius='sm'
                 color={action.color}
               >
                 {action.text}
@@ -565,8 +656,8 @@ export function ApiForm({
             ))}
             <Button
               onClick={form.handleSubmit(submitForm, onFormError)}
-              variant="filled"
-              radius="sm"
+              variant='filled'
+              radius='sm'
               color={props.submitColor ?? 'green'}
               disabled={isLoading || (props.fetchInitialData && !isDirty)}
             >
@@ -582,10 +673,10 @@ export function ApiForm({
 export function CreateApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const createProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
@@ -600,15 +691,15 @@ export function CreateApiForm({
 export function EditApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const editProps = useMemo<ApiFormProps>(
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      submitText: t`Update` ?? props.submitText,
+      submitText: props.submitText ?? t`Update`,
       method: 'PUT'
     }),
     [props]
@@ -620,10 +711,10 @@ export function EditApiForm({
 export function DeleteApiForm({
   id,
   props
-}: {
+}: Readonly<{
   id?: string;
   props: ApiFormProps;
-}) {
+}>) {
   const deleteProps = useMemo<ApiFormProps>(
     () => ({
       ...props,

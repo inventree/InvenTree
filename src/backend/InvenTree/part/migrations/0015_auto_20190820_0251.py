@@ -18,6 +18,9 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(help_text='Parameter Name', max_length=100)),
                 ('units', models.CharField(blank=True, help_text='Parameter Units', max_length=25)),
             ],
+            options={
+                'verbose_name': 'Part Parameter Template',
+            },
         ),
         migrations.RemoveField(
             model_name='partparameter',

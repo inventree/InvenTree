@@ -1,4 +1,4 @@
-import { Button } from '@mantine/core';
+import { Button, Tooltip } from '@mantine/core';
 import {
   IconBrandAzure,
   IconBrandBitbucket,
@@ -14,10 +14,11 @@ import {
   IconLogin
 } from '@tabler/icons-react';
 
+import { t } from '@lingui/macro';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
-import { Provider } from '../../states/states';
+import type { Provider } from '../../states/states';
 
 const brandIcons: { [key: string]: JSX.Element } = {
   google: <IconBrandGoogle />,
@@ -33,7 +34,7 @@ const brandIcons: { [key: string]: JSX.Element } = {
   microsoft: <IconBrandAzure />
 };
 
-export function SsoButton({ provider }: { provider: Provider }) {
+export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
   function login() {
     // set preferred provider
     api
@@ -49,14 +50,23 @@ export function SsoButton({ provider }: { provider: Provider }) {
   }
 
   return (
-    <Button
-      leftSection={getBrandIcon(provider)}
-      radius="xl"
-      component="a"
-      onClick={login}
+    <Tooltip
+      label={
+        provider.login
+          ? t`You will be redirected to the provider for further actions.`
+          : t`This provider is not full set up.`
+      }
     >
-      {provider.display_name}{' '}
-    </Button>
+      <Button
+        leftSection={getBrandIcon(provider)}
+        radius='xl'
+        component='a'
+        onClick={login}
+        disabled={!provider.login}
+      >
+        {provider.display_name}
+      </Button>
+    </Tooltip>
   );
 }
 function getBrandIcon(provider: Provider) {

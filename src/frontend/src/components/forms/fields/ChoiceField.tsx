@@ -1,21 +1,22 @@
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for selecting from a list of choices
  */
 export function ChoiceField({
   controller,
-  definition
-}: {
+  definition,
+  fieldName
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
   fieldName: string;
-}) {
+}>) {
   const fieldId = useId();
 
   const {
@@ -23,9 +24,11 @@ export function ChoiceField({
     fieldState: { error }
   } = controller;
 
+  const { value } = field;
+
   // Build a set of choices for the field
   const choices: any[] = useMemo(() => {
-    let choices = definition.choices ?? [];
+    const choices = definition.choices ?? [];
 
     // TODO: Allow provision of custom render function also
 
@@ -48,16 +51,24 @@ export function ChoiceField({
     [field.onChange, definition]
   );
 
+  const choiceValue = useMemo(() => {
+    if (!value) {
+      return '';
+    } else {
+      return value.toString();
+    }
+  }, [value]);
+
   return (
     <Select
       id={fieldId}
       aria-label={`choice-field-${field.name}`}
-      error={error?.message}
-      radius="sm"
+      error={definition.error ?? error?.message}
+      radius='sm'
       {...field}
       onChange={onChange}
       data={choices}
-      value={field.value}
+      value={choiceValue}
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder}
@@ -65,6 +76,7 @@ export function ChoiceField({
       disabled={definition.disabled}
       leftSection={definition.icon}
       comboboxProps={{ withinPortal: true }}
+      searchable
     />
   );
 }

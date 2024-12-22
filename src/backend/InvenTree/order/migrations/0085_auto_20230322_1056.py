@@ -44,6 +44,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'unique_together': {('order', 'item')},
+                'verbose_name': 'Return Order Line Item',
             },
         ),
     ]

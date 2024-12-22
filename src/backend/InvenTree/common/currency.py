@@ -3,6 +3,7 @@
 import decimal
 import logging
 import math
+from typing import Optional
 
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -59,7 +60,9 @@ def currency_codes() -> list:
     """Returns the current currency codes."""
     from common.settings import get_global_setting
 
-    codes = get_global_setting('CURRENCY_CODES', create=False).strip()
+    codes = get_global_setting(
+        'CURRENCY_CODES', create=False, enviroment_key='INVENTREE_CURRENCY_CODES'
+    ).strip()
 
     if not codes:
         codes = currency_codes_default_list()
@@ -111,7 +114,9 @@ def after_change_currency(setting) -> None:
     InvenTree.tasks.update_exchange_rates(force=True)
 
     # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
+    InvenTree.tasks.offload_task(
+        part_tasks.check_missing_pricing, force_async=True, group='pricing'
+    )
 
 
 def validate_currency_codes(value):
@@ -139,7 +144,7 @@ def validate_currency_codes(value):
     return list(valid_currencies)
 
 
-def currency_exchange_plugins() -> list:
+def currency_exchange_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for currency exchange."""
     try:
         from plugin import registry

@@ -1,15 +1,26 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import { NavigateFunction } from 'react-router-dom';
+import type { NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../states/ApiState';
+import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
+
+export function followRedirect(navigate: NavigateFunction, redirect: any) {
+  let url = redirect?.redirectUrl ?? '/home';
+
+  if (redirect?.queryParams) {
+    // Construct and appand query parameters
+    url = `${url}?${new URLSearchParams(redirect.queryParams).toString()}`;
+  }
+
+  navigate(url);
+}
 
 /**
  * sends a request to the specified url from a form. this will change the window location.
@@ -26,7 +37,10 @@ function post(path: string, params: any, method = 'post') {
   form.action = path;
 
   for (const key in params) {
-    if (params.hasOwnProperty(key)) {
+    if (
+      params.hasOwn?.(key) ||
+      Object.prototype.hasOwnProperty.call(params, key)
+    ) {
       const hiddenField = document.createElement('input');
       hiddenField.type = 'hidden';
       hiddenField.name = key;
@@ -47,8 +61,7 @@ function post(path: string, params: any, method = 'post') {
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState, isLoggedIn } =
-    useUserState.getState();
+  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -58,7 +71,7 @@ export const doBasicLogin = async (username: string, password: string) => {
 
   const login_url = apiUrl(ApiEndpoints.user_login);
 
-  let result: boolean = false;
+  let result = false;
 
   // Attempt login with
   await api
@@ -82,8 +95,8 @@ export const doBasicLogin = async (username: string, password: string) => {
     })
     .catch((err) => {
       if (
-        err?.response.status == 403 &&
-        err?.response.data.detail == 'MFA required for this user'
+        err?.response?.status == 403 &&
+        err?.response?.data?.detail == 'MFA required for this user'
       ) {
         post(apiUrl(ApiEndpoints.user_login), {
           username: username,
@@ -96,7 +109,7 @@ export const doBasicLogin = async (username: string, password: string) => {
 
   if (result) {
     await fetchUserState();
-    await fetchGlobalStates();
+    fetchGlobalStates();
   } else {
     clearUserState();
   }
@@ -178,7 +191,7 @@ export function handleReset(navigate: any, values: { email: string }) {
  */
 export const checkLoginState = async (
   navigate: any,
-  redirect?: string,
+  redirect?: any,
   no_redirect?: boolean
 ) => {
   setApiDefaults();
@@ -198,13 +211,13 @@ export const checkLoginState = async (
 
     fetchGlobalStates();
 
-    navigate(redirect ?? '/home');
+    followRedirect(navigate, redirect);
   };
 
   // Callback function when login fails
   const loginFailure = () => {
     if (!no_redirect) {
-      navigate('/login', { state: { redirectFrom: redirect } });
+      navigate('/login', { state: redirect });
     }
   };
 

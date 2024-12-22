@@ -10,10 +10,13 @@ from django.views.generic.base import RedirectView
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
+from rest_framework.generics import DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.helpers
+import InvenTree.permissions
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListAPI,
@@ -22,10 +25,19 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.serializers import (
+    ExtendedUserSerializer,
+    MeUserSerializer,
+    UserCreateSerializer,
+)
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner
-from users.serializers import GroupSerializer, OwnerSerializer, RoleSerializer
+from users.serializers import (
+    ApiTokenSerializer,
+    GroupSerializer,
+    OwnerSerializer,
+    RoleSerializer,
+)
 
 logger = logging.getLogger('inventree')
 
@@ -118,16 +130,27 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = ExendedUserSerializer
+    serializer_class = ExtendedUserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """Detail endpoint for current user."""
 
+    serializer_class = MeUserSerializer
+
+    rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
+
     def get_object(self):
         """Always return the current user object."""
         return self.request.user
+
+    def get_permission_model(self):
+        """Return the model for the permission check.
+
+        Note that for this endpoint, the current user can *always* edit their own details.
+        """
+        return None
 
 
 class UserList(ListCreateAPI):
@@ -135,7 +158,10 @@ class UserList(ListCreateAPI):
 
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsSuperuserOrReadOnly,
+    ]
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['first_name', 'last_name', 'username']
@@ -153,7 +179,21 @@ class UserList(ListCreateAPI):
     filterset_fields = ['is_staff', 'is_active', 'is_superuser']
 
 
-class GroupDetail(RetrieveUpdateDestroyAPI):
+class GroupMixin:
+    """Mixin for Group API endpoints to add permissions filter."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint."""
+        # Do we wish to include extra detail?
+        params = self.request.query_params
+        kwargs['permission_detail'] = InvenTree.helpers.str2bool(
+            params.get('permission_detail', None)
+        )
+        kwargs['context'] = self.get_serializer_context()
+        return self.serializer_class(*args, **kwargs)
+
+
+class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group."""
 
     queryset = Group.objects.all()
@@ -161,7 +201,7 @@ class GroupDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class GroupList(ListCreateAPI):
+class GroupList(GroupMixin, ListCreateAPI):
     """List endpoint for all auth groups."""
 
     queryset = Group.objects.all()
@@ -258,7 +298,23 @@ class GetAuthToken(APIView):
             return Response(data)
 
         else:
-            raise exceptions.NotAuthenticated()
+            raise exceptions.NotAuthenticated()  # pragma: no cover
+
+
+class TokenListView(DestroyAPIView, ListAPI):
+    """List of registered tokens for current users."""
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ApiTokenSerializer
+
+    def get_queryset(self):
+        """Only return data for current user."""
+        return ApiToken.objects.filter(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        """Revoke token."""
+        instance.revoked = True
+        instance.save()
 
 
 class LoginRedirect(RedirectView):
@@ -275,6 +331,13 @@ class LoginRedirect(RedirectView):
 user_urls = [
     path('roles/', RoleDetails.as_view(), name='api-user-roles'),
     path('token/', GetAuthToken.as_view(), name='api-token'),
+    path(
+        'tokens/',
+        include([
+            path('<int:pk>/', TokenListView.as_view(), name='api-token-detail'),
+            path('', TokenListView.as_view(), name='api-token-list'),
+        ]),
+    ),
     path('me/', MeUserDetail.as_view(), name='api-user-me'),
     path(
         'owner/',

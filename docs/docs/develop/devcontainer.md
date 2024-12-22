@@ -52,7 +52,7 @@ Tasks can help you executing scripts. You can run them by open the command panel
 
 #### Setup demo dataset
 
-If you need some demo test-data, run the `setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](https://github.com/inventree/demo-dataset).
+If you need some demo test-data, run the `setup-test` task. This will import an `admin` user with the password `inventree`. For more info on what this dataset contains see [inventree/demo-dataset](../demo.md).
 
 #### Setup a superuser
 
@@ -67,7 +67,7 @@ If you need to process your queue with background workers, run the `worker` task
 You can either only run InvenTree or use the integrated debugger for debugging. Goto the `Run and debug` side panel make sure `InvenTree Server` is selected. Click on the play button on the left.
 
 !!! tip "Debug with 3rd party"
-    Sometimes you need to debug also some 3rd party packages. Just select `InvenTree Servre - 3rd party`
+    Sometimes you need to debug also some 3rd party packages. Just select `InvenTree Server - 3rd party`
 
 You can now set breakpoints and vscode will automatically pause execution if that point is hit. You can see all variables available in that context and evaluate some code with the debugger console at the bottom. Use the play or step buttons to continue execution.
 

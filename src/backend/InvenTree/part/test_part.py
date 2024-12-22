@@ -169,7 +169,7 @@ class PartTest(TestCase):
         self.assertEqual(Part.barcode_model_type(), 'part')
 
         p = Part.objects.get(pk=1)
-        barcode = p.format_barcode(brief=True)
+        barcode = p.format_barcode()
         self.assertEqual(barcode, '{"part": 1}')
 
     def test_tree(self):
@@ -244,8 +244,7 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
+        self.assertEqual(self.r1.get_absolute_url(), '/platform/part/3')
 
     def test_category(self):
         """Test PartCategory path."""
@@ -270,9 +269,8 @@ class PartTest(TestCase):
 
     def test_barcode(self):
         """Test barcode format functionality."""
-        barcode = self.r1.format_barcode(brief=False)
-        self.assertIn('InvenTree', barcode)
-        self.assertIn('"part": {"id": 3}', barcode)
+        barcode = self.r1.format_barcode()
+        self.assertEqual('{"part": 3}', barcode)
 
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded."""
@@ -370,6 +368,101 @@ class PartTest(TestCase):
 
         self.assertIsNotNone(p.last_stocktake)
         self.assertEqual(p.last_stocktake, ps.date)
+
+    def test_delete(self):
+        """Test delete operation for a Part instance."""
+        part = Part.objects.first()
+
+        for active, locked in [(True, True), (True, False), (False, True)]:
+            # Cannot delete part if it is active or locked
+            part.active = active
+            part.locked = locked
+            part.save()
+
+            with self.assertRaises(ValidationError):
+                part.delete()
+
+        part.active = False
+        part.locked = False
+
+        part.delete()
+
+    def test_revisions(self):
+        """Test the 'revision' and 'revision_of' field."""
+        template = Part.objects.create(
+            name='Template part', description='A template part', is_template=True
+        )
+
+        # Create a new part
+        part = Part.objects.create(
+            name='Master Part',
+            description='Master part (will have revisions)',
+            variant_of=template,
+        )
+
+        self.assertEqual(part.revisions.count(), 0)
+
+        # Try to set as revision of itself
+        with self.assertRaises(ValidationError) as exc:
+            part.revision_of = part
+            part.save()
+
+        self.assertIn('Part cannot be a revision of itself', str(exc.exception))
+
+        part.refresh_from_db()
+
+        rev_a = Part.objects.create(
+            name='Master Part', description='Master part (revision A)'
+        )
+
+        with self.assertRaises(ValidationError) as exc:
+            print('rev a:', rev_a.revision_of, part.revision_of)
+            rev_a.revision_of = part
+            rev_a.save()
+
+        self.assertIn('Revision code must be specified', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_a.revision_of = template
+            rev_a.revision = 'A'
+            rev_a.save()
+
+        self.assertIn('Cannot make a revision of a template part', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_a.revision_of = part
+            rev_a.revision = 'A'
+            rev_a.save()
+
+        self.assertIn('Parent part must point to the same template', str(exc.exception))
+
+        rev_a.variant_of = template
+        rev_a.revision_of = part
+        rev_a.revision = 'A'
+        rev_a.save()
+
+        self.assertEqual(part.revisions.count(), 1)
+
+        rev_b = Part.objects.create(
+            name='Master Part', description='Master part (revision B)'
+        )
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_b.revision_of = rev_a
+            rev_b.revision = 'B'
+            rev_b.save()
+
+        self.assertIn(
+            'Cannot make a revision of a part which is already a revision',
+            str(exc.exception),
+        )
+
+        rev_b.variant_of = template
+        rev_b.revision_of = part
+        rev_b.revision = 'B'
+        rev_b.save()
+
+        self.assertEqual(part.revisions.count(), 2)
 
 
 class TestTemplateTest(TestCase):

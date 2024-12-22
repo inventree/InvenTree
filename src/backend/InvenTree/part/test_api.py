@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
-from pathlib import Path
 from random import randint
 
 from django.core.exceptions import ValidationError
@@ -13,7 +12,6 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
-from rest_framework import status
 from rest_framework.test import APIClient
 
 import build.models
@@ -283,6 +281,15 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             'A\t part\t category\t',
             'A pa\rrt cat\r\r\regory',
             'A part\u200e catego\u200fry\u202e',
+            'A\u0000 part\u0000 category',
+            'A part\u0007 category',
+            'A\u001f part category',
+            'A part\u007f category',
+            '\u0001A part category',
+            'A part\u0085 category',
+            'A part category\u200e',
+            'A part cat\u200fegory',
+            'A\u0006 part\u007f categ\nory\r',
         ]
 
         for val in values:
@@ -371,7 +378,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 params['delete_parts'] = '1'
             if delete_child_categories:
                 params['delete_child_categories'] = '1'
-            response = self.delete(url, params, expected_code=204)
+            self.delete(url, params, expected_code=204)
 
             if delete_parts:
                 if i == Target.delete_subcategories_delete_parts:
@@ -505,6 +512,82 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             self.assertEqual(item['parent'], parent)
             self.assertEqual(item['subcategories'], subcategories)
 
+    def test_part_category_default_location(self):
+        """Test default location propagation through location trees."""
+        """Making a tree structure like this:
+        main
+        loc 2
+            sub1
+                sub2
+                loc 3
+                    sub3
+                    loc 4
+                        sub4
+                    sub5
+        Expected behaviour:
+        main parent loc: Out of test scope. Parent category data not controlled by the test
+        sub1 parent loc: loc 2
+        sub2 parent loc: loc 2
+        sub3 parent loc: loc 3
+        sub4 parent loc: loc 4
+        sub5 parent loc: loc 3
+        """
+        main = PartCategory.objects.create(
+            name='main',
+            parent=PartCategory.objects.first(),
+            default_location=StockLocation.objects.get(id=2),
+        )
+        sub1 = PartCategory.objects.create(name='sub1', parent=main)
+        sub2 = PartCategory.objects.create(
+            name='sub2', parent=sub1, default_location=StockLocation.objects.get(id=3)
+        )
+        sub3 = PartCategory.objects.create(
+            name='sub3', parent=sub2, default_location=StockLocation.objects.get(id=4)
+        )
+        sub4 = PartCategory.objects.create(name='sub4', parent=sub3)
+        sub5 = PartCategory.objects.create(name='sub5', parent=sub2)
+        Part.objects.create(name='test', category=sub4)
+        PartCategory.objects.rebuild()
+
+        # This query will trigger an internal server error if annotation results are not limited to 1
+        url = reverse('api-part-list')
+        response = self.get(url, expected_code=200)
+
+        # sub1, expect main to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub1.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], main.default_location.pk
+        )
+
+        # sub2, expect main to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub2.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], main.default_location.pk
+        )
+
+        # sub3, expect sub2 to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub3.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], sub2.default_location.pk
+        )
+
+        # sub4, expect sub3 to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub4.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], sub3.default_location.pk
+        )
+
+        # sub5, expect sub2 to be propagated
+        url = reverse('api-part-category-detail', kwargs={'pk': sub5.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['parent_default_location'], sub2.default_location.pk
+        )
+
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
     """Tests for the various OPTIONS endpoints in the /part/ API.
@@ -512,7 +595,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
     Ensure that the required field details are provided!
     """
 
-    roles = ['part.add']
+    roles = ['part.add', 'part_category.view']
 
     def test_part(self):
         """Test the Part API OPTIONS."""
@@ -897,7 +980,7 @@ class PartAPITest(PartAPITestBase):
         """Return list of part thumbnails."""
         url = reverse('api-part-thumbs')
 
-        response = self.get(url)
+        self.get(url)
 
     def test_paginate(self):
         """Test pagination of the Part list API."""
@@ -1033,25 +1116,26 @@ class PartAPITest(PartAPITestBase):
         url = reverse('api-part-list')
 
         required_cols = [
-            'Part ID',
-            'Part Name',
-            'Part Description',
-            'In Stock',
+            'ID',
+            'Name',
+            'Description',
+            'Total Stock',
             'Category Name',
             'Keywords',
-            'Template',
+            'Is Template',
             'Virtual',
             'Trackable',
             'Active',
             'Notes',
-            'creation_date',
+            'Creation Date',
+            'On Order',
+            'In Stock',
+            'Link',
         ]
 
         excluded_cols = ['lft', 'rght', 'level', 'tree_id', 'metadata']
 
-        with self.download_file(
-            url, {'export': 'csv'}, expected_fn='InvenTree_Parts.csv'
-        ) as file:
+        with self.download_file(url, {'export': 'csv'}) as file:
             data = self.process_csv(
                 file,
                 excluded_cols=excluded_cols,
@@ -1060,13 +1144,13 @@ class PartAPITest(PartAPITestBase):
             )
 
             for row in data:
-                part = Part.objects.get(pk=row['Part ID'])
+                part = Part.objects.get(pk=row['ID'])
 
                 if part.IPN:
                     self.assertEqual(part.IPN, row['IPN'])
 
-                self.assertEqual(part.name, row['Part Name'])
-                self.assertEqual(part.description, row['Part Description'])
+                self.assertEqual(part.name, row['Name'])
+                self.assertEqual(part.description, row['Description'])
 
                 if part.category:
                     self.assertEqual(part.category.name, row['Category Name'])
@@ -1543,7 +1627,7 @@ class PartDetailTests(PartAPITestBase):
 
         # Try to upload a non-image file
         test_path = BASE_DIR / '_testfolder' / 'dummy_image'
-        with open(f'{test_path}.txt', 'w') as dummy_image:
+        with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
             dummy_image.write('hello world')
 
         with open(f'{test_path}.txt', 'rb') as dummy_image:
@@ -2148,7 +2232,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location', 'stock', 'bom', 'company']
 
-    roles = ['part.add', 'part.change', 'part.delete']
+    roles = ['part.add', 'part.change', 'part.delete', 'stock.view']
 
     def setUp(self):
         """Set up the test case."""
@@ -2641,6 +2725,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
     superuser = False
     is_staff = False
+    roles = ['stocktake.view']
 
     fixtures = ['category', 'part', 'location', 'stock']
 
@@ -2920,7 +3005,7 @@ class PartTestTemplateTest(PartAPITestBase):
             expected_code=400,
         )
 
-        # Try to post a new test against a non-trackable part (should fail)
+        # Try to post a new test against a non-testable part (should fail)
         response = self.post(
             url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
         )
@@ -2936,7 +3021,7 @@ class PartTestTemplateTest(PartAPITestBase):
         options = response.data['actions']['PUT']
 
         self.assertTrue(options['pk']['read_only'])
-        self.assertTrue(options['pk']['required'])
+        self.assertFalse(options['pk']['required'])
         self.assertEqual(options['part']['api_url'], '/api/part/')
         self.assertTrue(options['test_name']['required'])
         self.assertFalse(options['test_name']['read_only'])

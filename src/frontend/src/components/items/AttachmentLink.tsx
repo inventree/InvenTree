@@ -9,16 +9,15 @@ import {
   IconLink,
   IconPhoto
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
-
-import { useLocalState } from '../../states/LocalState';
+import { type ReactNode, useMemo } from 'react';
+import { generateUrl } from '../../functions/urls';
 
 /**
  * Return an icon based on the provided filename
  */
 export function attachmentIcon(attachment: string): ReactNode {
   const sz = 18;
-  let suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
+  const suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
   switch (suffix) {
     case 'pdf':
       return <IconFileTypePdf size={sz} />;
@@ -55,26 +54,24 @@ export function attachmentIcon(attachment: string): ReactNode {
 export function AttachmentLink({
   attachment,
   external
-}: {
+}: Readonly<{
   attachment: string;
   external?: boolean;
-}): ReactNode {
-  let text = external ? attachment : attachment.split('/').pop();
-
-  const host = useLocalState((s) => s.host);
+}>): ReactNode {
+  const text = external ? attachment : attachment.split('/').pop();
 
   const url = useMemo(() => {
     if (external) {
       return attachment;
     }
 
-    return `${host}${attachment}`;
-  }, [host, attachment, external]);
+    return generateUrl(attachment);
+  }, [attachment, external]);
 
   return (
-    <Group justify="left" gap="sm" wrap="nowrap">
+    <Group justify='left' gap='sm' wrap='nowrap'>
       {external ? <IconLink /> : attachmentIcon(attachment)}
-      <Anchor href={url} target="_blank" rel="noopener noreferrer">
+      <Anchor href={url} target='_blank' rel='noopener noreferrer'>
         {text}
       </Anchor>
     </Group>

@@ -2,18 +2,19 @@
 
 import logging
 from datetime import datetime
+from string import Formatter
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
+from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
@@ -95,7 +96,7 @@ class PluginValidationMixin(DiffMixin):
                     return
             except ValidationError as exc:
                 raise exc
-            except Exception as exc:
+            except Exception:
                 # Log the exception to the database
                 import InvenTree.exceptions
 
@@ -127,10 +128,18 @@ class PluginValidationMixin(DiffMixin):
 
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
+        from InvenTree.exceptions import log_error
         from plugin.registry import registry
 
         for plugin in registry.with_mixin('validation'):
-            plugin.validate_model_deletion(self)
+            try:
+                plugin.validate_model_deletion(self)
+            except ValidationError as e:
+                # Plugin might raise a ValidationError to prevent deletion
+                raise e
+            except Exception:
+                log_error('plugin.validate_model_deletion')
+                continue
 
         super().delete()
 
@@ -216,11 +225,14 @@ class MetadataMixin(models.Model):
             self.save()
 
 
-class DataImportMixin(object):
+class DataImportMixin:
     """Model mixin class which provides support for 'data import' functionality.
 
     Models which implement this mixin should provide information on the fields available for import
     """
+
+    # TODO: This mixin should be removed after https://github.com/inventree/InvenTree/pull/6911 is implemented
+    # TODO: This approach to data import functionality is *outdated*
 
     # Define a map of fields available for import
     IMPORT_FIELDS = {}
@@ -312,8 +324,9 @@ class ReferenceIndexingMixin(models.Model):
 
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
+        - The '?' key is required to accept our wildcard-with-default syntax {?:default}
         """
-        return {'ref': cls.get_next_reference(), 'date': datetime.now()}
+        return {'ref': cls.get_next_reference(), 'date': datetime.now(), '?': '?'}
 
     @classmethod
     def get_most_recent_item(cls):
@@ -360,8 +373,18 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern."""
-        fmt = cls.get_reference_pattern()
+
+        # Based on https://stackoverflow.com/a/57570269/14488558
+        class ReferenceFormatter(Formatter):
+            def format_field(self, value, format_spec):
+                if isinstance(value, str) and value == '?':
+                    value = format_spec
+                    format_spec = ''
+                return super().format_field(value, format_spec)
+
+        ref_ptn = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
+        fmt = ReferenceFormatter()
 
         reference = None
 
@@ -369,7 +392,7 @@ class ReferenceIndexingMixin(models.Model):
 
         while reference is None:
             try:
-                ref = fmt.format(**ctx)
+                ref = fmt.format(ref_ptn, **ctx)
 
                 if ref in attempts:
                     # We are stuck in a loop!
@@ -389,10 +412,7 @@ class ReferenceIndexingMixin(models.Model):
             except Exception:
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
-                if recent:
-                    reference = recent.reference
-                else:
-                    reference = ''
+                reference = recent.reference if recent else ''
 
         return reference
 
@@ -409,14 +429,14 @@ class ReferenceIndexingMixin(models.Model):
             })
 
         # Check that only 'allowed' keys are provided
-        for key in info.keys():
-            if key not in ctx.keys():
+        for key in info:
+            if key not in ctx:
                 raise ValidationError({
                     'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
-        if 'ref' not in info.keys():
+        if 'ref' not in info:
             raise ValidationError({
                 'value': _('Missing required format key') + ": 'ref'"
             })
@@ -441,7 +461,7 @@ class ReferenceIndexingMixin(models.Model):
             )
 
         # Check that the reference field can be rebuild
-        cls.rebuild_reference_field(value, validate=True)
+        return cls.rebuild_reference_field(value, validate=True)
 
     @classmethod
     def rebuild_reference_field(cls, reference, validate=False):
@@ -573,6 +593,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     # How items (not nodes) are hooked into the tree
     # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
+
+    # Extra fields to include in the get_path result. E.g. icon
+    EXTRA_PATH_FIELDS = []
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -779,7 +802,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
-        verbose_name=_('parent'),
+        verbose_name='parent',
         related_name='children',
     )
 
@@ -855,7 +878,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Returns:
             List of category names from the top level to this category
         """
-        return self.parentpath + [self]
+        return [*self.parentpath, self]
 
     def get_path(self):
         """Return a list of element in the item tree.
@@ -867,7 +890,14 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
             name: <name>,
         }
         """
-        return [{'pk': item.pk, 'name': item.name} for item in self.path]
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name,
+                **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
+            }
+            for item in self.path
+        ]
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
@@ -931,6 +961,8 @@ class InvenTreeBarcodeMixin(models.Model):
 
     - barcode_data : Raw data associated with an assigned barcode
     - barcode_hash : A 'hash' of the assigned barcode data used to improve matching
+
+    The barcode_model_type_code() classmethod must be implemented in the model class.
     """
 
     class Meta:
@@ -961,11 +993,25 @@ class InvenTreeBarcodeMixin(models.Model):
         # By default, use the name of the class
         return cls.__name__.lower()
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        r"""Return a 'short' code for the model type.
+
+        This is used to generate a efficient QR code for the model type.
+        It is expected to match this pattern: [0-9A-Z $%*+-.\/:]{2}
+
+        Note: Due to the shape constrains (45**2=2025 different allowed codes)
+        this needs to be explicitly implemented in the model class to avoid collisions.
+        """
+        raise NotImplementedError(
+            'barcode_model_type_code() must be implemented in the model class'
+        )
+
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
-        return InvenTree.helpers.MakeBarcode(
-            self.__class__.barcode_model_type(), self.pk, **kwargs
-        )
+        from plugin.base.barcodes.helper import generate_barcode
+
+        return generate_barcode(self)
 
     def format_matched_response(self):
         """Format a standard response for a matched barcode."""
@@ -983,7 +1029,7 @@ class InvenTreeBarcodeMixin(models.Model):
     @property
     def barcode(self):
         """Format a minimal barcode string (e.g. for label printing)."""
-        return self.format_barcode(brief=True)
+        return self.format_barcode()
 
     @classmethod
     def lookup_barcode(cls, barcode_hash):
@@ -1027,6 +1073,71 @@ class InvenTreeBarcodeMixin(models.Model):
         self.save()
 
 
+def notify_staff_users_of_error(instance, label: str, context: dict):
+    """Helper function to notify staff users of an error."""
+    import common.models
+    import common.notifications
+
+    try:
+        # Get all staff users
+        staff_users = get_user_model().objects.filter(is_staff=True)
+
+        target_users = []
+
+        # Send a notification to each staff user (unless they have disabled error notifications)
+        for user in staff_users:
+            if common.models.InvenTreeUserSetting.get_setting(
+                'NOTIFICATION_ERROR_REPORT', True, user=user
+            ):
+                target_users.append(user)
+
+        if len(target_users) > 0:
+            common.notifications.trigger_notification(
+                instance,
+                label,
+                context=context,
+                targets=target_users,
+                delivery_methods={common.notifications.UIMessageNotification},
+            )
+
+    except Exception as exc:
+        # We do not want to throw an exception while reporting an exception!
+        logger.error(exc)
+
+
+@receiver(post_save, sender=Task, dispatch_uid='failure_post_save_notification')
+def after_failed_task(sender, instance: Task, created: bool, **kwargs):
+    """Callback when a new task failure log is generated."""
+    from django.conf import settings
+
+    max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
+    n = instance.attempt_count
+
+    # Only notify once the maximum number of attempts has been reached
+    if not instance.success and n >= max_attempts:
+        try:
+            url = InvenTree.helpers_model.construct_absolute_url(
+                reverse(
+                    'admin:django_q_failure_change', kwargs={'object_id': instance.pk}
+                )
+            )
+        except (ValueError, NoReverseMatch):
+            url = ''
+
+        notify_staff_users_of_error(
+            instance,
+            'inventree.task_failure',
+            {
+                'failure': instance,
+                'name': _('Task Failure'),
+                'message': _(
+                    f"Background worker task '{instance.func}' failed after {n} attempts"
+                ),
+                'link': url,
+            },
+        )
+
+
 @receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')
 def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """Callback when a server error is logged.
@@ -1035,41 +1146,21 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
     """
     if created:
         try:
-            import common.models
-            import common.notifications
-
-            users = get_user_model().objects.filter(is_staff=True)
-
-            link = InvenTree.helpers_model.construct_absolute_url(
+            url = InvenTree.helpers_model.construct_absolute_url(
                 reverse(
                     'admin:error_report_error_change', kwargs={'object_id': instance.pk}
                 )
             )
+        except NoReverseMatch:
+            url = ''
 
-            context = {
+        notify_staff_users_of_error(
+            instance,
+            'inventree.error_log',
+            {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': link,
-            }
-
-            target_users = []
-
-            for user in users:
-                if common.models.InvenTreeUserSetting.get_setting(
-                    'NOTIFICATION_ERROR_REPORT', True, user=user
-                ):
-                    target_users.append(user)
-
-            if len(target_users) > 0:
-                common.notifications.trigger_notification(
-                    instance,
-                    'inventree.error_log',
-                    context=context,
-                    targets=target_users,
-                    delivery_methods={common.notifications.UIMessageNotification},
-                )
-
-        except Exception as exc:
-            """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)  # noqa: LOG005
+                'link': url,
+            },
+        )

@@ -77,6 +77,7 @@ nav:
     - Core Concepts:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
+      - Custom States: concepts/custom_states.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
@@ -87,6 +88,7 @@ nav:
     - Security: security.md
   - Install:
     - Introduction: start/intro.md
+    - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
@@ -96,8 +98,9 @@ nav:
         - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
-    - Serving Files: start/serving_files.md
+    - User Accounts: start/accounts.md
     - Data Backup: start/backup.md
+    - Invoke: start/invoke.md
     - Migrating Data: start/migrate.md
     - Advanced Topics: start/advanced.md
   - Parts:
@@ -106,6 +109,7 @@ nav:
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Parameters: part/parameter.md
+    - Revisions: part/revision.md
     - Templates: part/template.md
     - Tests: part/test.md
     - Pricing: part/pricing.md
@@ -195,6 +199,7 @@ nav:
       - Developing a Plugin: extend/how_to_plugin.md
       - Model Metadata: extend/plugins/metadata.md
       - Tags: extend/plugins/tags.md
+      - Unit Test: extend/plugins/test.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md
@@ -202,14 +207,15 @@ nav:
       - Barcode Mixin: extend/plugins/barcode.md
       - Currency Mixin: extend/plugins/currency.md
       - Event Mixin: extend/plugins/event.md
+      - Icon Pack Mixin: extend/plugins/icon.md
       - Label Printing Mixin: extend/plugins/label.md
       - Locate Mixin: extend/plugins/locate.md
       - Navigation Mixin: extend/plugins/navigation.md
-      - Panel Mixin: extend/plugins/panel.md
       - Report Mixin: extend/plugins/report.md
       - Schedule Mixin: extend/plugins/schedule.md
       - Settings Mixin: extend/plugins/settings.md
       - URL Mixin: extend/plugins/urls.md
+      - User Interface Mixin: extend/plugins/ui.md
       - Validation Mixin: extend/plugins/validation.md
     - Machines:
       - Overview: extend/machines/overview.md

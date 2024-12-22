@@ -1,5 +1,7 @@
 """API for the plugin app."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -19,15 +21,17 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
+    RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
-    RetrieveUpdateDestroyAPI,
     UpdateAPI,
 )
-from InvenTree.permissions import IsSuperuser
+from InvenTree.permissions import IsSuperuser, IsSuperuserOrReadOnly
 from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
 
@@ -61,7 +65,7 @@ class PluginFilter(rest_filters.FilterSet):
             match = True
 
             for mixin in mixins:
-                if mixin not in result.mixins().keys():
+                if mixin not in result.mixins():
                     match = False
                     break
 
@@ -140,7 +144,7 @@ class PluginList(ListAPI):
     search_fields = ['key', 'name']
 
 
-class PluginDetail(RetrieveUpdateDestroyAPI):
+class PluginDetail(RetrieveDestroyAPI):
     """API detail endpoint for PluginConfig object.
 
     get:
@@ -155,6 +159,7 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
+    permission_classes = [IsSuperuserOrReadOnly]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -171,6 +176,18 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
             })
 
         return super().delete(request, *args, **kwargs)
+
+
+class PluginAdminDetail(RetrieveAPI):
+    """Endpoint for viewing admin integration plugin details.
+
+    This endpoint is used to view the available admin integration options for a plugin.
+    """
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginAdminDetailSerializer
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
 
 class PluginInstall(CreateAPI):
@@ -266,7 +283,9 @@ class PluginSettingList(ListAPI):
     filterset_fields = ['plugin__active', 'plugin__key']
 
 
-def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
+def check_plugin(
+    plugin_slug: Optional[str], plugin_pk: Optional[int]
+) -> InvenTreePlugin:
     """Check that a plugin for the provided slug exists and get the config.
 
     Args:
@@ -286,16 +305,16 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
         raise NotFound(detail='Plugin not specified')
 
     # Define filter
-    filter = {}
+    filters = {}
     if plugin_slug:
-        filter['key'] = plugin_slug
+        filters['key'] = plugin_slug
     elif plugin_pk:
-        filter['pk'] = plugin_pk
+        filters['pk'] = plugin_pk
     ref = plugin_slug or plugin_pk
 
     # Check that the 'plugin' specified is valid
     try:
-        plugin_cgf = PluginConfig.objects.filter(**filter).first()
+        plugin_cgf = PluginConfig.objects.filter(**filters).first()
     except PluginConfig.DoesNotExist:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
 
@@ -410,6 +429,13 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
+class PluginMetadataView(MetadataView):
+    """Metadata API endpoint for the PluginConfig model."""
+
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
+
+
 plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
@@ -417,6 +443,8 @@ plugin_api_urls = [
     path(
         'plugins/',
         include([
+            # UI plugins
+            path('ui/', include(ui_plugins_api_urls)),
             # Plugin management
             path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
             path('install/', PluginInstall.as_view(), name='api-plugin-install'),
@@ -434,7 +462,7 @@ plugin_api_urls = [
                     )
                 ]),
             ),
-            # Lookup for individual plugins (based on 'key', not 'pk')
+            # Lookup for individual plugins (based on 'plugin', not 'pk')
             path(
                 '<str:plugin>/',
                 include([
@@ -455,7 +483,7 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
+                        PluginMetadataView.as_view(),
                         {'model': PluginConfig, 'lookup_field': 'key'},
                         name='api-plugin-metadata',
                     ),
@@ -468,6 +496,9 @@ plugin_api_urls = [
                         'uninstall/',
                         PluginUninstall.as_view(),
                         name='api-plugin-uninstall',
+                    ),
+                    path(
+                        'admin/', PluginAdminDetail.as_view(), name='api-plugin-admin'
                     ),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),

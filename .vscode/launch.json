@@ -6,19 +6,37 @@
   "configurations": [
     {
       "name": "InvenTree Server",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
-      "args": ["runserver"],
+      "args": [
+        "runserver",
+        // "0.0.0.0:8000", // expose server in network (useful for testing with mobile app)
+        // "--noreload" // disable auto-reload
+      ],
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "InvenTree Server - Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
+      "args": [
+        "test",
+        // "part.test_api.PartCategoryAPITest", // run only a specific test
+      ],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "InvenTree Server - 3rd party",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
-      "args": ["runserver"],
+      "args": [
+        "runserver"
+      ],
       "django": true,
       "justMyCode": false
     },

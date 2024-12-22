@@ -3,14 +3,11 @@
 import os
 
 from django.conf import settings
-from django.test import TestCase, tag
-from django.urls import include, path, re_path, reverse
-
-from error_report.models import Error
+from django.test import TestCase
+from django.urls import include, path, re_path
 
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
-from plugin.base.integration.PanelMixin import PanelMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import (
     APICallMixin,
@@ -19,7 +16,6 @@ from plugin.mixins import (
     SettingsMixin,
     UrlsMixin,
 )
-from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
 
 
@@ -338,140 +334,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         self.assertEqual(result.status_code, 400)
         self.assertIn('Bad Request', str(result.content))
-
-
-class PanelMixinTests(InvenTreeTestCase):
-    """Test that the PanelMixin plugin operates correctly."""
-
-    fixtures = ['category', 'part', 'location', 'stock']
-
-    roles = 'all'
-
-    def test_installed(self):
-        """Test that the sample panel plugin is installed."""
-        plugins = registry.with_mixin('panel')
-
-        self.assertEqual(len(plugins), 0)
-
-        # Now enable the plugin
-        registry.set_plugin_state('samplepanel', True)
-        plugins = registry.with_mixin('panel')
-
-        self.assertIn('samplepanel', [p.slug for p in plugins])
-
-        # Find 'inactive' plugins (should be None)
-        plugins = registry.with_mixin('panel', active=False)
-        self.assertEqual(len(plugins), 0)
-
-    @tag('cui')
-    def test_disabled(self):
-        """Test that the panels *do not load* if the plugin is not enabled."""
-        plugin = registry.get_plugin('samplepanel')
-
-        plugin.set_setting('ENABLE_HELLO_WORLD', True)
-        plugin.set_setting('ENABLE_BROKEN_PANEL', True)
-
-        # Ensure that the plugin is *not* enabled
-        config = plugin.plugin_config()
-
-        self.assertFalse(config.active)
-
-        # Load some pages, ensure that the panel content is *not* loaded
-        for url in [
-            reverse('part-detail', kwargs={'pk': 1}),
-            reverse('stock-item-detail', kwargs={'pk': 2}),
-            reverse('stock-location-detail', kwargs={'pk': 1}),
-        ]:
-            response = self.client.get(url)
-
-            self.assertEqual(response.status_code, 200)
-
-            # Test that these panels have *not* been loaded
-            self.assertNotIn('No Content', str(response.content))
-            self.assertNotIn('Hello world', str(response.content))
-            self.assertNotIn('Custom Part Panel', str(response.content))
-
-    @tag('cui')
-    def test_enabled(self):
-        """Test that the panels *do* load if the plugin is enabled."""
-        plugin = registry.get_plugin('samplepanel')
-
-        self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)
-
-        # Ensure that the plugin is enabled
-        config = plugin.plugin_config()
-        config.active = True
-        config.save()
-
-        self.assertTrue(config.active)
-        self.assertEqual(len(registry.with_mixin('panel', active=True)), 1)
-
-        # Load some pages, ensure that the panel content is *not* loaded
-        urls = [
-            reverse('part-detail', kwargs={'pk': 1}),
-            reverse('stock-item-detail', kwargs={'pk': 2}),
-            reverse('stock-location-detail', kwargs={'pk': 2}),
-        ]
-
-        plugin.set_setting('ENABLE_HELLO_WORLD', False)
-        plugin.set_setting('ENABLE_BROKEN_PANEL', False)
-
-        for url in urls:
-            response = self.client.get(url)
-
-            self.assertEqual(response.status_code, 200)
-
-            self.assertIn('No Content', str(response.content))
-
-            # This panel is disabled by plugin setting
-            self.assertNotIn('Hello world!', str(response.content))
-
-            # This panel is only active for the "Part" view
-            if url == urls[0]:
-                self.assertIn('Custom Part Panel', str(response.content))
-            else:
-                self.assertNotIn('Custom Part Panel', str(response.content))
-
-        # Enable the 'Hello World' panel
-        plugin.set_setting('ENABLE_HELLO_WORLD', True)
-
-        for url in urls:
-            response = self.client.get(url)
-
-            self.assertEqual(response.status_code, 200)
-
-            self.assertIn('Hello world!', str(response.content))
-
-            # The 'Custom Part' panel should still be there, too
-            if url == urls[0]:
-                self.assertIn('Custom Part Panel', str(response.content))
-            else:
-                self.assertNotIn('Custom Part Panel', str(response.content))
-
-        # Enable the 'broken panel' setting - this will cause all panels to not render
-        plugin.set_setting('ENABLE_BROKEN_PANEL', True)
-
-        n_errors = Error.objects.count()
-
-        for url in urls:
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-            # No custom panels should have been loaded
-            self.assertNotIn('No Content', str(response.content))
-            self.assertNotIn('Hello world!', str(response.content))
-            self.assertNotIn('Broken Panel', str(response.content))
-            self.assertNotIn('Custom Part Panel', str(response.content))
-
-        # Assert that each request threw an error
-        self.assertEqual(Error.objects.count(), n_errors + len(urls))
-
-    def test_mixin(self):
-        """Test that ImplementationError is raised."""
-        with self.assertRaises(MixinNotImplementedError):
-
-            class Wrong(PanelMixin, InvenTreePlugin):
-                pass
-
-            plugin = Wrong()
-            plugin.get_custom_panels('abc', 'abc')

@@ -4,17 +4,21 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.test.utils import override_settings
 
 from InvenTree import status_codes as status
+from InvenTree.unit_test import findOffloadedEvent
 
 import common.models
 from common.settings import set_global_setting
 import build.tasks
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
+from build.status_codes import BuildStatus
 from part.models import Part, BomItem, BomItemSubstitute, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
@@ -54,6 +58,7 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+            testable=True,
         )
 
         # create one build with one required test template
@@ -62,6 +67,7 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+            testable=True,
         )
 
         cls.test_template_required = PartTestTemplate.objects.create(
@@ -97,6 +103,7 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+            testable=True,
         )
 
         cls.test_template_non_required = PartTestTemplate.objects.create(
@@ -175,6 +182,7 @@ class BuildTestBase(TestCase):
             part=cls.assembly,
             quantity=10,
             issued_by=get_user_model().objects.get(pk=1),
+            status=BuildStatus.PENDING,
         )
 
         # Create some BuildLine items we can use later on
@@ -320,6 +328,10 @@ class BuildTest(BuildTestBase):
 
         # Build is PENDING
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
+
+        self.assertTrue(self.build.is_active)
+        self.assertTrue(self.build.can_hold)
+        self.assertTrue(self.build.can_issue)
 
         # Build has two build outputs
         self.assertEqual(self.build.output_count, 2)
@@ -470,6 +482,11 @@ class BuildTest(BuildTestBase):
 
     def test_overallocation_and_trim(self):
         """Test overallocation of stock and trim function"""
+
+        self.assertEqual(self.build.status, status.BuildStatus.PENDING)
+        self.build.issue_build()
+        self.assertEqual(self.build.status, status.BuildStatus.PRODUCTION)
+
         # Fully allocate tracked stock (not eligible for trimming)
         self.allocate_stock(
             self.output_1,
@@ -516,6 +533,7 @@ class BuildTest(BuildTestBase):
 
         self.build.complete_build_output(self.output_1, None)
         self.build.complete_build_output(self.output_2, None)
+
         self.assertTrue(self.build.can_complete)
 
         n = StockItem.objects.filter(consumed_by=self.build).count()
@@ -582,6 +600,8 @@ class BuildTest(BuildTestBase):
 
         self.stock_2_1.quantity = 30
         self.stock_2_1.save()
+
+        self.build.issue_build()
 
         # Allocate non-tracked parts
         self.allocate_stock(
@@ -704,6 +724,59 @@ class BuildTest(BuildTestBase):
         self.assertFalse(messages.filter(user__pk=3).exists())
 
         self.assertTrue(messages.filter(user__pk=4).exists())
+
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True
+    )
+    def test_events(self):
+        """Test that build events are triggered correctly."""
+
+        from django_q.models import OrmQ
+        from build.events import BuildEvents
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
+
+        OrmQ.objects.all().delete()
+
+        # Create a new build
+        build = Build.objects.create(
+            reference='BO-9999',
+            title='Some new build',
+            part=self.assembly,
+            quantity=5,
+            issued_by=get_user_model().objects.get(pk=2),
+            responsible=Owner.create(obj=Group.objects.get(pk=3))
+        )
+
+        # Check that the 'build.created' event was triggered
+        task = findOffloadedEvent(
+            'build_build.created',
+            matching_kwargs=['id', 'model'],
+            reverse=True,
+            clear_after=True,
+        )
+
+        # Assert that the task was found
+        self.assertIsNotNone(task)
+
+        # Check that the Build ID matches
+        self.assertEqual(task.kwargs()['id'], build.pk)
+
+        # Issue the build
+        build.issue_build()
+
+        # Check that the 'build.issued' event was triggered
+        task = findOffloadedEvent(
+            BuildEvents.ISSUED,
+            matching_kwargs=['id'],
+            clear_after=True,
+        )
+
+        self.assertIsNotNone(task)
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

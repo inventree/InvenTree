@@ -2,6 +2,7 @@
 
 from django import template
 from django.conf import settings as djangosettings
+from django.templatetags.static import static
 from django.urls import reverse
 
 from common.notifications import storage
@@ -94,5 +95,26 @@ def notification_list(context, *args, **kwargs):
             'description': a.__doc__,
             'name': a.__name__,
         }
-        for a in storage.liste
+        for a in storage.methods
     ]
+
+
+@register.simple_tag(takes_context=True)
+def plugin_static(context, file: str, **kwargs):
+    """Return the URL for a static file within a plugin.
+
+    Arguments:
+        file: The path to the file within the plugin static directory
+
+    Keyword Arguments:
+        plugin: The plugin slug (optional, will be inferred from the context if not provided)
+
+    """
+    plugin = context.get('plugin', None)
+
+    plugin = plugin.slug if plugin else kwargs.get('plugin')
+
+    if not plugin:
+        return file
+
+    return static(f'plugins/{plugin}/{file}')

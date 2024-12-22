@@ -2,7 +2,6 @@
 
 import datetime
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import override_settings
@@ -10,12 +9,18 @@ from django.test import override_settings
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
-from stock.status_codes import StockHistoryCode
+from stock.status_codes import StockHistoryCode, StockStatus
 
-from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
+from .models import (
+    StockItem,
+    StockItemTestResult,
+    StockItemTracking,
+    StockLocation,
+    StockLocationType,
+)
 
 
 class StockTestBase(InvenTreeTestCase):
@@ -257,9 +262,8 @@ class StockTest(StockTestBase):
     def test_url(self):
         """Test get_absolute_url function."""
         it = StockItem.objects.get(pk=2)
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
-            self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
+        self.assertEqual(it.get_absolute_url(), '/platform/stock/item/2')
+        self.assertEqual(self.home.get_absolute_url(), '/platform/stock/location/1')
 
     def test_strings(self):
         """Test str function."""
@@ -435,10 +439,31 @@ class StockTest(StockTestBase):
         self.assertIn('Counted items', track.notes)
 
         n = it.tracking_info.count()
-        self.assertFalse(it.stocktake(-1, None, 'test negative stocktake'))
+        self.assertFalse(
+            it.stocktake(
+                -1,
+                None,
+                notes='test negative stocktake',
+                status=StockStatus.DAMAGED.value,
+            )
+        )
 
         # Ensure tracking info was not added
         self.assertEqual(it.tracking_info.count(), n)
+
+        it.refresh_from_db()
+        self.assertEqual(it.status, StockStatus.OK.value)
+
+        # Next, perform a valid stocktake
+        self.assertTrue(
+            it.stocktake(
+                100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
+            )
+        )
+
+        it.refresh_from_db()
+        self.assertEqual(it.quantity, 100)
+        self.assertEqual(it.status, StockStatus.DAMAGED.value)
 
     def test_add_stock(self):
         """Test adding stock."""
@@ -755,23 +780,14 @@ class StockTest(StockTestBase):
         # First, we will create a stock location structure
 
         A = StockLocation.objects.create(name='A', description='Top level location')
-
         B1 = StockLocation.objects.create(name='B1', parent=A)
-
         B2 = StockLocation.objects.create(name='B2', parent=A)
-
         B3 = StockLocation.objects.create(name='B3', parent=A)
-
         C11 = StockLocation.objects.create(name='C11', parent=B1)
-
         C12 = StockLocation.objects.create(name='C12', parent=B1)
-
         C21 = StockLocation.objects.create(name='C21', parent=B2)
-
         C22 = StockLocation.objects.create(name='C22', parent=B2)
-
         C31 = StockLocation.objects.create(name='C31', parent=B3)
-
         C32 = StockLocation.objects.create(name='C32', parent=B3)
 
         # Check that the tree_id is correct for each sublocation
@@ -895,6 +911,101 @@ class StockTest(StockTestBase):
 
             self.assertEqual(len(p.metadata.keys()), 4)
 
+    def test_merge(self):
+        """Test merging of multiple stock items."""
+        from djmoney.money import Money
+
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        # Test simple merge without any pricing information
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        s2 = StockItem.objects.create(part=part, quantity=20)
+        s3 = StockItem.objects.create(part=part, quantity=30)
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 60)
+        self.assertIsNone(s1.purchase_price)
+
+        part.stock_items.all().delete()
+
+        # Create some stock items with pricing information
+        s1 = StockItem.objects.create(part=part, quantity=10, purchase_price=None)
+        s2 = StockItem.objects.create(
+            part=part, quantity=15, purchase_price=Money(10, 'USD')
+        )
+        s3 = StockItem.objects.create(part=part, quantity=30)
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 55)
+        self.assertEqual(s1.purchase_price, Money(10, 'USD'))
+
+        part.stock_items.all().delete()
+
+        s1 = StockItem.objects.create(
+            part=part, quantity=10, purchase_price=Money(5, 'USD')
+        )
+        s2 = StockItem.objects.create(
+            part=part, quantity=25, purchase_price=Money(10, 'USD')
+        )
+        s3 = StockItem.objects.create(
+            part=part, quantity=5, purchase_price=Money(75, 'USD')
+        )
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 40)
+
+        # Final purchase price should be the weighted average
+        self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
+
+    def test_notify_low_stock(self):
+        """Test that the 'notify_low_stock' task is triggered correctly."""
+        FUNC_NAME = 'part.tasks.notify_low_stock_if_required'
+
+        from django_q.models import OrmQ
+
+        # Start from a blank slate
+        OrmQ.objects.all().delete()
+
+        def check_func() -> bool:
+            """Check that the 'notify_low_stock_if_required' task has been triggered."""
+            found = False
+            for task in OrmQ.objects.all():
+                if task.func() == FUNC_NAME:
+                    found = True
+                    break
+
+            # Clear the task queue (for the next test)
+            OrmQ.objects.all().delete()
+
+            return found
+
+        self.assertFalse(check_func())
+
+        part = Part.objects.first()
+
+        # Create a new stock item for this part
+        item = StockItem.objects.create(
+            part=part, quantity=100, location=StockLocation.objects.first()
+        )
+
+        self.assertTrue(check_func())
+        self.assertFalse(check_func())
+
+        # Re-count the stock item
+        item.stocktake(99, None)
+
+        self.assertTrue(check_func())
+
 
 class StockBarcodeTest(StockTestBase):
     """Run barcode tests for the stock app."""
@@ -904,12 +1015,6 @@ class StockBarcodeTest(StockTestBase):
         item = StockItem.objects.get(pk=1)
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
-
-        # Call format_barcode method
-        barcode = item.format_barcode(brief=False)
-
-        for key in ['tool', 'version', 'instance', 'stockitem']:
-            self.assertIn(key, barcode)
 
         # Render simple barcode data for the StockItem
         barcode = item.barcode
@@ -921,7 +1026,7 @@ class StockBarcodeTest(StockTestBase):
 
         loc = StockLocation.objects.get(pk=1)
 
-        barcode = loc.format_barcode(brief=True)
+        barcode = loc.format_barcode()
         self.assertEqual('{"stocklocation": 1}', barcode)
 
 
@@ -1182,14 +1287,20 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item2.test_results.count(), 4)
 
         # Test StockItem serialization
-        item2.serializeStock(1, [100], self.user)
+        # Note: This will create a new StockItem with a new serial number
+
+        with self.assertRaises(ValidationError):
+            # Serial number #100 will be rejected by the sample plugin
+            item2.serializeStock(1, [100], self.user)
+
+        item2.serializeStock(1, [101], self.user)
 
         # Add a test result to the parent *after* serialization
         item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
-        item3 = StockItem.objects.get(serial=100, part=item2.part)
+        item3 = StockItem.objects.get(serial=101, part=item2.part)
 
         self.assertEqual(item3.test_results.count(), 4)
 
@@ -1264,3 +1375,47 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
         self.assertNotIn('somenewtest', tests)
+
+
+class StockLocationTest(InvenTreeTestCase):
+    """Tests for the StockLocation model."""
+
+    def test_icon(self):
+        """Test stock location icon."""
+        # No default icon set
+        loc = StockLocation.objects.create(name='Test Location')
+        loc_type = StockLocationType.objects.create(
+            name='Test Type', icon='ti:cube-send:outline'
+        )
+        self.assertEqual(loc.icon, '')
+
+        # Set a default icon
+        InvenTreeSetting.set_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', 'ti:package:outline'
+        )
+        self.assertEqual(loc.icon, 'ti:package:outline')
+
+        # Assign location type and check that it takes precedence over default icon
+        loc.location_type = loc_type
+        loc.save()
+        self.assertEqual(loc.icon, 'ti:cube-send:outline')
+
+        # Set a custom icon and assert that it takes precedence over all other icons
+        loc.icon = 'ti:tag:outline'
+        loc.save()
+        self.assertEqual(loc.icon, 'ti:tag:outline')
+        InvenTreeSetting.set_setting('STOCK_LOCATION_DEFAULT_ICON', '')
+
+        # Test that the icon can be set to None again
+        loc.icon = ''
+        loc.location_type = None
+        loc.save()
+        self.assertEqual(loc.icon, '')
+
+
+class AdminTest(AdminTestCase):
+    """Tests for the admin interface integration."""
+
+    def test_admin(self):
+        """Test the admin URL."""
+        self.helper(model=StockLocationType)

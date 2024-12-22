@@ -50,7 +50,9 @@ def update_news_feed():
         return
 
     # News feed isn't defined, no need to continue
-    if not settings.INVENTREE_NEWS_URL or type(settings.INVENTREE_NEWS_URL) != str:
+    if not settings.INVENTREE_NEWS_URL or not isinstance(
+        settings.INVENTREE_NEWS_URL, str
+    ):
         return
 
     # Fetch and parse feed
@@ -69,6 +71,10 @@ def update_news_feed():
         # Check if id already exists
         if entry.id in id_list:
             continue
+
+        # Enforce proper links for the entries
+        if entry.link and str(entry.link).startswith('/'):
+            entry.link = settings.INVENTREE_BASE_URL + str(entry.link)
 
         # Create entry
         try:

@@ -46,10 +46,7 @@ def rename_company_image(instance, filename):
     """
     base = 'company_images'
 
-    if filename.count('.') > 0:
-        ext = filename.split('.')[-1]
-    else:
-        ext = ''
+    ext = filename.split('.')[-1] if filename.count('.') > 0 else ''
 
     fn = f'company_{instance.pk}_img'
 
@@ -165,19 +162,19 @@ class Company(
 
     is_customer = models.BooleanField(
         default=False,
-        verbose_name=_('is customer'),
+        verbose_name=_('Is customer'),
         help_text=_('Do you sell items to this company?'),
     )
 
     is_supplier = models.BooleanField(
         default=True,
-        verbose_name=_('is supplier'),
+        verbose_name=_('Is supplier'),
         help_text=_('Do you purchase items from this company?'),
     )
 
     is_manufacturer = models.BooleanField(
         default=False,
-        verbose_name=_('is manufacturer'),
+        verbose_name=_('Is manufacturer'),
         help_text=_('Does this company manufacture parts?'),
     )
 
@@ -225,9 +222,7 @@ class Company(
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('company-detail', kwargs={'pk': self.id})
-        return InvenTree.helpers.pui_url(f'/company/{self.id}')
+        return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
     def get_image_url(self):
         """Return the URL of the image for this company."""
@@ -269,6 +264,11 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
         role: position in company
     """
 
+    class Meta:
+        """Metaclass defines extra model options."""
+
+        verbose_name = _('Contact')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the Contcat model."""
@@ -306,7 +306,8 @@ class Address(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass defines extra model options."""
 
-        verbose_name_plural = 'Addresses'
+        verbose_name = _('Address')
+        verbose_name_plural = _('Addresses')
 
     def __init__(self, *args, **kwargs):
         """Custom init function."""
@@ -445,6 +446,7 @@ class Address(InvenTree.models.InvenTreeModel):
 class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
@@ -467,6 +469,11 @@ class ManufacturerPart(
     def get_api_url():
         """Return the API URL associated with the ManufacturerPart instance."""
         return reverse('api-manufacturer-part-list')
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'MP'
 
     part = models.ForeignKey(
         'part.Part',
@@ -560,6 +567,7 @@ class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Manufacturer Part Parameter')
         unique_together = ('manufacturer_part', 'name')
 
     @staticmethod
@@ -617,6 +625,7 @@ class SupplierPartManager(models.Manager):
 class SupplierPart(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -661,13 +670,16 @@ class SupplierPart(
 
     def get_absolute_url(self):
         """Return the web URL of the detail view for this SupplierPart."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('supplier-part-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/purchasing/supplier-part/{self.id}')
 
     def api_instance_filters(self):
         """Return custom API filters for this particular instance."""
         return {'manufacturer_part': {'part': self.part.pk}}
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SP'
 
     def clean(self):
         """Custom clean action for the SupplierPart model.
@@ -1005,6 +1017,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Supplier Price Break')
         unique_together = ('part', 'quantity')
 
         # This model was moved from the 'Part' app
@@ -1032,9 +1045,15 @@ class SupplierPriceBreak(common.models.PriceBreak):
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        if instance.part and instance.part.part:
-            instance.part.part.schedule_pricing_update(create=True)
+    if (
+        (
+            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+            and not InvenTree.ready.isImportingData()
+        )
+        and instance.part
+        and instance.part.part
+    ):
+        instance.part.part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1044,6 +1063,12 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        if instance.part and instance.part.part:
-            instance.part.part.schedule_pricing_update(create=False)
+    if (
+        (
+            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+            and not InvenTree.ready.isImportingData()
+        )
+        and instance.part
+        and instance.part.part
+    ):
+        instance.part.part.schedule_pricing_update(create=False)

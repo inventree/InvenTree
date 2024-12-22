@@ -112,7 +112,7 @@ class MachineConfig(models.Model):
         """Get machine errors for django admin interface."""
         return format_html_join(
             mark_safe('<br>'), '{}', ((str(error),) for error in self.errors)
-        ) or mark_safe(f"<i>{_('No errors')}</i>")
+        ) or mark_safe(f'<i>{_("No errors")}</i>')
 
     @admin.display(description=_('Machine status'))
     def get_machine_status(self):
@@ -188,7 +188,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         if 'settings' not in kwargs:
             machine_config: MachineConfig = kwargs.pop('machine_config', None)
             if machine_config and machine_config.machine:
-                config_type = kwargs.get('config_type', None)
+                config_type = kwargs.get('config_type')
                 if config_type == cls.ConfigType.DRIVER:
                     kwargs['settings'] = machine_config.machine.driver_settings
                 elif config_type == cls.ConfigType.MACHINE:

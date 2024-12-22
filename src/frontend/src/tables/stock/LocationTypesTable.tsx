@@ -2,7 +2,8 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
@@ -13,9 +14,9 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function LocationTypesTable() {
   const table = useTable('location-types');
@@ -25,7 +26,9 @@ export default function LocationTypesTable() {
     return {
       name: {},
       description: {},
-      icon: {}
+      icon: {
+        field_type: 'icon'
+      }
     };
   }, []);
 
@@ -56,6 +59,12 @@ export default function LocationTypesTable() {
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'icon',
+        title: t`Icon`,
+        sortable: true,
+        render: (value: any) => <ApiIcon name={value.icon} />
+      },
+      {
         accessor: 'name',
         title: t`Name`,
         sortable: true
@@ -65,11 +74,6 @@ export default function LocationTypesTable() {
         title: t`Description`
       },
       {
-        accessor: 'icon',
-        title: t`Icon`,
-        sortable: true
-      },
-      {
         accessor: 'location_count',
         sortable: true
       }
@@ -77,7 +81,7 @@ export default function LocationTypesTable() {
   }, []);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.stock_location),
@@ -101,7 +105,7 @@ export default function LocationTypesTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-location-type"
+        key='add-location-type'
         tooltip={t`Add Location Type`}
         onClick={() => newLocationType.open()}
         hidden={!user.hasAddRole(UserRoles.stock_location)}

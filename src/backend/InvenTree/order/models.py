@@ -1,12 +1,9 @@
 """Order model definitions."""
 
 import logging
-import os
-import sys
 from datetime import datetime
 from decimal import Decimal
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -38,6 +35,7 @@ from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (
     InvenTreeModelMoneyField,
@@ -46,6 +44,7 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
+from order.events import PurchaseOrderEvents, ReturnOrderEvents, SalesOrderEvents
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -151,9 +150,6 @@ class TotalPriceMixin(models.Model):
             try:
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
-                # Record the error, try to press on
-                _1, _2, _3 = sys.exc_info()
-
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
 
@@ -246,6 +242,16 @@ class Order(
                 raise ValidationError({
                     'contact': _('Contact does not match selected company')
                 })
+
+    def clean_line_item(self, line):
+        """Clean a line item for this order.
+
+        Used when duplicating an existing line item,
+        to ensure it is 'fresh'.
+        """
+        line.pk = None
+        line.target_date = None
+        line.order = self
 
     def report_context(self):
         """Generate context data for the reporting interface."""
@@ -379,14 +385,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         verbose_name = _('Purchase Order')
 
+    def clean_line_item(self, line):
+        """Clean a line item for this PurchaseOrder."""
+        super().clean_line_item(line)
+        line.received = 0
+
     def report_context(self):
         """Return report context data for this PurchaseOrder."""
         return {**super().report_context(), 'supplier': self.supplier}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('po-detail', kwargs={'pk': self.pk})
         return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
@@ -400,13 +409,18 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return PurchaseOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference()
         }
 
         return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'PO'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -454,7 +468,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
-        return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
+        return f'{self.reference} - {self.supplier.name if self.supplier else _("deleted")}'
 
     reference = models.CharField(
         unique=True,
@@ -466,9 +480,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
         validators=[order.validators.validate_purchase_order_reference],
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=PurchaseOrderStatus.PENDING.value,
         choices=PurchaseOrderStatus.items(),
+        verbose_name=_('Status'),
         help_text=_('Purchase order status'),
     )
 
@@ -522,6 +537,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed'),
     )
 
+    destination = TreeForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        related_name='purchase_orders',
+        blank=True,
+        null=True,
+        verbose_name=_('Destination'),
+        help_text=_('Destination for received items'),
+    )
+
     @transaction.atomic
     def add_line_item(
         self,
@@ -530,6 +555,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         group: bool = True,
         reference: str = '',
         purchase_price=None,
+        destination=None,
     ):
         """Add a new line item to this purchase order.
 
@@ -537,12 +563,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         * The supplier part matches the supplier specified for this purchase order
         * The quantity is greater than zero
 
-        Args:
+        Arguments:
             supplier_part: The supplier_part to add
             quantity : The number of items to add
             group (bool, optional): If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists). Defaults to True.
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
+            destination (optional): Destination for item. Defaults to None.
 
         Returns:
             The newly created PurchaseOrderLineItem instance
@@ -591,6 +618,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             quantity=quantity,
             reference=reference,
             purchase_price=purchase_price,
+            destination=destination,
         )
 
         line.save()
@@ -603,12 +631,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        if self.is_pending:
+        if self.can_issue:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('purchaseorder.placed', id=self.pk)
+            trigger_event(PurchaseOrderEvents.PLACED, id=self.pk)
 
             # Notify users that the order has been placed
             notify_responsible(
@@ -634,7 +662,20 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 if line.part and line.part.part:
                     line.part.part.schedule_pricing_update(create=True)
 
-            trigger_event('purchaseorder.completed', id=self.pk)
+            trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
+
+    @transaction.atomic
+    def issue_order(self):
+        """Equivalent to 'place_order'."""
+        self.place_order()
+
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.ON_HOLD.value,
+        ]
 
     @transaction.atomic
     def place_order(self):
@@ -648,6 +689,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Attempt to transition to COMPLETE status."""
         return self.handle_transition(
             self.status, PurchaseOrderStatus.COMPLETE.value, self, self._action_complete
+        )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, PurchaseOrderStatus.ON_HOLD.value, self, self._action_hold
         )
 
     @transaction.atomic
@@ -672,12 +720,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
         - Status is PLACED
-        - Status is PENDING
+        - Status is PENDING (or ON_HOLD)
         """
-        return self.status in [
-            PurchaseOrderStatus.PLACED.value,
-            PurchaseOrderStatus.PENDING.value,
-        ]
+        return self.status in PurchaseOrderStatusGroups.OPEN
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
@@ -685,7 +730,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
 
-            trigger_event('purchaseorder.cancelled', id=self.pk)
+            trigger_event(PurchaseOrderEvents.CANCELLED, id=self.pk)
 
             # Notify users that the order has been canceled
             notify_responsible(
@@ -694,6 +739,22 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
             )
+
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.PLACED.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this purchase order as 'on hold'."""
+        if self.can_hold:
+            self.status = PurchaseOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(PurchaseOrderEvents.HOLD, id=self.pk)
 
     # endregion
 
@@ -726,7 +787,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def is_complete(self):
         """Return True if all line items have been received."""
-        return self.lines.count() > 0 and self.pending_line_items().count() == 0
+        return self.pending_line_items().count() == 0
 
     @transaction.atomic
     def receive_line_item(
@@ -737,13 +798,21 @@ class PurchaseOrder(TotalPriceMixin, Order):
         batch_code = kwargs.get('batch_code', '')
 
         # Extract optional list of serial numbers
-        serials = kwargs.get('serials', None)
+        serials = kwargs.get('serials')
 
         # Extract optional notes field
         notes = kwargs.get('notes', '')
 
+        # Extract optional packaging field
+        packaging = kwargs.get('packaging')
+
+        if not packaging:
+            # Default to the packaging field for the linked supplier part
+            if line.part:
+                packaging = line.part.packaging
+
         # Extract optional barcode field
-        barcode = kwargs.get('barcode', None)
+        barcode = kwargs.get('barcode')
 
         # Prevent null values for barcode
         if barcode is None:
@@ -791,6 +860,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
+                    packaging=packaging,
                     serial=sn,
                     purchase_price=unit_purchase_price,
                 )
@@ -810,7 +880,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     deltas=tracking_info,
                     location=location,
                     purchaseorder=self,
-                    quantity=quantity,
+                    quantity=float(quantity),
+                )
+
+                trigger_event(
+                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
                 )
 
         # Update the number of parts received against the particular line item
@@ -844,14 +918,17 @@ class SalesOrder(TotalPriceMixin, Order):
 
         verbose_name = _('Sales Order')
 
+    def clean_line_item(self, line):
+        """Clean a line item for this SalesOrder."""
+        super().clean_line_item(line)
+        line.shipped = 0
+
     def report_context(self):
         """Generate report context data for this SalesOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('so-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
@@ -865,11 +942,16 @@ class SalesOrder(TotalPriceMixin, Order):
         return SalesOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SO'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -917,7 +999,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
-        return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
+        return f'{self.reference} - {self.customer.name if self.customer else _("deleted")}'
 
     reference = models.CharField(
         unique=True,
@@ -944,11 +1026,11 @@ class SalesOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base."""
         return self.customer
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
         verbose_name=_('Status'),
-        help_text=_('Purchase order status'),
+        help_text=_('Sales order status'),
     )
 
     @property
@@ -995,25 +1077,15 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_fully_allocated(self):
         """Return True if all line items are fully allocated."""
-        for line in self.lines.all():
-            if not line.is_fully_allocated():
-                return False
-
-        return True
+        return all(line.is_fully_allocated() for line in self.lines.all())
 
     def is_overallocated(self):
         """Return true if any lines in the order are over-allocated."""
-        for line in self.lines.all():
-            if line.is_overallocated():
-                return True
-
-        return False
+        return any(line.is_overallocated() for line in self.lines.all())
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""
-        return self.lines.count() > 0 and all(
-            line.is_completed() for line in self.lines.all()
-        )
+        return all(line.is_completed() for line in self.lines.all())
 
     def can_complete(self, raise_error=False, allow_incomplete_lines=False):
         """Test if this SalesOrder can be completed.
@@ -1036,6 +1108,11 @@ class SalesOrder(TotalPriceMixin, Order):
                     _('Order cannot be completed as there are incomplete shipments')
                 )
 
+            if self.pending_allocation_count > 0:
+                raise ValidationError(
+                    _('Order cannot be completed as there are incomplete allocations')
+                )
+
             if not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete line items')
@@ -1054,14 +1131,38 @@ class SalesOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order'."""
         self.issue_order()
 
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.ON_HOLD.value,
+        ]
+
     def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
-        if self.status == SalesOrderStatus.PENDING:
+        if self.can_issue:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('salesorder.issued', id=self.pk)
+            trigger_event(SalesOrderEvents.ISSUED, id=self.pk)
+
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.IN_PROGRESS.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this sales order as 'on hold'."""
+        if self.can_hold:
+            self.status = SalesOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(SalesOrderEvents.HOLD, id=self.pk)
 
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
@@ -1078,6 +1179,8 @@ class SalesOrder(TotalPriceMixin, Order):
             self.status = SalesOrderStatus.COMPLETE.value
         else:
             self.status = SalesOrderStatus.SHIPPED.value
+
+        if self.shipment_date is None:
             self.shipped_by = user
             self.shipment_date = InvenTree.helpers.current_date()
 
@@ -1085,9 +1188,10 @@ class SalesOrder(TotalPriceMixin, Order):
 
         # Schedule pricing update for any referenced parts
         for line in self.lines.all():
-            line.part.schedule_pricing_update(create=True)
+            if line.part:
+                line.part.schedule_pricing_update(create=True)
 
-        trigger_event('salesorder.completed', id=self.pk)
+        trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
         return True
 
@@ -1113,7 +1217,7 @@ class SalesOrder(TotalPriceMixin, Order):
             for allocation in line.allocations.all():
                 allocation.delete()
 
-        trigger_event('salesorder.cancelled', id=self.pk)
+        trigger_event(SalesOrderEvents.CANCELLED, id=self.pk)
 
         # Notify users that the order has been canceled
         notify_responsible(
@@ -1157,6 +1261,13 @@ class SalesOrder(TotalPriceMixin, Order):
         )
 
     @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, SalesOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
         return self.handle_transition(
@@ -1196,6 +1307,23 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return a queryset of the pending shipments for this order."""
         return self.shipments.filter(shipment_date=None)
 
+    def allocations(self):
+        """Return a queryset of all allocations for this order."""
+        return SalesOrderAllocation.objects.filter(line__order=self)
+
+    def pending_allocations(self):
+        """Return a queryset of any pending allocations for this order.
+
+        Allocations are pending if:
+
+        a) They are not associated with a SalesOrderShipment
+        b) The linked SalesOrderShipment has not been shipped
+        """
+        Q1 = Q(shipment=None)
+        Q2 = Q(shipment__shipment_date=None)
+
+        return self.allocations().filter(Q1 | Q2).distinct()
+
     @property
     def shipment_count(self):
         """Return the total number of shipments associated with this order."""
@@ -1210,6 +1338,11 @@ class SalesOrder(TotalPriceMixin, Order):
     def pending_shipment_count(self):
         """Return the number of pending shipments associated with this order."""
         return self.pending_shipments().count()
+
+    @property
+    def pending_allocation_count(self):
+        """Return the number of pending (non-shipped) allocations."""
+        return self.pending_allocations().count()
 
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='sales_order_post_save')
@@ -1355,6 +1488,11 @@ class PurchaseOrderLineItem(OrderLineItem):
         order: Reference to a PurchaseOrder object
     """
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order Line Item')
+
     # Filter for determining if a particular PurchaseOrderLineItem is overdue
     OVERDUE_FILTER = (
         Q(received__lt=F('quantity'))
@@ -1381,10 +1519,9 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
-        return '{n} x {part} from {supplier} (for {po})'.format(
+        return '{n} x {part} - {po}'.format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
-            supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
             po=self.order,
         )
 
@@ -1444,7 +1581,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         related_name='po_lines',
         blank=True,
         null=True,
-        help_text=_('Where does the Purchaser want this item to be stored?'),
+        help_text=_('Destination for received items'),
     )
 
     def get_destination(self):
@@ -1469,6 +1606,10 @@ class PurchaseOrderLineItem(OrderLineItem):
         r = self.quantity - self.received
         return max(r, 0)
 
+    def is_completed(self) -> bool:
+        """Determine if this lien item has been fully received."""
+        return self.received >= self.quantity
+
     def update_pricing(self):
         """Update pricing information based on the supplier part data."""
         if self.part:
@@ -1491,6 +1632,11 @@ class PurchaseOrderExtraLine(OrderExtraLine):
         title: title of line
         price: The unit price for this OrderLine
     """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order Extra Line')
 
     @staticmethod
     def get_api_url():
@@ -1515,6 +1661,11 @@ class SalesOrderLineItem(OrderLineItem):
         sale_price: The unit sale price for this OrderLineItem
         shipped: The number of items which have actually shipped against this line item
     """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order Line Item')
 
     # Filter for determining if a particular SalesOrderLineItem is overdue
     OVERDUE_FILTER = (
@@ -1626,7 +1777,9 @@ class SalesOrderLineItem(OrderLineItem):
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -1649,11 +1802,23 @@ class SalesOrderShipment(
 
         # Shipment reference must be unique for a given sales order
         unique_together = ['order', 'reference']
+        verbose_name = _('Sales Order Shipment')
 
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
+
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'allocations': self.allocations,
+            'order': self.order,
+            'reference': self.reference,
+            'shipment': self,
+            'tracking_number': self.tracking_number,
+            'title': str(self),
+        }
 
     order = models.ForeignKey(
         SalesOrder,
@@ -1752,15 +1917,10 @@ class SalesOrderShipment(
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
         """
+        import order.tasks
+
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
-
-        allocations = self.allocations.all()
-
-        # Iterate through each stock item assigned to this shipment
-        for allocation in allocations:
-            # Mark the allocation as "complete"
-            allocation.complete_allocation(user)
 
         # Update the "shipment" date
         self.shipment_date = kwargs.get(
@@ -1769,32 +1929,41 @@ class SalesOrderShipment(
         self.shipped_by = user
 
         # Was a tracking number provided?
-        tracking_number = kwargs.get('tracking_number', None)
+        tracking_number = kwargs.get('tracking_number')
 
         if tracking_number is not None:
             self.tracking_number = tracking_number
 
         # Was an invoice number provided?
-        invoice_number = kwargs.get('invoice_number', None)
+        invoice_number = kwargs.get('invoice_number')
 
         if invoice_number is not None:
             self.invoice_number = invoice_number
 
         # Was a link provided?
-        link = kwargs.get('link', None)
+        link = kwargs.get('link')
 
         if link is not None:
             self.link = link
 
         # Was a delivery date provided?
-        delivery_date = kwargs.get('delivery_date', None)
+        delivery_date = kwargs.get('delivery_date')
 
         if delivery_date is not None:
             self.delivery_date = delivery_date
 
         self.save()
 
-        trigger_event('salesordershipment.completed', id=self.pk)
+        # Offload the "completion" of each line item to the background worker
+        # This may take some time, and we don't want to block the main thread
+        InvenTree.tasks.offload_task(
+            order.tasks.complete_sales_order_shipment,
+            shipment_id=self.pk,
+            user_id=user.pk if user else None,
+            group='sales_order',
+        )
+
+        trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=self.pk)
 
 
 class SalesOrderExtraLine(OrderExtraLine):
@@ -1805,6 +1974,11 @@ class SalesOrderExtraLine(OrderExtraLine):
         title: title of line
         price: The unit price for this OrderLine
     """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order Extra Line')
 
     @staticmethod
     def get_api_url():
@@ -1829,6 +2003,11 @@ class SalesOrderAllocation(models.Model):
         item: StockItem reference
         quantity: Quantity to take from the StockItem
     """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order Allocation')
 
     @staticmethod
     def get_api_url():
@@ -1887,7 +2066,7 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and self.quantity != 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
-        if self.line.order != self.shipment.order:
+        if self.shipment and self.line.order != self.shipment.order:
             errors['line'] = _('Sales order does not match shipment')
             errors['shipment'] = _('Shipment does not match sales order')
 
@@ -1904,6 +2083,8 @@ class SalesOrderAllocation(models.Model):
     shipment = models.ForeignKey(
         SalesOrderShipment,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name='allocations',
         verbose_name=_('Shipment'),
         help_text=_('Sales order shipment reference'),
@@ -1980,14 +2161,18 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         verbose_name = _('Return Order')
 
+    def clean_line_item(self, line):
+        """Clean a line item for this ReturnOrder."""
+        super().clean_line_item(line)
+        line.received_date = None
+        line.outcome = ReturnOrderLineStatus.PENDING.value
+
     def report_context(self):
         """Generate report context data for this ReturnOrder."""
         return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('return-order-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod
@@ -2001,7 +2186,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return ReturnOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_return_order_reference()
@@ -2009,9 +2194,14 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         return defaults
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'RO'
+
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
-        return f"{self.reference} - {self.customer.name if self.customer else _('no customer')}"
+        return f'{self.reference} - {self.customer.name if self.customer else _("no customer")}'
 
     reference = models.CharField(
         unique=True,
@@ -2038,7 +2228,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base class."""
         return self.customer
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
         verbose_name=_('Status'),
@@ -2082,13 +2272,34 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            ReturnOrderStatus.PENDING.value,
+            ReturnOrderStatus.IN_PROGRESS.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this order as 'on hold' (if allowed)."""
+        if self.can_hold:
+            self.status = ReturnOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event(ReturnOrderEvents.HOLD, id=self.pk)
+
+    @property
+    def can_cancel(self):
+        """Return True if this order can be cancelled."""
+        return self.status in ReturnOrderStatusGroups.OPEN
+
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
-        if self.status != ReturnOrderStatus.CANCELLED:
+        if self.can_cancel:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 
-            trigger_event('returnorder.cancelled', id=self.pk)
+            trigger_event(ReturnOrderEvents.CANCELLED, id=self.pk)
 
             # Notify users that the order has been canceled
             notify_responsible(
@@ -2100,25 +2311,40 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)."""
-        if self.status == ReturnOrderStatus.IN_PROGRESS:
+        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('returnorder.completed', id=self.pk)
+            trigger_event(ReturnOrderEvents.COMPLETED, id=self.pk)
 
     def place_order(self):
         """Deprecated version of 'issue_order."""
         self.issue_order()
 
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            ReturnOrderStatus.PENDING.value,
+            ReturnOrderStatus.ON_HOLD.value,
+        ]
+
     def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)."""
-        if self.status == ReturnOrderStatus.PENDING:
+        if self.can_issue:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
-            trigger_event('returnorder.issued', id=self.pk)
+            trigger_event(ReturnOrderEvents.ISSUED, id=self.pk)
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to tranasition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, ReturnOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
 
     @transaction.atomic
     def issue_order(self):
@@ -2144,14 +2370,23 @@ class ReturnOrder(TotalPriceMixin, Order):
     # endregion
 
     @transaction.atomic
-    def receive_line_item(self, line, location, user, note=''):
+    def receive_line_item(self, line, location, user, **kwargs):
         """Receive a line item against this ReturnOrder.
 
-        Rules:
-        - Transfers the StockItem to the specified location
-        - Marks the StockItem as "quarantined"
-        - Adds a tracking entry to the StockItem
-        - Removes the 'customer' reference from the StockItem
+        Arguments:
+            line: ReturnOrderLineItem to receive
+            location: StockLocation to receive the item to
+            user: User performing the action
+
+        Keyword Arguments:
+            note: Additional notes to add to the tracking entry
+            status: Status to set the StockItem to (default: StockStatus.QUARANTINED)
+
+        Performs the following actions:
+            - Transfers the StockItem to the specified location
+            - Marks the StockItem as "quarantined"
+            - Adds a tracking entry to the StockItem
+            - Removes the 'customer' reference from the StockItem
         """
         # Prevent an item from being "received" multiple times
         if line.received_date is not None:
@@ -2160,17 +2395,26 @@ class ReturnOrder(TotalPriceMixin, Order):
 
         stock_item = line.item
 
-        deltas = {
-            'status': StockStatus.QUARANTINED.value,
-            'returnorder': self.pk,
-            'location': location.pk,
-        }
+        if not stock_item.serialized and line.quantity < stock_item.quantity:
+            # Split the stock item if we are returning less than the full quantity
+            stock_item = stock_item.splitStock(line.quantity, user=user)
+
+            # Update the line item to point to the *new* stock item
+            line.item = stock_item
+            line.save()
+
+        status = kwargs.get('status')
+
+        if status is None:
+            status = StockStatus.QUARANTINED.value
+
+        deltas = {'status': status, 'returnorder': self.pk, 'location': location.pk}
 
         if stock_item.customer:
             deltas['customer'] = stock_item.customer.pk
 
         # Update the StockItem
-        stock_item.status = StockStatus.QUARANTINED.value
+        stock_item.status = status
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
@@ -2181,7 +2425,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         stock_item.add_tracking_entry(
             StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER,
             user,
-            notes=note,
+            notes=kwargs.get('note', ''),
             deltas=deltas,
             location=location,
             returnorder=self,
@@ -2191,7 +2435,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         line.received_date = InvenTree.helpers.current_date()
         line.save()
 
-        trigger_event('returnorder.received', id=self.pk)
+        trigger_event(ReturnOrderEvents.RECEIVED, id=self.pk, line_item_id=line.pk)
 
         # Notify responsible users
         notify_responsible(
@@ -2208,6 +2452,7 @@ class ReturnOrderLineItem(OrderLineItem):
     class Meta:
         """Metaclass options for this model."""
 
+        verbose_name = _('Return Order Line Item')
         unique_together = [('order', 'item')]
 
     @staticmethod
@@ -2219,9 +2464,22 @@ class ReturnOrderLineItem(OrderLineItem):
         """Perform extra validation steps for the ReturnOrderLineItem model."""
         super().clean()
 
-        if self.item and not self.item.serialized:
+        if not self.item:
+            raise ValidationError({'item': _('Stock item must be specified')})
+
+        if self.quantity > self.item.quantity:
             raise ValidationError({
-                'item': _('Only serialized items can be assigned to a Return Order')
+                'quantity': _('Return quantity exceeds stock quantity')
+            })
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Return quantity must be greater than zero')
+            })
+
+        if self.item.serialized and self.quantity != 1:
+            raise ValidationError({
+                'quantity': _('Invalid quantity for serialized stock item')
             })
 
     order = models.ForeignKey(
@@ -2240,6 +2498,15 @@ class ReturnOrderLineItem(OrderLineItem):
         help_text=_('Select item to return from customer'),
     )
 
+    quantity = models.DecimalField(
+        verbose_name=('Quantity'),
+        help_text=('Quantity to return'),
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
+    )
+
     received_date = models.DateField(
         null=True,
         blank=True,
@@ -2252,7 +2519,7 @@ class ReturnOrderLineItem(OrderLineItem):
         """Return True if this item has been received."""
         return self.received_date is not None
 
-    outcome = models.PositiveIntegerField(
+    outcome = InvenTreeCustomStatusModelField(
         default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
         verbose_name=_('Outcome'),
@@ -2269,6 +2536,11 @@ class ReturnOrderLineItem(OrderLineItem):
 
 class ReturnOrderExtraLine(OrderExtraLine):
     """Model for a single ExtraLine in a ReturnOrder."""
+
+    class Meta:
+        """Metaclass options for this model."""
+
+        verbose_name = _('Return Order Extra Line')
 
     @staticmethod
     def get_api_url():

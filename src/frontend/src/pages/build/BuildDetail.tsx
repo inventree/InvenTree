@@ -1,53 +1,60 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  IconChecklist,
   IconClipboardCheck,
   IconClipboardList,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconListCheck,
-  IconNotes,
-  IconPaperclip,
-  IconQrcode,
+  IconListNumbers,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  HoldItemAction,
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
@@ -58,10 +65,13 @@ export default function BuildDetail() {
 
   const user = useUserState();
 
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
   const {
     instance: build,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
@@ -76,12 +86,20 @@ export default function BuildDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
         label: t`Part`,
         model: ModelType.part
+      },
+      {
+        type: 'text',
+        name: 'part_detail.IPN',
+        icon: 'part',
+        label: t`IPN`,
+        hidden: !build.part_detail?.IPN,
+        copy: true
       },
       {
         type: 'status',
@@ -92,13 +110,15 @@ export default function BuildDetail() {
       {
         type: 'text',
         name: 'reference',
-        label: t`Reference`
+        label: t`Reference`,
+        copy: true
       },
       {
         type: 'text',
         name: 'title',
         label: t`Description`,
-        icon: 'description'
+        icon: 'description',
+        copy: true
       },
       {
         type: 'link',
@@ -111,7 +131,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'quantity',
@@ -136,7 +156,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'text',
         name: 'issued_by',
@@ -171,10 +191,18 @@ export default function BuildDetail() {
         label: t`Completed`,
         icon: 'calendar',
         hidden: !build.completion_date
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'link',
         name: 'take_from',
@@ -231,25 +259,23 @@ export default function BuildDetail() {
         content: detailsPanel
       },
       {
-        name: 'allocate-stock',
-        label: t`Allocate Stock`,
-        icon: <IconListCheck />,
-        content: build?.pk ? (
-          <BuildLineTable
-            params={{
-              build: id
-            }}
-          />
-        ) : (
-          <Skeleton />
-        )
+        name: 'line-items',
+        label: t`Line Items`,
+        icon: <IconListNumbers />,
+        content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
       },
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
-        // TODO: Hide if build is complete
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
       },
       {
         name: 'complete-outputs',
@@ -258,7 +284,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-outputs"
+            tableName='build-outputs'
             params={{
               build: id,
               is_building: false
@@ -267,13 +293,27 @@ export default function BuildDetail() {
         )
       },
       {
+        name: 'allocated-stock',
+        label: t`Allocated Stock`,
+        icon: <IconList />,
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED,
+        content: build.pk ? (
+          <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
-        icon: <IconList />,
+        icon: <IconListCheck />,
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-consumed"
+            tableName='build-consumed'
+            showLocation={false}
             params={{
               consumed_by: id
             }}
@@ -291,27 +331,26 @@ export default function BuildDetail() {
         )
       },
       {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.build} model_id={Number(id)} />
+        name: 'test-results',
+        label: t`Test Results`,
+        icon: <IconChecklist />,
+        hidden: !build.part_detail?.testable,
+        content: build.pk ? (
+          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
+        ) : (
+          <Skeleton />
         )
       },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.build}
-            modelId={build.pk}
-            editable={user.hasChangeRole(UserRoles.build)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      })
     ];
-  }, [build, id, user]);
+  }, [build, id, user, buildStatus]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
@@ -320,21 +359,7 @@ export default function BuildDetail() {
     pk: build.pk,
     title: t`Edit Build Order`,
     fields: buildOrderFields,
-    onFormSuccess: () => {
-      refreshInstance();
-    }
-  });
-
-  const cancelBuild = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
-    title: t`Cancel Build Order`,
-    fields: {
-      remove_allocated_stock: {},
-      remove_incomplete_outputs: {}
-    },
-    onFormSuccess: () => {
-      refreshInstance();
-    }
+    onFormSuccess: refreshInstance
   });
 
   const duplicateBuild = useCreateApiFormModal({
@@ -349,56 +374,128 @@ export default function BuildDetail() {
     modelType: ModelType.build
   });
 
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
+    title: t`Cancel Build Order`,
+    onFormSuccess: refreshInstance,
+    successMessage: t`Order cancelled`,
+    preFormWarning: t`Cancel this order`,
+    fields: {
+      remove_allocated_stock: {},
+      remove_incomplete_outputs: {}
+    }
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_hold, build.pk),
+    title: t`Hold Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
+  });
+
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_issue, build.pk),
+    title: t`Issue Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
+    title: t`Complete Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`,
+    fields: {
+      accept_overallocated: {},
+      accept_unallocated: {},
+      accept_incomplete: {}
+    }
+  });
+
   const buildActions = useMemo(() => {
+    const canEdit = user.hasChangeRole(UserRoles.build);
+
+    const canIssue =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.ON_HOLD);
+
+    const canComplete = canEdit && build.status == buildStatus.PRODUCTION;
+
+    const canHold =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.PRODUCTION);
+
+    const canCancel =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.ON_HOLD ||
+        build.status == buildStatus.PRODUCTION);
+
     return [
-      <AdminButton model={ModelType.build} pk={build.pk} />,
-      <ActionDropdown
-        tooltip={t`Barcode Actions`}
-        icon={<IconQrcode />}
-        actions={[
-          ViewBarcodeAction({}),
-          LinkBarcodeAction({
-            hidden: build?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash
-          })
-        ]}
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon='issue'
+        hidden={!canIssue}
+        color='blue'
+        onClick={issueOrder.open}
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon='complete'
+        hidden={!canComplete}
+        color='green'
+        onClick={completeOrder.open}
+      />,
+      <AdminButton model={ModelType.build} id={build.pk} />,
+      <BarcodeActionDropdown
+        model={ModelType.build}
+        pk={build.pk}
+        hash={build?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Build Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
-            hidden: !user.hasChangeRole(UserRoles.build)
-          }),
-          CancelItemAction({
-            tooltip: t`Cancel order`,
-            onClick: () => cancelBuild.open(),
-            hidden: !user.hasChangeRole(UserRoles.build)
-            // TODO: Hide if build cannot be cancelled
+            hidden: !canEdit,
+            tooltip: t`Edit order`
           }),
           DuplicateItemAction({
             onClick: () => duplicateBuild.open(),
+            tooltip: t`Duplicate order`,
             hidden: !user.hasAddRole(UserRoles.build)
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold,
+            onClick: holdOrder.open
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            onClick: cancelOrder.open,
+            hidden: !canCancel
           })
         ]}
       />
     ];
-  }, [id, build, user]);
+  }, [id, build, user, buildStatus]);
 
   const buildBadges = useMemo(() => {
     return instanceQuery.isFetching
       ? []
       : [
           <StatusRenderer
-            status={build.status}
+            status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />
@@ -409,22 +506,37 @@ export default function BuildDetail() {
     <>
       {editBuild.modal}
       {duplicateBuild.modal}
-      {cancelBuild.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={build.reference}
-          subtitle={build.title}
-          badges={buildBadges}
-          imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
-          breadcrumbs={[
-            { name: t`Build Orders`, url: '/build' },
-            { name: build.reference, url: `/build/${build.pk}` }
-          ]}
-          actions={buildActions}
-        />
-        <PanelGroup pageKey="build" panels={buildPanels} />
-      </Stack>
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {issueOrder.modal}
+      {completeOrder.modal}
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap='xs'>
+          <PageDetail
+            title={`${t`Build Order`}: ${build.reference}`}
+            subtitle={build.title}
+            badges={buildBadges}
+            editAction={editBuild.open}
+            editEnabled={user.hasChangePermission(ModelType.part)}
+            imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            breadcrumbs={[
+              { name: t`Manufacturing`, url: '/manufacturing' },
+              {
+                name: build.reference,
+                url: getDetailUrl(ModelType.build, build.pk)
+              }
+            ]}
+            actions={buildActions}
+          />
+          <PanelGroup
+            pageKey='build'
+            panels={buildPanels}
+            instance={build}
+            model={ModelType.build}
+            id={build.pk}
+          />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

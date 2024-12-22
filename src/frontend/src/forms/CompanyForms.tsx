@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
@@ -18,11 +18,18 @@ import {
 /**
  * Field set for SupplierPart instance
  */
-export function useSupplierPartFields() {
+export function useSupplierPartFields({
+  partId
+}: {
+  partId?: number;
+}) {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
+        value: partId,
+        disabled: !!partId,
         filters: {
+          part: partId,
           purchaseable: true,
           active: true
         }
@@ -41,7 +48,8 @@ export function useSupplierPartFields() {
       },
       supplier: {
         filters: {
-          active: true
+          active: true,
+          is_supplier: true
         }
       },
       SKU: {
@@ -62,14 +70,19 @@ export function useSupplierPartFields() {
     };
 
     return fields;
-  }, []);
+  }, [partId]);
 }
 
 export function useManufacturerPartFields() {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {},
-      manufacturer: {},
+      manufacturer: {
+        filters: {
+          active: true,
+          is_manufacturer: true
+        }
+      },
       MPN: {},
       description: {},
       link: {}

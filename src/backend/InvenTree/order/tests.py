@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 import django.core.exceptions as django_exceptions
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -41,16 +40,14 @@ class OrderTest(TestCase):
         """Basic tests e.g. repr functions etc."""
         for pk in range(1, 8):
             order = PurchaseOrder.objects.get(pk=pk)
-
-            if settings.ENABLE_CLASSIC_FRONTEND:
-                self.assertEqual(
-                    order.get_absolute_url(), f'/order/purchase-order/{pk}/'
-                )
+            self.assertEqual(
+                order.get_absolute_url(), f'/platform/purchasing/purchase-order/{pk}'
+            )
 
             self.assertEqual(order.reference, f'PO-{pk:04d}')
 
         line = PurchaseOrderLineItem.objects.get(pk=1)
-        self.assertEqual(str(line), '100 x ACME0001 from ACME (for PO-0001 - ACME)')
+        self.assertEqual(str(line), '100 x ACME0001 - PO-0001 - ACME')
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved."""

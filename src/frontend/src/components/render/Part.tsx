@@ -1,9 +1,11 @@
 import { t } from '@lingui/macro';
-import { ReactNode } from 'react';
+import { Badge } from '@mantine/core';
+import type { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
-import { InstanceRenderInterface, RenderInlineModel } from './Instance';
+import { ApiIcon } from '../items/ApiIcon';
+import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance
@@ -12,14 +14,35 @@ export function RenderPart(
   props: Readonly<InstanceRenderInterface>
 ): ReactNode {
   const { instance } = props;
-  const stock = t`Stock` + `: ${instance.in_stock}`;
+
+  let badgeText = '';
+  let badgeColor = '';
+
+  const stock = instance.total_in_stock;
+
+  if (instance.active == false) {
+    badgeColor = 'red';
+    badgeText = t`Inactive`;
+  } else if (stock <= 0) {
+    badgeColor = 'orange';
+    badgeText = t`No stock`;
+  } else {
+    badgeText = `${t`Stock`}: ${stock}`;
+    badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
+  }
+
+  const badge = (
+    <Badge size='xs' color={badgeColor}>
+      {badgeText}
+    </Badge>
+  );
 
   return (
     <RenderInlineModel
       {...props}
-      primary={instance.name}
+      primary={instance.full_name ?? instance.name}
       secondary={instance.description}
-      suffix={stock}
+      suffix={badge}
       image={instance.thumnbnail || instance.image}
       url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
@@ -33,12 +56,18 @@ export function RenderPartCategory(
   props: Readonly<InstanceRenderInterface>
 ): ReactNode {
   const { instance } = props;
-  const lvl = '-'.repeat(instance.level || 0);
 
   return (
     <RenderInlineModel
       {...props}
-      primary={`${lvl} ${instance.name}`}
+      tooltip={instance.pathstring}
+      prefix={
+        <>
+          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
+          {instance.icon && <ApiIcon name={instance.icon} />}
+        </>
+      }
+      primary={instance.pathstring}
       secondary={instance.description}
       url={
         props.link
@@ -54,9 +83,9 @@ export function RenderPartCategory(
  */
 export function RenderPartParameterTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.name}
@@ -68,9 +97,9 @@ export function RenderPartParameterTemplate({
 
 export function RenderPartTestTemplate({
   instance
-}: {
+}: Readonly<{
   instance: any;
-}): ReactNode {
+}>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.test_name}

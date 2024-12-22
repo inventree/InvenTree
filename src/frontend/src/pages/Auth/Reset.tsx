@@ -19,8 +19,8 @@ export default function Reset() {
 
   return (
     <LanguageContext>
-      <Center mih="100vh">
-        <Container w="md" miw={425}>
+      <Center mih='100vh'>
+        <Container w='md' miw={425}>
           <Stack>
             <Title>
               <Trans>Reset password</Trans>
@@ -30,15 +30,15 @@ export default function Reset() {
                 required
                 label={t`Email`}
                 description={t`We will send you a link to login - if you are registered`}
-                placeholder="email@example.org"
+                placeholder='email@example.org'
                 {...simpleForm.getInputProps('email')}
               />
             </Stack>
             <Button
-              type="submit"
+              type='submit'
               onClick={() => handleReset(navigate, simpleForm.values)}
             >
-              <Trans>Send mail</Trans>
+              <Trans>Send Email</Trans>
             </Button>
           </Stack>
         </Container>

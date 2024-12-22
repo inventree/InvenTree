@@ -1,4 +1,4 @@
-"""Custom query filters for the Part models.
+"""Custom query filters for the Part app.
 
 The code here makes heavy use of subquery annotations!
 
@@ -296,15 +296,12 @@ def annotate_default_location(reference=''):
         rght__gt=OuterRef(f'{reference}rght'),
         level__lte=OuterRef(f'{reference}level'),
         parent__isnull=False,
-    )
+        default_location__isnull=False,
+    ).order_by('-level')
 
     return Coalesce(
         F(f'{reference}default_location'),
-        Subquery(
-            subquery.order_by('-level')
-            .filter(default_location__isnull=False)
-            .values('default_location')
-        ),
+        Subquery(subquery.values('default_location')[:1]),
         Value(None),
         output_field=IntegerField(),
     )

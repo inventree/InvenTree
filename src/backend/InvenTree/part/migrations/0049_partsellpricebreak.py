@@ -24,6 +24,7 @@ class Migration(migrations.Migration):
                 ('part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='salepricebreaks', to='part.Part')),
             ],
             options={
+                'verbose_name': 'Part Sale Price Break',
                 'unique_together': {('part', 'quantity')},
             },
         ),

@@ -1,35 +1,37 @@
-"""Background task definitions for the BuildOrder app"""
+"""Background task definitions for the BuildOrder app."""
+
+import logging
+import random
+import time
 
 from datetime import timedelta
 from decimal import Decimal
-import logging
 
 from django.contrib.auth.models import User
-from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-from plugin.events import trigger_event
+import build.models as build_models
 import common.notifications
-import build.models
-import InvenTree.email
 import InvenTree.helpers
+import InvenTree.helpers_email
 import InvenTree.helpers_model
 import InvenTree.tasks
-from InvenTree.ready import isImportingData
-from build.status_codes import BuildStatusGroups
-
 import part.models as part_models
-
+from build.events import BuildEvents
+from build.status_codes import BuildStatusGroups
+from InvenTree.ready import isImportingData
+from plugin.events import trigger_event
 
 logger = logging.getLogger('inventree')
 
 
 def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
-
-    build_order = build.models.Build.objects.filter(pk=build_id).first()
+    build_order = build_models.Build.objects.filter(pk=build_id).first()
 
     if not build_order:
         logger.warning("Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist", build_id)
@@ -40,8 +42,7 @@ def auto_allocate_build(build_id: int, **kwargs):
 
 def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
-
-    build_order = build.models.Build.objects.filter(pk=build_id).first()
+    build_order = build_models.Build.objects.filter(pk=build_id).first()
 
     if user_id:
         try:
@@ -75,7 +76,7 @@ def update_build_order_lines(bom_item_pk: int):
     assemblies = bom_item.get_assemblies()
 
     # Find all active builds which reference any of the parts
-    builds = build.models.Build.objects.filter(
+    builds = build_models.Build.objects.filter(
         part__in=list(assemblies),
         status__in=BuildStatusGroups.ACTIVE_CODES
     )
@@ -83,7 +84,7 @@ def update_build_order_lines(bom_item_pk: int):
     # Iterate through each build, and update the relevant line items
     for bo in builds:
         # Try to find a matching build order line
-        line = build.models.BuildLine.objects.filter(
+        line = build_models.BuildLine.objects.filter(
             build=bo,
             bom_item=bom_item,
         ).first()
@@ -97,7 +98,7 @@ def update_build_order_lines(bom_item_pk: int):
                 line.save()
         else:
             # Create a new line item
-            build.models.BuildLine.objects.create(
+            build_models.BuildLine.objects.create(
                 build=bo,
                 bom_item=bom_item,
                 quantity=q,
@@ -107,7 +108,7 @@ def update_build_order_lines(bom_item_pk: int):
         logger.info("Updated %s build orders for part %s", builds.count(), bom_item.part)
 
 
-def check_build_stock(build: build.models.Build):
+def check_build_stock(build: build_models.Build):
     """Check the required stock for a newly created build order.
 
     Send an email out to any subscribed users if stock is low.
@@ -185,11 +186,70 @@ def check_build_stock(build: build.models.Build):
 
         recipients = emails.values_list('email', flat=True)
 
-        InvenTree.email.send_email(subject, '', recipients, html_message=html_message)
+        InvenTree.helpers_email.send_email(subject, '', recipients, html_message=html_message)
 
 
-def notify_overdue_build_order(bo: build.models.Build):
-    """Notify appropriate users that a Build has just become 'overdue'"""
+def create_child_builds(build_id: int) -> None:
+    """Create child build orders for a given parent build.
+
+    - Will create a build order for each assembly part in the BOM
+    - Runs recursively, also creating child builds for each sub-assembly part
+    """
+
+    try:
+        build_order = build_models.Build.objects.get(pk=build_id)
+    except (build_models.Build.DoesNotExist, ValueError):
+        return
+
+    assembly_items = build_order.part.get_bom_items().filter(sub_part__assembly=True)
+
+    # Random delay, to reduce likelihood of race conditions from multiple build orders being created simultaneously
+    time.sleep(random.random())
+
+    with transaction.atomic():
+        # Atomic transaction to ensure that all child build orders are created together, or not at all
+        # This is critical to prevent duplicate child build orders being created (e.g. if the task is re-run)
+
+        sub_build_ids = []
+
+        for item in assembly_items:
+            quantity = item.quantity * build_order.quantity
+
+
+            # Check if the child build order has already been created
+            if build_models.Build.objects.filter(
+                part=item.sub_part,
+                parent=build_order,
+                quantity=quantity,
+                status__in=BuildStatusGroups.ACTIVE_CODES
+            ).exists():
+                continue
+
+            sub_order = build_models.Build.objects.create(
+                part=item.sub_part,
+                quantity=quantity,
+                title=build_order.title,
+                batch=build_order.batch,
+                parent=build_order,
+                target_date=build_order.target_date,
+                sales_order=build_order.sales_order,
+                issued_by=build_order.issued_by,
+                responsible=build_order.responsible,
+            )
+
+            sub_build_ids.append(sub_order.pk)
+
+        for pk in sub_build_ids:
+            # Offload the child build order creation to the background task queue
+            InvenTree.tasks.offload_task(
+                create_child_builds,
+                pk,
+                group='build'
+            )
+
+
+def notify_overdue_build_order(bo: build_models.Build):
+    """Notify appropriate users that a Build has just become 'overdue'."""
     targets = []
 
     if bo.issued_by:
@@ -213,7 +273,7 @@ def notify_overdue_build_order(bo: build.models.Build):
         }
     }
 
-    event_name = 'build.overdue_build_order'
+    event_name = BuildEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(
@@ -229,7 +289,7 @@ def notify_overdue_build_order(bo: build.models.Build):
 
 @InvenTree.tasks.scheduled_task(InvenTree.tasks.ScheduledTask.DAILY)
 def check_overdue_build_orders():
-    """Check if any outstanding BuildOrders have just become overdue
+    """Check if any outstanding BuildOrders have just become overdue.
 
     - This check is performed daily
     - Look at the 'target_date' of any outstanding BuildOrder objects
@@ -237,7 +297,7 @@ def check_overdue_build_orders():
     """
     yesterday = InvenTree.helpers.current_date() - timedelta(days=1)
 
-    overdue_orders = build.models.Build.objects.filter(
+    overdue_orders = build_models.Build.objects.filter(
         target_date=yesterday,
         status__in=BuildStatusGroups.ACTIVE_CODES
     )

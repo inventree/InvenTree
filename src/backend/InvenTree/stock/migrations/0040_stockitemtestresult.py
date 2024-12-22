@@ -25,5 +25,8 @@ class Migration(migrations.Migration):
                 ('stock_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_results', to='stock.StockItem')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
             ],
+            options={
+                'verbose_name': 'Stock Item Test Result',
+            },
         ),
     ]
