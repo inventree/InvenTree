@@ -54,7 +54,7 @@ export type TableState = {
   setExpandedRecords: (records: any[]) => void;
   isRowExpanded: (pk: number) => boolean;
   selectedRecords: any[];
-  selectedIds: number[];
+  selectedIds: any[];
   hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;

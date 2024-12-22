@@ -217,13 +217,12 @@ export default function Scan() {
               </Group>
               <BarcodeScanTable
                 records={history}
-                onItemsSelected={(items) =>
-                  setSelection(items.map((item) => item.id))
-                }
-                onItemsDeleted={(items) => {
-                  const item_ids = items.map((item) => item.id);
+                onItemsSelected={(ids: string[]) => {
+                  setSelection(ids);
+                }}
+                onItemsDeleted={(ids: string[]) => {
                   historyHandlers.setState(
-                    history.filter((item) => !item_ids.includes(item.id))
+                    history.filter((item) => !ids.includes(item.id))
                   );
                 }}
               />

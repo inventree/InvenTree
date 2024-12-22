@@ -20,8 +20,8 @@ export default function BarcodeScanTable({
   onItemsDeleted
 }: {
   records: BarcodeScanItem[];
-  onItemsSelected: (items: BarcodeScanItem[]) => void;
-  onItemsDeleted: (items: BarcodeScanItem[]) => void;
+  onItemsSelected: (items: string[]) => void;
+  onItemsDeleted: (items: string[]) => void;
 }) {
   const navigate = useNavigate();
   const user = useUserState();
@@ -92,16 +92,16 @@ export default function BarcodeScanTable({
         color='red'
         tooltip={t`Delete selected records`}
         onClick={() => {
-          onItemsDeleted(table.selectedRecords);
+          onItemsDeleted(table.selectedIds);
           table.clearSelectedRecords();
         }}
       />
     ];
-  }, [table.hasSelectedRecords, table.selectedRecords]);
+  }, [table.hasSelectedRecords, table.selectedIds]);
 
   useEffect(() => {
-    onItemsSelected(table.selectedRecords);
-  }, [table.selectedRecords]);
+    onItemsSelected(table.selectedIds);
+  }, [table.selectedIds]);
 
   return (
     <>
