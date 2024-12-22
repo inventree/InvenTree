@@ -653,13 +653,29 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]);
 
   const optionalParams = useMemo(() => {
-    const optionalParamsa: Record<string, any> = {};
+    let _params: Record<string, any> = {};
+
     if (tableProps.enablePagination) {
-      optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
-      optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
+      _params = {
+        ..._params,
+        totalRecords: tableState.recordCount,
+        recordsPerPage: tableState.pageSize,
+        page: tableState.page,
+        onPageChange: tableState.setPage,
+        recordsPerPageOptions: PAGE_SIZES,
+        onRecordsPerPageChange: updatePageSize
+      };
     }
-    return optionalParamsa;
-  }, [tableProps.enablePagination]);
+
+    return _params;
+  }, [
+    tableProps.enablePagination,
+    tableState.recordCount,
+    tableState.pageSize,
+    tableState.page,
+    tableState.setPage,
+    updatePageSize
+  ]);
 
   return (
     <>
@@ -688,10 +704,6 @@ export function InvenTreeTable<T extends Record<string, any>>({
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
               minHeight={tableProps.minHeight ?? 300}
-              totalRecords={tableState.recordCount}
-              recordsPerPage={tableState.pageSize}
-              page={tableState.page}
-              onPageChange={tableState.setPage}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
