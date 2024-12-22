@@ -1,12 +1,15 @@
 import { t } from '@lingui/macro';
 import { IconTrash } from '@tabler/icons-react';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { RenderInstance } from '../../components/render/Instance';
 import { useTable } from '../../hooks/UseTable';
+import { useUserState } from '../../states/UserState';
 import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { type RowAction, RowViewAction } from '../RowActions';
 
 /**
  * A table for showing barcode scan history data on the scan index page
@@ -20,6 +23,9 @@ export default function BarcodeScanTable({
   onItemsSelected: (items: BarcodeScanItem[]) => void;
   onItemsDeleted: (items: BarcodeScanItem[]) => void;
 }) {
+  const navigate = useNavigate();
+  const user = useUserState();
+
   const table = useTable('barcode-scan-results');
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -60,6 +66,24 @@ export default function BarcodeScanTable({
     ];
   }, []);
 
+  const rowActions = useCallback((record: BarcodeScanItem) => {
+    const actions: RowAction[] = [];
+
+    if (record.model && record.pk && record.instance) {
+      actions.push(
+        RowViewAction({
+          title: t`View Item`,
+          modelId: record.instance?.pk,
+          modelType: record.model,
+          navigate: navigate,
+          hidden: !user.hasViewPermission(record.model)
+        })
+      );
+    }
+
+    return actions;
+  }, []);
+
   const tableActions = useMemo(() => {
     return [
       <ActionButton
@@ -92,6 +116,7 @@ export default function BarcodeScanTable({
           enablePagination: false,
           enableSearch: false,
           enableRefresh: false,
+          rowActions: rowActions,
           tableActions: tableActions
         }}
       />
