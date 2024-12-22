@@ -156,7 +156,6 @@ apipatterns = [
             ),
             path('login/', users.api.Login.as_view(), name='api-login'),
             path('logout/', users.api.Logout.as_view(), name='api-logout'),
-            path('2fa/', users.api.TwoFAView.as_view(), name='api-2fa'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
