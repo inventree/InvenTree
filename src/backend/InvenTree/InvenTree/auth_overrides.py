@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from allauth.account import app_settings as allauth_account_settings
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.core.exceptions import ImmediateHttpResponse
@@ -17,7 +18,9 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.forms import TOTPDeviceForm
 from allauth_2fa.utils import user_has_valid_totp_device
+from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.registration.views import RegisterView
 from rest_framework import serializers
 
 import InvenTree.helpers_model
@@ -269,13 +272,40 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     email = serializers.EmailField()
 
-    def __init__(self, instance=None, data=..., **kwargs):
-        """Check settings to influence which fields are needed."""
-        kwargs['email_required'] = get_global_setting('LOGIN_MAIL_REQUIRED')
-        super().__init__(instance, data, **kwargs)
-
     def save(self, request):
         """Override to check if registration is open."""
         if registration_enabled():
             return super().save(request)
         raise forms.ValidationError(_('Registration is disabled.'))
+
+
+class CustomRegisterView(RegisterView):
+    """Registers a new user.
+
+    Accepts the following POST parameters: username, email, password1, password2.
+    """
+
+    # Fixes https://github.com/inventree/InvenTree/issues/8707
+    # This contains code from dj-rest-auth 7.0 - therefore the version was pinned
+    def get_response_data(self, user):
+        """Override to fix check for auth_model."""
+        if (
+            allauth_account_settings.EMAIL_VERIFICATION
+            == allauth_account_settings.EmailVerificationMethod.MANDATORY
+        ):
+            return {'detail': _('Verification e-mail sent.')}
+
+        if api_settings.USE_JWT:
+            data = {
+                'user': user,
+                'access': self.access_token,
+                'refresh': self.refresh_token,
+            }
+            return api_settings.JWT_SERIALIZER(
+                data, context=self.get_serializer_context()
+            ).data
+        elif self.token_model:
+            return api_settings.TOKEN_SERIALIZER(
+                user.auth_token, context=self.get_serializer_context()
+            ).data
+        return None

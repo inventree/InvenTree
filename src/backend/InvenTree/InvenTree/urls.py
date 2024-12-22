@@ -29,6 +29,7 @@ import plugin.api
 import report.api
 import stock.api
 import users.api
+from InvenTree.auth_overrides import CustomRegisterView
 from plugin.urls import get_plugin_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
@@ -114,6 +115,7 @@ apipatterns = [
                 name='account_confirm_email',
             ),
             path('registration/', include('dj_rest_auth.registration.urls')),
+            path('registration/', CustomRegisterView.as_view(), name='rest_register'),
             path(
                 'providers/', SocialProviderListView.as_view(), name='social_providers'
             ),
@@ -154,6 +156,7 @@ apipatterns = [
             ),
             path('login/', users.api.Login.as_view(), name='api-login'),
             path('logout/', users.api.Logout.as_view(), name='api-logout'),
+            path('2fa/', users.api.TwoFAView.as_view(), name='api-2fa'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
