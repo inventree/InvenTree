@@ -273,7 +273,17 @@ export default function Scan() {
               <Group justify='space-between'>
                 <StylishText size='lg'>{t`Scanned Items`}</StylishText>
               </Group>
-              <BarcodeScanTable records={history} />
+              <BarcodeScanTable
+                records={history}
+                onItemsSelected={(items) =>
+                  setSelection(items.map((item) => item.id))
+                }
+                onItemsDeleted={(items) =>
+                  historyHandlers.setState(
+                    history.filter((item) => !items.includes(item))
+                  )
+                }
+              />
             </Stack>
           </Paper>
         </Grid.Col>

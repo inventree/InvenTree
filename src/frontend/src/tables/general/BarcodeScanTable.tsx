@@ -1,6 +1,8 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { IconTrash } from '@tabler/icons-react';
+import { useEffect, useMemo } from 'react';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { RenderInstance } from '../../components/render/Instance';
 import { useTable } from '../../hooks/UseTable';
 import type { TableColumn } from '../Column';
@@ -10,9 +12,13 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * A table for showing barcode scan history data on the scan index page
  */
 export default function BarcodeScanTable({
-  records
+  records,
+  onItemsSelected,
+  onItemsDeleted
 }: {
   records: BarcodeScanItem[];
+  onItemsSelected: (items: BarcodeScanItem[]) => void;
+  onItemsDeleted: (items: BarcodeScanItem[]) => void;
 }) {
   const table = useTable('barcode-scan-results');
 
@@ -54,6 +60,25 @@ export default function BarcodeScanTable({
     ];
   }, []);
 
+  const tableActions = useMemo(() => {
+    return [
+      <ActionButton
+        disabled={!table.hasSelectedRecords}
+        icon={<IconTrash />}
+        color='red'
+        tooltip={t`Delete selected records`}
+        onClick={() => {
+          onItemsDeleted(table.selectedRecords);
+          table.clearSelectedRecords();
+        }}
+      />
+    ];
+  }, [table.hasSelectedRecords, table.selectedRecords]);
+
+  useEffect(() => {
+    onItemsSelected(table.selectedRecords);
+  }, [table.selectedRecords]);
+
   return (
     <>
       <InvenTreeTable
@@ -66,7 +91,8 @@ export default function BarcodeScanTable({
           enableSelection: true,
           enablePagination: false,
           enableSearch: false,
-          enableRefresh: false
+          enableRefresh: false,
+          tableActions: tableActions
         }}
       />
     </>
