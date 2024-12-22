@@ -90,10 +90,8 @@ test('Build Order - Basic Tests', async ({ page }) => {
 test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/`);
-
-  // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.goto(`${baseUrl}/manufacturing/index/`);
+  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
