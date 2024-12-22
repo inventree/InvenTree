@@ -1,42 +1,29 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
-  Button,
-  Checkbox,
   Grid,
   Group,
-  ScrollArea,
+  Paper,
   Space,
   Stack,
-  Table,
-  Text,
-  rem
+  Text
 } from '@mantine/core';
-import {
-  randomId,
-  useFullscreen,
-  useListState,
-  useLocalStorage
-} from '@mantine/hooks';
+import { randomId, useListState, useLocalStorage } from '@mantine/hooks';
 import {
   IconAlertCircle,
-  IconArrowsMaximize,
-  IconArrowsMinimize,
   IconLink,
   IconNumber,
   IconQuestionMark,
   IconSearch,
   IconTrash
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
-import { DocInfo } from '../../components/items/DocInfo';
+import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { StylishText } from '../../components/items/StylishText';
-import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import PageTitle from '../../components/nav/PageTitle';
-import { RenderInstance } from '../../components/render/Instance';
 import { ModelInformationDict } from '../../components/render/ModelType';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
@@ -44,43 +31,28 @@ import {
   notYetImplemented,
   showApiErrorMessage
 } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
-
-export interface ScanItem {
-  id: string;
-  ref: string;
-  data: any;
-  instance?: any;
-  timestamp: Date;
-  source: string;
-  link?: string;
-  model?: ModelType;
-  pk?: string;
-}
+import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {
-  const { toggle: toggleFullscreen, fullscreen } = useFullscreen();
-  const [history, historyHandlers] = useListState<ScanItem>([]);
-  const [historyStorage, setHistoryStorage] = useLocalStorage<ScanItem[]>({
+  const [history, historyHandlers] = useListState<BarcodeScanItem>([]);
+  const [historyStorage, setHistoryStorage] = useLocalStorage<
+    BarcodeScanItem[]
+  >({
     key: 'scan-history',
     defaultValue: []
   });
   const [selection, setSelection] = useState<string[]>([]);
 
-  const selectionLinked =
-    selection.length === 1 && getSelectedItem(selection[0])?.link != undefined;
-
   function btnOpenSelectedLink() {
     const item = getSelectedItem(selection[0]);
     if (!item) return;
-    if (!selectionLinked) return;
-    window.open(item.link, '_blank');
-  }
 
-  function btnDeleteFullHistory() {
-    historyHandlers.setState([]);
-    setHistoryStorage([]);
-    setSelection([]);
+    if (item.model && item.pk) {
+      const url = getDetailUrl(item.model, item.pk);
+      window.open(url, '_blank');
+    }
   }
 
   function btnDeleteHistory() {
@@ -91,16 +63,16 @@ export default function Scan() {
   }
 
   // general functions
-  function getSelectedItem(ref: string): ScanItem | undefined {
+  function getSelectedItem(ref: string): BarcodeScanItem | undefined {
     if (selection.length === 0) return;
     const item = history.find((item) => item.id === ref);
-    if (item?.ref === undefined) return;
+    if (item?.barcode === undefined) return;
     return item;
   }
 
   // Fetch model instance based on scan item
   const fetchInstance = useCallback(
-    (item: ScanItem) => {
+    (item: BarcodeScanItem) => {
       if (!item.model || !item.pk) {
         return;
       }
@@ -138,7 +110,7 @@ export default function Scan() {
               match = true;
               fetchInstance({
                 id: randomId(),
-                ref: barcode,
+                barcode: barcode,
                 data: data,
                 timestamp: new Date(),
                 source: 'scan',
@@ -152,7 +124,7 @@ export default function Scan() {
           if (!match) {
             historyHandlers.append({
               id: randomId(),
-              ref: barcode,
+              barcode: barcode,
               data: data,
               timestamp: new Date(),
               source: 'scan'
@@ -227,195 +199,85 @@ export default function Scan() {
     );
   };
 
-  // rendering
   return (
     <>
       <PageTitle title={t`Barcode Scanning`} />
       <Group justify='space-between'>
         <Group justify='left'>
-          <StylishText>
-            <Trans>Scan Page</Trans>
+          <StylishText size='xl'>
+            <Trans>Barcode Scanning</Trans>
           </StylishText>
-          <DocInfo
-            text={t`This page can be used for continuously scanning items and taking actions on them.`}
-          />
         </Group>
-        <Button
-          onClick={toggleFullscreen}
-          size='sm'
-          variant='subtle'
-          title={t`Toggle Fullscreen`}
-        >
-          {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
-        </Button>
       </Group>
       <Space h={'md'} />
       <Grid maw={'100%'}>
         <Grid.Col span={4}>
-          <Stack gap='xs'>
-            <BarcodeInput onScan={scanBarcode} />
-            <Stack gap={0}>
-              <TitleWithDoc
-                order={3}
-                text={t`Depending on the selected parts actions will be shown here. Not all barcode types are supported currently.`}
-              >
-                <Trans>Action</Trans>
-              </TitleWithDoc>
-              {selection.length === 0 ? (
-                <Text>
-                  <Trans>No selection</Trans>
-                </Text>
-              ) : (
-                <>
-                  <Text>
-                    <Trans>{selection.length} items selected</Trans>
-                  </Text>
-                  <Text fz='sm' c='dimmed'>
-                    <Trans>General Actions</Trans>
-                  </Text>
-                  <Group>
-                    <ActionIcon
-                      color='red'
-                      onClick={btnDeleteHistory}
-                      title={t`Delete`}
-                      variant='default'
-                    >
-                      <IconTrash />
-                    </ActionIcon>
-                    <ActionIcon
-                      onClick={notYetImplemented}
-                      disabled={selection.length > 1}
-                      title={t`Lookup part`}
-                      variant='default'
-                    >
-                      <IconSearch />
-                    </ActionIcon>
-                    <ActionIcon
-                      onClick={btnOpenSelectedLink}
-                      disabled={!selectionLinked}
-                      title={t`Open Link`}
-                      variant='default'
-                    >
-                      <IconLink />
-                    </ActionIcon>
-                  </Group>
-                  <SelectedActions />
-                </>
-              )}
+          <Paper p='sm' shadow='xs'>
+            <Stack gap='xs'>
+              <StylishText size='lg'>{t`Barcode Input`}</StylishText>
+              <BarcodeInput onScan={scanBarcode} />
             </Stack>
-          </Stack>
+          </Paper>
+          <Paper p='sm' shadow='xs'>
+            <Stack gap='xs'>
+              <Stack gap={0}>
+                <StylishText size='lg'>{t`Action`}</StylishText>
+                {selection.length === 0 ? (
+                  <Text>
+                    <Trans>No selection</Trans>
+                  </Text>
+                ) : (
+                  <>
+                    <Text>
+                      <Trans>{selection.length} items selected</Trans>
+                    </Text>
+                    <Text fz='sm' c='dimmed'>
+                      <Trans>General Actions</Trans>
+                    </Text>
+                    <Group>
+                      <ActionIcon
+                        color='red'
+                        onClick={btnDeleteHistory}
+                        title={t`Delete`}
+                        variant='default'
+                      >
+                        <IconTrash />
+                      </ActionIcon>
+                      <ActionIcon
+                        onClick={notYetImplemented}
+                        disabled={selection.length > 1}
+                        title={t`Lookup part`}
+                        variant='default'
+                      >
+                        <IconSearch />
+                      </ActionIcon>
+                      <ActionIcon
+                        onClick={btnOpenSelectedLink}
+                        disabled={false}
+                        title={t`Open Link`}
+                        variant='default'
+                      >
+                        <IconLink />
+                      </ActionIcon>
+                    </Group>
+                    <SelectedActions />
+                  </>
+                )}
+              </Stack>
+            </Stack>
+          </Paper>
         </Grid.Col>
         <Grid.Col span={8}>
-          <Group justify='space-between'>
-            <TitleWithDoc
-              order={3}
-              text={t`History is locally kept in this browser.`}
-              detail={t`The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area.`}
-            >
-              <Trans>History</Trans>
-            </TitleWithDoc>
-            <ActionIcon
-              color='red'
-              onClick={btnDeleteFullHistory}
-              variant='default'
-              title={t`Delete History`}
-            >
-              <IconTrash />
-            </ActionIcon>
-          </Group>
-          <HistoryTable
-            data={history}
-            selection={selection}
-            setSelection={setSelection}
-          />
+          <Paper p='sm' shadow='xs'>
+            <Stack gap='xs'>
+              <Group justify='space-between'>
+                <StylishText size='lg'>{t`Scanned Items`}</StylishText>
+              </Group>
+              <BarcodeScanTable records={history} />
+            </Stack>
+          </Paper>
         </Grid.Col>
       </Grid>
     </>
-  );
-}
-
-function HistoryTable({
-  data,
-  selection,
-  setSelection
-}: Readonly<{
-  data: ScanItem[];
-  selection: string[];
-  setSelection: React.Dispatch<React.SetStateAction<string[]>>;
-}>) {
-  const toggleRow = (id: string) =>
-    setSelection((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id]
-    );
-  const toggleAll = () =>
-    setSelection((current) =>
-      current.length === data.length ? [] : data.map((item) => item.id)
-    );
-
-  const rows = useMemo(() => {
-    return data.map((item) => {
-      return (
-        <tr key={item.id}>
-          <td>
-            <Checkbox
-              checked={selection.includes(item.id)}
-              onChange={() => toggleRow(item.id)}
-            />
-          </td>
-          <td>
-            {item.pk && item.model && item.instance ? (
-              <RenderInstance model={item.model} instance={item.instance} />
-            ) : (
-              item.ref
-            )}
-          </td>
-          <td>{item.model}</td>
-          <td>{item.source}</td>
-          <td>{item.timestamp?.toString()}</td>
-        </tr>
-      );
-    });
-  }, [data, selection]);
-
-  // rendering
-  if (data.length === 0)
-    return (
-      <Text>
-        <Trans>No history</Trans>
-      </Text>
-    );
-  return (
-    <ScrollArea>
-      <Table miw={800} verticalSpacing='sm'>
-        <thead>
-          <tr>
-            <th style={{ width: rem(40) }}>
-              <Checkbox
-                onChange={toggleAll}
-                checked={selection.length === data.length}
-                indeterminate={
-                  selection.length > 0 && selection.length !== data.length
-                }
-              />
-            </th>
-            <th>
-              <Trans>Item</Trans>
-            </th>
-            <th>
-              <Trans>Type</Trans>
-            </th>
-            <th>
-              <Trans>Source</Trans>
-            </th>
-            <th>
-              <Trans>Scanned at</Trans>
-            </th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
-    </ScrollArea>
   );
 }
