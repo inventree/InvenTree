@@ -80,7 +80,6 @@ export type InvenTreeTableProps<T = any> = {
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   rowExpansion?: DataTableRowExpansionProps<T>;
-  idAccessor?: string;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
@@ -110,8 +109,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   defaultSortColumn: '',
   barcodeActions: [],
   tableFilters: [],
-  tableActions: [],
-  idAccessor: 'pk'
+  tableActions: []
 };
 
 /**
@@ -702,7 +700,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               highlightOnHover
               loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
-              idAccessor={tableProps.idAccessor}
+              idAccessor={tableState.idAccessor}
               minHeight={tableProps.minHeight ?? 300}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}

@@ -14,7 +14,7 @@ import {
   IconNumber,
   IconQuestionMark
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
@@ -33,12 +33,14 @@ import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
 export default function Scan() {
   const [history, historyHandlers] = useListState<BarcodeScanItem>([]);
+
   const [historyStorage, setHistoryStorage] = useLocalStorage<
     BarcodeScanItem[]
   >({
     key: 'scan-history',
     defaultValue: []
   });
+
   const [selection, setSelection] = useState<string[]>([]);
 
   // Fetch model instance based on scan item
@@ -67,6 +69,7 @@ export default function Scan() {
     [api]
   );
 
+  // Barcode scanning callback function
   const scanBarcode = useCallback(
     (barcode: string) => {
       api
@@ -125,26 +128,23 @@ export default function Scan() {
     historyHandlers.setState(historyStorage);
   }
 
-  // selected actions component
-  const SelectedActions = () => {
-    const uniqueObjectTypes = [
-      ...new Set(
-        selection
-          .map((id) => {
-            return history.find((item) => item.id === id)?.model;
-          })
-          .filter((item) => item != undefined)
-      )
-    ];
+  // Items selected for action
+  const selectedItems: BarcodeScanItem[] = useMemo(() => {
+    return history.filter((item) => selection.includes(item.id));
+  }, [selection, history]);
 
-    if (uniqueObjectTypes.length === 0) {
+  // selected actions component
+  const SelectedActions = useMemo(() => {
+    const uniqueObjectTypes = new Set(selectedItems.map((item) => item.model));
+
+    if (uniqueObjectTypes.size === 0) {
       return (
         <Group gap={0}>
           <IconQuestionMark color='orange' />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
-    } else if (uniqueObjectTypes.length > 1) {
+    } else if (uniqueObjectTypes.size > 1) {
       return (
         <Group gap={0}>
           <IconAlertCircle color='orange' />
@@ -152,10 +152,11 @@ export default function Scan() {
         </Group>
       );
     }
+
     return (
       <>
         <Text fz='sm' c='dimmed'>
-          <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
+          <Trans>Actions ... </Trans>
         </Text>
         <Group>
           <ActionIcon
@@ -168,7 +169,7 @@ export default function Scan() {
         </Group>
       </>
     );
-  };
+  }, [selectedItems]);
 
   return (
     <>
@@ -202,7 +203,7 @@ export default function Scan() {
                     <Text>
                       <Trans>{selection.length} items selected</Trans>
                     </Text>
-                    <SelectedActions />
+                    {SelectedActions}
                   </>
                 )}
               </Stack>

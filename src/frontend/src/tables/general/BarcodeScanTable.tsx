@@ -26,7 +26,7 @@ export default function BarcodeScanTable({
   const navigate = useNavigate();
   const user = useUserState();
 
-  const table = useTable('barcode-scan-results');
+  const table = useTable('barcode-scan-results', 'id');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -110,7 +110,6 @@ export default function BarcodeScanTable({
         tableData={records}
         columns={tableColumns}
         props={{
-          idAccessor: 'id',
           enableFilters: false,
           enableSelection: true,
           enablePagination: false,
