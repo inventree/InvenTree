@@ -120,11 +120,13 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
+  tableData,
   columns,
   props
 }: Readonly<{
-  url: string;
+  url?: string;
   tableState: TableState;
+  tableData?: any[];
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }>) {
@@ -157,12 +159,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: true,
+    enabled: !!url && !tableData,
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
     queryFn: async () => {
+      if (!url) {
+        return null;
+      }
+
       if (props.enableColumnCaching == false) {
         return null;
       }
@@ -435,6 +441,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const fetchTableData = async () => {
     const queryParams = getTableFilters(true);
 
+    if (!url) {
+      return [];
+    }
+
     return api
       .get(url, {
         params: queryParams,
@@ -489,7 +499,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
   };
 
-  const { data, isFetching, isLoading, refetch } = useQuery({
+  const {
+    data: apiData,
+    isFetching,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: [
       'tabledata',
       url,
@@ -501,6 +516,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.activeFilters,
       tableState.searchTerm
     ],
+    enabled: !!url && !tableData,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
@@ -521,13 +537,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update tableState.records when new data received
   useEffect(() => {
-    tableState.setRecords(data ?? []);
+    const data = tableData ?? apiData ?? [];
+
+    tableState.setRecords(data);
 
     // set pagesize to length if pagination is disabled
     if (!tableProps.enablePagination) {
       tableState.setPageSize(data?.length ?? defaultPageSize);
     }
-  }, [data]);
+  }, [tableData, apiData]);
 
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
