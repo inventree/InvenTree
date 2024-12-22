@@ -135,9 +135,9 @@ export default function Scan() {
   }, [history]);
 
   // load data from session storage on mount
-  if (history.length === 0 && historyStorage.length != 0) {
+  useEffect(() => {
     historyHandlers.setState(historyStorage);
-  }
+  }, [historyStorage]);
 
   // Items selected for action
   const selectedItems: BarcodeScanItem[] = useMemo(() => {
@@ -233,9 +233,12 @@ export default function Scan() {
                   setSelection(ids);
                 }}
                 onItemsDeleted={(ids: string[]) => {
-                  historyHandlers.setState(
-                    history.filter((item) => !ids.includes(item.id))
+                  const newHistory = history.filter(
+                    (item) => !ids.includes(item.id)
                   );
+
+                  historyHandlers.setState(newHistory);
+                  setHistoryStorage(newHistory);
                 }}
               />
             </Stack>
