@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
@@ -50,6 +51,16 @@ export default function Scan() {
         return;
       }
 
+      // Prevent duplicates
+      if (history.find((i) => i.model == item.model && i.pk == item.pk)) {
+        showNotification({
+          label: t`Duplicate`,
+          message: t`Item already scanned`,
+          color: 'orange'
+        });
+        return;
+      }
+
       const model_info = ModelInformationDict[item.model];
 
       api
@@ -66,7 +77,7 @@ export default function Scan() {
           });
         });
     },
-    [api]
+    [api, history]
   );
 
   // Barcode scanning callback function
