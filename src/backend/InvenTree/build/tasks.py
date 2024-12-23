@@ -26,7 +26,8 @@ from build.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 from plugin.events import trigger_event
 
-logger = logging.getLogger('inventree')
+import structlog
+logger = structlog.get_logger('inventree')
 
 
 def auto_allocate_build(build_id: int, **kwargs):

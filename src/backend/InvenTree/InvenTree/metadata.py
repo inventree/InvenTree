@@ -1,10 +1,9 @@
 """Custom metadata for DRF."""
 
-import logging
-
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 
+import structlog
 from rest_framework import exceptions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
@@ -17,7 +16,7 @@ import users.models
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeMetadata(SimpleMetadata):

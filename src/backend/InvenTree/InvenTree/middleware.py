@@ -1,6 +1,5 @@
 """Middleware for InvenTree."""
 
-import logging
 import sys
 
 from django.conf import settings
@@ -9,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import Resolver404, include, path, resolve, reverse_lazy
 
+import structlog
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
@@ -16,7 +16,7 @@ from common.settings import get_global_setting
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_token_from_request(request):

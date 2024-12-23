@@ -2,7 +2,6 @@
 
 # -*- coding: utf-8 -*-
 
-import logging
 import sys
 import traceback
 
@@ -11,11 +10,12 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.views as drfviews
+import structlog
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def log_error(path, error_name=None, error_info=None, error_data=None):

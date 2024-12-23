@@ -24,7 +24,8 @@ from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
 
 import logging
-logger = logging.getLogger('inventree')
+import structlog
+logger = structlog.get_logger('inventree')
 
 
 class BuildTestBase(TestCase):

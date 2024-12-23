@@ -48,7 +48,8 @@ import users.models
 import generic.states
 
 
-logger = logging.getLogger('inventree')
+import structlog
+logger = structlog.get_logger('inventree')
 
 
 class Build(
