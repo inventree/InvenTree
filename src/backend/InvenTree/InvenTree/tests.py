@@ -16,7 +16,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
-from backend.InvenTree.InvenTree.unit_test import in_env_context
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -33,7 +32,7 @@ from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase, in_env_context
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
