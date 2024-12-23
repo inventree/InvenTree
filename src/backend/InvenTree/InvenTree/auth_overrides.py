@@ -267,7 +267,7 @@ class CustomSocialAccountAdapter(
 
 # override dj-rest-auth
 class RegisterSerializer(DjRestRegisterSerializer):
-    """Override of serializer to use dynamic settings."""
+    """Registration requires email, password (twice) and username."""
 
     email = serializers.EmailField()
 
