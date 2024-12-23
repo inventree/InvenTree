@@ -16,12 +16,12 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
-import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
+from zoneinfo import ZoneInfo
 
 import InvenTree.conversion
 import InvenTree.format
@@ -736,14 +736,14 @@ class TestTimeFormat(TestCase):
             month=1,
             day=1,
             hour=0,
-            minute=0,
+            minute=1,
             second=0,
-            tzinfo=pytz.timezone('Europe/London'),
+            tzinfo=ZoneInfo('Europe/London'),
         )
 
         tests = [
             ('UTC', '2000-01-01 00:01:00+00:00'),
-            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('Europe/London', '2000-01-01 00:01:00+00:00'),
             ('America/New_York', '1999-12-31 19:01:00-05:00'),
             # All following tests should result in the same value
             ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),

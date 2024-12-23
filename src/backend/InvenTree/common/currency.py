@@ -3,6 +3,7 @@
 import decimal
 import logging
 import math
+from typing import Optional
 
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -143,7 +144,7 @@ def validate_currency_codes(value):
     return list(valid_currencies)
 
 
-def currency_exchange_plugins() -> list:
+def currency_exchange_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for currency exchange."""
     try:
         from plugin import registry

@@ -103,7 +103,7 @@ def getindex(container: list, index: int) -> Any:
 
 
 @register.simple_tag()
-def getkey(container: dict, key: str) -> Any:
+def getkey(container: dict, key: str, backup_value: Optional[any] = None) -> Any:
     """Perform key lookup in the provided dict object.
 
     This function is provided to get around template rendering limitations.
@@ -112,14 +112,13 @@ def getkey(container: dict, key: str) -> Any:
     Arguments:
         container: A python dict object
         key: The 'key' to be found within the dict
+        backup_value: A backup value to return if the key is not found
     """
     if type(container) is not dict:
         logger.warning('getkey() called with non-dict object')
         return None
 
-    if key in container:
-        return container[key]
-    return None
+    return container.get(key, backup_value)
 
 
 @register.simple_tag()
