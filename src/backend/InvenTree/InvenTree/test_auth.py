@@ -1,5 +1,6 @@
-"""Test the sso module functionality."""
+"""Test the sso and auth module functionality."""
 
+from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.test import override_settings
 from django.test.testcases import TransactionTestCase
@@ -9,6 +10,7 @@ from allauth.socialaccount.models import SocialAccount, SocialLogin
 from common.models import InvenTreeSetting
 from InvenTree import sso
 from InvenTree.auth_overrides import RegistratonMixin
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class Dummy:
@@ -119,3 +121,59 @@ class TestSsoGroupSync(TransactionTestCase):
         self.assertEqual(Group.objects.filter(name='inventree_group').count(), 0)
         sso.ensure_sso_groups(None, self.sociallogin)
         self.assertEqual(Group.objects.filter(name='inventree_group').count(), 1)
+
+
+class TestAuth(InvenTreeAPITestCase):
+    """Test authentication functionality."""
+
+    def test_registration(self):
+        """Test the registration process."""
+        self.logout()
+
+        # Duplicate username
+        resp = self.post(
+            '/api/auth/registration/',
+            {
+                'username': 'testuser',
+                'email': 'test@example.com',
+                'password1': 'password',
+                'password2': 'password',
+            },
+            expected_code=400,
+        )
+        self.assertIn(
+            'A user with that username already exists.', resp.data['username']
+        )
+
+        # Registration is disabled
+        resp = self.post(
+            '/api/auth/registration/',
+            {
+                'username': 'user1',
+                'email': 'test@example.com',
+                'password1': '#asdf1234',
+                'password2': '#asdf1234',
+            },
+            expected_code=400,
+        )
+        self.assertIn('Registration is disabled.', resp.data['non_field_errors'])
+
+        # Enable registration - now it should work
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', True)
+        settings.EMAIL_HOST = 'localhost'
+
+        resp = self.post(
+            '/api/auth/registration/',
+            {
+                'username': 'user1',
+                'email': 'test@example.com',
+                'password1': '#asdf1234',
+                'password2': '#asdf1234',
+            },
+            expected_code=201,
+        )
+        self.assertIn('key', resp.data)
+
+        # Reset
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', False)
+        settings.EMAIL_HOST = ''
