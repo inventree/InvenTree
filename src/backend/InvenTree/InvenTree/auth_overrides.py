@@ -12,7 +12,6 @@ from django.utils.translation import gettext_lazy as _
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth_2fa.forms import TOTPDeviceForm
 
 import InvenTree.helpers_model
 import InvenTree.sso
@@ -82,16 +81,6 @@ class CustomSignupForm(SignupForm):
                 self.add_error('email2', _('You must type the same email each time.'))
 
         return cleaned_data
-
-
-class CustomTOTPDeviceForm(TOTPDeviceForm):
-    """Ensure that db registration is enabled."""
-
-    def __init__(self, user, metadata=None, **kwargs):
-        """Override to check if registration is open."""
-        if not settings.MFA_ENABLED:
-            raise forms.ValidationError(_('MFA Registration is disabled.'))
-        super().__init__(user, metadata, **kwargs)
 
 
 def registration_enabled():
