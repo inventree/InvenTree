@@ -19,7 +19,6 @@ from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 from rest_framework import serializers
 
-import common.models
 import generic.states
 import InvenTree.fields
 import InvenTree.helpers
@@ -38,8 +37,12 @@ from build.validators import (
     generate_next_build_reference,
     validate_build_order_reference,
 )
+from common.models import ProjectCode
 from common.notifications import InvenTreeNotificationBodies, trigger_notification
-from common.settings import get_global_setting
+from common.settings import (
+    get_global_setting,
+    prevent_build_output_complete_on_incompleted_tests,
+)
 from generic.states import StateTransitionMixin
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -391,7 +394,7 @@ class Build(
     )
 
     project_code = models.ForeignKey(
-        common.models.ProjectCode,
+        ProjectCode,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1120,7 +1123,7 @@ class Build(
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
         prevent_on_incomplete = kwargs.get(
             'prevent_on_incomplete',
-            common.settings.prevent_build_output_complete_on_incompleted_tests(),
+            prevent_build_output_complete_on_incompleted_tests(),
         )
 
         if prevent_on_incomplete and not output.passedAllRequiredTests(
