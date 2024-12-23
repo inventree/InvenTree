@@ -114,8 +114,8 @@ apipatterns = [
                 ConfirmEmailView.as_view(),
                 name='account_confirm_email',
             ),
-            path('registration/', include('dj_rest_auth.registration.urls')),
             path('registration/', CustomRegisterView.as_view(), name='rest_register'),
+            path('registration/', include('dj_rest_auth.registration.urls')),
             path(
                 'providers/', SocialProviderListView.as_view(), name='social_providers'
             ),
