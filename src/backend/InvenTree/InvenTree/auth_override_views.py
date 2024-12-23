@@ -37,7 +37,8 @@ class CustomRegisterView(RegisterView):
                 data, context=self.get_serializer_context()
             ).data
         elif self.token_model:
+            # Only change in this block is below
             return api_settings.TOKEN_SERIALIZER(
-                user.auth_token, context=self.get_serializer_context()
+                user.api_tokens.last(), context=self.get_serializer_context()
             ).data
         return None
