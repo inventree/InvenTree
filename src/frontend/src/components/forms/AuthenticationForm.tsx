@@ -15,6 +15,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
@@ -44,26 +45,31 @@ export function AuthenticationForm() {
     setIsLoggingIn(true);
 
     if (classicLoginMode === true) {
-      doBasicLogin(
-        classicForm.values.username,
-        classicForm.values.password
-      ).then(() => {
-        setIsLoggingIn(false);
+      doBasicLogin(classicForm.values.username, classicForm.values.password)
+        .then(() => {
+          setIsLoggingIn(false);
 
-        if (isLoggedIn()) {
-          showLoginNotification({
-            title: t`Login successful`,
-            message: t`Logged in successfully`
-          });
-          followRedirect(navigate, location?.state);
-        } else {
-          showLoginNotification({
+          if (isLoggedIn()) {
+            showLoginNotification({
+              title: t`Login successful`,
+              message: t`Logged in successfully`
+            });
+            followRedirect(navigate, location?.state);
+          } else {
+            showLoginNotification({
+              title: t`Login failed`,
+              message: t`Check your input and try again.`,
+              success: false
+            });
+          }
+        })
+        .catch(() => {
+          showNotification({
             title: t`Login failed`,
             message: t`Check your input and try again.`,
-            success: false
+            color: 'red'
           });
-        }
-      });
+        });
     } else {
       doSimpleLogin(simpleForm.values.email).then((ret) => {
         setIsLoggingIn(false);

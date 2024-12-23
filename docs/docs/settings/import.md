@@ -15,77 +15,70 @@ External data can be imported via the admin interface, allowing for rapid integr
 !!! warning "Supported Models"
     Not all models in the InvenTree database support bulk import actions.
 
-When viewing a model (which supports bulk data import) in the admin interface, select the "Import" button in the top-right corner:
+### Required Permissions
 
-{% with id="import", url="admin/import.png", description="Data import" %}
+To import data, the user must have the appropriate permissions. The user must be a *staff* user, and have the `change` permission for the model in question.
+
+## Import Session
+
+Importing data is a multi-step process, which is managed via an *import session*. An import session is created when the user initiates a data import, and is used to track the progress of the data import process.
+
+### Import Session List
+
+The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.
+
+Import sessions can be managed from the *Admin Center* page, which lists all available import sessions
+
+### Context Sensitive Importing
+
+Depending on the type of data being imported, an import session can be created from an appropriate page context in the user interface. In such cases, the import session will be automatically linked to the relevant data type being imported.
+
+## Import Process
+
+The following steps outline the process of importing data into InvenTree:
+
+### Create Import Session
+
+An import session can be created via the methods outlined above. The first step is to create an import session, and upload the data file to import. Note that depending on the context of the data import, the user may have to select the database model to import data into.
+
+{% with id="import-create", url="admin/import_session_create.png", description="Create import session" %}
 {% include 'img.html' %}
 {% endwith %}
 
-The next screen displays a list of column headings which are expected to be present in the uploaded data file.
+### Map Data Fields
 
-{% with id="import_upload", url="admin/import_upload.png", description="Data upload" %}
+Next, the user must map the data fields in the uploaded file to the fields in the database model. This is a critical step, as the data fields must be correctly matched to the database fields.
+
+{% with id="import-map", url="admin/import_session_map.png", description="Map data fields" %}
 {% include 'img.html' %}
 {% endwith %}
 
-Select the data file to import, and the data format. Press the "Submit" button to upload the file.
+The InvenTree server will attempt to automatically associate the data fields in the uploaded file with the database fields. However, the user may need to manually adjust the field mappings to ensure that the data is imported correctly.
 
-### File Format
+### Import Data
 
-The uploaded data file must meet a number of formatting requirements for successful data upload. A simple way of ensuring that the file format is correct is to first [export data](./export.md) for the model in question, and delete all data rows (not the header row) from the exported data file.
+Once the data fields have been mapped, the data is loaded from the file, and stored (temporarily) in the import session. This step is performed automatically by the InvenTree server once the user has confirmed the field mappings.
 
-Then, the same file can be used as a template for uploading more data to the server.
+Note that this process may take some time if the data file is large. The import process is handled by the background worker process, and the user can navigate away from the import page and return later to check on the progress of the import.
 
-### ID Field
+### Process Data
 
-The uploaded data file requires a special field called `id`. This `id` field uniquely identifies each entry in the database table(s) - it is also known as a *primary key*.
+Once the data has been loaded into the import session, the user can process the data. This step will attempt to validate the data, and check for any errors or issues that may prevent the data from being imported.
 
-The `id` column **must** be present in an uploaded data file, as it is required to know how to process the incoming data.
-
-Depending on the value of the `id` field in each row, InvenTree will attempt to either insert a new record into the database, or update an existing one.
-
-#### Empty ID
-
-If the `id` field in a given data row is empty (blank), then InvenTree interprets that particular row as a *new* entry which will be inserted into the database.
-
-If you wish for a new database entry to be created for a particular data row, the `id` field **must** be left blank for that row.
-
-#### Non-Empty ID
-
-If the `id` field in a given data row is *not* empty, then InvenTree interprets that particular row as an *existing* row to override / update.
-
-In this case, InvenTree will search the database for an entry with the matching `id`. If a matching entry is found, then the entry is updated with the provided data.
-
-However, if an entry is *not* found with the matching `id`, InvenTree will return an error message, as it cannot find the matching database entry to update.
-
-!!! warning "Check id Value"
-    Exercise caution when uploading data with the `id` field specified!
-
-### Import Preview
-
-After the data file has been uploaded and validated, the user is presented with a *preview* screen, showing the records that will be inserted or updated in the database.
-
-Here the user has a final chance to review the data upload.
-
-Press the *Confirm Import* button to actually perform the import process and commit the data into the database.
-
-{% with id="import_preview", url="admin/import_preview.png", description="Data upload preview" %}
+{% with id="import-process", url="admin/import_session_process.png", description="Process data" %}
 {% include 'img.html' %}
 {% endwith %}
 
-Note that *new* records are automatically assigned an `id` value.
+Note that each row must be selected and confirmed by the user before it is actually imported into the database. Any errors which are detected will be displayed to the user, and the user can choose to correct the data and re-process it.
 
-## Import Errors
+During the processing step, the status of each row is displayed at the left of the table. Each row can be in one of the following states:
 
-Manually importing data in a relational database is a complex process. You may be presented with an error message which describes why the data could not be imported.
+- **Error**: The row contains an error which must be corrected before it can be imported.
+- **Pending**: The row contains no errors, and is ready to be imported.
+- **Imported**: The row has been successfully imported into the database.
 
-The error message should contain enough information to manually edit the data file to fix the problem.
+Each individual row can be imported, or removed (deleted) by the user. Once all the rows have been processed, the import session is considered *complete*.
 
-Any error messages are displayed per row, and you can hover the mouse over the particular error message to view specific error details:
+### Import Completed
 
-{% with id="import_error", url="admin/import_error.png", description="Data upload error" %}
-{% include 'img.html' %}
-{% endwith %}
-
-
-!!! info "Report Issue"
-    If the error message does not provide enough information, or the error seems like a bug caused by InvenTree itself, report an [issue on Github](https://github.com/inventree/inventree/issues).
+Once all records have been processed, the import session is considered complete. The import session can be closed, and the imported records are now stored in the database.

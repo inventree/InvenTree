@@ -12,6 +12,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../App';
 import { Boundary } from '../components/Boundary';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
@@ -201,6 +202,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
+
+          return null;
+        })
+        .catch(() => {
+          showNotification({
+            title: t`API Error`,
+            message: t`Failed to load table options`,
+            color: 'red'
+          });
 
           return null;
         });
