@@ -207,6 +207,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
             message: t`Failed to load table options`,
             color: 'red'
           });
+
+          return null;
         });
     }
   });
