@@ -1475,8 +1475,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     @staticmethod
     def annotate_queryset(queryset, build=None):
-        """Add extra annotations to the queryset:
+        """Add extra annotations to the queryset.
 
+        Annotations:
         - allocated: Total stock quantity allocated against this build line
         - available: Total stock available for allocation against this build line
         - on_order: Total stock on order for this build line

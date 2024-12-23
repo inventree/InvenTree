@@ -604,10 +604,7 @@ class Build(
         if self.remaining > 0:
             return False
 
-        if not self.is_fully_allocated(tracked=False):
-            return False
-
-        return True
+        return self.is_fully_allocated(tracked=False)
 
     @transaction.atomic
     def complete_allocations(self, user):
@@ -851,7 +848,7 @@ class Build(
 
         for bom_item in trackable_parts:
             parts = bom_item.get_valid_parts_for_allocation()
-            valid_parts[bom_item.pk] = list([part.pk for part in parts])
+            valid_parts[bom_item.pk] = [part.pk for part in parts]
 
         user = kwargs.get('user')
         batch = kwargs.get('batch', self.batch)
