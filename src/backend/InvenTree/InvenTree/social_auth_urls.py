@@ -198,8 +198,8 @@ class SocialProviderListView(ListAPI):
             provider_list.append(provider_data)
 
         data = {
-            'sso_enabled': InvenTree.sso.login_enabled(),
-            'sso_registration': InvenTree.sso.registration_enabled(),
+            'sso_enabled': InvenTree.sso.sso_login_enabled(),
+            'sso_registration': InvenTree.sso.sso_registration_enabled(),
             'mfa_required': settings.MFA_ENABLED
             and get_global_setting('LOGIN_ENFORCE_MFA'),
             'mfa_enabled': settings.MFA_ENABLED,

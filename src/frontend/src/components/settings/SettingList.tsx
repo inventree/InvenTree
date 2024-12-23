@@ -158,7 +158,7 @@ export function SettingList({
             </React.Fragment>
           );
         })}
-        {(keys || allKeys).length === 0 && (
+        {(keys || allKeys)?.length === 0 && (
           <Text style={{ fontStyle: 'italic' }}>
             <Trans>No settings specified</Trans>
           </Text>

@@ -1,13 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import {
-  Divider,
-  Paper,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
+import { Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconCoins,
@@ -34,7 +26,6 @@ import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
-import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
 
@@ -153,8 +144,6 @@ export default function AdminCenter() {
         icon: <IconListDetails />,
         content: (
           <Stack gap='xs'>
-            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
-            <Divider />
             <ProjectCodeTable />
           </Stack>
         )

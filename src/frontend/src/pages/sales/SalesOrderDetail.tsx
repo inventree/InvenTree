@@ -399,6 +399,17 @@ export default function SalesOrderDetail() {
     successMessage: t`Order placed on hold`
   });
 
+  const shipOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
+    title: t`Ship Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Ship this order?`,
+    successMessage: t`Order shipped`,
+    fields: {
+      accept_incomplete: {}
+    }
+  });
+
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
     title: t`Complete Sales Order`,
@@ -444,7 +455,7 @@ export default function SalesOrderDetail() {
         icon='deliver'
         hidden={!canShip}
         color='blue'
-        onClick={completeOrder.open}
+        onClick={shipOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
@@ -510,6 +521,7 @@ export default function SalesOrderDetail() {
       {issueOrder.modal}
       {cancelOrder.modal}
       {holdOrder.modal}
+      {shipOrder.modal}
       {completeOrder.modal}
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}

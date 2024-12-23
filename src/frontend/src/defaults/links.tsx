@@ -4,6 +4,8 @@ import { openContextModal } from '@mantine/modals';
 import type { MenuLinkItem } from '../components/items/MenuLinks';
 import { StylishText } from '../components/items/StylishText';
 import { UserRoles } from '../enums/Roles';
+import type { SettingsStateProps } from '../states/SettingsState';
+import type { UserStateProps } from '../states/UserState';
 
 export const navTabs = [
   { text: <Trans>Dashboard</Trans>, name: 'home' },
@@ -110,21 +112,17 @@ export function licenseInfo() {
   });
 }
 
-export function AboutLinks(): MenuLinkItem[] {
-  return [
+export function AboutLinks(
+  settings: SettingsStateProps,
+  user: UserStateProps
+): MenuLinkItem[] {
+  const base_items: MenuLinkItem[] = [
     {
       id: 'instance',
       title: t`System Information`,
       description: t`About this InvenTree instance`,
       icon: 'info',
       action: serverInfo
-    },
-    {
-      id: 'about',
-      title: t`About InvenTree`,
-      description: t`About the InvenTree Project`,
-      icon: 'info',
-      action: aboutInvenTree
     },
     {
       id: 'licenses',
@@ -134,4 +132,16 @@ export function AboutLinks(): MenuLinkItem[] {
       action: licenseInfo
     }
   ];
+
+  // Restrict the about link if that setting is set
+  if (user.isSuperuser() || !settings.isSet('INVENTREE_RESTRICT_ABOUT')) {
+    base_items.push({
+      id: 'about',
+      title: t`About InvenTree`,
+      description: t`About the InvenTree Project`,
+      icon: 'info',
+      action: aboutInvenTree
+    });
+  }
+  return base_items;
 }

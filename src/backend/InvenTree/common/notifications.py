@@ -3,6 +3,7 @@
 import logging
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -315,7 +316,7 @@ class NotificationBody:
     name: str
     slug: str
     message: str
-    template: str = None
+    template: Optional[str] = None
 
 
 class InvenTreeNotificationBodies:

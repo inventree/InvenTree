@@ -278,7 +278,7 @@ class ScheduledTask:
 
     func: Callable
     interval: str
-    minutes: int = None
+    minutes: Optional[int] = None
 
     MINUTES = 'I'
     HOURLY = 'H'
