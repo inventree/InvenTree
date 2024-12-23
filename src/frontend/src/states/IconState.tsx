@@ -38,8 +38,6 @@ export const useIconState = create<IconState>()((set, get) => ({
 
     const packs = await api.get(apiUrl(ApiEndpoints.icons));
 
-    let loaded = false;
-
     await Promise.all(
       packs.data.map(async (pack: any) => {
         if (pack.prefix && pack.fonts) {
@@ -52,7 +50,6 @@ export const useIconState = create<IconState>()((set, get) => ({
           const font = new FontFace(fontName, `${src};`);
           await font.load();
           document.fonts.add(font);
-          loaded = true;
           return font;
         } else {
           console.error(
@@ -63,12 +60,14 @@ export const useIconState = create<IconState>()((set, get) => ({
             message: t`Error loading icon package from server`,
             color: 'red'
           });
+
+          return null;
         }
       })
     );
 
     set({
-      hasLoaded: loaded,
+      hasLoaded: true,
       packages: packs.data,
       packagesMap: Object.fromEntries(
         packs.data?.map((pack: any) => [pack.prefix, pack])
