@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
+from backend.InvenTree.InvenTree.unit_test import in_env_context
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -1121,10 +1122,6 @@ class TestSettings(InvenTreeTestCase):
 
     superuser = True
 
-    def in_env_context(self, envs):
-        """Patch the env to include the given dict."""
-        return mock.patch.dict(os.environ, envs)
-
     def run_reload(self, envs=None):
         """Helper function to reload InvenTree."""
         # Set default - see B006
@@ -1133,7 +1130,7 @@ class TestSettings(InvenTreeTestCase):
 
         from plugin import registry
 
-        with self.in_env_context(envs):
+        with in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -1198,7 +1195,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({
+        with in_env_context({
             'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
         }):
             self.assertIn(
@@ -1217,7 +1214,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({
+        with in_env_context({
             'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
         }):
             self.assertIn(
@@ -1231,7 +1228,7 @@ class TestSettings(InvenTreeTestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.in_env_context({TEST_ENV_NAME: '321'}):
+        with in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
         # test typecasting to dict - None should be mapped to empty dict
@@ -1240,13 +1237,13 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # test typecasting to dict - valid JSON string should be mapped to corresponding dict
-        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+        with in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
             self.assertEqual(
                 config.get_setting(TEST_ENV_NAME, None, typecast=dict), {'a': 1}
             )
 
         # test typecasting to dict - invalid JSON string should be mapped to empty dict
-        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+        with in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 

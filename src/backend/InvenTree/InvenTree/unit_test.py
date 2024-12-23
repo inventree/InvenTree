@@ -3,10 +3,12 @@
 import csv
 import io
 import json
+import os
 import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -601,3 +603,8 @@ class AdminTestCase(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         return obj
+
+
+def in_env_context(envs):
+    """Patch the env to include the given dict."""
+    return mock.patch.dict(os.environ, envs)
