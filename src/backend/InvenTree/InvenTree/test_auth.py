@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import ValidationError
 from django.test import override_settings
 from django.test.testcases import TransactionTestCase
 
@@ -123,8 +124,31 @@ class TestSsoGroupSync(TransactionTestCase):
         self.assertEqual(Group.objects.filter(name='inventree_group').count(), 1)
 
 
+class EmailSettingsContext:
+    """Context manager to enable email settings for tests."""
+
+    def __enter__(self):
+        """Enable stuff."""
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', True)
+        settings.EMAIL_HOST = 'localhost'
+
+    def __exit__(self, type, value, traceback):
+        """Exit stuff."""
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', False)
+        settings.EMAIL_HOST = ''
+
+
 class TestAuth(InvenTreeAPITestCase):
     """Test authentication functionality."""
+
+    def email_args(self, user=None, email=None):
+        """Generate registration arguments."""
+        return {
+            'username': user or 'user1',
+            'email': email or 'test@example.com',
+            'password1': '#asdf1234',
+            'password2': '#asdf1234',
+        }
 
     def test_registration(self):
         """Test the registration process."""
@@ -133,12 +157,7 @@ class TestAuth(InvenTreeAPITestCase):
         # Duplicate username
         resp = self.post(
             '/api/auth/registration/',
-            {
-                'username': 'testuser',
-                'email': 'test@example.com',
-                'password1': 'password',
-                'password2': 'password',
-            },
+            self.email_args(user='testuser'),
             expected_code=400,
         )
         self.assertIn(
@@ -147,33 +166,46 @@ class TestAuth(InvenTreeAPITestCase):
 
         # Registration is disabled
         resp = self.post(
-            '/api/auth/registration/',
-            {
-                'username': 'user1',
-                'email': 'test@example.com',
-                'password1': '#asdf1234',
-                'password2': '#asdf1234',
-            },
-            expected_code=400,
+            '/api/auth/registration/', self.email_args(), expected_code=400
         )
         self.assertIn('Registration is disabled.', resp.data['non_field_errors'])
 
         # Enable registration - now it should work
-        InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', True)
-        settings.EMAIL_HOST = 'localhost'
+        with EmailSettingsContext():
+            resp = self.post(
+                '/api/auth/registration/', self.email_args(), expected_code=201
+            )
+            self.assertIn('key', resp.data)
 
+    def test_registration_email(self):
+        """Test that LOGIN_SIGNUP_MAIL_RESTRICTION works."""
+        self.logout()
+
+        # Check the setting validation is working
+        with self.assertRaises(ValidationError):
+            InvenTreeSetting.set_setting(
+                'LOGIN_SIGNUP_MAIL_RESTRICTION', 'example.com,inventree.org'
+            )
+
+        # Setting setting correctly
+        correct_setting = '@example.com,@inventree.org'
+        InvenTreeSetting.set_setting('LOGIN_SIGNUP_MAIL_RESTRICTION', correct_setting)
+        self.assertEqual(
+            InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_RESTRICTION'),
+            correct_setting,
+        )
+
+        # Wrong email format
         resp = self.post(
             '/api/auth/registration/',
-            {
-                'username': 'user1',
-                'email': 'test@example.com',
-                'password1': '#asdf1234',
-                'password2': '#asdf1234',
-            },
-            expected_code=201,
+            self.email_args(email='admin@invenhost.com'),
+            expected_code=400,
         )
-        self.assertIn('key', resp.data)
+        self.assertIn('The provided email domain is not approved.', resp.data['email'])
 
-        # Reset
-        InvenTreeSetting.set_setting('LOGIN_ENABLE_REG', False)
-        settings.EMAIL_HOST = ''
+        # Right format should work
+        with EmailSettingsContext():
+            resp = self.post(
+                '/api/auth/registration/', self.email_args(), expected_code=201
+            )
+            self.assertIn('key', resp.data)
