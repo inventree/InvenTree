@@ -1,4 +1,4 @@
-"""Unit tests for the 'build' models"""
+"""Unit tests for the 'build' models."""
 
 import logging
 import uuid
@@ -195,10 +195,10 @@ class BuildTestBase(TestCase):
 
 
 class BuildTest(BuildTestBase):
-    """Unit testing class for the Build model"""
+    """Unit testing class for the Build model."""
 
     def test_ref_int(self):
-        """Test the "integer reference" field used for natural sorting"""
+        """Test the "integer reference" field used for natural sorting."""
         # Set build reference to new value
         set_global_setting(
             'BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None
@@ -227,7 +227,7 @@ class BuildTest(BuildTestBase):
         )
 
     def test_ref_validation(self):
-        """Test that the reference field validation works as expected"""
+        """Test that the reference field validation works as expected."""
         # Default reference pattern = 'BO-{ref:04d}
         # These patterns should fail
         for ref in ['BO-1234x', 'BO1234', 'OB-1234', 'BO--1234']:
@@ -258,7 +258,7 @@ class BuildTest(BuildTestBase):
         )
 
     def test_next_ref(self):
-        """Test that the next reference is automatically generated"""
+        """Test that the next reference is automatically generated."""
         set_global_setting(
             'BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None
         )
@@ -283,7 +283,7 @@ class BuildTest(BuildTestBase):
         )
 
     def test_init(self):
-        """Perform some basic tests before we start the ball rolling"""
+        """Perform some basic tests before we start the ball rolling."""
         self.assertEqual(StockItem.objects.count(), 12)
 
         # Build is PENDING
@@ -308,7 +308,7 @@ class BuildTest(BuildTestBase):
         self.assertFalse(self.build.is_complete)
 
     def test_build_item_clean(self):
-        """Ensure that dodgy BuildItem objects cannot be created"""
+        """Ensure that dodgy BuildItem objects cannot be created."""
         stock = StockItem.objects.create(part=self.assembly, quantity=99)
 
         # Create a BuiltItem which points to an invalid StockItem
@@ -341,13 +341,13 @@ class BuildTest(BuildTestBase):
         b.save()
 
     def test_duplicate_bom_line(self):
-        """Try to add a duplicate BOM item - it should be allowed"""
+        """Try to add a duplicate BOM item - it should be allowed."""
         BomItem.objects.create(
             part=self.assembly, sub_part=self.sub_part_1, quantity=99
         )
 
     def allocate_stock(self, output, allocations):
-        """Allocate stock to this build, against a particular output
+        """Allocate stock to this build, against a particular output.
 
         Args:
             output: StockItem object (or None)
@@ -373,7 +373,7 @@ class BuildTest(BuildTestBase):
         BuildItem.objects.bulk_create(items_to_create)
 
     def test_partial_allocation(self):
-        """Test partial allocation of stock"""
+        """Test partial allocation of stock."""
         # Fully allocate tracked stock against build output 1
         self.allocate_stock(self.output_1, {self.stock_3_1: 6})
 
@@ -419,7 +419,7 @@ class BuildTest(BuildTestBase):
         self.assertTrue(self.build.is_fully_allocated(tracked=False))
 
     def test_overallocation_and_trim(self):
-        """Test overallocation of stock and trim function"""
+        """Test overallocation of stock and trim function."""
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
         self.build.issue_build()
         self.assertEqual(self.build.status, status.BuildStatus.PRODUCTION)
@@ -492,7 +492,7 @@ class BuildTest(BuildTestBase):
         )
 
     def test_change_part(self):
-        """Try to change target part after creating a build"""
+        """Try to change target part after creating a build."""
         bo = Build.objects.create(
             reference='BO-9999',
             title='Some new build',
@@ -511,7 +511,7 @@ class BuildTest(BuildTestBase):
             bo.clean()
 
     def test_cancel(self):
-        """Test cancellation of the build"""
+        """Test cancellation of the build."""
         # TODO
         """
         self.allocate_stock(50, 50, 200, self.output_1)
@@ -521,7 +521,7 @@ class BuildTest(BuildTestBase):
         """
 
     def test_complete(self):
-        """Test completion of a build output"""
+        """Test completion of a build output."""
         self.stock_1_1.quantity = 1000
         self.stock_1_1.save()
 
@@ -582,7 +582,7 @@ class BuildTest(BuildTestBase):
             self.assertFalse(output.is_building)
 
     def test_complete_with_required_tests(self):
-        """Test the prevention completion when a required test is missing feature"""
+        """Test the prevention completion when a required test is missing feature."""
         # with required tests incompleted the save should fail
         set_global_setting(
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None
@@ -624,7 +624,7 @@ class BuildTest(BuildTestBase):
         self.assertEqual(message.name, 'Overdue Build Order')
 
     def test_new_build_notification(self):
-        """Test that a notification is sent when a new build is created"""
+        """Test that a notification is sent when a new build is created."""
         Build.objects.create(
             reference='BO-9999',
             title='Some new build',
@@ -728,10 +728,10 @@ class BuildTest(BuildTestBase):
 
 
 class AutoAllocationTests(BuildTestBase):
-    """Tests for auto allocating stock against a build order"""
+    """Tests for auto allocating stock against a build order."""
 
     def setUp(self):
-        """Init routines for this unit test class"""
+        """Init routines for this unit test class."""
         super().setUp()
 
         # Add a "substitute" part for bom_item_2
@@ -795,7 +795,7 @@ class AutoAllocationTests(BuildTestBase):
         self.assertFalse(self.line_2.is_fully_allocated())
 
     def test_fully_auto(self):
-        """We should be able to auto-allocate against a build in a single go"""
+        """We should be able to auto-allocate against a build in a single go."""
         self.build.auto_allocate_stock(
             interchangeable=True, substitutes=True, optional_items=True
         )

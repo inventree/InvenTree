@@ -98,11 +98,11 @@ class Build(
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the BuildOrder model"""
+        """Return the API URL associated with the BuildOrder model."""
         return reverse('api-build-list')
 
     def api_instance_filters(self):
-        """Returns custom API filters for the particular BuildOrder instance"""
+        """Returns custom API filters for the particular BuildOrder instance."""
         return {'parent': {'exclude_tree': self.pk}}
 
     @classmethod
@@ -121,7 +121,7 @@ class Build(
         return 'BO'
 
     def save(self, *args, **kwargs):
-        """Custom save method for the BuildOrder model"""
+        """Custom save method for the BuildOrder model."""
         self.reference_int = self.validate_reference_field(self.reference)
 
         # Check part when initially creating the build order
@@ -159,7 +159,7 @@ class Build(
             raise ValidationError({'parent': _('Invalid choice for parent build')})
 
     def clean(self):
-        """Validate the BuildOrder model"""
+        """Validate the BuildOrder model."""
         super().clean()
 
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
@@ -224,11 +224,11 @@ class Build(
         return queryset
 
     def __str__(self):
-        """String representation of a BuildOrder"""
+        """String representation of a BuildOrder."""
         return self.reference
 
     def get_absolute_url(self):
-        """Return the web URL associated with this BuildOrder"""
+        """Return the web URL associated with this BuildOrder."""
         return InvenTree.helpers.pui_url(f'/manufacturing/build-order/{self.id}')
 
     reference = models.CharField(
@@ -322,7 +322,7 @@ class Build(
 
     @property
     def status_text(self):
-        """Return the text representation of the status field"""
+        """Return the text representation of the status field."""
         return BuildStatus.text(self.status)
 
     batch = models.CharField(
@@ -470,11 +470,11 @@ class Build(
 
     @property
     def output_count(self):
-        """Return the number of build outputs (StockItem) associated with this build order"""
+        """Return the number of build outputs (StockItem) associated with this build order."""
         return self.build_outputs.count()
 
     def has_build_outputs(self):
-        """Returns True if this build has more than zero build outputs"""
+        """Returns True if this build has more than zero build outputs."""
         return self.output_count > 0
 
     def get_build_outputs(self, **kwargs):
@@ -515,7 +515,7 @@ class Build(
 
     @property
     def complete_count(self):
-        """Return the total quantity of completed outputs"""
+        """Return the total quantity of completed outputs."""
         quantity = 0
 
         for output in self.complete_outputs:
@@ -524,7 +524,7 @@ class Build(
         return quantity
 
     def is_partially_allocated(self):
-        """Test is this build order has any stock allocated against it"""
+        """Test is this build order has any stock allocated against it."""
         return self.allocated_stock.count() > 0
 
     @property
@@ -583,7 +583,7 @@ class Build(
 
     @property
     def can_complete(self):
-        """Returns True if this BuildOrder is ready to be completed
+        """Returns True if this BuildOrder is ready to be completed.
 
         - Must not have any outstanding build outputs
         - Completed count must meet the required quantity
@@ -741,7 +741,7 @@ class Build(
 
     @property
     def can_hold(self):
-        """Returns True if this BuildOrder can be placed on hold"""
+        """Returns True if this BuildOrder can be placed on hold."""
         return self.status in [BuildStatus.PENDING.value, BuildStatus.PRODUCTION.value]
 
     def _action_hold(self, *args, **kwargs):
@@ -1031,7 +1031,7 @@ class Build(
 
     @property
     def allocated_stock(self):
-        """Returns a QuerySet object of all BuildItem objects which point back to this Build"""
+        """Returns a QuerySet object of all BuildItem objects which point back to this Build."""
         return BuildItem.objects.filter(build_line__build=self)
 
     @transaction.atomic
@@ -1051,7 +1051,7 @@ class Build(
 
     @transaction.atomic
     def scrap_build_output(self, output, quantity, location, **kwargs):
-        """Mark a particular build output as scrapped / rejected
+        """Mark a particular build output as scrapped / rejected.
 
         - Mark the output as "complete"
         - *Do Not* update the "completed" count for this order
@@ -1336,7 +1336,7 @@ class Build(
         return self.unallocated_lines(tracked=tracked).count() == 0
 
     def is_output_fully_allocated(self, output):
-        """Determine if the specified output (StockItem) has been fully allocated for this build
+        """Determine if the specified output (StockItem) has been fully allocated for this build.
 
         Args:
             output: StockItem object (the "in production" output to test against)
@@ -1428,7 +1428,7 @@ class Build(
 
     @transaction.atomic
     def update_build_line_items(self):
-        """Rebuild required quantity field for each BuildLine object"""
+        """Rebuild required quantity field for each BuildLine object."""
         lines_to_update = []
 
         for line in self.build_lines.all():
@@ -1497,7 +1497,7 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     @staticmethod
     def get_api_url():
-        """Return the API URL used to access this model"""
+        """Return the API URL used to access this model."""
         return reverse('api-build-line-list')
 
     def report_context(self):
@@ -1534,11 +1534,11 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     @property
     def part(self):
-        """Return the sub_part reference from the link bom_item"""
+        """Return the sub_part reference from the link bom_item."""
         return self.bom_item.sub_part
 
     def allocated_quantity(self):
-        """Calculate the total allocated quantity for this BuildLine"""
+        """Calculate the total allocated quantity for this BuildLine."""
         # Queryset containing all BuildItem objects allocated against this BuildLine
         allocations = self.allocations.all()
 
@@ -1549,18 +1549,18 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         return allocated['q']
 
     def unallocated_quantity(self):
-        """Return the unallocated quantity for this BuildLine"""
+        """Return the unallocated quantity for this BuildLine."""
         return max(self.quantity - self.allocated_quantity(), 0)
 
     def is_fully_allocated(self):
-        """Return True if this BuildLine is fully allocated"""
+        """Return True if this BuildLine is fully allocated."""
         if self.bom_item.consumable:
             return True
 
         return self.allocated_quantity() >= self.quantity
 
     def is_overallocated(self):
-        """Return True if this BuildLine is over-allocated"""
+        """Return True if this BuildLine is over-allocated."""
         return self.allocated_quantity() > self.quantity
 
 
@@ -1584,11 +1584,11 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL used to access this model"""
+        """Return the API URL used to access this model."""
         return reverse('api-build-item-list')
 
     def save(self, *args, **kwargs):
-        """Custom save method for the BuildItem model"""
+        """Custom save method for the BuildItem model."""
         self.clean()
 
         super().save()
@@ -1721,12 +1721,12 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     @property
     def build(self):
-        """Return the BuildOrder associated with this BuildItem"""
+        """Return the BuildOrder associated with this BuildItem."""
         return self.build_line.build if self.build_line else None
 
     @property
     def bom_item(self):
-        """Return the BomItem associated with this BuildItem"""
+        """Return the BomItem associated with this BuildItem."""
         return self.build_line.bom_item if self.build_line else None
 
     @transaction.atomic

@@ -1,4 +1,4 @@
-"""Unit tests for the BuildOrder API"""
+"""Unit tests for the BuildOrder API."""
 
 from datetime import datetime, timedelta
 
@@ -90,7 +90,7 @@ class BuildTest(BuildAPITest):
     """Unit testing for the build complete API endpoint."""
 
     def setUp(self):
-        """Basic setup for this test suite"""
+        """Basic setup for this test suite."""
         super().setUp()
 
         self.build = Build.objects.get(pk=1)
@@ -258,7 +258,7 @@ class BuildTest(BuildAPITest):
         self.assertGreater(bo.consumed_stock.count(), 0)
 
     def test_delete(self):
-        """Test that we can delete a BuildOrder via the API"""
+        """Test that we can delete a BuildOrder via the API."""
         bo = Build.objects.get(pk=1)
 
         url = reverse('api-build-detail', kwargs={'pk': bo.pk})
@@ -443,7 +443,7 @@ class BuildTest(BuildAPITest):
         )
 
     def test_download_build_orders(self):
-        """Test that we can download a list of build orders via the API"""
+        """Test that we can download a list of build orders via the API."""
         required_cols = [
             'Reference',
             'Build Status',
@@ -558,7 +558,7 @@ class BuildAllocationTest(BuildAPITest):
     """
 
     def setUp(self):
-        """Basic operation as part of test suite setup"""
+        """Basic operation as part of test suite setup."""
         super().setUp()
 
         self.assignRole('build.add')
@@ -823,7 +823,7 @@ class BuildItemTest(BuildAPITest):
     """
 
     def setUp(self):
-        """Basic operation as part of test suite setup"""
+        """Basic operation as part of test suite setup."""
         super().setUp()
 
         self.assignRole('build.add')
@@ -870,7 +870,7 @@ class BuildOverallocationTest(BuildAPITest):
 
     @classmethod
     def setUpTestData(cls):
-        """Basic operation as part of test suite setup"""
+        """Basic operation as part of test suite setup."""
         super().setUpTestData()
 
         cls.assignRole('build.add')
@@ -906,7 +906,7 @@ class BuildOverallocationTest(BuildAPITest):
         cls.build.complete_build_output(outputs[0], cls.user)
 
     def setUp(self):
-        """Basic operation as part of test suite setup"""
+        """Basic operation as part of test suite setup."""
         super().setUp()
 
         self.generate_exchange_rates()
@@ -1132,10 +1132,10 @@ class BuildOutputCreateTest(BuildAPITest):
 
 
 class BuildOutputScrapTest(BuildAPITest):
-    """Unit tests for scrapping build outputs"""
+    """Unit tests for scrapping build outputs."""
 
     def scrap(self, build_id, data, expected_code=None):
-        """Helper method to POST to the scrap API"""
+        """Helper method to POST to the scrap API."""
         url = reverse('api-build-output-scrap', kwargs={'pk': build_id})
 
         response = self.post(url, data, expected_code=expected_code)
@@ -1143,7 +1143,7 @@ class BuildOutputScrapTest(BuildAPITest):
         return response.data
 
     def test_invalid_scraps(self):
-        """Test that invalid scrap attempts are rejected"""
+        """Test that invalid scrap attempts are rejected."""
         # Test with missing required fields
         response = self.scrap(1, {}, expected_code=400)
 
@@ -1185,7 +1185,7 @@ class BuildOutputScrapTest(BuildAPITest):
         )
 
     def test_valid_scraps(self):
-        """Test that valid scrap attempts succeed"""
+        """Test that valid scrap attempts succeed."""
         # Create a build output
         build = Build.objects.get(pk=1)
 

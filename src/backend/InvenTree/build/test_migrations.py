@@ -26,7 +26,7 @@ class TestForwardMigrations(MigratorTestCase):
         )
 
     def test_items_exist(self):
-        """Test to ensure that the 'assembly' field is correctly configured"""
+        """Test to ensure that the 'assembly' field is correctly configured."""
         Part = self.new_state.apps.get_model('part', 'part')
 
         self.assertEqual(Part.objects.count(), 1)
@@ -69,7 +69,7 @@ class TestReferenceMigration(MigratorTestCase):
                 print(build.reference)
 
     def test_build_reference(self):
-        """Test that the build reference is correctly assigned to the PK of the Build"""
+        """Test that the build reference is correctly assigned to the PK of the Build."""
         Build = self.new_state.apps.get_model('build', 'build')
 
         self.assertEqual(Build.objects.count(), 3)
@@ -89,7 +89,7 @@ class TestReferencePatternMigration(MigratorTestCase):
     migrate_to = ('build', unit_test.getNewestMigrationFile('build'))
 
     def prepare(self):
-        """Create some initial data prior to migration"""
+        """Create some initial data prior to migration."""
         Setting = self.old_state.apps.get_model('common', 'inventreesetting')
 
         # Create a custom existing prefix so we can confirm the operation is working
@@ -116,7 +116,7 @@ class TestReferencePatternMigration(MigratorTestCase):
             )
 
     def test_reference_migration(self):
-        """Test that the reference fields have been correctly updated"""
+        """Test that the reference fields have been correctly updated."""
         Build = self.new_state.apps.get_model('build', 'build')
 
         for build in Build.objects.all():
@@ -144,7 +144,7 @@ class TestBuildLineCreation(MigratorTestCase):
     migrate_to = ('build', '0047_auto_20230606_1058')
 
     def prepare(self):
-        """Create data to work with"""
+        """Create data to work with."""
         # Model references
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')
@@ -212,7 +212,7 @@ class TestBuildLineCreation(MigratorTestCase):
                 )
 
     def test_build_line_creation(self):
-        """Test that the BuildLine objects have been created correctly"""
+        """Test that the BuildLine objects have been created correctly."""
         Build = self.new_state.apps.get_model('build', 'build')
         BomItem = self.new_state.apps.get_model('part', 'bomitem')
         BuildLine = self.new_state.apps.get_model('build', 'buildline')

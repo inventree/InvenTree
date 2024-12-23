@@ -57,7 +57,7 @@ class BuildSerializer(
     """Serializes a Build object."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         model = Build
         fields = [
@@ -171,7 +171,7 @@ class BuildSerializer(
         return queryset
 
     def __init__(self, *args, **kwargs):
-        """Determine if extra serializer fields are required"""
+        """Determine if extra serializer fields are required."""
         part_detail = kwargs.pop('part_detail', True)
         create = kwargs.pop('create', False)
 
@@ -188,7 +188,7 @@ class BuildSerializer(
         return ['create_child_builds']
 
     def validate_reference(self, reference):
-        """Custom validation for the Build reference field"""
+        """Custom validation for the Build reference field."""
         # Ensure the reference matches the required pattern
         Build.validate_reference_field(reference)
 
@@ -217,7 +217,7 @@ class BuildOutputSerializer(serializers.Serializer):
     """
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['output']
 
@@ -230,7 +230,7 @@ class BuildOutputSerializer(serializers.Serializer):
     )
 
     def validate_output(self, output):
-        """Perform validation for the output (StockItem) provided to the serializer"""
+        """Perform validation for the output (StockItem) provided to the serializer."""
         build = self.context['build']
 
         # As this serializer can be used in multiple contexts, we need to work out why we are here
@@ -265,12 +265,12 @@ class BuildOutputSerializer(serializers.Serializer):
 
 
 class BuildOutputQuantitySerializer(BuildOutputSerializer):
-    """Serializer for a single build output, with additional quantity field"""
+    """Serializer for a single build output, with additional quantity field."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
-        fields = BuildOutputSerializer.Meta.fields + ['quantity']
+        fields = [*BuildOutputSerializer.Meta.fields, 'quantity']
 
     quantity = serializers.DecimalField(
         max_digits=15,
@@ -282,7 +282,7 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
     )
 
     def validate(self, data):
-        """Validate the serializer data"""
+        """Validate the serializer data."""
         data = super().validate(data)
 
         output = data.get('output')
@@ -328,15 +328,15 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     )
 
     def get_build(self):
-        """Return the Build instance associated with this serializer"""
+        """Return the Build instance associated with this serializer."""
         return self.context['build']
 
     def get_part(self):
-        """Return the Part instance associated with the build"""
+        """Return the Part instance associated with the build."""
         return self.get_build().part
 
     def validate_quantity(self, quantity):
-        """Validate the provided quantity field"""
+        """Validate the provided quantity field."""
         if quantity <= 0:
             raise ValidationError(_('Quantity must be greater than zero'))
 
@@ -382,7 +382,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     )
 
     def validate_serial_numbers(self, serial_numbers):
-        """Clean the provided serial number string"""
+        """Clean the provided serial number string."""
         serial_numbers = serial_numbers.strip()
 
         return serial_numbers
@@ -435,7 +435,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Generate the new build output(s)"""
+        """Generate the new build output(s)."""
         data = self.validated_data
 
         build = self.get_build()
@@ -454,14 +454,14 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
     """DRF serializer for deleting (cancelling) one or more build outputs."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['outputs']
 
     outputs = BuildOutputSerializer(many=True, required=True)
 
     def validate(self, data):
-        """Perform data validation for this serializer"""
+        """Perform data validation for this serializer."""
         data = super().validate(data)
 
         outputs = data.get('outputs', [])
@@ -485,10 +485,10 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
 
 
 class BuildOutputScrapSerializer(serializers.Serializer):
-    """DRF serializer for scrapping one or more build outputs"""
+    """DRF serializer for scrapping one or more build outputs."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['outputs', 'location', 'notes']
 
@@ -518,7 +518,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """Perform validation on the serializer data"""
+        """Perform validation on the serializer data."""
         super().validate(data)
         outputs = data.get('outputs', [])
 
@@ -528,7 +528,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Save the serializer to scrap the build outputs"""
+        """Save the serializer to scrap the build outputs."""
         build = self.context['build']
         request = self.context['request']
         data = self.validated_data
@@ -553,7 +553,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
     """DRF serializer for completing one or more build outputs."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = [
             'outputs',
@@ -587,7 +587,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
     notes = serializers.CharField(label=_('Notes'), required=False, allow_blank=True)
 
     def validate(self, data):
-        """Perform data validation for this serializer"""
+        """Perform data validation for this serializer."""
         super().validate(data)
 
         outputs = data.get('outputs', [])
@@ -652,12 +652,12 @@ class BuildIssueSerializer(serializers.Serializer):
     """DRF serializer for issuing a build order."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = []
 
     def save(self):
-        """Issue the specified build order"""
+        """Issue the specified build order."""
         build = self.context['build']
         build.issue_build()
 
@@ -678,15 +678,15 @@ class BuildHoldSerializer(serializers.Serializer):
 
 
 class BuildCancelSerializer(serializers.Serializer):
-    """DRF serializer class for cancelling an active BuildOrder"""
+    """DRF serializer class for cancelling an active BuildOrder."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['remove_allocated_stock', 'remove_incomplete_outputs']
 
     def get_context_data(self):
-        """Retrieve extra context data from this serializer"""
+        """Retrieve extra context data from this serializer."""
         build = self.context['build']
 
         return {
@@ -710,7 +710,7 @@ class BuildCancelSerializer(serializers.Serializer):
     )
 
     def save(self):
-        """Cancel the specified build"""
+        """Cancel the specified build."""
         build = self.context['build']
         request = self.context['request']
 
@@ -741,7 +741,7 @@ class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['accept_overallocated', 'accept_unallocated', 'accept_incomplete']
 
@@ -770,7 +770,7 @@ class BuildCompleteSerializer(serializers.Serializer):
     )
 
     def validate_accept_overallocated(self, value):
-        """Check if the 'accept_overallocated' field is required"""
+        """Check if the 'accept_overallocated' field is required."""
         build = self.context['build']
 
         if build.is_overallocated() and value == OverallocationChoice.REJECT:
@@ -788,7 +788,7 @@ class BuildCompleteSerializer(serializers.Serializer):
     )
 
     def validate_accept_unallocated(self, value):
-        """Check if the 'accept_unallocated' field is required"""
+        """Check if the 'accept_unallocated' field is required."""
         build = self.context['build']
 
         if not build.are_untracked_parts_allocated and not value:
@@ -806,7 +806,7 @@ class BuildCompleteSerializer(serializers.Serializer):
     )
 
     def validate_accept_incomplete(self, value):
-        """Check if the 'accept_incomplete' field is required"""
+        """Check if the 'accept_incomplete' field is required."""
         build = self.context['build']
 
         if build.remaining > 0 and not value:
@@ -815,7 +815,7 @@ class BuildCompleteSerializer(serializers.Serializer):
         return value
 
     def validate(self, data):
-        """Perform validation of this serializer prior to saving"""
+        """Perform validation of this serializer prior to saving."""
         build = self.context['build']
 
         if (
@@ -833,7 +833,7 @@ class BuildCompleteSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Complete the specified build output"""
+        """Complete the specified build output."""
         request = self.context['request']
         build = self.context['build']
 
@@ -858,7 +858,7 @@ class BuildUnallocationSerializer(serializers.Serializer):
     """
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['build_line', 'output']
 
@@ -905,7 +905,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     """A serializer for allocating a single stock item against a build order."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['build_item', 'stock_item', 'quantity', 'output']
 
@@ -918,7 +918,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_build_line(self, build_line):
-        """Check if the parts match"""
+        """Check if the parts match."""
         build = self.context['build']
 
         # BomItem should point to the same 'part' as the parent build
@@ -946,7 +946,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_stock_item(self, stock_item):
-        """Perform validation of the stock_item field"""
+        """Perform validation of the stock_item field."""
         if not stock_item.in_stock:
             raise ValidationError(_('Item must be in stock'))
 
@@ -957,7 +957,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_quantity(self, quantity):
-        """Perform validation of the 'quantity' field"""
+        """Perform validation of the 'quantity' field."""
         if quantity <= 0:
             raise ValidationError(_('Quantity must be greater than zero'))
 
@@ -972,7 +972,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """Perform data validation for this item"""
+        """Perform data validation for this item."""
         super().validate(data)
 
         build_line = data['build_line']
@@ -1016,7 +1016,7 @@ class BuildAllocationSerializer(serializers.Serializer):
     """DRF serializer for allocation stock items against a build order."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = ['items']
 
@@ -1034,7 +1034,7 @@ class BuildAllocationSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Perform the allocation"""
+        """Perform the allocation."""
         data = self.validated_data
 
         items = data.get('items', [])
@@ -1076,7 +1076,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
     """DRF serializer for auto allocating stock items against a build order."""
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         fields = [
             'location',
@@ -1125,7 +1125,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
     )
 
     def save(self):
-        """Perform the auto-allocation step"""
+        """Perform the auto-allocation step."""
         import build.tasks
         import InvenTree.tasks
 
@@ -1168,7 +1168,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     ]
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         model = BuildItem
         fields = [
@@ -1204,7 +1204,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         ]
 
     def __init__(self, *args, **kwargs):
-        """Determine which extra details fields should be included"""
+        """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
         location_detail = kwargs.pop('location_detail', True)
         stock_detail = kwargs.pop('stock_detail', True)
@@ -1321,7 +1321,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     export_only_fields = ['part_description', 'part_category_name']
 
     class Meta:
-        """Serializer metaclass"""
+        """Serializer metaclass."""
 
         model = BuildLine
         fields = [
@@ -1366,7 +1366,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         read_only_fields = ['build', 'bom_item', 'allocations']
 
     def __init__(self, *args, **kwargs):
-        """Determine which extra details fields should be included"""
+        """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
         build_detail = kwargs.pop('build_detail', False)
 
