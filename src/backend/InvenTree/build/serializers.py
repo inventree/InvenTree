@@ -1390,7 +1390,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part_name = serializers.CharField(
         source='bom_item.sub_part.name', label=_('Part Name'), read_only=True
     )
-    part_IPN = serializers.CharField(
+    part_IPN = serializers.CharField(  # noqa: N815
         source='bom_item.sub_part.IPN', label=_('Part IPN'), read_only=True
     )
 
