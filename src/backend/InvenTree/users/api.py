@@ -1,7 +1,6 @@
 """DRF API definition for the 'users' app."""
 
 import datetime
-import logging
 
 from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import Group, User
@@ -10,6 +9,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path, reverse
 from django.views.generic.base import RedirectView
 
+import structlog
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
 from allauth_2fa.utils import user_has_valid_totp_device
@@ -48,7 +48,7 @@ from users.serializers import (
     RoleSerializer,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class OwnerList(ListAPI):

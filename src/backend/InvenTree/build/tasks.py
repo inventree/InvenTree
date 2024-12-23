@@ -1,6 +1,5 @@
 """Background task definitions for the BuildOrder app."""
 
-import logging
 import random
 import time
 
