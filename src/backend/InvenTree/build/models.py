@@ -1,9 +1,7 @@
 """Build database model definitions."""
 
 import decimal
-import logging
 from datetime import datetime
-from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -26,7 +24,10 @@ from stock.status_codes import StockStatus, StockHistoryCode
 
 from build.events import BuildEvents
 from build.filters import annotate_allocated_quantity
-from build.validators import generate_next_build_reference, validate_build_order_reference
+from build.validators import (
+    generate_next_build_reference,
+    validate_build_order_reference,
+)
 from generic.states import StateTransitionMixin
 
 import InvenTree.fields
@@ -49,7 +50,8 @@ import generic.states
 
 
 import structlog
-logger = structlog.get_logger('inventree')
+
+logger = structlog.get_logger("inventree")
 
 
 class Build(

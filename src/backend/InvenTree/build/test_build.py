@@ -23,7 +23,6 @@ from part.models import Part, BomItem, BomItemSubstitute, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
 
-import logging
 import structlog
 logger = structlog.get_logger('inventree')
 
