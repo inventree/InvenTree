@@ -1,14 +1,10 @@
 """Overrides for registration view."""
 
-import logging
-
 from django.utils.translation import gettext_lazy as _
 
 from allauth.account import app_settings as allauth_account_settings
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.views import RegisterView
-
-logger = logging.getLogger('inventree')
 
 
 class CustomRegisterView(RegisterView):
