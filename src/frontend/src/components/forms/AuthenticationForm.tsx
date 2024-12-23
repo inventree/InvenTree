@@ -202,7 +202,7 @@ export function RegistrationForm() {
         }
       })
       .catch((err) => {
-        if (err.response.status === 400) {
+        if (err.response?.status === 400) {
           setIsRegistering(false);
           for (const [key, value] of Object.entries(err.response.data)) {
             registrationForm.setFieldError(key, value as string);
