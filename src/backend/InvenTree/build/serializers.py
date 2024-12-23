@@ -265,7 +265,7 @@ class BuildOutputSerializer(serializers.Serializer):
 
 
 class BuildOutputQuantitySerializer(BuildOutputSerializer):
-    """Serializer for a single build output, with additional quantity field."""
+    """Build output with quantity field."""
 
     class Meta:
         """Serializer metaclass."""
@@ -485,7 +485,7 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
 
 
 class BuildOutputScrapSerializer(serializers.Serializer):
-    """DRF serializer for scrapping one or more build outputs."""
+    """Scrapping one or more build outputs."""
 
     class Meta:
         """Serializer metaclass."""
@@ -678,7 +678,7 @@ class BuildHoldSerializer(serializers.Serializer):
 
 
 class BuildCancelSerializer(serializers.Serializer):
-    """DRF serializer class for cancelling an active BuildOrder."""
+    """Cancel an active BuildOrder."""
 
     class Meta:
         """Serializer metaclass."""
