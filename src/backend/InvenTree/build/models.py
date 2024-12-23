@@ -3,50 +3,46 @@
 import decimal
 import logging
 from datetime import datetime
-from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Sum, Q
+from django.db.models import F, Q, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
-
+from mptt.models import MPTTModel, TreeForeignKey
 from rest_framework import serializers
 
-from build.status_codes import BuildStatus, BuildStatusGroups
-from stock.status_codes import StockStatus, StockHistoryCode
-
-from build.events import BuildEvents
-from build.filters import annotate_allocated_quantity
-from build.validators import generate_next_build_reference, validate_build_order_reference
-from generic.states import StateTransitionMixin
-
+import common.models
+import generic.states
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
-
-import common.models
-from common.notifications import trigger_notification, InvenTreeNotificationBodies
-from common.settings import get_global_setting
-from plugin.events import trigger_event
-
 import part.models
 import report.mixins
 import stock.models
 import users.models
-import generic.states
-
+from build.events import BuildEvents
+from build.filters import annotate_allocated_quantity
+from build.status_codes import BuildStatus, BuildStatusGroups
+from build.validators import (
+    generate_next_build_reference,
+    validate_build_order_reference,
+)
+from common.notifications import InvenTreeNotificationBodies, trigger_notification
+from common.settings import get_global_setting
+from generic.states import StateTransitionMixin
+from plugin.events import trigger_event
+from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = logging.getLogger('inventree')
 
@@ -60,7 +56,8 @@ class Build(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
-    MPTTModel):
+    MPTTModel,
+):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -85,11 +82,16 @@ class Build(
     """
 
     class Meta:
-        """Metaclass options for the BuildOrder model"""
-        verbose_name = _("Build Order")
-        verbose_name_plural = _("Build Orders")
+        """Metaclass options for the BuildOrder model."""
 
-    OVERDUE_FILTER = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=InvenTree.helpers.current_date())
+        verbose_name = _('Build Order')
+        verbose_name_plural = _('Build Orders')
+
+    OVERDUE_FILTER = (
+        Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+        & ~Q(target_date=None)
+        & Q(target_date__lte=InvenTree.helpers.current_date())
+    )
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
@@ -101,18 +103,12 @@ class Build(
 
     def api_instance_filters(self):
         """Returns custom API filters for the particular BuildOrder instance"""
-        return {
-            'parent': {
-                'exclude_tree': self.pk,
-            }
-        }
+        return {'parent': {'exclude_tree': self.pk}}
 
     @classmethod
     def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
-        defaults = {
-            'reference': generate_next_build_reference(),
-        }
+        defaults = {'reference': generate_next_build_reference()}
 
         if request and request.user:
             defaults['issued_by'] = request.user.pk
@@ -122,7 +118,7 @@ class Build(
     @classmethod
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
-        return "BO"
+        return 'BO'
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
@@ -153,7 +149,6 @@ class Build(
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:
-
             # Set the destination location (if not specified)
             if not self.destination:
                 self.destination = self.part.get_default_location()
@@ -161,13 +156,10 @@ class Build(
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
-            raise ValidationError({
-                'parent': _('Invalid choice for parent build'),
-            })
+            raise ValidationError({'parent': _('Invalid choice for parent build')})
 
     def clean(self):
         """Validate the BuildOrder model"""
-
         super().clean()
 
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
@@ -178,13 +170,10 @@ class Build(
 
         # Prevent changing target part after creation
         if self.has_field_changed('part'):
-            raise ValidationError({
-                'part': _('Build order part cannot be changed')
-            })
+            raise ValidationError({'part': _('Build order part cannot be changed')})
 
     def report_context(self) -> dict:
         """Generate custom report context data."""
-
         return {
             'bom_items': self.part.get_bom_items(),
             'build': self,
@@ -193,9 +182,8 @@ class Build(
             'part': self.part,
             'quantity': self.quantity,
             'reference': self.reference,
-            'title': str(self)
+            'title': str(self),
         }
-
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -215,10 +203,19 @@ class Build(
             return queryset
 
         # Order was completed within the specified range
-        completed = Q(status=BuildStatus.COMPLETE.value) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
+        completed = (
+            Q(status=BuildStatus.COMPLETE.value)
+            & Q(completion_date__gte=min_date)
+            & Q(completion_date__lte=max_date)
+        )
 
         # Order target date falls within specified range
-        pending = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+        pending = (
+            Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+            & ~Q(target_date=None)
+            & Q(target_date__gte=min_date)
+            & Q(target_date__lte=max_date)
+        )
 
         # TODO - Construct a queryset for "overdue" orders
 
@@ -241,22 +238,21 @@ class Build(
         help_text=_('Build Order Reference'),
         verbose_name=_('Reference'),
         default=generate_next_build_reference,
-        validators=[
-            validate_build_order_reference,
-        ]
+        validators=[validate_build_order_reference],
     )
 
     title = models.CharField(
         verbose_name=_('Description'),
         blank=True,
         max_length=100,
-        help_text=_('Brief description of the build (optional)')
+        help_text=_('Brief description of the build (optional)'),
     )
 
     parent = TreeForeignKey(
         'self',
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         related_name='children',
         verbose_name=_('Parent Build'),
         help_text=_('BuildOrder to which this build is allocated'),
@@ -267,9 +263,7 @@ class Build(
         verbose_name=_('Part'),
         on_delete=models.CASCADE,
         related_name='builds',
-        limit_choices_to={
-            'assembly': True,
-        },
+        limit_choices_to={'assembly': True},
         help_text=_('Select part to build'),
     )
 
@@ -278,8 +272,9 @@ class Build(
         verbose_name=_('Sales Order Reference'),
         on_delete=models.SET_NULL,
         related_name='builds',
-        null=True, blank=True,
-        help_text=_('SalesOrder to which this build is allocated')
+        null=True,
+        blank=True,
+        help_text=_('SalesOrder to which this build is allocated'),
     )
 
     take_from = models.ForeignKey(
@@ -287,8 +282,11 @@ class Build(
         verbose_name=_('Source Location'),
         on_delete=models.SET_NULL,
         related_name='sourcing_builds',
-        null=True, blank=True,
-        help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
+        null=True,
+        blank=True,
+        help_text=_(
+            'Select location to take stock from for this build (leave blank to take from any stock location)'
+        ),
     )
 
     destination = models.ForeignKey(
@@ -296,7 +294,8 @@ class Build(
         verbose_name=_('Destination Location'),
         on_delete=models.SET_NULL,
         related_name='incoming_builds',
-        null=True, blank=True,
+        null=True,
+        blank=True,
         help_text=_('Select location where the completed items will be stored'),
     )
 
@@ -304,13 +303,13 @@ class Build(
         verbose_name=_('Build Quantity'),
         default=1,
         validators=[MinValueValidator(1)],
-        help_text=_('Number of stock items to build')
+        help_text=_('Number of stock items to build'),
     )
 
     completed = models.PositiveIntegerField(
         verbose_name=_('Completed items'),
         default=0,
-        help_text=_('Number of stock items which have been completed')
+        help_text=_('Number of stock items which have been completed'),
     )
 
     status = generic.states.fields.InvenTreeCustomStatusModelField(
@@ -318,7 +317,7 @@ class Build(
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
         validators=[MinValueValidator(0)],
-        help_text=_('Build status code')
+        help_text=_('Build status code'),
     )
 
     @property
@@ -331,31 +330,40 @@ class Build(
         max_length=100,
         blank=True,
         null=True,
-        help_text=_('Batch code for this build output')
+        help_text=_('Batch code for this build output'),
     )
 
-    creation_date = models.DateField(auto_now_add=True, editable=False, verbose_name=_('Creation Date'))
+    creation_date = models.DateField(
+        auto_now_add=True, editable=False, verbose_name=_('Creation Date')
+    )
 
     target_date = models.DateField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_('Target completion date'),
-        help_text=_('Target date for build completion. Build will be overdue after this date.')
+        help_text=_(
+            'Target date for build completion. Build will be overdue after this date.'
+        ),
     )
 
-    completion_date = models.DateField(null=True, blank=True, verbose_name=_('Completion Date'))
+    completion_date = models.DateField(
+        null=True, blank=True, verbose_name=_('Completion Date')
+    )
 
     completed_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('completed by'),
-        related_name='builds_completed'
+        related_name='builds_completed',
     )
 
     issued_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Issued by'),
         help_text=_('User who issued this build order'),
         related_name='builds_issued',
@@ -364,28 +372,29 @@ class Build(
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Responsible'),
         help_text=_('User or group responsible for this build order'),
         related_name='builds_responsible',
     )
 
     link = InvenTree.fields.InvenTreeURLField(
-        verbose_name=_('External Link'),
-        blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
     )
 
     priority = models.PositiveIntegerField(
         verbose_name=_('Build Priority'),
         default=0,
         validators=[MinValueValidator(0)],
-        help_text=_('Priority of this build order')
+        help_text=_('Priority of this build order'),
     )
 
     project_code = models.ForeignKey(
         common.models.ProjectCode,
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Project Code'),
         help_text=_('Project code for this build order'),
     )
@@ -408,7 +417,9 @@ class Build(
     @property
     def has_open_child_builds(self):
         """Return True if this build order has any open child builds."""
-        return self.sub_builds().filter(status__in=BuildStatusGroups.ACTIVE_CODES).exists()
+        return (
+            self.sub_builds().filter(status__in=BuildStatusGroups.ACTIVE_CODES).exists()
+        )
 
     @property
     def is_overdue(self):
@@ -476,7 +487,7 @@ class Build(
         outputs = self.build_outputs.all()
 
         # Filter by 'in stock' status
-        in_stock = kwargs.get('in_stock', None)
+        in_stock = kwargs.get('in_stock')
 
         if in_stock is not None:
             if in_stock:
@@ -485,7 +496,7 @@ class Build(
                 outputs = outputs.exclude(stock.models.StockItem.IN_STOCK_FILTER)
 
         # Filter by 'complete' status
-        complete = kwargs.get('complete', None)
+        complete = kwargs.get('complete')
 
         if complete is not None:
             if complete:
@@ -578,8 +589,10 @@ class Build(
         - Completed count must meet the required quantity
         - Untracked parts must be allocated
         """
-
-        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and self.has_open_child_builds:
+        if (
+            get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS')
+            and self.has_open_child_builds
+        ):
             return False
 
         if self.status != BuildStatus.PRODUCTION.value:
@@ -612,21 +625,27 @@ class Build(
     @transaction.atomic
     def complete_build(self, user, trim_allocated_stock=False):
         """Mark this build as complete."""
-
         return self.handle_transition(
-            self.status, BuildStatus.COMPLETE.value, self, self._action_complete, user=user, trim_allocated_stock=trim_allocated_stock
+            self.status,
+            BuildStatus.COMPLETE.value,
+            self,
+            self._action_complete,
+            user=user,
+            trim_allocated_stock=trim_allocated_stock,
         )
 
     def _action_complete(self, *args, **kwargs):
         """Action to be taken when a build is completed."""
-
         import build.tasks
 
         trim_allocated_stock = kwargs.pop('trim_allocated_stock', False)
         user = kwargs.pop('user', None)
 
         # Prevent completion if there are open child builds
-        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and self.has_open_child_builds:
+        if (
+            get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS')
+            and self.has_open_child_builds
+        ):
             return
 
         if self.incomplete_count > 0:
@@ -645,18 +664,17 @@ class Build(
             build.tasks.complete_build_allocations,
             self.pk,
             user.pk if user else None,
-            group='build'
+            group='build',
         ):
-            raise ValidationError(_("Failed to offload task to complete build allocations"))
+            raise ValidationError(
+                _('Failed to offload task to complete build allocations')
+            )
 
         # Register an event
         trigger_event(BuildEvents.COMPLETED, id=self.pk)
 
         # Notify users that this build has been completed
-        targets = [
-            self.issued_by,
-            self.responsible,
-        ]
+        targets = [self.issued_by, self.responsible]
 
         # Notify those users interested in the parent build
         if self.parent:
@@ -676,11 +694,10 @@ class Build(
             'name': name,
             'slug': 'build.completed',
             'message': _('A build order has been completed'),
-            'link': InvenTree.helpers_model.construct_absolute_url(self.get_absolute_url()),
-            'template': {
-                'html': 'email/build_order_completed.html',
-                'subject': name,
-            }
+            'link': InvenTree.helpers_model.construct_absolute_url(
+                self.get_absolute_url()
+            ),
+            'template': {'html': 'email/build_order_completed.html', 'subject': name},
         }
 
         trigger_notification(
@@ -705,14 +722,10 @@ class Build(
     @property
     def can_issue(self):
         """Returns True if this BuildOrder can be issued."""
-        return self.status in [
-            BuildStatus.PENDING.value,
-            BuildStatus.ON_HOLD.value,
-        ]
+        return self.status in [BuildStatus.PENDING.value, BuildStatus.ON_HOLD.value]
 
     def _action_issue(self, *args, **kwargs):
         """Perform the action to mark this order as PRODUCTION."""
-
         if self.can_issue:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
@@ -722,7 +735,6 @@ class Build(
     @transaction.atomic
     def hold_build(self):
         """Mark the Build as ON HOLD."""
-
         return self.handle_transition(
             self.status, BuildStatus.ON_HOLD.value, self, self._action_hold
         )
@@ -730,14 +742,10 @@ class Build(
     @property
     def can_hold(self):
         """Returns True if this BuildOrder can be placed on hold"""
-        return self.status in [
-            BuildStatus.PENDING.value,
-            BuildStatus.PRODUCTION.value,
-        ]
+        return self.status in [BuildStatus.PENDING.value, BuildStatus.PRODUCTION.value]
 
     def _action_hold(self, *args, **kwargs):
         """Action to be taken when a build is placed on hold."""
-
         if self.can_hold:
             self.status = BuildStatus.ON_HOLD.value
             self.save()
@@ -752,14 +760,17 @@ class Build(
         - Set build status to CANCELLED
         - Save the Build object
         """
-
         return self.handle_transition(
-            self.status, BuildStatus.CANCELLED.value, self, self._action_cancel, user=user, **kwargs
+            self.status,
+            BuildStatus.CANCELLED.value,
+            self,
+            self._action_cancel,
+            user=user,
+            **kwargs,
         )
 
     def _action_cancel(self, *args, **kwargs):
         """Action to be taken when a build is cancelled."""
-
         import build.tasks
 
         user = kwargs.pop('user', None)
@@ -775,7 +786,9 @@ class Build(
                 user.pk if user else None,
                 group='build',
             ):
-                raise ValidationError(_("Failed to offload task to complete build allocations"))
+                raise ValidationError(
+                    _('Failed to offload task to complete build allocations')
+                )
 
         else:
             self.allocated_stock.all().delete()
@@ -798,7 +811,7 @@ class Build(
             self,
             Build,
             exclude=self.issued_by,
-            content=InvenTreeNotificationBodies.OrderCanceled
+            content=InvenTreeNotificationBodies.OrderCanceled,
         )
 
         trigger_event(BuildEvents.CANCELLED, id=self.pk)
@@ -811,9 +824,7 @@ class Build(
             build_line: Specify a particular BuildLine instance to un-allocate stock against
             output: Specify a particular StockItem (output) to un-allocate stock against
         """
-        allocations = self.allocated_stock.filter(
-            install_into=output
-        )
+        allocations = self.allocated_stock.filter(install_into=output)
 
         if build_line:
             allocations = allocations.filter(build_line=build_line)
@@ -833,7 +844,6 @@ class Build(
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
         """
-
         trackable_parts = self.part.get_trackable_parts()
 
         # Create (and cache) a map of valid parts for allocation
@@ -843,10 +853,10 @@ class Build(
             parts = bom_item.get_valid_parts_for_allocation()
             valid_parts[bom_item.pk] = list([part.pk for part in parts])
 
-        user = kwargs.get('user', None)
+        user = kwargs.get('user')
         batch = kwargs.get('batch', self.batch)
-        location = kwargs.get('location', None)
-        serials = kwargs.get('serials', None)
+        location = kwargs.get('location')
+        serials = kwargs.get('serials')
         auto_allocate = kwargs.get('auto_allocate', False)
 
         if location is None:
@@ -854,7 +864,7 @@ class Build(
 
         if self.part.has_trackable_parts and not serials:
             raise ValidationError({
-                'serials': _("Serial numbers must be provided for trackable parts")
+                'serials': _('Serial numbers must be provided for trackable parts')
             })
 
         # We are generating multiple serialized outputs
@@ -871,7 +881,7 @@ class Build(
                 build=self,
                 batch=batch,
                 location=location,
-                is_building=True
+                is_building=True,
             )
 
             for output in outputs:
@@ -884,15 +894,14 @@ class Build(
                         'buildorder': self.pk,
                         'batch': output.batch,
                         'serial': output.serial,
-                        'location': location.pk if location else None
+                        'location': location.pk if location else None,
                     },
-                    commit=False
+                    commit=False,
                 ):
                     tracking.append(entry)
 
                 # Auto-allocate stock based on serial number
                 if auto_allocate:
-
                     for bom_item in trackable_parts:
                         valid_part_ids = valid_parts.get(bom_item.pk, [])
 
@@ -908,8 +917,7 @@ class Build(
                             # Find the 'BuildLine' object which points to this BomItem
                             try:
                                 build_line = BuildLine.objects.get(
-                                    build=self,
-                                    bom_item=bom_item
+                                    build=self, bom_item=bom_item
                                 )
 
                                 # Allocate the stock items against the BuildLine
@@ -939,7 +947,7 @@ class Build(
                 part=self.part,
                 build=self,
                 batch=batch,
-                is_building=True
+                is_building=True,
             )
 
             output.add_tracking_entry(
@@ -949,8 +957,8 @@ class Build(
                     'quantity': float(quantity),
                     'buildorder': self.pk,
                     'batch': batch,
-                    'location': location.pk if location else None
-                }
+                    'location': location.pk if location else None,
+                },
             )
 
         if self.status == BuildStatus.PENDING:
@@ -966,13 +974,13 @@ class Build(
         - Delete the output StockItem
         """
         if not output:
-            raise ValidationError(_("No build output specified"))
+            raise ValidationError(_('No build output specified'))
 
         if not output.is_building:
-            raise ValidationError(_("Build output is already completed"))
+            raise ValidationError(_('Build output is already completed'))
 
         if output.build != self:
-            raise ValidationError(_("Build output does not match Build Order"))
+            raise ValidationError(_('Build output does not match Build Order'))
 
         # Deallocate all build items against the output
         self.deallocate_stock(output=output)
@@ -993,7 +1001,6 @@ class Build(
         lines = annotate_allocated_quantity(lines)
 
         for build_line in lines:
-
             reduce_by = build_line.allocated - build_line.quantity
 
             if reduce_by <= 0:
@@ -1001,7 +1008,6 @@ class Build(
 
             # Find BuildItem objects to trim
             for item in BuildItem.objects.filter(build_line=build_line):
-
                 # Previous item completed the job
                 if reduce_by <= 0:
                     break
@@ -1026,9 +1032,7 @@ class Build(
     @property
     def allocated_stock(self):
         """Returns a QuerySet object of all BuildItem objects which point back to this Build"""
-        return BuildItem.objects.filter(
-            build_line__build=self
-        )
+        return BuildItem.objects.filter(build_line__build=self)
 
     @transaction.atomic
     def subtract_allocated_stock(self, user):
@@ -1055,19 +1059,17 @@ class Build(
         - Add a transaction entry to the stock item history
         """
         if not output:
-            raise ValidationError(_("No build output specified"))
+            raise ValidationError(_('No build output specified'))
 
         if quantity <= 0:
-            raise ValidationError({
-                'quantity': _("Quantity must be greater than zero")
-            })
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity > output.quantity:
             raise ValidationError({
-                'quantity': _("Quantity cannot be greater than the output quantity")
+                'quantity': _('Quantity cannot be greater than the output quantity')
             })
 
-        user = kwargs.get('user', None)
+        user = kwargs.get('user')
         notes = kwargs.get('notes', '')
         discard_allocations = kwargs.get('discard_allocations', False)
 
@@ -1100,7 +1102,7 @@ class Build(
                 'location': location.pk,
                 'status': StockStatus.REJECTED.value,
                 'buildorder': self.pk,
-            }
+            },
         )
 
     @transaction.atomic
@@ -1119,12 +1121,18 @@ class Build(
         allocated_items = output.items_to_install.all()
 
         required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
-        prevent_on_incomplete = kwargs.get('prevent_on_incomplete', common.settings.prevent_build_output_complete_on_incompleted_tests())
+        prevent_on_incomplete = kwargs.get(
+            'prevent_on_incomplete',
+            common.settings.prevent_build_output_complete_on_incompleted_tests(),
+        )
 
-        if (prevent_on_incomplete and not output.passedAllRequiredTests(required_tests=required_tests)):
+        if prevent_on_incomplete and not output.passedAllRequiredTests(
+            required_tests=required_tests
+        ):
             serial = output.serial
             raise ValidationError(
-                _(f"Build output {serial} has not passed all required tests"))
+                _(f'Build output {serial} has not passed all required tests')
+            )
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
@@ -1141,26 +1149,16 @@ class Build(
 
         output.save(add_note=False)
 
-        deltas = {
-            'status': status,
-            'buildorder': self.pk
-        }
+        deltas = {'status': status, 'buildorder': self.pk}
 
         if location:
             deltas['location'] = location.pk
 
         output.add_tracking_entry(
-            StockHistoryCode.BUILD_OUTPUT_COMPLETED,
-            user,
-            notes=notes,
-            deltas=deltas
+            StockHistoryCode.BUILD_OUTPUT_COMPLETED, user, notes=notes, deltas=deltas
         )
 
-        trigger_event(
-            BuildEvents.OUTPUT_COMPLETED,
-            id=output.pk,
-            build_id=self.pk,
-        )
+        trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 
         # Increase the completed quantity for this build
         self.completed += output.quantity
@@ -1181,8 +1179,8 @@ class Build(
         - If multiple stock items are found, we *may* be able to allocate:
             - If the calling function has specified that items are interchangeable
         """
-        location = kwargs.get('location', None)
-        exclude_location = kwargs.get('exclude_location', None)
+        location = kwargs.get('location')
+        exclude_location = kwargs.get('exclude_location')
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
         optional_items = kwargs.get('optional_items', False)
@@ -1198,7 +1196,6 @@ class Build(
 
         # Auto-allocation is only possible for "untracked" line items
         for line_item in self.untracked_line_items.all():
-
             # Find the referenced BomItem
             bom_item = line_item.bom_item
 
@@ -1220,30 +1217,35 @@ class Build(
 
             # Check which parts we can "use" (may include variants and substitutes)
             available_parts = bom_item.get_valid_parts_for_allocation(
-                allow_variants=True,
-                allow_substitutes=substitutes,
+                allow_variants=True, allow_substitutes=substitutes
             )
 
             # Look for available stock items
-            available_stock = stock.models.StockItem.objects.filter(stock.models.StockItem.IN_STOCK_FILTER)
-
-            # Filter by list of available parts
-            available_stock = available_stock.filter(
-                part__in=list(available_parts),
+            available_stock = stock.models.StockItem.objects.filter(
+                stock.models.StockItem.IN_STOCK_FILTER
             )
 
+            # Filter by list of available parts
+            available_stock = available_stock.filter(part__in=list(available_parts))
+
             # Filter out "serialized" stock items, these cannot be auto-allocated
-            available_stock = available_stock.filter(Q(serial=None) | Q(serial='')).distinct()
+            available_stock = available_stock.filter(
+                Q(serial=None) | Q(serial='')
+            ).distinct()
 
             if location:
                 # Filter only stock items located "below" the specified location
                 sublocations = location.get_descendants(include_self=True)
-                available_stock = available_stock.filter(location__in=list(sublocations))
+                available_stock = available_stock.filter(
+                    location__in=list(sublocations)
+                )
 
             if exclude_location:
                 # Exclude any stock items from the provided location
                 sublocations = exclude_location.get_descendants(include_self=True)
-                available_stock = available_stock.exclude(location__in=list(sublocations))
+                available_stock = available_stock.exclude(
+                    location__in=list(sublocations)
+                )
 
             """
             Next, we sort the available stock items with the following priority:
@@ -1253,7 +1255,10 @@ class Build(
 
             This ensures that allocation priority is first given to "direct" parts
             """
-            available_stock = sorted(available_stock, key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v))
+            available_stock = sorted(
+                available_stock,
+                key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v),
+            )
 
             if len(available_stock) == 0:
                 # No stock items are available
@@ -1263,29 +1268,33 @@ class Build(
                 # or all items are "interchangeable" and we don't care where we take stock from
 
                 for stock_item in available_stock:
-
                     # Skip inactive parts
                     if not stock_item.part.active:
                         continue
 
                     # How much of the stock item is "available" for allocation?
-                    quantity = min(unallocated_quantity, stock_item.unallocated_quantity())
+                    quantity = min(
+                        unallocated_quantity, stock_item.unallocated_quantity()
+                    )
 
                     if quantity > 0:
-
                         try:
-                            new_items.append(BuildItem(
-                                build_line=line_item,
-                                stock_item=stock_item,
-                                quantity=quantity,
-                            ))
+                            new_items.append(
+                                BuildItem(
+                                    build_line=line_item,
+                                    stock_item=stock_item,
+                                    quantity=quantity,
+                                )
+                            )
 
                             # Subtract the required quantity
                             unallocated_quantity -= quantity
 
                         except (ValidationError, serializers.ValidationError) as exc:
                             # Catch model errors and re-throw as DRF errors
-                            raise ValidationError(detail=serializers.as_serializer_error(exc))
+                            raise ValidationError(
+                                detail=serializers.as_serializer_error(exc)
+                            )
 
                     if unallocated_quantity <= 0:
                         # We have now fully-allocated this BomItem - no need to continue!
@@ -1324,7 +1333,6 @@ class Build(
         Returns:
             True if the BuildOrder has been fully allocated, otherwise False
         """
-
         return self.unallocated_lines(tracked=tracked).count() == 0
 
     def is_output_fully_allocated(self, output):
@@ -1336,17 +1344,13 @@ class Build(
         To determine if the output has been fully allocated,
         we need to test all "trackable" BuildLine objects
         """
-
         lines = self.build_lines.filter(bom_item__sub_part__trackable=True)
         lines = lines.exclude(bom_item__consumable=True)
 
         # Find any lines which have not been fully allocated
         for line in lines:
             # Grab all BuildItem objects which point to this output
-            allocations = BuildItem.objects.filter(
-                build_line=line,
-                install_into=output,
-            )
+            allocations = BuildItem.objects.filter(build_line=line, install_into=output)
 
             allocated = allocations.aggregate(
                 q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
@@ -1365,7 +1369,6 @@ class Build(
         Returns:
             True if any BuildLine has been over-allocated.
         """
-
         lines = self.build_lines.all().exclude(bom_item__consumable=True)
         lines = annotate_allocated_quantity(lines)
 
@@ -1396,30 +1399,32 @@ class Build(
 
         bom_items = self.part.get_bom_items()
 
-        logger.info("Creating BuildLine objects for BuildOrder %s (%s items)", self.pk, len(bom_items))
+        logger.info(
+            'Creating BuildLine objects for BuildOrder %s (%s items)',
+            self.pk,
+            len(bom_items),
+        )
 
         # Iterate through each part required to build the parent part
         for bom_item in bom_items:
             if prevent_duplicates:
                 if BuildLine.objects.filter(build=self, bom_item=bom_item).exists():
-                    logger.info("BuildLine already exists for BuildOrder %s and BomItem %s", self.pk, bom_item.pk)
+                    logger.info(
+                        'BuildLine already exists for BuildOrder %s and BomItem %s',
+                        self.pk,
+                        bom_item.pk,
+                    )
                     continue
 
             # Calculate required quantity
             quantity = bom_item.get_required_quantity(self.quantity)
 
-            lines.append(
-                BuildLine(
-                    build=self,
-                    bom_item=bom_item,
-                    quantity=quantity
-                )
-            )
+            lines.append(BuildLine(build=self, bom_item=bom_item, quantity=quantity))
 
         BuildLine.objects.bulk_create(lines)
 
         if len(lines) > 0:
-            logger.info("Created %s BuildLine objects for BuildOrder", len(lines))
+            logger.info('Created %s BuildLine objects for BuildOrder', len(lines))
 
     @transaction.atomic
     def update_build_line_items(self):
@@ -1432,20 +1437,21 @@ class Build(
 
         BuildLine.objects.bulk_update(lines_to_update, ['quantity'])
 
-        logger.info("Updated %s BuildLine objects for BuildOrder", len(lines_to_update))
+        logger.info('Updated %s BuildLine objects for BuildOrder', len(lines_to_update))
 
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
 def after_save_build(sender, instance: Build, created: bool, **kwargs):
     """Callback function to be executed after a Build instance is saved."""
     # Escape if we are importing data
-    if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+    if InvenTree.ready.isImportingData() or not InvenTree.ready.canAppAccessDatabase(
+        allow_test=True
+    ):
         return
 
     from . import tasks as build_tasks
 
     if instance:
-
         if created:
             # A new Build has just been created
 
@@ -1454,13 +1460,13 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
             # Run checks on required parts
             InvenTree.tasks.offload_task(
-                build_tasks.check_build_stock,
-                instance,
-                group='build'
+                build_tasks.check_build_stock, instance, group='build'
             )
 
             # Notify the responsible users that the build order has been created
-            InvenTree.helpers_model.notify_responsible(instance, sender, exclude=instance.issued_by)
+            InvenTree.helpers_model.notify_responsible(
+                instance, sender, exclude=instance.issued_by
+            )
 
         else:
             # Update BuildLine objects if the Build quantity has changed
@@ -1485,10 +1491,9 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     class Meta:
         """Model meta options."""
+
         verbose_name = _('Build Order Line Item')
-        unique_together = [
-            ('build', 'bom_item'),
-        ]
+        unique_together = [('build', 'bom_item')]
 
     @staticmethod
     def get_api_url():
@@ -1497,7 +1502,6 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
 
     def report_context(self):
         """Generate custom report context for this BuildLine object."""
-
         return {
             'allocated_quantity': self.allocated_quantity,
             'allocations': self.allocations,
@@ -1509,14 +1513,14 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         }
 
     build = models.ForeignKey(
-        Build, on_delete=models.CASCADE,
-        related_name='build_lines', help_text=_('Build object')
+        Build,
+        on_delete=models.CASCADE,
+        related_name='build_lines',
+        help_text=_('Build object'),
     )
 
     bom_item = models.ForeignKey(
-        part.models.BomItem,
-        on_delete=models.CASCADE,
-        related_name='build_lines',
+        part.models.BomItem, on_delete=models.CASCADE, related_name='build_lines'
     )
 
     quantity = models.DecimalField(
@@ -1575,9 +1579,8 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     class Meta:
         """Model meta options."""
-        unique_together = [
-            ('build_line', 'stock_item', 'install_into'),
-        ]
+
+        unique_together = [('build_line', 'stock_item', 'install_into')]
 
     @staticmethod
     def get_api_url():
@@ -1602,42 +1605,52 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         try:
-
             # If the 'part' is trackable, then the 'install_into' field must be set!
-            if self.stock_item.part and self.stock_item.part.trackable and not self.install_into:
-                raise ValidationError(_('Build item must specify a build output, as master part is marked as trackable'))
+            if (
+                self.stock_item.part
+                and self.stock_item.part.trackable
+                and not self.install_into
+            ):
+                raise ValidationError(
+                    _(
+                        'Build item must specify a build output, as master part is marked as trackable'
+                    )
+                )
 
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
-
                 q = InvenTree.helpers.normalize(self.quantity)
                 a = InvenTree.helpers.normalize(self.stock_item.quantity)
 
                 raise ValidationError({
-                    'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
+                    'quantity': _(
+                        f'Allocated quantity ({q}) must not exceed available stock quantity ({a})'
+                    )
                 })
 
             # Ensure that we do not 'over allocate' a stock item
             available = decimal.Decimal(self.stock_item.quantity)
             quantity = decimal.Decimal(self.quantity)
-            build_allocation_count = decimal.Decimal(self.stock_item.build_allocation_count(
-                exclude_allocations={'pk': self.pk}
-            ))
-            sales_allocation_count = decimal.Decimal(self.stock_item.sales_order_allocation_count())
+            build_allocation_count = decimal.Decimal(
+                self.stock_item.build_allocation_count(
+                    exclude_allocations={'pk': self.pk}
+                )
+            )
+            sales_allocation_count = decimal.Decimal(
+                self.stock_item.sales_order_allocation_count()
+            )
 
             total_allocation = (
                 build_allocation_count + sales_allocation_count + quantity
             )
 
             if total_allocation > available:
-                raise ValidationError({
-                    'quantity': _('Stock item is over-allocated')
-                })
+                raise ValidationError({'quantity': _('Stock item is over-allocated')})
 
             # Allocated quantity must be positive
             if self.quantity <= 0:
                 raise ValidationError({
-                    'quantity': _('Allocation quantity must be greater than zero'),
+                    'quantity': _('Allocation quantity must be greater than zero')
                 })
 
             # Quantity must be 1 for serialized stock
@@ -1647,9 +1660,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 })
 
         except stock.models.StockItem.DoesNotExist:
-            raise ValidationError("Stock item must be specified")
+            raise ValidationError('Stock item must be specified')
         except part.models.Part.DoesNotExist:
-            raise ValidationError("Part must be specified")
+            raise ValidationError('Part must be specified')
 
         """
         Attempt to find the "BomItem" which links this BuildItem to the build.
@@ -1675,18 +1688,20 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
             elif self.bom_item.inherited:
-                if self.build.part in self.bom_item.part.get_descendants(include_self=False):
+                if self.build.part in self.bom_item.part.get_descendants(
+                    include_self=False
+                ):
                     valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not valid and self.build and self.stock_item:
-            ancestors = self.stock_item.part.get_ancestors(include_self=True, ascending=True)
+            ancestors = self.stock_item.part.get_ancestors(
+                include_self=True, ascending=True
+            )
 
             for idx, ancestor in enumerate(ancestors):
-
                 build_line = BuildLine.objects.filter(
-                    build=self.build,
-                    bom_item__part=ancestor,
+                    build=self.build, bom_item__part=ancestor
                 )
 
                 if build_line.exists():
@@ -1700,9 +1715,8 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         # BomItem did not exist or could not be validated.
         # Search for a new one
         if not valid:
-
             raise ValidationError({
-                'stock_item': _("Selected stock item does not match BOM line")
+                'stock_item': _('Selected stock item does not match BOM line')
             })
 
     @property
@@ -1729,27 +1743,17 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > self.quantity:
-            item = item.splitStock(
-                self.quantity,
-                None,
-                user,
-                notes=notes,
-            )
+            item = item.splitStock(self.quantity, None, user, notes=notes)
 
         # For a trackable part, special consideration needed!
         if item.part.trackable:
-
             # Make sure we are pointing to the new item
             self.stock_item = item
             self.save()
 
             # Install the stock item into the output
             self.install_into.installStockItem(
-                item,
-                self.quantity,
-                user,
-                notes,
-                build=self.build,
+                item, self.quantity, user, notes, build=self.build
             )
 
         else:
@@ -1762,16 +1766,11 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                 StockHistoryCode.BUILD_CONSUMED,
                 user,
                 notes=notes,
-                deltas={
-                    'buildorder': self.build.pk,
-                    'quantity': float(item.quantity),
-                }
+                deltas={'buildorder': self.build.pk, 'quantity': float(item.quantity)},
             )
 
     build_line = models.ForeignKey(
-        BuildLine,
-        on_delete=models.CASCADE, null=True,
-        related_name='allocations',
+        BuildLine, on_delete=models.CASCADE, null=True, related_name='allocations'
     )
 
     stock_item = models.ForeignKey(
@@ -1780,10 +1779,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         related_name='allocations',
         verbose_name=_('Stock Item'),
         help_text=_('Source stock item'),
-        limit_choices_to={
-            'sales_order': None,
-            'belongs_to': None,
-        }
+        limit_choices_to={'sales_order': None, 'belongs_to': None},
     )
 
     quantity = models.DecimalField(
@@ -1792,17 +1788,16 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         default=1,
         validators=[MinValueValidator(0)],
         verbose_name=_('Quantity'),
-        help_text=_('Stock quantity to allocate to build')
+        help_text=_('Stock quantity to allocate to build'),
     )
 
     install_into = models.ForeignKey(
         'stock.StockItem',
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         related_name='items_to_install',
         verbose_name=_('Install into'),
         help_text=_('Destination stock item'),
-        limit_choices_to={
-            'is_building': True,
-        }
+        limit_choices_to={'is_building': True},
     )
