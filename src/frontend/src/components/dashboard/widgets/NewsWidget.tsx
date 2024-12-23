@@ -99,7 +99,8 @@ export default function NewsWidget() {
         })
         .then(() => {
           newsItems.refetch();
-        });
+        })
+        .catch(() => {});
     },
     [newsItems]
   );
