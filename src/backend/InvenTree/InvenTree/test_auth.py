@@ -10,19 +10,19 @@ from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.models import InvenTreeSetting
 from InvenTree import sso
-from InvenTree.auth_overrides import RegistratonMixin
+from InvenTree.auth_overrides import RegistrationMixin
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class Dummy:
-    """Simulate super class of RegistratonMixin."""
+    """Simulate super class of RegistrationMixin."""
 
     def save_user(self, _request, user: User, *args) -> User:
         """This method is only used that the super() call of RegistrationMixin does not fail."""
         return user
 
 
-class MockRegistrationMixin(RegistratonMixin, Dummy):
+class MockRegistrationMixin(RegistrationMixin, Dummy):
     """Mocked implementation of the RegistrationMixin."""
 
 
