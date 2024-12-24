@@ -117,7 +117,7 @@ def registration_enabled():
     return False
 
 
-class RegistratonMixin:
+class RegistrationMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
@@ -188,7 +188,7 @@ class CustomUrlMixin:
 
 
 class CustomAccountAdapter(
-    CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter
+    CustomUrlMixin, RegistrationMixin, OTPAdapter, DefaultAccountAdapter
 ):
     """Override of adapter to use dynamic settings."""
 
@@ -215,7 +215,7 @@ class CustomAccountAdapter(
 
 
 class CustomSocialAccountAdapter(
-    CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter
+    CustomUrlMixin, RegistrationMixin, DefaultSocialAccountAdapter
 ):
     """Override of adapter to use dynamic settings."""
 
