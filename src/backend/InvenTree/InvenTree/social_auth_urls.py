@@ -18,7 +18,7 @@ from rest_framework.response import Response
 
 import InvenTree.sso
 from common.settings import get_global_setting
-from InvenTree.auth_overrides import registration_enabled
+from InvenTree.forms import registration_enabled
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
 from InvenTree.serializers import EmptySerializer, InvenTreeModelSerializer
 

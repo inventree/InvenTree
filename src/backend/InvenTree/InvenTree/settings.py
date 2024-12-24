@@ -620,7 +620,7 @@ REST_AUTH = {
     'TOKEN_MODEL': 'users.models.ApiToken',
     'TOKEN_CREATOR': 'users.models.default_create_token',
     'USE_JWT': USE_JWT,
-    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
+    'REGISTER_SERIALIZER': 'InvenTree.forms.RegisterSerializer',
 }
 
 OLD_PASSWORD_FIELD_ENABLED = True
