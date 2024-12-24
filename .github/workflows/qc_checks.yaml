@@ -209,7 +209,7 @@ jobs:
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
-          persist-credentials: false
+          persist-credentials: true
       - name: Download schema artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
