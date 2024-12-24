@@ -34,7 +34,7 @@ django-weasyprint                       # django weasyprint integration
 djangorestframework<3.15                # DRF framework  # FIXED 2024-06-26 see https://github.com/inventree/InvenTree/pull/7521
 djangorestframework-simplejwt[crypto]   # JWT authentication
 django-xforwardedfor-middleware         # IP forwarding metadata
-dj-rest-auth                            # Authentication API endpoints
+dj-rest-auth==7.0.0                     # Authentication API endpoints # FIXED 2024-12-22 due to https://github.com/inventree/InvenTree/issues/8707
 dulwich                                 # pure Python git integration
 drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
