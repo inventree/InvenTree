@@ -198,7 +198,7 @@ export function RegistrationForm() {
         headers: { Authorization: '' }
       })
       .then((ret) => {
-        if (ret?.status === 204) {
+        if (ret?.status === 204 || ret?.status === 201) {
           setIsRegistering(false);
           showLoginNotification({
             title: t`Registration successful`,

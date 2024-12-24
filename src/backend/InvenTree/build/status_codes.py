@@ -24,6 +24,4 @@ class BuildStatusGroups:
         BuildStatus.PRODUCTION.value,
     ]
 
-    COMPLETE = [
-        BuildStatus.COMPLETE.value,
-    ]
+    COMPLETE = [BuildStatus.COMPLETE.value]
