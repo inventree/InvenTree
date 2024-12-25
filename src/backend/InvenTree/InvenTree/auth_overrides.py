@@ -98,7 +98,7 @@ def registration_enabled():
     return False
 
 
-class RegistratonMixin:
+class RegistrationMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
@@ -168,7 +168,7 @@ class CustomUrlMixin:
         return InvenTree.helpers_model.construct_absolute_url(url)
 
 
-class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultAccountAdapter):
+class CustomAccountAdapter(CustomUrlMixin, RegistrationMixin, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def send_mail(self, template_prefix, email, context):
@@ -194,7 +194,7 @@ class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultAccountAdapt
 
 
 class CustomSocialAccountAdapter(
-    CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter
+    CustomUrlMixin, RegistrationMixin, DefaultSocialAccountAdapter
 ):
     """Override of adapter to use dynamic settings."""
 

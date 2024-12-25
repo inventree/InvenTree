@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 294
+INVENTREE_API_VERSION = 296
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v294 - 2024-12-22 : https://github.com/inventree/InvenTree/pull/6293
+v296 - 2024-12-22 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
+
+v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
+    - Improve API documentation for build APIs
+
+v294 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8738
+    - Extends registration API documentation
 
 v293 - 2024-12-14 : https://github.com/inventree/InvenTree/pull/8658
     - Adds new fields to the supplier barcode API endpoints

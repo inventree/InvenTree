@@ -53,18 +53,24 @@ export default function RemoteComponent({
     }
 
     if (sourceFile && functionName) {
-      findExternalPluginFunction(sourceFile, functionName).then((func) => {
-        if (func) {
-          try {
-            func(componentRef.current, context);
-            setRenderingError('');
-          } catch (error) {
-            setRenderingError(`${error}`);
+      findExternalPluginFunction(sourceFile, functionName)
+        .then((func) => {
+          if (func) {
+            try {
+              func(componentRef.current, context);
+              setRenderingError('');
+            } catch (error) {
+              setRenderingError(`${error}`);
+            }
+          } else {
+            setRenderingError(`${sourceFile}:${functionName}`);
           }
-        } else {
-          setRenderingError(`${sourceFile}:${functionName}`);
-        }
-      });
+        })
+        .catch((_error) => {
+          console.error(
+            `ERR: Failed to load remove plugin function: ${sourceFile}:${functionName}`
+          );
+        });
     } else {
       setRenderingError(
         `${t`Invalid source or function name`} - ${sourceFile}:${functionName}`

@@ -385,9 +385,7 @@ cssselect2==0.7.0 \
 defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
     --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
-    # via
-    #   odfpy
-    #   python3-openid
+    # via python3-openid
 deprecated==1.2.15 \
     --hash=sha256:353bc4a8ac4bfc96800ddab349d89c25dec1079f65fd53acdcc1e0b975b21320 \
     --hash=sha256:683e561a90de76239796e6b6feac66b99030d2dd3fcf61ef996330f14bbb9b0d
@@ -396,10 +394,6 @@ deprecated==1.2.15 \
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-semantic-conventions
-diff-match-patch==20241021 \
-    --hash=sha256:93cea333fb8b2bc0d181b0de5e16df50dd344ce64828226bda07728818936782 \
-    --hash=sha256:beae57a99fa48084532935ee2968b8661db861862ec82c6f21f4acdd6d835073
-    # via django-import-export
 django==4.2.17 \
     --hash=sha256:3a93350214ba25f178d4045c0786c61573e7dbfa3c509b3551374f1e11ba8de0 \
     --hash=sha256:6b56d834cc94c8b21a8f4e775064896be3b4a4ca387f2612d4406a5927cd2fdc
@@ -412,7 +406,6 @@ django==4.2.17 \
     #   django-filter
     #   django-flags
     #   django-ical
-    #   django-import-export
     #   django-js-asset
     #   django-markdownify
     #   django-money
@@ -462,10 +455,6 @@ django-flags==5.0.13 \
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
     --hash=sha256:74a16bca05735f91a00120cad7250f3c3aa292a9f698a6cfdc544a922c11de70
-    # via -r src/backend/requirements.in
-django-import-export==3.2.0 \
-    --hash=sha256:1d3f2cb2ee3cca0386ed60651fa1623be989f130d9fbdf98a67f7dc3a94b8a37 \
-    --hash=sha256:38fd7b9439b9e3aa1a4747421c1087a5bc194e915a28d795fb8429a5f8028f2d
     # via -r src/backend/requirements.in
 django-ipware==7.0.1 \
     --hash=sha256:d9ec43d2bf7cdf216fed8d494a084deb5761a54860a53b2e74346a4f384cff47 \
@@ -1000,9 +989,6 @@ oauthlib==3.2.2 \
     --hash=sha256:8139f29aac13e25d502680e9e19963e83f16838d48a0d71c287fe40e7067fbca \
     --hash=sha256:9859c40929662bec5d64f34d01c99e093149682a3f38915dc0655d5a633dd918
     # via requests-oauthlib
-odfpy==1.4.1 \
-    --hash=sha256:db766a6e59c5103212f3cc92ec8dd50a0f3a02790233ed0b52148b70d3c438ec
-    # via tablib
 openpyxl==3.1.5 \
     --hash=sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2 \
     --hash=sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050
@@ -1593,12 +1579,10 @@ structlog==24.4.0 \
     --hash=sha256:597f61e80a91cc0749a9fd2a098ed76715a1c8a01f73e336b746504d1aad7610 \
     --hash=sha256:b27bfecede327a6d2da5fbc96bd859f114ecc398a6389d664f62085ee7ae6fc4
     # via django-structlog
-tablib[html, ods, xls, xlsx, yaml]==3.7.0 \
-    --hash=sha256:9a6930037cfe0f782377963ca3f2b1dae3fd4cdbf0883848f22f1447e7bb718b \
-    --hash=sha256:f9db84ed398df5109bd69c11d46613d16cc572fb9ad3213f10d95e2b5f12c18e
-    # via
-    #   -r src/backend/requirements.in
-    #   django-import-export
+tablib[xls, xlsx, yaml]==3.5.0 \
+    --hash=sha256:9821caa9eca6062ff7299fa645e737aecff982e6b2b42046928a6413c8dabfd9 \
+    --hash=sha256:f6661dfc45e1d4f51fa8a6239f9c8349380859a5bfaa73280645f046d6c96e33
+    # via -r src/backend/requirements.in
 tinycss2==1.4.0 \
     --hash=sha256:10c0972f6fc0fbee87c3edb76549357415e94548c1ae10ebccdea16fb404a9b7 \
     --hash=sha256:3a49cf47b7675da0b15d0c6e1df8df4ebd96e9394bb905a5775adb0d884c5289

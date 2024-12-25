@@ -1,13 +1,13 @@
 """DRF API definition for the 'users' app."""
 
 import datetime
-import logging
 
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
+import structlog
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
 from rest_framework.generics import DestroyAPIView
@@ -39,7 +39,7 @@ from users.serializers import (
     RoleSerializer,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class OwnerList(ListAPI):
