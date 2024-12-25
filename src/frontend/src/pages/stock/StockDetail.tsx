@@ -661,7 +661,6 @@ export default function StockDetail() {
   const stockActions = useMemo(() => {
     const inStock =
       user.hasChangeRole(UserRoles.stock) &&
-      stockitem.quantity > 0 &&
       !stockitem.sales_order &&
       !stockitem.belongs_to &&
       !stockitem.customer &&
@@ -717,7 +716,7 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove Stock`,
-            hidden: serialized || !inStock,
+            hidden: serialized || !inStock || stockitem.quantity <= 0,
             icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
