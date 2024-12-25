@@ -282,7 +282,6 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'import_export',  # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering
@@ -586,12 +585,10 @@ REST_AUTH = {
     'TOKEN_MODEL': 'users.models.ApiToken',
     'TOKEN_CREATOR': 'users.models.default_create_token',
     'USE_JWT': USE_JWT,
+    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
 }
 
 OLD_PASSWORD_FIELD_ENABLED = True
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.CustomRegisterSerializer'
-}
 
 # JWT settings - rest_framework_simplejwt
 if USE_JWT:
@@ -1051,9 +1048,6 @@ USE_I18N = True
 USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
-
-# Use database transactions when importing / exporting data
-IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
