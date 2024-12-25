@@ -20,7 +20,9 @@ from allauth_2fa.utils import user_has_valid_totp_device
 from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
-from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.registration.serializers import (
+    RegisterSerializer as DjRestRegisterSerializer,
+)
 from rest_framework import serializers
 
 import InvenTree.helpers_model
@@ -385,15 +387,10 @@ class CustomSocialAccountAdapter(
 
 
 # override dj-rest-auth
-class CustomRegisterSerializer(RegisterSerializer):
-    """Override of serializer to use dynamic settings."""
+class RegisterSerializer(DjRestRegisterSerializer):
+    """Registration requires email, password (twice) and username."""
 
     email = serializers.EmailField()
-
-    def __init__(self, instance=None, data=..., **kwargs):
-        """Check settings to influence which fields are needed."""
-        kwargs['email_required'] = get_global_setting('LOGIN_MAIL_REQUIRED')
-        super().__init__(instance, data, **kwargs)
 
     def save(self, request):
         """Override to check if registration is open."""
