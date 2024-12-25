@@ -29,8 +29,8 @@ class TestForwardMigrations(MigratorTestCase):
 class MFAMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the users app."""
 
-    migrate_from = ('users', '0011_auto_20240119_1659')
-    migrate_to = ('users', '0012_migrate_mfa_20240408_1659')
+    migrate_from = ('users', '0012_alter_ruleset_can_view')
+    migrate_to = ('users', '0013_migrate_mfa_20240408_1659')
 
     def prepare(self):
         """Setup the initial state of the database before migrations."""
