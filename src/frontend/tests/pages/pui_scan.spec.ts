@@ -8,6 +8,17 @@ const scan = async (page, barcode) => {
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
 };
 
+test('Scanning - Dialog', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+  await scan(page, '{"part": 15}');
+
+  await page.getByText('Part: R_550R_0805_1%', { exact: true }).waitFor();
+  await page.getByText('Available:').waitFor();
+  await page.getByText('Required:').waitFor();
+});
+
 test('Scanning - Basic', async ({ page }) => {
   await doQuickLogin(page);
 

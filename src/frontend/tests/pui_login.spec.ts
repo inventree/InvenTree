@@ -92,6 +92,4 @@ test('Login - Failures', async ({ page }) => {
   await page.getByLabel('login-password').fill('');
 
   await loginWithError();
-
-  await page.waitForTimeout(2500);
 });
