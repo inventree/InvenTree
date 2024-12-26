@@ -21,10 +21,10 @@ Barcodes can be linked with the following data model types:
 - [Stock Item](../stock/stock.md#stock-item)
 - [Stock Location](../stock/stock.md#stock-location)
 - [Supplier Part](../order/company.md#supplier-parts)
-- [Purchase Order](../order/purchase.md#purchase-order)
-- [Sales Order](../order/sales.md#sales-order)
-- [Return Order](../order/return.md#return-order)
-- [Build Order](../build/build.md#build-order)
+- [Purchase Order](../order/purchase_order.md#purchase-orders)
+- [Sales Order](../order/sales_order.md#sales-orders)
+- [Return Order](../order/return_order.md#return-orders)
+- [Build Order](../build/build.md#build-orders)
 
 ### Configuration Options
 
