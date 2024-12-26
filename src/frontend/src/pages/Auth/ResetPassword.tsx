@@ -17,7 +17,7 @@ import { LanguageContext } from '../../contexts/LanguageContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
-export default function Set_Password() {
+export default function ResetPassword() {
   const simpleForm = useForm({ initialValues: { password: '' } });
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
