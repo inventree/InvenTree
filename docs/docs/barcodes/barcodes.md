@@ -40,10 +40,7 @@ The barcode system can be configured via the [global settings](../settings/globa
 
 ## Web Integration
 
-Barcode scanning can be enabled within the web interface. Barcode scanning in the web interface supports scanning via:
-
-- Keyboard style scanners (e.g. USB connected)
-- Webcam (image processing)
+Barcode scanning can be enabled within the web interface. This allows users to scan barcodes directly from the web browser.
 
 ### Input Modes
 
