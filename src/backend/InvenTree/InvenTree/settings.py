@@ -77,7 +77,7 @@ if version_file.exists():
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
