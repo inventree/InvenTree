@@ -13,7 +13,15 @@ InvenTree has native support for barcodes, which provides powerful functionality
 - Barcodes can be embedded in [labels or reports](../report/barcodes.md)
 - Barcode functionality can be [extended via plugins](../extend/plugins/barcode.md)
 
-### Barcode Data Types
+### Barcode Formats
+
+InvenTree supports the following barcode formats:
+
+- [Internal Barcodes](./internal.md): Native InvenTree barcodes, which are automatically generated for each item
+- [External Barcodes](./external.md): External (third party) barcodes which can be assigned to items
+- [Custom Barcodes](./custom.md): Fully customizable barcodes can be generated using the plugin system.
+
+### Barcode Model Linking
 
 Barcodes can be linked with the following data model types:
 
