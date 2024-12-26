@@ -25,6 +25,7 @@ export default function BarcodeKeyboardInput({
     <>
       <Stack gap='sm'>
         <TextInput
+          aria-label='barcode-scan-keyboard-input'
           value={text}
           onChange={(event) => {
             setText(event.currentTarget?.value);

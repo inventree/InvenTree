@@ -48,7 +48,7 @@ export function BarcodeInput({
       value: 'scanner',
       label: (
         <Tooltip label={t`Scanner Input`}>
-          <IconScan size={20} />
+          <IconScan size={20} aria-label='barcode-input-scanner' />
         </Tooltip>
       )
     });
@@ -58,7 +58,7 @@ export function BarcodeInput({
       value: 'camera',
       label: (
         <Tooltip label={t`Camera Input`}>
-          <IconCamera size={20} />
+          <IconCamera size={20} aria-label='barcode-input-camera' />
         </Tooltip>
       )
     });
@@ -67,7 +67,7 @@ export function BarcodeInput({
       value: 'keyboard',
       label: (
         <Tooltip label={t`Keyboard Input`}>
-          <IconKeyboard size={20} />
+          <IconKeyboard size={20} aria-label='barcode-input-keyboard' />
         </Tooltip>
       )
     });
@@ -100,6 +100,7 @@ export function BarcodeInput({
       <LoadingOverlay visible={processing} />
       <Stack gap='xs'>
         <SegmentedControl
+          aria-label='barcode-input-type'
           size='xs'
           data={scanningOptions}
           value={inputType || 'scanner'}
