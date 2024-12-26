@@ -91,6 +91,7 @@ export const doBasicLogin = async (
     )
     .then((response) => {
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
+        setSession(response.data.meta.session_token);
         setToken(response.data.meta.access_token);
         result = true;
       }
@@ -121,11 +122,16 @@ export const doBasicLogin = async (
  * @arg deleteToken: If true, delete the token from the server
  */
 export const doLogout = async (navigate: NavigateFunction) => {
-  const { clearUserState, isLoggedIn } = useUserState.getState();
+  const { clearUserState, isLoggedIn, setSession } = useUserState.getState();
+  const { session } = useUserState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
-    await api.post(apiUrl(ApiEndpoints.user_logout)).catch(() => {});
+    await api
+      .delete(apiUrl(ApiEndpoints.user_logout), {
+        headers: { 'X-Session-Token': session }
+      })
+      .catch(() => {});
 
     showLoginNotification({
       title: t`Logged Out`,
@@ -133,6 +139,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
     });
   }
 
+  setSession(undefined);
   clearUserState();
   clearCsrfCookie();
   navigate('/login');

@@ -26,7 +26,7 @@ export enum ApiEndpoints {
   user_email_primary = 'auth/emails/:id/primary/',
   user_login = '_allauth/app/v1/auth/login',
   user_login_mfa = '_allauth/app/v1/auth/2fa/authenticate',
-  user_logout = 'auth/logout/',
+  user_logout = '_allauth/app/v1/auth/session',
   user_register = 'auth/registration/',
 
   // Generic API endpoints
