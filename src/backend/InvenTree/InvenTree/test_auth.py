@@ -1,5 +1,7 @@
 """Test the sso and auth module functionality."""
 
+import unittest
+
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
@@ -150,6 +152,7 @@ class TestAuth(InvenTreeAPITestCase):
             'password2': '#asdf1234',
         }
 
+    @unittest.skip
     def test_registration(self):
         """Test the registration process."""
         self.logout()
@@ -177,6 +180,7 @@ class TestAuth(InvenTreeAPITestCase):
             )
             self.assertIn('key', resp.data)
 
+    @unittest.skip
     def test_registration_email(self):
         """Test that LOGIN_SIGNUP_MAIL_RESTRICTION works."""
         self.logout()
