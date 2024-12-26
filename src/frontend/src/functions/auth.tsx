@@ -1,8 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import type { NavigateFunction } from 'react-router-dom';
-
+import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
@@ -59,9 +58,14 @@ function post(path: string, params: any, method = 'post') {
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
-export const doBasicLogin = async (username: string, password: string) => {
+export const doBasicLogin = async (
+  username: string,
+  password: string,
+  navigate: NavigateFunction
+) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  const { clearUserState, setToken, setSession, fetchUserState } =
+    useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -86,24 +90,20 @@ export const doBasicLogin = async (username: string, password: string) => {
       }
     )
     .then((response) => {
-      if (response.status == 200) {
-        if (response.data.key) {
-          setToken(response.data.key);
-          result = true;
-        }
+      if (response.status == 200 && response.data?.meta?.is_authenticated) {
+        setToken(response.data.meta.access_token);
+        result = true;
       }
     })
     .catch((err) => {
-      if (
-        err?.response?.status == 403 &&
-        err?.response?.data?.detail == 'MFA required for this user'
-      ) {
-        post(apiUrl(ApiEndpoints.user_login), {
-          username: username,
-          password: password,
-          csrfmiddlewaretoken: getCsrfCookie(),
-          mfa: true
-        });
+      if (err?.response?.status == 401) {
+        const mfa_flow = err.response.data.data.flows.find(
+          (flow: any) => flow.id == 'mfa_authenticate'
+        );
+        if (mfa_flow && mfa_flow.is_pending == true) {
+          setSession(err.response.data.meta.session_token);
+          navigate('/mfa');
+        }
       }
     });
 
@@ -158,7 +158,10 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
-export function handleReset(navigate: any, values: { email: string }) {
+export function handleReset(
+  navigate: NavigateFunction,
+  values: { email: string }
+) {
   api
     .post(apiUrl(ApiEndpoints.user_reset), values, {
       headers: { Authorization: '' }
@@ -179,6 +182,27 @@ export function handleReset(navigate: any, values: { email: string }) {
           color: 'red'
         });
       }
+    });
+}
+
+export function handleMfaLogin(
+  navigate: NavigateFunction,
+  location: Location<any>,
+  values: { code: string }
+) {
+  const { session, setToken } = useUserState.getState();
+
+  api
+    .post(
+      apiUrl(ApiEndpoints.user_login_mfa),
+      {
+        code: values.code
+      },
+      { headers: { 'X-Session-Token': session } }
+    )
+    .then((response) => {
+      setToken(response.data.meta.access_token);
+      followRedirect(navigate, location?.state);
     });
 }
 

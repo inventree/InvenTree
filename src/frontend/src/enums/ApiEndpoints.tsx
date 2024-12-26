@@ -24,7 +24,8 @@ export enum ApiEndpoints {
   user_email_remove = 'auth/emails/:id/remove/',
   user_email_verify = 'auth/emails/:id/verify/',
   user_email_primary = 'auth/emails/:id/primary/',
-  user_login = 'auth/login/',
+  user_login = '_allauth/app/v1/auth/login',
+  user_login_mfa = '_allauth/app/v1/auth/2fa/authenticate',
   user_logout = 'auth/logout/',
   user_register = 'auth/registration/',
 

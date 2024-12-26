@@ -59,7 +59,8 @@ export default function Login() {
     if (searchParams.has('login') && searchParams.has('password')) {
       doBasicLogin(
         searchParams.get('login') ?? '',
-        searchParams.get('password') ?? ''
+        searchParams.get('password') ?? '',
+        navigate
       ).then(() => {
         followRedirect(navigate, location?.state);
       });

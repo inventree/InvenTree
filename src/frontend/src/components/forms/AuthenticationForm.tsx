@@ -45,7 +45,11 @@ export function AuthenticationForm() {
     setIsLoggingIn(true);
 
     if (classicLoginMode === true) {
-      doBasicLogin(classicForm.values.username, classicForm.values.password)
+      doBasicLogin(
+        classicForm.values.username,
+        classicForm.values.password,
+        navigate
+      )
         .then(() => {
           setIsLoggingIn(false);
 

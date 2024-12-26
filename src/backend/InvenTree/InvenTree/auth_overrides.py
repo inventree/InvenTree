@@ -11,12 +11,14 @@ from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
+from allauth.headless.tokens.sessions import SessionTokenStrategy
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 import InvenTree.helpers_model
 import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
+from users.models import ApiToken
 
 logger = logging.getLogger('inventree')
 
@@ -219,3 +221,12 @@ class CustomSocialAccountAdapter(
         # Log the error to the database
         log_error(path, error_name=error, error_data=exception)
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
+
+
+class DRFTokenStrategy(SessionTokenStrategy):
+    """Strategy that InvenTrees own included Token model."""
+
+    def create_access_token(self, request):
+        """Create a new access token for the user."""
+        token, _ = ApiToken.objects.get_or_create(user=request.user)
+        return token.key

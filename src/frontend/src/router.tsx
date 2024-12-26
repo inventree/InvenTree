@@ -104,6 +104,7 @@ export const NotFound = Loadable(
   lazy(() => import('./components/errors/NotFound'))
 );
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const MFALogin = Loadable(lazy(() => import('./pages/Auth/MFALogin')));
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
 export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
@@ -165,6 +166,7 @@ export const routes = (
     </Route>
     <Route path='/' errorElement={<ErrorPage />}>
       <Route path='/login' element={<Login />} />,
+      <Route path='/mfa' element={<MFALogin />} />,
       <Route path='/logout' element={<Logout />} />,
       <Route path='/logged-in' element={<Logged_In />} />
       <Route path='/reset-password' element={<Reset />} />

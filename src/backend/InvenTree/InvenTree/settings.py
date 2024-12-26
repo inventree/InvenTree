@@ -20,6 +20,7 @@ from django.core.validators import URLValidator
 from django.http import Http404
 
 import structlog
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -1165,6 +1166,9 @@ USE_X_FORWARDED_PORT = get_boolean_setting(
 # Refer to the django-cors-headers documentation for more information
 # Ref: https://github.com/adamchainz/django-cors-headers
 
+
+CORS_ALLOW_HEADERS = (*default_headers, 'x-session-token')
+
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
     'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
@@ -1290,6 +1294,7 @@ HEADLESS_FRONTEND_URLS = {
     'account_signup': 'https://app.org/account/signup',
 }
 HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
 MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
 # Markdownify configuration
