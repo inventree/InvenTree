@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { StylishText } from '../../components/items/StylishText';
+import { ProtectedRoute } from '../../components/nav/Layout';
 import { LanguageContext } from '../../contexts/LanguageContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
@@ -80,42 +81,44 @@ export default function Set_Password() {
 
   return (
     <LanguageContext>
-      <Center mih='100vh'>
-        <Container w='md' miw={425}>
-          <Stack>
-            <StylishText size='xl'>{t`Reset Password`}</StylishText>
-            <Divider />
-            {user.username() && (
-              <Paper>
-                <Group>
-                  <StylishText size='md'>{t`User`}</StylishText>
-                  <Text>{user.username()}</Text>
-                </Group>
-              </Paper>
-            )}
-            <Divider />
-            <Stack gap='xs'>
-              <PasswordInput
-                required
-                aria-label='input-password-1'
-                label={t`New Password`}
-                description={t`Enter your new password`}
-                {...simpleForm.getInputProps('new_password1')}
-              />
-              <PasswordInput
-                required
-                aria-label='input-password-2'
-                label={t`Confirm New Password`}
-                description={t`Confirm your new password`}
-                {...simpleForm.getInputProps('new_password2')}
-              />
+      <ProtectedRoute>
+        <Center mih='100vh'>
+          <Container w='md' miw={425}>
+            <Stack>
+              <StylishText size='xl'>{t`Reset Password`}</StylishText>
+              <Divider />
+              {user.username() && (
+                <Paper>
+                  <Group>
+                    <StylishText size='md'>{t`User`}</StylishText>
+                    <Text>{user.username()}</Text>
+                  </Group>
+                </Paper>
+              )}
+              <Divider />
+              <Stack gap='xs'>
+                <PasswordInput
+                  required
+                  aria-label='input-password-1'
+                  label={t`New Password`}
+                  description={t`Enter your new password`}
+                  {...simpleForm.getInputProps('new_password1')}
+                />
+                <PasswordInput
+                  required
+                  aria-label='input-password-2'
+                  label={t`Confirm New Password`}
+                  description={t`Confirm your new password`}
+                  {...simpleForm.getInputProps('new_password2')}
+                />
+              </Stack>
+              <Button type='submit' onClick={handleSet}>
+                <Trans>Confirm</Trans>
+              </Button>
             </Stack>
-            <Button type='submit' onClick={handleSet}>
-              <Trans>Confirm</Trans>
-            </Button>
-          </Stack>
-        </Container>
-      </Center>
+          </Container>
+        </Center>
+      </ProtectedRoute>
     </LanguageContext>
   );
 }
