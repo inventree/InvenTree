@@ -1508,17 +1508,22 @@ class StockItem(
         """
         return self.children.count()
 
-    def is_in_stock(self, check_status: bool = True):
+    def is_in_stock(
+        self, check_status: bool = True, check_quantity: bool = True
+    ) -> bool:
         """Return True if this StockItem is "in stock".
 
         Args:
             check_status: If True, check the status of the StockItem. Defaults to True.
+            check_quantity: If True, check the quantity of the StockItem. Defaults to True.
         """
         if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
             return False
 
+        if check_quantity and self.quantity <= 0:
+            return False
+
         return all([
-            self.quantity > 0,  # Quantity must be greater than zero
             self.sales_order is None,  # Not assigned to a SalesOrder
             self.belongs_to is None,  # Not installed inside another StockItem
             self.customer is None,  # Not assigned to a customer
