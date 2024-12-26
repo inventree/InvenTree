@@ -9,8 +9,6 @@ from plugin.base.event.events import trigger_event
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import EventMixin
 
-from .event_sample import logger
-
 
 class EventPluginSampleTests(TestCase):
     """Tests for EventPluginSample."""
@@ -27,7 +25,7 @@ class EventPluginSampleTests(TestCase):
         # Enable event testing
         settings.PLUGIN_TESTING_EVENTS = True
         # Check that an event is issued
-        with self.assertLogs(logger=logger.name, level='DEBUG') as cm:
+        with self.assertLogs(logger='inventree', level='DEBUG') as cm:
             trigger_event('test.event')
         self.assertIn(
             'DEBUG:inventree:Event `test.event` triggered in sample plugin', cm[1]
