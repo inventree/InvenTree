@@ -97,12 +97,14 @@ export default function Set_Password() {
             <Stack gap='xs'>
               <PasswordInput
                 required
+                aria-label='input-password-1'
                 label={t`New Password`}
                 description={t`Enter your new password`}
                 {...simpleForm.getInputProps('new_password1')}
               />
               <PasswordInput
                 required
+                aria-label='input-password-2'
                 label={t`Confirm New Password`}
                 description={t`Confirm your new password`}
                 {...simpleForm.getInputProps('new_password2')}
