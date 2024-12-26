@@ -1571,7 +1571,9 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not pk.is_in_stock(check_status=False):
+        if not allow_out_of_stock_transfer and not pk.is_in_stock(
+            check_status=False, check_quantity=False
+        ):
             raise ValidationError(_('Stock item is not in stock'))
 
         return pk
