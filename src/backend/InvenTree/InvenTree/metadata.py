@@ -388,7 +388,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 model = field.queryset.model
             else:
                 logger.debug(
-                    'Could not extract model for:', field_info.get('label'), '->', field
+                    'Could not extract model for: %s -> %s',
+                    field_info.get('label'),
+                    field,
                 )
                 model = None
 
