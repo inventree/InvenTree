@@ -50,7 +50,7 @@ export function AuthenticationForm() {
         classicForm.values.password,
         navigate
       )
-        .then(() => {
+        .then((success) => {
           setIsLoggingIn(false);
 
           if (isLoggedIn()) {
@@ -59,6 +59,8 @@ export function AuthenticationForm() {
               message: t`Logged in successfully`
             });
             followRedirect(navigate, location?.state);
+          } else if (success) {
+            // MFA login
           } else {
             showLoginNotification({
               title: t`Login failed`,

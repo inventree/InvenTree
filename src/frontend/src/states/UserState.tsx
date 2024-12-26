@@ -17,7 +17,7 @@ export interface UserStateProps {
   setToken: (newToken: string) => void;
   clearToken: () => void;
   session: string | undefined;
-  setSession: (newSession: string) => void;
+  setSession: (newSession: string | undefined) => void;
   fetchUserToken: () => void;
   fetchUserState: () => void;
   clearUserState: () => void;
@@ -54,7 +54,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     setApiDefaults();
   },
   session: undefined,
-  setSession: (newSession: string) => {
+  setSession: (newSession: string | undefined) => {
     set({ session: newSession });
   },
   userId: () => {

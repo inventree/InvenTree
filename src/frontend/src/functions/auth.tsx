@@ -75,7 +75,8 @@ export const doBasicLogin = async (
 
   const login_url = apiUrl(ApiEndpoints.user_login);
 
-  let result = false;
+  let loginDone = false;
+  let success = false;
 
   // Attempt login with
   await api
@@ -93,7 +94,8 @@ export const doBasicLogin = async (
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
         setSession(response.data.meta.session_token);
         setToken(response.data.meta.access_token);
-        result = true;
+        loginDone = true;
+        success = true;
       }
     })
     .catch((err) => {
@@ -103,17 +105,19 @@ export const doBasicLogin = async (
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
           setSession(err.response.data.meta.session_token);
+          success = true;
           navigate('/mfa');
         }
       }
     });
 
-  if (result) {
+  if (loginDone) {
     await fetchUserState();
     fetchGlobalStates();
   } else {
     clearUserState();
   }
+  return success;
 };
 
 /**
