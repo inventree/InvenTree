@@ -710,7 +710,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
               highlightOnHover
               loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
-              idAccessor={tableState.idAccessor}
+              idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
