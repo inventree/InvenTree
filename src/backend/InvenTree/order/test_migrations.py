@@ -96,7 +96,7 @@ class TestShipmentMigration(MigratorTestCase):
 
         customer = Company.objects.create(
             name='My customer',
-            description='A customer we sell stuff too',
+            description='A customer we sell stuff to',
             is_customer=True,
         )
 

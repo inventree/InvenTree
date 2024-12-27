@@ -48,7 +48,8 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data);
+        .then((res) => res.data)
+        .catch(() => {});
     }
   });
 
@@ -102,18 +103,21 @@ export default function QueryCountDashboardWidget({
   title,
   description,
   modelType,
+  enabled = true,
   params
 }: {
   label: string;
   title: string;
   description: string;
   modelType: ModelType;
+  enabled?: boolean;
   params: any;
 }): DashboardWidgetProps {
   return {
     label: label,
     title: title,
     description: description,
+    enabled: enabled,
     minWidth: 2,
     minHeight: 1,
     render: () => (

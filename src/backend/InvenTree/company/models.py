@@ -222,9 +222,7 @@ class Company(
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('company-detail', kwargs={'pk': self.id})
-        return InvenTree.helpers.pui_url(f'/company/{self.id}')
+        return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
     def get_image_url(self):
         """Return the URL of the image for this company."""
@@ -672,8 +670,6 @@ class SupplierPart(
 
     def get_absolute_url(self):
         """Return the web URL of the detail view for this SupplierPart."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('supplier-part-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/purchasing/supplier-part/{self.id}')
 
     def api_instance_filters(self):
@@ -1050,11 +1046,14 @@ class SupplierPriceBreak(common.models.PriceBreak):
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
     if (
-        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-        and not InvenTree.ready.isImportingData()
+        (
+            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+            and not InvenTree.ready.isImportingData()
+        )
+        and instance.part
+        and instance.part.part
     ):
-        if instance.part and instance.part.part:
-            instance.part.part.schedule_pricing_update(create=True)
+        instance.part.part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1065,8 +1064,11 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
     if (
-        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-        and not InvenTree.ready.isImportingData()
+        (
+            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+            and not InvenTree.ready.isImportingData()
+        )
+        and instance.part
+        and instance.part.part
     ):
-        if instance.part and instance.part.part:
-            instance.part.part.schedule_pricing_update(create=False)
+        instance.part.part.schedule_pricing_update(create=False)

@@ -31,9 +31,7 @@ Configuration of basic server settings:
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE") }}
 {{ globalsetting("INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT") }}
-{{ globalsetting("INVENTREE_REQUIRE_CONFIRM") }}
 {{ globalsetting("INVENTREE_STRICT_URLS") }}
-{{ globalsetting("INVENTREE_TREE_DEPTH") }}
 {{ globalsetting("INVENTREE_BACKUP_ENABLE") }}
 {{ globalsetting("INVENTREE_BACKUP_DAYS") }}
 {{ globalsetting("INVENTREE_DELETE_TASKS_DAYS") }}

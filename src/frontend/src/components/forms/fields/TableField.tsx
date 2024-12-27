@@ -213,6 +213,7 @@ export function TableField({
  */
 export function TableFieldExtraRow({
   visible,
+  fieldName,
   fieldDefinition,
   defaultValue,
   emptyValue,
@@ -220,6 +221,7 @@ export function TableFieldExtraRow({
   onValueChange
 }: {
   visible: boolean;
+  fieldName?: string;
   fieldDefinition: ApiFormFieldType;
   defaultValue?: any;
   error?: string;
@@ -253,9 +255,10 @@ export function TableFieldExtraRow({
               <InvenTreeIcon icon='downright' />
             </Container>
             <StandaloneField
+              fieldName={fieldName ?? 'field'}
               fieldDefinition={field}
               defaultValue={defaultValue}
-              error={error}
+              error={fieldDefinition.error ?? error}
             />
           </Group>
         </Table.Td>

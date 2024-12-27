@@ -1,4 +1,4 @@
-"""Custom query filters for the Part models.
+"""Custom query filters for the Part app.
 
 The code here makes heavy use of subquery annotations!
 

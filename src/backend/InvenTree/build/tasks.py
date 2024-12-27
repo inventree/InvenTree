@@ -3,13 +3,12 @@
 import logging
 import random
 import time
-
 from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.template.loader import render_to_string
 from django.db import transaction
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
@@ -21,6 +20,7 @@ import InvenTree.helpers_email
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models as part_models
+from build.events import BuildEvents
 from build.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 from plugin.events import trigger_event
@@ -33,7 +33,10 @@ def auto_allocate_build(build_id: int, **kwargs):
     build_order = build_models.Build.objects.filter(pk=build_id).first()
 
     if not build_order:
-        logger.warning("Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist", build_id)
+        logger.warning(
+            'Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist',
+            build_id,
+        )
         return
 
     build_order.auto_allocate_stock(**kwargs)
@@ -47,13 +50,19 @@ def complete_build_allocations(build_id: int, user_id: int):
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
-            logger.warning("Could not complete build allocations for BuildOrder <%s> - User does not exist", build_id)
+            logger.warning(
+                'Could not complete build allocations for BuildOrder <%s> - User does not exist',
+                build_id,
+            )
             return
     else:
         user = None
 
     if not build_order:
-        logger.warning("Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist", build_id)
+        logger.warning(
+            'Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist',
+            build_id,
+        )
         return
 
     build_order.complete_allocations(user)
@@ -64,7 +73,7 @@ def update_build_order_lines(bom_item_pk: int):
 
     This task is triggered when a BomItem is created or updated.
     """
-    logger.info("Updating build order lines for BomItem %s", bom_item_pk)
+    logger.info('Updating build order lines for BomItem %s', bom_item_pk)
 
     bom_item = part_models.BomItem.objects.filter(pk=bom_item_pk).first()
 
@@ -76,16 +85,14 @@ def update_build_order_lines(bom_item_pk: int):
 
     # Find all active builds which reference any of the parts
     builds = build_models.Build.objects.filter(
-        part__in=list(assemblies),
-        status__in=BuildStatusGroups.ACTIVE_CODES
+        part__in=list(assemblies), status__in=BuildStatusGroups.ACTIVE_CODES
     )
 
     # Iterate through each build, and update the relevant line items
     for bo in builds:
         # Try to find a matching build order line
         line = build_models.BuildLine.objects.filter(
-            build=bo,
-            bom_item=bom_item,
+            build=bo, bom_item=bom_item
         ).first()
 
         q = bom_item.get_required_quantity(bo.quantity)
@@ -98,13 +105,13 @@ def update_build_order_lines(bom_item_pk: int):
         else:
             # Create a new line item
             build_models.BuildLine.objects.create(
-                build=bo,
-                bom_item=bom_item,
-                quantity=q,
+                build=bo, bom_item=bom_item, quantity=q
             )
 
     if builds.count() > 0:
-        logger.info("Updated %s build orders for part %s", builds.count(), bom_item.part)
+        logger.info(
+            'Updated %s build orders for part %s', builds.count(), bom_item.part
+        )
 
 
 def check_build_stock(build: build_models.Build):
@@ -132,7 +139,6 @@ def check_build_stock(build: build_models.Build):
         return
 
     for bom_item in part.get_bom_items():
-
         sub_part = bom_item.sub_part
 
         # The 'in stock' quantity depends on whether the bom_item allows variants
@@ -148,7 +154,9 @@ def check_build_stock(build: build_models.Build):
             # There is not sufficient stock for this part
 
             lines.append({
-                'link': InvenTree.helpers_model.construct_absolute_url(sub_part.get_absolute_url()),
+                'link': InvenTree.helpers_model.construct_absolute_url(
+                    sub_part.get_absolute_url()
+                ),
                 'part': sub_part,
                 'in_stock': in_stock,
                 'allocated': allocated,
@@ -163,29 +171,32 @@ def check_build_stock(build: build_models.Build):
     # Are there any users subscribed to these parts?
     subscribers = build.part.get_subscribers()
 
-    emails = EmailAddress.objects.filter(
-        user__in=subscribers,
-    )
+    emails = EmailAddress.objects.filter(user__in=subscribers)
 
     if len(emails) > 0:
-
-        logger.info("Notifying users of stock required for build %s", build.pk)
+        logger.info('Notifying users of stock required for build %s', build.pk)
 
         context = {
-            'link': InvenTree.helpers_model.construct_absolute_url(build.get_absolute_url()),
+            'link': InvenTree.helpers_model.construct_absolute_url(
+                build.get_absolute_url()
+            ),
             'build': build,
             'part': build.part,
             'lines': lines,
         }
 
         # Render the HTML message
-        html_message = render_to_string('email/build_order_required_stock.html', context)
+        html_message = render_to_string(
+            'email/build_order_required_stock.html', context
+        )
 
-        subject = _("Stock required for build order")
+        subject = _('Stock required for build order')
 
         recipients = emails.values_list('email', flat=True)
 
-        InvenTree.helpers_email.send_email(subject, '', recipients, html_message=html_message)
+        InvenTree.helpers_email.send_email(
+            subject, '', recipients, html_message=html_message
+        )
 
 
 def create_child_builds(build_id: int) -> None:
@@ -194,7 +205,6 @@ def create_child_builds(build_id: int) -> None:
     - Will create a build order for each assembly part in the BOM
     - Runs recursively, also creating child builds for each sub-assembly part
     """
-
     try:
         build_order = build_models.Build.objects.get(pk=build_id)
     except (build_models.Build.DoesNotExist, ValueError):
@@ -214,13 +224,12 @@ def create_child_builds(build_id: int) -> None:
         for item in assembly_items:
             quantity = item.quantity * build_order.quantity
 
-
             # Check if the child build order has already been created
             if build_models.Build.objects.filter(
                 part=item.sub_part,
                 parent=build_order,
                 quantity=quantity,
-                status__in=BuildStatusGroups.ACTIVE_CODES
+                status__in=BuildStatusGroups.ACTIVE_CODES,
             ).exists():
                 continue
 
@@ -240,11 +249,7 @@ def create_child_builds(build_id: int) -> None:
 
         for pk in sub_build_ids:
             # Offload the child build order creation to the background task queue
-            InvenTree.tasks.offload_task(
-                create_child_builds,
-                pk,
-                group='build'
-            )
+            InvenTree.tasks.offload_task(create_child_builds, pk, group='build')
 
 
 def notify_overdue_build_order(bo: build_models.Build):
@@ -262,24 +267,16 @@ def notify_overdue_build_order(bo: build_models.Build):
     context = {
         'order': bo,
         'name': name,
-        'message': _(f"Build order {bo} is now overdue"),
-        'link': InvenTree.helpers_model.construct_absolute_url(
-            bo.get_absolute_url(),
-        ),
-        'template': {
-            'html': 'email/overdue_build_order.html',
-            'subject': name,
-        }
+        'message': _(f'Build order {bo} is now overdue'),
+        'link': InvenTree.helpers_model.construct_absolute_url(bo.get_absolute_url()),
+        'template': {'html': 'email/overdue_build_order.html', 'subject': name},
     }
 
-    event_name = 'build.overdue_build_order'
+    event_name = BuildEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(
-        bo,
-        event_name,
-        targets=targets,
-        context=context
+        bo, event_name, targets=targets, context=context
     )
 
     # Register a matching event to the plugin system
@@ -297,8 +294,7 @@ def check_overdue_build_orders():
     yesterday = InvenTree.helpers.current_date() - timedelta(days=1)
 
     overdue_orders = build_models.Build.objects.filter(
-        target_date=yesterday,
-        status__in=BuildStatusGroups.ACTIVE_CODES
+        target_date=yesterday, status__in=BuildStatusGroups.ACTIVE_CODES
     )
 
     for bo in overdue_orders:

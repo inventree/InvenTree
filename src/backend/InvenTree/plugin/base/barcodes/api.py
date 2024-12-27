@@ -57,7 +57,7 @@ class BarcodeView(CreateAPIView):
             return
 
         # Ensure that the response data is stringified first, otherwise cannot be JSON encoded
-        if type(response) is dict:
+        if isinstance(response, dict):
             response = {key: str(value) for key, value in response.items()}
         elif response is None:
             pass
@@ -65,7 +65,7 @@ class BarcodeView(CreateAPIView):
             response = str(response)
 
         # Ensure that the context data is stringified first, otherwise cannot be JSON encoded
-        if type(context) is dict:
+        if isinstance(context, dict):
             context = {key: str(value) for key, value in context.items()}
         elif context is None:
             pass
@@ -92,7 +92,7 @@ class BarcodeView(CreateAPIView):
 
             if num_scans > max_scans:
                 n = num_scans - max_scans
-                old_scan_ids = (
+                old_scan_ids = list(
                     BarcodeScanResult.objects.all()
                     .order_by('timestamp')
                     .values_list('pk', flat=True)[:n]
@@ -151,9 +151,16 @@ class BarcodeView(CreateAPIView):
         response = {}
 
         for current_plugin in plugins:
-            result = current_plugin.scan(barcode)
+            try:
+                result = current_plugin.scan(barcode)
+            except Exception:
+                log_error('BarcodeView.scan_barcode')
+                continue
 
             if result is None:
+                continue
+
+            if len(result) == 0:
                 continue
 
             if 'error' in result:
@@ -166,6 +173,7 @@ class BarcodeView(CreateAPIView):
                     plugin = current_plugin
                     response = result
             else:
+                # Return the first successful match
                 plugin = current_plugin
                 response = result
                 break
@@ -279,6 +287,8 @@ class BarcodeAssign(BarcodeView):
                 result['error'] = _('Barcode matches existing item')
                 result['plugin'] = inventree_barcode_plugin.name
                 result['barcode_data'] = barcode
+
+                result.pop('success', None)
 
                 raise ValidationError(result)
 
@@ -497,8 +507,11 @@ class BarcodePOReceive(BarcodeView):
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
+        supplier = kwargs.get('supplier')
         purchase_order = kwargs.get('purchase_order')
         location = kwargs.get('location')
+        line_item = kwargs.get('line_item')
+        auto_allocate = kwargs.get('auto_allocate', True)
 
         # Extract location from PurchaseOrder, if available
         if not location and purchase_order:
@@ -532,9 +545,19 @@ class BarcodePOReceive(BarcodeView):
         plugin_response = None
 
         for current_plugin in plugins:
-            result = current_plugin.scan_receive_item(
-                barcode, request.user, purchase_order=purchase_order, location=location
-            )
+            try:
+                result = current_plugin.scan_receive_item(
+                    barcode,
+                    request.user,
+                    supplier=supplier,
+                    purchase_order=purchase_order,
+                    location=location,
+                    line_item=line_item,
+                    auto_allocate=auto_allocate,
+                )
+            except Exception:
+                log_error('BarcodePOReceive.handle_barcode')
+                continue
 
             if result is None:
                 continue
@@ -560,7 +583,7 @@ class BarcodePOReceive(BarcodeView):
 
         # A plugin has not been found!
         if plugin is None:
-            response['error'] = _('No match for supplier barcode')
+            response['error'] = _('No plugin match for supplier barcode')
 
         self.log_scan(request, response, 'success' in response)
 

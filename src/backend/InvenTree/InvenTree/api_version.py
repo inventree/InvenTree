@@ -1,12 +1,37 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 287
+INVENTREE_API_VERSION = 295
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
+    - Improve API documentation for build APIs
+
+v294 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8738
+    - Extends registration API documentation
+
+v293 - 2024-12-14 : https://github.com/inventree/InvenTree/pull/8658
+    - Adds new fields to the supplier barcode API endpoints
+
+v292 - 2024-12-03 : https://github.com/inventree/InvenTree/pull/8625
+    - Add "on_order" and "in_stock" annotations to SupplierPart API
+    - Enhanced filtering for the SupplierPart API
+
+v291 - 2024-11-30 : https://github.com/inventree/InvenTree/pull/8596
+    - Allow null / empty values for plugin settings
+
+v290 - 2024-11-29 : https://github.com/inventree/InvenTree/pull/8590
+    - Adds "quantity" field to ReturnOrderLineItem model and API
+
+v289 - 2024-11-27 : https://github.com/inventree/InvenTree/pull/8570
+    - Enable status change when transferring stock items
+
+v288 - 2024-11-27 : https://github.com/inventree/InvenTree/pull/8574
+    - Adds "consumed" filter to StockItem API
 
 v287 - 2024-11-27 : https://github.com/inventree/InvenTree/pull/8571
     - Adds ability to set stock status when returning items from a customer

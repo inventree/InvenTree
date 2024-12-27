@@ -16,21 +16,17 @@ class TestForwardMigrations(MigratorTestCase):
         Part = self.old_state.apps.get_model('part', 'part')
 
         buildable_part = Part.objects.create(
-            name='Widget',
-            description='Buildable Part',
-            active=True,
+            name='Widget', description='Buildable Part', active=True
         )
 
         Build = self.old_state.apps.get_model('build', 'build')
 
         Build.objects.create(
-            part=buildable_part,
-            title='A build of some stuff',
-            quantity=50,
+            part=buildable_part, title='A build of some stuff', quantity=50
         )
 
     def test_items_exist(self):
-        """Test to ensure that the 'assembly' field is correctly configured"""
+        """Test to ensure that the 'assembly' field is correctly configured."""
         Part = self.new_state.apps.get_model('part', 'part')
 
         self.assertEqual(Part.objects.count(), 1)
@@ -57,30 +53,15 @@ class TestReferenceMigration(MigratorTestCase):
         """Create some builds."""
         Part = self.old_state.apps.get_model('part', 'part')
 
-        part = Part.objects.create(
-            name='Part',
-            description='A test part',
-        )
+        part = Part.objects.create(name='Part', description='A test part')
 
         Build = self.old_state.apps.get_model('build', 'build')
 
-        Build.objects.create(
-            part=part,
-            title='My very first build',
-            quantity=10
-        )
+        Build.objects.create(part=part, title='My very first build', quantity=10)
 
-        Build.objects.create(
-            part=part,
-            title='My very second build',
-            quantity=10
-        )
+        Build.objects.create(part=part, title='My very second build', quantity=10)
 
-        Build.objects.create(
-            part=part,
-            title='My very third build',
-            quantity=10
-        )
+        Build.objects.create(part=part, title='My very third build', quantity=10)
 
         # Ensure that the builds *do not* have a 'reference' field
         for build in Build.objects.all():
@@ -88,7 +69,7 @@ class TestReferenceMigration(MigratorTestCase):
                 print(build.reference)
 
     def test_build_reference(self):
-        """Test that the build reference is correctly assigned to the PK of the Build"""
+        """Test that the build reference is correctly assigned to the PK of the Build."""
         Build = self.new_state.apps.get_model('build', 'build')
 
         self.assertEqual(Build.objects.count(), 3)
@@ -108,21 +89,16 @@ class TestReferencePatternMigration(MigratorTestCase):
     migrate_to = ('build', unit_test.getNewestMigrationFile('build'))
 
     def prepare(self):
-        """Create some initial data prior to migration"""
+        """Create some initial data prior to migration."""
         Setting = self.old_state.apps.get_model('common', 'inventreesetting')
 
         # Create a custom existing prefix so we can confirm the operation is working
-        Setting.objects.create(
-            key='BUILDORDER_REFERENCE_PREFIX',
-            value='BuildOrder-',
-        )
+        Setting.objects.create(key='BUILDORDER_REFERENCE_PREFIX', value='BuildOrder-')
 
         Part = self.old_state.apps.get_model('part', 'part')
 
         assembly = Part.objects.create(
-            name='Assy 1',
-            description='An assembly',
-            level=0, lft=0, rght=0, tree_id=0,
+            name='Assy 1', description='An assembly', level=0, lft=0, rght=0, tree_id=0
         )
 
         Build = self.old_state.apps.get_model('build', 'build')
@@ -130,14 +106,17 @@ class TestReferencePatternMigration(MigratorTestCase):
         for idx in range(1, 11):
             Build.objects.create(
                 part=assembly,
-                title=f"Build {idx}",
+                title=f'Build {idx}',
                 quantity=idx,
-                reference=f"{idx + 100}",
-                level=0, lft=0, rght=0, tree_id=0,
+                reference=f'{idx + 100}',
+                level=0,
+                lft=0,
+                rght=0,
+                tree_id=0,
             )
 
     def test_reference_migration(self):
-        """Test that the reference fields have been correctly updated"""
+        """Test that the reference fields have been correctly updated."""
         Build = self.new_state.apps.get_model('build', 'build')
 
         for build in Build.objects.all():
@@ -165,7 +144,7 @@ class TestBuildLineCreation(MigratorTestCase):
     migrate_to = ('build', '0047_auto_20230606_1058')
 
     def prepare(self):
-        """Create data to work with"""
+        """Create data to work with."""
         # Model references
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')
@@ -182,40 +161,44 @@ class TestBuildLineCreation(MigratorTestCase):
             name='Assembly',
             description='An assembly',
             assembly=True,
-            level=0, lft=0, rght=0, tree_id=0,
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=0,
         )
 
         # Create components
         for idx in range(1, 11):
             part = Part.objects.create(
-                name=f"Part {idx}",
-                description=f"Part {idx}",
-                level=0, lft=0, rght=0, tree_id=0,
+                name=f'Part {idx}',
+                description=f'Part {idx}',
+                level=0,
+                lft=0,
+                rght=0,
+                tree_id=0,
             )
 
             # Create plentiful stock
             StockItem.objects.create(
-                part=part,
-                quantity=1000,
-                level=0, lft=0, rght=0, tree_id=0,
+                part=part, quantity=1000, level=0, lft=0, rght=0, tree_id=0
             )
 
             # Create a BOM item
             BomItem.objects.create(
-                part=assembly,
-                sub_part=part,
-                quantity=idx,
-                reference=f"REF-{idx}",
+                part=assembly, sub_part=part, quantity=idx, reference=f'REF-{idx}'
             )
 
         # Create some builds
         for idx in range(1, 4):
             build = Build.objects.create(
                 part=assembly,
-                title=f"Build {idx}",
+                title=f'Build {idx}',
                 quantity=idx * 10,
-                reference=f"REF-{idx}",
-                level=0, lft=0, rght=0, tree_id=0,
+                reference=f'REF-{idx}',
+                level=0,
+                lft=0,
+                rght=0,
+                tree_id=0,
             )
 
             # Allocate stock to the build
@@ -229,7 +212,7 @@ class TestBuildLineCreation(MigratorTestCase):
                 )
 
     def test_build_line_creation(self):
-        """Test that the BuildLine objects have been created correctly"""
+        """Test that the BuildLine objects have been created correctly."""
         Build = self.new_state.apps.get_model('build', 'build')
         BomItem = self.new_state.apps.get_model('part', 'bomitem')
         BuildLine = self.new_state.apps.get_model('build', 'buildline')
@@ -254,10 +237,7 @@ class TestBuildLineCreation(MigratorTestCase):
         # Check that each BuildItem has been linked to a BuildLine
         for item in BuildItem.objects.all():
             self.assertIsNotNone(item.build_line)
-            self.assertEqual(
-                item.stock_item.part,
-                item.build_line.bom_item.sub_part,
-            )
+            self.assertEqual(item.stock_item.part, item.build_line.bom_item.sub_part)
 
         item = BuildItem.objects.first()
 
@@ -273,12 +253,8 @@ class TestBuildLineCreation(MigratorTestCase):
         for line in BuildLine.objects.all():
             # Check that the quantity is correct
             self.assertEqual(
-                line.quantity,
-                line.build.quantity * line.bom_item.quantity,
+                line.quantity, line.build.quantity * line.bom_item.quantity
             )
 
             # Check that the linked parts are correct
-            self.assertEqual(
-                line.build.part,
-                line.bom_item.part,
-            )
+            self.assertEqual(line.build.part, line.bom_item.part)

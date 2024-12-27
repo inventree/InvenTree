@@ -1,8 +1,9 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
+import { clearTableFilters, setTableChoiceFilter } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Sales Orders', async ({ page }) => {
+test('Sales Orders - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -11,7 +12,11 @@ test('Sales Orders', async ({ page }) => {
 
   // Check for expected text in the table
   await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
-  await page.getByText('In Progress').first().waitFor();
+
+  await clearTableFilters(page);
+
+  await setTableChoiceFilter(page, 'status', 'On Hold');
+
   await page.getByText('On Hold').first().waitFor();
 
   // Navigate to a particular sales order

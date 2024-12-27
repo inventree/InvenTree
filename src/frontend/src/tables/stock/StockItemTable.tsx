@@ -1,9 +1,10 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -21,7 +22,6 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -42,7 +42,13 @@ import { TableHoverCard } from '../TableHoverCard';
 /**
  * Construct a list of columns for the stock item table
  */
-function stockItemTableColumns(): TableColumn[] {
+function stockItemTableColumns({
+  showLocation,
+  showPricing
+}: {
+  showLocation: boolean;
+  showPricing: boolean;
+}): TableColumn[] {
   return [
     {
       accessor: 'part',
@@ -215,6 +221,7 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true
     },
     LocationColumn({
+      hidden: !showLocation,
       accessor: 'location_detail'
     }),
     {
@@ -239,6 +246,7 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Unit Price`,
       sortable: true,
       switchable: true,
+      hidden: !showPricing,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
@@ -248,6 +256,7 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'stock_value',
       title: t`Stock Value`,
       sortable: false,
+      hidden: !showPricing,
       render: (record: any) => {
         const min_price =
           record.purchase_price || record.part_detail?.pricing_min;
@@ -342,6 +351,11 @@ function stockItemTableFilters({
       name: 'include_variants',
       label: t`Include Variants`,
       description: t`Include stock items for variant parts`
+    },
+    {
+      name: 'consumed',
+      label: t`Consumed`,
+      description: t`Show items which have been consumed by a build order`
     },
     {
       name: 'installed',
@@ -461,10 +475,14 @@ function stockItemTableFilters({
 export function StockItemTable({
   params = {},
   allowAdd = false,
+  showLocation = true,
+  showPricing = true,
   tableName = 'stockitems'
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
+  showLocation?: boolean;
+  showPricing?: boolean;
   tableName: string;
 }>) {
   const table = useTable(tableName);
@@ -477,7 +495,15 @@ export function StockItemTable({
     [settings]
   );
 
-  const tableColumns = useMemo(() => stockItemTableColumns(), []);
+  const tableColumns = useMemo(
+    () =>
+      stockItemTableColumns({
+        showLocation: showLocation ?? true,
+        showPricing: showPricing ?? true
+      }),
+    [showLocation, showPricing]
+  );
+
   const tableFilters = useMemo(
     () =>
       stockItemTableFilters({
@@ -514,6 +540,12 @@ export function StockItemTable({
     modelType: ModelType.stockitem
   });
 
+  const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: partsToOrder
+  });
+
   const transferStock = useTransferStockItem(tableActionParams);
   const addStock = useAddStockItem(tableActionParams);
   const removeStock = useRemoveStockItem(tableActionParams);
@@ -537,6 +569,17 @@ export function StockItemTable({
         disabled={table.selectedRecords.length === 0}
         actions={[
           {
+            name: t`Count Stock`,
+            icon: (
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: t`Count Stock`,
+            disabled: !can_add_stocktake,
+            onClick: () => {
+              countStock.open();
+            }
+          },
+          {
             name: t`Add Stock`,
             icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             tooltip: t`Add a new stock item`,
@@ -552,17 +595,6 @@ export function StockItemTable({
             disabled: !can_add_stock,
             onClick: () => {
               removeStock.open();
-            }
-          },
-          {
-            name: t`Count Stock`,
-            icon: (
-              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
-            ),
-            tooltip: t`Count Stock`,
-            disabled: !can_add_stocktake,
-            onClick: () => {
-              countStock.open();
             }
           },
           {
@@ -598,8 +630,14 @@ export function StockItemTable({
             name: t`Order stock`,
             icon: <InvenTreeIcon icon='buy' />,
             tooltip: t`Order new stock`,
-            disabled: !can_add_order || !can_change_order,
-            onClick: notYetImplemented
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            disabled: !table.hasSelectedRecords,
+            onClick: () => {
+              setPartsToOrder(
+                table.selectedRecords.map((record) => record.part_detail)
+              );
+              orderPartsWizard.openWizard();
+            }
           },
           {
             name: t`Assign to customer`,
@@ -628,7 +666,7 @@ export function StockItemTable({
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user, table, allowAdd]);
+  }, [user, allowAdd, table.hasSelectedRecords, table.selectedRecords]);
 
   return (
     <>
@@ -641,6 +679,7 @@ export function StockItemTable({
       {mergeStock.modal}
       {assignStock.modal}
       {deleteStock.modal}
+      {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}

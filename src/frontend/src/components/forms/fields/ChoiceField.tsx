@@ -63,7 +63,7 @@ export function ChoiceField({
     <Select
       id={fieldId}
       aria-label={`choice-field-${field.name}`}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       radius='sm'
       {...field}
       onChange={onChange}

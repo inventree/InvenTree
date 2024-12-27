@@ -68,6 +68,7 @@ export function SettingList({
     fields: {
       value: {
         field_type: fieldType,
+        required: setting?.required ?? false,
         label: setting?.name,
         description: setting?.description,
         api_url: setting?.api_url ?? '',
@@ -157,7 +158,7 @@ export function SettingList({
             </React.Fragment>
           );
         })}
-        {(keys || allKeys).length === 0 && (
+        {(keys || allKeys)?.length === 0 && (
           <Text style={{ fontStyle: 'italic' }}>
             <Trans>No settings specified</Trans>
           </Text>

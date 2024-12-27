@@ -12,6 +12,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../App';
 import { Boundary } from '../components/Boundary';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
@@ -88,7 +89,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
-  onRowContextMenu?: (record: T, event: any) => void;
+  onCellContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
   noHeader?: boolean;
 };
@@ -197,6 +198,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
+
+          return null;
+        })
+        .catch(() => {
+          showNotification({
+            title: t`API Error`,
+            message: t`Failed to load table options`,
+            color: 'red'
+          });
 
           return null;
         });
@@ -568,16 +578,21 @@ export function InvenTreeTable<T extends Record<string, any>>({
     [props.onRowClick, props.onCellClick]
   );
 
-  // Callback when a row is right-clicked
-  const handleRowContextMenu = ({
+  // Callback when a cell is right-clicked
+  const handleCellContextMenu = ({
     record,
+    column,
     event
   }: {
     record: any;
+    column: any;
     event: any;
   }) => {
-    if (props.onRowContextMenu) {
-      return props.onRowContextMenu(record, event);
+    if (column?.noContext === true) {
+      return;
+    }
+    if (props.onCellContextMenu) {
+      return props.onCellContextMenu(record, event);
     } else if (props.rowActions) {
       const empty = () => {};
       const items = props.rowActions(record).map((action) => ({
@@ -693,7 +708,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   overflow: 'hidden'
                 })
               }}
-              onRowContextMenu={handleRowContextMenu}
+              onCellContextMenu={handleCellContextMenu}
               {...optionalParams}
             />
           </Box>

@@ -3,10 +3,12 @@
 import csv
 import io
 import json
+import os
 import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -92,6 +94,73 @@ def getNewestMigrationFile(app, exclude_extension=True):
         newest_file = newest_file.replace('.py', '')
 
     return newest_file
+
+
+def findOffloadedTask(
+    task_name: str,
+    clear_after: bool = False,
+    reverse: bool = False,
+    matching_args=None,
+    matching_kwargs=None,
+):
+    """Find an offloaded tasks in the background worker queue.
+
+    Arguments:
+        task_name: The name of the task to search for
+        clear_after: Clear the task queue after searching
+        reverse: Search in reverse order (most recent first)
+        matching_args: List of argument names to match against
+        matching_kwargs: List of keyword argument names to match against
+    """
+    from django_q.models import OrmQ
+
+    tasks = OrmQ.objects.all()
+
+    if reverse:
+        tasks = tasks.order_by('-pk')
+
+    task = None
+
+    for t in tasks:
+        if t.func() == task_name:
+            found = True
+
+            if matching_args:
+                for arg in matching_args:
+                    if arg not in t.args():
+                        found = False
+                        break
+
+            if matching_kwargs:
+                for kwarg in matching_kwargs:
+                    if kwarg not in t.kwargs():
+                        found = False
+                        break
+
+            if found:
+                task = t
+                break
+
+    if clear_after:
+        OrmQ.objects.all().delete()
+
+    return task
+
+
+def findOffloadedEvent(
+    event_name: str,
+    clear_after: bool = False,
+    reverse: bool = False,
+    matching_kwargs=None,
+):
+    """Find an offloaded event in the background worker queue."""
+    return findOffloadedTask(
+        'plugin.base.event.events.register_event',
+        matching_args=[str(event_name)],
+        matching_kwargs=matching_kwargs,
+        clear_after=clear_after,
+        reverse=reverse,
+    )
 
 
 class UserMixin:
@@ -534,3 +603,8 @@ class AdminTestCase(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         return obj
+
+
+def in_env_context(envs):
+    """Patch the env to include the given dict."""
+    return mock.patch.dict(os.environ, envs)

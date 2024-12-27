@@ -43,40 +43,6 @@ def setup_urls(self):
     ]
 ```
 
-### Implementing the Page Base
-Some plugins require a page with a navbar, sidebar, and content similar to other InvenTree pages.
-This can be done within a templated HTML file by extending the file "page_base.html". To do this, place the following line at the top of your template file.
-``` HTML
-{% raw %}
-{% extends "page_base.html" %}
-{% endraw %}
-```
-
-Additionally, add the following imports after the extended line.
-``` HTML
-{% raw %}
-{% load static %}
-{% load inventree_extras %}
-{% load plugin_extras %}
-{% load i18n %}
-{% endraw %}
-```
-
-#### Blocks
-The page_base file is split into multiple sections called blocks. This allows you to implement sections of the webpage while getting many items like navbars, sidebars, and general layout provided for you.
-
-The current default page base can be found [here]({{ sourcefile("src/backend/InvenTree/templates/page_base.html") }}). Look through this file to determine overridable blocks. The [stock app]({{ sourcedir("src/backend/InvenTree/stock") }}) offers a great example of implementing these blocks.
-
-!!! warning "Sidebar Block"
-    You may notice that implementing the `sidebar` block doesn't initially work. Be sure to enable the sidebar using JavaScript. This can be achieved by appending the following code, replacing `label` with a label of your choosing,  to the end of your template file.
-    ``` HTML
-    {% raw %}
-    {% block js_ready %}
-    {{ block.super }}
-        enableSidebar('label');
-    {% endblock js_ready %}
-    {% endraw %}
-    ```
 
 #### Panels
 InvenTree uses bootstrap panels to display the page's content. These panels are locate inside the block `page_content`.
