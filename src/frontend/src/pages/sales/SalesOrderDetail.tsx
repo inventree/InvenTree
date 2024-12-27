@@ -121,9 +121,8 @@ export default function SalesOrderDetail() {
       },
       {
         icon: 'status',
-        value_formatter: () => order.status_custom_key || order.status,
         type: 'status',
-        name: 'status',
+        name: 'status_custom_key',
         label: t`Status`,
         model: ModelType.salesorder
       }

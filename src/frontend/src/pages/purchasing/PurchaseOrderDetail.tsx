@@ -141,7 +141,7 @@ export default function PurchaseOrderDetail() {
       },
       {
         type: 'status',
-        name: 'status',
+        name: 'status_custom_key',
         label: t`Status`,
         model: ModelType.purchaseorder
       }

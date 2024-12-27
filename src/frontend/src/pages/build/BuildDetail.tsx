@@ -103,7 +103,7 @@ export default function BuildDetail() {
       },
       {
         type: 'status',
-        name: 'status',
+        name: 'status_custom_key',
         label: t`Status`,
         model: ModelType.build
       },
