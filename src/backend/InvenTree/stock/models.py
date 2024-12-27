@@ -2137,6 +2137,12 @@ class StockItem(
         else:
             tracking_info['location'] = location.pk
 
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.status_custom_key = status
+            tracking_info['status'] = status
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2214,8 +2220,16 @@ class StockItem(
         if count < 0:
             return False
 
+        tracking_info = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.status_custom_key = status
+            tracking_info['status'] = status
+
         if self.updateQuantity(count):
-            tracking_info = {'quantity': float(count)}
+            tracking_info['quantity'] = float(count)
 
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
@@ -2269,8 +2283,17 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        tracking_info = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.status_custom_key = status
+            tracking_info['status'] = status
+
         if self.updateQuantity(self.quantity + quantity):
-            tracking_info = {'added': float(quantity), 'quantity': float(self.quantity)}
+            tracking_info['added'] = float(quantity)
+            tracking_info['quantity'] = float(self.quantity)
 
             # Optional fields which can be supplied in a 'stocktake' call
             for field in StockItem.optional_transfer_fields():
@@ -2314,8 +2337,17 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        deltas = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.status_custom_key = status
+            deltas['status'] = status
+
         if self.updateQuantity(self.quantity - quantity):
-            deltas = {'removed': float(quantity), 'quantity': float(self.quantity)}
+            deltas['removed'] = float(quantity)
+            deltas['quantity'] = float(self.quantity)
 
             if location := kwargs.get('location'):
                 deltas['location'] = location.pk
