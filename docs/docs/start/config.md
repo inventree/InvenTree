@@ -61,13 +61,6 @@ The following basic options are available:
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
-| INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
-| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
-| INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
-| INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
-| INVENTREE_JSON_LOG | json_log | log as json | False |
-| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
-| INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
@@ -89,6 +82,36 @@ Date and time values are stored in the database in UTC format, and are converted
 By default, the InvenTree server will not automatically apply database migrations. When the InvenTree installation is updated (*or a plugin is installed which requires database migrations*), database migrations must be applied manually by the system administrator.
 
 With "auto update" enabled, the InvenTree server will automatically apply database migrations as required. To enable automatic database updates, set `INVENTREE_AUTO_UPDATE` to `True`.
+
+## Debugging and Logging Options
+
+The following debugging / logging options are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | False |
+| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
+| INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
+| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
+| INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
+| INVENTREE_JSON_LOG | json_log | log as json | False |
+| INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
+
+### Debug Mode
+
+Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./intro.md#debug-mode).
+
+### Query Count Logging
+
+Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
+
+### Debug Shell
+
+Enabling the `INVENTREE_DEBUG_SHELL` setting will allow the use of the [administrator shell](https://github.com/djk2/django-admin-shell). Note that this setting is only available if `INVENTREE_DEBUG` is also enabled, and is only accessible to superuser accounts.
+
+### Database Logging
+
+Enabling the `INVENTREE_DB_LOGGING` setting will log all database queries to the terminal. This can be useful for debugging database-related issues.
 
 ## Server Access
 
