@@ -11,6 +11,7 @@ import {
   TextInput,
   VisuallyHidden
 } from '@mantine/core';
+import { useTimeout } from '@mantine/hooks';
 import { IconScan } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 import type { BarcodeInputProps } from './BarcodeInput';
@@ -20,13 +21,18 @@ export default function BarcodeScannerInput({
 }: Readonly<BarcodeInputProps>) {
   const [barcodeData, setBarcodeData] = useState<string>('');
 
+  const { start, clear } = useTimeout(() => setBarcodeData(''), 500);
+
   const onKeyPress = useCallback(
     (event: any) => {
       if (event.key === 'Enter') {
         onScan(barcodeData);
         setBarcodeData('');
+        clear();
       } else {
         setBarcodeData((barcode) => barcode + event.key);
+        clear();
+        start();
       }
     },
     [barcodeData, onScan]
