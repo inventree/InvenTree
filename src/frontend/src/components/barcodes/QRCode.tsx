@@ -22,10 +22,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
-import type { QrCodeType } from './ActionDropdown';
+import type { QrCodeType } from '../items/ActionDropdown';
 
 import { extractErrorMessage } from '../../functions/api';
-import { BarcodeInput } from '../barcodes/BarcodeInput';
+import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
   ecl?: 'L' | 'M' | 'Q' | 'H';

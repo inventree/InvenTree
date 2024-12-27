@@ -22,7 +22,7 @@ import { type ReactNode, useMemo } from 'react';
 import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
-import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from './QRCode';
+import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
 import { StylishText } from './StylishText';
 
 export type ActionDropdownItem = {
