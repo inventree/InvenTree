@@ -48,7 +48,6 @@ export default function BarcodeScanDialog({
 
         // Find the matching model type
         for (const model_type of Object.keys(ModelInformationDict)) {
-          console.log('-- checking:', model_type);
           if (data[model_type]?.['pk']) {
             if (user.hasViewPermission(model_type as ModelType)) {
               const url = getDetailUrl(
