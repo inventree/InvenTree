@@ -10,12 +10,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import { useMatch, useNavigate } from 'react-router-dom';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
+import { generateUrl } from '../../functions/urls';
+import { base_url } from '../../main';
 import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -151,6 +153,7 @@ function NavTabs() {
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
+  const location = useLocation();
 
   const tabs: ReactNode[] = useMemo(() => {
     const _tabs: ReactNode[] = [];
@@ -162,15 +165,16 @@ function NavTabs() {
 
       _tabs.push(
         <Tabs.Tab
+          component={Anchor}
           value={tab.name}
           key={tab.name}
           onClick={(event: any) =>
             navigateToLink(`/${tab.name}`, navigate, event)
           }
+          href={generateUrl(`${base_url}/${tab.name}`)}
+          underline={'never'}
         >
-          <Anchor href={`/${tab.name}`} underline={'never'}>
-            {tab.text}
-          </Anchor>
+          {tab.text}
         </Tabs.Tab>
       );
     });
