@@ -38,11 +38,14 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   // Link to barcode
   await page.getByLabel('action-menu-barcode-actions').click();
   await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
-  await page.getByRole('heading', { name: 'Link Barcode' }).waitFor();
-  await page
-    .getByPlaceholder('Scan barcode data here using')
-    .fill('1234567890');
-  await page.getByRole('button', { name: 'Link' }).click();
+
+  await page.getByLabel('barcode-input-scanner').click();
+  await page.getByText('Waiting for scanner input').waitFor();
+
+  // Simulate barcode scan
+  await page.keyboard.type('1234567890\n');
+  await page.waitForTimeout(500);
+
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Unlink barcode
@@ -53,6 +56,8 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+  await page.waitForTimeout(2500);
+  return;
 });
 
 test('Purchase Orders - General', async ({ page }) => {
