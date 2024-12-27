@@ -95,3 +95,37 @@ test('Login - Failures', async ({ page }) => {
 
   await page.waitForTimeout(2500);
 });
+
+test('Login - Change Password', async ({ page }) => {
+  await doQuickLogin(page, 'noaccess', 'youshallnotpass');
+
+  // Navigate to the 'change password' page
+  await page.goto(`${baseUrl}/settings/user/account`);
+  await page.getByLabel('action-menu-user-actions').click();
+  await page.getByLabel('action-menu-user-actions-change-password').click();
+
+  // First attempt with some errors
+  await page.getByLabel('input-password-1').fill('12345');
+  await page.getByLabel('input-password-2').fill('54321');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+  await page.getByText('The two password fields didn’t match').waitFor();
+
+  await page.getByLabel('input-password-2').fill('12345');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+
+  await page.getByText('This password is too short').waitFor();
+  await page.getByText('This password is entirely numeric').waitFor();
+
+  await page.getByLabel('input-password-1').fill('youshallnotpass');
+  await page.getByLabel('input-password-2').fill('youshallnotpass');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+
+  await page.getByText('Password Changed').waitFor();
+  await page.getByText('The password was set successfully').waitFor();
+
+  // Should have redirected to the index page
+  await page.waitForURL('**/platform/home**');
+  await page.getByText('InvenTree Demo Server - Norman Nothington');
+
+  await page.waitForTimeout(1000);
+});

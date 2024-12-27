@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -20,7 +21,6 @@ import {
   useAllocateStockToBuildForm,
   useBuildOrderFields
 } from '../../forms/BuildForms';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -548,6 +548,12 @@ export default function BuildLineTable({
     table: table
   });
 
+  const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: partsToOrder
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
@@ -573,7 +579,6 @@ export default function BuildLineTable({
         record.trackable == hasOutput;
 
       const canOrder =
-        in_production &&
         !consumable &&
         user.hasAddRole(UserRoles.purchase_order) &&
         part.purchaseable;
@@ -609,8 +614,12 @@ export default function BuildLineTable({
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
           hidden: !canOrder,
+          disabled: !table.hasSelectedRecords,
           color: 'blue',
-          onClick: notYetImplemented
+          onClick: () => {
+            setPartsToOrder([record.part_detail]);
+            orderPartsWizard.openWizard();
+          }
         },
         {
           icon: <IconTool />,
@@ -650,6 +659,24 @@ export default function BuildLineTable({
         color='blue'
         onClick={() => {
           autoAllocateStock.open();
+        }}
+      />,
+      <ActionButton
+        key='order-parts'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        disabled={!table.hasSelectedRecords}
+        icon={<IconShoppingCart />}
+        color='blue'
+        tooltip={t`Order Parts`}
+        onClick={() => {
+          setPartsToOrder(
+            table.selectedRecords
+              .filter(
+                (r) => r.part_detail?.purchaseable && r.part_detail?.active
+              )
+              .map((r) => r.part_detail)
+          );
+          orderPartsWizard.openWizard();
         }}
       />,
       <ActionButton
@@ -770,6 +797,7 @@ export default function BuildLineTable({
       {deallocateStock.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}
         tableState={table}

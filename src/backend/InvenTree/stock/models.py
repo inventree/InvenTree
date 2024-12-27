@@ -289,8 +289,6 @@ class StockLocation(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('stock-location-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/stock/location/{self.id}')
 
     def get_stock_items(self, cascade=True):
@@ -533,7 +531,13 @@ class StockItem(
         # If a non-null value is returned (by any plugin) we will use that
 
         for plugin in registry.with_mixin('validation'):
-            serial_int = plugin.convert_serial_to_int(serial)
+            try:
+                serial_int = plugin.convert_serial_to_int(serial)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.convert_serial_to_int'
+                )
+                serial_int = None
 
             # Save the first returned result
             if serial_int is not None:
@@ -839,8 +843,6 @@ class StockItem(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('stock-item-detail', kwargs={'pk': self.id})
         return InvenTree.helpers.pui_url(f'/stock/item/{self.id}')
 
     def get_part_name(self):
@@ -1502,17 +1504,22 @@ class StockItem(
         """
         return self.children.count()
 
-    def is_in_stock(self, check_status: bool = True):
+    def is_in_stock(
+        self, check_status: bool = True, check_quantity: bool = True
+    ) -> bool:
         """Return True if this StockItem is "in stock".
 
         Args:
             check_status: If True, check the status of the StockItem. Defaults to True.
+            check_quantity: If True, check the quantity of the StockItem. Defaults to True.
         """
         if check_status and self.status not in StockStatusGroups.AVAILABLE_CODES:
             return False
 
+        if check_quantity and self.quantity <= 0:
+            return False
+
         return all([
-            self.quantity > 0,  # Quantity must be greater than zero
             self.sales_order is None,  # Not assigned to a SalesOrder
             self.belongs_to is None,  # Not installed inside another StockItem
             self.customer is None,  # Not assigned to a customer
@@ -2561,8 +2568,6 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return f'/stock/track/{self.id}'
         return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):

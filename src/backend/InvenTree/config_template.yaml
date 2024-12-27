@@ -26,7 +26,7 @@ database:
   # PORT: Database host port (if required)
 
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
-debug: True
+debug: False
 
 # Additional debug options
 debug_querycount: False
@@ -124,9 +124,9 @@ use_x_forwarded_host: false
 use_x_forwarded_port: false
 
 # Cookie settings (nominally the default settings should be fine)
-#cookie:
-#  secure: false
-#  samesite: false
+cookie:
+  secure: false
+  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:

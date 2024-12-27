@@ -69,12 +69,12 @@ def provider_display_name(provider):
     return provider.name
 
 
-def login_enabled() -> bool:
+def sso_login_enabled() -> bool:
     """Return True if SSO login is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))
 
 
-def registration_enabled() -> bool:
+def sso_registration_enabled() -> bool:
     """Return True if SSO registration is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO_REG'))
 

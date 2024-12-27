@@ -19,9 +19,9 @@ import django.core.exceptions
 from django.core.validators import URLValidator
 from django.http import Http404
 
-import pytz
 import structlog
 from dotenv import load_dotenv
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -77,19 +77,7 @@ if version_file.exists():
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
-
-ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
-    'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
-)
-
-# Disable CUI parts if CUI tests are disabled
-if TESTING and '--exclude-tag=cui' in sys.argv:
-    ENABLE_CLASSIC_FRONTEND = False
-
-ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
-    'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
-)
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -223,18 +211,6 @@ PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
-# Translated Template settings
-STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
-STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
-
-# Create the target directory if it does not exist
-if not STATICFILES_I18_TRG.exists():
-    STATICFILES_I18_TRG.mkdir(parents=True)
-
-STATICFILES_DIRS.append(STATICFILES_I18_TRG)
-STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
-
 # Append directory for compiled react files if debug server is running
 if DEBUG and 'collectstatic' not in sys.argv:
     web_dir = BASE_DIR.joinpath('..', 'web', 'static').absolute()
@@ -247,10 +223,6 @@ if DEBUG and 'collectstatic' not in sys.argv:
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
 
         print('-', STATICFILES_DIRS[-1])
-STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
-
-# Color Themes Directory
-STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -310,8 +282,6 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'crispy_forms',  # Improved form rendering
-    'import_export',  # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering
@@ -319,7 +289,6 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',  # django-money exchange rates
     'error_report',  # Error reporting in the admin interface
     'django_q',
-    'formtools',  # Form wizard tools
     'dbbackup',  # Backups - django-dbbackup
     'taggit',  # Tagging
     'flags',  # Flagging - django-flags
@@ -565,10 +534,6 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Custom InvenTree context processors
-                'InvenTree.context.health_status',
-                'InvenTree.context.status_codes',
-                'InvenTree.context.user_roles',
             ],
             'loaders': [
                 (
@@ -620,12 +585,10 @@ REST_AUTH = {
     'TOKEN_MODEL': 'users.models.ApiToken',
     'TOKEN_CREATOR': 'users.models.default_create_token',
     'USE_JWT': USE_JWT,
+    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
 }
 
 OLD_PASSWORD_FIELD_ENABLED = True
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
-}
 
 # JWT settings - rest_framework_simplejwt
 if USE_JWT:
@@ -1074,8 +1037,8 @@ TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 # Check that the timezone is valid
 try:
-    pytz.timezone(TIME_ZONE)
-except pytz.exceptions.UnknownTimeZoneError:  # pragma: no cover
+    ZoneInfo(TIME_ZONE)
+except ZoneInfoNotFoundError:  # pragma: no cover
     raise ValueError(f"Specified timezone '{TIME_ZONE}' is not valid")
 
 USE_I18N = True
@@ -1085,12 +1048,6 @@ USE_I18N = True
 USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
-
-# crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# Use database transactions when importing / exporting data
-IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
@@ -1220,7 +1177,9 @@ SESSION_COOKIE_SECURE = (
     if DEBUG
     else (
         SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+        or get_boolean_setting(
+            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+        )
     )
 )
 
@@ -1344,8 +1303,8 @@ REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
-    'login': 'InvenTree.forms.CustomLoginForm',
-    'signup': 'InvenTree.forms.CustomSignupForm',
+    'login': 'InvenTree.auth_overrides.CustomLoginForm',
+    'signup': 'InvenTree.auth_overrides.CustomSignupForm',
     'add_email': 'allauth.account.forms.AddEmailForm',
     'change_password': 'allauth.account.forms.ChangePasswordForm',
     'set_password': 'allauth.account.forms.SetPasswordForm',
@@ -1353,12 +1312,13 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
-ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
+
+ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
 # Determine if multi-factor authentication is enabled for this server (default = True)
 MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
-SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
-ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
