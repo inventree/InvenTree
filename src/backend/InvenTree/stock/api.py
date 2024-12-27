@@ -572,7 +572,10 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code."""
-        return queryset.filter(status=value)
+        q1 = Q(status=value, status_custom_key__isnull=True)
+        q2 = Q(status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
 
     allocated = rest_filters.BooleanFilter(
         label='Is Allocated', method='filter_allocated'
