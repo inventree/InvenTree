@@ -153,9 +153,18 @@ class StatusCode(BaseEnum):
         return re.sub(r'(?<!^)(?=[A-Z])', '_', ref_name).lower()
 
     @classmethod
-    def items(cls):
+    def items(cls, custom=True):
         """All status code items."""
-        return [(x.value, x.label) for x in cls.values()]
+        data = [(x.value, x.label) for x in cls.values()]
+
+        if custom:
+            try:
+                for item in cls.custom_values():
+                    data.append((item.key, item.label))
+            except Exception:
+                pass
+
+        return data
 
     @classmethod
     def keys(cls):
@@ -189,7 +198,7 @@ class StatusCode(BaseEnum):
         return filtered.label
 
     @classmethod
-    def dict(cls, key=None, custom=None):
+    def dict(cls, key=None, custom=True):
         """Return a dict representation containing all required information."""
         data = {
             x.name: {'color': x.color, 'key': x.value, 'label': x.label, 'name': x.name}
