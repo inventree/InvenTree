@@ -121,7 +121,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 
 ### Debug Mode
 
-Note that in [debug mode](./intro.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development:
+Note that in [debug mode](./intro.md#debug-mode), some of the above settings are automatically adjusted to allow for easier development. The following settings are internally overridden in debug mode with the values specified below:
 
 | Setting | Value in Debug Mode | Description |
 | --- | --- | --- |
