@@ -571,7 +571,10 @@ class StockFilter(rest_filters.FilterSet):
     status = rest_filters.NumberFilter(label=_('Status Code'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
-        """Filter by integer status code."""
+        """Filter by integer status code.
+
+        Note: Also account for the possibility of a custom status code.
+        """
         q1 = Q(status=value, status_custom_key__isnull=True)
         q2 = Q(status_custom_key=value)
 
