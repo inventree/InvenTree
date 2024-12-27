@@ -1,4 +1,11 @@
-import { ActionIcon, Container, Group, Indicator, Tabs } from '@mantine/core';
+import {
+  ActionIcon,
+  Anchor,
+  Container,
+  Group,
+  Indicator,
+  Tabs
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -161,7 +168,9 @@ function NavTabs() {
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          {tab.text}
+          <Anchor href={`/${tab.name}`} underline={'never'}>
+            {tab.text}
+          </Anchor>
         </Tabs.Tab>
       );
     });
