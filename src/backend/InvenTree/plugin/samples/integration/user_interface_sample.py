@@ -75,7 +75,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'dynamic-panel',
                 'title': 'Dynamic Panel',
                 'source': self.plugin_static_file('sample_panel.js'),
-                'icon': 'part',
+                'icon': 'ti:wave-saw-tool:outline',
                 'context': {
                     'version': INVENTREE_SW_VERSION,
                     'plugin_version': self.VERSION,
@@ -97,7 +97,7 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'part-panel',
                 'title': _('Part Panel'),
                 'source': self.plugin_static_file('sample_panel.js:renderPartPanel'),
-                'icon': 'part',
+                'icon': 'ti:package_outline',
                 'context': {'part_name': part.name if part else ''},
             })
 
