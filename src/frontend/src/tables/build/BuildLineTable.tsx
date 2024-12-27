@@ -137,6 +137,7 @@ export function BuildLineSubTable({
           withColumnBorders
           striped
           pinLastColumn
+          idAccessor='pk'
           columns={tableColumns}
           records={lineItem.filteredAllocations ?? lineItem.allocations}
         />
