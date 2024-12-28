@@ -103,18 +103,23 @@ class StatusCode(BaseEnum):
         return isinstance(value.value, int)
 
     @classmethod
-    def custom_values(cls):
-        """Return all user-defined custom values for this status class."""
+    def custom_queryset(cls):
+        """Return a queryset of all custom values for this status class."""
         from common.models import InvenTreeCustomUserStateModel
 
         try:
-            return list(
-                InvenTreeCustomUserStateModel.objects.filter(
-                    reference_status=cls.__name__
-                )
+            return InvenTreeCustomUserStateModel.objects.filter(
+                reference_status=cls.__name__
             )
         except Exception:
-            return []
+            return None
+
+    @classmethod
+    def custom_values(cls):
+        """Return all user-defined custom values for this status class."""
+        if query := cls.custom_queryset():
+            return list(query)
+        return []
 
     @classmethod
     def values(cls, key=None):

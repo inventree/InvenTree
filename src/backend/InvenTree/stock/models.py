@@ -2144,7 +2144,7 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and status != self.status:
-            self.status_custom_key = status
+            self.set_status(status)
             tracking_info['status'] = status
 
         # Optional fields which can be supplied in a 'move' call
@@ -2229,7 +2229,7 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and status != self.status:
-            self.status_custom_key = status
+            self.set_status(status)
             tracking_info['status'] = status
 
         if self.updateQuantity(count):
@@ -2292,7 +2292,7 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and status != self.status:
-            self.status_custom_key = status
+            self.set_status(status)
             tracking_info['status'] = status
 
         if self.updateQuantity(self.quantity + quantity):
@@ -2346,7 +2346,7 @@ class StockItem(
         status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
 
         if status and status != self.status:
-            self.status_custom_key = status
+            self.set_status(status)
             deltas['status'] = status
 
         if self.updateQuantity(self.quantity - quantity):

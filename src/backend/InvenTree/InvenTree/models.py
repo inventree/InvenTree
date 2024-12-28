@@ -96,9 +96,30 @@ class StatusCodeMixin:
         """Return the status class associated with this model."""
         return self.STATUS_CLASS
 
+    def save(self):
+        """Custom save method for StatusCodeMixin.
+
+        - Ensure custom status code values are correctly updated
+        """
+        if self.status_class:
+            # Check that the current 'logical key' actually matches the current status code
+            custom_values = self.status_class.custom_queryset().filter(
+                logical_key=self.get_status(), key=self.get_custom_status()
+            )
+
+            if not custom_values.exists():
+                # No match - null out the custom value
+                setattr(self, f'{self.STATUS_FIELD}_custom_key', None)
+
+        super().save()
+
     def get_status(self) -> int:
         """Return the status code for this object."""
         return self.status
+
+    def get_custom_status(self) -> int:
+        """Return the custom status code for this object."""
+        return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 
     def set_status(self, status: int) -> bool:
         """Set the status code for this object."""
@@ -125,6 +146,9 @@ class StatusCodeMixin:
                     setattr(self, custom_field, item.key)
                     result = True
                     break
+
+        if not result:
+            logger.warning(f'Failed to set status {status} for class {self.__class__}')
 
         return result
 
