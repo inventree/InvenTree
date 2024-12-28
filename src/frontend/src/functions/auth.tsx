@@ -201,7 +201,7 @@ export function handleMfaLogin(
   location: Location<any>,
   values: { code: string }
 ) {
-  const { session, setToken } = useUserState.getState();
+  const { session, setToken, setSession } = useUserState.getState();
 
   api
     .post(
@@ -212,6 +212,7 @@ export function handleMfaLogin(
       { headers: { 'X-Session-Token': session } }
     )
     .then((response) => {
+      setSession(response.data.meta.session_token);
       setToken(response.data.meta.access_token);
       followRedirect(navigate, location?.state);
     });

@@ -99,11 +99,15 @@ export function SecurityContent() {
 function EmailContent() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
-  const [user] = useUserState((state) => [state.user]);
+  const [session] = useUserState((state) => [state.session]);
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () =>
-      api.get(apiUrl(ApiEndpoints.user_emails)).then((res) => res.data)
+      api
+        .get(apiUrl(ApiEndpoints.user_emails), {
+          headers: { 'X-Session-Token': session }
+        })
+        .then((res) => res.data.data)
   });
 
   function runServerAction(
@@ -122,7 +126,11 @@ function EmailContent() {
         act = api.delete;
         break;
     }
-    act(apiUrl(url), { email: value })
+    act(
+      apiUrl(url),
+      { email: value },
+      { headers: { 'X-Session-Token': session } }
+    )
       .then(() => {
         refetch();
       })
@@ -131,9 +139,13 @@ function EmailContent() {
 
   function addEmail() {
     api
-      .post(apiUrl(ApiEndpoints.user_emails), {
-        email: newEmailValue
-      })
+      .post(
+        apiUrl(ApiEndpoints.user_emails),
+        {
+          email: newEmailValue
+        },
+        { headers: { 'X-Session-Token': session } }
+      )
       .then(() => {
         refetch();
       })
@@ -142,10 +154,14 @@ function EmailContent() {
 
   function changePrimary() {
     api
-      .post(apiUrl(ApiEndpoints.user_emails), {
-        email: value,
-        primary: true
-      })
+      .post(
+        apiUrl(ApiEndpoints.user_emails),
+        {
+          email: value,
+          primary: true
+        },
+        { headers: { 'X-Session-Token': session } }
+      )
       .then(() => {
         refetch();
       })
@@ -157,40 +173,46 @@ function EmailContent() {
   return (
     <Grid>
       <Grid.Col span={6}>
-        <Radio.Group
-          value={value}
-          onChange={setValue}
-          name='email_accounts'
-          label={t`The following email addresses are associated with your account:`}
-        >
-          <Stack mt='xs'>
-            {data.map((email: any) => (
-              <Radio
-                key={email.id}
-                value={String(email.id)}
-                label={
-                  <Group justify='space-between'>
-                    {email.email}
-                    {email.primary && (
-                      <Badge color='blue'>
-                        <Trans>Primary</Trans>
-                      </Badge>
-                    )}
-                    {email.verified ? (
-                      <Badge color='green'>
-                        <Trans>Verified</Trans>
-                      </Badge>
-                    ) : (
-                      <Badge color='yellow'>
-                        <Trans>Unverified</Trans>
-                      </Badge>
-                    )}
-                  </Group>
-                }
-              />
-            ))}
-          </Stack>
-        </Radio.Group>
+        {data.length == 0 ? (
+          <Text>
+            <Trans>Currently no emails are registered</Trans>
+          </Text>
+        ) : (
+          <Radio.Group
+            value={value}
+            onChange={setValue}
+            name='email_accounts'
+            label={t`The following email addresses are associated with your account:`}
+          >
+            <Stack mt='xs'>
+              {data.map((email: any) => (
+                <Radio
+                  key={email.email}
+                  value={String(email.email)}
+                  label={
+                    <Group justify='space-between'>
+                      {email.email}
+                      {email.primary && (
+                        <Badge color='blue'>
+                          <Trans>Primary</Trans>
+                        </Badge>
+                      )}
+                      {email.verified ? (
+                        <Badge color='green'>
+                          <Trans>Verified</Trans>
+                        </Badge>
+                      ) : (
+                        <Badge color='yellow'>
+                          <Trans>Unverified</Trans>
+                        </Badge>
+                      )}
+                    </Group>
+                  }
+                />
+              ))}
+            </Stack>
+          </Radio.Group>
+        )}
       </Grid.Col>
       <Grid.Col span={6}>
         <Stack>
