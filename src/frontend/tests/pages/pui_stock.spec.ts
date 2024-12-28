@@ -169,56 +169,58 @@ test('Stock - Serial Numbers', async ({ page }) => {
 test('Stock - Stock Actions', async ({ page }) => {
   await doQuickLogin(page);
 
-  // Find an in-stock, untracked item
-  await page.goto(
-    `${baseUrl}/stock/location/index/stock-items?in_stock=1&serialized=0`
-  );
-  await page.getByText('530470210').first().click();
+  await page.goto(`${baseUrl}/stock/item/1225/details`);
+
+  // Helper function to launch a stock action
+  const launchStockAction = async (action: string) => {
+    await page.getByLabel('action-menu-stock-operations').click();
+    await page.getByLabel(`action-menu-stock-operations-${action}`).click();
+  };
+
+  const setStockStatus = async (status: string) => {
+    await page.getByLabel('action-button-change-status').click();
+    await page.getByLabel('choice-field-status').click();
+    await page.getByRole('option', { name: status }).click();
+  };
+
+  // Check for required values
+  await page.getByText('Status', { exact: true }).waitFor();
+  await page.getByText('Custom Status', { exact: true }).waitFor();
+  await page.getByText('Attention needed').waitFor();
   await page
-    .locator('div')
-    .filter({ hasText: /^Quantity: 270$/ })
-    .first()
+    .getByLabel('Stock Details')
+    .getByText('Incoming goods inspection')
     .waitFor();
+  await page.getByText('123').first().waitFor();
 
-  // Check for expected action sections
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
-  await page.getByRole('banner').getByRole('button').click();
-
-  await page.getByLabel('action-menu-printing-actions').click();
-  await page.getByLabel('action-menu-printing-actions-print-labels').click();
-  await page.getByRole('button', { name: 'Cancel' }).click();
-
-  await page.getByLabel('action-menu-stock-operations').click();
-  await page.getByLabel('action-menu-stock-operations-count').waitFor();
-  await page.getByLabel('action-menu-stock-operations-add').waitFor();
-  await page.getByLabel('action-menu-stock-operations-remove').waitFor();
-
-  await page.getByLabel('action-menu-stock-operations-transfer').click();
-  await page.getByLabel('text-field-notes').fill('test notes');
+  // Add stock, and change status
+  await launchStockAction('add');
+  await page.getByLabel('number-field-quantity').fill('12');
+  await setStockStatus('Lost');
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('This field is required.').first().waitFor();
 
-  // Set the status field
-  await page.getByLabel('action-button-change-status').click();
-  await page.getByLabel('choice-field-status').click();
-  await page.getByText('Attention needed').click();
+  await page.getByText('Lost').first().waitFor();
+  await page.getByText('Unavailable').first().waitFor();
+  await page.getByText('135').first().waitFor();
 
-  // Set the packaging field
-  await page.getByLabel('action-button-adjust-packaging').click();
-  await page.getByLabel('text-field-packaging').fill('test packaging');
+  // Remove stock, and change status
+  await launchStockAction('remove');
+  await page.getByLabel('number-field-quantity').fill('99');
+  await setStockStatus('Damaged');
+  await page.getByRole('button', { name: 'Submit' }).click();
 
-  // Close the dialog
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByText('36').first().waitFor();
+  await page.getByText('Damaged').first().waitFor();
 
-  // Find an item which has been sent to a customer
-  await page.goto(`${baseUrl}/stock/item/1014/details`);
-  await page.getByText('Batch Code: 2022-11-12').waitFor();
-  await page.getByText('Unavailable').waitFor();
-  await page.getByLabel('action-menu-stock-operations').click();
-  await page.getByLabel('action-menu-stock-operations-return').click();
+  // Count stock and change status (reverting to original value)
+  await launchStockAction('count');
+  await page.getByLabel('number-field-quantity').fill('123');
+  await setStockStatus('Incoming goods inspection');
+  await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.waitForTimeout(2500);
+  await page.getByText('123').first().waitFor();
+  await page.getByText('Custom Status').first().waitFor();
+  await page.getByText('Incoming goods inspection').first().waitFor();
 });
 
 test('Stock - Tracking', async ({ page }) => {
@@ -233,7 +235,4 @@ test('Stock - Tracking', async ({ page }) => {
   await page.getByText('- - Factory/Office Block/Room').first().waitFor();
   await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
   await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
-
-  await page.waitForTimeout(1500);
-  return;
 });

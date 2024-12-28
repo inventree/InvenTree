@@ -158,7 +158,7 @@ class StatusCode(BaseEnum):
         return re.sub(r'(?<!^)(?=[A-Z])', '_', ref_name).lower()
 
     @classmethod
-    def items(cls, custom=True):
+    def items(cls, custom=False):
         """All status code items."""
         data = [(x.value, x.label) for x in cls.values()]
 
