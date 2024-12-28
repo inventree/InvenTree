@@ -268,6 +268,4 @@ test('Build Order - Filters', async ({ page }) => {
 
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
-
-  await page.waitForTimeout(2500);
 });

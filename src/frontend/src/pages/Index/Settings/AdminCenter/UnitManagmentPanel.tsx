@@ -11,7 +11,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';
 
 function AllUnitTable() {
-  const table = useTable('all-units');
+  const table = useTable('all-units', 'name');
   const columns = useMemo(() => {
     return [
       {
@@ -29,7 +29,6 @@ function AllUnitTable() {
       tableState={table}
       columns={columns}
       props={{
-        idAccessor: 'name',
         enableSearch: false,
         enablePagination: false,
         enableColumnSwitching: false,
