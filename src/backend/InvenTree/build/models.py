@@ -43,7 +43,7 @@ from common.settings import (
     get_global_setting,
     prevent_build_output_complete_on_incompleted_tests,
 )
-from generic.states import StateTransitionMixin
+from generic.states import StateTransitionMixin, StatusCodeMixin
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
@@ -55,11 +55,11 @@ class Build(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
-    InvenTree.models.StatusCodeMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
+    StatusCodeMixin,
     MPTTModel,
 ):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
