@@ -55,6 +55,7 @@ class Build(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.StatusCodeMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
@@ -83,6 +84,8 @@ class Build(
         responsible: User (or group) responsible for completing the build
         priority: Priority of the build
     """
+
+    STATUS_CLASS = BuildStatus
 
     class Meta:
         """Metaclass options for the BuildOrder model."""

@@ -183,6 +183,7 @@ class Order(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
@@ -379,6 +380,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = PurchaseOrderStatus
 
     class Meta:
         """Model meta options."""
@@ -913,6 +915,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = SalesOrderStatus
 
     class Meta:
         """Model meta options."""
@@ -2157,6 +2160,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = ReturnOrderStatus
 
     class Meta:
         """Model meta options."""
@@ -2449,8 +2453,10 @@ class ReturnOrder(TotalPriceMixin, Order):
         )
 
 
-class ReturnOrderLineItem(OrderLineItem):
+class ReturnOrderLineItem(InvenTree.models.StatusCodeMixin, OrderLineItem):
     """Model for a single LineItem in a ReturnOrder."""
+
+    STATUS_CLASS = ReturnOrderLineStatus
 
     class Meta:
         """Metaclass options for this model."""

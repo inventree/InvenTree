@@ -78,6 +78,57 @@ class DiffMixin:
         return field_name in self.get_field_deltas()
 
 
+class StatusCodeMixin:
+    """Mixin class which handles custom 'status' fields.
+
+    - Implements a 'set_stutus' method which can be used to set the status of an object
+    - Implements a 'get_status' method which can be used to retrieve the status of an object
+
+    This mixin assumes that the implementing class has a 'status' field,
+    which must be an instance of the InvenTreeCustomStatusModelField class.
+    """
+
+    STATUS_CLASS = None
+    STATUS_FIELD = 'status'
+
+    @property
+    def status_class(self):
+        """Return the status class associated with this model."""
+        return self.STATUS_CLASS
+
+    def get_status(self) -> int:
+        """Return the status code for this object."""
+        return self.status
+
+    def set_status(self, status: int) -> bool:
+        """Set the status code for this object."""
+        if not self.status_class:
+            raise NotImplementedError('Status class not defined')
+
+        base_values = self.status_class.values()
+        custom_value_set = self.status_class.custom_values()
+
+        custom_field = f'{self.STATUS_FIELD}_custom_key'
+
+        result = False
+
+        if status in base_values:
+            # Set the status to a 'base' value
+            setattr(self, self.STATUS_FIELD, status)
+            setattr(self, custom_field, None)
+            result = True
+        else:
+            for item in custom_value_set:
+                if item.key == status:
+                    # Set the status to a 'custom' value
+                    setattr(self, self.STATUS_FIELD, item.logical_key)
+                    setattr(self, custom_field, item.key)
+                    result = True
+                    break
+
+        return result
+
+
 class PluginValidationMixin(DiffMixin):
     """Mixin class which exposes the model instance to plugin validation.
 
@@ -507,6 +558,13 @@ class InvenTreeModel(PluginValidationMixin, models.Model):
         """Metaclass options."""
 
         abstract = True
+
+    def save(self):
+        """Custom save method for InvenTreeModel.
+
+        - Ensure custom status code values are correctly updated
+        """
+        super().save()
 
 
 class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
