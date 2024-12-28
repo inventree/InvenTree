@@ -1,6 +1,11 @@
 import { test } from '../baseFixtures.js';
 import { baseUrl } from '../defaults.js';
-import { clickButtonIfVisible, openFilterDrawer } from '../helpers.js';
+import {
+  clearTableFilters,
+  clickButtonIfVisible,
+  openFilterDrawer,
+  setTableChoiceFilter
+} from '../helpers.js';
 import { doQuickLogin } from '../login.js';
 
 test('Stock - Basic Tests', async ({ page }) => {
@@ -84,9 +89,15 @@ test('Stock - Filters', async ({ page }) => {
     .getByRole('cell', { name: 'A round table - with blue paint' })
     .waitFor();
 
-  // Clear filters (ready for next set of tests)
-  await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  // Filter by custom status code
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Status', 'Incoming goods inspection');
+  await page.getByText('1 - 8 / 8').waitFor();
+  await page.getByRole('cell', { name: '1551AGY' }).first().waitFor();
+  await page.getByRole('cell', { name: 'widget.blue' }).first().waitFor();
+  await page.getByRole('cell', { name: '002.01-PCBA' }).first().waitFor();
+
+  await clearTableFilters(page);
 });
 
 test('Stock - Serial Numbers', async ({ page }) => {

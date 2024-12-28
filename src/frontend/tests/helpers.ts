@@ -34,13 +34,14 @@ export const clickButtonIfVisible = async (page, name, timeout = 500) => {
 export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
-  await page.getByLabel('filter-drawer-close').click();
+  await closeFilterDrawer(page);
 };
 
 export const setTableChoiceFilter = async (page, filter, value) => {
   await openFilterDrawer(page);
 
   await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByPlaceholder('Select filter').fill(filter);
   await page.getByPlaceholder('Select filter').click();
   await page.getByRole('option', { name: filter }).click();
 
