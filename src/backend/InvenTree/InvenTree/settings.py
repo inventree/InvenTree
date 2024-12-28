@@ -17,7 +17,7 @@ from pathlib import Path
 import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
-from django.http import Http404
+from django.http import Http404, HttpResponseGone
 
 import structlog
 from corsheaders.defaults import default_headers
@@ -1340,7 +1340,7 @@ MARKDOWNIFY = {
 }
 
 # Ignore these error typeps for in-database error logging
-IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
+IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 10
