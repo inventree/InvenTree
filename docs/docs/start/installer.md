@@ -23,6 +23,10 @@ The above command may need to be run with `sudo` permissions, depending on the s
 sudo wget -qO install.sh https://get.inventree.org && sudo bash install.sh
 ```
 
+#### Frequently Asked Questions
+
+If you encounter any issues during the installation process, please refer first to the [FAQ](../faq.md) for common problems and solutions.
+
 ### File Locations
 
 The installer creates the following directories:

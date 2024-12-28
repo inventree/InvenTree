@@ -1,11 +1,19 @@
 import { t } from '@lingui/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
-import { IconLink, IconPointer } from '@tabler/icons-react';
+import { IconBarcode, IconLink, IconPointer } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
+import { openContextModal } from '@mantine/modals';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
+
+export function openQrModal(navigate: NavigateFunction) {
+  return openContextModal({
+    modal: 'qr',
+    innerProps: { navigate: navigate }
+  });
+}
 
 export function getActions(navigate: NavigateFunction) {
   const setNavigationOpen = useLocalState((state) => state.setNavigationOpen);
@@ -55,6 +63,13 @@ export function getActions(navigate: NavigateFunction) {
       description: t`Open the main navigation menu`,
       onClick: () => setNavigationOpen(true),
       leftSection: <IconPointer size='1.2rem' />
+    },
+    {
+      id: 'scan',
+      label: t`Scan`,
+      description: t`Scan a barcode or QR code`,
+      onClick: () => openQrModal(navigate),
+      leftSection: <IconBarcode size='1.2rem' />
     }
   ];
 

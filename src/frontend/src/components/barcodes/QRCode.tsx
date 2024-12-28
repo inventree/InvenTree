@@ -15,14 +15,16 @@ import {
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
-import type { QrCodeType } from './ActionDropdown';
+import type { QrCodeType } from '../items/ActionDropdown';
+
+import { extractErrorMessage } from '../../functions/api';
 import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
@@ -76,12 +78,13 @@ export const InvenTreeQRCode = ({
   const { data } = useQuery({
     queryKey: ['qr-code', mdl_prop.model, mdl_prop.pk],
     queryFn: async () => {
-      const res = await api.post(apiUrl(ApiEndpoints.barcode_generate), {
-        model: mdl_prop.model,
-        pk: mdl_prop.pk
-      });
-
-      return res.data?.barcode as string;
+      return api
+        .post(apiUrl(ApiEndpoints.barcode_generate), {
+          model: mdl_prop.model,
+          pk: mdl_prop.pk
+        })
+        .then((res) => res.data?.barcode ?? ('' as string))
+        .catch((error) => '');
     }
   });
 
@@ -146,37 +149,33 @@ export const InvenTreeQRCode = ({
 };
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
-  const [barcode, setBarcode] = useState('');
+  const [error, setError] = useState<string>('');
 
-  function linkBarcode(value?: string) {
+  const linkBarcode = useCallback((barcode: string) => {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
         [mdl_prop.model]: mdl_prop.pk,
-        barcode: value || barcode
+        barcode: barcode
       })
       .then((response) => {
+        setError('');
         modals.closeAll();
         location.reload();
+      })
+      .catch((error) => {
+        const msg = extractErrorMessage({
+          error: error,
+          field: 'error',
+          defaultMessage: t`Failed to link barcode`
+        });
+        setError(msg);
       });
-  }
-  const actionSubmit = (decodedText: string) => {
-    linkBarcode(decodedText);
-  };
-
-  const handleLinkBarcode = () => {
-    linkBarcode(barcode);
-  };
+  }, []);
 
   return (
     <Stack gap='xs'>
       <Divider />
-      <BarcodeInput
-        value={barcode}
-        onChange={(event) => setBarcode(event.currentTarget.value)}
-        onScan={actionSubmit}
-        onAction={handleLinkBarcode}
-        actionText={t`Link`}
-      />
+      <BarcodeInput onScan={linkBarcode} actionText={t`Link`} error={error} />
     </Stack>
   );
 };
@@ -194,11 +193,12 @@ export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   }
   return (
     <Box>
-      <Stack gap='xs'>
+      <Stack gap='sm'>
         <Divider />
         <Text>
           <Trans>This will remove the link to the associated barcode</Trans>
         </Text>
+        <Divider />
         <Group grow>
           <Button color='red' onClick={unlinkBarcode}>
             <Trans>Unlink Barcode</Trans>
