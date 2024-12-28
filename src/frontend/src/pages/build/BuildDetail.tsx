@@ -108,6 +108,15 @@ export default function BuildDetail() {
         model: ModelType.build
       },
       {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.build,
+        icon: 'status',
+        hidden:
+          !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
         type: 'text',
         name: 'reference',
         label: t`Reference`,

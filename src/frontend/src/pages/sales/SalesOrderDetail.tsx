@@ -124,6 +124,15 @@ export default function SalesOrderDetail() {
         name: 'status',
         label: t`Status`,
         model: ModelType.salesorder
+      },
+      {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.salesorder,
+        icon: 'status',
+        hidden:
+          !order.status_custom_key || order.status_custom_key == order.status
       }
     ];
 

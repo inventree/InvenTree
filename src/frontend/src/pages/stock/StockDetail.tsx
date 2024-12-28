@@ -134,10 +134,20 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'status',
+        type: 'status',
+        label: t`Status`,
+        model: ModelType.stockitem
+      },
+      {
         name: 'status_custom_key',
         type: 'status',
-        label: t`Stock Status`,
-        model: ModelType.stockitem
+        label: t`Custom Status`,
+        model: ModelType.stockitem,
+        icon: 'status',
+        hidden:
+          !stockitem.status_custom_key ||
+          stockitem.status_custom_key == stockitem.status
       },
       {
         type: 'text',
@@ -845,11 +855,10 @@ export default function StockDetail() {
             key='batch'
           />,
           <StatusRenderer
-            status={stockitem.status_custom_key}
+            status={stockitem.status_custom_key || stockitem.status}
             type={ModelType.stockitem}
             options={{
-              size: 'lg',
-              hidden: !!stockitem.status_custom_key
+              size: 'lg'
             }}
             key='status'
           />,
