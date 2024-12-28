@@ -583,13 +583,6 @@ class InvenTreeModel(PluginValidationMixin, models.Model):
 
         abstract = True
 
-    def save(self):
-        """Custom save method for InvenTreeModel.
-
-        - Ensure custom status code values are correctly updated
-        """
-        super().save()
-
 
 class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
     """Base class for an InvenTree model which includes a metadata field."""
