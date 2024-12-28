@@ -44,6 +44,20 @@ This error occurs because your installed python version is not up to date. We [r
 
 You (or your system administrator) needs to update python to meet the minimum requirements for InvenTree.
 
+### InvenTree Site URL
+
+During the installation or update process, you may see an error similar to:
+
+```
+'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+```
+
+If you see this error, it means that the `INVENTREE_SITE_URL` environment variable has not correctly specified. Refer to the [configuration documentation](./start/config.md#site-url) for more information.
+
+### Login Issues
+
+If you have successfully started the InvenTree server, but are experiencing issues logging in, it may be due to the security interactions between your web browser and the server. While the default configuration should work for most users, if you do experience login issues, ensure that your [server access settings](./start/config.md#server-access) are correctly configured.
+
 ## Update Issues
 
 Sometimes, users may encounter unexpected error messages when updating their InvenTree installation to a newer version.

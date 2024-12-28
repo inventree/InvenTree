@@ -108,8 +108,13 @@ export const MFALogin = Loadable(lazy(() => import('./pages/Auth/MFALogin')));
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
 export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
-export const Set_Password = Loadable(
-  lazy(() => import('./pages/Auth/Set-Password'))
+
+export const ChangePassword = Loadable(
+  lazy(() => import('./pages/Auth/ChangePassword'))
+);
+
+export const ResetPassword = Loadable(
+  lazy(() => import('./pages/Auth/ResetPassword'))
 );
 
 // Routes
@@ -170,7 +175,8 @@ export const routes = (
       <Route path='/logout' element={<Logout />} />,
       <Route path='/logged-in' element={<Logged_In />} />
       <Route path='/reset-password' element={<Reset />} />
-      <Route path='/set-password' element={<Set_Password />} />
+      <Route path='/set-password' element={<ResetPassword />} />
+      <Route path='/change-password' element={<ChangePassword />} />
     </Route>
   </Routes>
 );
