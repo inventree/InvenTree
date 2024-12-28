@@ -206,8 +206,6 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByText('Unavailable').waitFor();
   await page.getByLabel('action-menu-stock-operations').click();
   await page.getByLabel('action-menu-stock-operations-return').click();
-
-  await page.waitForTimeout(2500);
 });
 
 test('Stock - Tracking', async ({ page }) => {
