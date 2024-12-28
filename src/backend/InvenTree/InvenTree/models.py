@@ -96,7 +96,7 @@ class StatusCodeMixin:
         """Return the status class associated with this model."""
         return self.STATUS_CLASS
 
-    def save(self):
+    def save(self, *args, **kwargs):
         """Custom save method for StatusCodeMixin.
 
         - Ensure custom status code values are correctly updated
@@ -111,7 +111,7 @@ class StatusCodeMixin:
                 # No match - null out the custom value
                 setattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 
-        super().save()
+        super().save(*args, **kwargs)
 
     def get_status(self) -> int:
         """Return the status code for this object."""
