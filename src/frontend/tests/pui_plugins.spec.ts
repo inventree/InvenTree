@@ -122,7 +122,4 @@ test('Plugins - Locate Item', async ({ page, request }) => {
   await page.getByLabel('action-button-locate-item').click();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item location requested').waitFor();
-
-  await page.waitForTimeout(2500);
-  return;
 });

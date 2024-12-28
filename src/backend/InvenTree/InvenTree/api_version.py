@@ -11,6 +11,9 @@ v296 - 2024-12-22 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
 
+v296 - 2024-12-25 : https://github.com/inventree/InvenTree/pull/8732
+    - Adjust default "part_detail" behaviour for StockItem API endpoints
+
 v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
     - Improve API documentation for build APIs
 

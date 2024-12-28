@@ -36,7 +36,11 @@ To link an arbitrary barcode, select the *Link Barcode* action as shown below:
 
 If an item already has a linked barcode, it can be un-linked by selecting the *Unlink Barcode* action:
 
-{% with id="barcode_unlink", url="barcode/barcode_unlink.png", description="Unlink barcode" %}
+{% with id="barcode_unlink_1", url="barcode/barcode_unlink_1.png", description="Unlink barcode" %}
+{% include 'img.html' %}
+{% endwith %}
+
+{% with id="barcode_unlink_2", url="barcode/barcode_unlink_2.png", description="Unlink barcode" %}
 {% include 'img.html' %}
 {% endwith %}
 

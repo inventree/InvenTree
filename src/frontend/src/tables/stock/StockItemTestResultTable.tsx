@@ -446,6 +446,7 @@ export default function StockItemTestResultTable({
         return (
           <DataTable
             key={record.pk}
+            idAccessor={'test'}
             noHeader
             columns={cols}
             records={results.slice(0, -1)}

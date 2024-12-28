@@ -38,6 +38,7 @@ import type { TableFilter } from '../tables/Filter';
  * records: An array of records (rows) in the table
  * setRecords: A function to set the records
  * updateRecord: A function to update a single record in the table
+ * idAccessor: The name of the primary key field in the records (default = 'pk')
  */
 export type TableState = {
   tableKey: string;
@@ -54,7 +55,7 @@ export type TableState = {
   setExpandedRecords: (records: any[]) => void;
   isRowExpanded: (pk: number) => boolean;
   selectedRecords: any[];
-  selectedIds: number[];
+  selectedIds: any[];
   hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
@@ -71,6 +72,7 @@ export type TableState = {
   records: any[];
   setRecords: (records: any[]) => void;
   updateRecord: (record: any) => void;
+  idAccessor?: string;
 };
 
 /**
@@ -79,7 +81,7 @@ export type TableState = {
  * Refer to the TableState type definition for more information.
  */
 
-export function useTable(tableName: string): TableState {
+export function useTable(tableName: string, idAccessor = 'pk'): TableState {
   // Function to generate a new ID (to refresh the table)
   function generateTableName() {
     return `${tableName.replaceAll('-', '')}-${randomId()}`;
@@ -127,7 +129,7 @@ export function useTable(tableName: string): TableState {
 
   // Array of selected primary key values
   const selectedIds = useMemo(
-    () => selectedRecords.map((r) => r.pk ?? r.id),
+    () => selectedRecords.map((r) => r[idAccessor || 'pk']),
     [selectedRecords]
   );
 
@@ -164,7 +166,9 @@ export function useTable(tableName: string): TableState {
       const _records = [...records];
 
       // Find the matching record in the table
-      const index = _records.findIndex((r) => r.pk === record.pk);
+      const index = _records.findIndex(
+        (r) => r[idAccessor || 'pk'] === record.pk
+      );
 
       if (index >= 0) {
         _records[index] = {
@@ -213,6 +217,7 @@ export function useTable(tableName: string): TableState {
     setPageSize,
     records,
     setRecords,
-    updateRecord
+    updateRecord,
+    idAccessor
   };
 }
