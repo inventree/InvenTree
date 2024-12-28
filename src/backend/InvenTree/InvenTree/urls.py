@@ -105,32 +105,6 @@ apipatterns = [
             # path(
             #     'providers/', SocialProviderListView.as_view(), name='social_providers'
             # ),
-            # path(
-            #     'emails/',
-            #     include([
-            #         path(
-            #             '<int:pk>/',
-            #             include([
-            #                 path(
-            #                     'primary/',
-            #                     EmailPrimaryView.as_view(),
-            #                     name='email-primary',
-            #                 ),
-            #                 path(
-            #                     'verify/',
-            #                     EmailVerifyView.as_view(),
-            #                     name='email-verify',
-            #                 ),
-            #                 path(
-            #                     'remove/',
-            #                     EmailRemoveView().as_view(),
-            #                     name='email-remove',
-            #                 ),
-            #             ]),
-            #         ),
-            #         path('', EmailListView.as_view(), name='email-list'),
-            #     ]),
-            # ),
             # path('social/', include(get_provider_urls())),
             # path(
             #     'social/', SocialAccountListView.as_view(), name='social_account_list'
