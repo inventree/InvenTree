@@ -174,10 +174,10 @@ class GeneralStateTest(InvenTreeTestCase):
 
         # Correct call
         resp = view(rqst, **{StatusView.MODEL_REF: GeneralStatus})
-        self.assertEqual(
+        self.assertDictEqual(
             resp.data,
             {
-                'class': 'GeneralStatus',
+                'status_class': 'GeneralStatus',
                 'values': {
                     'COMPLETE': {
                         'key': 30,
