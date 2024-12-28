@@ -17,11 +17,11 @@ export default function BarcodeScanDialog({
   title,
   opened,
   onClose
-}: {
+}: Readonly<{
   title?: string;
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const navigate = useNavigate();
   const user = useUserState();
 
@@ -81,18 +81,16 @@ export default function BarcodeScanDialog({
   }, []);
 
   return (
-    <>
-      <Modal
-        size='lg'
-        opened={opened}
-        onClose={onClose}
-        title={<StylishText size='xl'>{title ?? t`Scan Barcode`}</StylishText>}
-      >
-        <Divider />
-        <Box>
-          <BarcodeInput onScan={onScan} error={error} processing={processing} />
-        </Box>
-      </Modal>
-    </>
+    <Modal
+      size='lg'
+      opened={opened}
+      onClose={onClose}
+      title={<StylishText size='xl'>{title ?? t`Scan Barcode`}</StylishText>}
+    >
+      <Divider />
+      <Box>
+        <BarcodeInput onScan={onScan} error={error} processing={processing} />
+      </Box>
+    </Modal>
   );
 }
