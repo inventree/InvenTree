@@ -6,7 +6,6 @@ import type { BarcodeInputProps } from './BarcodeInput';
 
 export default function BarcodeKeyboardInput({
   onScan,
-  placeholder = t`Input barcode data using keyboard`,
   actionText = t`Scan`
 }: Readonly<BarcodeInputProps>) {
   const [text, setText] = useState<string>('');
@@ -37,7 +36,7 @@ export default function BarcodeKeyboardInput({
                 onTextScan(text);
               }
             }}
-            placeholder={placeholder}
+            placeholder={t`Enter barcode data`}
             leftSection={<IconQrcode />}
             w='100%'
           />

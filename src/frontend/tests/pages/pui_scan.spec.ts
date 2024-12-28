@@ -30,9 +30,8 @@ test('Scanning - Basic', async ({ page }) => {
 
   // Select the scanner input
   await page.getByLabel('barcode-input-scanner').click();
-  await page.getByText('Waiting for scanner input').waitFor();
-  await page.keyboard.type('123-abc');
-  await page.getByText('123-abc').waitFor();
+  await page.getByPlaceholder('Enter barcode data').fill('123-abc');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
 
   // Select the camera input
   await page.getByLabel('barcode-input-camera').click();

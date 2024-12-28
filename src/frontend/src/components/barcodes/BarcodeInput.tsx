@@ -14,16 +14,16 @@ import { IconCamera, IconScan } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useLocalStorage } from '@mantine/hooks';
+import { Boundary } from '../Boundary';
 import BarcodeCameraInput from './BarcodeCameraInput';
 import BarcodeKeyboardInput from './BarcodeKeyboardInput';
 
 export type BarcodeInputProps = {
   onScan: (barcode: string) => void;
+  processing?: boolean;
   error?: string;
-  placeholder?: string;
   label?: string;
   actionText?: string;
-  processing?: boolean;
 };
 
 export function BarcodeInput({
@@ -85,37 +85,39 @@ export function BarcodeInput({
 
   return (
     <Box>
-      <LoadingOverlay visible={processing} />
-      <Stack gap='xs'>
-        <SegmentedControl
-          aria-label='barcode-input-type'
-          size='xs'
-          data={scanningOptions}
-          value={inputType || 'scanner'}
-          onChange={setInputType}
-        />
-        <Divider />
-        <Card p='sm' withBorder>
-          {barcode ? (
-            <Alert color='blue' title={t`Barcode Data`} p='xs'>
-              {barcode}
-            </Alert>
-          ) : (
-            <Alert color='yellow' title={t`No barcode data`} p='xs'>
-              {t`Scan or enter barcode data`}
-            </Alert>
-          )}
-          {error && (
-            <Alert color='red' title={t`Error`} p='xs'>
-              {error}
-            </Alert>
-          )}
-        </Card>
+      <Boundary label='BarcodeInput'>
+        <LoadingOverlay visible={processing} />
+        <Stack gap='xs'>
+          <SegmentedControl
+            aria-label='barcode-input-type'
+            size='xs'
+            data={scanningOptions}
+            value={inputType || 'scanner'}
+            onChange={setInputType}
+          />
+          <Divider />
+          <Card p='sm' withBorder>
+            {barcode ? (
+              <Alert color='blue' title={t`Barcode Data`} p='xs'>
+                {barcode}
+              </Alert>
+            ) : (
+              <Alert color='yellow' title={t`No barcode data`} p='xs'>
+                {t`Scan or enter barcode data`}
+              </Alert>
+            )}
+            {error && (
+              <Alert color='red' title={t`Error`} p='xs'>
+                {error}
+              </Alert>
+            )}
+          </Card>
 
-        <Card p='sm' withBorder>
-          {scannerInput}
-        </Card>
-      </Stack>
+          <Card p='sm' withBorder>
+            {scannerInput}
+          </Card>
+        </Stack>
+      </Boundary>
     </Box>
   );
 }

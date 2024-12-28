@@ -14,8 +14,7 @@ import Expand from '../items/Expand';
 import type { BarcodeInputProps } from './BarcodeInput';
 
 export default function BarcodeCameraInput({
-  onScan,
-  placeholder = t`Start scanning by selecting a camera and pressing the play button.`
+  onScan
 }: Readonly<BarcodeInputProps>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
@@ -156,6 +155,8 @@ export default function BarcodeCameraInput({
       setCamId(cam);
     }
   }, [cameraValue]);
+
+  const placeholder = t`Start scanning by selecting a camera and pressing the play button.`;
 
   return (
     <Stack gap='xs'>
