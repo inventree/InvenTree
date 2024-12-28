@@ -319,6 +319,7 @@ class Build(
         verbose_name=_('Build Status'),
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
+        status_class=BuildStatus,
         validators=[MinValueValidator(0)],
         help_text=_('Build status code'),
     )

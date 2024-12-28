@@ -483,6 +483,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     status = InvenTreeCustomStatusModelField(
         default=PurchaseOrderStatus.PENDING.value,
         choices=PurchaseOrderStatus.items(),
+        status_class=PurchaseOrderStatus,
         verbose_name=_('Status'),
         help_text=_('Purchase order status'),
     )
@@ -1029,6 +1030,7 @@ class SalesOrder(TotalPriceMixin, Order):
     status = InvenTreeCustomStatusModelField(
         default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
+        status_class=SalesOrderStatus,
         verbose_name=_('Status'),
         help_text=_('Sales order status'),
     )
@@ -2231,6 +2233,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     status = InvenTreeCustomStatusModelField(
         default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
+        status_class=ReturnOrderStatus,
         verbose_name=_('Status'),
         help_text=_('Return order status'),
     )
@@ -2522,6 +2525,7 @@ class ReturnOrderLineItem(OrderLineItem):
     outcome = InvenTreeCustomStatusModelField(
         default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
+        status_class=ReturnOrderLineStatus,
         verbose_name=_('Outcome'),
         help_text=_('Outcome for this line item'),
     )

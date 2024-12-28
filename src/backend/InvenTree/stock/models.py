@@ -1020,6 +1020,7 @@ class StockItem(
 
     status = InvenTreeCustomStatusModelField(
         default=StockStatus.OK.value,
+        status_class=StockStatus,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)],
     )

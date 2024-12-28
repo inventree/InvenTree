@@ -117,7 +117,7 @@ class StatusCode(BaseEnum):
             return []
 
     @classmethod
-    def values(cls, key=None, custom=True):
+    def values(cls, key=None):
         """Return a dict representation containing all required information."""
         elements = [itm for itm in cls if cls._is_element(itm.name)]
 
@@ -167,14 +167,14 @@ class StatusCode(BaseEnum):
         return data
 
     @classmethod
-    def keys(cls):
+    def keys(cls, custom=True):
         """All status code keys."""
-        return [x.value for x in cls.values()]
+        return [el[0] for el in cls.items(custom=custom)]
 
     @classmethod
-    def labels(cls):
+    def labels(cls, custom=True):
         """All status code labels."""
-        return [x.label for x in cls.values()]
+        return [el[1] for el in cls.items(custom=custom)]
 
     @classmethod
     def names(cls):
