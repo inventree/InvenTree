@@ -221,6 +221,13 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByText('123').first().waitFor();
   await page.getByText('Custom Status').first().waitFor();
   await page.getByText('Incoming goods inspection').first().waitFor();
+
+  // Find an item which has been sent to a customer
+  await page.goto(`${baseUrl}/stock/item/1014/details`);
+  await page.getByText('Batch Code: 2022-11-12').waitFor();
+  await page.getByText('Unavailable').waitFor();
+  await page.getByLabel('action-menu-stock-operations').click();
+  await page.getByLabel('action-menu-stock-operations-return').click();
 });
 
 test('Stock - Tracking', async ({ page }) => {

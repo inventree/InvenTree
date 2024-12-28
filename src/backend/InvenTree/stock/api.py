@@ -908,8 +908,9 @@ class StockApiMixin:
         try:
             params = self.request.query_params
 
+            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
+
             for key in [
-                'part_detail',
                 'path_detail',
                 'location_detail',
                 'supplier_part_detail',

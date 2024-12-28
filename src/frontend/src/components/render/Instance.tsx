@@ -6,6 +6,7 @@ import { type ReactNode, useCallback } from 'react';
 import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
+import { shortenString } from '../../functions/tables';
 import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
@@ -193,6 +194,16 @@ export function RenderInlineModel({
     [url, navigate]
   );
 
+  const primaryText = shortenString({
+    str: primary,
+    len: 50
+  });
+
+  const secondaryText = shortenString({
+    str: secondary,
+    len: 75
+  });
+
   return (
     <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
       <Group gap='xs' justify='left' wrap='nowrap'>
@@ -200,12 +211,12 @@ export function RenderInlineModel({
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href='' onClick={(event: any) => onClick(event)}>
-            <Text size='sm'>{primary}</Text>
+            <Text size='sm'>{primaryText}</Text>
           </Anchor>
         ) : (
-          <Text size='sm'>{primary}</Text>
+          <Text size='sm'>{primaryText}</Text>
         )}
-        {showSecondary && secondary && <Text size='xs'>{secondary}</Text>}
+        {showSecondary && secondary && <Text size='xs'>{secondaryText}</Text>}
       </Group>
       {suffix && (
         <>
