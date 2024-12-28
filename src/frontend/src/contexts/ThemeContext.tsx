@@ -6,6 +6,7 @@ import { ContextMenuProvider } from 'mantine-contextmenu';
 
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
+import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
@@ -47,7 +48,8 @@ export function ThemeContext({
             modals={{
               info: ServerInfoModal,
               about: AboutInvenTreeModal,
-              license: LicenseModal
+              license: LicenseModal,
+              qr: QrModal
             }}
           >
             <Notifications />

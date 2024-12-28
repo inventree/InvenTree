@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Box, Divider, Modal } from '@mantine/core';
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
@@ -17,17 +17,34 @@ export default function BarcodeScanDialog({
   title,
   opened,
   onClose
-}: {
+}: Readonly<{
   title?: string;
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const navigate = useNavigate();
-  const user = useUserState();
 
+  return (
+    <Modal
+      size='lg'
+      opened={opened}
+      onClose={onClose}
+      title={<StylishText size='xl'>{title ?? t`Scan Barcode`}</StylishText>}
+    >
+      <Divider />
+      <Box>
+        <ScanInputHandler navigate={navigate} onClose={onClose} />
+      </Box>
+    </Modal>
+  );
+}
+export function ScanInputHandler({
+  onClose,
+  navigate
+}: Readonly<{ onClose: () => void; navigate: NavigateFunction }>) {
   const [error, setError] = useState<string>('');
-
   const [processing, setProcessing] = useState<boolean>(false);
+  const user = useUserState();
 
   const onScan = useCallback((barcode: string) => {
     if (!barcode || barcode.length === 0) {
@@ -80,19 +97,5 @@ export default function BarcodeScanDialog({
       });
   }, []);
 
-  return (
-    <>
-      <Modal
-        size='lg'
-        opened={opened}
-        onClose={onClose}
-        title={<StylishText size='xl'>{title ?? t`Scan Barcode`}</StylishText>}
-      >
-        <Divider />
-        <Box>
-          <BarcodeInput onScan={onScan} error={error} processing={processing} />
-        </Box>
-      </Modal>
-    </>
-  );
+  return <BarcodeInput onScan={onScan} error={error} processing={processing} />;
 }
