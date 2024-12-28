@@ -575,7 +575,7 @@ class StockFilter(rest_filters.FilterSet):
 
         Note: Also account for the possibility of a custom status code.
         """
-        q1 = Q(status=value)
+        q1 = Q(status=value, status_custom_key__isnull=True)
         q2 = Q(status_custom_key=value)
 
         return queryset.filter(q1 | q2).distinct()
