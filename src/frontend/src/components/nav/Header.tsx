@@ -1,10 +1,10 @@
 import {
   ActionIcon,
-  Anchor,
   Container,
   Group,
   Indicator,
-  Tabs
+  Tabs,
+  UnstyledButton
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
@@ -165,16 +165,18 @@ function NavTabs() {
 
       _tabs.push(
         <Tabs.Tab
-          component={Anchor}
           value={tab.name}
           key={tab.name}
           onClick={(event: any) =>
             navigateToLink(`/${tab.name}`, navigate, event)
           }
-          href={generateUrl(`${base_url}/${tab.name}`)}
-          underline={'never'}
         >
-          {tab.text}
+          <UnstyledButton
+            component={'a'}
+            href={generateUrl(`${base_url}/${tab.name}`)}
+          >
+            {tab.text}
+          </UnstyledButton>
         </Tabs.Tab>
       );
     });
