@@ -25,9 +25,7 @@ class FilteredEventPluginSampleTests(TestCase):
         # Check that an event is issued
         with self.assertLogs(logger='inventree', level='DEBUG') as cm:
             trigger_event('test.event')
-        self.assertIn(
-            'DEBUG:inventree:Event `test.event` triggered in sample plugin', cm[1]
-        )
+        self.assertIn('Event `test.event` triggered in sample plugin', cm[1])
 
         # Disable again
         settings.PLUGIN_TESTING_EVENTS = False
