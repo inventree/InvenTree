@@ -2457,6 +2457,7 @@ class ReturnOrderLineItem(InvenTree.models.StatusCodeMixin, OrderLineItem):
     """Model for a single LineItem in a ReturnOrder."""
 
     STATUS_CLASS = ReturnOrderLineStatus
+    STATUS_FIELD = 'outcome'
 
     class Meta:
         """Metaclass options for this model."""
