@@ -141,9 +141,18 @@ export default function PurchaseOrderDetail() {
       },
       {
         type: 'status',
-        name: 'status_custom_key',
+        name: 'status',
         label: t`Status`,
         model: ModelType.purchaseorder
+      },
+      {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.purchaseorder,
+        icon: 'status',
+        hidden:
+          !order.status_custom_key || order.status_custom_key == order.status
       }
     ];
 

@@ -137,8 +137,7 @@ export default function StockDetail() {
         name: 'status',
         type: 'status',
         label: t`Status`,
-        model: ModelType.stockitem,
-        icon: 'status'
+        model: ModelType.stockitem
       },
       {
         name: 'status_custom_key',

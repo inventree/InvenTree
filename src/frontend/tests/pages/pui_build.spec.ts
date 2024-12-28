@@ -284,5 +284,6 @@ test('Build Order - Filters', async ({ page }) => {
   await page.getByText('1 - 1 / 1').waitFor();
   await page.getByRole('cell', { name: 'BO0023' }).click();
 
+  await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending Approval').first().waitFor();
 });
