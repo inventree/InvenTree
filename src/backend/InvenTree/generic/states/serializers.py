@@ -11,7 +11,7 @@ class GenericStateValueSerializer(serializers.Serializer):
     class Meta:
         """Meta class for GenericStateValueSerializer."""
 
-        fields = ['key', 'logical_key', 'name', 'label', 'color']
+        fields = ['key', 'logical_key', 'name', 'label', 'color', 'custom']
 
     key = serializers.IntegerField(label=_('Key'), required=True)
 
@@ -22,6 +22,8 @@ class GenericStateValueSerializer(serializers.Serializer):
     label = serializers.CharField(label=_('Label'), required=True)
 
     color = serializers.CharField(label=_('Color'), required=False)
+
+    custom = serializers.BooleanField(label=_('Custom'), required=False)
 
 
 class GenericStateClassSerializer(serializers.Serializer):

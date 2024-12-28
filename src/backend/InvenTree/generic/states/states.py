@@ -214,6 +214,7 @@ class StatusCode(BaseEnum):
                             'key': item.key,
                             'label': item.label,
                             'name': item.name,
+                            'custom': True,
                         }
             except Exception:
                 pass

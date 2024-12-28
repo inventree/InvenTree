@@ -83,6 +83,7 @@ class StatusView(GenericAPIView):
                         'key': item.key,
                         'label': item.label,
                         'name': item.name,
+                        'custom': True,
                     }
         except Exception:
             pass
@@ -114,12 +115,14 @@ class AllStatusViews(StatusView):
             for item in cls.custom_values():
                 label = str(item.name)
                 if label not in cls_data['values']:
+                    print('custom value:', item)
                     cls_data['values'][label] = {
                         'color': item.color,
                         'logical_key': item.logical_key,
                         'key': item.key,
                         'label': item.label,
                         'name': item.name,
+                        'custom': True,
                     }
 
             data[cls.__name__] = GenericStateClassSerializer(cls_data, many=False).data
