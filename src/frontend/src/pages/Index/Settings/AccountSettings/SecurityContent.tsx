@@ -106,20 +106,45 @@ function EmailContent() {
       api.get(apiUrl(ApiEndpoints.user_emails)).then((res) => res.data)
   });
 
-  function runServerAction(url: ApiEndpoints) {
+  function runServerAction(
+    url: ApiEndpoints,
+    action: 'post' | 'put' | 'delete' = 'post'
+  ) {
+    let act: any;
+    switch (action) {
+      case 'post':
+        act = api.post;
+        break;
+      case 'put':
+        act = api.put;
+        break;
+      case 'delete':
+        act = api.delete;
+        break;
+    }
+    act(apiUrl(url), { email: value })
+      .then(() => {
+        refetch();
+      })
+      .catch((res: any) => console.log(res.data));
+  }
+
+  function addEmail() {
     api
-      .post(apiUrl(url, undefined, { id: value }), {})
+      .post(apiUrl(ApiEndpoints.user_emails), {
+        email: newEmailValue
+      })
       .then(() => {
         refetch();
       })
       .catch((res) => console.log(res.data));
   }
 
-  function addEmail() {
+  function changePrimary() {
     api
       .post(apiUrl(ApiEndpoints.user_emails), {
-        email: newEmailValue,
-        user: user?.pk
+        email: value,
+        primary: true
       })
       .then(() => {
         refetch();
@@ -139,19 +164,19 @@ function EmailContent() {
           label={t`The following email addresses are associated with your account:`}
         >
           <Stack mt='xs'>
-            {data.map((link: any) => (
+            {data.map((email: any) => (
               <Radio
-                key={link.id}
-                value={String(link.id)}
+                key={email.id}
+                value={String(email.id)}
                 label={
                   <Group justify='space-between'>
-                    {link.email}
-                    {link.primary && (
+                    {email.email}
+                    {email.primary && (
                       <Badge color='blue'>
                         <Trans>Primary</Trans>
                       </Badge>
                     )}
-                    {link.verified ? (
+                    {email.verified ? (
                       <Badge color='green'>
                         <Trans>Verified</Trans>
                       </Badge>
@@ -183,18 +208,16 @@ function EmailContent() {
       </Grid.Col>
       <Grid.Col span={6}>
         <Group>
-          <Button
-            onClick={() => runServerAction(ApiEndpoints.user_email_primary)}
-          >
+          <Button onClick={() => changePrimary()}>
             <Trans>Make Primary</Trans>
           </Button>
           <Button
-            onClick={() => runServerAction(ApiEndpoints.user_email_verify)}
+            onClick={() => runServerAction(ApiEndpoints.user_emails, 'put')}
           >
             <Trans>Re-send Verification</Trans>
           </Button>
           <Button
-            onClick={() => runServerAction(ApiEndpoints.user_email_remove)}
+            onClick={() => runServerAction(ApiEndpoints.user_emails, 'delete')}
           >
             <Trans>Remove</Trans>
           </Button>
