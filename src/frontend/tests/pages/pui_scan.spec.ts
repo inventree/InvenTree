@@ -3,7 +3,7 @@ import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
 const scan = async (page, barcode) => {
-  await page.getByLabel('barcode-input-keyboard').click();
+  await page.getByLabel('barcode-input-scanner').click();
   await page.getByLabel('barcode-scan-keyboard-input').fill(barcode);
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
 };
@@ -37,11 +37,6 @@ test('Scanning - Basic', async ({ page }) => {
   // Select the camera input
   await page.getByLabel('barcode-input-camera').click();
   await page.getByText('Start scanning by selecting a camera').waitFor();
-
-  // Select the keyboard input
-  await page.getByLabel('barcode-input-keyboard').click();
-  await page.getByLabel('barcode-scan-keyboard-input').fill('hello-world');
-  await page.getByRole('button', { name: 'Scan', exact: true }).click();
 
   await page.getByText('No match found for barcode').waitFor();
 });

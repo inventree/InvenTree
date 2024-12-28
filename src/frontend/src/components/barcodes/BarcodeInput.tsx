@@ -10,13 +10,12 @@ import {
   Stack,
   Tooltip
 } from '@mantine/core';
-import { IconCamera, IconKeyboard, IconScan } from '@tabler/icons-react';
+import { IconCamera, IconScan } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useLocalStorage } from '@mantine/hooks';
 import BarcodeCameraInput from './BarcodeCameraInput';
 import BarcodeKeyboardInput from './BarcodeKeyboardInput';
-import BarcodeScannerInput from './BarcodeScannerInput';
 
 export type BarcodeInputProps = {
   onScan: (barcode: string) => void;
@@ -44,15 +43,6 @@ export function BarcodeInput({
   const scanningOptions: SegmentedControlItem[] = useMemo(() => {
     const options: SegmentedControlItem[] = [];
 
-    options.push({
-      value: 'scanner',
-      label: (
-        <Tooltip label={t`Scanner Input`}>
-          <IconScan size={20} aria-label='barcode-input-scanner' />
-        </Tooltip>
-      )
-    });
-
     // TODO : Hide camera input optionally
     options.push({
       value: 'camera',
@@ -64,10 +54,10 @@ export function BarcodeInput({
     });
 
     options.push({
-      value: 'keyboard',
+      value: 'scanner',
       label: (
-        <Tooltip label={t`Keyboard Input`}>
-          <IconKeyboard size={20} aria-label='barcode-input-keyboard' />
+        <Tooltip label={t`Scanner Input`}>
+          <IconScan size={20} aria-label='barcode-input-scanner' />
         </Tooltip>
       )
     });
@@ -88,8 +78,6 @@ export function BarcodeInput({
       case 'camera':
         return <BarcodeCameraInput onScan={onScanBarcode} />;
       case 'scanner':
-        return <BarcodeScannerInput onScan={onScanBarcode} />;
-      case 'keyboard':
       default:
         return <BarcodeKeyboardInput onScan={onScanBarcode} />;
     }

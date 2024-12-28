@@ -1,12 +1,5 @@
-import { Trans, t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Button,
-  Container,
-  Group,
-  Select,
-  Stack
-} from '@mantine/core';
+import { t } from '@lingui/macro';
+import { ActionIcon, Container, Group, Select, Stack } from '@mantine/core';
 import { useDocumentVisibility, useLocalStorage } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import {
@@ -91,24 +84,6 @@ export default function BarcodeCameraInput({
     ) {
       console.warn(`Code scan error = ${error}`);
     }
-  }
-
-  // button handlers
-  function btnSelectCamera() {
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices?.length) {
-          setCamId(devices[0]);
-        }
-      })
-      .catch((err) => {
-        showNotification({
-          title: t`Error while getting camera`,
-          message: err,
-          color: 'red',
-          icon: <IconX />
-        });
-      });
   }
 
   function btnStartScanning() {
@@ -225,11 +200,6 @@ export default function BarcodeCameraInput({
         <Container px={0} id='reader' w={'100%'}>
           {placeholder}
         </Container>
-      )}
-      {!camId && (
-        <Button onClick={btnSelectCamera}>
-          <Trans>Select Camera</Trans>
-        </Button>
       )}
     </Stack>
   );
