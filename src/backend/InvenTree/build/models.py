@@ -43,7 +43,7 @@ from common.settings import (
     get_global_setting,
     prevent_build_output_complete_on_incompleted_tests,
 )
-from generic.states import StateTransitionMixin
+from generic.states import StateTransitionMixin, StatusCodeMixin
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
@@ -59,6 +59,7 @@ class Build(
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
     StateTransitionMixin,
+    StatusCodeMixin,
     MPTTModel,
 ):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
@@ -83,6 +84,8 @@ class Build(
         responsible: User (or group) responsible for completing the build
         priority: Priority of the build
     """
+
+    STATUS_CLASS = BuildStatus
 
     class Meta:
         """Metaclass options for the BuildOrder model."""
@@ -319,6 +322,7 @@ class Build(
         verbose_name=_('Build Status'),
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),
+        status_class=BuildStatus,
         validators=[MinValueValidator(0)],
         help_text=_('Build status code'),
     )

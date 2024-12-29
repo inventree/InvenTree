@@ -20,7 +20,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 export function CurrencyTable({
   setInfo
 }: Readonly<{ setInfo: (info: any) => void }>) {
-  const table = useTable('currency');
+  const table = useTable('currency', 'currency');
   const columns = useMemo(() => {
     return [
       {
@@ -71,7 +71,6 @@ export function CurrencyTable({
       tableState={table}
       columns={columns}
       props={{
-        idAccessor: 'currency',
         tableActions: tableActions,
         dataFormatter: (data: any) => {
           setInfo(data);

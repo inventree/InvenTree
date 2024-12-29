@@ -318,6 +318,7 @@ export default function CategoryDetail() {
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
+        requiredRole={UserRoles.part_category}
       >
         <Stack gap='xs'>
           <LoadingOverlay visible={instanceQuery.isFetching} />

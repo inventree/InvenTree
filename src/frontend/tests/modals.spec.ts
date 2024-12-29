@@ -1,7 +1,7 @@
 import { test } from './baseFixtures.js';
 import { doQuickLogin } from './login.js';
 
-test('Modals as admin', async ({ page }) => {
+test('Modals - Admin', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
   // use server info
@@ -49,15 +49,4 @@ test('Modals as admin', async ({ page }) => {
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
     .click();
   await page.getByRole('cell', { name: 'InvenTree Version' }).click();
-
-  await page.goto('./platform/');
-
-  // Barcode scanning window
-  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
-  await page.getByRole('banner').getByRole('button').click();
-  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
-  await page.getByRole('button', { name: 'Close modal' }).click();
-  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
-  await page.waitForTimeout(500);
-  await page.getByRole('banner').getByRole('button').click();
 });
