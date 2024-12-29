@@ -68,24 +68,19 @@ export function SecurityContent() {
       <Title order={5}>
         <Trans>Multifactor</Trans>
       </Title>
-      {isLoadingProvider ? (
-        <Loader />
+
+      {isMfaEnabled ? (
+        <MfaContent />
       ) : (
-        <>
-          {isMfaEnabled ? (
-            <MfaContent />
-          ) : (
-            <Alert
-              icon={<IconAlertCircle size='1rem' />}
-              title={t`Not enabled`}
-              color='yellow'
-            >
-              <Trans>
-                Multifactor authentication is not configured for your account{' '}
-              </Trans>
-            </Alert>
-          )}
-        </>
+        <Alert
+          icon={<IconAlertCircle size='1rem' />}
+          title={t`Not enabled`}
+          color='yellow'
+        >
+          <Trans>
+            Multifactor authentication is not configured for your account{' '}
+          </Trans>
+        </Alert>
       )}
 
       <Title order={5}>

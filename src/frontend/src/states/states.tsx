@@ -59,6 +59,26 @@ export interface AuthProps {
   password_forgotten_enabled: boolean;
 }
 
+export interface SecuritySetting {
+  account: {
+    authentication_method: string;
+  };
+  socialaccount: { providers: Provider[] };
+  mfa: {
+    supported_types: string[];
+  };
+  usersessions: {
+    track_activity: boolean;
+  };
+}
+
+export interface Provider {
+  id: string;
+  name: string;
+  flows: string[];
+  client_id: string;
+}
+
 export interface Provider {
   id: string;
   name: string;

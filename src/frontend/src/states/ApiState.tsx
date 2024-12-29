@@ -4,13 +4,13 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { AuthProps, ServerAPIProps } from './states';
+import type { SecuritySetting, ServerAPIProps } from './states';
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
-  auth_settings?: AuthProps;
+  auth_settings?: SecuritySetting;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
@@ -31,11 +31,11 @@ export const useServerApiState = create<ServerApiStateProps>()(
 
         // Fetch login/SSO behaviour
         await api
-          .get(apiUrl(ApiEndpoints.sso_providers), {
+          .get(apiUrl(ApiEndpoints.securtiy_settings), {
             headers: { Authorization: '' }
           })
           .then((response) => {
-            set({ auth_settings: response.data });
+            set({ auth_settings: response.data.data });
           })
           .catch(() => {
             console.error('ERR: Error fetching SSO information');

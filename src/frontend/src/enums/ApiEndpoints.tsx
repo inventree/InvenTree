@@ -50,6 +50,7 @@ export enum ApiEndpoints {
   icons = 'icons/',
   selectionlist_list = 'selection/',
   selectionlist_detail = 'selection/:id/',
+  securtiy_settings = '_allauth/app/v1/config',
 
   // Barcode API endpoints
   barcode = 'barcode/',
