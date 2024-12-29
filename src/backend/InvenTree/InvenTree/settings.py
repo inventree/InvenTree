@@ -1290,10 +1290,12 @@ SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
+# TDOO: Implement dynamic lookup for those
 HEADLESS_FRONTEND_URLS = {
-    'account_confirm_email': 'https://app.project.org/account/verify-email/{key}',  # noqa: RUF027
-    'account_reset_password_from_key': 'https://app.org/account/password/reset/key/{key}',  # noqa: RUF027
-    'account_signup': 'https://app.org/account/signup',
+    'account_confirm_email': 'http://localhost:8000/verify-email/{key}',  # noqa: RUF027
+    'account_reset_password': 'http://localhost:8000/password-reset',
+    'account_reset_password_from_key': 'http://localhost:8000/password-reset-key/{key}',  # noqa: RUF027
+    'account_signup': 'http://localhost:8000/signup',
 }
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
