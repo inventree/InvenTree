@@ -416,23 +416,6 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
 
 
 @task
-def translate_stats(c):
-    """Collect translation stats.
-
-    The file generated from this is needed for the UI.
-    """
-    # Recompile the translation files (.mo)
-    # We do not run 'invoke dev.translate' here, as that will touch the source (.po) files too!
-    try:
-        manage(c, 'compilemessages', pty=True)
-    except Exception:
-        warning('WARNING: Translation files could not be compiled:')
-
-    path = managePyDir().joinpath('script', 'translation_stats.py')
-    run(c, f'python3 {path}')
-
-
-@task(post=[translate_stats])
 def translate(c, ignore_static=False, no_frontend=False):
     """Rebuild translation source files. Advanced use only!
 
@@ -562,7 +545,7 @@ def showmigrations(c, app=''):
 
 
 @task(
-    post=[clean_settings, translate_stats],
+    post=[clean_settings],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
@@ -592,7 +575,6 @@ def update(
     - frontend_compile or frontend_download (optional)
     - static (optional)
     - clean_settings
-    - translate_stats
     """
     info('Updating InvenTree installation...')
 
@@ -917,7 +899,7 @@ def worker(c):
     manage(c, 'qcluster', pty=True)
 
 
-@task(post=[translate_stats, static, server])
+@task(post=[static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
     import django
@@ -1527,7 +1509,6 @@ internal = Collection(
     rebuild_models,
     rebuild_thumbnails,
     showmigrations,
-    translate_stats,
 )
 
 ns = Collection(
