@@ -21,11 +21,12 @@ export enum ApiEndpoints {
   user_change_password = 'auth/password/change/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
-  user_emails = '_allauth/app/v1/account/email',
   user_login = '_allauth/app/v1/auth/login',
   user_login_mfa = '_allauth/app/v1/auth/2fa/authenticate',
   user_logout = '_allauth/app/v1/auth/session',
   user_register = 'auth/registration/',
+  user_mfa = '_allauth/app/v1/account/authenticators',
+  user_emails = '_allauth/app/v1/account/email',
 
   // Generic API endpoints
   currency_list = 'currency/exchange/',
