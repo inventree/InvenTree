@@ -2,6 +2,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import Group, User
 from django.http.response import HttpResponse
@@ -262,7 +263,7 @@ class Login(LoginView):
             'signal_kwargs': None,
             'signup': False,
             'email': None,
-            'redirect_url': reverse('platform'),
+            'redirect_url': reverse(settings.FRONTEND_URL_BASE),
         }
         logger.info('Redirecting to 2fa - Proceeding')
         return redirect(reverse('two-factor-authenticate'))
