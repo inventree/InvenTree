@@ -120,7 +120,7 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (panel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey)) {
+      if (event && (event?.ctrlKey || event?.shiftKey || event?.metaKey)) {
         const url = `${location.pathname}/../${panel}`;
         cancelEvent(event);
         navigateToLink(url, navigate, event);
