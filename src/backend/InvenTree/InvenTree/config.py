@@ -420,7 +420,7 @@ def get_frontend_settings(debug=True):
     # Set the base URL
     if 'base_url' not in settings:
         settings['base_url'] = get_setting(
-            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', ''
+            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
         )
 
     # Set the server list
