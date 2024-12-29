@@ -4,8 +4,7 @@ import {
   Paper,
   Stack,
   Tabs,
-  Tooltip,
-  UnstyledButton
+  Tooltip
 } from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -31,9 +30,7 @@ import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
-import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
-import { base_url } from '../../main';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
@@ -185,14 +182,7 @@ function BasePanelGroup({
                         handlePanelChange(panel.name, event)
                       }
                     >
-                      <UnstyledButton
-                        component={'a'}
-                        href={generateUrl(
-                          `${base_url}${location.pathname}/${panel.name}`
-                        )}
-                      >
-                        {expanded && panel.label}
-                      </UnstyledButton>
+                      {expanded && panel.label}
                     </Tabs.Tab>
                   </Tooltip>
                 )

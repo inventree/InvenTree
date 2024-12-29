@@ -1,11 +1,4 @@
-import {
-  ActionIcon,
-  Container,
-  Group,
-  Indicator,
-  Tabs,
-  UnstyledButton
-} from '@mantine/core';
+import { ActionIcon, Container, Group, Indicator, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,8 +9,6 @@ import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
-import { generateUrl } from '../../functions/urls';
-import { base_url } from '../../main';
 import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -170,12 +161,7 @@ function NavTabs() {
             navigateToLink(`/${tab.name}`, navigate, event)
           }
         >
-          <UnstyledButton
-            component={'a'}
-            href={generateUrl(`${base_url}/${tab.name}`)}
-          >
-            {tab.text}
-          </UnstyledButton>
+          {tab.text}
         </Tabs.Tab>
       );
     });
