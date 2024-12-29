@@ -25,13 +25,15 @@ export default function PurchasingIndex() {
         name: 'salesorders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        content: <SalesOrderTable />
+        content: <SalesOrderTable />,
+        hidden: !user.hasViewRole(UserRoles.sales_order)
       },
       {
         name: 'returnorders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        content: <ReturnOrderTable />
+        content: <ReturnOrderTable />,
+        hidden: !user.hasViewRole(UserRoles.return_order)
       },
       {
         name: 'suppliers',
@@ -42,7 +44,7 @@ export default function PurchasingIndex() {
         )
       }
     ];
-  }, []);
+  }, [user]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
     return <PermissionDenied />;
