@@ -160,17 +160,7 @@ class RegistrationMixin:
         return user
 
 
-class CustomUrlMixin:
-    """Mixin to set urls."""
-
-    def get_email_confirmation_url(self, request, emailconfirmation):
-        """Custom email confirmation (activation) url."""
-        url = reverse('account_confirm_email', args=[emailconfirmation.key])
-
-        return InvenTree.helpers_model.construct_absolute_url(url)
-
-
-class CustomAccountAdapter(CustomUrlMixin, RegistrationMixin, DefaultAccountAdapter):
+class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def send_mail(self, template_prefix, email, context):
@@ -195,9 +185,7 @@ class CustomAccountAdapter(CustomUrlMixin, RegistrationMixin, DefaultAccountAdap
         return url
 
 
-class CustomSocialAccountAdapter(
-    CustomUrlMixin, RegistrationMixin, DefaultSocialAccountAdapter
-):
+class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def is_auto_signup_allowed(self, request, sociallogin):
