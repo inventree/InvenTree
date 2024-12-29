@@ -67,7 +67,7 @@ export function RenderStockItem(
     <RenderInlineModel
       {...props}
       primary={instance.part_detail?.full_name}
-      suffix={<Text size='sm'>{quantity_string}</Text>}
+      suffix={<Text size='xs'>{quantity_string}</Text>}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
       url={
         props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined

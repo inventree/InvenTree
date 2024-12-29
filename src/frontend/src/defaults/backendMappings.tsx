@@ -20,7 +20,7 @@ export const statusCodeList: Record<string, ModelType> = {
 /*
  * Map the colors used in the backend to the colors used in the frontend
  */
-export const colorMap: { [key: string]: string } = {
+export const statusColorMap: { [key: string]: string } = {
   dark: 'dark',
   warning: 'yellow',
   success: 'green',

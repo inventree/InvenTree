@@ -77,7 +77,7 @@ if version_file.exists():
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -1177,7 +1177,9 @@ SESSION_COOKIE_SECURE = (
     if DEBUG
     else (
         SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+        or get_boolean_setting(
+            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+        )
     )
 )
 
@@ -1385,7 +1387,7 @@ CUSTOMIZE = get_setting(
 
 # Load settings for the frontend interface
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')

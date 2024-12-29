@@ -23,6 +23,10 @@ The following guide provides a streamlined production InvenTree installation, wi
 !!! warning "Docker Knowledge Required"
     This guide assumes that you are reasonably comfortable with the basic concepts of docker and docker compose.
 
+### Frequently Asked Questions
+
+If you encounter any issues during the installation process, please refer first to the [FAQ](../faq.md) for common problems and solutions.
+
 ## Docker Installation
 
 ### Required Files

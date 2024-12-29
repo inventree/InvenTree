@@ -1,39 +1,26 @@
-"""Basic unit tests for the BuildOrder app"""
-
-from django.core.exceptions import ValidationError
-from django.test import tag
-from django.urls import reverse
+"""Basic unit tests for the BuildOrder app."""
 
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ValidationError
+
+from build.status_codes import BuildStatus
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
+from part.models import BomItem, Part
 
 from .models import Build
-from part.models import Part, BomItem
-from stock.models import StockItem
-
-from common.settings import set_global_setting
-from build.status_codes import BuildStatus
 
 
 class BuildTestSimple(InvenTreeTestCase):
-    """Basic set of tests for the BuildOrder model functionality"""
+    """Basic set of tests for the BuildOrder model functionality."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'build',
-    ]
+    fixtures = ['category', 'part', 'location', 'build']
 
-    roles = [
-        'build.change',
-        'build.add',
-        'build.delete',
-    ]
+    roles = ['build.change', 'build.add', 'build.delete']
 
     def test_build_objects(self):
-        """Ensure the Build objects were correctly created"""
+        """Ensure the Build objects were correctly created."""
         self.assertEqual(Build.objects.count(), 5)
         b = Build.objects.get(pk=2)
         self.assertEqual(b.batch, 'B2')
@@ -42,12 +29,12 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(str(b), 'BO-0002')
 
     def test_url(self):
-        """Test URL lookup"""
+        """Test URL lookup."""
         b1 = Build.objects.get(pk=1)
         self.assertEqual(b1.get_absolute_url(), '/platform/manufacturing/build-order/1')
 
     def test_is_complete(self):
-        """Test build completion status"""
+        """Test build completion status."""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -72,7 +59,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertFalse(build.is_overdue)
 
     def test_is_active(self):
-        """Test active / inactive build status"""
+        """Test active / inactive build status."""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -91,7 +78,6 @@ class BuildTestSimple(InvenTreeTestCase):
 
     def test_build_create(self):
         """Test creation of build orders via API."""
-
         n = Build.objects.count()
 
         # Find an assembly part
@@ -105,13 +91,9 @@ class BuildTestSimple(InvenTreeTestCase):
 
         # Let's create some BOM items for this assembly
         for component in Part.objects.filter(assembly=False, component=True)[:15]:
-
             try:
                 BomItem.objects.create(
-                    part=assembly,
-                    sub_part=component,
-                    reference='xxx',
-                    quantity=5
+                    part=assembly, sub_part=component, reference='xxx', quantity=5
                 )
             except ValidationError:
                 pass

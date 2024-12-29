@@ -134,10 +134,20 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'status',
+        type: 'status',
+        label: t`Status`,
+        model: ModelType.stockitem
+      },
+      {
         name: 'status_custom_key',
         type: 'status',
-        label: t`Stock Status`,
-        model: ModelType.stockitem
+        label: t`Custom Status`,
+        model: ModelType.stockitem,
+        icon: 'status',
+        hidden:
+          !stockitem.status_custom_key ||
+          stockitem.status_custom_key == stockitem.status
       },
       {
         type: 'text',
@@ -661,7 +671,6 @@ export default function StockDetail() {
   const stockActions = useMemo(() => {
     const inStock =
       user.hasChangeRole(UserRoles.stock) &&
-      stockitem.quantity > 0 &&
       !stockitem.sales_order &&
       !stockitem.belongs_to &&
       !stockitem.customer &&
@@ -717,7 +726,7 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove Stock`,
-            hidden: serialized || !inStock,
+            hidden: serialized || !inStock || stockitem.quantity <= 0,
             icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
@@ -846,11 +855,10 @@ export default function StockDetail() {
             key='batch'
           />,
           <StatusRenderer
-            status={stockitem.status_custom_key}
+            status={stockitem.status_custom_key || stockitem.status}
             type={ModelType.stockitem}
             options={{
-              size: 'lg',
-              hidden: !!stockitem.status_custom_key
+              size: 'lg'
             }}
             key='status'
           />,

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-22 05:11\n"
+"PO-Revision-Date: 2024-12-27 00:05\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -60,6 +60,7 @@ msgstr "標籤打印成功"
 
 #: src/components/buttons/PrintingActions.tsx:120
 #: src/components/buttons/PrintingActions.tsx:158
+#: src/components/buttons/SSOButton.tsx:53
 #: src/components/editors/NotesEditor.tsx:73
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
 #: src/components/forms/fields/ApiFormField.tsx:338
@@ -69,9 +70,11 @@ msgstr "標籤打印成功"
 #: src/components/modals/LicenseModal.tsx:87
 #: src/components/nav/SearchDrawer.tsx:456
 #: src/components/render/ModelType.tsx:283
+#: src/pages/Auth/ChangePassword.tsx:50
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/part/PartPricingPanel.tsx:71
-#: src/tables/InvenTreeTable.tsx:487
+#: src/states/IconState.tsx:59
+#: src/tables/InvenTreeTable.tsx:497
 #: src/tables/bom/BomTable.tsx:454
 #: src/tables/stock/StockItemTestResultTable.tsx:320
 msgid "Error"
@@ -113,11 +116,15 @@ msgstr "列印報告"
 msgid "Remove this row"
 msgstr "移除此行"
 
-#: src/components/buttons/SSOButton.tsx:56
+#: src/components/buttons/SSOButton.tsx:54
+msgid "Sign in redirect failed."
+msgstr ""
+
+#: src/components/buttons/SSOButton.tsx:64
 msgid "You will be redirected to the provider for further actions."
 msgstr ""
 
-#: src/components/buttons/SSOButton.tsx:57
+#: src/components/buttons/SSOButton.tsx:65
 msgid "This provider is not full set up."
 msgstr ""
 
@@ -373,7 +380,7 @@ msgid "Getting started with InvenTree"
 msgstr "開始使用 InvenTree"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:166
-#: src/components/dashboard/widgets/NewsWidget.tsx:122
+#: src/components/dashboard/widgets/NewsWidget.tsx:123
 msgid "News Updates"
 msgstr ""
 
@@ -404,19 +411,19 @@ msgstr ""
 msgid "Mark as read"
 msgstr "標記為已讀"
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:114
+#: src/components/dashboard/widgets/NewsWidget.tsx:115
 msgid "Requires Superuser"
 msgstr ""
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:115
+#: src/components/dashboard/widgets/NewsWidget.tsx:116
 msgid "This widget requires superuser permissions"
 msgstr ""
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:132
+#: src/components/dashboard/widgets/NewsWidget.tsx:133
 msgid "No News"
 msgstr ""
 
-#: src/components/dashboard/widgets/NewsWidget.tsx:133
+#: src/components/dashboard/widgets/NewsWidget.tsx:134
 msgid "There are no unread news items"
 msgstr ""
 
@@ -436,7 +443,7 @@ msgstr "刪除與此項關聯的圖片？"
 #: src/forms/StockForms.tsx:716
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:199
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:306
-#: src/pages/stock/StockDetail.tsx:718
+#: src/pages/stock/StockDetail.tsx:717
 msgid "Remove"
 msgstr "移除"
 
@@ -770,21 +777,23 @@ msgstr "刪除"
 #~ msgid "Login successfull"
 #~ msgstr "Login successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:55
+#: src/components/forms/AuthenticationForm.tsx:54
 msgid "Login successful"
 msgstr "登錄成功"
 
-#: src/components/forms/AuthenticationForm.tsx:56
+#: src/components/forms/AuthenticationForm.tsx:55
 msgid "Logged in successfully"
 msgstr "登錄成功"
 
-#: src/components/forms/AuthenticationForm.tsx:61
+#: src/components/forms/AuthenticationForm.tsx:60
+#: src/components/forms/AuthenticationForm.tsx:68
 msgid "Login failed"
 msgstr "登錄失敗"
 
-#: src/components/forms/AuthenticationForm.tsx:62
-#: src/components/forms/AuthenticationForm.tsx:79
-#: src/components/forms/AuthenticationForm.tsx:216
+#: src/components/forms/AuthenticationForm.tsx:61
+#: src/components/forms/AuthenticationForm.tsx:69
+#: src/components/forms/AuthenticationForm.tsx:85
+#: src/components/forms/AuthenticationForm.tsx:222
 #: src/functions/auth.tsx:178
 msgid "Check your input and try again."
 msgstr "請檢查您的輸入並重試。"
@@ -794,127 +803,127 @@ msgstr "請檢查您的輸入並重試。"
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:73
+#: src/components/forms/AuthenticationForm.tsx:79
 #: src/functions/auth.tsx:169
 msgid "Mail delivery successful"
 msgstr "郵件發送成功"
 
-#: src/components/forms/AuthenticationForm.tsx:74
+#: src/components/forms/AuthenticationForm.tsx:80
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "請檢查您的收件箱以查看登錄鏈接。如果您有賬户，您將收到登錄鏈接。如未收到，請檢查郵箱垃圾箱。"
 
-#: src/components/forms/AuthenticationForm.tsx:78
+#: src/components/forms/AuthenticationForm.tsx:84
 msgid "Mail delivery failed"
 msgstr "郵件發送失敗"
 
-#: src/components/forms/AuthenticationForm.tsx:98
+#: src/components/forms/AuthenticationForm.tsx:104
 msgid "Or continue with other methods"
 msgstr "或繼續使用其他方法"
 
-#: src/components/forms/AuthenticationForm.tsx:109
-#: src/components/forms/AuthenticationForm.tsx:232
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:67
+#: src/components/forms/AuthenticationForm.tsx:115
+#: src/components/forms/AuthenticationForm.tsx:238
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:71
 msgid "Username"
 msgstr "使用者帳號"
 
-#: src/components/forms/AuthenticationForm.tsx:111
-#: src/components/forms/AuthenticationForm.tsx:234
+#: src/components/forms/AuthenticationForm.tsx:117
+#: src/components/forms/AuthenticationForm.tsx:240
 msgid "Your username"
 msgstr "你的用户名"
 
-#: src/components/forms/AuthenticationForm.tsx:116
-#: src/components/forms/AuthenticationForm.tsx:247
-#: src/pages/Auth/Set-Password.tsx:101
+#: src/components/forms/AuthenticationForm.tsx:122
+#: src/components/forms/AuthenticationForm.tsx:253
+#: src/pages/Auth/ResetPassword.tsx:101
 msgid "Password"
 msgstr "密碼"
 
-#: src/components/forms/AuthenticationForm.tsx:118
-#: src/components/forms/AuthenticationForm.tsx:249
+#: src/components/forms/AuthenticationForm.tsx:124
+#: src/components/forms/AuthenticationForm.tsx:255
 msgid "Your password"
 msgstr "您的密碼"
-
-#: src/components/forms/AuthenticationForm.tsx:130
-#: src/pages/Auth/Reset.tsx:26
-msgid "Reset password"
-msgstr "重置密碼"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
 #~ msgstr "Log in"
 
 #: src/components/forms/AuthenticationForm.tsx:136
+#: src/pages/Auth/Reset.tsx:26
+msgid "Reset password"
+msgstr "重置密碼"
+
+#: src/components/forms/AuthenticationForm.tsx:136
 #~ msgid "I will use username and password"
 #~ msgstr "I will use username and password"
 
-#: src/components/forms/AuthenticationForm.tsx:139
-#: src/components/forms/AuthenticationForm.tsx:239
+#: src/components/forms/AuthenticationForm.tsx:145
+#: src/components/forms/AuthenticationForm.tsx:245
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:51
 msgid "Email"
 msgstr "郵箱"
 
-#: src/components/forms/AuthenticationForm.tsx:140
+#: src/components/forms/AuthenticationForm.tsx:146
 #: src/pages/Auth/Reset.tsx:32
-#: src/pages/Auth/Set-Password.tsx:102
+#: src/pages/Auth/ResetPassword.tsx:102
 msgid "We will send you a link to login - if you are registered"
 msgstr "我們將向您發送登錄鏈接 - 如果您已註冊"
 
-#: src/components/forms/AuthenticationForm.tsx:156
+#: src/components/forms/AuthenticationForm.tsx:162
 msgid "Send me an email"
 msgstr "給我發一封電子郵件"
 
-#: src/components/forms/AuthenticationForm.tsx:158
+#: src/components/forms/AuthenticationForm.tsx:164
 msgid "Use username and password"
 msgstr "使用用户名和密碼"
 
-#: src/components/forms/AuthenticationForm.tsx:167
+#: src/components/forms/AuthenticationForm.tsx:173
 msgid "Log In"
 msgstr "登錄"
 
-#: src/components/forms/AuthenticationForm.tsx:169
+#: src/components/forms/AuthenticationForm.tsx:175
 #: src/pages/Auth/Reset.tsx:41
-#: src/pages/Auth/Set-Password.tsx:107
+#: src/pages/Auth/ResetPassword.tsx:107
 msgid "Send Email"
 msgstr "發送電子郵件"
 
-#: src/components/forms/AuthenticationForm.tsx:198
+#: src/components/forms/AuthenticationForm.tsx:204
 msgid "Registration successful"
 msgstr "註冊成功"
 
-#: src/components/forms/AuthenticationForm.tsx:199
+#: src/components/forms/AuthenticationForm.tsx:205
 msgid "Please confirm your email address to complete the registration"
 msgstr "請確認您的電子郵件地址以完成註冊"
 
-#: src/components/forms/AuthenticationForm.tsx:215
+#: src/components/forms/AuthenticationForm.tsx:221
 msgid "Input error"
 msgstr "輸入錯誤"
 
-#: src/components/forms/AuthenticationForm.tsx:241
+#: src/components/forms/AuthenticationForm.tsx:247
 msgid "This will be used for a confirmation"
 msgstr "此將用於確認"
 
-#: src/components/forms/AuthenticationForm.tsx:254
+#: src/components/forms/AuthenticationForm.tsx:260
 msgid "Password repeat"
 msgstr "密碼重複"
 
-#: src/components/forms/AuthenticationForm.tsx:256
+#: src/components/forms/AuthenticationForm.tsx:262
 msgid "Repeat password"
 msgstr "再次輸入密碼"
 
-#: src/components/forms/AuthenticationForm.tsx:268
-#: src/components/forms/AuthenticationForm.tsx:313
+#: src/components/forms/AuthenticationForm.tsx:274
+#: src/components/forms/AuthenticationForm.tsx:319
 msgid "Register"
 msgstr "註冊"
 
-#: src/components/forms/AuthenticationForm.tsx:274
+#: src/components/forms/AuthenticationForm.tsx:280
 msgid "Or use SSO"
 msgstr "或使用 SSO"
 
-#: src/components/forms/AuthenticationForm.tsx:305
+#: src/components/forms/AuthenticationForm.tsx:311
 msgid "Don't have an account?"
 msgstr "沒有帳户？"
 
-#: src/components/forms/AuthenticationForm.tsx:324
+#: src/components/forms/AuthenticationForm.tsx:330
 msgid "Go back to login"
 msgstr "返回登錄界面"
 
@@ -1304,7 +1313,7 @@ msgid "Read More"
 msgstr "瞭解更多"
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/tables/InvenTreeTable.tsx:479
+#: src/tables/InvenTreeTable.tsx:489
 msgid "Unknown error"
 msgstr "未知錯誤"
 
@@ -1980,15 +1989,15 @@ msgstr "渲染模板預覽時出錯。"
 msgid "Error Loading Plugin Preview"
 msgstr "加載插件預覽出錯"
 
-#: src/components/plugins/RemoteComponent.tsx:70
+#: src/components/plugins/RemoteComponent.tsx:76
 msgid "Invalid source or function name"
 msgstr ""
 
-#: src/components/plugins/RemoteComponent.tsx:88
+#: src/components/plugins/RemoteComponent.tsx:94
 msgid "Error Loading Content"
 msgstr ""
 
-#: src/components/plugins/RemoteComponent.tsx:92
+#: src/components/plugins/RemoteComponent.tsx:98
 msgid "Error occurred while loading plugin content"
 msgstr ""
 
@@ -2085,7 +2094,7 @@ msgstr "零件類別"
 #: src/forms/BuildForms.tsx:388
 #: src/forms/BuildForms.tsx:518
 #: src/forms/SalesOrderForms.tsx:248
-#: src/pages/stock/StockDetail.tsx:890
+#: src/pages/stock/StockDetail.tsx:889
 #: src/tables/stock/StockTrackingTable.tsx:49
 #: src/tables/stock/StockTrackingTable.tsx:56
 msgid "Stock Item"
@@ -2108,7 +2117,7 @@ msgstr "庫存地點"
 #: src/components/render/ModelType.tsx:91
 #: src/pages/stock/LocationDetail.tsx:191
 #: src/pages/stock/LocationDetail.tsx:369
-#: src/pages/stock/StockDetail.tsx:882
+#: src/pages/stock/StockDetail.tsx:881
 msgid "Stock Locations"
 msgstr "庫存地點"
 
@@ -2292,6 +2301,7 @@ msgid "Owners"
 msgstr "所有者"
 
 #: src/components/render/ModelType.tsx:222
+#: src/pages/Auth/ChangePassword.tsx:93
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:209
 #: src/tables/settings/ImportSessionTable.tsx:121
@@ -2409,7 +2419,7 @@ msgstr "無庫存"
 
 #: src/components/render/Stock.tsx:61
 #: src/pages/stock/StockDetail.tsx:174
-#: src/pages/stock/StockDetail.tsx:822
+#: src/pages/stock/StockDetail.tsx:821
 #: src/tables/build/BuildAllocatedStockTable.tsx:123
 #: src/tables/build/BuildOutputTable.tsx:81
 #: src/tables/sales/SalesOrderAllocationTable.tsx:125
@@ -2431,7 +2441,7 @@ msgstr "序列號"
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
 #: src/pages/stock/StockDetail.tsx:169
-#: src/pages/stock/StockDetail.tsx:828
+#: src/pages/stock/StockDetail.tsx:827
 #: src/tables/build/BuildLineTable.tsx:78
 #: src/tables/build/BuildOrderTestTable.tsx:204
 #: src/tables/part/PartPurchaseOrdersTable.tsx:93
@@ -3614,7 +3624,7 @@ msgstr "存儲已收到的庫存"
 #: src/forms/PurchaseOrderForms.tsx:570
 #: src/pages/build/BuildDetail.tsx:225
 #: src/pages/stock/StockDetail.tsx:193
-#: src/pages/stock/StockDetail.tsx:844
+#: src/pages/stock/StockDetail.tsx:843
 #: src/tables/build/BuildAllocatedStockTable.tsx:130
 #: src/tables/build/BuildOrderTestTable.tsx:195
 #: src/tables/build/BuildOutputTable.tsx:86
@@ -3759,19 +3769,19 @@ msgid "In Stock"
 msgstr "入庫"
 
 #: src/forms/StockForms.tsx:748
-#: src/pages/stock/StockDetail.tsx:709
+#: src/pages/stock/StockDetail.tsx:708
 #: src/tables/stock/StockItemTestResultTable.tsx:349
 msgid "Add"
 msgstr "添加"
 
 #: src/forms/StockForms.tsx:777
 #: src/pages/Index/Scan.tsx:281
-#: src/pages/stock/StockDetail.tsx:698
+#: src/pages/stock/StockDetail.tsx:697
 msgid "Count"
 msgstr "總計"
 
 #: src/forms/StockForms.tsx:1029
-#: src/pages/stock/StockDetail.tsx:710
+#: src/pages/stock/StockDetail.tsx:709
 #: src/tables/stock/StockItemTable.tsx:583
 msgid "Add Stock"
 msgstr "添加庫存"
@@ -3781,7 +3791,7 @@ msgid "Stock added"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1039
-#: src/pages/stock/StockDetail.tsx:719
+#: src/pages/stock/StockDetail.tsx:718
 #: src/tables/stock/StockItemTable.tsx:592
 msgid "Remove Stock"
 msgstr "移除庫存"
@@ -3792,7 +3802,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:1049
 #: src/pages/part/PartDetail.tsx:918
-#: src/pages/stock/StockDetail.tsx:728
+#: src/pages/stock/StockDetail.tsx:727
 #: src/tables/stock/StockItemTable.tsx:601
 msgid "Transfer Stock"
 msgstr "轉移庫存"
@@ -3919,7 +3929,7 @@ msgid "Check your inbox for a reset link. This only works if you have an account
 msgstr "查看收件箱中的重置鏈接。這隻有在您有賬户的情況下才會起作用。也請檢查垃圾郵件。"
 
 #: src/functions/auth.tsx:177
-#: src/pages/Auth/Set-Password.tsx:39
+#: src/pages/Auth/ResetPassword.tsx:39
 msgid "Reset failed"
 msgstr "重置失敗"
 
@@ -3999,6 +4009,43 @@ msgstr "確實要刪除此項目嗎?"
 msgid "Latest serial number"
 msgstr "最新序列號"
 
+#: src/pages/Auth/ChangePassword.tsx:41
+msgid "Password could not be changed"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:67
+msgid "Password Changed"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:68
+#: src/pages/Auth/ResetPassword.tsx:69
+msgid "The password was set successfully. You can now login with your new password"
+msgstr "密碼設置成功。您現在可以使用新密碼登錄"
+
+#: src/pages/Auth/ChangePassword.tsx:88
+msgid "Reset Password"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:103
+msgid "New Password"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:104
+msgid "Enter your new password"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:110
+msgid "Confirm New Password"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:111
+msgid "Confirm your new password"
+msgstr ""
+
+#: src/pages/Auth/ChangePassword.tsx:116
+msgid "Confirm"
+msgstr ""
+
 #: src/pages/Auth/Logged-In.tsx:22
 msgid "Checking if you are already logged in"
 msgstr "檢查您是否已經登錄"
@@ -4029,13 +4076,21 @@ msgstr "正在登出"
 #~ msgid "Send mail"
 #~ msgstr "Send mail"
 
-#: src/pages/Auth/Set-Password.tsx:30
+#: src/pages/Auth/ResetPassword.tsx:30
 msgid "Token invalid"
 msgstr "令牌無效"
 
-#: src/pages/Auth/Set-Password.tsx:31
+#: src/pages/Auth/ResetPassword.tsx:31
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
 msgstr "您需要提供一個有效的令牌來設置一個新的密碼。請檢查收件箱以獲取重置鏈接。"
+
+#: src/pages/Auth/ResetPassword.tsx:68
+msgid "Password set"
+msgstr "密碼已設置"
+
+#: src/pages/Auth/ResetPassword.tsx:96
+msgid "Set new password"
+msgstr "設置新密碼"
 
 #: src/pages/Auth/Set-Password.tsx:49
 #~ msgid "No token provided"
@@ -4044,18 +4099,6 @@ msgstr "您需要提供一個有效的令牌來設置一個新的密碼。請檢
 #: src/pages/Auth/Set-Password.tsx:50
 #~ msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
 #~ msgstr "You need to provide a token to set a new password. Check your inbox for a reset link."
-
-#: src/pages/Auth/Set-Password.tsx:68
-msgid "Password set"
-msgstr "密碼已設置"
-
-#: src/pages/Auth/Set-Password.tsx:69
-msgid "The password was set successfully. You can now login with your new password"
-msgstr "密碼設置成功。您現在可以使用新密碼登錄"
-
-#: src/pages/Auth/Set-Password.tsx:96
-msgid "Set new password"
-msgstr "設置新密碼"
 
 #: src/pages/ErrorPage.tsx:16
 msgid "Error: {0}"
@@ -4378,28 +4421,28 @@ msgstr "未掃描"
 msgid "Select Camera"
 msgstr "選擇相機"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:28
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:30
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:52
 msgid "Edit User Information"
 msgstr "編輯使用者資訊"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:32
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
 msgid "User details updated"
 msgstr "用户明細已更新"
-
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
-msgid "User Details"
-msgstr "用户詳情"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
 #~ msgid "Account Details"
 #~ msgstr "Account Details"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:44
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:43
+msgid "User Details"
+msgstr "用户詳情"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "User Actions"
 msgstr "用户操作"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:48
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
 msgid "Edit User"
 msgstr "編輯用户"
 
@@ -4408,16 +4451,24 @@ msgstr "編輯用户"
 #~ msgstr "First name"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:54
-msgid "Set Password"
-msgstr "設置密碼"
+#~ msgid "Set Password"
+#~ msgstr "Set Password"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:55
 #~ msgid "Last name"
 #~ msgstr "Last name"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
-msgid "Set User Password"
-msgstr "設置用户密碼"
+msgid "Change Password"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
+#~ msgid "Set User Password"
+#~ msgstr "Set User Password"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
+msgid "Change User Password"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -4435,19 +4486,19 @@ msgstr "設置用户密碼"
 #~ msgid "Last name:"
 #~ msgstr "Last name:"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:73
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:77
 msgid "First Name"
 msgstr "名"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:79
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:83
 msgid "Last Name"
 msgstr "姓"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:85
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 msgid "Staff Access"
 msgstr "工作人員訪問"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:93
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:97
 #: src/tables/settings/UserTable.tsx:293
 msgid "Superuser"
 msgstr "超級用户"
@@ -5685,7 +5736,7 @@ msgstr "可以創建"
 
 #: src/pages/part/PartDetail.tsx:322
 #: src/pages/part/PartDetail.tsx:780
-#: src/pages/stock/StockDetail.tsx:817
+#: src/pages/stock/StockDetail.tsx:816
 #: src/tables/build/BuildOrderTestTable.tsx:226
 #: src/tables/stock/StockItemTable.tsx:347
 msgid "In Production"
@@ -5806,7 +5857,7 @@ msgstr "關聯零件"
 
 #: src/pages/part/PartDetail.tsx:756
 #: src/pages/stock/StockDetail.tsx:180
-#: src/pages/stock/StockDetail.tsx:834
+#: src/pages/stock/StockDetail.tsx:833
 #: src/tables/build/BuildLineTable.tsx:186
 #: src/tables/part/PartTable.tsx:119
 #: src/tables/stock/StockItemTable.tsx:172
@@ -5854,12 +5905,12 @@ msgstr "轉移零件庫存"
 
 #: src/pages/part/PartDetail.tsx:926
 #: src/pages/part/PartSchedulingDetail.tsx:70
-#: src/pages/stock/StockDetail.tsx:750
+#: src/pages/stock/StockDetail.tsx:749
 msgid "Order"
 msgstr "訂單"
 
 #: src/pages/part/PartDetail.tsx:927
-#: src/pages/stock/StockDetail.tsx:751
+#: src/pages/stock/StockDetail.tsx:750
 #: src/tables/build/BuildLineTable.tsx:594
 msgid "Order Stock"
 msgstr "訂單庫存"
@@ -6652,63 +6703,67 @@ msgstr "項目已返回庫存"
 #~ msgid "Remove stock"
 #~ msgstr "Remove stock"
 
-#: src/pages/stock/StockDetail.tsx:694
+#: src/pages/stock/StockDetail.tsx:693
 msgid "Stock Operations"
 msgstr "庫存操作"
+
+#: src/pages/stock/StockDetail.tsx:698
+msgid "Count stock"
+msgstr "庫存計數"
 
 #: src/pages/stock/StockDetail.tsx:698
 #: src/tables/stock/StockItemTable.tsx:481
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:699
-msgid "Count stock"
-msgstr "庫存計數"
-
-#: src/pages/stock/StockDetail.tsx:727
+#: src/pages/stock/StockDetail.tsx:726
 msgid "Transfer"
 msgstr "轉移"
 
-#: src/pages/stock/StockDetail.tsx:738
+#: src/pages/stock/StockDetail.tsx:737
 msgid "Serialize"
 msgstr "序列化"
 
-#: src/pages/stock/StockDetail.tsx:739
+#: src/pages/stock/StockDetail.tsx:738
 msgid "Serialize stock"
 msgstr "序列化庫存"
 
-#: src/pages/stock/StockDetail.tsx:762
+#: src/pages/stock/StockDetail.tsx:761
 msgid "Return"
 msgstr "退貨"
 
-#: src/pages/stock/StockDetail.tsx:763
+#: src/pages/stock/StockDetail.tsx:762
 msgid "Return from customer"
 msgstr "從客户退貨"
 
-#: src/pages/stock/StockDetail.tsx:776
+#: src/pages/stock/StockDetail.tsx:775
 msgid "Assign to Customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:777
+#: src/pages/stock/StockDetail.tsx:776
 msgid "Assign to a customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:789
+#: src/pages/stock/StockDetail.tsx:788
 msgid "Stock Item Actions"
 msgstr "庫存項操作"
 
-#: src/pages/stock/StockDetail.tsx:859
+#: src/pages/stock/StockDetail.tsx:858
 #: src/tables/stock/StockItemTable.tsx:422
 msgid "Stale"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:865
+#: src/pages/stock/StockDetail.tsx:864
 #: src/tables/stock/StockItemTable.tsx:416
 msgid "Expired"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:871
+#: src/pages/stock/StockDetail.tsx:870
 msgid "Unavailable"
+msgstr ""
+
+#: src/states/IconState.tsx:60
+msgid "Error loading icon package from server"
 msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:36
@@ -6906,29 +6961,37 @@ msgstr "添加過濾條件"
 msgid "Clear Filters"
 msgstr "清除篩選"
 
-#: src/tables/InvenTreeTable.tsx:101
-#: src/tables/InvenTreeTable.tsx:423
-#: src/tables/InvenTreeTable.tsx:447
+#: src/tables/InvenTreeTable.tsx:102
+#: src/tables/InvenTreeTable.tsx:433
+#: src/tables/InvenTreeTable.tsx:457
 msgid "No records found"
 msgstr "沒有找到記錄"
 
-#: src/tables/InvenTreeTable.tsx:458
+#: src/tables/InvenTreeTable.tsx:206
+msgid "API Error"
+msgstr ""
+
+#: src/tables/InvenTreeTable.tsx:207
+msgid "Failed to load table options"
+msgstr ""
+
+#: src/tables/InvenTreeTable.tsx:468
 msgid "Server returned incorrect data type"
 msgstr "服務器返回了錯誤的數據類型"
 
-#: src/tables/InvenTreeTable.tsx:466
+#: src/tables/InvenTreeTable.tsx:476
 msgid "Bad request"
 msgstr "錯誤的請求"
 
-#: src/tables/InvenTreeTable.tsx:469
+#: src/tables/InvenTreeTable.tsx:479
 msgid "Unauthorized"
 msgstr "未授權"
 
-#: src/tables/InvenTreeTable.tsx:472
+#: src/tables/InvenTreeTable.tsx:482
 msgid "Forbidden"
 msgstr "禁止訪問"
 
-#: src/tables/InvenTreeTable.tsx:475
+#: src/tables/InvenTreeTable.tsx:485
 msgid "Not found"
 msgstr "未找到"
 
@@ -8547,10 +8610,6 @@ msgstr "重載插件"
 #: src/tables/plugin/PluginListTable.tsx:357
 msgid "Install Plugin"
 msgstr "安裝插件"
-
-#: src/tables/plugin/PluginListTable.tsx:366
-#~ msgid "Confirm"
-#~ msgstr "Confirm"
 
 #: src/tables/plugin/PluginListTable.tsx:374
 msgid "Plugin Detail"

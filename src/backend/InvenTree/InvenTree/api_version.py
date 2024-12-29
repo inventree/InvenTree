@@ -1,12 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 294
+INVENTREE_API_VERSION = 297
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v297 - 2024-12-29 - https://github.com/inventree/InvenTree/pull/8438
+    - Adjustments to the CustomUserState API endpoints and serializers
+
+v296 - 2024-12-25 : https://github.com/inventree/InvenTree/pull/8732
+    - Adjust default "part_detail" behaviour for StockItem API endpoints
+
+v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
+    - Improve API documentation for build APIs
 
 v294 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8738
     - Extends registration API documentation

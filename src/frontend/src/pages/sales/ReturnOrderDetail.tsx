@@ -115,6 +115,15 @@ export default function ReturnOrderDetail() {
         name: 'status',
         label: t`Status`,
         model: ModelType.returnorder
+      },
+      {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.returnorder,
+        icon: 'status',
+        hidden:
+          !order.status_custom_key || order.status_custom_key == order.status
       }
     ];
 

@@ -26,7 +26,7 @@ database:
   # PORT: Database host port (if required)
 
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
-debug: True
+debug: False
 
 # Additional debug options
 debug_querycount: False
@@ -124,9 +124,9 @@ use_x_forwarded_host: false
 use_x_forwarded_port: false
 
 # Cookie settings (nominally the default settings should be fine)
-#cookie:
-#  secure: false
-#  samesite: false
+cookie:
+  secure: false
+  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
@@ -211,10 +211,3 @@ ldap:
 #   hide_password_reset: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
-#   hide_pui_banner: true
-
-# Set enabled frontends
-# Use the environment variable INVENTREE_CLASSIC_FRONTEND
-# classic_frontend: True
-# Use the environment variable INVENTREE_PLATFORM_FRONTEND
-# platform_frontend: True
