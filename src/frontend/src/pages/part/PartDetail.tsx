@@ -970,18 +970,24 @@ export default function PartDetail() {
       {editPart.modal}
       {deletePart.modal}
       {orderPartsWizard.wizard}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.part}
+      >
         <Stack gap='xs'>
-          <NavigationTree
-            title={t`Part Categories`}
-            modelType={ModelType.partcategory}
-            endpoint={ApiEndpoints.category_tree}
-            opened={treeOpen}
-            onClose={() => {
-              setTreeOpen(false);
-            }}
-            selectedId={part?.category}
-          />
+          {user.hasViewRole(UserRoles.part_category) && (
+            <NavigationTree
+              title={t`Part Categories`}
+              modelType={ModelType.partcategory}
+              endpoint={ApiEndpoints.category_tree}
+              opened={treeOpen}
+              onClose={() => {
+                setTreeOpen(false);
+              }}
+              selectedId={part?.category}
+            />
+          )}
           <PageDetail
             title={`${t`Part`}: ${part.full_name}`}
             icon={
@@ -992,9 +998,13 @@ export default function PartDetail() {
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={
+              user.hasViewRole(UserRoles.part_category)
+                ? breadcrumbs
+                : undefined
+            }
             breadcrumbAction={() => {
-              setTreeOpen(true); // Open the category tree
+              setTreeOpen(true);
             }}
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}

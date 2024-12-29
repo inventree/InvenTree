@@ -363,6 +363,7 @@ export default function Stock() {
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
+        requiredRole={UserRoles.stock_location}
       >
         <Stack>
           <NavigationTree

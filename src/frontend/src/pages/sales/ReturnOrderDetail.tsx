@@ -470,7 +470,11 @@ export default function ReturnOrderDetail() {
       {holdOrder.modal}
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.return_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Return Order`}: ${order.reference}`}

@@ -483,7 +483,11 @@ export default function PurchaseOrderDetail() {
       {completeOrder.modal}
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.purchase_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}

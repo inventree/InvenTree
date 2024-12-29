@@ -534,7 +534,11 @@ export default function SalesOrderDetail() {
       {completeOrder.modal}
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.sales_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}
