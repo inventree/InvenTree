@@ -884,16 +884,22 @@ export default function StockDetail() {
   }, [stockitem, instanceQuery, enableExpiry]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail
+      requiredRole={UserRoles.stock}
+      status={requestStatus}
+      loading={instanceQuery.isFetching}
+    >
       <Stack>
-        <NavigationTree
-          title={t`Stock Locations`}
-          modelType={ModelType.stocklocation}
-          endpoint={ApiEndpoints.stock_location_tree}
-          opened={treeOpen}
-          onClose={() => setTreeOpen(false)}
-          selectedId={stockitem?.location}
-        />
+        {user.hasViewRole(UserRoles.stock_location) && (
+          <NavigationTree
+            title={t`Stock Locations`}
+            modelType={ModelType.stocklocation}
+            endpoint={ApiEndpoints.stock_location_tree}
+            opened={treeOpen}
+            onClose={() => setTreeOpen(false)}
+            selectedId={stockitem?.location}
+          />
+        )}
         <PageDetail
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
@@ -901,7 +907,9 @@ export default function StockDetail() {
           editAction={editStockItem.open}
           editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
-          breadcrumbs={breadcrumbs}
+          breadcrumbs={
+            user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
+          }
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}
