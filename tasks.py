@@ -977,9 +977,23 @@ def test_translations(c):
     }
 )
 def test(
-    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
+    c,
+    disable_pty=False,
+    runtest='',
+    migrations=False,
+    report=False,
+    coverage=False,
+    translations=False,
 ):
     """Run unit-tests for InvenTree codebase.
+
+    Arguments:
+        disable_pty (bool): Disable PTY (default = False)
+        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
+        migrations (bool): Run migration unit tests (default = False)
+        report (bool): Display a report of slow tests (default = False)
+        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
+        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -991,6 +1005,12 @@ def test(
     """
     # Run sanity check on the django install
     manage(c, 'check')
+
+    if translations:
+        try:
+            manage(c, 'compilemessages', pty=True)
+        except Exception:
+            warning('Failed to compile translations')
 
     pty = not disable_pty
 
