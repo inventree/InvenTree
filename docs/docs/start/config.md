@@ -177,6 +177,8 @@ You can also refer to the [Django documentation]({% include "django.html" %}/ref
 
 InvenTree provides support for the [X-Forwarded-Port](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Port) header, which can be used to determine if the incoming request is using a forwarded port. If you are running InvenTree behind a proxy which forwards port information, you should ensure that the `INVENTREE_USE_X_FORWARDED_PORT` setting is enabled.
 
+You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#use-x-forwarded-port) for more information on this header.
+
 **X-Forwarded-Proto**
 
 InvenTree provides support for the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto) header, which can be used to determine if the incoming request is using HTTPS, even if the server is running behind a proxy which forwards SSL connections. If you are running InvenTree behind a proxy which forwards SSL connections, you should ensure that the `INVENTREE_USE_X_FORWARDED_PROTO` setting is enabled.
