@@ -1207,6 +1207,12 @@ USE_X_FORWARDED_HOST = get_boolean_setting(
     default_value=False,
 )
 
+USE_X_FORWARDED_PORT = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PORT',
+    config_key='use_x_forwarded_port',
+    default_value=False,
+)
+
 # Cross Origin Resource Sharing (CORS) options
 # Refer to the django-cors-headers documentation for more information
 # Ref: https://github.com/adamchainz/django-cors-headers

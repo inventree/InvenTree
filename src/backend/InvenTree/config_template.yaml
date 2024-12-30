@@ -120,6 +120,7 @@ allowed_hosts:
 # Enable Proxy header passthrough
 # Override with the environment variable INVENTREE_USE_X_FORWARDED_<HEADER>
 # use_x_forwarded_host: true
+# use_x_forwarded_port: true
 # use_x_forwarded_proto: true
 
 # Cookie settings (nominally the default settings should be fine)

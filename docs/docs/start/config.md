@@ -140,6 +140,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
+| INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
 | INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |
 | INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
 | INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. | False |
@@ -171,6 +172,10 @@ By default, InvenTree *will not* look at the [X-Forwarded-Host](https://develope
 If you are running InvenTree behind a proxy which obscures the upstream host information, you will need to ensure that the `INVENTREE_USE_X_FORWARDED_HOST` setting is enabled. This will ensure that the InvenTree server uses the forwarded host header for processing requests.
 
 You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#secure-proxy-ssl-header) for more information on this header.
+
+**X-Forwarded-Port**
+
+InvenTree provides support for the [X-Forwarded-Port](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Port) header, which can be used to determine if the incoming request is using a forwarded port. If you are running InvenTree behind a proxy which forwards port information, you should ensure that the `INVENTREE_USE_X_FORWARDED_PORT` setting is enabled.
 
 **X-Forwarded-Proto**
 
