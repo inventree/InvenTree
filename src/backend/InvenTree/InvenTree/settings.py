@@ -1063,6 +1063,12 @@ if SITE_URL:
         print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
         sys.exit(-1)
 
+else:
+    logger.warning('No SITE_URL specified. Some features may not work correctly')
+    logger.warning(
+        'Specify a SITE_URL in the configuration file or via an environment variable'
+    )
+
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
 
