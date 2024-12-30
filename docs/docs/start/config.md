@@ -160,6 +160,11 @@ Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_
 
 If you are running InvenTree behind another proxy, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
 
+### HTTPS Considerations
+
+If you are running InvenTree behind a proxy which forwards SSL connections, you will need to ensure that the `INVENTREE_USE_X_FORWARDED_HOST` setting is enabled. This will ensure that the server uses the forwarded host header for generating URLs.
+
+
 ## Admin Site
 
 Django provides a powerful [administrator interface]({% include "django.html" %}/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, and available at the `/admin/` URL.
