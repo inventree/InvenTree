@@ -164,7 +164,7 @@ Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_
 
 If you are running InvenTree behind a proxy, or forwarded HTTPS connections, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
 
-Additionally, you may need to configure the following options to ensure that the proxy is correctly forwarded the right information:
+Additionally, you may need to configure the following header to ensure that the InvenTree server is watching for information forwarded by the proxy:
 
 **X-Forwarded-Host**
 
