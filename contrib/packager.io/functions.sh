@@ -292,6 +292,7 @@ function stop_inventree() {
 }
 
 function update_or_install() {
+  set -e
 
   # Set permissions so app user can write there
   chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
