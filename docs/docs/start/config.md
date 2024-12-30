@@ -138,8 +138,10 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
+| INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |
 | INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
 | INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. | False |
+| INVENTREE_SSL_HEADER | ssl_header | Header to use for SSL detection | *Not specified* |
 
 ### Debug Mode
 
@@ -156,14 +158,24 @@ Note that in [debug mode](./intro.md#debug-mode), some of the above settings are
 
 Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_SESSION_COOKIE_SECURE` is automatically set to `True` to ensure that the session cookie is secure! This means that the session cookie will only be sent over secure (https) connections.
 
-### Proxy Settings
+### Proxy Considerations
 
-If you are running InvenTree behind another proxy, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
+If you are running InvenTree behind a proxy, or forwarded HTTPS connections, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
 
-### HTTPS Considerations
+Additionally, you may need to configure the following options to ensure that the proxy is correctly forwarded the right information:
 
-If you are running InvenTree behind a proxy which forwards SSL connections, you will need to ensure that the `INVENTREE_USE_X_FORWARDED_HOST` setting is enabled. This will ensure that the server uses the forwarded host header for generating URLs.
+**X-Forwarded-Host**
 
+By default, InvenTree *will not* look at the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host) header.
+If you are running InvenTree behind a proxy which obscures the upstream host information, you will need to ensure that the `INVENTREE_USE_X_FORWARDED_HOST` setting is enabled. This will ensure that the InvenTree server uses the forwarded host header for processing requests.
+
+You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#secure-proxy-ssl-header) for more information on this header.
+
+**X-Forwarded-Proto**
+
+InvenTree provides support for the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto) header, which can be used to determine if the incoming request is using HTTPS, even if the server is running behind a proxy which forwards SSL connections. If you are running InvenTree behind a proxy which forwards SSL connections, you should ensure that the `INVENTREE_USE_X_FORWARDED_PROTO` setting is enabled.
+
+You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#use-x-forwarded-host) for more information on this header.
 
 ## Admin Site
 
