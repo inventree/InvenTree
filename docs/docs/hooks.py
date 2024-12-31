@@ -157,9 +157,8 @@ def get_release_data():
 def read_package_info(src: str):
     """Read package information from a JSON file."""
     if not os.path.exists(src):
-        print(f"WARNING: Package information file '{src}' does not exist")
+        print(f"ERROR: Package information file '{src}' does not exist")
         sys.exit(-1)
-        return []
 
     print(f"Reading package information from '{src}'")
 
