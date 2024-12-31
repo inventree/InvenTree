@@ -14,10 +14,13 @@ build:
     python: "3.9"
   jobs:
     post_install:
-      - echo "Generating API schema file"
       - pip install -U invoke
+      - echo "Installing InvenTree dependencies"
+      - invoke install --skip-plugins
       - invoke migrate
       - invoke int.frontend-compile
+      - echo "Exporting settings definitions"
       - invoke int.export-settings-definitions --filename docs/inventree_settings.json --overwrite
+      - echo "Generating API schema file"
       - invoke dev.schema --filename docs/schema.yml --ignore-warnings
       - python docs/extract_schema.py docs/schema.yml
