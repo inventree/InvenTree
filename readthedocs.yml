@@ -15,7 +15,7 @@ build:
     nodejs: "18"
   jobs:
     post_install:
-      - node install -g yarn
+      - npm install --global yarn
       - pip install -U invoke
       - echo "Installing InvenTree dependencies"
       - invoke install --skip-plugins
