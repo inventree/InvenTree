@@ -440,7 +440,7 @@ The INVENTREE_CUSTOMIZE environment variable must contain a json object with the
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi","hide_pui_banner":"True"}
+INVENTREE_CUSTOMIZE={"login_message":"Hallo World","hide_pui_banner":"True"}
 ```
 
 This example removes the PUI banner and sets a login message. Take care of the double quotes.

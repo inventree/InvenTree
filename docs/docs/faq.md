@@ -69,7 +69,7 @@ The [0.17.0 release](https://github.com/inventree/InvenTree/releases/tag/0.17.0)
 
 Sometimes, users may encounter unexpected error messages when updating their InvenTree installation to a newer version.
 
-The most common problem here is that the correct sequenct of steps has not been followed:
+The most common problem here is that the correct sequence of steps has not been followed:
 
 1. Ensure that the InvenTree web server and background worker processes are *halted*
 1. Update the InvenTree software (e.g. using git or docker, depending on installation method)
