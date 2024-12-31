@@ -8,7 +8,6 @@ from plugin.base.icons.mixins import IconPackMixin
 from plugin.base.integration.APICallMixin import APICallMixin
 from plugin.base.integration.AppMixin import AppMixin
 from plugin.base.integration.CurrencyExchangeMixin import CurrencyExchangeMixin
-from plugin.base.integration.DataExportMixin import DataExportMixin
 from plugin.base.integration.mixins import NavigationMixin, SettingsContentMixin
 from plugin.base.integration.PanelMixin import PanelMixin
 from plugin.base.integration.ReportMixin import ReportMixin
@@ -27,7 +26,6 @@ __all__ = [
     'BarcodeMixin',
     'BulkNotificationMethod',
     'CurrencyExchangeMixin',
-    'DataExportMixin',
     'EventMixin',
     'IconPackMixin',
     'LabelPrintingMixin',
