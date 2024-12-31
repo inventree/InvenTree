@@ -6,12 +6,14 @@
 # Note that while this file is a good starting point, it may need to be modified to suit your specific requirements
 
 
+# Logging configuration for Caddy
 (log_common) {
 	log {
 		output file /var/log/caddy/{args[0]}.access.log
 	}
 }
 
+# CORS headers control (used for static and media files)
 (cors-headers) {
 	header Allow GET,HEAD,OPTIONS
 	header Access-Control-Allow-Origin *
@@ -25,7 +27,8 @@
 	}
 }
 
-# Change the host to your domain (this will serve at inventree.localhost)
+# The default server address is configured in the .env file
+# If you need to listen on multiple addresses, or use a different port, you can modify this section directly
 {$INVENTREE_SITE_URL:inventree.localhost} {
 	import log_common inventree
 
@@ -35,6 +38,7 @@
 		max_size 100MB
 	}
 
+	# Handle static request files
 	handle_path /static/* {
 		import cors-headers static
 
@@ -42,6 +46,8 @@
 		file_server
 	}
 
+	# Handle media request files
+	# Note: Authentication is handled by the forward_auth directive
 	handle_path /media/* {
 		import cors-headers media
 
@@ -55,5 +61,13 @@
 		}
 	}
 
-	reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"}
+	# All other requests are proxied to the InvenTree server
+	reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"} {
+
+		# If you are running behind another proxy, you may need to specify 'trusted_proxies'
+		trusted_proxies {
+			# enter your trusted proxy IP addresses here
+		}
+
+	}
 }
