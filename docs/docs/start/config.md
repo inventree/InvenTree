@@ -93,7 +93,6 @@ The following debugging / logging options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | False |
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
-| INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
@@ -106,10 +105,6 @@ Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% inclu
 ### Query Count Logging
 
 Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
-
-### Debug Shell
-
-Enabling the `INVENTREE_DEBUG_SHELL` setting will allow the use of the [administrator shell](https://github.com/djk2/django-admin-shell). Note that this setting is only available if `INVENTREE_DEBUG` is also enabled, and is only accessible to superuser accounts.
 
 ### Database Logging
 
