@@ -1,0 +1,31 @@
+<div class='md-typeset__scrollwrap'>
+    <div class='md-typeset__table'>
+        <table>
+            <thead>
+                <tr>
+                    <th>Package</th>
+                    <th>Version</th>
+                    <th>License</th>
+                </tr>
+            </thead>
+            <tbody>
+
+{% for package in packages %}
+<tr>
+    <td>
+        {% if package.url %}
+        <a href='{{ package.url }}'>{{ package.name }}</a>
+        {% else %}
+        {{ package.name }}
+        {% endif %}
+    </td>
+    <td>{{ package.version }}</td>
+    <td>{{ package.license }}</td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+</div>
