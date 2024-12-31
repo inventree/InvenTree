@@ -280,6 +280,8 @@ export default function Stock() {
         <BarcodeActionDropdown
           model={ModelType.stocklocation}
           pk={location.pk}
+          hash={location?.barcode_hash}
+          perm={user.hasChangeRole(UserRoles.stock_location)}
           actions={[
             {
               name: 'Scan in stock items',
