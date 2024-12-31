@@ -12,10 +12,8 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "3.9"
-    nodejs: "18"
   jobs:
     post_install:
-      - npm install --global yarn
       - pip install -U invoke
       - echo "Installing InvenTree dependencies"
       - invoke install --skip-plugins

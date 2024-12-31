@@ -3,30 +3,10 @@
 import json
 import os
 import re
-import sys
 from datetime import datetime
 from distutils.version import StrictVersion
 
 import requests
-
-# Required paths
-here = os.path.dirname(__file__)
-backend_pkg_file = os.path.join(
-    here, '..', '..', 'src', 'backend', 'InvenTree', 'InvenTree', 'licenses.txt'
-)
-frontend_pkg_file = os.path.join(
-    here,
-    '..',
-    '..',
-    'src',
-    'backend',
-    'InvenTree',
-    'web',
-    'static',
-    'web',
-    '.vite',
-    'dependencies.json',
-)
 
 
 def fetch_rtd_versions():
@@ -154,54 +134,6 @@ def get_release_data():
     return releases
 
 
-def read_package_info(src: str):
-    """Read package information from a JSON file."""
-    if not os.path.exists(src):
-        print(f"ERROR: Package information file '{src}' does not exist")
-        sys.exit(-1)
-
-    print(f"Reading package information from '{src}'")
-
-    entries = []
-    names = set()
-
-    with open(src, encoding='utf-8') as f:
-        data = json.loads(f.read())
-
-    for entry in data:
-        name = None
-        for key in entry:
-            if key.lower() == 'name':
-                name = entry[key]
-                break
-
-        if not name or name.lower() in names:
-            continue
-
-        names.add(name.lower())
-
-        # Ensure all keys are lower case
-        entry = {key.lower(): value for key, value in entry.items()}
-
-        url = entry.get('url', None)
-
-        if not url:
-            url = entry.get('homepage', None)
-
-        if not url:
-            if repo := entry.get('repository', None):
-                if type(repo) == dict:
-                    url = repo.get('url', None)
-                elif type(repo) == str:
-                    url = repo
-
-        entry['url'] = url
-        entries.append(entry)
-
-    # Return packages, sorted by name
-    return sorted(entries, key=lambda x: str(x['name']).lower())
-
-
 def on_config(config, *args, **kwargs):
     """Run when the mkdocs config is loaded.
 
@@ -310,8 +242,5 @@ def on_config(config, *args, **kwargs):
 
     # Sort releases by descending date
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)
-
-    config['frontend_packages'] = read_package_info(frontend_pkg_file)
-    config['backend_packages'] = read_package_info(backend_pkg_file)
 
     return config
