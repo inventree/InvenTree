@@ -226,6 +226,9 @@ You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, o
 
 InvenTree requires a secret key for providing cryptographic signing - this should be a secret (and unpredictable) value.
 
+!!! info "Auto-Generated Key"
+    If none of the following options are specified, InvenTree will automatically generate a secret key file (stored in `secret_key.txt`) on first run.
+
 The secret key can be provided in multiple ways, with the following (descending) priorities:
 
 **Pass Secret Key via Environment Variable**
