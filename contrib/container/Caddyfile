@@ -4,6 +4,8 @@
 # - INVENTREE_SERVER: The internal URL of the InvenTree container (default: http://inventree-server:8000)
 #
 # Note that while this file is a good starting point, it may need to be modified to suit your specific requirements
+#
+# Ref to the Caddyfile documentation: https://caddyserver.com/docs/caddyfile
 
 
 # Logging configuration for Caddy
@@ -28,8 +30,9 @@
 }
 
 # The default server address is configured in the .env file
+# If not specified, the default address is used - http://inventree.localhost
 # If you need to listen on multiple addresses, or use a different port, you can modify this section directly
-{$INVENTREE_SITE_URL:inventree.localhost} {
+{$INVENTREE_SITE_URL:http://inventree.localhost} {
 	import log_common inventree
 
 	encode gzip
@@ -47,15 +50,18 @@
 	}
 
 	# Handle media request files
-	# Note: Authentication is handled by the forward_auth directive
 	handle_path /media/* {
 		import cors-headers media
 
 		root * /var/www/media
 		file_server
 
+		# Force download of media files (for security)
+		# Comment out this line if you do not want to force download
 		header Content-Disposition attachment
 
+		# Authentication is handled by the forward_auth directive
+		# This is required to ensure that media files are only accessible to authenticated users
 		forward_auth {$INVENTREE_SERVER:"http://inventree-server:8000"} {
 			uri /auth/
 		}
