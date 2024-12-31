@@ -319,7 +319,7 @@ def install(c, uv=False, skip_plugins=False):
     lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
     run(
         c,
-        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
+        f'pip-licenses --format=json --with-urls --with-license-file --no-license-path > {lic_path}',
     )
 
     success('Dependency installation complete')
