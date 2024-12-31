@@ -184,7 +184,10 @@ def read_package_info(src: str):
         # Ensure all keys are lower case
         entry = {key.lower(): value for key, value in entry.items()}
 
-        url = entry.get('homepage', None)
+        url = entry.get('url', None)
+
+        if not url:
+            url = entry.get('homepage', None)
 
         if not url:
             if repo := entry.get('repository', None):
