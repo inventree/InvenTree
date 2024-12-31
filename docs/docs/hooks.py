@@ -200,7 +200,7 @@ def read_package_info(src: str):
         entries.append(entry)
 
     # Return packages, sorted by name
-    return sorted(entries, key=lambda x: x['name'])
+    return sorted(entries, key=lambda x: str(x['name']).lower())
 
 
 def on_config(config, *args, **kwargs):
