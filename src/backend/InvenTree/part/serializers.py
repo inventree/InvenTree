@@ -34,8 +34,8 @@ import part.tasks
 import stock.models
 import users.models
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.serializers import DataImportExportSerializerMixin
 from InvenTree.tasks import offload_task
 
 from .models import (

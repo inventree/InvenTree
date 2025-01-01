@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+import tablib
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
@@ -24,7 +25,9 @@ from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
 from common.currency import currency_code_default, currency_code_mappings
+from importer.mixins import DataImportSerializerMixin
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from InvenTree.helpers import current_date
 
 
 class EmptySerializer(serializers.Serializer):
@@ -653,3 +656,138 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class DataExportSerializerMixin:
+    """Mixin class for adding data export functionality to a DRF serializer."""
+
+    export_only_fields = []
+    export_exclude_fields = []
+
+    def get_export_only_fields(self, **kwargs) -> list:
+        """Return the list of field names which are only used during data export."""
+        return self.export_only_fields
+
+    def get_export_exclude_fields(self, **kwargs) -> list:
+        """Return the list of field names which are excluded during data export."""
+        return self.export_exclude_fields
+
+    def __init__(self, *args, **kwargs):
+        """Initialise the DataExportSerializerMixin.
+
+        Determine if the serializer is being used for data export,
+        and if so, adjust the serializer fields accordingly.
+        """
+        exporting = kwargs.pop('exporting', False)
+
+        super().__init__(*args, **kwargs)
+
+        if exporting:
+            # Exclude fields which are not required for data export
+            for field in self.get_export_exclude_fields(**kwargs):
+                self.fields.pop(field, None)
+        else:
+            # Exclude fields which are only used for data export
+            for field in self.get_export_only_fields(**kwargs):
+                self.fields.pop(field, None)
+
+    def get_exportable_fields(self) -> dict:
+        """Return a dict of fields which can be exported against this serializer instance.
+
+        Note: Any fields which should be excluded from export have already been removed
+
+        Returns:
+            dict: A dictionary of field names and field objects
+        """
+        fields = {}
+
+        if meta := getattr(self, 'Meta', None):
+            write_only_fields = getattr(meta, 'write_only_fields', [])
+        else:
+            write_only_fields = []
+
+        for name, field in self.fields.items():
+            # Skip write-only fields
+            if getattr(field, 'write_only', False):
+                continue
+
+            if name in write_only_fields:
+                continue
+
+            # Skip fields which are themselves serializers
+            if issubclass(field.__class__, serializers.Serializer):
+                continue
+
+            fields[name] = field
+
+        return fields
+
+    def get_exported_filename(self, export_format) -> str:
+        """Return the filename for the exported data file.
+
+        An implementing class can override this implementation if required.
+
+        Arguments:
+            export_format: The file format to be exported
+
+        Returns:
+            str: The filename for the exported file
+        """
+        model = self.Meta.model
+        date = current_date().isoformat()
+
+        return f'InvenTree_{model.__name__}_{date}.{export_format}'
+
+    @classmethod
+    def arrange_export_headers(cls, headers: list) -> list:
+        """Optional method to arrange the export headers."""
+        return headers
+
+    def get_field_label(self, field) -> str:
+        """Return the label for a field in a serializer class."""
+        if field and (label := getattr(field, 'label', None)):
+            return label
+
+        return None
+
+    def process_row(self, row):
+        """Optional method to process a row before exporting it."""
+        return row
+
+    def export_to_file(self, data, file_format):
+        """Export the queryset to a file in the specified format.
+
+        Arguments:
+            queryset: The queryset to export
+            data: The serialized dataset to export
+            file_format: The file format to export to
+
+        Returns:
+            File object containing the exported data
+        """
+        # Extract all exportable fields from this serializer
+        fields = self.get_exportable_fields()
+
+        field_names = self.arrange_export_headers(list(fields.keys()))
+
+        # Extract human-readable field names
+        headers = []
+
+        for field_name, field in fields.items():
+            field = fields[field_name]
+
+            headers.append(self.get_field_label(field) or field_name)
+
+        dataset = tablib.Dataset(headers=headers)
+
+        for row in data:
+            row = self.process_row(row)
+            dataset.append([row.get(field, None) for field in field_names])
+
+        return dataset.export(file_format)
+
+
+class DataImportExportSerializerMixin(
+    DataImportSerializerMixin, DataExportSerializerMixin
+):
+    """Mixin class for adding data import/export functionality to a DRF serializer."""

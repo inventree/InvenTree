@@ -27,7 +27,6 @@ from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
@@ -50,6 +49,7 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
 )
+from InvenTree.views import DataExportViewMixin
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from order.serializers import (
     PurchaseOrderSerializer,

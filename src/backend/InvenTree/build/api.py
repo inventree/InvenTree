@@ -17,11 +17,11 @@ import part.models
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
 from InvenTree.helpers import isNull, str2bool
 from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.views import DataExportViewMixin
 from users.models import Owner
 
 

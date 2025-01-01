@@ -19,7 +19,6 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
@@ -42,6 +41,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
+from InvenTree.views import DataExportViewMixin
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from stock.models import StockLocation
 

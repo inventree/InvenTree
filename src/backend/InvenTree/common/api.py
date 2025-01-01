@@ -33,7 +33,6 @@ import InvenTree.conversion
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from generic.states.api import urlpattern as generic_states_api_urls
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
@@ -46,6 +45,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.permissions import IsStaffOrReadOnly, IsSuperuser
+from InvenTree.views import DataExportViewMixin
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 

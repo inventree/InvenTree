@@ -7,11 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 
 import part.models
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.views import DataExportViewMixin
 
 from .models import (
     Address,
@@ -223,7 +223,7 @@ class ManufacturerPartParameterFilter(rest_filters.FilterSet):
 
 
 class ManufacturerPartParameterList(ListCreateDestroyAPIView):
-    """API endpoint for list view of ManufacturerPartParamater model."""
+    """API endpoint for list view of ManufacturerPartParameter model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
@@ -331,7 +331,7 @@ class SupplierPartMixin:
     serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryest object for the SupplierPart list."""
+        """Return annotated queryset object for the SupplierPart list."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 

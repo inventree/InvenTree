@@ -19,7 +19,6 @@ import common.models
 import common.settings
 import company.models
 from generic.states.api import StatusView
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
@@ -29,6 +28,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.views import DataExportViewMixin
 from order import models, serializers
 from order.status_codes import (
     PurchaseOrderStatus,
@@ -1177,7 +1177,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detali view of a SalesOrderAllocation object."""
+    """API endpoint for detail view of a SalesOrderAllocation object."""
 
 
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
@@ -1230,7 +1230,7 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
 
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
-    """API detail endpooint for SalesOrderShipment model."""
+    """API detail endpoint for SalesOrderShipment model."""
 
 
 class SalesOrderShipmentComplete(CreateAPI):
@@ -1793,7 +1793,7 @@ order_api_urls = [
             ),
         ]),
     ),
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     path(
         'so/',
         include([

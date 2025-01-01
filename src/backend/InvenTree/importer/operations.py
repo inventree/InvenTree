@@ -96,26 +96,3 @@ def extract_rows(data_file) -> list:
         rows.append(dict(zip(headers, row)))
 
     return rows
-
-
-def get_field_label(field) -> str:
-    """Return the label for a field in a serializer class.
-
-    Check for labels in the following order of descending priority:
-
-    - The serializer class has a 'label' specified for the field
-    - The underlying model has a 'verbose_name' specified
-    - The field name is used as the label
-
-    Arguments:
-        field: Field instance from a serializer class
-
-    Returns:
-        str: Field label
-    """
-    if field and (label := getattr(field, 'label', None)):
-        return label
-
-    # TODO: Check if the field is a model field
-
-    return None
