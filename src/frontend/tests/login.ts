@@ -33,8 +33,7 @@ export const doQuickLogin = async (
 
   await page.goto(`${url}/login/?login=${username}&password=${password}`);
   await page.waitForURL('**/platform/home');
-
-  await page.getByText(/InvenTree Demo Server -/).waitFor();
+  await page.getByLabel('navigation-menu').waitFor();
 };
 
 export const doLogout = async (page) => {
