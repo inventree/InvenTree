@@ -415,23 +415,6 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
 
 
 @task
-def translate_stats(c):
-    """Collect translation stats.
-
-    The file generated from this is needed for the UI.
-    """
-    # Recompile the translation files (.mo)
-    # We do not run 'invoke dev.translate' here, as that will touch the source (.po) files too!
-    try:
-        manage(c, 'compilemessages', pty=True)
-    except Exception:
-        warning('WARNING: Translation files could not be compiled:')
-
-    path = managePyDir().joinpath('script', 'translation_stats.py')
-    run(c, f'python3 {path}')
-
-
-@task(post=[translate_stats])
 def translate(c, ignore_static=False, no_frontend=False):
     """Rebuild translation source files. Advanced use only!
 
@@ -561,7 +544,7 @@ def showmigrations(c, app=''):
 
 
 @task(
-    post=[clean_settings, translate_stats],
+    post=[clean_settings],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
@@ -591,7 +574,6 @@ def update(
     - frontend_compile or frontend_download (optional)
     - static (optional)
     - clean_settings
-    - translate_stats
     """
     info('Updating InvenTree installation...')
 
@@ -916,7 +898,7 @@ def worker(c):
     manage(c, 'qcluster', pty=True)
 
 
-@task(post=[translate_stats, static, server])
+@task(post=[static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
     import django
@@ -994,9 +976,23 @@ def test_translations(c):
     }
 )
 def test(
-    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
+    c,
+    disable_pty=False,
+    runtest='',
+    migrations=False,
+    report=False,
+    coverage=False,
+    translations=False,
 ):
     """Run unit-tests for InvenTree codebase.
+
+    Arguments:
+        disable_pty (bool): Disable PTY (default = False)
+        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
+        migrations (bool): Run migration unit tests (default = False)
+        report (bool): Display a report of slow tests (default = False)
+        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
+        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -1008,6 +1004,12 @@ def test(
     """
     # Run sanity check on the django install
     manage(c, 'check')
+
+    if translations:
+        try:
+            manage(c, 'compilemessages', pty=True)
+        except Exception:
+            warning('Failed to compile translations')
 
     pty = not disable_pty
 
@@ -1526,7 +1528,6 @@ internal = Collection(
     rebuild_models,
     rebuild_thumbnails,
     showmigrations,
-    translate_stats,
 )
 
 ns = Collection(

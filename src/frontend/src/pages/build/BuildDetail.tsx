@@ -108,6 +108,15 @@ export default function BuildDetail() {
         model: ModelType.build
       },
       {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.build,
+        icon: 'status',
+        hidden:
+          !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
         type: 'text',
         name: 'reference',
         label: t`Reference`,
@@ -510,7 +519,11 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.build}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Build Order`}: ${build.reference}`}

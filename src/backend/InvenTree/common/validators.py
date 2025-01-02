@@ -113,3 +113,17 @@ def validate_icon(name: Union[str, None]):
         return
 
     common.icons.validate_icon(name)
+
+
+def validate_uppercase(value: str):
+    """Ensure that the provided value is uppercase."""
+    value = str(value)
+
+    if value != value.upper():
+        raise ValidationError(_('Value must be uppercase'))
+
+
+def validate_variable_string(value: str):
+    """The passed value must be a valid variable identifier string."""
+    if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', value):
+        raise ValidationError(_('Value must be a valid variable identifier'))
