@@ -1357,14 +1357,17 @@ class TestOffloadTask(InvenTreeTestCase):
             # First call should run without issue
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertTrue(result)
-            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+            self.assertIn(
+                'Logging task attempt for dummy_task', str(cm.output).replace("\\'", '')
+            )
 
         with self.assertLogs(logger='inventree', level='INFO') as cm:
             # An attempt has been logged, but it is too recent
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Mark last attempt a few days ago - should now return True
@@ -1385,7 +1388,8 @@ class TestOffloadTask(InvenTreeTestCase):
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Configure so a task was successful too recently

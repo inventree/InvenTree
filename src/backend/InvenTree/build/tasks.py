@@ -1,6 +1,5 @@
 """Background task definitions for the BuildOrder app."""
 
-import logging
 import random
 import time
 from datetime import timedelta
@@ -11,6 +10,7 @@ from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from allauth.account.models import EmailAddress
 
 import build.models as build_models
@@ -25,7 +25,7 @@ from build.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 from plugin.events import trigger_event
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def auto_allocate_build(build_id: int, **kwargs):

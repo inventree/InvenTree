@@ -1,9 +1,9 @@
 """Django machine app config."""
 
-import logging
-
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
+
+import structlog
 
 from InvenTree.ready import (
     canAppAccessDatabase,
@@ -13,7 +13,7 @@ from InvenTree.ready import (
     isRunningMigrations,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MachineConfig(AppConfig):

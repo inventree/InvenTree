@@ -1,6 +1,5 @@
 """JSON serializers for Stock app."""
 
-import logging
 from datetime import timedelta
 from decimal import Decimal
 
@@ -10,6 +9,7 @@ from django.db.models import BooleanField, Case, Count, Prefetch, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -40,7 +40,7 @@ from .models import (
     StockLocationType,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class GenerateBatchCodeSerializer(serializers.Serializer):

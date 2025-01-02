@@ -1,11 +1,11 @@
 """Plugin mixin classes for icon pack plugin."""
 
-import logging
+import structlog
 
 from common.icons import IconPack, reload_icon_packs
 from plugin.helpers import MixinNotImplementedError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class IconPackMixin:

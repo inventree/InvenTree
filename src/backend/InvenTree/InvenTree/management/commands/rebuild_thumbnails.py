@@ -3,18 +3,18 @@
 - May be required after importing a new dataset, for example
 """
 
-import logging
 import os
 
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
 
+import structlog
 from PIL import UnidentifiedImageError
 
 from company.models import Company
 from part.models import Part
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class Command(BaseCommand):

@@ -1,12 +1,12 @@
 """Check if there are any pending database migrations, and run them."""
 
-import logging
-
 from django.core.management.base import BaseCommand
+
+import structlog
 
 from InvenTree.tasks import check_for_migrations
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class Command(BaseCommand):

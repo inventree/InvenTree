@@ -3,12 +3,12 @@
 Allows integration of custom 'panels' into the user interface.
 """
 
-import logging
+import structlog
 
 from InvenTree.helpers import generateTestKey
 from plugin.helpers import MixinNotImplementedError, render_template, render_text
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PanelMixin:

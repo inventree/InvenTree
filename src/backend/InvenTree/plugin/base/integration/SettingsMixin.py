@@ -1,11 +1,12 @@
 """Plugin mixin class for SettingsMixin."""
 
-import logging
 from typing import TYPE_CHECKING
 
 from django.db.utils import OperationalError, ProgrammingError
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 # import only for typechecking, otherwise this throws a model is unready error
 if TYPE_CHECKING:

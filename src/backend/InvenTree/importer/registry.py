@@ -1,12 +1,11 @@
 """Registry for supported serializers for data import operations."""
 
-import logging
-
+import structlog
 from rest_framework.serializers import Serializer
 
 from importer.mixins import DataImportSerializerMixin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DataImportSerializerRegister:

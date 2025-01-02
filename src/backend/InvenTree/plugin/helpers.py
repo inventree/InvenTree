@@ -1,7 +1,6 @@
 """Helpers for plugin app."""
 
 import inspect
-import logging
 import os
 import pathlib
 import pkgutil
@@ -16,7 +15,9 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 # region logging / errors

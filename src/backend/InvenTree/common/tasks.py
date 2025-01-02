@@ -1,6 +1,5 @@
 """Tasks (processes that get offloaded) for common app."""
 
-import logging
 import os
 from datetime import timedelta
 
@@ -11,13 +10,14 @@ from django.utils import timezone
 
 import feedparser
 import requests
+import structlog
 
 import InvenTree.helpers
 from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 @scheduled_task(ScheduledTask.DAILY)

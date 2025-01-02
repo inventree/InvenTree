@@ -1,14 +1,14 @@
 """Plugin mixin class for ScheduleMixin."""
 
-import logging
-
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
+
+import structlog
 
 from common.settings import get_global_setting
 from plugin.helpers import MixinImplementationError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class ScheduleMixin:

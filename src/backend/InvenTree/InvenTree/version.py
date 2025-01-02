@@ -3,7 +3,6 @@
 Provides information on the current InvenTree version
 """
 
-import logging
 import os
 import pathlib
 import platform
@@ -21,7 +20,9 @@ from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 INVENTREE_SW_VERSION = '0.18.0 dev'
 
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 # Discover git

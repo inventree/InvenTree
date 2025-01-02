@@ -1,11 +1,12 @@
 """Background tasks for the 'order' app."""
 
-import logging
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import common.notifications
 import InvenTree.helpers_model
@@ -15,7 +16,7 @@ from order.events import PurchaseOrderEvents, SalesOrderEvents
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from plugin.events import trigger_event
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def notify_overdue_purchase_order(po: order.models.PurchaseOrder):

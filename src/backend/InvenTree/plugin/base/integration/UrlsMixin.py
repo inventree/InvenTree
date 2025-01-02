@@ -1,14 +1,14 @@
 """Plugin mixin class for UrlsMixin."""
 
-import logging
-
 from django.conf import settings
 from django.urls import include, re_path
+
+import structlog
 
 from common.settings import get_global_setting
 from plugin.urls import PLUGIN_BASE
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class UrlsMixin:

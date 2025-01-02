@@ -1,12 +1,13 @@
 """Background task definitions for the 'part' app."""
 
-import logging
 import random
 import time
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import common.currency
 import common.notifications
@@ -24,7 +25,7 @@ from InvenTree.tasks import (
     scheduled_task,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def notify_low_stock(part: part_models.Part):

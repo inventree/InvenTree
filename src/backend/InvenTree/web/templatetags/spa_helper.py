@@ -1,7 +1,6 @@
 """Template tag to render SPA imports."""
 
 import json
-from logging import getLogger
 from pathlib import Path
 from typing import Union
 
@@ -9,7 +8,9 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
-logger = getLogger('InvenTree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 register = template.Library()
 
 FRONTEND_SETTINGS = json.dumps(settings.FRONTEND_SETTINGS)

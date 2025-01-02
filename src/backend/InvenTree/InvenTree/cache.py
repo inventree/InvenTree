@@ -1,12 +1,13 @@
 """Configuration options for InvenTree external cache."""
 
-import logging
 import socket
+
+import structlog
 
 import InvenTree.config
 import InvenTree.ready
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def cache_setting(name, default=None, **kwargs):

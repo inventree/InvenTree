@@ -3,12 +3,12 @@
 Allows integration of custom UI elements into the React user interface.
 """
 
-import logging
 from typing import Literal, TypedDict
 
+import structlog
 from rest_framework.request import Request
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 # List of supported feature types

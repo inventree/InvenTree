@@ -1,13 +1,13 @@
 """Sample plugin which responds to events."""
 
-import logging
-
 from django.conf import settings
+
+import structlog
 
 from plugin import InvenTreePlugin
 from plugin.mixins import EventMixin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class EventPluginSample(EventMixin, InvenTreePlugin):

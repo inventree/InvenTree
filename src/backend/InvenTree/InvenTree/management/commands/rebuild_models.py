@@ -3,13 +3,12 @@
 - This is crucial after importing any fixtures, etc
 """
 
-import logging
-
 from django.core.management.base import BaseCommand
 
+import structlog
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class Command(BaseCommand):

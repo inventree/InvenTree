@@ -1,15 +1,15 @@
 """Functions to print a label to a mixin printer."""
 
-import logging
-
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import common.notifications
 from InvenTree.exceptions import log_error
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def print_label(plugin_slug: str, **kwargs):

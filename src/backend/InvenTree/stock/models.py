@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
@@ -20,6 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -52,7 +52,7 @@ from stock.events import StockEvents
 from stock.generators import generate_batch_code
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class StockLocationType(InvenTree.models.MetadataMixin, models.Model):

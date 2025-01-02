@@ -1,7 +1,6 @@
 """Model definitions for the 'importer' app."""
 
 import json
-import logging
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -11,6 +10,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
@@ -20,7 +20,7 @@ import importer.validators
 import InvenTree.helpers
 from importer.status_codes import DataImportStatusCode
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DataImportSession(models.Model):

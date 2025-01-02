@@ -1,11 +1,10 @@
 """API endpoints for barcode plugins."""
 
-import logging
-
 from django.db.models import F
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import permissions, status
@@ -29,7 +28,7 @@ from users.models import RuleSet
 
 from . import serializers as barcode_serializers
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class BarcodeView(CreateAPIView):

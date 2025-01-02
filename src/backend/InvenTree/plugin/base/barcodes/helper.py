@@ -1,12 +1,13 @@
 """Helper functions for barcode generation."""
 
-import logging
 from typing import Type, cast
+
+import structlog
 
 import InvenTree.helpers_model
 from InvenTree.models import InvenTreeBarcodeMixin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def cache(func):

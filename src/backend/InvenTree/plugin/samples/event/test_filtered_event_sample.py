@@ -7,8 +7,6 @@ from common.models import InvenTreeSetting
 from plugin import registry
 from plugin.base.event.events import trigger_event
 
-from .filtered_event_sample import logger
-
 
 class FilteredEventPluginSampleTests(TestCase):
     """Tests for EventPluginSample."""
@@ -25,11 +23,9 @@ class FilteredEventPluginSampleTests(TestCase):
         # Enable event testing
         settings.PLUGIN_TESTING_EVENTS = True
         # Check that an event is issued
-        with self.assertLogs(logger=logger, level='DEBUG') as cm:
+        with self.assertLogs(logger='inventree', level='DEBUG') as cm:
             trigger_event('test.event')
-        self.assertIn(
-            'DEBUG:inventree:Event `test.event` triggered in sample plugin', cm[1]
-        )
+        self.assertIn('Event `test.event` triggered in sample plugin', str(cm[1]))
 
         # Disable again
         settings.PLUGIN_TESTING_EVENTS = False
@@ -46,7 +42,7 @@ class FilteredEventPluginSampleTests(TestCase):
         # Enable event testing
         settings.PLUGIN_TESTING_EVENTS = True
         # Check that an event is issued
-        with self.assertLogs(logger=logger, level='DEBUG') as cm:
+        with self.assertLogs(logger='inventree', level='DEBUG') as cm:
             trigger_event('test.some.other.event')
         self.assertNotIn(
             'DEBUG:inventree:Event `test.some.other.event` triggered in sample plugin',

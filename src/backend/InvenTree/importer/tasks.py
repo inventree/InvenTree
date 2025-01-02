@@ -1,12 +1,13 @@
 """Task definitions for the 'importer' app."""
 
-import logging
 from datetime import timedelta
+
+import structlog
 
 import InvenTree.helpers
 import InvenTree.tasks
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def import_data(session_id: int):

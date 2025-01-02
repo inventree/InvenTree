@@ -1,12 +1,12 @@
 """Label printing plugin which supports printing multiple labels on a single page."""
 
-import logging
 import math
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 import weasyprint
 from rest_framework import serializers
 
@@ -16,7 +16,7 @@ from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 from report.models import LabelOutput, LabelTemplate
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class LabelPrintingOptionsSerializer(serializers.Serializer):

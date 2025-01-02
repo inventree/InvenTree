@@ -1,12 +1,12 @@
 """API endpoints for social authentication with allauth."""
 
-import logging
 from importlib import import_module
 
 from django.conf import settings
 from django.urls import NoReverseMatch, include, path, reverse
 
 import allauth.socialaccount.providers.openid_connect.views as oidc_views
+import structlog
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter, OAuth2LoginView
@@ -22,7 +22,7 @@ from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
 from InvenTree.serializers import EmptySerializer, InvenTreeModelSerializer
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class GenericOAuth2ApiLoginView(OAuth2LoginView):
