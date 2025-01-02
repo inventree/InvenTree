@@ -114,7 +114,9 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
         """Add the _custom_key field to the model."""
         cls._meta.supports_custom_status = True
 
-        if not hasattr(self, '_custom_key_field'):
+        if not hasattr(self, '_custom_key_field') and not hasattr(
+            cls, f'{name}_custom_key'
+        ):
             self.add_field(cls, name)
 
         super().contribute_to_class(cls, name)
