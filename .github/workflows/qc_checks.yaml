@@ -295,7 +295,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
-          py-dep-paths: src/backend/requirements-3-12.txt
+          py-dep-paths: ${{matrix.python_version == '3.12' && 'src/backend/requirements-3-12.txt' || 'src/backend/requirements.txt'}}
           dev-install: true
           update: true
       - name: Data Export Test
