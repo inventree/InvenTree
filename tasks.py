@@ -282,12 +282,16 @@ def plugins(c, uv=False):
     help={
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
+        'path': 'Specify path to locate requirements file (leave blank for default path)',
     }
 )
-def install(c, uv=False, skip_plugins=False):
+def install(c, uv=False, skip_plugins=False, path: Optional[str] = None):
     """Installs required python packages."""
     # Ensure path is relative to *this* directory
-    INSTALL_FILE = localDir().joinpath('src/backend/requirements.txt')
+    if path:
+        INSTALL_FILE = Path(path).resolve()
+    else:
+        INSTALL_FILE = localDir().joinpath('src/backend/requirements.txt')
 
     info(f"Installing required python packages from '{INSTALL_FILE}'")
 
@@ -552,6 +556,7 @@ def showmigrations(c, app=''):
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
         'uv': 'Use UV (experimental package manager)',
+        'path': 'Specify path to locate requirements file (leave blank for default path)',
     },
 )
 def update(
@@ -561,6 +566,7 @@ def update(
     no_frontend: bool = False,
     skip_static: bool = False,
     uv: bool = False,
+    path: Optional[str] = None,
 ):
     """Update InvenTree installation.
 
@@ -579,7 +585,7 @@ def update(
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
-    install(c, uv=uv)
+    install(c, uv=uv, path=path)
 
     if not skip_backup:
         backup(c)

@@ -30,6 +30,10 @@ inputs:
     pip-dependency:
         required: false
         description: 'Extra python package for install.'
+    py-dep-paths:
+        required: false
+        description: 'Path to the python dependencies.'
+        default: ''
 
 runs:
     using: 'composite'
@@ -89,8 +93,8 @@ runs:
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install
+        run: invoke install --path {{ inputs.py-dep-paths }}
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --skip-backup --skip-static
+        run: invoke update --skip-backup --skip-static --path {{ inputs.py-dep-paths }}
