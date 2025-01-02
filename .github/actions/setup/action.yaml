@@ -93,8 +93,8 @@ runs:
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install --path {{ inputs.py-dep-paths }}
+        run: invoke install --path ${{ inputs.py-dep-paths }}
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --skip-backup --skip-static --path {{ inputs.py-dep-paths }}
+        run: invoke update --skip-backup --skip-static --path ${{ inputs.py-dep-paths }}
