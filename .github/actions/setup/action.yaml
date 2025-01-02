@@ -53,6 +53,7 @@ runs:
           cache-dependency-path: |
             src/backend/requirements.txt
             src/backend/requirements-dev.txt
+            src/backend/requirements-3-12.txt
             contrib/container/requirements.txt
             contrib/dev_reqs/requirements.txt
       - name: Install Base Python Dependencies
