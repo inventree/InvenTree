@@ -1331,6 +1331,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'build',
             'bom_item',
             'quantity',
+            'consumed',
+            'allocations',
             # Build detail fields
             'build_reference',
             # BOM item detail fields
@@ -1436,6 +1438,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     )
 
     quantity = serializers.FloatField(label=_('Quantity'))
+    consumed = serializers.FloatField(label=_('Consumed'))
 
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
@@ -1460,7 +1463,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     # Annotated (calculated) fields
 
     # Total quantity of allocated stock
-    allocated = serializers.FloatField(label=_('Allocated Stock'), read_only=True)
+    allocated = serializers.FloatField(label=_('Allocated'), read_only=True)
 
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
 
