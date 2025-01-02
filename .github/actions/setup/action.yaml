@@ -33,7 +33,7 @@ inputs:
     py-dep-paths:
         required: false
         description: 'Path to the python dependencies.'
-        default: ''
+        default: 'src/backend/requirements.txt'
 
 runs:
     using: 'composite'
