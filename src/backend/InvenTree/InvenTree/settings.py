@@ -77,7 +77,7 @@ if version_file.exists():
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -1063,6 +1063,12 @@ if SITE_URL:
         print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
         sys.exit(-1)
 
+else:
+    logger.warning('No SITE_URL specified. Some features may not work correctly')
+    logger.warning(
+        'Specify a SITE_URL in the configuration file or via an environment variable'
+    )
+
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
 
@@ -1177,9 +1183,23 @@ SESSION_COOKIE_SECURE = (
     if DEBUG
     else (
         SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+        or get_boolean_setting(
+            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+        )
     )
 )
+
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
+if ssl_header := get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PROTO', 'use_x_forwarded_proto', False
+):
+    # The default header name is 'HTTP_X_FORWARDED_PROTO', but can be adjusted
+    ssl_header_name = get_setting(
+        'INVENTREE_X_FORWARDED_PROTO_NAME',
+        'x_forwarded_proto_name',
+        'HTTP_X_FORWARDED_PROTO',
+    )
+    SECURE_PROXY_SSL_HEADER = (ssl_header_name, 'https')
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
@@ -1385,7 +1405,7 @@ CUSTOMIZE = get_setting(
 
 # Load settings for the frontend interface
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')

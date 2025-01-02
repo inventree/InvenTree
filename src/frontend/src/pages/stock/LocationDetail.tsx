@@ -280,6 +280,8 @@ export default function Stock() {
         <BarcodeActionDropdown
           model={ModelType.stocklocation}
           pk={location.pk}
+          hash={location?.barcode_hash}
+          perm={user.hasChangeRole(UserRoles.stock_location)}
           actions={[
             {
               name: 'Scan in stock items',
@@ -363,6 +365,7 @@ export default function Stock() {
       <InstanceDetail
         status={requestStatus}
         loading={id ? instanceQuery.isFetching : false}
+        requiredRole={UserRoles.stock_location}
       >
         <Stack>
           <NavigationTree

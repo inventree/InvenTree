@@ -482,7 +482,7 @@ function StockOperationsRow({
 
   const [statusOpen, statusHandlers] = useDisclosure(false, {
     onOpen: () => {
-      setStatus(record?.status || undefined);
+      setStatus(record?.status_custom_key || record?.status || undefined);
       props.changeFn(props.idx, 'status', record?.status || undefined);
     },
     onClose: () => {

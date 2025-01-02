@@ -6,7 +6,7 @@ import { ContextMenuProvider } from 'mantine-contextmenu';
 
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
-import { QrCodeModal } from '../components/modals/QrCodeModal';
+import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
@@ -46,10 +46,10 @@ export function ThemeContext({
           <ModalsProvider
             labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
             modals={{
-              qr: QrCodeModal,
               info: ServerInfoModal,
               about: AboutInvenTreeModal,
-              license: LicenseModal
+              license: LicenseModal,
+              qr: QrModal
             }}
           >
             <Notifications />

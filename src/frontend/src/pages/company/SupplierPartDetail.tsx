@@ -398,7 +398,11 @@ export default function SupplierPartDetail() {
       {deleteSupplierPart.modal}
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.purchase_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={t`Supplier Part`}

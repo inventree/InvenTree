@@ -571,8 +571,14 @@ class StockFilter(rest_filters.FilterSet):
     status = rest_filters.NumberFilter(label=_('Status Code'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
-        """Filter by integer status code."""
-        return queryset.filter(status=value)
+        """Filter by integer status code.
+
+        Note: Also account for the possibility of a custom status code.
+        """
+        q1 = Q(status=value, status_custom_key__isnull=True)
+        q2 = Q(status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
 
     allocated = rest_filters.BooleanFilter(
         label='Is Allocated', method='filter_allocated'
@@ -902,8 +908,9 @@ class StockApiMixin:
         try:
             params = self.request.query_params
 
+            kwargs['part_detail'] = str2bool(params.get('part_detail', True))
+
             for key in [
-                'part_detail',
                 'path_detail',
                 'location_detail',
                 'supplier_part_detail',

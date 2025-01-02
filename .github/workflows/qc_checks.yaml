@@ -242,6 +242,8 @@ jobs:
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
       INVENTREE_SITE_URL: http://127.0.0.1:12345
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -303,7 +305,7 @@ jobs:
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke dev.test --coverage
+        run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
         if: always()
@@ -324,7 +326,8 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_CACHE_HOST: localhost
       INVENTREE_PLUGINS_ENABLED: true
 
@@ -354,7 +357,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -372,7 +375,8 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 3306
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_PLUGINS_ENABLED: true
 
     services:
@@ -400,7 +404,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -417,7 +421,8 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_PLUGINS_ENABLED: false
 
     services:
@@ -441,7 +446,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
         if: always()
@@ -459,7 +464,8 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
@@ -473,12 +479,6 @@ jobs:
           install: true
       - name: Fetch Database
         run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
-
-      - name: Latest Database
-        run: |
-          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
 
       - name: 0.10.0 Database
         run: |
@@ -494,19 +494,27 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.12.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
       - name: 0.13.5 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
+
+      - name: 0.16.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.17.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
 
   platform_ui:
     name: Tests - Platform UI
@@ -517,7 +525,7 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: True
+      INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
       VITE_COVERAGE: true
 

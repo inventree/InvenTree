@@ -115,6 +115,15 @@ export default function ReturnOrderDetail() {
         name: 'status',
         label: t`Status`,
         model: ModelType.returnorder
+      },
+      {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.returnorder,
+        icon: 'status',
+        hidden:
+          !order.status_custom_key || order.status_custom_key == order.status
       }
     ];
 
@@ -461,7 +470,11 @@ export default function ReturnOrderDetail() {
       {holdOrder.modal}
       {completeOrder.modal}
       {duplicateReturnOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.return_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Return Order`}: ${order.reference}`}
