@@ -19,7 +19,7 @@ export interface PluginRegistryErrorI {
  * Table displaying list of plugin registry errors
  */
 export default function PluginErrorTable() {
-  const table = useTable('registryErrors');
+  const table = useTable('registryErrors', 'id');
 
   const registryErrorTableColumns: TableColumn<PluginRegistryErrorI>[] =
     useMemo(
@@ -49,7 +49,6 @@ export default function PluginErrorTable() {
       props={{
         dataFormatter: (data: any) =>
           data.registry_errors.map((e: any, i: number) => ({ id: i, ...e })),
-        idAccessor: 'id',
         enableDownload: false,
         enableFilters: false,
         enableSearch: false

@@ -24,7 +24,8 @@ export default function PurchasingIndex() {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        content: <PurchaseOrderTable />
+        content: <PurchaseOrderTable />,
+        hidden: !user.hasViewRole(UserRoles.purchase_order)
       },
       {
         name: 'suppliers',
@@ -49,7 +50,7 @@ export default function PurchasingIndex() {
         )
       }
     ];
-  }, []);
+  }, [user]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.purchase_order)) {
     return <PermissionDenied />;

@@ -11,14 +11,13 @@ from rest_framework.response import Response
 
 import common.models
 import common.serializers
-from generic.states.custom import get_status_api_response
 from importer.mixins import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
-from machine.machine_type import MachineStatus
 
+from .serializers import GenericStateClassSerializer
 from .states import StatusCode
 
 
@@ -38,6 +37,7 @@ class StatusView(GenericAPIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = GenericStateClassSerializer
 
     # Override status_class for implementing subclass
     MODEL_REF = 'statusmodel'
@@ -56,7 +56,7 @@ class StatusView(GenericAPIView):
     @extend_schema(
         description='Retrieve information about a specific status code',
         responses={
-            200: OpenApiResponse(description='Status code information'),
+            200: GenericStateClassSerializer,
             400: OpenApiResponse(description='Invalid request'),
         },
     )
@@ -70,9 +70,27 @@ class StatusView(GenericAPIView):
         if not issubclass(status_class, StatusCode):
             raise NotImplementedError('`status_class` not a valid StatusCode class')
 
-        data = {'class': status_class.__name__, 'values': status_class.dict()}
+        data = {'status_class': status_class.__name__, 'values': status_class.dict()}
 
-        return Response(data)
+        # Extend with custom values
+        try:
+            custom_values = status_class.custom_values()
+            for item in custom_values:
+                if item.name not in data['values']:
+                    data['values'][item.name] = {
+                        'color': item.color,
+                        'logical_key': item.logical_key,
+                        'key': item.key,
+                        'label': item.label,
+                        'name': item.name,
+                        'custom': True,
+                    }
+        except Exception:
+            pass
+
+        serializer = GenericStateClassSerializer(data, many=False)
+
+        return Response(serializer.data)
 
 
 class AllStatusViews(StatusView):
@@ -83,9 +101,32 @@ class AllStatusViews(StatusView):
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        data = get_status_api_response()
-        # Extend with MachineStatus classes
-        data.update(get_status_api_response(MachineStatus, prefix=['MachineStatus']))
+        from InvenTree.helpers import inheritors
+
+        data = {}
+
+        # Find all inherited status classes
+        status_classes = inheritors(StatusCode)
+
+        for cls in status_classes:
+            cls_data = {'status_class': cls.__name__, 'values': cls.dict()}
+
+            # Extend with custom values
+            for item in cls.custom_values():
+                label = str(item.name)
+                if label not in cls_data['values']:
+                    print('custom value:', item)
+                    cls_data['values'][label] = {
+                        'color': item.color,
+                        'logical_key': item.logical_key,
+                        'key': item.key,
+                        'label': item.label,
+                        'name': item.name,
+                        'custom': True,
+                    }
+
+            data[cls.__name__] = GenericStateClassSerializer(cls_data, many=False).data
+
         return Response(data)
 
 
@@ -99,6 +140,7 @@ class CustomStateList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['key']
     search_fields = ['key', 'name', 'label', 'reference_status']
+    filterset_fields = ['model', 'reference_status']
 
 
 class CustomStateDetail(RetrieveUpdateDestroyAPI):

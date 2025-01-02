@@ -42,7 +42,7 @@ export default function InvenTreeTableHeader({
   filters,
   toggleColumn
 }: Readonly<{
-  tableUrl: string;
+  tableUrl?: string;
   tableState: TableState;
   tableProps: InvenTreeTableProps<any>;
   hasSwitchableColumns: boolean;
@@ -92,7 +92,7 @@ export default function InvenTreeTableHeader({
   };
 
   const deleteRecords = useDeleteApiFormModal({
-    url: tableUrl,
+    url: tableUrl ?? '',
     title: t`Delete Selected Items`,
     preFormContent: (
       <Alert

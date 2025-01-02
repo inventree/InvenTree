@@ -31,13 +31,17 @@ export default function useStatusCodes({
   const statusCodeList = useGlobalStatusState.getState().status;
 
   const codes = useMemo(() => {
-    const statusCodes = getStatusCodes(modelType) || {};
+    const statusCodes = getStatusCodes(modelType) || null;
 
     const codesMap: Record<any, any> = {};
 
-    for (const name in statusCodes) {
-      codesMap[name] = statusCodes[name].key;
+    if (!statusCodes) {
+      return codesMap;
     }
+
+    Object.keys(statusCodes.values).forEach((name) => {
+      codesMap[name] = statusCodes.values[name].key;
+    });
 
     return codesMap;
   }, [modelType, statusCodeList]);

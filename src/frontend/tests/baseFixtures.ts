@@ -74,6 +74,7 @@ export const test = baseTest.extend({
         url != 'http://localhost:8000/api/barcode/' &&
         url != 'https://docs.inventree.org/en/versions.json' &&
         url != 'http://localhost:5173/favicon.ico' &&
+        !url.startsWith('https://api.github.com/repos/inventree') &&
         !url.startsWith('http://localhost:8000/api/news/') &&
         !url.startsWith('http://localhost:8000/api/notifications/') &&
         !url.startsWith('chrome://') &&
