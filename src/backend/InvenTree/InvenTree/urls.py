@@ -188,9 +188,6 @@ urlpatterns = []
 if settings.INVENTREE_ADMIN_ENABLED:
     admin_url = settings.INVENTREE_ADMIN_URL
 
-    if settings.ADMIN_SHELL_ENABLE:
-        urlpatterns += [path(f'{admin_url}/shell/', include('django_admin_shell.urls'))]
-
     urlpatterns += [
         path(f'{admin_url}/error_log/', include('error_report.urls')),
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
