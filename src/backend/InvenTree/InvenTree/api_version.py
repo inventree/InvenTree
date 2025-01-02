@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 297
 
 
 INVENTREE_API_TEXT = """
+v296 - 2024-12-22 : https://github.com/inventree/InvenTree/pull/6293
+    - Removes a considerable amount of old auth endpoints
+    - Introduces allauth based REST API
 
 v297 - 2024-12-29 - https://github.com/inventree/InvenTree/pull/8438
     - Adjustments to the CustomUserState API endpoints and serializers

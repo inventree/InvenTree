@@ -10,11 +10,6 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.registration.views import (
-    ConfirmEmailView,
-    SocialAccountDisconnectView,
-    SocialAccountListView,
-)
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
 
@@ -29,7 +24,6 @@ import plugin.api
 import report.api
 import stock.api
 import users.api
-from InvenTree.auth_override_views import CustomRegisterView
 from plugin.urls import get_plugin_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
@@ -43,14 +37,6 @@ from .api import (
     VersionView,
 )
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import (
-    EmailListView,
-    EmailPrimaryView,
-    EmailRemoveView,
-    EmailVerifyView,
-    SocialProviderListView,
-    get_provider_urls,
-)
 from .views import auth_request
 
 admin.site.site_header = 'InvenTree Admin'
@@ -109,61 +95,35 @@ apipatterns = [
     path(
         'auth/',
         include([
-            re_path(
-                r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$',
-                ConfirmEmailView.as_view(),
-                name='account_confirm_email',
-            ),
-            path('registration/', CustomRegisterView.as_view(), name='rest_register'),
-            path('registration/', include('dj_rest_auth.registration.urls')),
-            path(
-                'providers/', SocialProviderListView.as_view(), name='social_providers'
-            ),
-            path(
-                'emails/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            path(
-                                'primary/',
-                                EmailPrimaryView.as_view(),
-                                name='email-primary',
-                            ),
-                            path(
-                                'verify/',
-                                EmailVerifyView.as_view(),
-                                name='email-verify',
-                            ),
-                            path(
-                                'remove/',
-                                EmailRemoveView().as_view(),
-                                name='email-remove',
-                            ),
-                        ]),
-                    ),
-                    path('', EmailListView.as_view(), name='email-list'),
-                ]),
-            ),
-            path('social/', include(get_provider_urls())),
-            path(
-                'social/', SocialAccountListView.as_view(), name='social_account_list'
-            ),
-            path(
-                'social/<int:pk>/disconnect/',
-                SocialAccountDisconnectView.as_view(),
-                name='social_account_disconnect',
-            ),
-            path('login/', users.api.Login.as_view(), name='api-login'),
+            # TODO remove
+            # re_path(
+            #     r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$',
+            #     ConfirmEmailView.as_view(),
+            #     name='account_confirm_email',
+            # ),
+            # path('registration/', include('dj_rest_auth.registration.urls')),
+            # path(
+            #     'providers/', SocialProviderListView.as_view(), name='social_providers'
+            # ),
+            # path('social/', include(get_provider_urls())),
+            # path(
+            #     'social/', SocialAccountListView.as_view(), name='social_account_list'
+            # ),
+            # path(
+            #     'social/<int:pk>/disconnect/',
+            #     SocialAccountDisconnectView.as_view(),
+            #     name='social_account_disconnect',
+            # ),
+            # path('login/', users.api.Login.as_view(), name='api-login'),
             path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
                 name='api-login-redirect',
             ),
-            path('', include('dj_rest_auth.urls')),
         ]),
     ),
+    path('_allauth/', include('allauth.headless.urls')),
     # Magic login URLs
     path(
         'email/generate/',
@@ -200,13 +160,13 @@ urlpatterns += backendpatterns
 
 frontendpatterns = [
     *platform_urls,
+    path('accounts/', include('allauth.urls')),  # Still needed for provider login
     # Add a redirect for login views
     path(
         'accounts/login/',
         RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='account_login',
     ),
-    path('accounts/', include('allauth_2fa.urls')),  # MFA support
 ]
 
 urlpatterns += frontendpatterns

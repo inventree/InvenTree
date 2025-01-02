@@ -112,7 +112,6 @@ def content_excludes(
         'exchange.exchangebackend',
         'common.notificationentry',
         'common.notificationmessage',
-        'user_sessions.session',
         'importer.dataimportsession',
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',

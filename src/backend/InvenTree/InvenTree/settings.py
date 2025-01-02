@@ -17,9 +17,10 @@ from pathlib import Path
 import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
-from django.http import Http404
+from django.http import Http404, HttpResponseGone
 
 import structlog
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -271,7 +272,8 @@ INSTALLED_APPS = [
     # Core django modules
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'user_sessions',  # db user sessions
+    'django.contrib.sessions',
+    'django.contrib.humanize',
     'whitenoise.runserver_nostatic',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -295,13 +297,13 @@ INSTALLED_APPS = [
     'django_structlog',  # Structured logging
     'allauth',  # Base app for SSO
     'allauth.account',  # Extend user with accounts
+    'allauth.headless',  # APIs for auth
     'allauth.socialaccount',  # Use 'social' providers
+    'allauth.mfa',  # MFA for for allauth
+    'allauth.usersessions',  # DB sessions
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
-    'allauth_2fa',  # MFA flow for allauth
-    'dj_rest_auth',  # Authentication APIs - dj-rest-auth
-    'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
 ]
@@ -311,7 +313,8 @@ MIDDLEWARE = CONFIG.get(
     [
         'django.middleware.security.SecurityMiddleware',
         'x_forwarded_for.middleware.XForwardedForMiddleware',
-        'user_sessions.middleware.SessionMiddleware',  # db user sessions
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
@@ -319,13 +322,10 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
-        'django_otp.middleware.OTPMiddleware',  # MFA support
-        'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',  # Flow control for allauth
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
-        'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
@@ -574,31 +574,6 @@ if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
-
-# JWT switch
-USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
-REST_USE_JWT = USE_JWT
-
-# dj-rest-auth
-REST_AUTH = {
-    'SESSION_LOGIN': True,
-    'TOKEN_MODEL': 'users.models.ApiToken',
-    'TOKEN_CREATOR': 'users.models.default_create_token',
-    'USE_JWT': USE_JWT,
-    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
-}
-
-OLD_PASSWORD_FIELD_ENABLED = True
-
-# JWT settings - rest_framework_simplejwt
-if USE_JWT:
-    JWT_AUTH_COOKIE = 'inventree-auth'
-    JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
-    )
-    INSTALLED_APPS.append('rest_framework_simplejwt')
-
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -938,13 +913,7 @@ if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
 
-# database user sessions
-SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = get_setting(
-    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
-)
-
-SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
+SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -1217,6 +1186,9 @@ USE_X_FORWARDED_PORT = get_boolean_setting(
 # Refer to the django-cors-headers documentation for more information
 # Ref: https://github.com/adamchainz/django-cors-headers
 
+
+CORS_ALLOW_HEADERS = (*default_headers, 'x-session-token')
+
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
     'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
@@ -1287,6 +1259,7 @@ SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
 )
+USERSESSIONS_TRACK_ACTIVITY = True
 
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
@@ -1331,12 +1304,20 @@ ACCOUNT_FORMS = {
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
 
-ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
-# Determine if multi-factor authentication is enabled for this server (default = True)
-MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
-
 SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+# TDOO: Implement dynamic lookup for those
+HEADLESS_FRONTEND_URLS = {
+    'account_confirm_email': 'http://localhost:8000/verify-email/{key}',  # noqa: RUF027
+    'account_reset_password': 'http://localhost:8000/password-reset',
+    'account_reset_password_from_key': 'http://localhost:8000/password-reset-key/{key}',  # noqa: RUF027
+    'account_signup': 'http://localhost:8000/signup',
+}
+HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
@@ -1379,7 +1360,7 @@ MARKDOWNIFY = {
 }
 
 # Ignore these error typeps for in-database error logging
-IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
+IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 10

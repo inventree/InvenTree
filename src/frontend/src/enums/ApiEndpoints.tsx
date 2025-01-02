@@ -21,13 +21,12 @@ export enum ApiEndpoints {
   user_change_password = 'auth/password/change/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
-  user_emails = 'auth/emails/',
-  user_email_remove = 'auth/emails/:id/remove/',
-  user_email_verify = 'auth/emails/:id/verify/',
-  user_email_primary = 'auth/emails/:id/primary/',
-  user_login = 'auth/login/',
-  user_logout = 'auth/logout/',
+  user_login = '_allauth/app/v1/auth/login',
+  user_login_mfa = '_allauth/app/v1/auth/2fa/authenticate',
+  user_logout = '_allauth/app/v1/auth/session',
   user_register = 'auth/registration/',
+  user_mfa = '_allauth/app/v1/account/authenticators',
+  user_emails = '_allauth/app/v1/account/email',
 
   // Generic API endpoints
   currency_list = 'currency/exchange/',
@@ -52,6 +51,7 @@ export enum ApiEndpoints {
   icons = 'icons/',
   selectionlist_list = 'selection/',
   selectionlist_detail = 'selection/:id/',
+  securtiy_settings = '_allauth/app/v1/config',
 
   // Barcode API endpoints
   barcode = 'barcode/',

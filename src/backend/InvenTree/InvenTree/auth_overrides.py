@@ -1,7 +1,6 @@
 """Overrides for allauth and adjacent packages to enforce InvenTree specific auth settings and restirctions."""
 
 import logging
-from urllib.parse import urlencode
 
 from django import forms
 from django.conf import settings
@@ -12,20 +11,14 @@ from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
-from allauth.core.exceptions import ImmediateHttpResponse
+from allauth.headless.tokens.sessions import SessionTokenStrategy
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth_2fa.adapter import OTPAdapter
-from allauth_2fa.forms import TOTPDeviceForm
-from allauth_2fa.utils import user_has_valid_totp_device
-from dj_rest_auth.registration.serializers import (
-    RegisterSerializer as DjRestRegisterSerializer,
-)
-from rest_framework import serializers
 
 import InvenTree.helpers_model
 import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
+from users.models import ApiToken
 
 logger = logging.getLogger('inventree')
 
@@ -90,16 +83,6 @@ class CustomSignupForm(SignupForm):
                 self.add_error('email2', _('You must type the same email each time.'))
 
         return cleaned_data
-
-
-class CustomTOTPDeviceForm(TOTPDeviceForm):
-    """Ensure that db registration is enabled."""
-
-    def __init__(self, user, metadata=None, **kwargs):
-        """Override to check if registration is open."""
-        if not settings.MFA_ENABLED:
-            raise forms.ValidationError(_('MFA Registration is disabled.'))
-        super().__init__(user, metadata, **kwargs)
 
 
 def registration_enabled():
@@ -177,19 +160,7 @@ class RegistrationMixin:
         return user
 
 
-class CustomUrlMixin:
-    """Mixin to set urls."""
-
-    def get_email_confirmation_url(self, request, emailconfirmation):
-        """Custom email confirmation (activation) url."""
-        url = reverse('account_confirm_email', args=[emailconfirmation.key])
-
-        return InvenTree.helpers_model.construct_absolute_url(url)
-
-
-class CustomAccountAdapter(
-    CustomUrlMixin, RegistrationMixin, OTPAdapter, DefaultAccountAdapter
-):
+class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def send_mail(self, template_prefix, email, context):
@@ -214,9 +185,7 @@ class CustomAccountAdapter(
         return url
 
 
-class CustomSocialAccountAdapter(
-    CustomUrlMixin, RegistrationMixin, DefaultSocialAccountAdapter
-):
+class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def is_auto_signup_allowed(self, request, sociallogin):
@@ -224,29 +193,6 @@ class CustomSocialAccountAdapter(
         if get_global_setting('LOGIN_SIGNUP_SSO_AUTO', True):
             return super().is_auto_signup_allowed(request, sociallogin)
         return False
-
-    # from OTPAdapter
-    def has_2fa_enabled(self, user):
-        """Returns True if the user has 2FA configured."""
-        return user_has_valid_totp_device(user)
-
-    def login(self, request, user):
-        """Ensure user is send to 2FA before login if enabled."""
-        # Require two-factor authentication if it has been configured.
-        if self.has_2fa_enabled(user):
-            # Cast to string for the case when this is not a JSON serializable
-            # object, e.g. a UUID.
-            request.session['allauth_2fa_user_id'] = str(user.id)
-
-            redirect_url = reverse('two-factor-authenticate')
-            # Add GET parameters to the URL if they exist.
-            if request.GET:
-                redirect_url += '?' + urlencode(request.GET)
-
-            raise ImmediateHttpResponse(response=HttpResponseRedirect(redirect_url))
-
-        # Otherwise defer to the original allauth adapter.
-        return super().login(request, user)
 
     def authentication_error(
         self, request, provider_id, error=None, exception=None, extra_context=None
@@ -265,14 +211,10 @@ class CustomSocialAccountAdapter(
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
 
 
-# override dj-rest-auth
-class RegisterSerializer(DjRestRegisterSerializer):
-    """Registration requires email, password (twice) and username."""
+class DRFTokenStrategy(SessionTokenStrategy):
+    """Strategy that InvenTrees own included Token model."""
 
-    email = serializers.EmailField()
-
-    def save(self, request):
-        """Override to check if registration is open."""
-        if registration_enabled():
-            return super().save(request)
-        raise forms.ValidationError(_('Registration is disabled.'))
+    def create_access_token(self, request):
+        """Create a new access token for the user."""
+        token, _ = ApiToken.objects.get_or_create(user=request.user)
+        return token.key

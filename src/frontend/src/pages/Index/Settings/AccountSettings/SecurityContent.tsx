@@ -68,24 +68,19 @@ export function SecurityContent() {
       <Title order={5}>
         <Trans>Multifactor</Trans>
       </Title>
-      {isLoadingProvider ? (
-        <Loader />
+
+      {isMfaEnabled ? (
+        <MfaContent />
       ) : (
-        <>
-          {isMfaEnabled ? (
-            <MfaContent />
-          ) : (
-            <Alert
-              icon={<IconAlertCircle size='1rem' />}
-              title={t`Not enabled`}
-              color='yellow'
-            >
-              <Trans>
-                Multifactor authentication is not configured for your account{' '}
-              </Trans>
-            </Alert>
-          )}
-        </>
+        <Alert
+          icon={<IconAlertCircle size='1rem' />}
+          title={t`Not enabled`}
+          color='yellow'
+        >
+          <Trans>
+            Multifactor authentication is not configured for your account{' '}
+          </Trans>
+        </Alert>
       )}
 
       <Title order={5}>
@@ -99,28 +94,69 @@ export function SecurityContent() {
 function EmailContent() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
-  const [user] = useUserState((state) => [state.user]);
+  const [session] = useUserState((state) => [state.session]);
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () =>
-      api.get(apiUrl(ApiEndpoints.user_emails)).then((res) => res.data)
+      api
+        .get(apiUrl(ApiEndpoints.user_emails), {
+          headers: { 'X-Session-Token': session }
+        })
+        .then((res) => res.data.data)
   });
 
-  function runServerAction(url: ApiEndpoints) {
+  function runServerAction(
+    url: ApiEndpoints,
+    action: 'post' | 'put' | 'delete' = 'post'
+  ) {
+    let act: any;
+    switch (action) {
+      case 'post':
+        act = api.post;
+        break;
+      case 'put':
+        act = api.put;
+        break;
+      case 'delete':
+        act = api.delete;
+        break;
+    }
+    act(
+      apiUrl(url),
+      { email: value },
+      { headers: { 'X-Session-Token': session } }
+    )
+      .then(() => {
+        refetch();
+      })
+      .catch((res: any) => console.log(res.data));
+  }
+
+  function addEmail() {
     api
-      .post(apiUrl(url, undefined, { id: value }), {})
+      .post(
+        apiUrl(ApiEndpoints.user_emails),
+        {
+          email: newEmailValue
+        },
+        { headers: { 'X-Session-Token': session } }
+      )
       .then(() => {
         refetch();
       })
       .catch((res) => console.log(res.data));
   }
 
-  function addEmail() {
+  function changePrimary() {
     api
-      .post(apiUrl(ApiEndpoints.user_emails), {
-        email: newEmailValue,
-        user: user?.pk
-      })
+      .post(
+        apiUrl(ApiEndpoints.user_emails),
+        {
+          email: value,
+          primary: true
+        },
+        { headers: { 'X-Session-Token': session } }
+      )
       .then(() => {
         refetch();
       })
@@ -132,40 +168,46 @@ function EmailContent() {
   return (
     <Grid>
       <Grid.Col span={6}>
-        <Radio.Group
-          value={value}
-          onChange={setValue}
-          name='email_accounts'
-          label={t`The following email addresses are associated with your account:`}
-        >
-          <Stack mt='xs'>
-            {data.map((link: any) => (
-              <Radio
-                key={link.id}
-                value={String(link.id)}
-                label={
-                  <Group justify='space-between'>
-                    {link.email}
-                    {link.primary && (
-                      <Badge color='blue'>
-                        <Trans>Primary</Trans>
-                      </Badge>
-                    )}
-                    {link.verified ? (
-                      <Badge color='green'>
-                        <Trans>Verified</Trans>
-                      </Badge>
-                    ) : (
-                      <Badge color='yellow'>
-                        <Trans>Unverified</Trans>
-                      </Badge>
-                    )}
-                  </Group>
-                }
-              />
-            ))}
-          </Stack>
-        </Radio.Group>
+        {data.length == 0 ? (
+          <Text>
+            <Trans>Currently no emails are registered</Trans>
+          </Text>
+        ) : (
+          <Radio.Group
+            value={value}
+            onChange={setValue}
+            name='email_accounts'
+            label={t`The following email addresses are associated with your account:`}
+          >
+            <Stack mt='xs'>
+              {data.map((email: any) => (
+                <Radio
+                  key={email.email}
+                  value={String(email.email)}
+                  label={
+                    <Group justify='space-between'>
+                      {email.email}
+                      {email.primary && (
+                        <Badge color='blue'>
+                          <Trans>Primary</Trans>
+                        </Badge>
+                      )}
+                      {email.verified ? (
+                        <Badge color='green'>
+                          <Trans>Verified</Trans>
+                        </Badge>
+                      ) : (
+                        <Badge color='yellow'>
+                          <Trans>Unverified</Trans>
+                        </Badge>
+                      )}
+                    </Group>
+                  }
+                />
+              ))}
+            </Stack>
+          </Radio.Group>
+        )}
       </Grid.Col>
       <Grid.Col span={6}>
         <Stack>
@@ -183,18 +225,16 @@ function EmailContent() {
       </Grid.Col>
       <Grid.Col span={6}>
         <Group>
-          <Button
-            onClick={() => runServerAction(ApiEndpoints.user_email_primary)}
-          >
+          <Button onClick={() => changePrimary()}>
             <Trans>Make Primary</Trans>
           </Button>
           <Button
-            onClick={() => runServerAction(ApiEndpoints.user_email_verify)}
+            onClick={() => runServerAction(ApiEndpoints.user_emails, 'put')}
           >
             <Trans>Re-send Verification</Trans>
           </Button>
           <Button
-            onClick={() => runServerAction(ApiEndpoints.user_email_remove)}
+            onClick={() => runServerAction(ApiEndpoints.user_emails, 'delete')}
           >
             <Trans>Remove</Trans>
           </Button>
