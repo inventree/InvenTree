@@ -41,7 +41,7 @@ Configuration of basic server settings:
 
 ### Login Settings
 
-Change how logins, password-forgot, signups are handled:
+Change how logins, password-forgot, user registrations are handled:
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |

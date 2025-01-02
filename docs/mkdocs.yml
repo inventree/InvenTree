@@ -82,7 +82,6 @@ nav:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
     - Security: security.md

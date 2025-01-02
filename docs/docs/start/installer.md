@@ -103,13 +103,13 @@ By default, a public AWS service is used to resolve the public IP address of the
 #### Admin User
 
 By default, an admin user is automatically generated with username `admin`, mail `admin@example.com` and a dynamic password that is saved to `/etc/inventree/admin_password`.
-These values can be customised with the environment variables `INVENTREE_ADMIN_USER`, `INVENTREE_ADMIN_EMAIL` and `INVENTREE_ADMIN_PASSWORD`.
+These values can be customized with the environment variables `INVENTREE_ADMIN_USER`, `INVENTREE_ADMIN_EMAIL` and `INVENTREE_ADMIN_PASSWORD`.
 To stop the automatic generation of an admin user, generate an empty file needs to be placed at `/etc/inventree/admin_password`.
 
-#### Webconfig
+#### Web Config
 
 By default, InvenTree is served internally on port 6000 and then proxied via Nginx. The config is placed in `/etc/nginx/sites-enabled/inventree.conf` and overwritten on each update. The location can be set with the environment variable `SETUP_NGINX_FILE`.
-This only serves an HTTP version of InvenTree, to use HTTPS (recommended for production) or customise any further an additional config file should be used.
+This only serves an HTTP version of InvenTree, to use HTTPS (recommended for production) or customize any further an additional config file should be used.
 
 #### Extra python packages
 Extra python packages can be installed by setting the environment variable `SETUP_EXTRA_PIP`.

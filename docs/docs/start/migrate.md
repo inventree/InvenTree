@@ -48,7 +48,7 @@ This step ensures that the required database tables exist, and are at the correc
 
 ### Import Data
 
-The new database should now be correctly initialized with the correct table structures required to import the data. Run the following command to load the databased dump file into the new database.
+The new database should now be correctly initialized with the correct table structures required to import the data. Run the following command to load the database dump file into the new database.
 
 !!! warning "Empty Database"
     If the database is not *empty* (i.e. it contains data records) then the data import process will fail. If errors occur during the import process, run `invoke import-records` with the `-c` option to clear all existing data from the database.
