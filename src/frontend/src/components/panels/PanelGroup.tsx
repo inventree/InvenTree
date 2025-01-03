@@ -4,7 +4,8 @@ import {
   Paper,
   Stack,
   Tabs,
-  Tooltip
+  Tooltip,
+  UnstyledButton
 } from '@mantine/core';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -30,7 +31,9 @@ import type { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
+import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
+import { base_url } from '../../main';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
@@ -117,7 +120,7 @@ function BasePanelGroup({
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (panel: string, event?: any) => {
-      if (event && (event?.ctrlKey || event?.shiftKey)) {
+      if (event && (event?.ctrlKey || event?.shiftKey || event?.metaKey)) {
         const url = `${location.pathname}/../${panel}`;
         cancelEvent(event);
         navigateToLink(url, navigate, event);
@@ -182,7 +185,14 @@ function BasePanelGroup({
                         handlePanelChange(panel.name, event)
                       }
                     >
-                      {expanded && panel.label}
+                      <UnstyledButton
+                        component={'a'}
+                        href={generateUrl(
+                          `${base_url}${location.pathname}/${panel.name}`
+                        )}
+                      >
+                        {expanded && panel.label}
+                      </UnstyledButton>
                     </Tabs.Tab>
                   </Tooltip>
                 )
