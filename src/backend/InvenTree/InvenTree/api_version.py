@@ -1,15 +1,27 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 294
+INVENTREE_API_VERSION = 298
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v294 - 2024-12-04 : https://github.com/inventree/InvenTree/pull/8596
+v298 - 2024-12-04 : https://github.com/inventree/InvenTree/pull/8596
     - Adds ReferenceSource and Reference endpoints to the API
+
+v297 - 2024-12-29 - https://github.com/inventree/InvenTree/pull/8438
+    - Adjustments to the CustomUserState API endpoints and serializers
+
+v296 - 2024-12-25 : https://github.com/inventree/InvenTree/pull/8732
+    - Adjust default "part_detail" behaviour for StockItem API endpoints
+
+v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
+    - Improve API documentation for build APIs
+
+v294 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8738
+    - Extends registration API documentation
 
 v293 - 2024-12-14 : https://github.com/inventree/InvenTree/pull/8658
     - Adds new fields to the supplier barcode API endpoints

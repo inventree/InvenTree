@@ -769,7 +769,9 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=StockStatus.items(), default=StockStatus.OK.value, label=_('Status')
+        choices=StockStatus.items(custom=True),
+        default=StockStatus.OK.value,
+        label=_('Status'),
     )
 
     packaging = serializers.CharField(
@@ -1935,7 +1937,7 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(),
+        choices=stock.status_codes.StockStatus.items(custom=True),
         default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),

@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 
 import { t } from '@lingui/macro';
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
@@ -46,6 +47,13 @@ export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
       .then(() => {
         // redirect to login
         window.location.href = provider.login;
+      })
+      .catch(() => {
+        showNotification({
+          title: t`Error`,
+          message: t`Sign in redirect failed.`,
+          color: 'red'
+        });
       });
   }
 

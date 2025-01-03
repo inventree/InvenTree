@@ -292,14 +292,15 @@ function stop_inventree() {
 }
 
 function update_or_install() {
+  set -e
 
   # Set permissions so app user can write there
   chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
 
   # Run update as app user
   echo "# POI12| Updating InvenTree"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install uv wheel"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update --uv | sed -e 's/^/# POI12| u | /;'"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
   echo "# POI12| Set permissions for data dir and media: ${DATA_DIR}"

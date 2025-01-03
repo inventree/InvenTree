@@ -77,7 +77,7 @@ if version_file.exists():
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -282,7 +282,6 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'import_export',  # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering
@@ -586,12 +585,10 @@ REST_AUTH = {
     'TOKEN_MODEL': 'users.models.ApiToken',
     'TOKEN_CREATOR': 'users.models.default_create_token',
     'USE_JWT': USE_JWT,
+    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
 }
 
 OLD_PASSWORD_FIELD_ENABLED = True
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.CustomRegisterSerializer'
-}
 
 # JWT settings - rest_framework_simplejwt
 if USE_JWT:
@@ -1052,9 +1049,6 @@ USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
-# Use database transactions when importing / exporting data
-IMPORT_EXPORT_USE_TRANSACTIONS = True
-
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
@@ -1068,6 +1062,12 @@ if SITE_URL:
     except Exception:
         print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
         sys.exit(-1)
+
+else:
+    logger.warning('No SITE_URL specified. Some features may not work correctly')
+    logger.warning(
+        'Specify a SITE_URL in the configuration file or via an environment variable'
+    )
 
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
@@ -1183,9 +1183,23 @@ SESSION_COOKIE_SECURE = (
     if DEBUG
     else (
         SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+        or get_boolean_setting(
+            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+        )
     )
 )
+
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
+if ssl_header := get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PROTO', 'use_x_forwarded_proto', False
+):
+    # The default header name is 'HTTP_X_FORWARDED_PROTO', but can be adjusted
+    ssl_header_name = get_setting(
+        'INVENTREE_X_FORWARDED_PROTO_NAME',
+        'x_forwarded_proto_name',
+        'HTTP_X_FORWARDED_PROTO',
+    )
+    SECURE_PROXY_SSL_HEADER = (ssl_header_name, 'https')
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
@@ -1391,7 +1405,7 @@ CUSTOMIZE = get_setting(
 
 # Load settings for the frontend interface
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
