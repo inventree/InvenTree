@@ -118,3 +118,5 @@ class NewsFeedEntryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(common.models.WebhookMessage, admin.ModelAdmin)
+admin.site.register(common.models.Reference, admin.ModelAdmin)
+admin.site.register(common.models.ReferenceSource, admin.ModelAdmin)
