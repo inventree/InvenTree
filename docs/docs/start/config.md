@@ -434,16 +434,15 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.hide_pui_banner | Disable PUI banner | False |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi","hide_pui_banner":"True"}
+INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
 ```
 
-This example removes the PUI banner and sets a login message. Take care of the double quotes.
+This example sets a login message. Take care of the double quotes.
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 
