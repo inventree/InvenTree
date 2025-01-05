@@ -36,13 +36,25 @@ ModuleNotFoundError: No module named 'django'
 
 Either the named modules are not installed, or the virtual environment is not correctly activated.
 
-- Ensure that the virtual environment is correctly activated before running any InvenTree commands.
-- Ensure that the invoke tool is correctly installed inside the virtual environment.
-- Ensure that all required python packages are installed by running `invoke install`
+**Check Virtual Environment**
 
-Most likely you are trying to run the InvenTree server from outside the context of the virtual environment where the required python libraries are installed.
+Ensure that the virtual environment is correctly activated before running any InvenTree commands.
 
-Always activate the virtual environment before running server commands!
+**Check Invoke Tool**
+
+Ensure that the invoke tool is correctly installed inside the virtual environment, with:
+
+```bash
+pip install --upgrade --ignore-installed invoke
+```
+
+**Install Required Python Packages**
+
+Ensure that all required python packages are installed by running:
+
+```bash
+invoke install
+```
 
 ### 'str' object has no attribute 'removeSuffix'
 
