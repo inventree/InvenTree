@@ -34,7 +34,9 @@ A "bare metal" development setup can be installed as follows:
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
-pip install django invoke && invoke
+pip install --upgrade --ignore-installed invoke
+invoke install
+invoke update
 invoke dev.setup-dev --tests
 ```
 

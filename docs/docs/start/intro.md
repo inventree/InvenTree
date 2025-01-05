@@ -82,6 +82,24 @@ Or, if that does not work, try:
 
 This will place the current shell session inside a virtual environment - the terminal should display the ``(env)`` prefix.
 
+### Invoke in Virtual Environment
+
+If you are using a virtual environment (and you should be!) you will need to ensure that you have installed the `invoke` package inside the virtual environment! If the invoke commands are run from outside the virtual environment, they may not work correctly - and may be extremely difficult to debug!
+
+To install the `invoke` package inside the virtual environment, run the following command (after activating the virtual environment):
+
+```
+pip install --upgrade --ignore-installed invoke
+```
+
+To check that the `invoke` package is correctly installed, run the following command:
+
+```
+which invoke
+```
+
+This should return the path to the `invoke` binary inside the virtual environment. If the path is *not* inside the virtual environment, the `invoke` package is not correctly installed!
+
 ## InvenTree Source Code
 
 InvenTree source code is distributed on [GitHub](https://github.com/inventree/inventree/), and the latest version can be downloaded (using Git) with the following command:
