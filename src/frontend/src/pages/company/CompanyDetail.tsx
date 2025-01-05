@@ -13,7 +13,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import {
@@ -66,6 +66,7 @@ export type CompanyDetailProps = {
 export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const {
@@ -283,7 +284,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Delete Company`,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => {
+      navigate('/');
+    }
   });
 
   const companyActions = useMemo(() => {
