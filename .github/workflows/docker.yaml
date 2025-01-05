@@ -85,6 +85,7 @@ jobs:
         id: test-docker
         run: |
           docker build . --target production --tag inventree-test -f contrib/container/Dockerfile
+          docker run --rm inventree-test invoke version
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
