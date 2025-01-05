@@ -592,7 +592,11 @@ def update(
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
     if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
-        info('Skipping frontend update!')
+        if no_frontend:
+            info('Skipping frontend update (no_frontend flag set)')
+        else:
+            info('Skipping frontend update (INVENTREE_DOCKER flag set)')
+
         frontend = False
         no_frontend = True
     else:
