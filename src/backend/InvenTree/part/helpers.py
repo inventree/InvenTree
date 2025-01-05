@@ -1,15 +1,15 @@
 """Various helper functions for the part app."""
 
-import logging
 import os
 
 from django.conf import settings
 
+import structlog
 from jinja2 import Environment, select_autoescape
 
 from common.settings import get_global_setting
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 # Compiled template for rendering the 'full_name' attribute of a Part

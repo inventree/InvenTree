@@ -4,7 +4,6 @@ import datetime
 import hashlib
 import inspect
 import io
-import logging
 import os
 import os.path
 import re
@@ -22,6 +21,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import bleach
+import structlog
 from bleach import clean
 from djmoney.money import Money
 from PIL import Image
@@ -31,7 +31,7 @@ from common.currency import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):

@@ -1,6 +1,5 @@
 """This module provides template tags for extra functionality, over and above the built-in Django tags."""
 
-import logging
 from datetime import date, datetime
 
 from django import template
@@ -22,7 +21,9 @@ from plugin.plugin import InvenTreePlugin
 register = template.Library()
 
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 @register.simple_tag()

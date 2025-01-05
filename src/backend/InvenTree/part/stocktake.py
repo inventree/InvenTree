@@ -1,13 +1,13 @@
 """Stocktake report functionality."""
 
 import io
-import logging
 import time
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 import tablib
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -18,7 +18,7 @@ import InvenTree.helpers
 import part.models
 import stock.models
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def perform_stocktake(
