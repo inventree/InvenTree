@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import logging
-
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 from company.models import Company, ManufacturerPart, SupplierPart
 from InvenTree.exceptions import log_error
@@ -15,7 +15,7 @@ from order.models import PurchaseOrder
 from part.models import Part
 from plugin.base.integration.SettingsMixin import SettingsMixin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class BarcodeMixin:

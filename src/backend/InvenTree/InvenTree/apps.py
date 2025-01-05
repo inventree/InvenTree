@@ -1,6 +1,5 @@
 """AppConfig for InvenTree app."""
 
-import logging
 from importlib import import_module
 from pathlib import Path
 
@@ -11,6 +10,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
+import structlog
 from allauth.socialaccount.signals import social_account_updated
 
 import InvenTree.conversion
@@ -19,7 +19,7 @@ import InvenTree.tasks
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeConfig(AppConfig):

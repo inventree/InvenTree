@@ -1,15 +1,16 @@
 """Machine registry."""
 
-import logging
 from typing import Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
 
+import structlog
+
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MachineRegistry(

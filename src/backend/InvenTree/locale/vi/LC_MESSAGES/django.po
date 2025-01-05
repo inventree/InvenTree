@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-28 21:46+0000\n"
-"PO-Revision-Date: 2024-12-29 06:04\n"
+"POT-Creation-Date: 2025-01-05 01:50+0000\n"
+"PO-Revision-Date: 2025-01-05 01:53\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -69,21 +69,21 @@ msgstr "Miền email được cung cấp không được phê duyệt."
 msgid "Registration is disabled."
 msgstr "Đăng ký bị vô hiệu hóa."
 
-#: InvenTree/conversion.py:161
+#: InvenTree/conversion.py:162
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
 msgstr "Đơn vị không hợp lệ ({unit})"
 
-#: InvenTree/conversion.py:178
+#: InvenTree/conversion.py:179
 msgid "No value provided"
 msgstr "Chưa cung cấp giá trị"
 
-#: InvenTree/conversion.py:205
+#: InvenTree/conversion.py:206
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr "Không thể chuyển đổi {original} sang {unit}"
 
-#: InvenTree/conversion.py:207 InvenTree/conversion.py:221
+#: InvenTree/conversion.py:208 InvenTree/conversion.py:222
 #: InvenTree/helpers.py:504 order/models.py:592 order/models.py:836
 msgid "Invalid quantity provided"
 msgstr "Số lượng cung cấp không hợp lệ"
@@ -612,7 +612,7 @@ msgstr "Chức năng tải hình ảnh từ URL bên ngoài không được bậ
 msgid "Failed to download image from remote URL"
 msgstr ""
 
-#: InvenTree/templatetags/inventree_extras.py:152
+#: InvenTree/templatetags/inventree_extras.py:153
 msgid "Unknown database"
 msgstr "Không rõ cơ sở dữ liệu"
 
@@ -2060,37 +2060,37 @@ msgstr "Kết quả"
 msgid "Was the barcode scan successful?"
 msgstr ""
 
-#: common/notifications.py:329
+#: common/notifications.py:330
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "Mới {verbose_name}"
 
-#: common/notifications.py:331
+#: common/notifications.py:332
 msgid "A new order has been created and assigned to you"
 msgstr "Một đơn đặt hàng mới đã được tạo và phân công cho bạn"
 
-#: common/notifications.py:337
+#: common/notifications.py:338
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr "{verbose_name} đã bị hủy"
 
-#: common/notifications.py:339
+#: common/notifications.py:340
 msgid "A order that is assigned to you was canceled"
 msgstr "Một đơn đặt từng được phân công cho bạn đã bị hủy bỏ"
 
-#: common/notifications.py:345 common/notifications.py:352 order/api.py:476
+#: common/notifications.py:346 common/notifications.py:353 order/api.py:476
 msgid "Items Received"
 msgstr "Mục đã nhận"
 
-#: common/notifications.py:347
+#: common/notifications.py:348
 msgid "Items have been received against a purchase order"
 msgstr "Hàng đã được nhận theo đơn đặt mua"
 
-#: common/notifications.py:354
+#: common/notifications.py:355
 msgid "Items have been received against a return order"
 msgstr "Hàng đã nhận theo đơn hàng trả lại"
 
-#: common/notifications.py:476
+#: common/notifications.py:477
 msgid "Error raised by plugin"
 msgstr "Lỗi được thông báo bởi phần mở rộng"
 
@@ -4592,7 +4592,7 @@ msgstr "Số lượng phải là 1 cho hàng hóa sêri"
 msgid "Sales order does not match shipment"
 msgstr "Đơn bán hàng không phù hợp với vận đơn"
 
-#: order/models.py:2076 plugin/base/barcodes/api.py:652
+#: order/models.py:2076 plugin/base/barcodes/api.py:651
 msgid "Shipment does not match sales order"
 msgstr "Vận đơn không phù hợp với đơn bán hàng"
 
@@ -4955,20 +4955,20 @@ msgstr "Hoàn tiền"
 msgid "Reject"
 msgstr "Từ chối"
 
-#: order/tasks.py:31
+#: order/tasks.py:32
 msgid "Overdue Purchase Order"
 msgstr "Đơn đặt mua quá hạn"
 
-#: order/tasks.py:36
+#: order/tasks.py:37
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr "Đơn đặt mua {po} quá hạn"
 
-#: order/tasks.py:81
+#: order/tasks.py:82
 msgid "Overdue Sales Order"
 msgstr "Đơn bán hàng quá hạn"
 
-#: order/tasks.py:86
+#: order/tasks.py:87
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr "Đơn bán hàng {so} đã quá hạn"
@@ -6295,11 +6295,11 @@ msgstr "Báo cáo kiểm kê có sẵn"
 msgid "A new stocktake report is available for download"
 msgstr "Có sẵn một báo cáo kiểm kê mới để tải về"
 
-#: part/tasks.py:37
+#: part/tasks.py:38
 msgid "Low stock notification"
 msgstr "Thông báo sắp hết hàng"
 
-#: part/tasks.py:39
+#: part/tasks.py:40
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "Kho có sẵn cho {part.name} đã mất dưới mức cấu hình tối thiểu"
@@ -6316,83 +6316,83 @@ msgstr "Chưa chỉ ra hành động cụ thể"
 msgid "No matching action found"
 msgstr "Không tìm thấy chức năng phù hợp"
 
-#: plugin/base/barcodes/api.py:211
+#: plugin/base/barcodes/api.py:210
 msgid "No match found for barcode data"
 msgstr "Không tìm thấy dữ liệu mã vạch phù hợp"
 
-#: plugin/base/barcodes/api.py:215
+#: plugin/base/barcodes/api.py:214
 msgid "Match found for barcode data"
 msgstr "Đã tìm thấy dữ liệu mã vạch phù hợp"
 
-#: plugin/base/barcodes/api.py:253 plugin/base/barcodes/serializers.py:73
+#: plugin/base/barcodes/api.py:252 plugin/base/barcodes/serializers.py:73
 msgid "Model is not supported"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:258
+#: plugin/base/barcodes/api.py:257
 msgid "Model instance not found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:287
+#: plugin/base/barcodes/api.py:286
 msgid "Barcode matches existing item"
 msgstr "Mã vạch phù hợp với hàng hóa hiện có"
 
-#: plugin/base/barcodes/api.py:428
+#: plugin/base/barcodes/api.py:427
 msgid "No matching part data found"
 msgstr "Không tìm thấy thông tin sản phẩm phù hợp"
 
-#: plugin/base/barcodes/api.py:444
+#: plugin/base/barcodes/api.py:443
 msgid "No matching supplier parts found"
 msgstr "Không tìm thấy sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:447
+#: plugin/base/barcodes/api.py:446
 msgid "Multiple matching supplier parts found"
 msgstr "Tìm thấy nhiều sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:460 plugin/base/barcodes/api.py:687
+#: plugin/base/barcodes/api.py:459 plugin/base/barcodes/api.py:686
 msgid "No matching plugin found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:470
+#: plugin/base/barcodes/api.py:469
 msgid "Matched supplier part"
 msgstr "Sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:538
+#: plugin/base/barcodes/api.py:537
 msgid "Item has already been received"
 msgstr "Hàng hóa này đã được nhận"
 
-#: plugin/base/barcodes/api.py:586
+#: plugin/base/barcodes/api.py:585
 msgid "No plugin match for supplier barcode"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:635
+#: plugin/base/barcodes/api.py:634
 msgid "Multiple matching line items found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:638
+#: plugin/base/barcodes/api.py:637
 msgid "No matching line item found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:684
+#: plugin/base/barcodes/api.py:683
 msgid "No sales order provided"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:693
+#: plugin/base/barcodes/api.py:692
 msgid "Barcode does not match an existing stock item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:709
+#: plugin/base/barcodes/api.py:708
 msgid "Stock item does not match line item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:739
+#: plugin/base/barcodes/api.py:738
 msgid "Insufficient stock available"
 msgstr "Kho không đủ hạn mức khả dụng"
 
-#: plugin/base/barcodes/api.py:752
+#: plugin/base/barcodes/api.py:751
 msgid "Stock item allocated to sales order"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:755
+#: plugin/base/barcodes/api.py:754
 msgid "Not enough information"
 msgstr "Không đủ thông tin"
 
@@ -6760,52 +6760,52 @@ msgstr "Cung cấp khả năng quét mã vạch TME"
 msgid "The Supplier which acts as 'TME'"
 msgstr "Nhà cung cấp hoạt động như 'TME'"
 
-#: plugin/installer.py:228 plugin/installer.py:306
+#: plugin/installer.py:229 plugin/installer.py:307
 msgid "Only staff users can administer plugins"
 msgstr ""
 
-#: plugin/installer.py:231
+#: plugin/installer.py:232
 msgid "Plugin installation is disabled"
 msgstr ""
 
-#: plugin/installer.py:268
+#: plugin/installer.py:269
 msgid "Installed plugin successfully"
 msgstr "Cài đặt phần mở rộng thành công"
 
-#: plugin/installer.py:273
+#: plugin/installer.py:274
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "Cài đặt phần bổ sung đến {path}"
 
-#: plugin/installer.py:297
+#: plugin/installer.py:298
 msgid "Plugin was not found in registry"
 msgstr ""
 
-#: plugin/installer.py:300
+#: plugin/installer.py:301
 msgid "Plugin is not a packaged plugin"
 msgstr ""
 
-#: plugin/installer.py:303
+#: plugin/installer.py:304
 msgid "Plugin package name not found"
 msgstr ""
 
-#: plugin/installer.py:323
+#: plugin/installer.py:324
 msgid "Plugin uninstalling is disabled"
 msgstr ""
 
-#: plugin/installer.py:327
+#: plugin/installer.py:328
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr ""
 
-#: plugin/installer.py:331
+#: plugin/installer.py:332
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:347
+#: plugin/installer.py:348
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:362
+#: plugin/installer.py:363
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
@@ -6861,21 +6861,21 @@ msgstr "Phần bổ sung"
 msgid "Method"
 msgstr "Phương thức"
 
-#: plugin/plugin.py:275
+#: plugin/plugin.py:276
 msgid "No author found"
 msgstr "Không tìm thấy tác giả"
 
-#: plugin/registry.py:538
+#: plugin/registry.py:539
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Phần bổ sung '{p}' không tương thích với phiên bản InvenTree hiện tại {v}"
 
-#: plugin/registry.py:541
+#: plugin/registry.py:542
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Phần bổ sung yêu cầu ít nhất phiên bản {v}"
 
-#: plugin/registry.py:543
+#: plugin/registry.py:544
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Phần bổ sung yêu cầu tối đa phiên bản {v}"

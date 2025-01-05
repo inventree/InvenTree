@@ -1,17 +1,17 @@
 """Provides system status functionality checks."""
 
-import logging
 from datetime import timedelta
 
 from django.utils import timezone
 
+import structlog
 from django_q.models import Success
 from django_q.status import Stat
 
 import InvenTree.helpers_email
 import InvenTree.ready
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def is_worker_running(**kwargs):
