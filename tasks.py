@@ -33,9 +33,6 @@ def task_exception_handler(t, v, tb):
         warning(
             "- Ensure all required packages are installed by running 'invoke install'"
         )
-    else:
-        error('type:', t, type(t))
-        error('value:', v)
 
 
 sys.excepthook = task_exception_handler
