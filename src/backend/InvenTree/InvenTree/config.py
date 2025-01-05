@@ -2,6 +2,7 @@
 
 import datetime
 import json
+import logging
 import os
 import random
 import shutil
@@ -12,9 +13,7 @@ from pathlib import Path
 from django.core.files.base import ContentFile
 from django.core.files.storage import Storage
 
-import structlog
-
-logger = structlog.get_logger('inventree')
+logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
 
