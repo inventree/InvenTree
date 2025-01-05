@@ -574,7 +574,9 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
     )
 
     status_custom_key = serializers.ChoiceField(
-        choices=StockStatus.items(), default=StockStatus.OK.value, label=_('Status')
+        choices=StockStatus.items(custom=True),
+        default=StockStatus.OK.value,
+        label=_('Status'),
     )
 
     accept_incomplete_allocation = serializers.BooleanField(

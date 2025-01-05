@@ -9,7 +9,7 @@ import type { ModelType } from '../enums/ModelType';
 import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 
-type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
+export type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerStateProps {
   status?: StatusLookup;
@@ -35,8 +35,10 @@ export const useGlobalStatusState = create<ServerStateProps>()(
           .then((response) => {
             const newStatusLookup: StatusLookup = {} as StatusLookup;
             for (const key in response.data) {
-              newStatusLookup[statusCodeList[key] || key] =
-                response.data[key].values;
+              newStatusLookup[statusCodeList[key] || key] = {
+                status_class: key,
+                values: response.data[key].values
+              };
             }
             set({ status: newStatusLookup });
           })

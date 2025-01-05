@@ -305,7 +305,7 @@ jobs:
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke dev.test --coverage
+        run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
         if: always()
@@ -357,7 +357,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -404,7 +404,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -446,7 +446,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
         if: always()

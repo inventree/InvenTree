@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
@@ -20,6 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -37,6 +37,7 @@ import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.status_codes import (
@@ -51,7 +52,7 @@ from stock.events import StockEvents
 from stock.generators import generate_batch_code
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
@@ -340,6 +341,7 @@ class StockItem(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    StatusCodeMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
@@ -372,6 +374,8 @@ class StockItem(
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
+
+    STATUS_CLASS = StockStatus
 
     class Meta:
         """Model meta options."""
@@ -1020,6 +1024,7 @@ class StockItem(
 
     status = InvenTreeCustomStatusModelField(
         default=StockStatus.OK.value,
+        status_class=StockStatus,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)],
     )
@@ -2137,6 +2142,12 @@ class StockItem(
         else:
             tracking_info['location'] = location.pk
 
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            tracking_info['status'] = status
+
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
             if field in kwargs:
@@ -2214,8 +2225,16 @@ class StockItem(
         if count < 0:
             return False
 
+        tracking_info = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            tracking_info['status'] = status
+
         if self.updateQuantity(count):
-            tracking_info = {'quantity': float(count)}
+            tracking_info['quantity'] = float(count)
 
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
@@ -2269,8 +2288,17 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        tracking_info = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            tracking_info['status'] = status
+
         if self.updateQuantity(self.quantity + quantity):
-            tracking_info = {'added': float(quantity), 'quantity': float(self.quantity)}
+            tracking_info['added'] = float(quantity)
+            tracking_info['quantity'] = float(self.quantity)
 
             # Optional fields which can be supplied in a 'stocktake' call
             for field in StockItem.optional_transfer_fields():
@@ -2314,8 +2342,17 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        deltas = {}
+
+        status = kwargs.pop('status', None) or kwargs.pop('status_custom_key', None)
+
+        if status and status != self.status:
+            self.set_status(status)
+            deltas['status'] = status
+
         if self.updateQuantity(self.quantity - quantity):
-            deltas = {'removed': float(quantity), 'quantity': float(self.quantity)}
+            deltas['removed'] = float(quantity)
+            deltas['quantity'] = float(self.quantity)
 
             if location := kwargs.get('location'):
                 deltas['location'] = location.pk

@@ -1,7 +1,6 @@
 """Functions for tasks and a few general async tasks."""
 
 import json
-import logging
 import os
 import random
 import re
@@ -21,6 +20,7 @@ from django.db.utils import NotSupportedError, OperationalError, ProgrammingErro
 from django.utils import timezone
 
 import requests
+import structlog
 from maintenance_mode.core import (
     get_maintenance_mode,
     maintenance_mode_on,
@@ -33,7 +33,7 @@ from plugin import registry
 
 from .version import isInvenTreeUpToDate
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def schedule_task(taskname, **kwargs):

@@ -134,10 +134,20 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'status',
+        type: 'status',
+        label: t`Status`,
+        model: ModelType.stockitem
+      },
+      {
         name: 'status_custom_key',
         type: 'status',
-        label: t`Stock Status`,
-        model: ModelType.stockitem
+        label: t`Custom Status`,
+        model: ModelType.stockitem,
+        icon: 'status',
+        hidden:
+          !stockitem.status_custom_key ||
+          stockitem.status_custom_key == stockitem.status
       },
       {
         type: 'text',
@@ -845,11 +855,10 @@ export default function StockDetail() {
             key='batch'
           />,
           <StatusRenderer
-            status={stockitem.status_custom_key}
+            status={stockitem.status_custom_key || stockitem.status}
             type={ModelType.stockitem}
             options={{
-              size: 'lg',
-              hidden: !!stockitem.status_custom_key
+              size: 'lg'
             }}
             key='status'
           />,
@@ -875,16 +884,22 @@ export default function StockDetail() {
   }, [stockitem, instanceQuery, enableExpiry]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail
+      requiredRole={UserRoles.stock}
+      status={requestStatus}
+      loading={instanceQuery.isFetching}
+    >
       <Stack>
-        <NavigationTree
-          title={t`Stock Locations`}
-          modelType={ModelType.stocklocation}
-          endpoint={ApiEndpoints.stock_location_tree}
-          opened={treeOpen}
-          onClose={() => setTreeOpen(false)}
-          selectedId={stockitem?.location}
-        />
+        {user.hasViewRole(UserRoles.stock_location) && (
+          <NavigationTree
+            title={t`Stock Locations`}
+            modelType={ModelType.stocklocation}
+            endpoint={ApiEndpoints.stock_location_tree}
+            opened={treeOpen}
+            onClose={() => setTreeOpen(false)}
+            selectedId={stockitem?.location}
+          />
+        )}
         <PageDetail
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
@@ -892,7 +907,9 @@ export default function StockDetail() {
           editAction={editStockItem.open}
           editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
-          breadcrumbs={breadcrumbs}
+          breadcrumbs={
+            user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
+          }
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}

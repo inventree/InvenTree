@@ -58,11 +58,18 @@ If you see this error, it means that the `INVENTREE_SITE_URL` environment variab
 
 If you have successfully started the InvenTree server, but are experiencing issues logging in, it may be due to the security interactions between your web browser and the server. While the default configuration should work for most users, if you do experience login issues, ensure that your [server access settings](./start/config.md#server-access) are correctly configured.
 
+### Session Cookies
+
+The [0.17.0 release](https://github.com/inventree/InvenTree/releases/tag/0.17.0) included [a change to the way that session cookies were handled](https://github.com/inventree/InvenTree/pull/8269). This change may cause login issues for existing InvenTree installs which are upgraded from an older version. System administrators should refer to the [server access settings](./start/config.md#server-access) and ensure that the following settings are correctly configured:
+
+- **INVENTREE_SESSION_COOKIE_SECURE**: `False`
+- **INVENTREE_COOKIE_SAMESITE**: `False`
+
 ## Update Issues
 
 Sometimes, users may encounter unexpected error messages when updating their InvenTree installation to a newer version.
 
-The most common problem here is that the correct sequenct of steps has not been followed:
+The most common problem here is that the correct sequence of steps has not been followed:
 
 1. Ensure that the InvenTree web server and background worker processes are *halted*
 1. Update the InvenTree software (e.g. using git or docker, depending on installation method)

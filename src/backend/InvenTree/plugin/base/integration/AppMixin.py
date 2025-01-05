@@ -1,6 +1,5 @@
 """Plugin mixin class for AppMixin."""
 
-import logging
 from importlib import reload
 from pathlib import Path
 from typing import Optional
@@ -9,9 +8,11 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 
+import structlog
+
 from InvenTree.config import get_plugin_dir
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class AppMixin:
