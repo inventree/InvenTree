@@ -1,7 +1,6 @@
 """Base Class for InvenTree plugins."""
 
 import inspect
-import logging
 import warnings
 from datetime import datetime
 from distutils.sysconfig import get_python_lib
@@ -13,10 +12,12 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+
 import InvenTree.helpers
 from plugin.helpers import get_git_log
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MetaBase:

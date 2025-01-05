@@ -1,6 +1,5 @@
 """Order model definitions."""
 
-import logging
 from datetime import datetime
 from decimal import Decimal
 
@@ -15,6 +14,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -58,7 +58,7 @@ from part import models as PartModels
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class TotalPriceMixin(models.Model):

@@ -1,10 +1,10 @@
 """Custom management command to cleanup old settings that are not defined anymore."""
 
-import logging
-
 from django.core.management.base import BaseCommand
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 class Command(BaseCommand):
