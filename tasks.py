@@ -15,6 +15,32 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
+def task_exception_handler(t, v, tb):
+    """Handle exceptions raised by tasks.
+
+    The intent here is to provide more 'useful' error messages when tasks fail.
+    """
+    sys.__excepthook__(t, v, tb)
+
+    if t is ModuleNotFoundError:
+        mod_name = str(v).split(' ')[-1].strip("'")
+
+        error(f'Error importing required module: {mod_name}')
+        warning('- Ensure the correct Python virtual environment is active')
+        warning(
+            '- Ensure that the invoke tool is installed in the active Python environment'
+        )
+        warning(
+            "- Ensure all required packages are installed by running 'invoke install'"
+        )
+    else:
+        error('type:', t, type(t))
+        error('value:', v)
+
+
+sys.excepthook = task_exception_handler
+
+
 def success(*args):
     """Print a success message to the console."""
     msg = ' '.join(map(str, args))
