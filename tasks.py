@@ -57,8 +57,8 @@ def checkPythonVersion():
         valid = False
 
     if not valid:
-        print(f'The installed python version ({version}) is not supported!')
-        print(f'InvenTree requires Python {REQ_MAJOR}.{REQ_MINOR} or above')
+        error(f'The installed python version ({version}) is not supported!')
+        error(f'InvenTree requires Python {REQ_MAJOR}.{REQ_MINOR} or above')
         sys.exit(1)
 
 
@@ -231,7 +231,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
 
     # Print a warning if node is available but yarn is not
     if node_version and not yarn_passes:
-        print(
+        warning(
             'Node is available but yarn is not. Install yarn if you wish to build the frontend.'
         )
 
@@ -239,7 +239,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
-def check_file_existance(filename: Path, overwrite: bool = False):
+def check_file_existence(filename: Path, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
     Args:
@@ -253,7 +253,7 @@ def check_file_existance(filename: Path, overwrite: bool = False):
         response = str(response).strip().lower()
 
         if response not in ['y', 'yes']:
-            print('Cancelled export operation')
+            error('Cancelled export operation')
             sys.exit(1)
 
 
@@ -499,7 +499,7 @@ def restore(
         base_cmd += f' -I {path}'
 
     if ignore_database:
-        print('Skipping database archive...')
+        info('Skipping database archive...')
     else:
         info('Restoring InvenTree database')
         cmd = f'dbrestore {base_cmd}'
@@ -510,7 +510,7 @@ def restore(
         manage(c, cmd)
 
     if ignore_media:
-        print('Skipping media restore...')
+        info('Skipping media restore...')
     else:
         info('Restoring InvenTree media files')
         cmd = f'mediarestore {base_cmd}'
@@ -592,7 +592,7 @@ def update(
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
     if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
-        print('Skipping frontend update!')
+        info('Skipping frontend update!')
         frontend = False
         no_frontend = True
     else:
@@ -655,7 +655,7 @@ def export_records(
 
     info(f"Exporting database records to file '{target}'")
 
-    check_file_existance(target, overwrite)
+    check_file_existence(target, overwrite)
 
     tmpfile = f'{target}.tmp'
 
@@ -700,7 +700,7 @@ def export_records(
         f_out.write(json.dumps(data_out, indent=2))
 
     if not retain_temp:
-        print('Removing temporary files')
+        info('Removing temporary files')
         os.remove(tmpfile)
 
     success('Data export completed')
@@ -1099,7 +1099,7 @@ def schema(
 ):
     """Export current API schema."""
     filename = Path(filename).resolve()
-    check_file_existance(filename, overwrite)
+    check_file_existence(filename, overwrite)
 
     info(f"Exporting schema file to '{filename}'")
 
@@ -1131,7 +1131,7 @@ def schema(
 def export_settings_definitions(c, filename='inventree_settings.json', overwrite=False):
     """Export settings definition to a JSON file."""
     filename = Path(filename).resolve()
-    check_file_existance(filename, overwrite)
+    check_file_existence(filename, overwrite)
 
     info(f"Exporting settings definition to '{filename}'...")
     manage(c, f'export_settings_definitions {filename}', pty=True)
@@ -1359,10 +1359,10 @@ def frontend_download(
         current_content = current.read_text().strip()
         ref_value = tag or sha
         if current_content == ref_value:
-            print(f'Frontend {ref} is already `{ref_value}`')
+            info(f'Frontend {ref} is already `{ref_value}`')
             return True
         else:
-            print(
+            info(
                 f'Frontend {ref} is not expected `{ref_value}` but `{current_content}` - new version will be downloaded'
             )
             return False
@@ -1395,7 +1395,7 @@ def frontend_download(
                 and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
             ):
                 ref = content.get('INVENTREE_COMMIT_SHA')
-                print(
+                info(
                     f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
                 )
             else:
@@ -1436,7 +1436,8 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
         if not (qc_run := find_resource(workflow_runs['workflow_runs'], 'name', 'QC')):
             error(f'ERROR: Cannot find any workflow runs for current SHA {ref}')
             return
-        print(
+
+        info(
             f'Found workflow {qc_run["name"]} (run {qc_run["run_number"]}-{qc_run["run_attempt"]})'
         )
 
@@ -1449,9 +1450,10 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
                 artifacts['artifacts'], 'name', 'frontend-build'
             )
         ):
-            print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
+            error('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
-        print(
+
+        info(
             f'Found artifact {frontend_artifact["name"]} with id {frontend_artifact["id"]} ({frontend_artifact["size_in_bytes"] / 1e6:.2f}MB).'
         )
 
