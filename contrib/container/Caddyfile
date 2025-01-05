@@ -71,9 +71,7 @@
 	reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"} {
 
 		# If you are running behind another proxy, you may need to specify 'trusted_proxies'
-		trusted_proxies {
-			# enter your trusted proxy IP addresses here
-		}
-
+		# Ref: https://caddyserver.com/docs/json/apps/http/servers/trusted_proxies/
+		# trusted_proxies ...
 	}
 }
