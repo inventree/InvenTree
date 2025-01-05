@@ -44,10 +44,15 @@ if [[ -n "$INVENTREE_PY_ENV" ]]; then
         # Setup a virtual environment (within the "data/env" directory)
         echo "Running first time setup for python environment"
         python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages --upgrade-deps
+
+        # Ensure invoke tool is installed locally
+        source ${INVENTREE_PY_ENV}/bin/activate
+        python3 -m pip install --ignore-installed --upgrade invoke
     fi
 
     # Now activate the venv
     source ${INVENTREE_PY_ENV}/bin/activate
+
 fi
 
 cd ${INVENTREE_HOME}
