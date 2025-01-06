@@ -1136,12 +1136,7 @@ COOKIE_MODE = (
 # Valid modes (as per the django settings documentation)
 valid_cookie_modes = ['lax', 'strict', 'none']
 
-if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
-    # Set the cookie mode (in production mode only)
-    COOKIE_MODE = COOKIE_MODE.capitalize()
-else:
-    # Default to False, as per the Django settings
-    COOKIE_MODE = False
+COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -1149,13 +1144,14 @@ CSRF_COOKIE_NAME = 'csrftoken'
 
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
+LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 
 """Set the SESSION_COOKIE_SECURE value based on the following rules:
 - False if the server is running in DEBUG mode
 - True if samesite cookie setting is set to 'None'
 - Otherwise, use the value specified in the configuration file (or env var)
 """
-SESSION_COOKIE_SECURE = (
+COOKIE_SECURE = (
     False
     if DEBUG
     else (
@@ -1165,6 +1161,10 @@ SESSION_COOKIE_SECURE = (
         )
     )
 )
+
+CSRF_COOKIE_SECURE = COOKIE_SECURE
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+LANGUAGE_COOKIE_SECURE = COOKIE_SECURE
 
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
 if ssl_header := get_boolean_setting(
