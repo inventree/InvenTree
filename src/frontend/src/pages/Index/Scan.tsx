@@ -56,7 +56,7 @@ export default function Scan() {
       // Prevent duplicates
       if (history.find((i) => i.model == item.model && i.pk == item.pk)) {
         showNotification({
-          label: t`Duplicate`,
+          title: t`Duplicate`,
           message: t`Item already scanned`,
           color: 'orange'
         });
