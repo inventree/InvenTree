@@ -219,10 +219,8 @@ if DEBUG and 'collectstatic' not in sys.argv:
 
     # Append directory for sample plugin static content (if in debug mode)
     if PLUGINS_ENABLED:
-        print('Adding plugin sample static content')
+        logger.info('Adding plugin sample static content')
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
-
-        print('-', STATICFILES_DIRS[-1])
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -353,29 +351,6 @@ QUERYCOUNT = {
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
-ADMIN_SHELL_ENABLE = False
-ADMIN_SHELL_IMPORT_DJANGO = False
-ADMIN_SHELL_IMPORT_MODELS = False
-
-# In DEBUG mode, add support for django-admin-shell
-# Ref: https://github.com/djk2/django-admin-shell
-if (
-    DEBUG
-    and INVENTREE_ADMIN_ENABLED
-    and not TESTING
-    and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):
-    try:
-        import django_admin_shell  # noqa: F401
-
-        INSTALLED_APPS.append('django_admin_shell')
-        ADMIN_SHELL_ENABLE = True
-
-        logger.warning('Admin shell is enabled')
-    except ModuleNotFoundError:
-        logger.warning(
-            'django-admin-shell is not installed - Admin shell is not enabled'
-        )
 
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
@@ -1060,7 +1035,9 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        logger.error(msg)
+        print(msg)
         sys.exit(-1)
 
 else:
@@ -1159,12 +1136,7 @@ COOKIE_MODE = (
 # Valid modes (as per the django settings documentation)
 valid_cookie_modes = ['lax', 'strict', 'none']
 
-if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
-    # Set the cookie mode (in production mode only)
-    COOKIE_MODE = COOKIE_MODE.capitalize()
-else:
-    # Default to False, as per the Django settings
-    COOKIE_MODE = False
+COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -1172,13 +1144,14 @@ CSRF_COOKIE_NAME = 'csrftoken'
 
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
+LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 
 """Set the SESSION_COOKIE_SECURE value based on the following rules:
 - False if the server is running in DEBUG mode
 - True if samesite cookie setting is set to 'None'
 - Otherwise, use the value specified in the configuration file (or env var)
 """
-SESSION_COOKIE_SECURE = (
+COOKIE_SECURE = (
     False
     if DEBUG
     else (
@@ -1188,6 +1161,10 @@ SESSION_COOKIE_SECURE = (
         )
     )
 )
+
+CSRF_COOKIE_SECURE = COOKIE_SECURE
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+LANGUAGE_COOKIE_SECURE = COOKIE_SECURE
 
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
 if ssl_header := get_boolean_setting(

@@ -1,6 +1,5 @@
 """Install a plugin into the python virtual environment."""
 
-import logging
 import re
 import subprocess
 import sys
@@ -9,11 +8,13 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+
 import plugin.models
 import plugin.staticfiles
 from InvenTree.exceptions import log_error
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def pip_command(*args):

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-28 21:46+0000\n"
-"PO-Revision-Date: 2024-12-29 06:03\n"
+"POT-Creation-Date: 2025-01-05 01:50+0000\n"
+"PO-Revision-Date: 2025-01-05 01:53\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -69,21 +69,21 @@ msgstr "Die angegebene E-Mail-Domain ist nicht freigegeben."
 msgid "Registration is disabled."
 msgstr "Registrierung ist deaktiviert."
 
-#: InvenTree/conversion.py:161
+#: InvenTree/conversion.py:162
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
 msgstr "Ungültige Einheit angegeben ({unit})"
 
-#: InvenTree/conversion.py:178
+#: InvenTree/conversion.py:179
 msgid "No value provided"
 msgstr "Kein Wert angegeben"
 
-#: InvenTree/conversion.py:205
+#: InvenTree/conversion.py:206
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr "Konnte {original} nicht in {unit} umwandeln"
 
-#: InvenTree/conversion.py:207 InvenTree/conversion.py:221
+#: InvenTree/conversion.py:208 InvenTree/conversion.py:222
 #: InvenTree/helpers.py:504 order/models.py:592 order/models.py:836
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
@@ -612,7 +612,7 @@ msgstr "Das Herunterladen von Bildern von Remote-URLs ist nicht aktiviert"
 msgid "Failed to download image from remote URL"
 msgstr ""
 
-#: InvenTree/templatetags/inventree_extras.py:152
+#: InvenTree/templatetags/inventree_extras.py:153
 msgid "Unknown database"
 msgstr "Unbekannte Datenbank"
 
@@ -2060,37 +2060,37 @@ msgstr "Ergebnis"
 msgid "Was the barcode scan successful?"
 msgstr ""
 
-#: common/notifications.py:329
+#: common/notifications.py:330
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "Neue {verbose_name}"
 
-#: common/notifications.py:331
+#: common/notifications.py:332
 msgid "A new order has been created and assigned to you"
 msgstr "Eine neue Bestellung wurde erstellt und Ihnen zugewiesen"
 
-#: common/notifications.py:337
+#: common/notifications.py:338
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr "{verbose_name} storniert"
 
-#: common/notifications.py:339
+#: common/notifications.py:340
 msgid "A order that is assigned to you was canceled"
 msgstr "Eine Bestellung, die Ihnen zugewiesen war, wurde storniert"
 
-#: common/notifications.py:345 common/notifications.py:352 order/api.py:476
+#: common/notifications.py:346 common/notifications.py:353 order/api.py:476
 msgid "Items Received"
 msgstr "Artikel erhalten"
 
-#: common/notifications.py:347
+#: common/notifications.py:348
 msgid "Items have been received against a purchase order"
 msgstr "Artikel wurden aus einer Bestellung erhalten"
 
-#: common/notifications.py:354
+#: common/notifications.py:355
 msgid "Items have been received against a return order"
 msgstr "Artikel wurden aus einer Rücksendung erhalten"
 
-#: common/notifications.py:476
+#: common/notifications.py:477
 msgid "Error raised by plugin"
 msgstr "Fehler in Plugin aufgetreten"
 
@@ -4592,7 +4592,7 @@ msgstr "Anzahl für serialisierte Lagerartikel muss 1 sein"
 msgid "Sales order does not match shipment"
 msgstr "Auftrag gehört nicht zu Sendung"
 
-#: order/models.py:2076 plugin/base/barcodes/api.py:652
+#: order/models.py:2076 plugin/base/barcodes/api.py:651
 msgid "Shipment does not match sales order"
 msgstr "Sendung gehört nicht zu Auftrag"
 
@@ -4955,20 +4955,20 @@ msgstr "Rückerstattung"
 msgid "Reject"
 msgstr "Ablehnen"
 
-#: order/tasks.py:31
+#: order/tasks.py:32
 msgid "Overdue Purchase Order"
 msgstr "Überfällige Bestellung"
 
-#: order/tasks.py:36
+#: order/tasks.py:37
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr "Bestellung {po} ist jetzt überfällig"
 
-#: order/tasks.py:81
+#: order/tasks.py:82
 msgid "Overdue Sales Order"
 msgstr "Überfälliger Auftrag"
 
-#: order/tasks.py:86
+#: order/tasks.py:87
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr "Auftrag {so} ist jetzt überfällig"
@@ -6295,11 +6295,11 @@ msgstr "Inventurbericht verfügbar"
 msgid "A new stocktake report is available for download"
 msgstr "Ein neuer Inventurbericht steht zum Download zur Verfügung"
 
-#: part/tasks.py:37
+#: part/tasks.py:38
 msgid "Low stock notification"
 msgstr "Benachrichtigungen über geringen Bestand"
 
-#: part/tasks.py:39
+#: part/tasks.py:40
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "Der verfügbare Bestand für {part.name} ist unter das konfigurierte Mindestniveau gefallen"
@@ -6316,83 +6316,83 @@ msgstr "Keine Aktion angegeben"
 msgid "No matching action found"
 msgstr "Keine passende Aktion gefunden"
 
-#: plugin/base/barcodes/api.py:211
+#: plugin/base/barcodes/api.py:210
 msgid "No match found for barcode data"
 msgstr "Keine Treffer für Barcode"
 
-#: plugin/base/barcodes/api.py:215
+#: plugin/base/barcodes/api.py:214
 msgid "Match found for barcode data"
 msgstr "Treffer für Barcode gefunden"
 
-#: plugin/base/barcodes/api.py:253 plugin/base/barcodes/serializers.py:73
+#: plugin/base/barcodes/api.py:252 plugin/base/barcodes/serializers.py:73
 msgid "Model is not supported"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:258
+#: plugin/base/barcodes/api.py:257
 msgid "Model instance not found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:287
+#: plugin/base/barcodes/api.py:286
 msgid "Barcode matches existing item"
 msgstr "Barcode entspricht einem bereits vorhandenen Artikel"
 
-#: plugin/base/barcodes/api.py:428
+#: plugin/base/barcodes/api.py:427
 msgid "No matching part data found"
 msgstr "Keine passenden Teiledaten gefunden"
 
-#: plugin/base/barcodes/api.py:444
+#: plugin/base/barcodes/api.py:443
 msgid "No matching supplier parts found"
 msgstr "Keine passenden Zulieferteile gefunden"
 
-#: plugin/base/barcodes/api.py:447
+#: plugin/base/barcodes/api.py:446
 msgid "Multiple matching supplier parts found"
 msgstr "Mehrere passende Zulieferteile gefunden"
 
-#: plugin/base/barcodes/api.py:460 plugin/base/barcodes/api.py:687
+#: plugin/base/barcodes/api.py:459 plugin/base/barcodes/api.py:686
 msgid "No matching plugin found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:470
+#: plugin/base/barcodes/api.py:469
 msgid "Matched supplier part"
 msgstr "Zulieferteil zugeordnet"
 
-#: plugin/base/barcodes/api.py:538
+#: plugin/base/barcodes/api.py:537
 msgid "Item has already been received"
 msgstr "Artikel wurde bereits erhalten"
 
-#: plugin/base/barcodes/api.py:586
+#: plugin/base/barcodes/api.py:585
 msgid "No plugin match for supplier barcode"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:635
+#: plugin/base/barcodes/api.py:634
 msgid "Multiple matching line items found"
 msgstr "Mehrere passende Elemente gefunden"
 
-#: plugin/base/barcodes/api.py:638
+#: plugin/base/barcodes/api.py:637
 msgid "No matching line item found"
 msgstr "Kein passendes Element gefunden"
 
-#: plugin/base/barcodes/api.py:684
+#: plugin/base/barcodes/api.py:683
 msgid "No sales order provided"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:693
+#: plugin/base/barcodes/api.py:692
 msgid "Barcode does not match an existing stock item"
 msgstr "Barcode stimmt nicht mit einem vorhandenen Lagerartikel überein"
 
-#: plugin/base/barcodes/api.py:709
+#: plugin/base/barcodes/api.py:708
 msgid "Stock item does not match line item"
 msgstr "Lagerartikel stimmt nicht mit dem Element überein"
 
-#: plugin/base/barcodes/api.py:739
+#: plugin/base/barcodes/api.py:738
 msgid "Insufficient stock available"
 msgstr "Unzureichender Bestand verfügbar"
 
-#: plugin/base/barcodes/api.py:752
+#: plugin/base/barcodes/api.py:751
 msgid "Stock item allocated to sales order"
 msgstr "Lagerartikel der Bestellung zugeordnet"
 
-#: plugin/base/barcodes/api.py:755
+#: plugin/base/barcodes/api.py:754
 msgid "Not enough information"
 msgstr "Nicht genügend Informationen"
 
@@ -6760,52 +6760,52 @@ msgstr "Unterstützt das Scannen von TME-Barcodes"
 msgid "The Supplier which acts as 'TME'"
 msgstr "Der Lieferant, der als 'TME' fungiert"
 
-#: plugin/installer.py:228 plugin/installer.py:306
+#: plugin/installer.py:229 plugin/installer.py:307
 msgid "Only staff users can administer plugins"
 msgstr "Nur Mitarbeiter können Plugins verwalten"
 
-#: plugin/installer.py:231
+#: plugin/installer.py:232
 msgid "Plugin installation is disabled"
 msgstr "Plugin-Installation ist deaktiviert"
 
-#: plugin/installer.py:268
+#: plugin/installer.py:269
 msgid "Installed plugin successfully"
 msgstr "Plugin wurde erfolgreich installiert"
 
-#: plugin/installer.py:273
+#: plugin/installer.py:274
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "Plugin installiert in {path}"
 
-#: plugin/installer.py:297
+#: plugin/installer.py:298
 msgid "Plugin was not found in registry"
 msgstr "Plugin wurde nicht in der Registry gefunden"
 
-#: plugin/installer.py:300
+#: plugin/installer.py:301
 msgid "Plugin is not a packaged plugin"
 msgstr "Plugin ist kein gepacktes Plugin"
 
-#: plugin/installer.py:303
+#: plugin/installer.py:304
 msgid "Plugin package name not found"
 msgstr "Plugin-Paketname nicht gefunden"
 
-#: plugin/installer.py:323
+#: plugin/installer.py:324
 msgid "Plugin uninstalling is disabled"
 msgstr "Plugin-Deinstallation ist deaktiviert"
 
-#: plugin/installer.py:327
+#: plugin/installer.py:328
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr "Plugin kann nicht deinstalliert werden, da es momentan aktiv ist"
 
-#: plugin/installer.py:331
+#: plugin/installer.py:332
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:347
+#: plugin/installer.py:348
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:362
+#: plugin/installer.py:363
 msgid "Uninstalled plugin successfully"
 msgstr "Plugin erfolgreich deinstallieren"
 
@@ -6861,21 +6861,21 @@ msgstr "Plugin"
 msgid "Method"
 msgstr "Methode"
 
-#: plugin/plugin.py:275
+#: plugin/plugin.py:276
 msgid "No author found"
 msgstr "Kein Autor gefunden"
 
-#: plugin/registry.py:538
+#: plugin/registry.py:539
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Plugin '{p}' ist nicht kompatibel mit der aktuellen InvenTree Version {v}"
 
-#: plugin/registry.py:541
+#: plugin/registry.py:542
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Plugin benötigt mindestens Version {v}"
 
-#: plugin/registry.py:543
+#: plugin/registry.py:544
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Plugin benötigt maximal Version {v}"

@@ -1,6 +1,5 @@
 """Overrides for allauth and adjacent packages to enforce InvenTree specific auth settings and restirctions."""
 
-import logging
 from urllib.parse import urlencode
 
 from django import forms
@@ -10,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.core.exceptions import ImmediateHttpResponse
@@ -27,7 +27,7 @@ import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 # override allauth

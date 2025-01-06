@@ -7,7 +7,6 @@ import base64
 import hashlib
 import hmac
 import json
-import logging
 import os
 import uuid
 from datetime import timedelta, timezone
@@ -34,6 +33,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
@@ -54,7 +54,7 @@ from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MetaMixin(models.Model):

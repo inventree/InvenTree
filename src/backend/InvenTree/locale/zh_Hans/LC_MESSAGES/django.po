@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-28 21:46+0000\n"
-"PO-Revision-Date: 2024-12-29 06:03\n"
+"POT-Creation-Date: 2025-01-05 01:50+0000\n"
+"PO-Revision-Date: 2025-01-05 01:53\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -69,21 +69,21 @@ msgstr "提供的邮箱域名未被批准。"
 msgid "Registration is disabled."
 msgstr "注册已禁用。"
 
-#: InvenTree/conversion.py:161
+#: InvenTree/conversion.py:162
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
 msgstr "提供了无效的单位 ({unit})"
 
-#: InvenTree/conversion.py:178
+#: InvenTree/conversion.py:179
 msgid "No value provided"
 msgstr "没有提供数值"
 
-#: InvenTree/conversion.py:205
+#: InvenTree/conversion.py:206
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
 msgstr "不能将 {original} 转换到 {unit}"
 
-#: InvenTree/conversion.py:207 InvenTree/conversion.py:221
+#: InvenTree/conversion.py:208 InvenTree/conversion.py:222
 #: InvenTree/helpers.py:504 order/models.py:592 order/models.py:836
 msgid "Invalid quantity provided"
 msgstr "提供的数量无效"
@@ -612,7 +612,7 @@ msgstr "未启用从远程 URL下载图片"
 msgid "Failed to download image from remote URL"
 msgstr "从远程URL下载图像失败"
 
-#: InvenTree/templatetags/inventree_extras.py:152
+#: InvenTree/templatetags/inventree_extras.py:153
 msgid "Unknown database"
 msgstr "未知的資料庫"
 
@@ -2060,37 +2060,37 @@ msgstr "结果"
 msgid "Was the barcode scan successful?"
 msgstr "条码扫描成功吗？"
 
-#: common/notifications.py:329
+#: common/notifications.py:330
 #, python-brace-format
 msgid "New {verbose_name}"
 msgstr "新建{verbose_name}"
 
-#: common/notifications.py:331
+#: common/notifications.py:332
 msgid "A new order has been created and assigned to you"
 msgstr "新订单已创建并分配给您"
 
-#: common/notifications.py:337
+#: common/notifications.py:338
 #, python-brace-format
 msgid "{verbose_name} canceled"
 msgstr "{verbose_name} 已取消"
 
-#: common/notifications.py:339
+#: common/notifications.py:340
 msgid "A order that is assigned to you was canceled"
 msgstr "分配给您的订单已取消"
 
-#: common/notifications.py:345 common/notifications.py:352 order/api.py:476
+#: common/notifications.py:346 common/notifications.py:353 order/api.py:476
 msgid "Items Received"
 msgstr "收到的物品"
 
-#: common/notifications.py:347
+#: common/notifications.py:348
 msgid "Items have been received against a purchase order"
 msgstr "已根据采购订单收到物品"
 
-#: common/notifications.py:354
+#: common/notifications.py:355
 msgid "Items have been received against a return order"
 msgstr "已收到退货订单中的物品"
 
-#: common/notifications.py:476
+#: common/notifications.py:477
 msgid "Error raised by plugin"
 msgstr "插件引发的错误"
 
@@ -4592,7 +4592,7 @@ msgstr "序列化库存项目的数量必须为1"
 msgid "Sales order does not match shipment"
 msgstr "销售订单与发货不匹配"
 
-#: order/models.py:2076 plugin/base/barcodes/api.py:652
+#: order/models.py:2076 plugin/base/barcodes/api.py:651
 msgid "Shipment does not match sales order"
 msgstr "发货与销售订单不匹配"
 
@@ -4955,20 +4955,20 @@ msgstr "退款"
 msgid "Reject"
 msgstr "拒絕"
 
-#: order/tasks.py:31
+#: order/tasks.py:32
 msgid "Overdue Purchase Order"
 msgstr "逾期采购订单"
 
-#: order/tasks.py:36
+#: order/tasks.py:37
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
 msgstr "采购订单 {po} 已逾期"
 
-#: order/tasks.py:81
+#: order/tasks.py:82
 msgid "Overdue Sales Order"
 msgstr "逾期销售订单"
 
-#: order/tasks.py:86
+#: order/tasks.py:87
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
 msgstr "销售订单 {so} 已逾期"
@@ -6295,11 +6295,11 @@ msgstr "库存盘点报告可用"
 msgid "A new stocktake report is available for download"
 msgstr "有新的库存盘点报告可供下载"
 
-#: part/tasks.py:37
+#: part/tasks.py:38
 msgid "Low stock notification"
 msgstr "低库存通知"
 
-#: part/tasks.py:39
+#: part/tasks.py:40
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr "可用的 {part.name}库存已经跌到设置的最低值"
@@ -6316,83 +6316,83 @@ msgstr "未指定操作"
 msgid "No matching action found"
 msgstr "未找到指定操作"
 
-#: plugin/base/barcodes/api.py:211
+#: plugin/base/barcodes/api.py:210
 msgid "No match found for barcode data"
 msgstr "未找到匹配条形码数据"
 
-#: plugin/base/barcodes/api.py:215
+#: plugin/base/barcodes/api.py:214
 msgid "Match found for barcode data"
 msgstr "找到匹配条形码数据"
 
-#: plugin/base/barcodes/api.py:253 plugin/base/barcodes/serializers.py:73
+#: plugin/base/barcodes/api.py:252 plugin/base/barcodes/serializers.py:73
 msgid "Model is not supported"
 msgstr "不支持模型"
 
-#: plugin/base/barcodes/api.py:258
+#: plugin/base/barcodes/api.py:257
 msgid "Model instance not found"
 msgstr "找不到模型实例"
 
-#: plugin/base/barcodes/api.py:287
+#: plugin/base/barcodes/api.py:286
 msgid "Barcode matches existing item"
 msgstr "条形码匹配现有项目"
 
-#: plugin/base/barcodes/api.py:428
+#: plugin/base/barcodes/api.py:427
 msgid "No matching part data found"
 msgstr "没有找到匹配的零件数据"
 
-#: plugin/base/barcodes/api.py:444
+#: plugin/base/barcodes/api.py:443
 msgid "No matching supplier parts found"
 msgstr "没有找到匹配的供应商零件"
 
-#: plugin/base/barcodes/api.py:447
+#: plugin/base/barcodes/api.py:446
 msgid "Multiple matching supplier parts found"
 msgstr "找到多个匹配的供应商零件"
 
-#: plugin/base/barcodes/api.py:460 plugin/base/barcodes/api.py:687
+#: plugin/base/barcodes/api.py:459 plugin/base/barcodes/api.py:686
 msgid "No matching plugin found for barcode data"
 msgstr "没有找到匹配条形码数据的插件"
 
-#: plugin/base/barcodes/api.py:470
+#: plugin/base/barcodes/api.py:469
 msgid "Matched supplier part"
 msgstr "匹配的供应商零件"
 
-#: plugin/base/barcodes/api.py:538
+#: plugin/base/barcodes/api.py:537
 msgid "Item has already been received"
 msgstr "项目已被接收"
 
-#: plugin/base/barcodes/api.py:586
+#: plugin/base/barcodes/api.py:585
 msgid "No plugin match for supplier barcode"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:635
+#: plugin/base/barcodes/api.py:634
 msgid "Multiple matching line items found"
 msgstr "找到多个匹配的行项目"
 
-#: plugin/base/barcodes/api.py:638
+#: plugin/base/barcodes/api.py:637
 msgid "No matching line item found"
 msgstr "未找到匹配的行项目"
 
-#: plugin/base/barcodes/api.py:684
+#: plugin/base/barcodes/api.py:683
 msgid "No sales order provided"
 msgstr "未提供销售订单"
 
-#: plugin/base/barcodes/api.py:693
+#: plugin/base/barcodes/api.py:692
 msgid "Barcode does not match an existing stock item"
 msgstr "条形码与现有的库存项不匹配"
 
-#: plugin/base/barcodes/api.py:709
+#: plugin/base/barcodes/api.py:708
 msgid "Stock item does not match line item"
 msgstr "库存项与行项目不匹配"
 
-#: plugin/base/barcodes/api.py:739
+#: plugin/base/barcodes/api.py:738
 msgid "Insufficient stock available"
 msgstr "可用库存不足"
 
-#: plugin/base/barcodes/api.py:752
+#: plugin/base/barcodes/api.py:751
 msgid "Stock item allocated to sales order"
 msgstr "库存项已分配到销售订单"
 
-#: plugin/base/barcodes/api.py:755
+#: plugin/base/barcodes/api.py:754
 msgid "Not enough information"
 msgstr "没有足够的信息"
 
@@ -6760,52 +6760,52 @@ msgstr "为扫描 TME 条形码提供支持"
 msgid "The Supplier which acts as 'TME'"
 msgstr "作为‘TME’的供应商"
 
-#: plugin/installer.py:228 plugin/installer.py:306
+#: plugin/installer.py:229 plugin/installer.py:307
 msgid "Only staff users can administer plugins"
 msgstr "只有员工用户可以管理插件"
 
-#: plugin/installer.py:231
+#: plugin/installer.py:232
 msgid "Plugin installation is disabled"
 msgstr "插件安装已禁用"
 
-#: plugin/installer.py:268
+#: plugin/installer.py:269
 msgid "Installed plugin successfully"
 msgstr "插件安装成功"
 
-#: plugin/installer.py:273
+#: plugin/installer.py:274
 #, python-brace-format
 msgid "Installed plugin into {path}"
 msgstr "插件安装到 {path}"
 
-#: plugin/installer.py:297
+#: plugin/installer.py:298
 msgid "Plugin was not found in registry"
 msgstr "在插件仓库中找不到插件"
 
-#: plugin/installer.py:300
+#: plugin/installer.py:301
 msgid "Plugin is not a packaged plugin"
 msgstr "插件不是一个打包的插件"
 
-#: plugin/installer.py:303
+#: plugin/installer.py:304
 msgid "Plugin package name not found"
 msgstr "找不到插件包名称"
 
-#: plugin/installer.py:323
+#: plugin/installer.py:324
 msgid "Plugin uninstalling is disabled"
 msgstr "插件卸载已禁用"
 
-#: plugin/installer.py:327
+#: plugin/installer.py:328
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr "插件无法卸载，因为它目前处于激活状态"
 
-#: plugin/installer.py:331
+#: plugin/installer.py:332
 msgid "Plugin is not installed"
 msgstr ""
 
-#: plugin/installer.py:347
+#: plugin/installer.py:348
 msgid "Plugin installation not found"
 msgstr ""
 
-#: plugin/installer.py:362
+#: plugin/installer.py:363
 msgid "Uninstalled plugin successfully"
 msgstr "插件卸载成功"
 
@@ -6861,21 +6861,21 @@ msgstr "插件"
 msgid "Method"
 msgstr "方法"
 
-#: plugin/plugin.py:275
+#: plugin/plugin.py:276
 msgid "No author found"
 msgstr "未找到作者"
 
-#: plugin/registry.py:538
+#: plugin/registry.py:539
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "插件 '{p}' 与当前 InvenTree 版本{v} 不兼容"
 
-#: plugin/registry.py:541
+#: plugin/registry.py:542
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "插件所需最低版本 {v}"
 
-#: plugin/registry.py:543
+#: plugin/registry.py:544
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "插件所需最高版本 {v}"

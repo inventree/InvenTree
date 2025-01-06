@@ -1,7 +1,6 @@
 """Main JSON interface views."""
 
 import json
-import logging
 import sys
 from pathlib import Path
 
@@ -10,6 +9,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
@@ -31,7 +31,7 @@ from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class LicenseViewSerializer(serializers.Serializer):
