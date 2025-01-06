@@ -219,10 +219,8 @@ if DEBUG and 'collectstatic' not in sys.argv:
 
     # Append directory for sample plugin static content (if in debug mode)
     if PLUGINS_ENABLED:
-        print('Adding plugin sample static content')
+        logger.info('Adding plugin sample static content')
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
-
-        print('-', STATICFILES_DIRS[-1])
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -1037,7 +1035,9 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        logger.error(msg)
+        print(msg)
         sys.exit(-1)
 
 else:
