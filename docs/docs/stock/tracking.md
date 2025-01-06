@@ -24,7 +24,7 @@ Multiple stock items may share the same batch code without restriction, even acr
 
 #### Generating Batch Codes
 
-Batch codes can be generated automatically based on a provided pattern. The default pattern simply uses the current datecode as the batch number, however this can be customized within a certain scope.
+Batch codes can be generated automatically based on a provided pattern. The default pattern simply uses the current date-code as the batch number, however this can be customized within a certain scope.
 
 {% with id="batch_code_pattern", url="stock/batch_code_template.png", description="Batch code pattern" %}
 {% include 'img.html' %}
@@ -150,4 +150,4 @@ Custom serial number functionality, with any arbitrary requirements or level of 
 
 A custom plugin allows the user to determine how a "valid" serial number is defined, and (crucially) how any given serial number value is incremented to provide the next value in the sequence.
 
-Implementing custom methods for these two consideraions allows for complex serial number schema to be supported with minimal effort.
+Implementing custom methods for these two considerations allows for complex serial number schema to be supported with minimal effort.

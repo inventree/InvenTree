@@ -148,10 +148,6 @@ pyupgrade `find . -name "*.py"`
 django-upgrade --target-version {{ config.extra.django_version }} `find . -name "*.py"`
 ```
 
-## Credits
-
-If you add any new dependencies / libraries, they should be added to [the credits page](../credits.md).
-
 ## Migration Files
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
