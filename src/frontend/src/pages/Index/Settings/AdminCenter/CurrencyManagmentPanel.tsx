@@ -42,6 +42,7 @@ export function CurrencyTable({
       .then(() => {
         table.refreshTable();
         showNotification({
+          title: t`Success`,
           message: t`Exchange rates updated`,
           color: 'green'
         });
