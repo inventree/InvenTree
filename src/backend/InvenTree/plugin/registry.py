@@ -579,9 +579,7 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(
-                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                        )
+                        handle_error(error, log_name='init', do_raise=True)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
