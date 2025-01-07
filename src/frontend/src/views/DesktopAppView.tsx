@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { api, queryClient } from '../App';
 import { ApiProvider } from '../contexts/ApiContext';
-import { BaseContext } from '../contexts/BaseContext';
+import { ThemeContext } from '../contexts/ThemeContext';
 import { defaultHostList } from '../defaults/defaultHostList';
 import { base_url } from '../main';
 import { routes } from '../router';
@@ -19,10 +19,10 @@ export default function DesktopAppView() {
   }, [hostList]);
 
   return (
-    <BaseContext>
+    <ThemeContext>
       <ApiProvider client={queryClient} api={api}>
         <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
       </ApiProvider>
-    </BaseContext>
+    </ThemeContext>
   );
 }
