@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { inventreeApi, queryClient } from '../App';
+import { api, queryClient } from '../App';
 import { ApiProvider } from '../contexts/ApiContext';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
@@ -20,7 +20,7 @@ export default function DesktopAppView() {
 
   return (
     <BaseContext>
-      <ApiProvider client={queryClient} api={inventreeApi}>
+      <ApiProvider client={queryClient} api={api}>
         <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
       </ApiProvider>
     </BaseContext>
