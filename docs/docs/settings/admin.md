@@ -19,7 +19,7 @@ To access the admin interface, select the "Admin" option from the drop-down user
 !!! info "Staff Only"
     Only users with staff access will be able to see the "Admin" option
 
-An adminstation panel will be presented as shown below:
+An administration panel will be presented as shown below:
 
 {% with id="admin", url="admin/admin.png", description="InvenTree Admin Panel" %}
 {% include 'img.html' %}
