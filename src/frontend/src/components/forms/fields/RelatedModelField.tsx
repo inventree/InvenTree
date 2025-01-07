@@ -15,7 +15,7 @@ import {
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { api } from '../../../App';
+import { useApi } from '../../../contexts/ApiContext';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
 import type { ApiFormFieldType } from './ApiFormField';
@@ -34,6 +34,7 @@ export function RelatedModelField({
   fieldName: string;
   limit?: number;
 }>) {
+  const api = useApi();
   const fieldId = useId();
   const {
     field,

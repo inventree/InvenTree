@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import type { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
@@ -48,6 +48,7 @@ export default function NavigationTree({
   modelType: ModelType;
   endpoint: ApiEndpoints;
 }>) {
+  const api = useApi();
   const navigate = useNavigate();
   const treeState = useTree();
 

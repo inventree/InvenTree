@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type FieldValues,
@@ -23,7 +23,7 @@ import {
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import { api, queryClient } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import type { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import {
@@ -110,6 +110,8 @@ export function OptionsApiForm({
   props: ApiFormProps;
   id?: string;
 }>) {
+  const api = useApi();
+
   const props = useMemo(
     () => ({
       ..._props,
@@ -205,6 +207,8 @@ export function ApiForm({
   props: ApiFormProps;
   optionsLoading: boolean;
 }>) {
+  const api = useApi();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [fields, setFields] = useState<ApiFormFieldSet>(

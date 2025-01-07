@@ -10,10 +10,10 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { useApi } from '../../contexts/ApiContext';
 import { formatFileSize } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
@@ -99,6 +99,7 @@ export function AttachmentTable({
   model_type: ModelType;
   model_id: number;
 }>): ReactNode {
+  const api = useApi();
   const user = useUserState();
   const table = useTable(`${model_type}-attachments`);
 
