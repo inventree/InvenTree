@@ -28,13 +28,6 @@ def image_data(img, fmt='PNG') -> str:
     return report.helpers.encode_image_base64(img, fmt)
 
 
-def error_barcode():
-    """Render a 'error' barcode image."""
-    img = Image.new('RGB', (10, 10), color='red')
-
-    return image_data(img, fmt='PNG')
-
-
 @register.simple_tag()
 def clean_barcode(data):
     """Return a 'cleaned' string for encoding into a barcode / qrcode.
@@ -76,7 +69,7 @@ def qrcode(data: str, **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        return error_barcode()
+        raise ValueError("No data provided to 'qrcode' template tag")
 
     # Extract other arguments from kwargs
     fill_color = kwargs.pop('fill_color', 'black')
@@ -120,7 +113,7 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        return error_barcode()
+        raise ValueError("No data provided to 'barcode' template tag")
 
     constructor = python_barcode.get_barcode_class(barcode_class)
 
@@ -159,7 +152,7 @@ def datamatrix(data: str, **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        return error_barcode()
+        raise ValueError("No data provided to 'datamatrix' template tag")
 
     dm = DataMatrix(data)
 

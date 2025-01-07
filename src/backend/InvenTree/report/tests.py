@@ -240,6 +240,10 @@ class BarcodeTagTest(TestCase):
         self.assertIsInstance(barcode, str)
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.barcode('')
+
     def test_qrcode(self):
         """Test the qrcode generation tag."""
         # Test with default settings
@@ -255,6 +259,10 @@ class BarcodeTagTest(TestCase):
         self.assertIsInstance(qrcode, str)
         self.assertTrue(qrcode.startswith('data:image/bmp;'))
         self.assertEqual(len(qrcode), 309720)
+
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.qrcode('')
 
     def test_datamatrix(self):
         """Test the datamatrix generation tag."""
@@ -272,6 +280,10 @@ class BarcodeTagTest(TestCase):
             datamatrix,
             'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAIAAABL1vtsAAAAqElEQVR4nN1UQQ6AMAgrxv9/GQ9mpJYSY/QkBxM3KLUUA0i8i+1l/dcQiXj09CwSEU2aQJ7nE8ou2faVUXoPZSEkq+dZKVxWg4UqxUHnVdkp6IdwMXMulGvzNBDMk4WwPSrUF3LNnQNZBJmOsZaVXa44QSEKnvWb5mIgKon1E1H6aPyOcIa15uhONP9aR4hSCiGmYAoYpj4uO+vK4+ybMhr8Nkjmn/z4Dvoldi8uJu4iAAAAAElFTkSuQmCC',
         )
+
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.datamatrix('')
 
 
 class ReportTest(InvenTreeAPITestCase):
