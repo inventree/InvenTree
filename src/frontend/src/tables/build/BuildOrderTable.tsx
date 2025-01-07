@@ -8,7 +8,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -33,6 +37,7 @@ import {
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
+  OutstandingFilter,
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
@@ -119,15 +124,11 @@ export function BuildOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const ownerFilters = useOwnerFilters();
+  const userFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
-      {
-        name: 'outstanding',
-        type: 'boolean',
-        label: t`Outstanding`,
-        description: t`Show outstanding orders`
-      },
+      OutstandingFilter(),
       OrderStatusFilter({ model: ModelType.build }),
       OverdueFilter(),
       AssignedToMeFilter(),
@@ -145,7 +146,7 @@ export function BuildOrderTable({
         name: 'issued_by',
         label: t`Issued By`,
         description: t`Filter by user who issued this order`,
-        choices: ownerFilters.choices
+        choices: userFilters.choices
       },
       ResponsibleFilter({ choices: ownerFilters.choices })
     ];
@@ -161,7 +162,12 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId, projectCodeFilters.choices, ownerFilters.choices]);
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    ownerFilters.choices,
+    userFilters.choices
+  ]);
 
   const user = useUserState();
 
