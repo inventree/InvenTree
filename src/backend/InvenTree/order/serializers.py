@@ -50,6 +50,7 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
+    UserSerializer,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -158,6 +159,8 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         required=False, allow_null=True, label=_('Creation Date')
     )
 
+    created_by = UserSerializer(read_only=True)
+
     duplicate = DuplicateOrderSerializer(
         label=_('Duplicate Order'),
         help_text=_('Specify options for duplicating this order'),
@@ -174,6 +177,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     def annotate_queryset(queryset):
         """Add extra information to the queryset."""
         queryset = queryset.annotate(line_items=SubqueryCount('lines'))
+        queryset = queryset.select_related('created_by')
 
         return queryset
 
@@ -183,6 +187,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         return [
             'pk',
             'creation_date',
+            'created_by',
             'target_date',
             'description',
             'line_items',
