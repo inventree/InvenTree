@@ -9,12 +9,17 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -55,6 +60,7 @@ export function SalesOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
+  const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
@@ -87,6 +93,12 @@ export function SalesOrderTable({
         label: t`Responsible`,
         description: t`Filter by responsible owner`,
         choices: responsibleFilters.choices
+      },
+      {
+        name: 'created_by',
+        label: t`Created By`,
+        description: t`Filter by user who created the order`,
+        choices: createdByFilters.choices
       }
     ];
 
@@ -100,7 +112,12 @@ export function SalesOrderTable({
     }
 
     return filters;
-  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    responsibleFilters.choices,
+    createdByFilters.choices
+  ]);
 
   const salesOrderFields = useSalesOrderFields({});
 
@@ -165,6 +182,7 @@ export function SalesOrderTable({
       StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),
+      CreatedByColumn({}),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),

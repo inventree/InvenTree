@@ -8,13 +8,18 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CompletionDateColumn,
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -54,6 +59,7 @@ export function ReturnOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
+  const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
@@ -86,6 +92,12 @@ export function ReturnOrderTable({
         label: t`Responsible`,
         description: t`Filter by responsible owner`,
         choices: responsibleFilters.choices
+      },
+      {
+        name: 'created_by',
+        label: t`Created By`,
+        description: t`Filter by user who created the order`,
+        choices: createdByFilters.choices
       }
     ];
 
@@ -99,7 +111,12 @@ export function ReturnOrderTable({
     }
 
     return filters;
-  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    responsibleFilters.choices,
+    createdByFilters.choices
+  ]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -128,6 +145,7 @@ export function ReturnOrderTable({
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),
+      CreatedByColumn({}),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'

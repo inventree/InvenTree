@@ -8,13 +8,18 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CompletionDateColumn,
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -57,6 +62,7 @@ export function PurchaseOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
+  const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -89,9 +95,19 @@ export function PurchaseOrderTable({
         label: t`Responsible`,
         description: t`Filter by responsible owner`,
         choices: responsibleFilters.choices
+      },
+      {
+        name: 'created_by',
+        label: t`Created By`,
+        description: t`Filter by user who created the order`,
+        choices: createdByFilters.choices
       }
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
+  }, [
+    projectCodeFilters.choices,
+    responsibleFilters.choices,
+    createdByFilters.choices
+  ]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -120,6 +136,7 @@ export function PurchaseOrderTable({
       StatusColumn({ model: ModelType.purchaseorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),
+      CreatedByColumn({}),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
