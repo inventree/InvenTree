@@ -5,7 +5,7 @@ import {
   useFormContext
 } from 'react-hook-form';
 
-import { api } from '../../../App';
+import { useApi } from '../../../contexts/ApiContext';
 import {
   constructField,
   extractAvailableFields
@@ -29,6 +29,7 @@ export function DependentField({
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
 }>) {
+  const api = useApi();
   const { watch, resetField } = useFormContext();
 
   const mappedFieldNames = useMemo(

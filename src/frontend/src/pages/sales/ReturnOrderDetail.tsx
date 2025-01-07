@@ -187,6 +187,13 @@ export default function ReturnOrderDetail() {
         icon: 'reference',
         copy: true,
         hidden: !order.project_code
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
       }
     ];
 
@@ -221,13 +228,6 @@ export default function ReturnOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
       }
     ];
 
