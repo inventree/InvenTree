@@ -19,10 +19,10 @@ export default function DesktopAppView() {
   }, [hostList]);
 
   return (
-    <ThemeContext>
-      <ApiProvider client={queryClient} api={api}>
+    <ApiProvider client={queryClient} api={api}>
+      <ThemeContext>
         <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
-      </ApiProvider>
-    </ThemeContext>
+      </ThemeContext>
+    </ApiProvider>
   );
 }
