@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 
 import barcode as python_barcode
 import qrcode.constants as ECL
+from PIL import Image, ImageColor
 from qrcode.main import QRCode
 
 import report.helpers
@@ -25,6 +26,13 @@ def image_data(img, fmt='PNG'):
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
     return report.helpers.encode_image_base64(img, fmt)
+
+
+def error_barcode():
+    """Render a 'error' barcode image."""
+    img = Image.new('RGB', (10, 10), color='red')
+
+    return image_data(img, fmt='PNG')
 
 
 @register.simple_tag()
@@ -65,6 +73,11 @@ def qrcode(data, **kwargs):
         base64 encoded image data
 
     """
+    data = str(data).strip()
+
+    if not data:
+        return error_barcode()
+
     # Extract other arguments from kwargs
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
@@ -91,6 +104,11 @@ def qrcode(data, **kwargs):
 @register.simple_tag()
 def barcode(data, barcode_class='code128', **kwargs):
     """Render a barcode."""
+    data = str(data).strip()
+
+    if not data:
+        return error_barcode()
+
     constructor = python_barcode.get_barcode_class(barcode_class)
 
     img_format = kwargs.pop('format', 'PNG')
@@ -105,3 +123,58 @@ def barcode(data, barcode_class='code128', **kwargs):
 
     # Render to byte-encoded image
     return image_data(image, fmt=img_format)
+
+
+@register.simple_tag()
+def datamatrix(data, **kwargs):
+    """Render a DataMatrix barcode.
+
+    Arguments:
+        data: Data to encode
+
+    Keyword Arguments:
+        fill_color: Foreground color (default = 'black')
+        back_color: Background color (default = 'white')
+        scale: Matrix scaling factor (default = 1)
+    """
+    from ppf.datamatrix import DataMatrix
+
+    data = str(data).strip()
+
+    if not data:
+        return error_barcode()
+
+    dm = DataMatrix(data)
+
+    print('datamatrix:', data)
+
+    fill_color = kwargs.pop('fill_color', 'black')
+    back_color = kwargs.pop('back_color', 'white')
+
+    try:
+        fg = ImageColor.getcolor(fill_color, 'RGB')
+    except Exception:
+        fg = ImageColor.getcolor('black', 'RGB')
+
+    try:
+        bg = ImageColor.getcolor(back_color, 'RGB')
+    except Exception:
+        bg = ImageColor.getcolor('white', 'RGB')
+
+    scale = kwargs.pop('scale', 1)
+
+    height = len(dm.matrix) + 2
+    width = len(dm.matrix[0]) + 2
+
+    # Generate raw image from the matrix
+    img = Image.new('RGB', (width, height), color=bg)
+
+    for y, row in enumerate(dm.matrix):
+        for x, value in enumerate(row):
+            if value:
+                img.putpixel((x + 1, y + 1), fg)
+
+    if scale != 1:
+        img = img.resize((int(width * scale), int(height * scale)))
+
+    return image_data(img, fmt='PNG')
