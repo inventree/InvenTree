@@ -75,6 +75,24 @@ class GeneralExtraLineList(DataExportViewMixin):
     filterset_fields = ['order']
 
 
+class OrderCreateMixin:
+    """Mixin class which handles order creation via API."""
+
+    def create(self, request, *args, **kwargs):
+        """Save user information on order creation."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+
 class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
@@ -260,7 +278,9 @@ class PurchaseOrderMixin:
         return queryset
 
 
-class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
+class PurchaseOrderList(
+    PurchaseOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PurchaseOrder objects.
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -722,7 +742,9 @@ class SalesOrderMixin:
         return queryset
 
 
-class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
+class SalesOrderList(
+    SalesOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of SalesOrder objects.
 
     - GET: Return list of SalesOrder objects (with filters)
@@ -730,20 +752,6 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
     """
 
     filterset_class = SalesOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        serializer = self.get_serializer(data=self.clean_data(request.data))
-        serializer.is_valid(raise_exception=True)
-
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     def filter_queryset(self, queryset):
         """Perform custom filtering operations on the SalesOrder queryset."""
@@ -1339,24 +1347,12 @@ class ReturnOrderMixin:
         return queryset
 
 
-class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
+class ReturnOrderList(
+    ReturnOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        serializer = self.get_serializer(data=self.clean_data(request.data))
-        serializer.is_valid(raise_exception=True)
-
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
