@@ -5,7 +5,7 @@ import { useLocalState } from './states/LocalState';
 import { useUserState } from './states/UserState';
 
 // Global API instance
-export const api = axios.create({});
+export const inventreeApi = axios.create({});
 
 /*
  * Setup default settings for the Axios API instance.
@@ -14,18 +14,18 @@ export function setApiDefaults() {
   const { host } = useLocalState.getState();
   const { token } = useUserState.getState();
 
-  api.defaults.baseURL = host;
-  api.defaults.timeout = 2500;
+  inventreeApi.defaults.baseURL = host;
+  inventreeApi.defaults.timeout = 2500;
 
-  api.defaults.withCredentials = true;
-  api.defaults.withXSRFToken = true;
-  api.defaults.xsrfCookieName = 'csrftoken';
-  api.defaults.xsrfHeaderName = 'X-CSRFToken';
+  inventreeApi.defaults.withCredentials = true;
+  inventreeApi.defaults.withXSRFToken = true;
+  inventreeApi.defaults.xsrfCookieName = 'csrftoken';
+  inventreeApi.defaults.xsrfHeaderName = 'X-CSRFToken';
 
   if (token) {
-    api.defaults.headers.Authorization = `Token ${token}`;
+    inventreeApi.defaults.headers.Authorization = `Token ${token}`;
   } else {
-    delete api.defaults.headers['Authorization'];
+    delete inventreeApi.defaults.headers['Authorization'];
   }
 }
 
