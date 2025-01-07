@@ -377,7 +377,7 @@ export default function StockDetail() {
     ); // Must not be installed into another item
   }, [stockitem]);
 
-  const showSalesAlloctions: boolean = useMemo(() => {
+  const showSalesAllocations: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
 
@@ -452,14 +452,14 @@ export default function StockDetail() {
         icon: <IconBookmark />,
         hidden:
           !stockitem.in_stock ||
-          (!showSalesAlloctions && !showBuildAllocations),
+          (!showSalesAllocations && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
+            defaultValue={['buildAllocations', 'salesAllocations']}
           >
             {showBuildAllocations && (
-              <Accordion.Item value='buildallocations' key='buildallocations'>
+              <Accordion.Item value='buildAllocations' key='buildAllocations'>
                 <Accordion.Control>
                   <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
@@ -473,8 +473,8 @@ export default function StockDetail() {
                 </Accordion.Panel>
               </Accordion.Item>
             )}
-            {showSalesAlloctions && (
-              <Accordion.Item value='salesallocations' key='salesallocations'>
+            {showSalesAllocations && (
+              <Accordion.Item value='salesAllocations' key='salesAllocations'>
                 <Accordion.Control>
                   <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
@@ -536,7 +536,7 @@ export default function StockDetail() {
       })
     ];
   }, [
-    showSalesAlloctions,
+    showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,
     stockitem,
