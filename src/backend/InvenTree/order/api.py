@@ -313,6 +313,7 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'supplier__name',
         'target_date',
@@ -782,6 +783,7 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'customer__name',
         'customer_reference',
@@ -1378,6 +1380,7 @@ class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'customer__name',
         'customer_reference',
