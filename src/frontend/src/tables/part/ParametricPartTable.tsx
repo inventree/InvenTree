@@ -171,9 +171,9 @@ export default function ParametricPartTable({
         records[partIndex].parameters[parameterIndex] = parameter;
       }
 
-      table.setRecords(records);
+      table.updateRecord(records[partIndex]);
     },
-    [table.records]
+    [table.updateRecord]
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
