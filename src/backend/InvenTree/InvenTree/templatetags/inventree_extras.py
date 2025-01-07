@@ -463,7 +463,7 @@ def get_user_color_theme(user):
         user_theme_name = user_theme.name
         if not user_theme_name or not ColorTheme.is_valid_choice(user_theme):
             user_theme_name = 'default'
-    except ColorTheme.DoesNotExist:
+    except Exception:
         user_theme_name = 'default'
 
     return user_theme_name
