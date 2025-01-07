@@ -34,7 +34,6 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -63,6 +62,7 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -110,6 +110,7 @@ import PartSupplierDetail from './PartSupplierDetail';
 export default function PartDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const navigate = useNavigate();
   const user = useUserState();
 
