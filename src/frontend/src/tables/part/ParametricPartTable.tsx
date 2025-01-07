@@ -5,9 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -95,11 +95,12 @@ export default function ParametricPartTable({
 }: Readonly<{
   categoryId?: any;
 }>) {
+  const api = useApi();
   const table = useTable('parametric-parts');
   const user = useUserState();
   const navigate = useNavigate();
 
-  const categoryParmeters = useQuery({
+  const categoryParameters = useQuery({
     queryKey: ['category-parameters', categoryId],
     queryFn: async () => {
       return api
@@ -176,7 +177,7 @@ export default function ParametricPartTable({
   );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
-    const data = categoryParmeters.data ?? [];
+    const data = categoryParameters.data ?? [];
 
     return data.map((template: any) => {
       let title = template.name;
@@ -201,7 +202,7 @@ export default function ParametricPartTable({
         )
       };
     });
-  }, [user, categoryParmeters.data]);
+  }, [user, categoryParameters.data]);
 
   const onParameterClick = useCallback((template: number, part: any) => {
     setSelectedTemplate(template);
