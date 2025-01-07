@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -127,16 +128,12 @@ export const doBasicLogin = async (
  */
 export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn, setSession } = useUserState.getState();
-  const { session } = useUserState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
-    await api
-      .delete(apiUrl(ApiEndpoints.user_logout), {
-        headers: { 'X-Session-Token': session }
-      })
-      .catch(() => {});
-
+    await authApi(apiUrl(ApiEndpoints.user_logout), undefined, 'delete').catch(
+      () => {}
+    );
     showLoginNotification({
       title: t`Logged Out`,
       message: t`Successfully logged out`
@@ -201,21 +198,14 @@ export function handleMfaLogin(
   location: Location<any>,
   values: { code: string }
 ) {
-  const { session, setToken, setSession } = useUserState.getState();
-
-  api
-    .post(
-      apiUrl(ApiEndpoints.user_login_mfa),
-      {
-        code: values.code
-      },
-      { headers: { 'X-Session-Token': session } }
-    )
-    .then((response) => {
-      setSession(response.data.meta.session_token);
-      setToken(response.data.meta.access_token);
-      followRedirect(navigate, location?.state);
-    });
+  const { setToken, setSession } = useUserState.getState();
+  authApi(apiUrl(ApiEndpoints.user_login_mfa), undefined, 'post', {
+    code: values.code
+  }).then((response) => {
+    setSession(response.data.meta.session_token);
+    setToken(response.data.meta.access_token);
+    followRedirect(navigate, location?.state);
+  });
 }
 
 /**
@@ -309,4 +299,39 @@ export function ProviderLogin(
   };
   const url = `${host}${apiUrl(ApiEndpoints.login_provider_redirect)}`;
   post(url, values);
+}
+
+/**
+ * Makes an API request with session tokens using the provided URL, configuration, method, and data.
+ *
+ * @param url - The URL to which the request is sent.
+ * @param config - Optional Axios request configuration.
+ * @param method - The HTTP method to use for the request. Defaults to 'get'.
+ * @param data - Optional data to be sent with the request.
+ * @returns A promise that resolves to the response of the API request.
+ */
+export function authApi(
+  url: string,
+  config: AxiosRequestConfig | undefined = undefined,
+  method: 'get' | 'post' | 'put' | 'delete' = 'get',
+  data?: any
+) {
+  const [session] = useUserState((state) => [state.session]);
+  // extend default axios instance with session token
+  const requestConfig = config || {};
+  if (!requestConfig.headers) {
+    requestConfig.headers = {};
+  }
+  requestConfig.headers['X-Session-Token'] = session;
+
+  // set method
+  requestConfig.method = method;
+
+  // set data
+  if (data) {
+    requestConfig.data = data;
+  }
+
+  // use normal api
+  return api.post(url, requestConfig);
 }

@@ -21,9 +21,8 @@ import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { ProviderLogin } from '../../../../functions/auth';
+import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import { useUserState } from '../../../../states/UserState';
 import type { Provider, SecuritySetting } from '../../../../states/states';
 
 export function SecurityContent() {
@@ -80,73 +79,23 @@ export function SecurityContent() {
 function EmailContent() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
-  const [session] = useUserState((state) => [state.session]);
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () =>
-      api
-        .get(apiUrl(ApiEndpoints.user_emails), {
-          headers: { 'X-Session-Token': session }
-        })
-        .then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.user_emails)).then((res) => res.data.data)
   });
 
   function runServerAction(
-    url: ApiEndpoints,
-    action: 'post' | 'put' | 'delete' = 'post'
+    action: 'post' | 'put' | 'delete' = 'post',
+    data?: any
   ) {
-    let act: any;
-    switch (action) {
-      case 'post':
-        act = api.post;
-        break;
-      case 'put':
-        act = api.put;
-        break;
-      case 'delete':
-        act = api.delete;
-        break;
-    }
-    act(
-      apiUrl(url),
-      { email: value },
-      { headers: { 'X-Session-Token': session } }
-    )
+    const vals: any = data || { email: value };
+    console.log('vals', vals);
+    authApi(apiUrl(ApiEndpoints.user_emails), undefined, action, vals)
       .then(() => {
         refetch();
       })
       .catch((res: any) => console.log(res.data));
-  }
-
-  function addEmail() {
-    api
-      .post(
-        apiUrl(ApiEndpoints.user_emails),
-        {
-          email: newEmailValue
-        },
-        { headers: { 'X-Session-Token': session } }
-      )
-      .then(() => {
-        refetch();
-      })
-      .catch((res) => console.log(res.data));
-  }
-
-  function changePrimary() {
-    api
-      .post(
-        apiUrl(ApiEndpoints.user_emails),
-        {
-          email: value,
-          primary: true
-        },
-        { headers: { 'X-Session-Token': session } }
-      )
-      .then(() => {
-        refetch();
-      })
-      .catch((res) => console.log(res.data));
   }
 
   if (isLoading) return <Loader />;
@@ -211,23 +160,25 @@ function EmailContent() {
       </Grid.Col>
       <Grid.Col span={6}>
         <Group>
-          <Button onClick={() => changePrimary()}>
+          <Button
+            onClick={() =>
+              runServerAction('post', { email: value, primary: true })
+            }
+          >
             <Trans>Make Primary</Trans>
           </Button>
-          <Button
-            onClick={() => runServerAction(ApiEndpoints.user_emails, 'put')}
-          >
+          <Button onClick={() => runServerAction('put')}>
             <Trans>Re-send Verification</Trans>
           </Button>
-          <Button
-            onClick={() => runServerAction(ApiEndpoints.user_emails, 'delete')}
-          >
+          <Button onClick={() => runServerAction('delete')}>
             <Trans>Remove</Trans>
           </Button>
         </Group>
       </Grid.Col>
       <Grid.Col span={6}>
-        <Button onClick={addEmail}>
+        <Button
+          onClick={() => runServerAction('post', { email: newEmailValue })}
+        >
           <Trans>Add Email</Trans>
         </Button>
       </Grid.Col>
@@ -252,15 +203,10 @@ function SsoContent({
 }: Readonly<{ auth_settings: SecuritySetting | undefined }>) {
   const [value, setValue] = useState<string>('');
   const [currentProviders, setCurrentProviders] = useState<Provider[]>();
-  const { session } = useUserState.getState();
   const { isLoading, data } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () =>
-      api
-        .get(apiUrl(ApiEndpoints.user_sso), {
-          headers: { 'X-Session-Token': session }
-        })
-        .then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.user_sso)).then((res) => res.data.data)
   });
 
   useEffect(() => {
@@ -281,10 +227,7 @@ function SsoContent({
   }, [auth_settings, data]);
 
   function removeProvider() {
-    api
-      .delete(apiUrl(ApiEndpoints.user_sso), {
-        headers: { 'X-Session-Token': session }
-      })
+    authApi(apiUrl(ApiEndpoints.user_sso), undefined, 'delete')
       .then(() => {
         queryClient.removeQueries({
           queryKey: ['sso-list']
