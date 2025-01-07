@@ -20,7 +20,7 @@ QR_ECL_LEVEL_MAP = {
 }
 
 
-def image_data(img, fmt='PNG'):
+def image_data(img, fmt='PNG') -> str:
     """Convert an image into HTML renderable data.
 
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
@@ -53,24 +53,24 @@ def clean_barcode(data):
 
 
 @register.simple_tag()
-def qrcode(data, **kwargs):
+def qrcode(data: str, **kwargs) -> str:
     """Return a byte-encoded QR code image.
 
     Arguments:
         data: Data to encode
 
     Keyword Arguments:
-        version: QR code version, (None to auto detect) (default = None)
-        error_correction: Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'M')
-        box_size: pixel dimensions for one black square pixel in the QR code (default = 20)
-        border: count white QR square pixels around the qr code, needed as padding (default = 1)
-        optimize: data will be split into multiple chunks of at least this length using different modes (text, alphanumeric, binary) to optimize the QR code size. Set to `0` to disable. (default = 1)
-        format: Image format (default = 'PNG')
-        fill_color: Fill color (default = "black")
-        back_color: Background color (default = "white")
+        version (int): QR code version, (None to auto detect) (default = None)
+        error_correction (str): Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'M')
+        box_size (int): pixel dimensions for one black square pixel in the QR code (default = 20)
+        border (int): count white QR square pixels around the qr code, needed as padding (default = 1)
+        optimize (int): data will be split into multiple chunks of at least this length using different modes (text, alphanumeric, binary) to optimize the QR code size. Set to `0` to disable. (default = 1)
+        format (str): Image format (default = 'PNG')
+        fill_color (str): Fill color (default = "black")
+        back_color (str): Background color (default = "white")
 
     Returns:
-        base64 encoded image data
+        image (str): base64 encoded image data
 
     """
     data = str(data).strip()
@@ -102,8 +102,21 @@ def qrcode(data, **kwargs):
 
 
 @register.simple_tag()
-def barcode(data, barcode_class='code128', **kwargs):
-    """Render a barcode."""
+def barcode(data: str, barcode_class='code128', **kwargs) -> str:
+    """Render a 1D barcode.
+
+    Arguments:
+        data: Data to encode
+
+    Keyword Arguments:
+        format (str): Image format (default = 'PNG')
+        fill_color (str): Foreground color (default = 'black')
+        back_color (str): Background color (default = 'white')
+        scale (float): Scaling factor (default = 1)
+
+    Returns:
+        image (str): base64 encoded image data
+    """
     data = str(data).strip()
 
     if not data:
@@ -126,16 +139,20 @@ def barcode(data, barcode_class='code128', **kwargs):
 
 
 @register.simple_tag()
-def datamatrix(data, **kwargs):
+def datamatrix(data: str, **kwargs) -> str:
     """Render a DataMatrix barcode.
 
     Arguments:
         data: Data to encode
 
     Keyword Arguments:
-        fill_color: Foreground color (default = 'black')
-        back_color: Background color (default = 'white')
-        scale: Matrix scaling factor (default = 1)
+        fill_color (str): Foreground color (default = 'black')
+        back_color (str): Background color (default = 'white')
+        scale (float): Matrix scaling factor (default = 1)
+        border (int): Border width (default = 1)
+
+    Returns:
+        image (str): base64 encoded image data
     """
     from ppf.datamatrix import DataMatrix
 
@@ -146,10 +163,17 @@ def datamatrix(data, **kwargs):
 
     dm = DataMatrix(data)
 
-    print('datamatrix:', data)
-
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
+
+    border = kwargs.pop('border', 1)
+
+    try:
+        border = int(border)
+    except Exception:
+        border = 1
+
+    border = max(0, border)
 
     try:
         fg = ImageColor.getcolor(fill_color, 'RGB')
@@ -163,8 +187,8 @@ def datamatrix(data, **kwargs):
 
     scale = kwargs.pop('scale', 1)
 
-    height = len(dm.matrix) + 2
-    width = len(dm.matrix[0]) + 2
+    height = len(dm.matrix) + 2 * border
+    width = len(dm.matrix[0]) + 2 * border
 
     # Generate raw image from the matrix
     img = Image.new('RGB', (width, height), color=bg)
@@ -172,7 +196,7 @@ def datamatrix(data, **kwargs):
     for y, row in enumerate(dm.matrix):
         for x, value in enumerate(row):
             if value:
-                img.putpixel((x + 1, y + 1), fg)
+                img.putpixel((x + border, y + border), fg)
 
     if scale != 1:
         img = img.resize((int(width * scale), int(height * scale)))
