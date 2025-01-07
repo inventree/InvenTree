@@ -35,12 +35,15 @@ import {
   CompletedBeforeFilter,
   CreatedAfterFilter,
   CreatedBeforeFilter,
+  CreatedByFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
+  OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
-  StatusFilterOptions,
+  ProjectCodeFilter,
+  ResponsibleFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -66,12 +69,7 @@ export function PurchaseOrderTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
-      },
+      OrderStatusFilter({ model: ModelType.purchaseorder }),
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
@@ -83,25 +81,10 @@ export function PurchaseOrderTable({
       TargetDateAfterFilter(),
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
       HasProjectCodeFilter(),
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
-      },
-      {
-        name: 'created_by',
-        label: t`Created By`,
-        description: t`Filter by user who created the order`,
-        choices: createdByFilters.choices
-      }
+      ResponsibleFilter({ choices: responsibleFilters.choices }),
+      CreatedByFilter({ choices: createdByFilters.choices })
     ];
   }, [
     projectCodeFilters.choices,

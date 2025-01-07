@@ -32,8 +32,10 @@ import {
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
+  OrderStatusFilter,
   OverdueFilter,
-  StatusFilterOptions,
+  ProjectCodeFilter,
+  ResponsibleFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -126,12 +128,7 @@ export function BuildOrderTable({
         label: t`Outstanding`,
         description: t`Show outstanding orders`
       },
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.build)
-      },
+      OrderStatusFilter({ model: ModelType.build }),
       OverdueFilter(),
       AssignedToMeFilter(),
       MinDateFilter(),
@@ -142,12 +139,7 @@ export function BuildOrderTable({
       TargetDateAfterFilter(),
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
       HasProjectCodeFilter(),
       {
         name: 'issued_by',
@@ -155,12 +147,7 @@ export function BuildOrderTable({
         description: t`Filter by user who issued this order`,
         choices: ownerFilters.choices
       },
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: ownerFilters.choices
-      }
+      ResponsibleFilter({ choices: ownerFilters.choices })
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter
