@@ -316,13 +316,13 @@ export function authApi(
   method: 'get' | 'post' | 'put' | 'delete' = 'get',
   data?: any
 ) {
-  const [session] = useUserState((state) => [state.session]);
+  const state = useUserState.getState();
   // extend default axios instance with session token
   const requestConfig = config || {};
   if (!requestConfig.headers) {
     requestConfig.headers = {};
   }
-  requestConfig.headers['X-Session-Token'] = session;
+  requestConfig.headers['X-Session-Token'] = state.session;
 
   // set method
   requestConfig.method = method;
@@ -333,5 +333,5 @@ export function authApi(
   }
 
   // use normal api
-  return api.post(url, requestConfig);
+  return api(url, requestConfig);
 }
