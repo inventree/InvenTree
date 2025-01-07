@@ -1314,6 +1314,7 @@ HEADLESS_FRONTEND_URLS = {
     'account_reset_password': 'http://localhost:8000/password-reset',
     'account_reset_password_from_key': 'http://localhost:8000/password-reset-key/{key}',  # noqa: RUF027
     'account_signup': 'http://localhost:8000/signup',
+    'socialaccount_login_error': 'http://localhost:8000/social-login-error',
 }
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'

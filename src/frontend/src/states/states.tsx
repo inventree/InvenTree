@@ -50,15 +50,6 @@ export interface ServerAPIProps {
   django_admin: null | string;
 }
 
-export interface AuthProps {
-  sso_enabled: boolean;
-  sso_registration: boolean;
-  mfa_required: boolean;
-  providers: Provider[];
-  registration_enabled: boolean;
-  password_forgotten_enabled: boolean;
-}
-
 export interface SecuritySetting {
   account: {
     authentication_method: string;
@@ -77,15 +68,6 @@ export interface Provider {
   name: string;
   flows: string[];
   client_id: string;
-}
-
-export interface Provider {
-  id: string;
-  name: string;
-  configured: boolean;
-  login: string;
-  connect: string;
-  display_name: string;
 }
 
 // Type interface defining a single 'setting' object

@@ -34,7 +34,12 @@ export function AuthenticationForm() {
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_settings, sso_enabled, password_forgotten_enabled] =
+    useServerApiState((state) => [
+      state.auth_settings,
+      state.sso_enabled,
+      state.password_forgotten_enabled
+    ]);
   const navigate = useNavigate();
   const location = useLocation();
   const { isLoggedIn } = useUserState();
@@ -98,10 +103,10 @@ export function AuthenticationForm() {
 
   return (
     <>
-      {auth_settings?.sso_enabled === true ? (
+      {sso_enabled() ? (
         <>
           <Group grow mb='md' mt='md'>
-            {auth_settings.providers.map((provider) => (
+            {auth_settings?.socialaccount.providers.map((provider) => (
               <SsoButton provider={provider} key={provider.id} />
             ))}
           </Group>
@@ -130,7 +135,7 @@ export function AuthenticationForm() {
               placeholder={t`Your password`}
               {...classicForm.getInputProps('password')}
             />
-            {auth_settings?.password_forgotten_enabled === true && (
+            {password_forgotten_enabled() === true && (
               <Group justify='space-between' mt='0'>
                 <Anchor
                   component='button'
@@ -194,7 +199,12 @@ export function RegistrationForm() {
     initialValues: { username: '', email: '', password1: '', password2: '' }
   });
   const navigate = useNavigate();
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_settings, registration_enabled, sso_registration] =
+    useServerApiState((state) => [
+      state.auth_settings,
+      state.registration_enabled,
+      state.sso_registration_enabled
+    ]);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   function handleRegistration() {
@@ -232,11 +242,10 @@ export function RegistrationForm() {
       });
   }
 
-  const both_reg_enabled =
-    auth_settings?.registration_enabled && auth_settings?.sso_registration;
+  const both_reg_enabled = registration_enabled() && sso_registration();
   return (
     <>
-      {auth_settings?.registration_enabled && (
+      {registration_enabled() && (
         <form onSubmit={registrationForm.onSubmit(() => {})}>
           <Stack gap={0}>
             <TextInput
@@ -285,9 +294,9 @@ export function RegistrationForm() {
       {both_reg_enabled && (
         <Divider label={t`Or use SSO`} labelPosition='center' my='lg' />
       )}
-      {auth_settings?.sso_registration === true && (
+      {sso_registration() && (
         <Group grow mb='md' mt='md'>
-          {auth_settings.providers.map((provider) => (
+          {auth_settings?.socialaccount.providers.map((provider) => (
             <SsoButton provider={provider} key={provider.id} />
           ))}
         </Group>
@@ -303,13 +312,13 @@ export function ModeSelector({
   loginMode: boolean;
   setMode: any;
 }>) {
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
-  const registration_enabled =
-    auth_settings?.registration_enabled ||
-    auth_settings?.sso_registration ||
-    false;
+  const [sso_registration, registration_enabled] = useServerApiState(
+    (state) => [state.sso_registration_enabled, state.registration_enabled]
+  );
+  const both_reg_enabled =
+    registration_enabled() || sso_registration() || false;
 
-  if (registration_enabled === false) return null;
+  if (both_reg_enabled === false) return null;
   return (
     <Text ta='center' size={'xs'} mt={'md'}>
       {loginMode ? (

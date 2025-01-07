@@ -19,14 +19,14 @@ export enum ApiEndpoints {
   user_reset = 'auth/password/reset/',
   user_reset_set = 'auth/password/reset/confirm/',
   user_change_password = 'auth/password/change/',
-  user_sso = 'auth/social/',
-  user_sso_remove = 'auth/social/:id/disconnect/',
+  user_sso = '_allauth/app/v1/account/providers',
   user_login = '_allauth/app/v1/auth/login',
   user_login_mfa = '_allauth/app/v1/auth/2fa/authenticate',
   user_logout = '_allauth/app/v1/auth/session',
   user_register = 'auth/registration/',
   user_mfa = '_allauth/app/v1/account/authenticators',
   user_emails = '_allauth/app/v1/account/email',
+  login_provider_redirect = '_allauth/browser/v1/auth/provider/redirect',
 
   // Generic API endpoints
   currency_list = 'currency/exchange/',
@@ -44,14 +44,13 @@ export enum ApiEndpoints {
   custom_state_list = 'generic/status/custom/',
   version = 'version/',
   license = 'license/',
-  sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
   content_type_list = 'contenttype/',
   icons = 'icons/',
   selectionlist_list = 'selection/',
   selectionlist_detail = 'selection/:id/',
-  securtiy_settings = '_allauth/app/v1/config',
+  securtiy_settings = '_allauth/browser/v1/config',
 
   // Barcode API endpoints
   barcode = 'barcode/',
@@ -221,6 +220,5 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  ui_preference = 'web/ui_preference/',
   notes_image_upload = 'notes-image-upload/'
 }

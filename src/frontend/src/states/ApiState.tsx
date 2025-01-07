@@ -11,11 +11,16 @@ interface ServerApiStateProps {
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
   auth_settings?: SecuritySetting;
+  sso_enabled: () => boolean;
+  mfa_enabled: () => boolean;
+  registration_enabled: () => boolean;
+  sso_registration_enabled: () => boolean;
+  password_forgotten_enabled: () => boolean;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
@@ -24,6 +29,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
           .get(apiUrl(ApiEndpoints.api_server_info))
           .then((response) => {
             set({ server: response.data });
+            // set sso_enabled
           })
           .catch(() => {
             console.error('ERR: Error fetching server info');
@@ -41,7 +47,27 @@ export const useServerApiState = create<ServerApiStateProps>()(
             console.error('ERR: Error fetching SSO information');
           });
       },
-      status: undefined
+      auth_settings: undefined,
+      sso_enabled: () => {
+        const data = get().auth_settings?.socialaccount.providers;
+        return !(data === undefined || data.length == 0);
+      },
+      mfa_enabled: () => {
+        // TODO
+        return true;
+      },
+      registration_enabled: () => {
+        // TODO
+        return false;
+      },
+      sso_registration_enabled: () => {
+        // TODO
+        return false;
+      },
+      password_forgotten_enabled: () => {
+        // TODO
+        return false;
+      }
     }),
     {
       name: 'server-api-state',

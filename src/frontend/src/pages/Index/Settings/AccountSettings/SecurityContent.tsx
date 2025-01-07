@@ -11,8 +11,7 @@ import {
   Table,
   Text,
   TextInput,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
 import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -22,28 +21,15 @@ import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../../states/ApiState';
+import { ProviderLogin } from '../../../../functions/auth';
+import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
+import type { Provider, SecuritySetting } from '../../../../states/states';
 
 export function SecurityContent() {
-  const [isSsoEnabled, setIsSsoEnabled] = useState<boolean>(false);
-  const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
-
-  const { isLoading: isLoadingProvider, data: dataProvider } = useQuery({
-    queryKey: ['sso-providers'],
-    queryFn: () =>
-      api.get(apiUrl(ApiEndpoints.sso_providers)).then((res) => res.data)
-  });
-
-  // evaluate if security options are enabled
-  useEffect(() => {
-    if (dataProvider === undefined) return;
-
-    // check if SSO is enabled on the server
-    setIsSsoEnabled(dataProvider.sso_enabled || false);
-    // check if MFa is enabled
-    setIsMfaEnabled(dataProvider.mfa_required || false);
-  }, [dataProvider]);
+  const [auth_settings, sso_enabled, mfa_enabled] = useServerApiState(
+    (state) => [state.auth_settings, state.sso_enabled, state.mfa_enabled]
+  );
 
   return (
     <Stack>
@@ -54,8 +40,8 @@ export function SecurityContent() {
       <Title order={5}>
         <Trans>Single Sign On Accounts</Trans>
       </Title>
-      {isSsoEnabled ? (
-        <SsoContent dataProvider={dataProvider} />
+      {sso_enabled() ? (
+        <SsoContent auth_settings={auth_settings} />
       ) : (
         <Alert
           icon={<IconAlertCircle size='1rem' />}
@@ -69,7 +55,7 @@ export function SecurityContent() {
         <Trans>Multifactor</Trans>
       </Title>
 
-      {isMfaEnabled ? (
+      {mfa_enabled() ? (
         <MfaContent />
       ) : (
         <Alert
@@ -249,17 +235,36 @@ function EmailContent() {
   );
 }
 
-function SsoContent({ dataProvider }: Readonly<{ dataProvider: any }>) {
+function ProviderButton({ provider }: Readonly<{ provider: Provider }>) {
+  return (
+    <Button
+      key={provider.id}
+      variant='outline'
+      onClick={() => ProviderLogin(provider, 'connect')}
+    >
+      <Group justify='space-between'>{provider.name}</Group>
+    </Button>
+  );
+}
+
+function SsoContent({
+  auth_settings
+}: Readonly<{ auth_settings: SecuritySetting | undefined }>) {
   const [value, setValue] = useState<string>('');
-  const [currentProviders, setCurrentProviders] = useState<[]>();
+  const [currentProviders, setCurrentProviders] = useState<Provider[]>();
+  const { session } = useUserState.getState();
   const { isLoading, data } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () =>
-      api.get(apiUrl(ApiEndpoints.user_sso)).then((res) => res.data)
+      api
+        .get(apiUrl(ApiEndpoints.user_sso), {
+          headers: { 'X-Session-Token': session }
+        })
+        .then((res) => res.data.data)
   });
 
   useEffect(() => {
-    if (dataProvider === undefined) return;
+    if (auth_settings === undefined) return;
     if (data === undefined) return;
 
     const configuredProviders = data.map((item: any) => {
@@ -270,14 +275,16 @@ function SsoContent({ dataProvider }: Readonly<{ dataProvider: any }>) {
     }
 
     // remove providers that are used currently
-    let newData = dataProvider.providers;
-    newData = newData.filter(isAlreadyInUse);
+    const newData =
+      auth_settings.socialaccount.providers.filter(isAlreadyInUse);
     setCurrentProviders(newData);
-  }, [dataProvider, data]);
+  }, [auth_settings, data]);
 
   function removeProvider() {
     api
-      .post(apiUrl(ApiEndpoints.user_sso_remove, undefined, { id: value }))
+      .delete(apiUrl(ApiEndpoints.user_sso), {
+        headers: { 'X-Session-Token': session }
+      })
       .then(() => {
         queryClient.removeQueries({
           queryKey: ['sso-list']
@@ -288,28 +295,6 @@ function SsoContent({ dataProvider }: Readonly<{ dataProvider: any }>) {
 
   /* renderer */
   if (isLoading) return <Loader />;
-
-  function ProviderButton({ provider }: Readonly<{ provider: any }>) {
-    const button = (
-      <Button
-        key={provider.id}
-        component='a'
-        href={provider.connect}
-        variant='outline'
-        disabled={!provider.configured}
-      >
-        <Group justify='space-between'>
-          {provider.display_name}
-          {provider.configured == false && <IconAlertCircle />}
-        </Group>
-      </Button>
-    );
-
-    if (provider.configured) return button;
-    return (
-      <Tooltip label={t`Provider has not been configured`}>{button}</Tooltip>
-    );
-  }
 
   return (
     <Grid>
