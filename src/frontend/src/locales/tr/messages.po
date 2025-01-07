@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-12-31 04:52\n"
+"PO-Revision-Date: 2025-01-07 04:04\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -98,7 +98,8 @@ msgstr ""
 #: src/pages/Auth/ChangePassword.tsx:50
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/part/PartPricingPanel.tsx:71
-#: src/states/IconState.tsx:59
+#: src/states/IconState.tsx:42
+#: src/states/IconState.tsx:70
 #: src/tables/InvenTreeTable.tsx:505
 #: src/tables/bom/BomTable.tsx:454
 #: src/tables/stock/StockItemTestResultTable.tsx:320
@@ -678,6 +679,7 @@ msgstr "Resim yükleme başarısız oldu"
 #: src/components/editors/NotesEditor.tsx:83
 #: src/components/editors/NotesEditor.tsx:119
 #: src/components/forms/ApiForm.tsx:475
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:45
 #: src/tables/bom/BomTable.tsx:445
 msgid "Success"
 msgstr "Başarılı"
@@ -1915,7 +1917,7 @@ msgstr ""
 #: src/components/plugins/PluginDrawer.tsx:73
 #: src/forms/selectionListFields.tsx:103
 #: src/pages/build/BuildDetail.tsx:128
-#: src/pages/company/CompanyDetail.tsx:92
+#: src/pages/company/CompanyDetail.tsx:93
 #: src/pages/company/ManufacturerPartDetail.tsx:92
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:143
@@ -2162,7 +2164,7 @@ msgid "Stock Item"
 msgstr "Stok Ögesi"
 
 #: src/components/render/ModelType.tsx:82
-#: src/pages/company/CompanyDetail.tsx:206
+#: src/pages/company/CompanyDetail.tsx:207
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/PartStocktakeDetail.tsx:115
 #: src/pages/stock/LocationDetail.tsx:124
@@ -2224,7 +2226,7 @@ msgid "Build Items"
 msgstr "Yapı Ögeleri"
 
 #: src/components/render/ModelType.tsx:134
-#: src/pages/company/CompanyDetail.tsx:325
+#: src/pages/company/CompanyDetail.tsx:328
 msgid "Company"
 msgstr "Şirket"
 
@@ -2264,7 +2266,7 @@ msgstr "Satın Alma Siparişi"
 
 #: src/components/render/ModelType.tsx:152
 #: src/pages/Index/Settings/SystemSettings.tsx:248
-#: src/pages/company/CompanyDetail.tsx:199
+#: src/pages/company/CompanyDetail.tsx:200
 #: src/pages/company/SupplierPartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:575
 #: src/pages/purchasing/PurchasingIndex.tsx:25
@@ -2294,7 +2296,7 @@ msgstr "Satış Siparişi"
 
 #: src/components/render/ModelType.tsx:167
 #: src/pages/Index/Settings/SystemSettings.tsx:263
-#: src/pages/company/CompanyDetail.tsx:219
+#: src/pages/company/CompanyDetail.tsx:220
 #: src/pages/part/PartDetail.tsx:587
 #: src/pages/sales/SalesIndex.tsx:26
 msgid "Sales Orders"
@@ -2317,7 +2319,7 @@ msgstr "İade Emri"
 
 #: src/components/render/ModelType.tsx:184
 #: src/pages/Index/Settings/SystemSettings.tsx:279
-#: src/pages/company/CompanyDetail.tsx:226
+#: src/pages/company/CompanyDetail.tsx:227
 #: src/pages/part/PartDetail.tsx:594
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Return Orders"
@@ -2337,7 +2339,7 @@ msgid "Address"
 msgstr "Adres"
 
 #: src/components/render/ModelType.tsx:199
-#: src/pages/company/CompanyDetail.tsx:259
+#: src/pages/company/CompanyDetail.tsx:260
 msgid "Addresses"
 msgstr "Adresler"
 
@@ -2349,7 +2351,7 @@ msgid "Contact"
 msgstr "Bağlantı"
 
 #: src/components/render/ModelType.tsx:207
-#: src/pages/company/CompanyDetail.tsx:253
+#: src/pages/company/CompanyDetail.tsx:254
 msgid "Contacts"
 msgstr "Bağlantılar"
 
@@ -2466,7 +2468,7 @@ msgstr "Gönderi"
 
 #: src/components/render/Part.tsx:25
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:311
+#: src/pages/company/CompanyDetail.tsx:314
 #: src/pages/company/SupplierPartDetail.tsx:367
 #: src/pages/part/PartDetail.tsx:786
 msgid "Inactive"
@@ -4795,23 +4797,23 @@ msgstr "Para Birimi"
 msgid "Rate"
 msgstr "Kur"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:45
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:46
 msgid "Exchange rates updated"
 msgstr "Döviz kurları güncellendi"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:52
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:53
 msgid "Exchange rate update error"
 msgstr "Döviz kuru güncelleme hatası"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:62
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:63
 msgid "Refresh currency exchange rates"
 msgstr "Döviz kurlarını yenile"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:98
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:99
 msgid "Last fetched"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:99
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:100
 msgid "Base currency"
 msgstr ""
 
@@ -5447,23 +5449,23 @@ msgstr "Yapım Siparişi"
 #~ msgid "New Build Order"
 #~ msgstr "New Build Order"
 
-#: src/pages/company/CompanyDetail.tsx:98
+#: src/pages/company/CompanyDetail.tsx:99
 msgid "Website"
 msgstr "Web Sitesi"
 
-#: src/pages/company/CompanyDetail.tsx:106
+#: src/pages/company/CompanyDetail.tsx:107
 msgid "Phone Number"
 msgstr "Telefon Numarası"
 
-#: src/pages/company/CompanyDetail.tsx:113
+#: src/pages/company/CompanyDetail.tsx:114
 msgid "Email Address"
 msgstr "E-posta Adresi"
 
-#: src/pages/company/CompanyDetail.tsx:123
+#: src/pages/company/CompanyDetail.tsx:124
 msgid "Default Currency"
 msgstr "Varsayılan Para Birimi"
 
-#: src/pages/company/CompanyDetail.tsx:128
+#: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierDetail.tsx:8
 #: src/pages/company/SupplierPartDetail.tsx:128
 #: src/pages/company/SupplierPartDetail.tsx:236
@@ -5476,7 +5478,7 @@ msgstr "Varsayılan Para Birimi"
 msgid "Supplier"
 msgstr "Sağlayıcı"
 
-#: src/pages/company/CompanyDetail.tsx:134
+#: src/pages/company/CompanyDetail.tsx:135
 #: src/pages/company/ManufacturerDetail.tsx:8
 #: src/pages/company/ManufacturerPartDetail.tsx:103
 #: src/pages/company/ManufacturerPartDetail.tsx:267
@@ -5485,7 +5487,7 @@ msgstr "Sağlayıcı"
 msgid "Manufacturer"
 msgstr "Üretici"
 
-#: src/pages/company/CompanyDetail.tsx:140
+#: src/pages/company/CompanyDetail.tsx:141
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:31
 #: src/pages/sales/ReturnOrderDetail.tsx:104
@@ -5500,14 +5502,14 @@ msgid "Customer"
 msgstr "Müşteri"
 
 #: src/pages/company/CompanyDetail.tsx:175
-msgid "Company Details"
-msgstr ""
-
-#: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
 #~ msgstr "Edit company"
 
-#: src/pages/company/CompanyDetail.tsx:181
+#: src/pages/company/CompanyDetail.tsx:176
+msgid "Company Details"
+msgstr ""
+
+#: src/pages/company/CompanyDetail.tsx:182
 msgid "Manufactured Parts"
 msgstr "Üretilen Parçalar"
 
@@ -5515,24 +5517,24 @@ msgstr "Üretilen Parçalar"
 #~ msgid "Delete company"
 #~ msgstr "Delete company"
 
-#: src/pages/company/CompanyDetail.tsx:190
+#: src/pages/company/CompanyDetail.tsx:191
 msgid "Supplied Parts"
 msgstr "Sağlanan Parçalar"
 
-#: src/pages/company/CompanyDetail.tsx:237
+#: src/pages/company/CompanyDetail.tsx:238
 msgid "Assigned Stock"
 msgstr "Atanan Parçalar"
 
-#: src/pages/company/CompanyDetail.tsx:277
+#: src/pages/company/CompanyDetail.tsx:278
 #: src/tables/company/CompanyTable.tsx:87
 msgid "Edit Company"
 msgstr "Şirketi Düzenle"
 
-#: src/pages/company/CompanyDetail.tsx:285
+#: src/pages/company/CompanyDetail.tsx:286
 msgid "Delete Company"
 msgstr "Şirketi Sil"
 
-#: src/pages/company/CompanyDetail.tsx:293
+#: src/pages/company/CompanyDetail.tsx:296
 msgid "Company Actions"
 msgstr "Şirket Eylemleri"
 
@@ -6875,7 +6877,8 @@ msgstr ""
 msgid "Unavailable"
 msgstr ""
 
-#: src/states/IconState.tsx:60
+#: src/states/IconState.tsx:43
+#: src/states/IconState.tsx:71
 msgid "Error loading icon package from server"
 msgstr ""
 

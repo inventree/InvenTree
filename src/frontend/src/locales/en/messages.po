@@ -93,7 +93,8 @@ msgstr "Scan or enter barcode data"
 #: src/pages/Auth/ChangePassword.tsx:50
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/part/PartPricingPanel.tsx:71
-#: src/states/IconState.tsx:59
+#: src/states/IconState.tsx:42
+#: src/states/IconState.tsx:70
 #: src/tables/InvenTreeTable.tsx:505
 #: src/tables/bom/BomTable.tsx:454
 #: src/tables/stock/StockItemTestResultTable.tsx:320
@@ -673,6 +674,7 @@ msgstr "Image upload failed"
 #: src/components/editors/NotesEditor.tsx:83
 #: src/components/editors/NotesEditor.tsx:119
 #: src/components/forms/ApiForm.tsx:475
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:45
 #: src/tables/bom/BomTable.tsx:445
 msgid "Success"
 msgstr "Success"
@@ -1910,7 +1912,7 @@ msgstr "Plugin Information"
 #: src/components/plugins/PluginDrawer.tsx:73
 #: src/forms/selectionListFields.tsx:103
 #: src/pages/build/BuildDetail.tsx:128
-#: src/pages/company/CompanyDetail.tsx:92
+#: src/pages/company/CompanyDetail.tsx:93
 #: src/pages/company/ManufacturerPartDetail.tsx:92
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:143
@@ -2157,7 +2159,7 @@ msgid "Stock Item"
 msgstr "Stock Item"
 
 #: src/components/render/ModelType.tsx:82
-#: src/pages/company/CompanyDetail.tsx:206
+#: src/pages/company/CompanyDetail.tsx:207
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/PartStocktakeDetail.tsx:115
 #: src/pages/stock/LocationDetail.tsx:124
@@ -2219,7 +2221,7 @@ msgid "Build Items"
 msgstr "Build Items"
 
 #: src/components/render/ModelType.tsx:134
-#: src/pages/company/CompanyDetail.tsx:325
+#: src/pages/company/CompanyDetail.tsx:328
 msgid "Company"
 msgstr "Company"
 
@@ -2259,7 +2261,7 @@ msgstr "Purchase Order"
 
 #: src/components/render/ModelType.tsx:152
 #: src/pages/Index/Settings/SystemSettings.tsx:248
-#: src/pages/company/CompanyDetail.tsx:199
+#: src/pages/company/CompanyDetail.tsx:200
 #: src/pages/company/SupplierPartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:575
 #: src/pages/purchasing/PurchasingIndex.tsx:25
@@ -2289,7 +2291,7 @@ msgstr "Sales Order"
 
 #: src/components/render/ModelType.tsx:167
 #: src/pages/Index/Settings/SystemSettings.tsx:263
-#: src/pages/company/CompanyDetail.tsx:219
+#: src/pages/company/CompanyDetail.tsx:220
 #: src/pages/part/PartDetail.tsx:587
 #: src/pages/sales/SalesIndex.tsx:26
 msgid "Sales Orders"
@@ -2312,7 +2314,7 @@ msgstr "Return Order"
 
 #: src/components/render/ModelType.tsx:184
 #: src/pages/Index/Settings/SystemSettings.tsx:279
-#: src/pages/company/CompanyDetail.tsx:226
+#: src/pages/company/CompanyDetail.tsx:227
 #: src/pages/part/PartDetail.tsx:594
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Return Orders"
@@ -2332,7 +2334,7 @@ msgid "Address"
 msgstr "Address"
 
 #: src/components/render/ModelType.tsx:199
-#: src/pages/company/CompanyDetail.tsx:259
+#: src/pages/company/CompanyDetail.tsx:260
 msgid "Addresses"
 msgstr "Addresses"
 
@@ -2344,7 +2346,7 @@ msgid "Contact"
 msgstr "Contact"
 
 #: src/components/render/ModelType.tsx:207
-#: src/pages/company/CompanyDetail.tsx:253
+#: src/pages/company/CompanyDetail.tsx:254
 msgid "Contacts"
 msgstr "Contacts"
 
@@ -2461,7 +2463,7 @@ msgstr "Shipment"
 
 #: src/components/render/Part.tsx:25
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:311
+#: src/pages/company/CompanyDetail.tsx:314
 #: src/pages/company/SupplierPartDetail.tsx:367
 #: src/pages/part/PartDetail.tsx:786
 msgid "Inactive"
@@ -4790,23 +4792,23 @@ msgstr "Currency"
 msgid "Rate"
 msgstr "Rate"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:45
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:46
 msgid "Exchange rates updated"
 msgstr "Exchange rates updated"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:52
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:53
 msgid "Exchange rate update error"
 msgstr "Exchange rate update error"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:62
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:63
 msgid "Refresh currency exchange rates"
 msgstr "Refresh currency exchange rates"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:98
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:99
 msgid "Last fetched"
 msgstr "Last fetched"
 
-#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:99
+#: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:100
 msgid "Base currency"
 msgstr "Base currency"
 
@@ -5442,23 +5444,23 @@ msgstr "Build Order"
 #~ msgid "New Build Order"
 #~ msgstr "New Build Order"
 
-#: src/pages/company/CompanyDetail.tsx:98
+#: src/pages/company/CompanyDetail.tsx:99
 msgid "Website"
 msgstr "Website"
 
-#: src/pages/company/CompanyDetail.tsx:106
+#: src/pages/company/CompanyDetail.tsx:107
 msgid "Phone Number"
 msgstr "Phone Number"
 
-#: src/pages/company/CompanyDetail.tsx:113
+#: src/pages/company/CompanyDetail.tsx:114
 msgid "Email Address"
 msgstr "Email Address"
 
-#: src/pages/company/CompanyDetail.tsx:123
+#: src/pages/company/CompanyDetail.tsx:124
 msgid "Default Currency"
 msgstr "Default Currency"
 
-#: src/pages/company/CompanyDetail.tsx:128
+#: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierDetail.tsx:8
 #: src/pages/company/SupplierPartDetail.tsx:128
 #: src/pages/company/SupplierPartDetail.tsx:236
@@ -5471,7 +5473,7 @@ msgstr "Default Currency"
 msgid "Supplier"
 msgstr "Supplier"
 
-#: src/pages/company/CompanyDetail.tsx:134
+#: src/pages/company/CompanyDetail.tsx:135
 #: src/pages/company/ManufacturerDetail.tsx:8
 #: src/pages/company/ManufacturerPartDetail.tsx:103
 #: src/pages/company/ManufacturerPartDetail.tsx:267
@@ -5480,7 +5482,7 @@ msgstr "Supplier"
 msgid "Manufacturer"
 msgstr "Manufacturer"
 
-#: src/pages/company/CompanyDetail.tsx:140
+#: src/pages/company/CompanyDetail.tsx:141
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:31
 #: src/pages/sales/ReturnOrderDetail.tsx:104
@@ -5495,14 +5497,14 @@ msgid "Customer"
 msgstr "Customer"
 
 #: src/pages/company/CompanyDetail.tsx:175
-msgid "Company Details"
-msgstr "Company Details"
-
-#: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
 #~ msgstr "Edit company"
 
-#: src/pages/company/CompanyDetail.tsx:181
+#: src/pages/company/CompanyDetail.tsx:176
+msgid "Company Details"
+msgstr "Company Details"
+
+#: src/pages/company/CompanyDetail.tsx:182
 msgid "Manufactured Parts"
 msgstr "Manufactured Parts"
 
@@ -5510,24 +5512,24 @@ msgstr "Manufactured Parts"
 #~ msgid "Delete company"
 #~ msgstr "Delete company"
 
-#: src/pages/company/CompanyDetail.tsx:190
+#: src/pages/company/CompanyDetail.tsx:191
 msgid "Supplied Parts"
 msgstr "Supplied Parts"
 
-#: src/pages/company/CompanyDetail.tsx:237
+#: src/pages/company/CompanyDetail.tsx:238
 msgid "Assigned Stock"
 msgstr "Assigned Stock"
 
-#: src/pages/company/CompanyDetail.tsx:277
+#: src/pages/company/CompanyDetail.tsx:278
 #: src/tables/company/CompanyTable.tsx:87
 msgid "Edit Company"
 msgstr "Edit Company"
 
-#: src/pages/company/CompanyDetail.tsx:285
+#: src/pages/company/CompanyDetail.tsx:286
 msgid "Delete Company"
 msgstr "Delete Company"
 
-#: src/pages/company/CompanyDetail.tsx:293
+#: src/pages/company/CompanyDetail.tsx:296
 msgid "Company Actions"
 msgstr "Company Actions"
 
@@ -6870,7 +6872,8 @@ msgstr "Expired"
 msgid "Unavailable"
 msgstr "Unavailable"
 
-#: src/states/IconState.tsx:60
+#: src/states/IconState.tsx:43
+#: src/states/IconState.tsx:71
 msgid "Error loading icon package from server"
 msgstr "Error loading icon package from server"
 

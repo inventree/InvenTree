@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-05 01:50+0000\n"
-"PO-Revision-Date: 2025-01-05 01:53\n"
+"POT-Creation-Date: 2025-01-07 04:00+0000\n"
+"PO-Revision-Date: 2025-01-07 04:02\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
@@ -104,7 +104,7 @@ msgstr ""
 #: build/serializers.py:589 company/models.py:829 order/models.py:1434
 #: part/models.py:3302
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:2629 stock/models.py:2753 stock/serializers.py:725
+#: stock/models.py:2627 stock/models.py:2751 stock/serializers.py:725
 #: stock/serializers.py:887 stock/serializers.py:992 stock/serializers.py:1046
 #: stock/serializers.py:1357 stock/serializers.py:1446
 #: stock/serializers.py:1624
@@ -636,7 +636,7 @@ msgstr ""
 msgid "Invalid value for overage"
 msgstr ""
 
-#: build/api.py:37 order/api.py:82 order/api.py:175 order/serializers.py:125
+#: build/api.py:37 order/api.py:100 order/api.py:193 order/serializers.py:125
 msgid "Order Status"
 msgstr ""
 
@@ -644,8 +644,8 @@ msgstr ""
 msgid "Parent Build"
 msgstr ""
 
-#: build/api.py:67 build/api.py:694 order/api.py:432 order/api.py:649
-#: order/api.py:1047 order/api.py:1267 stock/api.py:491
+#: build/api.py:67 build/api.py:694 order/api.py:452 order/api.py:669
+#: order/api.py:1055 order/api.py:1275 stock/api.py:491
 msgid "Include Variants"
 msgstr ""
 
@@ -653,7 +653,7 @@ msgstr ""
 msgid "Ancestor Build"
 msgstr ""
 
-#: build/api.py:119 order/api.py:100
+#: build/api.py:119 order/api.py:118
 msgid "Assigned to me"
 msgstr ""
 
@@ -716,8 +716,8 @@ msgid "Testable"
 msgstr ""
 
 #: build/api.py:396 build/api.py:708 build/models.py:269
-#: build/serializers.py:1390 company/models.py:1039 order/api.py:203
-#: order/api.py:821 order/api.py:1060 order/models.py:1556 order/models.py:1715
+#: build/serializers.py:1390 company/models.py:1039 order/api.py:221
+#: order/api.py:829 order/api.py:1068 order/models.py:1556 order/models.py:1715
 #: order/models.py:1716 part/api.py:1439 part/api.py:1507 part/api.py:1814
 #: part/models.py:417 part/models.py:3131 part/models.py:3275
 #: part/models.py:3423 part/models.py:3444 part/models.py:3466
@@ -741,11 +741,11 @@ msgstr ""
 msgid "Part"
 msgstr ""
 
-#: build/api.py:401 order/api.py:866
+#: build/api.py:401 order/api.py:874
 msgid "Order Outstanding"
 msgstr ""
 
-#: build/api.py:411 order/api.py:825
+#: build/api.py:411 order/api.py:833
 msgid "Allocated"
 msgstr ""
 
@@ -903,7 +903,7 @@ msgstr ""
 msgid "User who issued this build order"
 msgstr ""
 
-#: build/models.py:384 common/models.py:116 order/api.py:150
+#: build/models.py:384 common/models.py:116 order/api.py:168
 #: order/models.py:341 part/models.py:1261
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
@@ -931,7 +931,7 @@ msgid "Priority of this build order"
 msgstr ""
 
 #: build/models.py:405 common/models.py:86 common/models.py:100
-#: order/api.py:136 order/models.py:305
+#: order/api.py:154 order/models.py:305
 msgid "Project Code"
 msgstr ""
 
@@ -1772,7 +1772,7 @@ msgstr ""
 msgid "Unit definition"
 msgstr ""
 
-#: common/models.py:1791 common/models.py:1848 stock/models.py:2748
+#: common/models.py:1791 common/models.py:1848 stock/models.py:2746
 #: stock/serializers.py:244
 msgid "Attachment"
 msgstr ""
@@ -1842,7 +1842,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr ""
 
 #: common/models.py:1963 common/models.py:2202 company/models.py:595
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:2740
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:2738
 msgid "Value"
 msgstr ""
 
@@ -2052,7 +2052,7 @@ msgid "Response data from the barcode scan"
 msgstr ""
 
 #: common/models.py:2290 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:2734
+#: stock/models.py:2732
 msgid "Result"
 msgstr ""
 
@@ -2078,7 +2078,7 @@ msgstr ""
 msgid "A order that is assigned to you was canceled"
 msgstr ""
 
-#: common/notifications.py:346 common/notifications.py:353 order/api.py:476
+#: common/notifications.py:346 common/notifications.py:353 order/api.py:496
 msgid "Items Received"
 msgstr ""
 
@@ -3746,7 +3746,7 @@ msgstr ""
 msgid "Parameter units"
 msgstr ""
 
-#: company/models.py:657 order/api.py:215 order/api.py:428
+#: company/models.py:657 order/api.py:233 order/api.py:448
 #: order/serializers.py:577 stock/models.py:880
 msgid "Supplier Part"
 msgstr ""
@@ -4073,7 +4073,7 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:233 order/api.py:1621
+#: machine/machine_types/label_printer.py:233 order/api.py:1617
 msgid "Unknown"
 msgstr ""
 
@@ -4161,80 +4161,80 @@ msgstr ""
 msgid "Config type"
 msgstr ""
 
-#: order/api.py:96
+#: order/api.py:114
 msgid "Order Reference"
 msgstr ""
 
-#: order/api.py:124 order/api.py:1079
+#: order/api.py:142 order/api.py:1087
 msgid "Outstanding"
 msgstr ""
 
-#: order/api.py:140
+#: order/api.py:158
 msgid "Has Project Code"
 msgstr ""
 
-#: order/api.py:154
+#: order/api.py:172
 msgid "Created Before"
 msgstr ""
 
-#: order/api.py:158
+#: order/api.py:176
 msgid "Created After"
 msgstr ""
 
-#: order/api.py:162
+#: order/api.py:180
 msgid "Target Date Before"
 msgstr ""
 
-#: order/api.py:166
+#: order/api.py:184
 msgid "Target Date After"
 msgstr ""
 
-#: order/api.py:179
+#: order/api.py:197
 msgid "Has Pricing"
 msgstr ""
 
-#: order/api.py:228 order/api.py:690 order/api.py:1307
+#: order/api.py:246 order/api.py:710 order/api.py:1315
 msgid "Completed Before"
 msgstr ""
 
-#: order/api.py:232 order/api.py:694 order/api.py:1311
+#: order/api.py:250 order/api.py:714 order/api.py:1319
 msgid "Completed After"
 msgstr ""
 
-#: order/api.py:411 order/api.py:817 order/api.py:1043 order/models.py:1537
+#: order/api.py:431 order/api.py:825 order/api.py:1051 order/models.py:1537
 #: order/models.py:1655 order/models.py:1706 order/models.py:1834
 #: order/models.py:1997 order/models.py:2499 order/models.py:2565
 msgid "Order"
 msgstr ""
 
-#: order/api.py:415 order/api.py:855
+#: order/api.py:435 order/api.py:863
 msgid "Order Complete"
 msgstr ""
 
-#: order/api.py:447 order/serializers.py:650
+#: order/api.py:467 order/serializers.py:650
 msgid "Internal Part"
 msgstr ""
 
-#: order/api.py:466
+#: order/api.py:486
 msgid "Order Pending"
 msgstr ""
 
-#: order/api.py:840
+#: order/api.py:848
 msgid "Completed"
 msgstr ""
 
-#: order/api.py:1095
+#: order/api.py:1103
 msgid "Has Shipment"
 msgstr ""
 
-#: order/api.py:1615 order/models.py:388 order/models.py:1538
+#: order/api.py:1611 order/models.py:388 order/models.py:1538
 #: order/models.py:1656
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:121 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr ""
 
-#: order/api.py:1617 order/models.py:923 order/models.py:1707
+#: order/api.py:1613 order/models.py:923 order/models.py:1707
 #: order/models.py:1835 order/models.py:1998
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
@@ -4243,7 +4243,7 @@ msgstr ""
 msgid "Sales Order"
 msgstr ""
 
-#: order/api.py:1619 order/models.py:2168 order/models.py:2500
+#: order/api.py:1615 order/models.py:2168 order/models.py:2500
 #: order/models.py:2566
 #: report/templates/report/inventree_return_order_report.html:13
 msgid "Return Order"
@@ -7729,7 +7729,7 @@ msgstr ""
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:1793 stock/models.py:2698
+#: stock/models.py:1793 stock/models.py:2696
 msgid "Test template does not exist"
 msgstr ""
 
@@ -7777,67 +7777,67 @@ msgstr ""
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2599
+#: stock/models.py:2597
 msgid "Stock Item Tracking"
 msgstr ""
 
-#: stock/models.py:2630
+#: stock/models.py:2628
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2670
+#: stock/models.py:2668
 msgid "Stock Item Test Result"
 msgstr ""
 
-#: stock/models.py:2701
+#: stock/models.py:2699
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2705
+#: stock/models.py:2703
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2710
+#: stock/models.py:2708
 msgid "Invalid value for this test"
 msgstr ""
 
-#: stock/models.py:2734
+#: stock/models.py:2732
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2741
+#: stock/models.py:2739
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2749 stock/serializers.py:245
+#: stock/models.py:2747 stock/serializers.py:245
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2753
+#: stock/models.py:2751
 msgid "Test notes"
 msgstr ""
 
-#: stock/models.py:2761
+#: stock/models.py:2759
 msgid "Test station"
 msgstr ""
 
-#: stock/models.py:2762
+#: stock/models.py:2760
 msgid "The identifier of the test station where the test was performed"
 msgstr ""
 
-#: stock/models.py:2768
+#: stock/models.py:2766
 msgid "Started"
 msgstr ""
 
-#: stock/models.py:2769
+#: stock/models.py:2767
 msgid "The timestamp of the test start"
 msgstr ""
 
-#: stock/models.py:2775
+#: stock/models.py:2773
 msgid "Finished"
 msgstr ""
 
-#: stock/models.py:2776
+#: stock/models.py:2774
 msgid "The timestamp of the test finish"
 msgstr ""
 
