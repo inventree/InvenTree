@@ -29,8 +29,9 @@ export default function Reset() {
             <Stack>
               <TextInput
                 required
-                label={t`Code`}
-                description={t`Enter your OTP or recovery code`}
+                label={t`TOTP Code`}
+                name='TOTP'
+                description={t`Enter your TOTP or recovery code`}
                 {...simpleForm.getInputProps('code')}
               />
             </Stack>
