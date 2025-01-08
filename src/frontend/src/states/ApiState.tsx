@@ -58,7 +58,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
       },
       registration_enabled: () => {
         // TODO
-        return false;
+        return true;
       },
       sso_registration_enabled: () => {
         // TODO
