@@ -19,7 +19,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
-import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
@@ -297,11 +296,54 @@ function SsoContent({
 }
 
 function MfaContent() {
+  const { isLoading, data, refetch } = useQuery({
+    queryKey: ['mfa-list'],
+    queryFn: () =>
+      api.get(apiUrl(ApiEndpoints.user_mfa)).then((res) => res.data.data)
+  });
+
+  function parseDate(date: number) {
+    if (date == null) return 'Never';
+    return new Date(date * 1000).toLocaleString();
+  }
+  const rows = useMemo(() => {
+    if (isLoading || data === undefined) return null;
+    return data.map((token: any) => (
+      <Table.Tr key={`${token.created_at}-${token.type}`}>
+        <Table.Td>{token.type}</Table.Td>
+        <Table.Td>{parseDate(token.last_used_at)}</Table.Td>
+        <Table.Td>{parseDate(token.created_at)}</Table.Td>
+      </Table.Tr>
+    ));
+  }, [data, isLoading]);
+
+  /* renderer */
+  if (isLoading) return <Loader />;
+
+  if (data.length == 0)
+    return (
+      <Alert icon={<IconAlertCircle size='1rem' />} color='green'>
+        <Trans>No factors configured</Trans>
+      </Alert>
+    );
+
   return (
-    <>
-      MFA Details
-      <PlaceholderPill />
-    </>
+    <Table stickyHeader striped highlightOnHover withTableBorder>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>
+            <Trans>Type</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Last used at</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Created at</Trans>
+          </Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>{rows}</Table.Tbody>
+    </Table>
   );
 }
 
