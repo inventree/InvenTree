@@ -21,6 +21,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   doBasicLogin,
   doSimpleLogin,
+  ensureCsrf,
   followRedirect
 } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
@@ -196,7 +197,12 @@ export function AuthenticationForm() {
 
 export function RegistrationForm() {
   const registrationForm = useForm({
-    initialValues: { username: '', email: '', password1: '', password2: '' }
+    initialValues: {
+      username: '',
+      email: '',
+      password: '',
+      password2: '' as string | undefined
+    }
   });
   const navigate = useNavigate();
   const [auth_settings, registration_enabled, sso_registration] =
@@ -207,14 +213,26 @@ export function RegistrationForm() {
     ]);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
-  function handleRegistration() {
+  async function handleRegistration() {
+    // check if passwords match
+    if (
+      registrationForm.values.password !== registrationForm.values.password2
+    ) {
+      registrationForm.setFieldError('password2', t`Passwords do not match`);
+      return;
+    }
     setIsRegistering(true);
+
+    // remove password2 from the request
+    const { password2, ...vals } = registrationForm.values;
+    await ensureCsrf();
+
     api
-      .post(apiUrl(ApiEndpoints.user_register), registrationForm.values, {
+      .post(apiUrl(ApiEndpoints.user_register), vals, {
         headers: { Authorization: '' }
       })
       .then((ret) => {
-        if (ret?.status === 204 || ret?.status === 201) {
+        if (ret?.status === 200) {
           setIsRegistering(false);
           showLoginNotification({
             title: t`Registration successful`,
@@ -226,16 +244,23 @@ export function RegistrationForm() {
       .catch((err) => {
         if (err.response?.status === 400) {
           setIsRegistering(false);
-          for (const [key, value] of Object.entries(err.response.data)) {
-            registrationForm.setFieldError(key, value as string);
+
+          // collect all errors per field
+          const errors: { [key: string]: string[] } = {};
+          for (const val of err.response.data.errors) {
+            if (!errors[val.param]) {
+              errors[val.param] = [];
+            }
+            errors[val.param].push(val.message);
           }
-          let err_msg = '';
-          if (err.response?.data?.non_field_errors) {
-            err_msg = err.response.data.non_field_errors;
+
+          for (const key in errors) {
+            registrationForm.setFieldError(key, errors[key]);
           }
+
           showLoginNotification({
             title: t`Input error`,
-            message: t`Check your input and try again. ` + err_msg,
+            message: t`Check your input and try again. `,
             success: false
           });
         }
@@ -268,7 +293,7 @@ export function RegistrationForm() {
               label={t`Password`}
               aria-label='register-password'
               placeholder={t`Your password`}
-              {...registrationForm.getInputProps('password1')}
+              {...registrationForm.getInputProps('password')}
             />
             <PasswordInput
               required

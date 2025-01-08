@@ -72,15 +72,9 @@ export const doBasicLogin = async (
   }
 
   clearCsrfCookie();
-  const cookie = getCsrfCookie();
+  await ensureCsrf();
 
   const login_url = apiUrl(ApiEndpoints.user_login);
-
-  if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {
-      // his is to be expected
-    });
-  }
 
   let loginDone = false;
   let success = false;
@@ -168,6 +162,13 @@ export const doSimpleLogin = async (email: string) => {
     });
   return mail;
 };
+
+export async function ensureCsrf() {
+  const cookie = getCsrfCookie();
+  if (cookie == undefined) {
+    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {});
+  }
+}
 
 export function handleReset(
   navigate: NavigateFunction,

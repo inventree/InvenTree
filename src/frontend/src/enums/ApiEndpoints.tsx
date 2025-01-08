@@ -23,7 +23,7 @@ export enum ApiEndpoints {
   user_login = 'auth/v1/auth/login',
   user_login_mfa = 'auth/v1/auth/2fa/authenticate',
   user_logout = 'auth/v1/auth/session',
-  user_register = 'auth/registration/', // TODO change
+  user_register = 'auth/v1/auth/signup',
   user_mfa = 'auth/v1/account/authenticators',
   user_emails = 'auth/v1/account/email',
   login_provider_redirect = 'auth/v1/auth/provider/redirect',
