@@ -19,14 +19,14 @@ export enum ApiEndpoints {
   user_reset = 'auth/password/reset/', // TODO change
   user_reset_set = 'auth/password/reset/confirm/', // TODO change
   user_change_password = 'auth/password/change/', // TODO change
-  user_sso = '_allauth/browser/v1/account/providers',
-  user_login = '_allauth/browser/v1/auth/login',
-  user_login_mfa = '_allauth/browser/v1/auth/2fa/authenticate',
-  user_logout = '_allauth/browser/v1/auth/session',
+  user_sso = 'auth/v1/account/providers',
+  user_login = 'auth/v1/auth/login',
+  user_login_mfa = 'auth/v1/auth/2fa/authenticate',
+  user_logout = 'auth/v1/auth/session',
   user_register = 'auth/registration/', // TODO change
-  user_mfa = '_allauth/browser/v1/account/authenticators',
-  user_emails = '_allauth/browser/v1/account/email',
-  login_provider_redirect = '_allauth/browser/v1/auth/provider/redirect',
+  user_mfa = 'auth/v1/account/authenticators',
+  user_emails = 'auth/v1/account/email',
+  login_provider_redirect = 'auth/v1/auth/provider/redirect',
 
   // Generic API endpoints
   currency_list = 'currency/exchange/',
@@ -50,7 +50,7 @@ export enum ApiEndpoints {
   icons = 'icons/',
   selectionlist_list = 'selection/',
   selectionlist_detail = 'selection/:id/',
-  securtiy_settings = '_allauth/browser/v1/config',
+  securtiy_settings = 'auth/v1/config',
 
   // Barcode API endpoints
   barcode = 'barcode/',

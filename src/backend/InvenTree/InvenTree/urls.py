@@ -10,6 +10,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
+from allauth.headless.urls import Client, build_urlpatterns
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
 
@@ -98,6 +99,12 @@ apipatterns = [
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
                 name='api-login-redirect',
+            ),
+            path(
+                '',
+                include(
+                    (build_urlpatterns(Client.BROWSER), 'headless'), namespace='browser'
+                ),
             ),
         ]),
     ),
