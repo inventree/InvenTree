@@ -1,6 +1,5 @@
 """Generic models which provide extra functionality over base Django model types."""
 
-import logging
 from datetime import datetime
 from string import Formatter
 
@@ -14,6 +13,7 @@ from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
@@ -25,7 +25,7 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DiffMixin:
@@ -1124,15 +1124,16 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
         except (ValueError, NoReverseMatch):
             url = ''
 
+        # Function name
+        f = instance.func
+
         notify_staff_users_of_error(
             instance,
             'inventree.task_failure',
             {
                 'failure': instance,
                 'name': _('Task Failure'),
-                'message': _(
-                    f"Background worker task '{instance.func}' failed after {n} attempts"
-                ),
+                'message': _(f"Background worker task '{f}' failed after {n} attempts"),
                 'link': url,
             },
         )

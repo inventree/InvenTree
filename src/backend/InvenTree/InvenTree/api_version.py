@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 297
+INVENTREE_API_VERSION = 298
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
@@ -10,6 +10,11 @@ INVENTREE_API_TEXT = """
 v296 - 2024-12-22 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
+
+v298 - 2025-01-07 - https://github.com/inventree/InvenTree/pull/8848
+    - Adds 'created_by' field to PurchaseOrder API endpoints
+    - Adds 'created_by' field to SalesOrder API endpoints
+    - Adds 'created_by' field to ReturnOrder API endpoints
 
 v297 - 2024-12-29 - https://github.com/inventree/InvenTree/pull/8438
     - Adjustments to the CustomUserState API endpoints and serializers

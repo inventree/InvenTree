@@ -1,7 +1,6 @@
 """Build database model definitions."""
 
 import decimal
-import logging
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -15,6 +14,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 from rest_framework import serializers
@@ -47,7 +47,7 @@ from generic.states import StateTransitionMixin, StatusCodeMixin
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class Build(

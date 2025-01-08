@@ -85,6 +85,7 @@ jobs:
         id: test-docker
         run: |
           docker build . --target production --tag inventree-test -f contrib/container/Dockerfile
+          docker run --rm inventree-test invoke version
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
@@ -100,6 +101,7 @@ jobs:
       - name: Update Docker Image
         run: |
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke install
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke version
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d

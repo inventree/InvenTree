@@ -1,6 +1,5 @@
 """Middleware for InvenTree."""
 
-import logging
 import sys
 
 from django.conf import settings
@@ -9,11 +8,12 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import resolve, reverse_lazy
 
+import structlog
 from error_report.middleware import ExceptionProcessor
 
 from users.models import ApiToken
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_token_from_request(request):

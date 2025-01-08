@@ -8,7 +8,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -32,8 +36,11 @@ import {
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
+  OrderStatusFilter,
+  OutstandingFilter,
   OverdueFilter,
-  StatusFilterOptions,
+  ProjectCodeFilter,
+  ResponsibleFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -117,21 +124,12 @@ export function BuildOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const ownerFilters = useOwnerFilters();
+  const userFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
-      {
-        name: 'outstanding',
-        type: 'boolean',
-        label: t`Outstanding`,
-        description: t`Show outstanding orders`
-      },
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.build)
-      },
+      OutstandingFilter(),
+      OrderStatusFilter({ model: ModelType.build }),
       OverdueFilter(),
       AssignedToMeFilter(),
       MinDateFilter(),
@@ -142,25 +140,15 @@ export function BuildOrderTable({
       TargetDateAfterFilter(),
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
       HasProjectCodeFilter(),
       {
         name: 'issued_by',
         label: t`Issued By`,
         description: t`Filter by user who issued this order`,
-        choices: ownerFilters.choices
+        choices: userFilters.choices
       },
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: ownerFilters.choices
-      }
+      ResponsibleFilter({ choices: ownerFilters.choices })
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter
@@ -174,7 +162,12 @@ export function BuildOrderTable({
     }
 
     return filters;
-  }, [partId, projectCodeFilters.choices, ownerFilters.choices]);
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    ownerFilters.choices,
+    userFilters.choices
+  ]);
 
   const user = useUserState();
 

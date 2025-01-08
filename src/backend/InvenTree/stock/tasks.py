@@ -1,8 +1,8 @@
 """Background tasks for the stock app."""
 
-import logging
+import structlog
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def rebuild_stock_item_tree(tree_id=None):

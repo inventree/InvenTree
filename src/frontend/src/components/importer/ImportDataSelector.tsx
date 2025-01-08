@@ -9,7 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { cancelEvent } from '../../functions/events';
 import {
@@ -131,6 +131,7 @@ export default function ImporterDataSelector({
 }: Readonly<{
   session: ImportSessionState;
 }>) {
+  const api = useApi();
   const table = useTable('dataimporter');
 
   const [selectedFieldNames, setSelectedFieldNames] = useState<string[]>([]);

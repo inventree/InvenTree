@@ -1,7 +1,6 @@
 """Database model definitions for the 'users' app."""
 
 import datetime
-import logging
 
 from django.conf import settings
 from django.contrib import admin
@@ -19,6 +18,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework.authtoken.models import Token as AuthToken
 
 import InvenTree.helpers
@@ -26,7 +26,7 @@ import InvenTree.models
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 #  OVERRIDE START

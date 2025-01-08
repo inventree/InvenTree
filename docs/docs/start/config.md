@@ -93,7 +93,6 @@ The following debugging / logging options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | False |
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
-| INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
@@ -106,10 +105,6 @@ Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% inclu
 ### Query Count Logging
 
 Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
-
-### Debug Shell
-
-Enabling the `INVENTREE_DEBUG_SHELL` setting will allow the use of the [administrator shell](https://github.com/djk2/django-admin-shell). Note that this setting is only available if `INVENTREE_DEBUG` is also enabled, and is only accessible to superuser accounts.
 
 ### Database Logging
 
@@ -434,16 +429,15 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.hide_pui_banner | Disable PUI banner | False |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi","hide_pui_banner":"True"}
+INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
 ```
 
-This example removes the PUI banner and sets a login message. Take care of the double quotes.
+This example sets a login message. Take care of the double quotes.
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 

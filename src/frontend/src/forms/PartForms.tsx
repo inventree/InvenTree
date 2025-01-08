@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { api } from '../App';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useApi } from '../contexts/ApiContext';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
@@ -179,6 +179,8 @@ export function usePartParameterFields({
 }: {
   editTemplate?: boolean;
 }): ApiFormFieldSet {
+  const api = useApi();
+
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 

@@ -1,12 +1,12 @@
 """Static files management for InvenTree plugins."""
 
-import logging
-
 from django.contrib.staticfiles.storage import staticfiles_storage
+
+import structlog
 
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def clear_static_dir(path, recursive=True):

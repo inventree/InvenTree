@@ -38,6 +38,7 @@ pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
 pint                                    # Unit conversion
 pip-licenses                            # License information for installed packages
+ppf.datamatrix                          # Data Matrix barcode generator
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
 pyyaml>=6.0.1                           # YAML parsing

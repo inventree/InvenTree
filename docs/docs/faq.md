@@ -26,7 +26,7 @@ Refer to the [invoke guide](./start/invoke.md#cant-find-any-collection-named-tas
 
 If the installed version of invoke is too old, users may see error messages during the installation procedure. Refer to the [invoke guide](./start/invoke.md#minimum-version) for more information.
 
-### No module named 'django'
+### No module named <xxx>
 
 During the install or update process, you may be presented with an error like:
 
@@ -34,9 +34,27 @@ During the install or update process, you may be presented with an error like:
 ModuleNotFoundError: No module named 'django'
 ```
 
-Most likely you are trying to run the InvenTree server from outside the context of the virtual environment where the required python libraries are installed.
+Either the named modules are not installed, or the virtual environment is not correctly activated.
 
-Always activate the virtual environment before running server commands!
+**Check Virtual Environment**
+
+Ensure that the virtual environment is correctly activated before running any InvenTree commands.
+
+**Check Invoke Tool**
+
+Ensure that the invoke tool is correctly installed inside the virtual environment, with:
+
+```bash
+pip install --upgrade --ignore-installed invoke
+```
+
+**Install Required Python Packages**
+
+Ensure that all required python packages are installed by running:
+
+```bash
+invoke install
+```
 
 ### 'str' object has no attribute 'removeSuffix'
 

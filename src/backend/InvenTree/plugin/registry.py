@@ -7,7 +7,6 @@
 import importlib
 import importlib.machinery
 import importlib.util
-import logging
 import os
 import sys
 import time
@@ -25,6 +24,8 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -38,7 +39,7 @@ from .helpers import (
 )
 from .plugin import InvenTreePlugin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PluginsRegistry:
@@ -579,9 +580,7 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(
-                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                        )
+                        handle_error(error, log_name='init', do_raise=True)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
