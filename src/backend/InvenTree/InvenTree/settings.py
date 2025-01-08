@@ -20,7 +20,6 @@ from django.core.validators import URLValidator
 from django.http import Http404, HttpResponseGone
 
 import structlog
-from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -1163,8 +1162,6 @@ USE_X_FORWARDED_PORT = get_boolean_setting(
 # Refer to the django-cors-headers documentation for more information
 # Ref: https://github.com/adamchainz/django-cors-headers
 
-
-CORS_ALLOW_HEADERS = (*default_headers, 'x-session-token')
 
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(

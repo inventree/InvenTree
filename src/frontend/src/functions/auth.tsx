@@ -65,8 +65,7 @@ export const doBasicLogin = async (
   navigate: NavigateFunction
 ) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, setSession, fetchUserState } =
-    useUserState.getState();
+  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -100,7 +99,6 @@ export const doBasicLogin = async (
     )
     .then((response) => {
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setSession(response.data.meta.session_token);
         setToken(response.data.meta.access_token);
         loginDone = true;
         success = true;
@@ -112,7 +110,6 @@ export const doBasicLogin = async (
           (flow: any) => flow.id == 'mfa_authenticate'
         );
         if (mfa_flow && mfa_flow.is_pending == true) {
-          setSession(err.response.data.meta.session_token);
           success = true;
           navigate('/mfa');
         }
@@ -134,7 +131,7 @@ export const doBasicLogin = async (
  * @arg deleteToken: If true, delete the token from the server
  */
 export const doLogout = async (navigate: NavigateFunction) => {
-  const { clearUserState, isLoggedIn, setSession } = useUserState.getState();
+  const { clearUserState, isLoggedIn } = useUserState.getState();
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
@@ -147,7 +144,6 @@ export const doLogout = async (navigate: NavigateFunction) => {
     });
   }
 
-  setSession(undefined);
   clearUserState();
   clearCsrfCookie();
   navigate('/login');
@@ -205,11 +201,10 @@ export function handleMfaLogin(
   location: Location<any>,
   values: { code: string }
 ) {
-  const { setToken, setSession } = useUserState.getState();
+  const { setToken } = useUserState.getState();
   authApi(apiUrl(ApiEndpoints.user_login_mfa), undefined, 'post', {
     code: values.code
   }).then((response) => {
-    setSession(response.data.meta.session_token);
     setToken(response.data.meta.access_token);
     followRedirect(navigate, location?.state);
   });
@@ -323,13 +318,7 @@ export function authApi(
   method: 'get' | 'post' | 'put' | 'delete' = 'get',
   data?: any
 ) {
-  const state = useUserState.getState();
-  // extend default axios instance with session token
   const requestConfig = config || {};
-  if (!requestConfig.headers) {
-    requestConfig.headers = {};
-  }
-  requestConfig.headers['X-Session-Token'] = state.session;
 
   // set method
   requestConfig.method = method;
