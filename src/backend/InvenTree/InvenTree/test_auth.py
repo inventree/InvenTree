@@ -143,6 +143,25 @@ class EmailSettingsContext:
 class TestAuth(InvenTreeAPITestCase):
     """Test authentication functionality."""
 
+    def test_buildin_token(self):
+        """Test the built-in token authentication."""
+        self.logout()
+        response = self.post(
+            '/api/auth/v1/auth/login',
+            {'username': self.username, 'password': self.password},
+            expected_code=200,
+        )
+        data = response.json()
+        self.assertIn('meta', data)
+        self.assertTrue(data['meta']['is_authenticated'])
+
+        # Test for conflicting login
+        self.post(
+            '/api/auth/v1/auth/login',
+            {'username': self.username, 'password': self.password},
+            expected_code=409,
+        )
+
     def email_args(self, user=None, email=None):
         """Generate registration arguments."""
         return {

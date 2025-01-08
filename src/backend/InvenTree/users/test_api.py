@@ -1,7 +1,6 @@
 """API tests for various user / auth API endpoints."""
 
 import datetime
-import unittest
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
@@ -206,17 +205,6 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.save()
 
         self.client.get(me, expected_code=200)
-
-    @unittest.skip
-    def test_buildin_token(self):
-        """Test the built-in token authentication."""
-        response = self.post(
-            reverse('rest_login'),
-            {'username': self.username, 'password': self.password},
-            expected_code=200,
-        )
-        self.assertIn('key', response.data)
-        self.assertTrue(response.data['key'].startswith('inv-'))
 
     def test_token_api(self):
         """Test the token API."""
