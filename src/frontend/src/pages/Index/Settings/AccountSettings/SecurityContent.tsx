@@ -17,7 +17,7 @@ import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
-import { api, queryClient } from '../../../../App';
+import { api } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
@@ -202,7 +202,7 @@ function SsoContent({
 }: Readonly<{ auth_settings: SecuritySetting | undefined }>) {
   const [value, setValue] = useState<string>('');
   const [currentProviders, setCurrentProviders] = useState<Provider[]>();
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () =>
       authApi(apiUrl(ApiEndpoints.user_sso)).then((res) => res.data.data)
@@ -213,7 +213,7 @@ function SsoContent({
     if (data === undefined) return;
 
     const configuredProviders = data.map((item: any) => {
-      return item.provider;
+      return item.provider.id;
     });
     function isAlreadyInUse(value: any) {
       return !configuredProviders.includes(value.id);
@@ -226,11 +226,15 @@ function SsoContent({
   }, [auth_settings, data]);
 
   function removeProvider() {
-    authApi(apiUrl(ApiEndpoints.user_sso), undefined, 'delete')
+    const split = value.split('$');
+    const provider = split[split.length - 1];
+    const uid = split.slice(0, split.length - 1).join('$');
+    authApi(apiUrl(ApiEndpoints.user_sso), undefined, 'delete', {
+      provider: provider,
+      account: uid
+    })
       .then(() => {
-        queryClient.removeQueries({
-          queryKey: ['sso-list']
-        });
+        refetch();
       })
       .catch((res) => console.log(res.data));
   }
@@ -262,15 +266,15 @@ function SsoContent({
               <Stack mt='xs'>
                 {data.map((link: any) => (
                   <Radio
-                    key={link.id}
-                    value={String(link.id)}
-                    label={link.provider}
+                    key={link.uid}
+                    value={[link.uid, link.provider.id].join('$')}
+                    label={`${link.provider.name}: ${link.display}`}
                   />
                 ))}
               </Stack>
             </Radio.Group>
             <Button onClick={removeProvider}>
-              <Trans>Remove</Trans>
+              <Trans>Remove Link</Trans>
             </Button>
           </Stack>
         )}
