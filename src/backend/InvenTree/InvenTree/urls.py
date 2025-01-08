@@ -95,26 +95,6 @@ apipatterns = [
     path(
         'auth/',
         include([
-            # TODO remove
-            # re_path(
-            #     r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$',
-            #     ConfirmEmailView.as_view(),
-            #     name='account_confirm_email',
-            # ),
-            # path('registration/', include('dj_rest_auth.registration.urls')),
-            # path(
-            #     'providers/', SocialProviderListView.as_view(), name='social_providers'
-            # ),
-            # path('social/', include(get_provider_urls())),
-            # path(
-            #     'social/', SocialAccountListView.as_view(), name='social_account_list'
-            # ),
-            # path(
-            #     'social/<int:pk>/disconnect/',
-            #     SocialAccountDisconnectView.as_view(),
-            #     name='social_account_disconnect',
-            # ),
-            # path('login/', users.api.Login.as_view(), name='api-login'),
             path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path(
                 'login-redirect/',
