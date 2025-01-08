@@ -6,17 +6,11 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from allauth.account.models import EmailAddress
 
 import part.settings
-from common.models import (
-    InvenTreeSetting,
-    InvenTreeUserSetting,
-    NotificationEntry,
-    NotificationMessage,
-)
+from common.models import NotificationEntry, NotificationMessage
 from common.notifications import UIMessageNotification, storage
 from common.settings import get_global_setting, set_global_setting
 from InvenTree import version
@@ -53,34 +47,14 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test that the 'add."""
         self.assertEqual(int(inventree_extras.add(3, 5)), 8)
 
-    def test_plugins_enabled(self):
-        """Test the plugins_enabled tag."""
-        self.assertEqual(inventree_extras.plugins_enabled(), True)
-
-    def test_plugins_install_disabled(self):
-        """Test the plugins_install_disabled tag."""
-        self.assertEqual(inventree_extras.plugins_install_disabled(), False)
-
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
-    @override_settings(SITE_URL=None)
-    def test_inventree_base_url(self):
-        """Test that the base URL tag returns correctly."""
-        self.assertEqual(inventree_extras.inventree_base_url(), '')
-
-    def test_inventree_is_release(self):
-        """Test that the release version check functions as expected."""
+    def test_inventree_version(self):
+        """Test the 'version' setting."""
         self.assertEqual(
-            inventree_extras.inventree_is_release(),
-            not version.isInvenTreeDevelopmentVersion(),
-        )
-
-    def test_inventree_docs_version(self):
-        """Test that the documentation version template tag returns correctly."""
-        self.assertEqual(
-            inventree_extras.inventree_docs_version(), version.inventreeDocsVersion()
+            inventree_extras.inventree_version(), version.INVENTREE_VERSION
         )
 
     def test_hash(self):
@@ -103,48 +77,9 @@ class TemplateTagTest(InvenTreeTestCase):
         else:
             self.assertEqual(len(d.split('-')), 3)
 
-    def test_github(self):
-        """Test that the github URL template tag returns correctly."""
-        self.assertIn('github.com', inventree_extras.inventree_github_url())
-
-    def test_docs(self):
-        """Test that the documentation URL template tag returns correctly."""
-        self.assertIn('docs.inventree.org', inventree_extras.inventree_docs_url())
-
     def test_keyvalue(self):
         """Test keyvalue template tag."""
         self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
-
-    def test_mail_configured(self):
-        """Test that mail configuration returns False."""
-        self.assertEqual(inventree_extras.mail_configured(), False)
-
-    def test_user_settings(self):
-        """Test user settings."""
-        result = inventree_extras.user_settings(self.user)
-        self.assertEqual(len(result), len(InvenTreeUserSetting.SETTINGS))
-
-    def test_global_settings(self):
-        """Test global settings."""
-        result = inventree_extras.global_settings()
-        self.assertEqual(len(result), len(InvenTreeSetting.SETTINGS))
-
-    def test_visible_global_settings(self):
-        """Test that hidden global settings are actually hidden."""
-        result = inventree_extras.visible_global_settings()
-
-        n = len(result)
-
-        n_hidden = 0
-        n_visible = 0
-
-        for val in InvenTreeSetting.SETTINGS.values():
-            if val.get('hidden', False):
-                n_hidden += 1
-            else:
-                n_visible += 1
-
-        self.assertEqual(n, n_visible)
 
 
 class PartTest(TestCase):

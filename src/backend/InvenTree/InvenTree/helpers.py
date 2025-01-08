@@ -181,18 +181,6 @@ def getLogoImage(as_file=False, custom=True):
     return getStaticUrl('img/inventree.png')
 
 
-def getSplashScreen(custom=True):
-    """Return the InvenTree splash screen, or a custom splash if available."""
-    static_storage = StaticFilesStorage()
-
-    if custom and settings.CUSTOM_SPLASH:
-        if static_storage.exists(settings.CUSTOM_SPLASH):
-            return static_storage.url(settings.CUSTOM_SPLASH)
-
-    # No custom splash screen
-    return static_storage.url('img/inventree_splash.jpg')
-
-
 def TestIfImageURL(url):
     """Test if an image URL (or filename) looks like a valid image format.
 
@@ -1061,3 +1049,20 @@ def pui_url(subpath: str) -> str:
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'
+
+
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    from plugin.registry import registry
+
+    # Check if plugins are even enabled
+    if not settings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
+        for plg in plug_list
+    ]
