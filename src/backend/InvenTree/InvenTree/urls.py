@@ -25,7 +25,6 @@ import report.api
 import stock.api
 import users.api
 from plugin.urls import get_plugin_urls
-from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import (
@@ -73,7 +72,6 @@ apipatterns = [
         ]),
     ),
     path('user/', include(users.api.user_urls)),
-    path('web/', include(web_api_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
     # Common endpoints endpoint
