@@ -73,8 +73,15 @@ export const doBasicLogin = async (
   }
 
   clearCsrfCookie();
+  const cookie = getCsrfCookie();
 
   const login_url = apiUrl(ApiEndpoints.user_login);
+
+  if (cookie == undefined) {
+    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {
+      // his is to be expected
+    });
+  }
 
   let loginDone = false;
   let success = false;
@@ -115,7 +122,7 @@ export const doBasicLogin = async (
   if (loginDone) {
     await fetchUserState();
     fetchGlobalStates();
-  } else {
+  } else if (!success) {
     clearUserState();
   }
   return success;

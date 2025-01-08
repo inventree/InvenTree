@@ -5,6 +5,7 @@ import datetime
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
@@ -330,7 +331,7 @@ class LoginRedirect(RedirectView):
 
 user_urls = [
     path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-    path('token/', GetAuthToken.as_view(), name='api-token'),
+    path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
     path(
         'tokens/',
         include([
