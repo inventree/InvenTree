@@ -37,6 +37,7 @@ export default function Set_Password() {
 
   function passwordError(values: any) {
     let message: any =
+      values?.new_password ||
       values?.new_password2 ||
       values?.new_password1 ||
       values?.current_password ||
