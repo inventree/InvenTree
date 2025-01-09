@@ -25,6 +25,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
+import { IconCalendarExclamation } from '@tabler/icons-react';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -49,7 +50,6 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
-
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -298,6 +298,12 @@ function LineItemFormRow({
     }
   });
 
+  const [expiryDateOpen, expiryDateHandlers] = useDisclosure(false, {
+    onClose: () => {
+      props.changeFn(props.idx, 'expiry_date', undefined);
+    }
+  });
+
   // Status value
   const [statusOpen, statusHandlers] = useDisclosure(false, {
     onClose: () => props.changeFn(props.idx, 'status', undefined)
@@ -439,6 +445,14 @@ function LineItemFormRow({
               tooltip={batchToolTip}
               tooltipAlignment='top'
               variant={batchOpen ? 'filled' : 'transparent'}
+            />
+            <ActionButton
+              size='sm'
+              onClick={() => expiryDateHandlers.toggle()}
+              icon={<IconCalendarExclamation />}
+              tooltip={t`Set Expiry Date`}
+              tooltipAlignment='top'
+              variant={expiryDateOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
               size='sm'
@@ -587,6 +601,19 @@ function LineItemFormRow({
         error={props.rowErrors?.serial_numbers?.message}
       />
       <TableFieldExtraRow
+        visible={expiryDateOpen}
+        onValueChange={(value) =>
+          props.changeFn(props.idx, 'expiry_date', value)
+        }
+        fieldDefinition={{
+          field_type: 'date',
+          label: t`Expiry Date`,
+          description: t`Enter an expiry date for received items`,
+          value: props.item.expiry_date
+        }}
+        error={props.rowErrors?.expiry_date?.message}
+      />
+      <TableFieldExtraRow
         visible={packagingOpen}
         onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
         fieldDefinition={{
@@ -672,6 +699,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
           line_item: elem.pk,
           location: elem.destination ?? elem.destination_detail?.pk ?? null,
           quantity: elem.quantity - elem.received,
+          expiry_date: null,
           batch_code: '',
           serial_numbers: '',
           status: 10,

@@ -717,6 +717,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
             'quantity',
             'status',
             'batch_code',
+            'expiry_date',
             'serial_numbers',
             'packaging',
             'note',
@@ -763,6 +764,13 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         required=False,
         default='',
         allow_blank=True,
+    )
+
+    expiry_date = serializers.DateField(
+        label=_('Expiry Date'),
+        help_text=_('Enter expiry date for incoming stock items'),
+        required=False,
+        default=None,
     )
 
     serial_numbers = serializers.CharField(
@@ -967,6 +975,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                         status=item['status'],
                         barcode=item.get('barcode', ''),
                         batch_code=item.get('batch_code', ''),
+                        expiry_date=item.get('expiry_date', ''),
                         packaging=item.get('packaging', ''),
                         serials=item.get('serials', None),
                         notes=item.get('note', None),

@@ -800,6 +800,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Extract optional batch code for the new stock item
         batch_code = kwargs.get('batch_code', '')
 
+        # Extract optional expiry data for the new stock item
+        expiry_date = kwargs.get('expiry_date', '')
+
         # Extract optional list of serial numbers
         serials = kwargs.get('serials')
 
@@ -863,6 +866,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
+                    expiry_date=expiry_date,
                     packaging=packaging,
                     serial=sn,
                     purchase_price=unit_purchase_price,
