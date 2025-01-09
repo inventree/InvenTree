@@ -62,7 +62,7 @@ export default function Set_Password() {
 
     // check if passwords match
     if (simpleForm.values.new_password1 !== simpleForm.values.new_password2) {
-      passwordError({ new_password2: t`Passwords do not match` });
+      passwordError({ new_password2: t`The two password fields didn’t match` });
       return;
     }
 
