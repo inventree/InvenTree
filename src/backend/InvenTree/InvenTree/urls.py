@@ -94,7 +94,6 @@ apipatterns = [
     path(
         'auth/',
         include([
-            path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
@@ -105,10 +104,9 @@ apipatterns = [
                 include(
                     (build_urlpatterns(Client.BROWSER), 'headless'), namespace='browser'
                 ),
-            ),
+            ),  # Allauth headless logic (only the browser client is included as we only use sessions based auth there)
         ]),
     ),
-    path('_allauth/', include('allauth.headless.urls')),
     # Magic login URLs
     path(
         'email/generate/',
@@ -122,8 +120,10 @@ apipatterns = [
 
 
 backendpatterns = [
-    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('auth/', auth_request),
+    path(
+        'auth/', include('rest_framework.urls', namespace='rest_framework')
+    ),  # Used for (DRF) browsable API auth
+    path('auth/', auth_request),  # Used for proxies to check if user is authenticated
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]

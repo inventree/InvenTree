@@ -9,7 +9,6 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
-from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
 from rest_framework.generics import DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -214,36 +213,6 @@ class GroupList(GroupMixin, ListCreateAPI):
     search_fields = ['name']
 
     ordering_fields = ['name']
-
-
-@extend_schema_view(
-    post=extend_schema(
-        responses={200: OpenApiResponse(description='User successfully logged out')}
-    )
-)
-class Logout(APIView):
-    """API view for logging out via API."""
-
-    serializer_class = None
-
-    def post(self, request):
-        """Logout the current user.
-
-        Deletes user token associated with request.
-        """
-        from InvenTree.middleware import get_token_from_request
-
-        if request.user:
-            token_key = get_token_from_request(request)
-
-            if token_key:
-                try:
-                    token = ApiToken.objects.get(key=token_key, user=request.user)
-                    token.delete()
-                except ApiToken.DoesNotExist:  # pragma: no cover
-                    pass
-
-        return super().logout(request)
 
 
 class GetAuthToken(APIView):
