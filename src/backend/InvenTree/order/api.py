@@ -5,6 +5,7 @@ from typing import cast
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -168,6 +169,10 @@ class OrderFilter(rest_filters.FilterSet):
         queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
     )
 
+    created_by = rest_filters.ModelChoiceFilter(
+        queryset=User.objects.all(), field_name='created_by', label=_('Created By')
+    )
+
     created_before = InvenTreeDateFilter(
         label=_('Created Before'), field_name='creation_date', lookup_expr='lt'
     )
@@ -328,6 +333,7 @@ class PurchaseOrderList(
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'supplier__name',
         'target_date',
@@ -785,6 +791,7 @@ class SalesOrderList(
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'customer__name',
         'customer_reference',
@@ -1369,6 +1376,7 @@ class ReturnOrderList(
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'customer__name',
         'customer_reference',

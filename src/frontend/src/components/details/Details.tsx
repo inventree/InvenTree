@@ -14,7 +14,7 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
@@ -101,6 +101,8 @@ function NameBadge({
   pk,
   type
 }: Readonly<{ pk: string | number; type: BadgeType }>) {
+  const api = useApi();
+
   const { data } = useQuery({
     queryKey: ['badge', type, pk],
     queryFn: async () => {
@@ -217,6 +219,7 @@ function BooleanValue(props: Readonly<FieldProps>) {
 }
 
 function TableAnchorValue(props: Readonly<FieldProps>) {
+  const api = useApi();
   const navigate = useNavigate();
 
   const { data } = useQuery({
