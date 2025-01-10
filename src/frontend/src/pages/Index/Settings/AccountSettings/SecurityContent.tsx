@@ -22,12 +22,14 @@ import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
-import type { Provider, SecuritySetting } from '../../../../states/states';
+import type { AuthConfig, Provider } from '../../../../states/states';
 
 export function SecurityContent() {
-  const [auth_settings, sso_enabled, mfa_enabled] = useServerApiState(
-    (state) => [state.auth_settings, state.sso_enabled, state.mfa_enabled]
-  );
+  const [auth_config, sso_enabled, mfa_enabled] = useServerApiState((state) => [
+    state.auth_config,
+    state.sso_enabled,
+    state.mfa_enabled
+  ]);
 
   return (
     <Stack>
@@ -39,7 +41,7 @@ export function SecurityContent() {
         <Trans>Single Sign On Accounts</Trans>
       </Title>
       {sso_enabled() ? (
-        <SsoContent auth_settings={auth_settings} />
+        <SsoContent auth_config={auth_config} />
       ) : (
         <Alert
           icon={<IconAlertCircle size='1rem' />}
@@ -81,7 +83,7 @@ function EmailContent() {
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () =>
-      authApi(apiUrl(ApiEndpoints.user_emails)).then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.auth_email)).then((res) => res.data.data)
   });
 
   function runServerAction(
@@ -90,7 +92,7 @@ function EmailContent() {
   ) {
     const vals: any = data || { email: value };
     console.log('vals', vals);
-    authApi(apiUrl(ApiEndpoints.user_emails), undefined, action, vals)
+    authApi(apiUrl(ApiEndpoints.auth_email), undefined, action, vals)
       .then(() => {
         refetch();
       })
@@ -198,18 +200,18 @@ function ProviderButton({ provider }: Readonly<{ provider: Provider }>) {
 }
 
 function SsoContent({
-  auth_settings
-}: Readonly<{ auth_settings: SecuritySetting | undefined }>) {
+  auth_config
+}: Readonly<{ auth_config: AuthConfig | undefined }>) {
   const [value, setValue] = useState<string>('');
   const [currentProviders, setCurrentProviders] = useState<Provider[]>();
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () =>
-      authApi(apiUrl(ApiEndpoints.user_sso)).then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.auth_providers)).then((res) => res.data.data)
   });
 
   useEffect(() => {
-    if (auth_settings === undefined) return;
+    if (auth_config === undefined) return;
     if (data === undefined) return;
 
     const configuredProviders = data.map((item: any) => {
@@ -220,16 +222,15 @@ function SsoContent({
     }
 
     // remove providers that are used currently
-    const newData =
-      auth_settings.socialaccount.providers.filter(isAlreadyInUse);
+    const newData = auth_config.socialaccount.providers.filter(isAlreadyInUse);
     setCurrentProviders(newData);
-  }, [auth_settings, data]);
+  }, [auth_config, data]);
 
   function removeProvider() {
     const split = value.split('$');
     const provider = split[split.length - 1];
     const uid = split.slice(0, split.length - 1).join('$');
-    authApi(apiUrl(ApiEndpoints.user_sso), undefined, 'delete', {
+    authApi(apiUrl(ApiEndpoints.auth_providers), undefined, 'delete', {
       provider: provider,
       account: uid
     })
@@ -303,7 +304,9 @@ function MfaContent() {
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['mfa-list'],
     queryFn: () =>
-      api.get(apiUrl(ApiEndpoints.user_mfa)).then((res) => res.data.data)
+      api
+        .get(apiUrl(ApiEndpoints.auth_authenticators))
+        .then((res) => res.data.data)
   });
 
   function parseDate(date: number) {

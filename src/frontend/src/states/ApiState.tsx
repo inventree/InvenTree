@@ -4,13 +4,13 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { SecuritySetting, ServerAPIProps } from './states';
+import type { AuthConfig, ServerAPIProps } from './states';
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
-  auth_settings?: SecuritySetting;
+  auth_config?: AuthConfig;
   sso_enabled: () => boolean;
   mfa_enabled: () => boolean;
   registration_enabled: () => boolean;
@@ -37,19 +37,19 @@ export const useServerApiState = create<ServerApiStateProps>()(
 
         // Fetch login/SSO behaviour
         await api
-          .get(apiUrl(ApiEndpoints.securtiy_settings), {
+          .get(apiUrl(ApiEndpoints.auth_config), {
             headers: { Authorization: '' }
           })
           .then((response) => {
-            set({ auth_settings: response.data.data });
+            set({ auth_config: response.data.data });
           })
           .catch(() => {
             console.error('ERR: Error fetching SSO information');
           });
       },
-      auth_settings: undefined,
+      auth_config: undefined,
       sso_enabled: () => {
-        const data = get().auth_settings?.socialaccount.providers;
+        const data = get().auth_config?.socialaccount.providers;
         return !(data === undefined || data.length == 0);
       },
       mfa_enabled: () => {

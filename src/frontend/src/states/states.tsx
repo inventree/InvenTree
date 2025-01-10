@@ -50,7 +50,7 @@ export interface ServerAPIProps {
   django_admin: null | string;
 }
 
-export interface SecuritySetting {
+export interface AuthConfig {
   account: {
     authentication_method: string;
   };

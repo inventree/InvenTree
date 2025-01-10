@@ -35,9 +35,9 @@ export function AuthenticationForm() {
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
-  const [auth_settings, sso_enabled, password_forgotten_enabled] =
+  const [auth_config, sso_enabled, password_forgotten_enabled] =
     useServerApiState((state) => [
-      state.auth_settings,
+      state.auth_config,
       state.sso_enabled,
       state.password_forgotten_enabled
     ]);
@@ -107,7 +107,7 @@ export function AuthenticationForm() {
       {sso_enabled() ? (
         <>
           <Group grow mb='md' mt='md'>
-            {auth_settings?.socialaccount.providers.map((provider) => (
+            {auth_config?.socialaccount.providers.map((provider) => (
               <SsoButton provider={provider} key={provider.id} />
             ))}
           </Group>
@@ -205,9 +205,9 @@ export function RegistrationForm() {
     }
   });
   const navigate = useNavigate();
-  const [auth_settings, registration_enabled, sso_registration] =
+  const [auth_config, registration_enabled, sso_registration] =
     useServerApiState((state) => [
-      state.auth_settings,
+      state.auth_config,
       state.registration_enabled,
       state.sso_registration_enabled
     ]);
@@ -228,7 +228,7 @@ export function RegistrationForm() {
     await ensureCsrf();
 
     api
-      .post(apiUrl(ApiEndpoints.user_register), vals, {
+      .post(apiUrl(ApiEndpoints.auth_signup), vals, {
         headers: { Authorization: '' }
       })
       .then((ret) => {
@@ -321,7 +321,7 @@ export function RegistrationForm() {
       )}
       {sso_registration() && (
         <Group grow mb='md' mt='md'>
-          {auth_settings?.socialaccount.providers.map((provider) => (
+          {auth_config?.socialaccount.providers.map((provider) => (
             <SsoButton provider={provider} key={provider.id} />
           ))}
         </Group>

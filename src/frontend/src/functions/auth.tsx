@@ -74,7 +74,7 @@ export const doBasicLogin = async (
   clearCsrfCookie();
   await ensureCsrf();
 
-  const login_url = apiUrl(ApiEndpoints.user_login);
+  const login_url = apiUrl(ApiEndpoints.auth_login);
 
   let loginDone = false;
   let success = false;
@@ -129,7 +129,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
 
   // Logout from the server session
   if (isLoggedIn() || !!getCsrfCookie()) {
-    await authApi(apiUrl(ApiEndpoints.user_logout), undefined, 'delete').catch(
+    await authApi(apiUrl(ApiEndpoints.auth_session), undefined, 'delete').catch(
       () => {}
     );
     showLoginNotification({
@@ -203,7 +203,7 @@ export function handleMfaLogin(
   values: { code: string }
 ) {
   const { setToken } = useUserState.getState();
-  authApi(apiUrl(ApiEndpoints.user_login_mfa), undefined, 'post', {
+  authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   }).then((response) => {
     setToken(response.data.meta.access_token);
@@ -300,7 +300,7 @@ export function ProviderLogin(
     process: process,
     csrfmiddlewaretoken: getCsrfCookie()
   };
-  const url = `${host}${apiUrl(ApiEndpoints.login_provider_redirect)}`;
+  const url = `${host}${apiUrl(ApiEndpoints.auth_provider_redirect)}`;
   post(url, values);
 }
 

@@ -69,7 +69,7 @@ export default function Set_Password() {
 
     // Set password with call to backend
     api
-      .post(apiUrl(ApiEndpoints.user_change_password), {
+      .post(apiUrl(ApiEndpoints.auth_pwd_change), {
         current_password: simpleForm.values.current_password,
         new_password: simpleForm.values.new_password2
       })
