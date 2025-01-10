@@ -34,7 +34,6 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -63,6 +62,7 @@ import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -110,6 +110,7 @@ import PartSupplierDetail from './PartSupplierDetail';
 export default function PartDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const navigate = useNavigate();
   const user = useUserState();
 
@@ -970,18 +971,24 @@ export default function PartDetail() {
       {editPart.modal}
       {deletePart.modal}
       {orderPartsWizard.wizard}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.part}
+      >
         <Stack gap='xs'>
-          <NavigationTree
-            title={t`Part Categories`}
-            modelType={ModelType.partcategory}
-            endpoint={ApiEndpoints.category_tree}
-            opened={treeOpen}
-            onClose={() => {
-              setTreeOpen(false);
-            }}
-            selectedId={part?.category}
-          />
+          {user.hasViewRole(UserRoles.part_category) && (
+            <NavigationTree
+              title={t`Part Categories`}
+              modelType={ModelType.partcategory}
+              endpoint={ApiEndpoints.category_tree}
+              opened={treeOpen}
+              onClose={() => {
+                setTreeOpen(false);
+              }}
+              selectedId={part?.category}
+            />
+          )}
           <PageDetail
             title={`${t`Part`}: ${part.full_name}`}
             icon={
@@ -992,9 +999,13 @@ export default function PartDetail() {
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={
+              user.hasViewRole(UserRoles.part_category)
+                ? breadcrumbs
+                : undefined
+            }
             breadcrumbAction={() => {
-              setTreeOpen(true); // Open the category tree
+              setTreeOpen(true);
             }}
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}

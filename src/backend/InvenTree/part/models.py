@@ -5,7 +5,6 @@ from __future__ import annotations
 import decimal
 import hashlib
 import inspect
-import logging
 import math
 import os
 import re
@@ -25,6 +24,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
@@ -67,7 +67,7 @@ from order.status_codes import (
 )
 from stock import models as StockModels
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PartCategory(InvenTree.models.InvenTreeTree):

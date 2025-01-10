@@ -5,6 +5,7 @@ from django.db import migrations
 
 import generic.states
 import generic.states.fields
+import generic.states.validators
 import InvenTree.status_codes
 
 
@@ -24,6 +25,11 @@ class Migration(migrations.Migration):
                 help_text="Additional status information for this item",
                 null=True,
                 verbose_name="Custom status key",
+                validators=[
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.StockStatus
+                    ),
+                ],
             ),
         ),
         migrations.AlterField(
@@ -32,7 +38,12 @@ class Migration(migrations.Migration):
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.StockStatus.items(),
                 default=10,
-                validators=[django.core.validators.MinValueValidator(0)],
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    generic.states.validators.CustomStatusCodeValidator(
+                        status_class=InvenTree.status_codes.StockStatus
+                    ),
+                ],
             ),
         ),
     ]

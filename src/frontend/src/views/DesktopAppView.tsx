@@ -1,9 +1,9 @@
-import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { queryClient } from '../App';
-import { BaseContext } from '../contexts/BaseContext';
+import { api, queryClient } from '../App';
+import { ApiProvider } from '../contexts/ApiContext';
+import { ThemeContext } from '../contexts/ThemeContext';
 import { defaultHostList } from '../defaults/defaultHostList';
 import { base_url } from '../main';
 import { routes } from '../router';
@@ -19,10 +19,10 @@ export default function DesktopAppView() {
   }, [hostList]);
 
   return (
-    <BaseContext>
-      <QueryClientProvider client={queryClient}>
+    <ApiProvider client={queryClient} api={api}>
+      <ThemeContext>
         <BrowserRouter basename={base_url}>{routes}</BrowserRouter>
-      </QueryClientProvider>
-    </BaseContext>
+      </ThemeContext>
+    </ApiProvider>
   );
 }

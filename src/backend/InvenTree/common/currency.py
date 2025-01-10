@@ -1,7 +1,6 @@
 """Helper functions for currency support."""
 
 import decimal
-import logging
 import math
 from typing import Optional
 
@@ -9,11 +8,12 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def currency_code_default():

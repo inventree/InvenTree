@@ -352,6 +352,7 @@ export default function SalesOrderShipmentDetail() {
       <InstanceDetail
         status={shipmentStatus}
         loading={shipmentQuery.isFetching || customerQuery.isFetching}
+        requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>
           <PageDetail
