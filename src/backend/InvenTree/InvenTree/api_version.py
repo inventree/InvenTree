@@ -10,6 +10,7 @@ INVENTREE_API_TEXT = """
 
 v299 - 2025-01-10 - https://github.com/inventree/InvenTree/pull/8867
     - Adds 'expiry_date' field to the PurchaseOrderReceive API endpoint
+    - Adds 'default_expiry` field to the PartBriefSerializer, affecting API endpoints which use it
 
 v298 - 2025-01-07 - https://github.com/inventree/InvenTree/pull/8848
     - Adds 'created_by' field to PurchaseOrder API endpoints
