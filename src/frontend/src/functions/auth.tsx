@@ -74,15 +74,13 @@ export const doBasicLogin = async (
   clearCsrfCookie();
   await ensureCsrf();
 
-  const login_url = apiUrl(ApiEndpoints.auth_login);
-
   let loginDone = false;
   let success = false;
 
   // Attempt login with
   await api
     .post(
-      login_url,
+      apiUrl(ApiEndpoints.auth_login),
       {
         username: username,
         password: password
