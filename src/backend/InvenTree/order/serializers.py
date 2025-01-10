@@ -975,7 +975,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                         status=item['status'],
                         barcode=item.get('barcode', ''),
                         batch_code=item.get('batch_code', ''),
-                        expiry_date=item.get('expiry_date', ''),
+                        expiry_date=item.get('expiry_date', None),
                         packaging=item.get('packaging', ''),
                         serials=item.get('serials', None),
                         notes=item.get('note', None),
