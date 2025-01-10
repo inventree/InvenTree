@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { api } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
@@ -36,12 +36,12 @@ export function SecurityContent() {
       <Title order={5}>
         <Trans>Email</Trans>
       </Title>
-      <EmailContent />
+      <EmailSection />
       <Title order={5}>
-        <Trans>Single Sign On Accounts</Trans>
+        <Trans>Single Sign On</Trans>
       </Title>
       {sso_enabled() ? (
-        <SsoContent auth_config={auth_config} />
+        <ProviderSection auth_config={auth_config} />
       ) : (
         <Alert
           icon={<IconAlertCircle size='1rem' />}
@@ -52,11 +52,10 @@ export function SecurityContent() {
         </Alert>
       )}
       <Title order={5}>
-        <Trans>Multifactor</Trans>
+        <Trans>Multifactor authentication</Trans>
       </Title>
-
       {mfa_enabled() ? (
-        <MfaContent />
+        <MfaSection />
       ) : (
         <Alert
           icon={<IconAlertCircle size='1rem' />}
@@ -68,16 +67,15 @@ export function SecurityContent() {
           </Trans>
         </Alert>
       )}
-
       <Title order={5}>
-        <Trans>Token</Trans>
+        <Trans>Access Tokens</Trans>
       </Title>
-      <TokenContent />
+      <TokenSection />
     </Stack>
   );
 }
 
-function EmailContent() {
+function EmailSection() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
   const { isLoading, data, refetch } = useQuery({
@@ -91,7 +89,6 @@ function EmailContent() {
     data?: any
   ) {
     const vals: any = data || { email: value };
-    console.log('vals', vals);
     authApi(apiUrl(ApiEndpoints.auth_email), undefined, action, vals)
       .then(() => {
         refetch();
@@ -199,39 +196,29 @@ function ProviderButton({ provider }: Readonly<{ provider: Provider }>) {
   );
 }
 
-function SsoContent({
+function ProviderSection({
   auth_config
 }: Readonly<{ auth_config: AuthConfig | undefined }>) {
   const [value, setValue] = useState<string>('');
-  const [currentProviders, setCurrentProviders] = useState<Provider[]>();
   const { isLoading, data, refetch } = useQuery({
-    queryKey: ['sso-list'],
+    queryKey: ['provider-list'],
     queryFn: () =>
       authApi(apiUrl(ApiEndpoints.auth_providers)).then((res) => res.data.data)
   });
 
-  useEffect(() => {
-    if (auth_config === undefined) return;
-    if (data === undefined) return;
+  const availableProviders = useMemo(() => {
+    if (!auth_config || !data) return [];
 
-    const configuredProviders = data.map((item: any) => {
-      return item.provider.id;
-    });
-    function isAlreadyInUse(value: any) {
-      return !configuredProviders.includes(value.id);
-    }
-
-    // remove providers that are used currently
-    const newData = auth_config.socialaccount.providers.filter(isAlreadyInUse);
-    setCurrentProviders(newData);
+    const configuredProviders = data.map((item: any) => item.provider.id);
+    return auth_config.socialaccount.providers.filter(
+      (provider: any) => !configuredProviders.includes(provider.id)
+    );
   }, [auth_config, data]);
 
   function removeProvider() {
-    const split = value.split('$');
-    const provider = split[split.length - 1];
-    const uid = split.slice(0, split.length - 1).join('$');
+    const [uid, provider] = value.split('$');
     authApi(apiUrl(ApiEndpoints.auth_providers), undefined, 'delete', {
-      provider: provider,
+      provider,
       account: uid
     })
       .then(() => {
@@ -240,7 +227,6 @@ function SsoContent({
       .catch((res) => console.log(res.data));
   }
 
-  /* renderer */
   if (isLoading) return <Loader />;
 
   return (
@@ -252,9 +238,7 @@ function SsoContent({
             title={t`Not configured`}
             color='yellow'
           >
-            <Trans>
-              There are no social network accounts connected to this account.{' '}
-            </Trans>
+            <Trans>There are no providers connected to this account. </Trans>
           </Alert>
         ) : (
           <Stack>
@@ -262,7 +246,7 @@ function SsoContent({
               value={value}
               onChange={setValue}
               name='sso_accounts'
-              label={t`You can sign in to your account using any of the following third party accounts`}
+              label={t`You can sign in to your account using any of the following providers`}
             >
               <Stack mt='xs'>
                 {data.map((link: any) => (
@@ -275,7 +259,7 @@ function SsoContent({
               </Stack>
             </Radio.Group>
             <Button onClick={removeProvider}>
-              <Trans>Remove Link</Trans>
+              <Trans>Remove Provider Link</Trans>
             </Button>
           </Stack>
         )}
@@ -284,11 +268,11 @@ function SsoContent({
         <Stack>
           <Text>Add SSO Account</Text>
           <Text>
-            {currentProviders === undefined ? (
+            {availableProviders === undefined ? (
               <Trans>Loading</Trans>
             ) : (
               <Stack gap='xs'>
-                {currentProviders.map((provider: any) => (
+                {availableProviders.map((provider: any) => (
                   <ProviderButton key={provider.id} provider={provider} />
                 ))}
               </Stack>
@@ -300,8 +284,8 @@ function SsoContent({
   );
 }
 
-function MfaContent() {
-  const { isLoading, data, refetch } = useQuery({
+function MfaSection() {
+  const { isLoading, data } = useQuery({
     queryKey: ['mfa-list'],
     queryFn: () =>
       api
@@ -309,12 +293,11 @@ function MfaContent() {
         .then((res) => res.data.data)
   });
 
-  function parseDate(date: number) {
-    if (date == null) return 'Never';
-    return new Date(date * 1000).toLocaleString();
-  }
+  const parseDate = (date: number) =>
+    date == null ? 'Never' : new Date(date * 1000).toLocaleString();
+
   const rows = useMemo(() => {
-    if (isLoading || data === undefined) return null;
+    if (isLoading || !data) return null;
     return data.map((token: any) => (
       <Table.Tr key={`${token.created_at}-${token.type}`}>
         <Table.Td>{token.type}</Table.Td>
@@ -324,7 +307,6 @@ function MfaContent() {
     ));
   }, [data, isLoading]);
 
-  /* renderer */
   if (isLoading) return <Loader />;
 
   if (data.length == 0)
@@ -354,7 +336,7 @@ function MfaContent() {
   );
 }
 
-function TokenContent() {
+function TokenSection() {
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['token-list'],
     queryFn: () =>
@@ -369,8 +351,9 @@ function TokenContent() {
       })
       .catch((res) => console.log(res.data));
   }
+
   const rows = useMemo(() => {
-    if (isLoading || data === undefined) return null;
+    if (isLoading || !data) return null;
     return data.map((token: any) => (
       <Table.Tr key={token.id}>
         <Table.Td>
@@ -397,7 +380,6 @@ function TokenContent() {
     ));
   }, [data, isLoading]);
 
-  /* renderer */
   if (isLoading) return <Loader />;
 
   if (data.length == 0)
