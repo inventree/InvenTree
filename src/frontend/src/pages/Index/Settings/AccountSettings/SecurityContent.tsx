@@ -267,17 +267,17 @@ function ProviderSection({
       <Grid.Col span={6}>
         <Stack>
           <Text>Add SSO Account</Text>
-          <Text>
-            {availableProviders === undefined ? (
+          {availableProviders === undefined ? (
+            <Text>
               <Trans>Loading</Trans>
-            ) : (
-              <Stack gap='xs'>
-                {availableProviders.map((provider: any) => (
-                  <ProviderButton key={provider.id} provider={provider} />
-                ))}
-              </Stack>
-            )}
-          </Text>
+            </Text>
+          ) : (
+            <Stack gap='xs'>
+              {availableProviders.map((provider: any) => (
+                <ProviderButton key={provider.id} provider={provider} />
+              ))}
+            </Stack>
+          )}
         </Stack>
       </Grid.Col>
     </Grid>
