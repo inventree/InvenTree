@@ -13,6 +13,7 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
+import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -114,11 +115,7 @@ export function useStockFields({
 
           if (expiry_days && expiry_days > 0) {
             // Adjust the expiry date based on the part default expiry
-            setExpiryDate(
-              new Date(
-                new Date().getTime() + expiry_days * 24 * 60 * 60 * 1000
-              ).toISOString()
-            );
+            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
           }
         }
       },
