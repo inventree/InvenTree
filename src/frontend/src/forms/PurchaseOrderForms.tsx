@@ -26,6 +26,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { IconCalendarExclamation } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -306,13 +307,11 @@ function LineItemFormRow({
       // check the default part expiry. Assume expiry is relative to today
       const defaultExpiry = record.part_detail?.default_expiry;
       if (defaultExpiry !== undefined && defaultExpiry > 0) {
-        const defaultExpiryDate = new Date();
-        defaultExpiryDate.setDate(defaultExpiryDate.getDate() + defaultExpiry);
-        const year = defaultExpiryDate.getFullYear();
-        const month = String(defaultExpiryDate.getMonth() + 1).padStart(2, '0'); // January is 0!
-        const day = String(defaultExpiryDate.getDate()).padStart(2, '0');
-        const defaultExpiryDateString = `${year}-${month}-${day}`;
-        props.changeFn(props.idx, 'expiry_date', defaultExpiryDateString);
+        props.changeFn(
+          props.idx,
+          'expiry_date',
+          dayjs().add(defaultExpiry, 'day').format('YYYY-MM-DD')
+        );
       }
     },
     onClose: () => {
