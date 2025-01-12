@@ -116,6 +116,7 @@ export function PageDetail({
                     miw={42}
                     mah={42}
                     maw={42}
+                    visibleFrom='sm'
                   />
                 )}
                 <Stack gap='xs'>

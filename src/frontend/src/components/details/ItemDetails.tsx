@@ -5,7 +5,7 @@ export function ItemDetailsGrid(props: React.PropsWithChildren<{}>) {
   return (
     <Paper p='xs'>
       <SimpleGrid
-        cols={{ base: 1, '750px': 2 }}
+        cols={{ base: 1, '900px': 2 }}
         type='container'
         spacing='xs'
         verticalSpacing='xs'
