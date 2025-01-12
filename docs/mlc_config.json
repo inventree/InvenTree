@@ -20,6 +20,9 @@
         },
         {
             "pattern": "https://opensource.org/license/MIT"
+        },
+        {
+            "pattern": "https://docs.inventree.org/en/latest/credits/"
         }
     ]
 }
