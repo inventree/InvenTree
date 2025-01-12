@@ -2,6 +2,7 @@ import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import { Fragment, type ReactNode } from 'react';
 
+import { shortenString } from '../../functions/tables';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
@@ -51,9 +52,14 @@ export function PageDetail({
     ]
   ]);
 
+  const pageTitleString = shortenString({
+    str: title,
+    len: 50
+  });
+
   return (
     <>
-      <PageTitle title={title} />
+      <PageTitle title={pageTitleString} />
       <Stack gap='xs'>
         {breadcrumbs && breadcrumbs.length > 0 && (
           <BreadcrumbList
