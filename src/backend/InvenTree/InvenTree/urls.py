@@ -124,6 +124,12 @@ backendpatterns = [
         'auth/', include('rest_framework.urls', namespace='rest_framework')
     ),  # Used for (DRF) browsable API auth
     path('auth/', auth_request),  # Used for proxies to check if user is authenticated
+    path('accounts/', include('allauth.urls')),
+    path(
+        'accounts/login/',
+        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
+        name='account_login',
+    ),  # Add a redirect for login views
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
@@ -139,19 +145,7 @@ if settings.INVENTREE_ADMIN_ENABLED:
     ]
 
 urlpatterns += backendpatterns
-
-frontendpatterns = [
-    *platform_urls,
-    path('accounts/', include('allauth.urls')),  # Still needed for provider login
-    # Add a redirect for login views
-    path(
-        'accounts/login/',
-        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
-        name='account_login',
-    ),
-]
-
-urlpatterns += frontendpatterns
+urlpatterns += platform_urls
 
 # Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
