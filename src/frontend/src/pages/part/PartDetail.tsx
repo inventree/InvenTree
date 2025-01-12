@@ -5,7 +5,6 @@ import {
   Grid,
   Loader,
   Skeleton,
-  Space,
   Stack,
   Text
 } from '@mantine/core';
@@ -1040,9 +1039,7 @@ export default function PartDetail() {
                     }}
                   />
                 </Stack>
-              ) : (
-                <Space />
-              )
+              ) : null
             }
           />
           <PanelGroup
