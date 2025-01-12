@@ -549,6 +549,16 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
 
+# JWT settings - rest_framework_simplejwt
+USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
+if USE_JWT:
+    JWT_AUTH_COOKIE = 'inventree-auth'
+    JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+    )
+    INSTALLED_APPS.append('rest_framework_simplejwt')
+
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -887,6 +897,7 @@ if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
 
+
 SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
 # Password validation
@@ -1209,6 +1220,7 @@ else:
     if CORS_ALLOWED_ORIGIN_REGEXES:
         logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
+# region  auth
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
@@ -1293,6 +1305,11 @@ HEADLESS_FRONTEND_URLS = {
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
 MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
+
+LOGOUT_REDIRECT_URL = get_setting(
+    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
+)
+# endregion auth
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
