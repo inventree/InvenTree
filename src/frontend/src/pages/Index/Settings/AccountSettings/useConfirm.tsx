@@ -6,7 +6,7 @@ import { useState } from 'react';
 const createPromise = () => {
   let resolver: any;
   return [
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       resolver = resolve;
     }),
     resolver
@@ -16,7 +16,9 @@ const createPromise = () => {
 /* Adapted from https://daveteu.medium.com/react-custom-confirmation-box-458cceba3f7b */
 export const useConfirm = () => {
   const [open, setOpen] = useState(false);
-  const [resolver, setResolver] = useState({ resolver: null });
+  const [resolver, setResolver] = useState<((status: boolean) => void) | null>(
+    null
+  );
   const [label, setLabel] = useState('');
 
   const getConfirmation = async (text: string) => {
@@ -24,13 +26,15 @@ export const useConfirm = () => {
     setOpen(true);
     const [promise, resolve] = await createPromise();
 
-    setResolver({ resolve });
+    setResolver(resolve);
     return promise;
   };
 
   const onClick = async (status: boolean) => {
     setOpen(false);
-    resolver.resolve(status);
+    if (resolver) {
+      resolver(status);
+    }
   };
 
   const Confirmation = () => (
@@ -49,7 +53,10 @@ type InputProps = {
   name: string;
   description: string;
 };
-export const useReauth = () => {
+export const useReauth = (): [
+  (props: InputProps) => Promise<[string, boolean]>,
+  () => JSX.Element
+] => {
   const [inputProps, setInputProps] = useState<InputProps>({
     label: '',
     name: '',
@@ -58,7 +65,9 @@ export const useReauth = () => {
 
   const [value, setValue] = useState('');
   const [open, setOpen] = useState(false);
-  const [resolver, setResolver] = useState({ resolver: null });
+  const [resolver, setResolver] = useState<{
+    resolve: (result: string, positive: boolean) => void;
+  } | null>(null);
 
   const getReauthText = async (props: InputProps) => {
     setInputProps(props);
@@ -71,7 +80,9 @@ export const useReauth = () => {
 
   const onClick = async (result: string, positive: boolean) => {
     setOpen(false);
-    resolver.resolve(result, positive);
+    if (resolver) {
+      resolver.resolve(result, positive);
+    }
   };
 
   const ReauthModal = () => (
