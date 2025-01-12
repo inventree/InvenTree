@@ -3,9 +3,11 @@ import {
   Alert,
   Badge,
   Button,
+  Code,
   Grid,
   Group,
   Loader,
+  Modal,
   Radio,
   Stack,
   Table,
@@ -13,16 +15,19 @@ import {
   TextInput,
   Title
 } from '@mantine/core';
-import { IconAlertCircle, IconAt } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconAt, IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-
 import { api } from '../../../../App';
+import { QRCode } from '../../../../components/barcodes/QRCode';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
+import { useReauth } from './useConfirm';
 
 export function SecurityContent() {
   const [auth_config, sso_enabled, mfa_enabled] = useServerApiState((state) => [
@@ -34,7 +39,7 @@ export function SecurityContent() {
   return (
     <Stack>
       <Title order={5}>
-        <Trans>Email</Trans>
+        <Trans>Email Addresses</Trans>
       </Title>
       <EmailSection />
       <Title order={5}>
@@ -63,7 +68,7 @@ export function SecurityContent() {
           color='yellow'
         >
           <Trans>
-            Multifactor authentication is not configured for your account{' '}
+            Multifactor authentication is not enabled for this server
           </Trans>
         </Alert>
       )}
@@ -103,7 +108,7 @@ function EmailSection() {
       <Grid.Col span={6}>
         {data.length == 0 ? (
           <Text>
-            <Trans>Currently no emails are registered</Trans>
+            <Trans>Currently no email adreesses are registered</Trans>
           </Text>
         ) : (
           <Radio.Group
@@ -285,13 +290,51 @@ function ProviderSection({
 }
 
 function MfaSection() {
-  const { isLoading, data } = useQuery({
+  const [getReauthText, ReauthModal] = useReauth();
+  const [recoveryCodes, setRecoveryCodes] = useState<
+    Recoverycodes | undefined
+  >();
+  const [
+    recoveryCodesOpen,
+    { open: openRecoveryCodes, close: closeRecoveryCodes }
+  ] = useDisclosure(false);
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ['mfa-list'],
     queryFn: () =>
       api
         .get(apiUrl(ApiEndpoints.auth_authenticators))
         .then((res) => res.data.data)
   });
+
+  function showRecoveryCodes(codes: Recoverycodes) {
+    setRecoveryCodes(codes);
+    openRecoveryCodes();
+  }
+
+  const removeTotp = () => {
+    runActionWithFallback(
+      () =>
+        authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'delete').then(
+          () => {
+            refetch();
+            return ResultType.success;
+          }
+        ),
+      getReauthText
+    );
+  };
+  const viewRecoveryCodes = () => {
+    runActionWithFallback(
+      () =>
+        authApi(apiUrl(ApiEndpoints.auth_recovery), undefined, 'get').then(
+          (res) => {
+            showRecoveryCodes(res.data.data);
+            return ResultType.success;
+          }
+        ),
+      getReauthText
+    );
+  };
 
   const parseDate = (date: number) =>
     date == null ? 'Never' : new Date(date * 1000).toLocaleString();
@@ -303,37 +346,287 @@ function MfaSection() {
         <Table.Td>{token.type}</Table.Td>
         <Table.Td>{parseDate(token.last_used_at)}</Table.Td>
         <Table.Td>{parseDate(token.created_at)}</Table.Td>
+        <Table.Td>
+          {token.type == 'totp' && (
+            <Button color='red' onClick={removeTotp}>
+              <Trans>Remove</Trans>
+            </Button>
+          )}
+          {token.type == 'recovery_codes' && (
+            <Button onClick={viewRecoveryCodes}>
+              <Trans>View</Trans>
+            </Button>
+          )}
+        </Table.Td>
       </Table.Tr>
     ));
   }, [data, isLoading]);
 
+  const usedFactors: string[] = useMemo(() => {
+    if (isLoading || !data) return [];
+    return data.map((token: any) => token.type);
+  }, [data]);
+
   if (isLoading) return <Loader />;
 
-  if (data.length == 0)
-    return (
-      <Alert icon={<IconAlertCircle size='1rem' />} color='green'>
-        <Trans>No factors configured</Trans>
-      </Alert>
+  return (
+    <>
+      <ReauthModal />
+      <Grid>
+        <Grid.Col span={6}>
+          {data.length == 0 ? (
+            <Alert icon={<IconAlertCircle size='1rem' />} color='yellow'>
+              <Trans>No factors configured</Trans>
+            </Alert>
+          ) : (
+            <Table stickyHeader striped highlightOnHover withTableBorder>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>
+                    <Trans>Type</Trans>
+                  </Table.Th>
+                  <Table.Th>
+                    <Trans>Last used at</Trans>
+                  </Table.Th>
+                  <Table.Th>
+                    <Trans>Created at</Trans>
+                  </Table.Th>
+                  <Table.Th>
+                    <Trans>Actions</Trans>
+                  </Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>{rows}</Table.Tbody>
+            </Table>
+          )}
+        </Grid.Col>
+        <Grid.Col span={6}>
+          <MfaAddSection
+            usedFactors={usedFactors}
+            refetch={refetch}
+            showRecoveryCodes={showRecoveryCodes}
+          />
+          <Modal
+            opened={recoveryCodesOpen}
+            onClose={() => {
+              refetch();
+              closeRecoveryCodes();
+            }}
+            title={t`Recovery Codes`}
+            centered
+          >
+            <Title order={3}>
+              <Trans>Unused Codes</Trans>
+            </Title>
+            <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
+
+            <Title order={3}>
+              <Trans>Used Codes</Trans>
+            </Title>
+            <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
+          </Modal>
+        </Grid.Col>
+      </Grid>
+    </>
+  );
+}
+
+enum ResultType {
+  success = 0,
+  reauth = 1,
+  mfareauth = 2,
+  error = 3
+}
+
+export interface Recoverycodes {
+  type: string;
+  created_at: number;
+  last_used_at: null;
+  total_code_count: number;
+  unused_code_count: number;
+  unused_codes: string[];
+  used_code_count: number;
+  used_codes: string[];
+}
+
+function MfaAddSection({
+  usedFactors,
+  refetch,
+  showRecoveryCodes
+}: Readonly<{
+  usedFactors: string[];
+  refetch: () => void;
+  showRecoveryCodes: (codes: Recoverycodes) => void;
+}>) {
+  const [totpQrOpen, { open: openTotpQr, close: closeTotpQr }] =
+    useDisclosure(false);
+  const [totpQr, setTotpQr] = useState<{ totp_url: string; secret: string }>();
+  const [value, setValue] = useState('');
+  const [getReauthText, ReauthModal] = useReauth();
+
+  const registerRecoveryCodes = async () => {
+    await runActionWithFallback(
+      () =>
+        authApi(apiUrl(ApiEndpoints.auth_recovery), undefined, 'post')
+          .then((res) => {
+            showRecoveryCodes(res.data.data);
+            return ResultType.success;
+          })
+          .catch((err) => {
+            showNotification({
+              title: t`Error while registering recovery codes`,
+              message: err.response.data.errors
+                .map((error: any) => error.message)
+                .join('\n'),
+              color: 'red',
+              icon: <IconX />
+            });
+
+            return ResultType.error;
+          }),
+      getReauthText
     );
+  };
+  const registerTotp = async () => {
+    await runActionWithFallback(
+      () =>
+        authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'get')
+          .then(() => ResultType.error)
+          .catch((err) => {
+            if (err.status == 404 && err.response.data.meta.secret) {
+              setTotpQr(err.response.data.meta);
+              openTotpQr();
+              return ResultType.success;
+            }
+            return ResultType.error;
+          }),
+      getReauthText
+    );
+  };
+
+  const possibleFactors = useMemo(() => {
+    return [
+      {
+        type: 'totp',
+        name: t`TOTP`,
+        description: t`Time-based One-Time Password`,
+        function: registerTotp,
+        used: usedFactors?.includes('totp')
+      },
+      {
+        type: 'recovery_codes',
+        name: t`Recovery Codes`,
+        description: t`One-Time pre-generated recovery codes`,
+        function: registerRecoveryCodes,
+        used: usedFactors?.includes('recovery_codes')
+      }
+    ];
+  }, [usedFactors]);
 
   return (
-    <Table stickyHeader striped highlightOnHover withTableBorder>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>
-            <Trans>Type</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Last used at</Trans>
-          </Table.Th>
-          <Table.Th>
-            <Trans>Created at</Trans>
-          </Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
-    </Table>
+    <Stack>
+      <ReauthModal />
+      <Text>Add Factor</Text>
+      {possibleFactors.map((factor) => (
+        <Button
+          key={factor.type}
+          onClick={factor.function}
+          disabled={factor.used}
+          variant='outline'
+        >
+          {factor.name}
+        </Button>
+      ))}
+      <Modal
+        opened={totpQrOpen}
+        onClose={closeTotpQr}
+        title={t`Register TOTP token`}
+      >
+        <Stack>
+          <QRCode data={totpQr?.totp_url} />
+          <Text>
+            <Trans>Secret</Trans>
+            <br />
+            {totpQr?.secret}
+          </Text>
+          <TextInput
+            required
+            label={t`One-Time Password`}
+            description={t`Enter the TOTP code to ensure it registered correctly`}
+            value={value}
+            onChange={(event) => setValue(event.currentTarget.value)}
+          />
+          <Button
+            fullWidth
+            onClick={() =>
+              runActionWithFallback(
+                () =>
+                  authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
+                    code: value
+                  }).then(() => {
+                    closeTotpQr();
+                    refetch();
+                    return ResultType.success;
+                  }),
+                getReauthText
+              )
+            }
+          >
+            <Trans>Submit</Trans>
+          </Button>
+        </Stack>
+      </Modal>
+    </Stack>
   );
+}
+
+async function runActionWithFallback(
+  action: () => Promise<ResultType>,
+  getReauthText: (props: any) => any
+) {
+  const rslt = await action().catch((err) => {
+    // check if we need to re-authenticate
+    if (err.status == 401) {
+      if (
+        err.response.data.data.flows.find(
+          (flow: any) => flow.id == 'mfa_reauthenticate'
+        )
+      ) {
+        return ResultType.mfareauth;
+      } else if (
+        err.response.data.data.flows.find(
+          (flow: any) => flow.id == 'reauthenticate'
+        )
+      ) {
+        return ResultType.reauth;
+      } else {
+        return ResultType.error;
+      }
+    } else {
+      return ResultType.error;
+    }
+  });
+  if (rslt == ResultType.mfareauth) {
+    authApi(apiUrl(ApiEndpoints.auth_mfa_reauthenticate), undefined, 'post', {
+      code: await getReauthText({
+        label: t`TOTP Code`,
+        name: 'TOTP',
+        description: t`Enter your TOTP or recovery code`
+      })
+    }).then(() => {
+      action();
+    });
+  } else if (rslt == ResultType.reauth) {
+    authApi(apiUrl(ApiEndpoints.auth_reauthenticate), undefined, 'post', {
+      password: await getReauthText({
+        label: t`Password`,
+        name: 'password',
+        description: t`Enter your password`
+      })
+    }).then(() => {
+      action();
+    });
+  }
 }
 
 function TokenSection() {
