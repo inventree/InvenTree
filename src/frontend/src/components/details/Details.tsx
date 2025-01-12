@@ -380,7 +380,6 @@ export function DetailsTableField({
     <Table.Tr style={{ verticalAlign: 'top' }}>
       <Table.Td
         style={{
-          width: '50',
           maxWidth: '50'
         }}
       >
@@ -409,7 +408,11 @@ export function DetailsTable({
   title?: string;
 }>) {
   return (
-    <Paper p='xs' withBorder radius='xs'>
+    <Paper
+      p='xs'
+      withBorder
+      style={{ overflowX: 'hidden', width: '100%', minWidth: 200 }}
+    >
       <Stack gap='xs'>
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>

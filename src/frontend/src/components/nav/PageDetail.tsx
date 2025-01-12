@@ -95,7 +95,7 @@ export function PageDetail({
               </Group>
               <Space />
               {actions && (
-                <Group gap={5} justify='right'>
+                <Group gap={5} justify='right' wrap='nowrap'>
                   {actions.map((action, idx) => (
                     <Fragment key={idx}>{action}</Fragment>
                   ))}
