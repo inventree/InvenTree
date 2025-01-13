@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 299
+INVENTREE_API_VERSION = 300
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v300 - 2025-01-13 - https://github.com/inventree/InvenTree/pull/8886
+    - Allow null value for 'expiry_date' field introduced in #8867
 
 v299 - 2025-01-10 - https://github.com/inventree/InvenTree/pull/8867
     - Adds 'expiry_date' field to the PurchaseOrderReceive API endpoint

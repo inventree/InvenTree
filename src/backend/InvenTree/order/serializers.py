@@ -770,6 +770,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         label=_('Expiry Date'),
         help_text=_('Enter expiry date for incoming stock items'),
         required=False,
+        allow_null=True,
         default=None,
     )
 
