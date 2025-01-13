@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 300
+INVENTREE_API_VERSION = 301
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v300 - 2025-01-10 : https://github.com/inventree/InvenTree/pull/6293
+v301 - 2025-01-10 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
 
