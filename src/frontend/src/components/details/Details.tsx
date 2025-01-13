@@ -380,16 +380,15 @@ export function DetailsTableField({
     <Table.Tr style={{ verticalAlign: 'top' }}>
       <Table.Td
         style={{
-          width: '50',
           maxWidth: '50'
         }}
       >
         <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
       </Table.Td>
-      <Table.Td style={{ maxWidth: '65%', lineBreak: 'auto' }}>
+      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
         <Text>{field.label}</Text>
       </Table.Td>
-      <Table.Td style={{ lineBreak: 'anywhere' }}>
+      <Table.Td style={{ lineBreak: 'anywhere', minWidth: 100, flex: 10 }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>
@@ -409,7 +408,11 @@ export function DetailsTable({
   title?: string;
 }>) {
   return (
-    <Paper p='xs' withBorder radius='xs'>
+    <Paper
+      p='xs'
+      withBorder
+      style={{ overflowX: 'hidden', width: '100%', minWidth: 200 }}
+    >
       <Stack gap='xs'>
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
