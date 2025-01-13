@@ -1220,7 +1220,7 @@ else:
     if CORS_ALLOWED_ORIGIN_REGEXES:
         logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
-# region  auth
+# region auth
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
@@ -1304,7 +1304,15 @@ HEADLESS_FRONTEND_URLS = {
 }
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
-MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
+MFA_ENABLED = get_boolean_setting(
+    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
+)  # TODO re-implement
+MFA_SUPPORTED_TYPES = get_setting(
+    'INVENTREE_MFA_SUPPORTED_TYPES',
+    'mfa_supported_types',
+    ['totp', 'recovery_codes'],
+    typecast=list,
+)
 
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'

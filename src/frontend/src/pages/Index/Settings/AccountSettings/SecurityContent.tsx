@@ -445,6 +445,7 @@ function MfaAddSection({
   refetch: () => void;
   showRecoveryCodes: (codes: Recoverycodes) => void;
 }>) {
+  const [auth_config] = useServerApiState((state) => [state.auth_config]);
   const [totpQrOpen, { open: openTotpQr, close: closeTotpQr }] =
     useDisclosure(false);
   const [totpQr, setTotpQr] = useState<{ totp_url: string; secret: string }>();
@@ -507,8 +508,10 @@ function MfaAddSection({
         function: registerRecoveryCodes,
         used: usedFactors?.includes('recovery_codes')
       }
-    ];
-  }, [usedFactors]);
+    ].filter((factor) => {
+      auth_config?.mfa.supported_types.includes(factor.type);
+    });
+  }, [usedFactors, auth_config]);
 
   return (
     <Stack>
