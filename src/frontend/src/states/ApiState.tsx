@@ -12,7 +12,6 @@ interface ServerApiStateProps {
   fetchServerApiState: () => void;
   auth_config?: AuthConfig;
   sso_enabled: () => boolean;
-  mfa_enabled: () => boolean;
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
   password_forgotten_enabled: () => boolean;
@@ -51,10 +50,6 @@ export const useServerApiState = create<ServerApiStateProps>()(
       sso_enabled: () => {
         const data = get().auth_config?.socialaccount.providers;
         return !(data === undefined || data.length == 0);
-      },
-      mfa_enabled: () => {
-        // TODO
-        return true;
       },
       registration_enabled: () => {
         // TODO

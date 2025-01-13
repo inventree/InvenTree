@@ -30,10 +30,9 @@ import type { AuthConfig, Provider } from '../../../../states/states';
 import { useReauth } from './useConfirm';
 
 export function SecurityContent() {
-  const [auth_config, sso_enabled, mfa_enabled] = useServerApiState((state) => [
+  const [auth_config, sso_enabled] = useServerApiState((state) => [
     state.auth_config,
-    state.sso_enabled,
-    state.mfa_enabled
+    state.sso_enabled
   ]);
 
   return (
@@ -59,19 +58,7 @@ export function SecurityContent() {
       <Title order={5}>
         <Trans>Multifactor authentication</Trans>
       </Title>
-      {mfa_enabled() ? (
-        <MfaSection />
-      ) : (
-        <Alert
-          icon={<IconAlertCircle size='1rem' />}
-          title={t`Not enabled`}
-          color='yellow'
-        >
-          <Trans>
-            Multifactor authentication is not enabled for this server
-          </Trans>
-        </Alert>
-      )}
+      <MfaSection />
       <Title order={5}>
         <Trans>Access Tokens</Trans>
       </Title>
