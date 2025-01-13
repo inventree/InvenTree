@@ -11,6 +11,9 @@ v300 - 2025-01-10 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
 
+v300 - 2025-01-13 - https://github.com/inventree/InvenTree/pull/8886
+    - Allow null value for 'expiry_date' field introduced in #8867
+
 v299 - 2025-01-10 - https://github.com/inventree/InvenTree/pull/8867
     - Adds 'expiry_date' field to the PurchaseOrderReceive API endpoint
     - Adds 'default_expiry` field to the PartBriefSerializer, affecting API endpoints which use it
