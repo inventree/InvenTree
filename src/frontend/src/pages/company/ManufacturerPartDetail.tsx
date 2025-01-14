@@ -133,19 +133,17 @@ export default function ManufacturerPartDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              src={manufacturerPart?.part_detail?.image}
-              apiPath={apiUrl(
-                ApiEndpoints.part_list,
-                manufacturerPart?.part_detail?.pk
-              )}
-              pk={manufacturerPart?.part_detail?.pk}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            src={manufacturerPart?.part_detail?.image}
+            apiPath={apiUrl(
+              ApiEndpoints.part_list,
+              manufacturerPart?.part_detail?.pk
+            )}
+            pk={manufacturerPart?.part_detail?.pk}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>

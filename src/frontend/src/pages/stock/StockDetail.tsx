@@ -346,19 +346,16 @@ export default function StockDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={
-                stockitem.part_detail?.image ??
-                stockitem?.part_detail?.thumbnail
-              }
-              pk={stockitem.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={
+              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
+            }
+            pk={stockitem.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>

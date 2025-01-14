@@ -9,7 +9,7 @@ export function AccountContent() {
 
   return (
     <div>
-      <SimpleGrid cols={2} spacing='md'>
+      <SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
         <Container w='100%'>
           <AccountDetailPanel />
         </Container>
