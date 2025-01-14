@@ -219,10 +219,8 @@ if DEBUG and 'collectstatic' not in sys.argv:
 
     # Append directory for sample plugin static content (if in debug mode)
     if PLUGINS_ENABLED:
-        print('Adding plugin sample static content')
+        logger.info('Adding plugin sample static content')
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
-
-        print('-', STATICFILES_DIRS[-1])
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -1037,7 +1035,9 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        logger.error(msg)
+        print(msg)
         sys.exit(-1)
 
 else:
@@ -1136,12 +1136,7 @@ COOKIE_MODE = (
 # Valid modes (as per the django settings documentation)
 valid_cookie_modes = ['lax', 'strict', 'none']
 
-if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
-    # Set the cookie mode (in production mode only)
-    COOKIE_MODE = COOKIE_MODE.capitalize()
-else:
-    # Default to False, as per the Django settings
-    COOKIE_MODE = False
+COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -1149,13 +1144,14 @@ CSRF_COOKIE_NAME = 'csrftoken'
 
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
+LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 
 """Set the SESSION_COOKIE_SECURE value based on the following rules:
 - False if the server is running in DEBUG mode
 - True if samesite cookie setting is set to 'None'
 - Otherwise, use the value specified in the configuration file (or env var)
 """
-SESSION_COOKIE_SECURE = (
+COOKIE_SECURE = (
     False
     if DEBUG
     else (
@@ -1165,6 +1161,10 @@ SESSION_COOKIE_SECURE = (
         )
     )
 )
+
+CSRF_COOKIE_SECURE = COOKIE_SECURE
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+LANGUAGE_COOKIE_SECURE = COOKIE_SECURE
 
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
 if ssl_header := get_boolean_setting(

@@ -3,7 +3,7 @@ import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { shortenString } from '../../functions/tables';
@@ -130,6 +130,8 @@ export function RenderRemoteInstance({
   model: ModelType;
   pk: number;
 }>): ReactNode {
+  const api = useApi();
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {

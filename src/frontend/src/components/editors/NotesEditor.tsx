@@ -7,7 +7,7 @@ import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
@@ -31,6 +31,7 @@ export default function NotesEditor({
   modelId: number;
   editable?: boolean;
 }>) {
+  const api = useApi();
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
 

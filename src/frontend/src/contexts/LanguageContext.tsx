@@ -47,6 +47,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     ru: t`Russian`,
     sk: t`Slovak`,
     sl: t`Slovenian`,
+    sr: t`Serbian`,
     sv: t`Swedish`,
     th: t`Thai`,
     tr: t`Turkish`,

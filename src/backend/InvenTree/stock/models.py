@@ -431,7 +431,7 @@ class StockItem(
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),
             'result_list': self.testResultList(include_installed=True),
-            'results': self.testResultMap(include_installed=True),
+            'results': self.testResultMap(include_installed=True, cascade=True),
             'serial': self.serial,
             'stock_item': self,
             'tests': self.testResultMap(),
@@ -2439,6 +2439,7 @@ class StockItem(
         """
         # Do we wish to include test results from installed items?
         include_installed = kwargs.pop('include_installed', False)
+        cascade = kwargs.pop('cascade', False)
 
         # Filter results by "date", so that newer results
         # will override older ones.
@@ -2448,9 +2449,6 @@ class StockItem(
 
         for result in results:
             result_map[result.key] = result
-
-        # Do we wish to "cascade" and include test results from installed stock items?
-        cascade = kwargs.get('cascade', False)
 
         if include_installed:
             installed_items = self.get_installed_items(cascade=cascade)

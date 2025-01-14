@@ -219,7 +219,7 @@ export default function BomPricingPanel({
 
   return (
     <Stack gap='xs'>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           tableState={table}
           url={apiUrl(ApiEndpoints.bom_list)}

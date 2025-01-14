@@ -171,4 +171,4 @@ WORKDIR ${INVENTREE_HOME}
 ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
 
 # Launch the development server
-CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+CMD ["invoke", "dev.server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
