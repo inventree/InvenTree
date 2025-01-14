@@ -45,7 +45,7 @@ export default function SupplierPricingPanel({
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_pricing_list)}
         columns={columns}
