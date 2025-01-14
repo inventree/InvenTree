@@ -5,7 +5,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../App';
+import { useApi } from '../contexts/ApiContext';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { resolveItem } from '../functions/conversion';
 import { apiUrl } from '../states/ApiState';
@@ -20,6 +20,8 @@ type UseFilterProps = {
 };
 
 export function useFilters(props: UseFilterProps) {
+  const api = useApi();
+
   const query = useQuery({
     enabled: true,
     gcTime: 500,

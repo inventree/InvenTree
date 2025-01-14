@@ -53,7 +53,12 @@ export function MenuLinks({
         <Divider />
         <StylishText size='md'>{title}</StylishText>
         <Divider />
-        <SimpleGrid cols={2} spacing={0} p={3}>
+        <SimpleGrid
+          cols={{ base: 1, '400px': 2 }}
+          type='container'
+          spacing={0}
+          p={3}
+        >
           {visibleLinks.map((item) => (
             <Tooltip
               key={`menu-link-tooltip-${item.id}`}

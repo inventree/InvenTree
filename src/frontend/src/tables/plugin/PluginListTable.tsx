@@ -13,12 +13,12 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import PluginDrawer from '../../components/plugins/PluginDrawer';
 import type { PluginInterface } from '../../components/plugins/PluginInterface';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
@@ -63,6 +63,7 @@ function PluginIcon({ plugin }: Readonly<{ plugin: PluginInterface }>) {
  * Table displaying list of available plugins
  */
 export default function PluginListTable() {
+  const api = useApi();
   const table = useTable('plugin');
   const navigate = useNavigate();
   const user = useUserState();

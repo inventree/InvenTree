@@ -352,6 +352,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
             'category_default_location',
             'default_location',
+            'default_expiry',
             'name',
             'revision',
             'full_name',
@@ -682,7 +683,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['duplicate']
+    import_exclude_fields = ['duplicate', 'tags']
 
     class Meta:
         """Metaclass defining serializer fields."""

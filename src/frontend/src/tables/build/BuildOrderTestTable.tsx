@@ -10,10 +10,10 @@ import {
   useState
 } from 'react';
 
-import { api } from '../../App';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { RenderUser } from '../../components/render/User';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTestResultFields } from '../../forms/StockForms';
@@ -40,6 +40,7 @@ export default function BuildOrderTestTable({
 }>) {
   const table = useTable('build-tests');
   const user = useUserState();
+  const api = useApi();
 
   // Fetch the test templates required for this build order
   const { data: testTemplates } = useQuery({
