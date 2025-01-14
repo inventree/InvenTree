@@ -75,6 +75,20 @@ def check_link(url) -> bool:
 
 def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
+    print('get_build_environment()')
+
+    for key in [
+        'READTHEDOCS',
+        'READTHEDOCS_GIT_IDENTIFIER',
+        'READTHEDOCS_GIT_COMMIT_HASH',
+        'READTHEDOCS_GIT_CLONE_URL',
+        'READTHEDOCS_VERSION_TYPE',
+        'GITHUB_ACTIONS',
+        'GITHUB_REF',
+    ]:
+        val = os.environ.get(key)
+        print(f' - {key}: {val}')
+
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
         return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
