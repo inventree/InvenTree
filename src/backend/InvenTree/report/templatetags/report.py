@@ -93,13 +93,7 @@ def getindex(container: list, index: int) -> Any:
 
     if index < 0 or index >= len(container):
         return None
-
-    try:
-        value = container[index]
-    except IndexError:
-        value = None
-
-    return value
+    return container[index]
 
 
 @register.simple_tag()
@@ -191,7 +185,7 @@ def uploaded_image(
         try:
             full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
             exists = full_path.exists() and full_path.is_file()
-        except Exception:
+        except Exception:  # pragma: no cover
             exists = False
 
     if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
@@ -376,10 +370,14 @@ def internal_link(link, text) -> str:
     """
     text = str(text)
 
-    url = InvenTree.helpers_model.construct_absolute_url(link)
+    try:
+        url = InvenTree.helpers_model.construct_absolute_url(link)
+    except Exception:
+        url = None
 
     # If the base URL is not set, just return the text
     if not url:
+        logger.warning('Failed to construct absolute URL for internal link')
         return text
 
     return mark_safe(f'<a href="{url}">{text}</a>')
@@ -558,15 +556,18 @@ def icon(name, **kwargs):
 
 
 @register.simple_tag()
-def include_icon_fonts():
+def include_icon_fonts(ttf: bool = False, woff: bool = False):
     """Return the CSS font-face rule for the icon fonts used on the current page (or all)."""
     fonts = []
 
+    if not ttf and not woff:
+        ttf = woff = True
+
     for font in common.icons.get_icon_packs().values():
         # generate the font src string (prefer ttf over woff, woff2 is not supported by weasyprint)
-        if 'truetype' in font.fonts:
+        if 'truetype' in font.fonts and ttf:
             font_format, url = 'truetype', font.fonts['truetype']
-        elif 'woff' in font.fonts:
+        elif 'woff' in font.fonts and woff:
             font_format, url = 'woff', font.fonts['woff']
 
         fonts.append(f"""
