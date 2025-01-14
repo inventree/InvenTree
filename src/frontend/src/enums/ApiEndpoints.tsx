@@ -221,5 +221,6 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
+  ui_preference = 'web/ui_preference/',
   notes_image_upload = 'notes-image-upload/'
 }

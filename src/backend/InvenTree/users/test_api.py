@@ -95,6 +95,11 @@ class UserAPITests(InvenTreeAPITestCase):
     def test_login_redirect(self):
         """Test login redirect endpoint."""
         response = self.get(reverse('api-login-redirect'), expected_code=302)
+        self.assertEqual(response.url, '/index/')
+
+        # PUI
+        self.put(reverse('api-ui-preference'), {'preferred_method': 'pui'})
+        response = self.get(reverse('api-login-redirect'), expected_code=302)
         self.assertEqual(response.url, '/platform/logged-in/')
 
 
