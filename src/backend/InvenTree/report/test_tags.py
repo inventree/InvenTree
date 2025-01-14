@@ -5,11 +5,13 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
 
-from backend.InvenTree.common.models import InvenTreeSetting
-from backend.InvenTree.report.templatetags import barcode as barcode_tags
-from backend.InvenTree.report.templatetags import report as report_tags
 from PIL import Image
 from zoneinfo import ZoneInfo
+
+from common.models import InvenTreeSetting
+from part.models import Part
+from report.templatetags import barcode as barcode_tags
+from report.templatetags import report as report_tags
 
 
 class ReportTagTest(TestCase):
@@ -36,8 +38,14 @@ class ReportTagTest(TestCase):
         """Tests for the 'getkey' template tag."""
         data = {'hello': 'world', 'foo': 'bar', 'with spaces': 'withoutspaces', 1: 2}
 
+        # Valid case
         for k, v in data.items():
             self.assertEqual(report_tags.getkey(data, k), v)
+
+        # Error case
+        self.assertEqual(
+            None, report_tags.getkey('not a container', 'not-a-key', 'a value')
+        )
 
     def test_asset(self):
         """Tests for asset files."""
@@ -117,15 +125,52 @@ class ReportTagTest(TestCase):
         img = report_tags.uploaded_image(SafeString('part/images/test.jpg'))
         self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
 
+        # Check width, height, rotate
+        img = report_tags.uploaded_image(
+            'part/images/test.jpg', width=100, height=200, rotate=90
+        )
+        self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
+
+        img = report_tags.uploaded_image('part/images/test.jpg', width=100)
+        self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
+
+        # Invalid args
+        img = report_tags.uploaded_image(
+            'part/images/test.jpg', width='a', height='b', rotate='c'
+        )
+        self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
+
     def test_part_image(self):
         """Unit tests for the 'part_image' tag."""
         with self.assertRaises(TypeError):
             report_tags.part_image(None)
+        with self.assertRaises(TypeError):
+            report_tags.part_image(None, preview=True)
+        with self.assertRaises(TypeError):
+            report_tags.part_image(None, thumbnail=True)
 
     def test_company_image(self):
         """Unit tests for the 'company_image' tag."""
         with self.assertRaises(TypeError):
             report_tags.company_image(None)
+        with self.assertRaises(TypeError):
+            report_tags.company_image(None, preview=True)
+        with self.assertRaises(TypeError):
+            report_tags.company_image(None, thumbnail=True)
+
+    def test_internal_link(self):
+        """Unit tests for the 'internal_link' tag."""
+        # Test with a valid object
+        obj = Part.objects.create(name='test', description='test')
+        self.assertEqual(report_tags.internal_link(obj, 'test123'), 'test123')
+        link = report_tags.internal_link(obj.get_absolute_url(), 'test')
+        self.assertEqual(
+            link, f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>'
+        )
+
+        # Test with an invalid object
+        link = report_tags.internal_link(None, None)
+        self.assertEqual(link, 'None')
 
     def test_logo_image(self):
         """Unit tests for the 'logo_image' tag."""
@@ -153,6 +198,11 @@ class ReportTagTest(TestCase):
         self.assertEqual(
             fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
         )
+
+        # Failure cases
+        self.assertEqual(fn('abc'), 'abc')
+        self.assertEqual(fn(1234.456, decimal_places='a'), '1234.456')
+        self.assertEqual(fn(1234.456, leading='a'), '1234.456')
 
     @override_settings(TIME_ZONE='America/New_York')
     def test_date_tags(self):
@@ -203,12 +253,17 @@ class ReportTagTest(TestCase):
 
     def test_include_icon_fonts(self):
         """Test the include_icon_fonts template tag."""
+        # ttf
         style = report_tags.include_icon_fonts()
 
         self.assertIn('@font-face {', style)
         self.assertIn("font-family: 'inventree-icon-font-ti';", style)
         self.assertIn('tabler-icons/tabler-icons.ttf', style)
         self.assertIn('.icon {', style)
+
+        # woff
+        style = report_tags.include_icon_fonts(woff=True)
+        self.assertIn('tabler-icons/tabler-icons.woff', style)
 
 
 class BarcodeTagTest(TestCase):
@@ -270,6 +325,3 @@ class BarcodeTagTest(TestCase):
         # Test empty tag
         with self.assertRaises(ValueError):
             barcode_tags.datamatrix('')
-
-
-#
