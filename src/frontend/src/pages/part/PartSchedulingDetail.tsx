@@ -243,7 +243,7 @@ export default function PartSchedulingDetail({
           <Text>{t`There is no scheduling information available for the selected part`}</Text>
         </Alert>
       )}
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.part_scheduling, part.pk)}
           tableState={table}

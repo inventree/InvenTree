@@ -240,7 +240,7 @@ export default function PricingOverviewPanel({
     <>
       {editPricing.modal}
       <Stack gap='xs'>
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Stack gap='xs'>
             <Paper p='xs'>
               <Group justify='space-between' wrap='nowrap'>

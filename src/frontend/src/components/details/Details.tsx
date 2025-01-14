@@ -378,17 +378,22 @@ export function DetailsTableField({
 
   return (
     <Table.Tr style={{ verticalAlign: 'top' }}>
+      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
+        <Group gap='xs' wrap='nowrap'>
+          <InvenTreeIcon
+            icon={field.icon ?? (field.name as InvenTreeIconType)}
+          />
+          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+        </Group>
+      </Table.Td>
       <Table.Td
         style={{
-          maxWidth: '50'
+          lineBreak: 'anywhere',
+          minWidth: 100,
+          flex: 10,
+          display: 'inline-block'
         }}
       >
-        <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
-      </Table.Td>
-      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
-        <Text>{field.label}</Text>
-      </Table.Td>
-      <Table.Td style={{ lineBreak: 'anywhere', minWidth: 100, flex: 10 }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>
