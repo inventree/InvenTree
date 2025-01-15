@@ -44,6 +44,8 @@ def filter_queryset(queryset: QuerySet, **kwargs) -> QuerySet:
     Example:
         {% filter_queryset companies is_supplier=True as suppliers %}
     """
+    if not isinstance(queryset, QuerySet):
+        return queryset
     return queryset.filter(**kwargs)
 
 
@@ -185,8 +187,8 @@ def uploaded_image(
         try:
             full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
             exists = full_path.exists() and full_path.is_file()
-        except Exception:  # pragma: no cover
-            exists = False
+        except Exception:
+            exists = False  # pragma: no cover
 
     if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
         logger.warning("File '%s' is not a valid image", filename)
@@ -523,7 +525,10 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
         timezone: The timezone to use for the date (defaults to the server timezone)
         fmt: The format string to use (defaults to ISO formatting)
     """
-    dt = InvenTree.helpers.to_local_time(dt, timezone).date()
+    try:
+        dt = InvenTree.helpers.to_local_time(dt, timezone).date()
+    except TypeError:
+        return str(dt)
 
     if fmt:
         return dt.strftime(fmt)

@@ -95,12 +95,6 @@ def render_date(context, date_object):
     return date_object
 
 
-@register.simple_tag
-def render_currency(money, **kwargs):
-    """Render a currency / Money object."""
-    return InvenTree.helpers_model.render_currency(money, **kwargs)
-
-
 @register.simple_tag()
 def str2bool(x, *args, **kwargs):
     """Convert a string to a boolean value."""

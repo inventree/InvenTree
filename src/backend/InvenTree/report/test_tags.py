@@ -5,11 +5,12 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
 
+from djmoney.money import Money
 from PIL import Image
 from zoneinfo import ZoneInfo
 
 from common.models import InvenTreeSetting
-from part.models import Part
+from part.models import Part, PartParameter, PartParameterTemplate
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
 
@@ -264,6 +265,87 @@ class ReportTagTest(TestCase):
         # woff
         style = report_tags.include_icon_fonts(woff=True)
         self.assertIn('tabler-icons/tabler-icons.woff', style)
+
+    def test_filter_queryset(self):
+        """Test the filter_queryset template tag."""
+        # Test with a valid queryset
+        qs = Part.objects.all()
+        self.assertEqual(
+            list(report_tags.filter_queryset(qs, name='test')),
+            list(qs.filter(name='test')),
+        )
+
+        # Test with an invalid queryset
+        self.assertEqual(report_tags.filter_queryset(None, name='test'), None)
+
+    def test_part_parameter(self):
+        """Test the part_parameter template tag."""
+        # Test with a valid part
+        part = Part.objects.create(name='test', description='test')
+        t1 = PartParameterTemplate.objects.create(name='Template 1', units='mm')
+        parameter = PartParameter.objects.create(part=part, template=t1, data='test')
+
+        self.assertEqual(report_tags.part_parameter(part, 'name'), None)
+        self.assertEqual(report_tags.part_parameter(part, 'Template 1'), parameter)
+        # Test with an invalid part
+        self.assertEqual(report_tags.part_parameter(None, 'name'), None)
+
+    def test_render_currency(self):
+        """Test the render_currency template tag."""
+        m = Money(1234.56, 'USD')
+        exp_m = '$1,234.56'
+
+        self.assertEqual(report_tags.render_currency(m), exp_m)
+        self.assertEqual(report_tags.render_currency(m, currency='EUR'), exp_m)
+        self.assertEqual(
+            report_tags.render_currency(
+                Money(1234, 'USD'), currency='EUR', min_decimal_places=3
+            ),
+            '$1,234.000',
+        )
+        self.assertEqual(
+            report_tags.render_currency(
+                Money(1234, 'USD'), currency='EUR', max_decimal_places=1
+            ),
+            '$1,234.0',
+        )
+
+        # Test with an invalid amount
+        self.assertEqual(report_tags.render_currency('abc'), '-')
+        self.assertEqual(report_tags.render_currency(m, decimal_places='a'), exp_m)
+        self.assertEqual(report_tags.render_currency(m, min_decimal_places='a'), exp_m)
+        self.assertEqual(report_tags.render_currency(m, max_decimal_places='a'), exp_m)
+
+    def test_render_html_text(self):
+        """Test the render_html_text template tag."""
+        # Test with a valid text
+        self.assertEqual(report_tags.render_html_text('hello world'), 'hello world')
+        self.assertEqual(
+            report_tags.render_html_text('<b>hello world</b>'), '<b>hello world</b>'
+        )
+        self.assertEqual(
+            report_tags.render_html_text('hello world', bold=True),
+            '<strong>hello world</strong>',
+        )
+        self.assertEqual(
+            report_tags.render_html_text('hello world', italic=True),
+            '<em>hello world</em>',
+        )
+        self.assertEqual(
+            report_tags.render_html_text('hello world', heading='h1'),
+            '<h1>hello world</h1>',
+        )
+
+    def test_format_date(self):
+        """Test the format_date template tag."""
+        # Test with a valid date
+        date = timezone.datetime(year=2024, month=3, day=13)
+        self.assertEqual(report_tags.format_date(date), '2024-03-13')
+        self.assertEqual(report_tags.format_date(date, fmt='%d-%m-%y'), '13-03-24')
+
+        # Test with an invalid date
+        self.assertEqual(report_tags.format_date('abc'), 'abc')
+        self.assertEqual(report_tags.format_date(date, fmt='a'), 'a')
 
 
 class BarcodeTagTest(TestCase):
