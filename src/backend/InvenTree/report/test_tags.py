@@ -329,6 +329,7 @@ class ReportTagTest(TestCase):
 
         self.assertEqual(report_tags.render_currency(m), exp_m)
         self.assertEqual(report_tags.render_currency(m, currency='EUR'), exp_m)
+        self.assertEqual(report_tags.render_currency(m, decimal_places=3), '$1,234.560')
         self.assertEqual(
             report_tags.render_currency(
                 Money(1234, 'USD'), currency='EUR', min_decimal_places=3
