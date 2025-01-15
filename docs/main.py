@@ -8,6 +8,26 @@ import textwrap
 import requests
 import yaml
 
+# Debugging output - useful for diagnosing CI build issues
+print('loading ./docs/main.py...')
+
+# Print out some useful debugging information
+# Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
+for key in [
+    'GITHUB_ACTIONS',
+    'GITHUB_REF',
+    'READTHEDOCS',
+    'READTHEDOCS_GIT_IDENTIFIER',
+    'READTHEDOCS_GIT_CLONE_URL',
+    'READTHEDOCS_GIT_COMMIT_HASH',
+    'READTHEDOCS_PROJECT',
+    'READTHEDOCS_VERSION',
+    'READTHEDOCS_VERSION_NAME',
+    'READTHEDOCS_VERSION_TYPE',
+]:
+    val = os.environ.get(key) or '-- MISSING --'
+    print(f' - {key}: {val}')
+
 # Cached settings dict values
 global GLOBAL_SETTINGS
 global USER_SETTINGS
@@ -77,12 +97,15 @@ def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
-        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+        for var in ['READTHEDOCS_GIT_COMMIT_HASH', 'READTHEDOCS_GIT_IDENTIFIER']:
+            if val := os.environ.get(var):
+                return val
     # We are in GitHub Actions
     elif os.environ.get('GITHUB_ACTIONS') == 'true':
         return os.environ.get('GITHUB_REF')
-    else:
-        return 'master'
+
+    # Default to 'master' branch
+    return 'master'
 
 
 def define_env(env):

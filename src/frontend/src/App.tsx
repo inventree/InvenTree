@@ -15,7 +15,7 @@ export function setApiDefaults() {
   const token = useUserState.getState().token;
 
   api.defaults.baseURL = host;
-  api.defaults.timeout = 2500;
+  api.defaults.timeout = 5000;
 
   api.defaults.withCredentials = true;
   api.defaults.withXSRFToken = true;
