@@ -91,12 +91,15 @@ def get_build_enviroment() -> str:
 
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
-        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+        for var in ['READTHEDOCS_GIT_COMMIT_HASH', 'READTHEDOCS_GIT_IDENTIFIER']:
+            if val := os.environ.get(var):
+                return val
     # We are in GitHub Actions
     elif os.environ.get('GITHUB_ACTIONS') == 'true':
         return os.environ.get('GITHUB_REF')
-    else:
-        return 'master'
+
+    # Default to 'master' branch
+    return 'master'
 
 
 def define_env(env):
