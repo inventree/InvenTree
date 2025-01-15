@@ -82,11 +82,21 @@ class ReportTest(InvenTreeAPITestCase):
         part_pk = Part.objects.first().pk
         report = ReportTemplate.objects.filter(model_type='part').first()
 
-        response = self.get(
-            url, {'model_type': 'part', 'items': part_pk}, expected_code=400
-        )
-        print('errrrresponse', response, 'errrrresponse', response.data)
-        return
+        try:
+            response = self.get(
+                url, {'model_type': 'part', 'items': part_pk}, expected_code=400
+            )
+            self.assertIn('model_type', response.data)
+            self.assertContains(
+                response,
+                'Select a valid choice. part is not one of the available choices.',
+            )
+            return
+        except AssertionError:
+            print('noerr')
+            response = self.get(url, {'model_type': 'part', 'items': part_pk})
+            print('rsp', response.data, 'rsp', response)
+
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], report.pk)
         self.assertEqual(response.data[0]['name'], report.name)
