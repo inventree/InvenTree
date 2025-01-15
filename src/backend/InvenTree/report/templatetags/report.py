@@ -190,7 +190,7 @@ def uploaded_image(
         try:
             full_path = settings.MEDIA_ROOT.joinpath(filename).resolve()
             exists = full_path.exists() and full_path.is_file()
-        except Exception:
+        except Exception:  # pragma: no cover
             exists = False  # pragma: no cover
 
     if exists and validate and not InvenTree.helpers.TestIfImage(full_path):
