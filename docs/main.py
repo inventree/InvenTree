@@ -11,6 +11,8 @@ import yaml
 # Debugging output - useful for diagnosing CI build issues
 print('loading ./docs/main.py...')
 
+# Print out some useful debugging information
+# Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
 for key in [
     'GITHUB_ACTIONS',
     'GITHUB_REF',
