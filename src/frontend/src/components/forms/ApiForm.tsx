@@ -435,11 +435,18 @@ export function ApiForm({
       }
     });
 
+    /* Set the timeout for the request:
+     * - If a timeout is provided in the props, use that
+     * - If the form contains files, use a longer timeout
+     * - Otherwise, use the default timeout
+     */
+    const timeout = props.timeout ?? (hasFiles ? 30000 : undefined);
+
     return api({
       method: method,
       url: url,
       data: hasFiles ? formData : jsonData,
-      timeout: props.timeout,
+      timeout: timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
       }
