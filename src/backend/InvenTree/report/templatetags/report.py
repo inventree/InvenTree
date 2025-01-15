@@ -62,7 +62,10 @@ def filter_db_model(model_name: str, **kwargs) -> QuerySet:
     Example:
         {% filter_db_model 'part.partcategory' is_template=True as template_parts %}
     """
-    app_name, model_name = model_name.split('.')
+    try:
+        app_name, model_name = model_name.split('.')
+    except ValueError:
+        return None
 
     try:
         model = apps.get_model(app_name, model_name)

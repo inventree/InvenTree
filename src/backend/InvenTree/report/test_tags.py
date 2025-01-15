@@ -278,6 +278,38 @@ class ReportTagTest(TestCase):
         # Test with an invalid queryset
         self.assertEqual(report_tags.filter_queryset(None, name='test'), None)
 
+    def test_filter_db_model(self):
+        """Test the filter_db_model template tag."""
+        self.assertEqual(list(report_tags.filter_db_model('part.part')), [])
+
+        part = Part.objects.create(name='test', description='test')
+        self.assertEqual(
+            list(report_tags.filter_db_model('part.part', name='test')), [part]
+        )
+        self.assertEqual(
+            list(report_tags.filter_db_model('part.part', name='test1')), []
+        )
+
+        # Invalid model
+        self.assertEqual(report_tags.filter_db_model('part.abcd'), None)
+        self.assertEqual(report_tags.filter_db_model(''), None)
+
+    def test_encode_svg_image(self):
+        """Test the encode_svg_image template tag."""
+        # Generate smallest possible SVG for testing
+        svg_path = settings.BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+        with open(svg_path, 'w', encoding='utf8') as f:
+            f.write('<svg xmlns="http://www.w3.org/2000/svg>')
+
+        # Test with a valid SVG file
+        svg = report_tags.encode_svg_image(svg_path)
+        self.assertTrue(svg.startswith('data:image/svg+xml;charset=utf-8;base64,'))
+        self.assertIn('svg', svg)
+        self.assertEqual(
+            'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmc+',
+            svg,
+        )
+
     def test_part_parameter(self):
         """Test the part_parameter template tag."""
         # Test with a valid part
