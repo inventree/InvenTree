@@ -290,7 +290,7 @@ class PluginsRegistry:
                 collect,
             )
 
-            if collect:
+            if collect and not settings.PLUGINS_INSTALL_DISABLED:
                 logger.info('Collecting plugins')
                 self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
