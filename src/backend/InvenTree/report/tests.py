@@ -87,9 +87,9 @@ class ReportTest(InvenTreeAPITestCase):
                 url, {'model_type': 'part', 'items': part_pk}, expected_code=400
             )
             self.assertIn('model_type', response.data)
-            self.assertContains(
-                response,
+            self.assertIn(
                 'Select a valid choice. part is not one of the available choices.',
+                str(response.data),
             )
             return
         except AssertionError:
