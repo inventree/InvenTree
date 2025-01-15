@@ -75,8 +75,7 @@ def check_link(url) -> bool:
 
 def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
-    print('get_build_environment()')
-
+    # Debugging output - useful for diagnosing CI build issues
     for key in [
         'READTHEDOCS',
         'READTHEDOCS_GIT_IDENTIFIER',
@@ -86,7 +85,7 @@ def get_build_enviroment() -> str:
         'GITHUB_ACTIONS',
         'GITHUB_REF',
     ]:
-        val = os.environ.get(key)
+        val = os.environ.get(key) or '-- MISSING --'
         print(f' - {key}: {val}')
 
     # Check if we are in ReadTheDocs
