@@ -130,7 +130,9 @@ export function AttachmentTable({
       setIsUploading(true);
 
       api
-        .post(url, formData)
+        .post(url, formData, {
+          timeout: 30 * 1000
+        })
         .then((response) => {
           notifications.show({
             title: t`File uploaded`,
