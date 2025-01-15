@@ -8,6 +8,24 @@ import textwrap
 import requests
 import yaml
 
+# Debugging output - useful for diagnosing CI build issues
+print('loading ./docs/main.py...')
+
+for key in [
+    'GITHUB_ACTIONS',
+    'GITHUB_REF',
+    'READTHEDOCS',
+    'READTHEDOCS_GIT_IDENTIFIER',
+    'READTHEDOCS_GIT_CLONE_URL',
+    'READTHEDOCS_GIT_COMMIT_HASH',
+    'READTHEDOCS_PROJECT',
+    'READTHEDOCS_VERSION',
+    'READTHEDOCS_VERSION_NAME',
+    'READTHEDOCS_VERSION_TYPE',
+]:
+    val = os.environ.get(key) or '-- MISSING --'
+    print(f' - {key}: {val}')
+
 # Cached settings dict values
 global GLOBAL_SETTINGS
 global USER_SETTINGS
@@ -75,22 +93,6 @@ def check_link(url) -> bool:
 
 def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
-    # Debugging output - useful for diagnosing CI build issues
-    for key in [
-        'GITHUB_ACTIONS',
-        'GITHUB_REF',
-        'READTHEDOCS',
-        'READTHEDOCS_GIT_IDENTIFIER',
-        'READTHEDOCS_GIT_CLONE_URL',
-        'READTHEDOCS_GIT_COMMIT_HASH',
-        'READTHEDOCS_PROJECT',
-        'READTHEDOCS_VERSION',
-        'READTHEDOCS_VERSION_NAME',
-        'READTHEDOCS_VERSION_TYPE',
-    ]:
-        val = os.environ.get(key) or '-- MISSING --'
-        print(f' - {key}: {val}')
-
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
         for var in ['READTHEDOCS_GIT_COMMIT_HASH', 'READTHEDOCS_GIT_IDENTIFIER']:
