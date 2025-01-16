@@ -54,7 +54,11 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_inventree_version(self):
         """Test the 'version' setting."""
         self.assertEqual(
-            inventree_extras.inventree_version(), version.INVENTREE_VERSION
+            inventree_extras.inventree_version(), version.inventreeVersion()
+        )
+        self.assertNotEqual(
+            inventree_extras.inventree_version(shortstring=True),
+            version.inventreeVersion(),
         )
 
     def test_hash(self):
