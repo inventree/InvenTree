@@ -10,12 +10,14 @@ from PIL import Image
 from zoneinfo import ZoneInfo
 
 from common.models import InvenTreeSetting
+from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartParameter, PartParameterTemplate
+from part.test_api import PartImageTestMixin
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
 
 
-class ReportTagTest(TestCase):
+class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
     """Unit tests for the report template tags."""
 
     def debug_mode(self, value: bool):
@@ -145,10 +147,12 @@ class ReportTagTest(TestCase):
         """Unit tests for the 'part_image' tag."""
         with self.assertRaises(TypeError):
             report_tags.part_image(None)
-        with self.assertRaises(TypeError):
-            report_tags.part_image(None, preview=True)
-        with self.assertRaises(TypeError):
-            report_tags.part_image(None, thumbnail=True)
+
+        obj = Part.objects.create(name='test', description='test')
+        self.create_test_image()
+
+        report_tags.part_image(obj, preview=True)
+        report_tags.part_image(obj, thumbnail=True)
 
     def test_company_image(self):
         """Unit tests for the 'company_image' tag."""
