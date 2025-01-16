@@ -291,7 +291,7 @@ class PluginsRegistry:
                 collect,
             )
 
-            if collect:
+            if collect and not settings.PLUGINS_INSTALL_DISABLED:
                 logger.info('Collecting plugins')
                 self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
@@ -580,9 +580,7 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(
-                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                        )
+                        handle_error(error, log_name='init', do_raise=True)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',

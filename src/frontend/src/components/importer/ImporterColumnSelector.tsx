@@ -13,7 +13,7 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
@@ -24,6 +24,8 @@ function ImporterColumn({
   column,
   options
 }: Readonly<{ column: any; options: any[] }>) {
+  const api = useApi();
+
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const [selectedColumn, setSelectedColumn] = useState<string>(
@@ -78,6 +80,8 @@ function ImporterDefaultField({
   fieldName: string;
   session: ImportSessionState;
 }) {
+  const api = useApi();
+
   const onChange = useCallback(
     (value: any) => {
       // Update the default value for the field
@@ -162,6 +166,8 @@ export default function ImporterColumnSelector({
 }: Readonly<{
   session: ImportSessionState;
 }>) {
+  const api = useApi();
+
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const acceptMapping = useCallback(() => {

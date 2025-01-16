@@ -1124,15 +1124,16 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
         except (ValueError, NoReverseMatch):
             url = ''
 
+        # Function name
+        f = instance.func
+
         notify_staff_users_of_error(
             instance,
             'inventree.task_failure',
             {
                 'failure': instance,
                 'name': _('Task Failure'),
-                'message': _(
-                    f"Background worker task '{instance.func}' failed after {n} attempts"
-                ),
+                'message': _(f"Background worker task '{f}' failed after {n} attempts"),
                 'link': url,
             },
         )

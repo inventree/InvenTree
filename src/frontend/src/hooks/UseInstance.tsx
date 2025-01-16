@@ -1,7 +1,7 @@
 import { type QueryObserverResult, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
-import { api } from '../App';
+import { useApi } from '../contexts/ApiContext';
 import type { ApiEndpoints } from '../enums/ApiEndpoints';
 import { type PathParams, apiUrl } from '../states/ApiState';
 
@@ -48,6 +48,8 @@ export function useInstance<T = any>({
   throwError?: boolean;
   updateInterval?: number;
 }): UseInstanceResult {
+  const api = useApi();
+
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
   const [requestStatus, setRequestStatus] = useState<number>(0);
