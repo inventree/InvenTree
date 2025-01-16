@@ -1,16 +1,16 @@
 """Custom backend implementations."""
 
 import datetime
-import logging
 import time
 
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
+import structlog
 from maintenance_mode.backends import AbstractStateBackend
 
 import common.models
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeMaintenanceModeBackend(AbstractStateBackend):

@@ -151,7 +151,7 @@ export default function PriceBreakPanel({
       {newPriceBreak.modal}
       {editPriceBreak.modal}
       {deletePriceBreak.modal}
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           tableState={table}
           url={tableUrl}

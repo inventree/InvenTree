@@ -152,12 +152,13 @@ def on_config(config, *args, **kwargs):
     """
     rtd = os.environ.get('READTHEDOCS', False)
 
+    # Note: version selection is handled by RTD internally
     # Check for 'versions.json' file
     # If it does not exist, we need to fetch it from the RTD API
-    if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
-        print("Found 'versions.json' file")
-    else:
-        fetch_rtd_versions()
+    # if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
+    #    print("Found 'versions.json' file")
+    # else:
+    #    fetch_rtd_versions()
 
     if rtd:
         rtd_version = os.environ['READTHEDOCS_VERSION']

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
@@ -20,6 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -52,7 +52,7 @@ from stock.events import StockEvents
 from stock.generators import generate_batch_code
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
@@ -431,7 +431,7 @@ class StockItem(
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),
             'result_list': self.testResultList(include_installed=True),
-            'results': self.testResultMap(include_installed=True),
+            'results': self.testResultMap(include_installed=True, cascade=True),
             'serial': self.serial,
             'stock_item': self,
             'tests': self.testResultMap(),
@@ -2439,6 +2439,7 @@ class StockItem(
         """
         # Do we wish to include test results from installed items?
         include_installed = kwargs.pop('include_installed', False)
+        cascade = kwargs.pop('cascade', False)
 
         # Filter results by "date", so that newer results
         # will override older ones.
@@ -2448,9 +2449,6 @@ class StockItem(
 
         for result in results:
             result_map[result.key] = result
-
-        # Do we wish to "cascade" and include test results from installed stock items?
-        cascade = kwargs.get('cascade', False)
 
         if include_installed:
             installed_items = self.get_installed_items(cascade=cascade)

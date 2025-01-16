@@ -1,13 +1,13 @@
 """Builtin plugin for requesting exchange rates from an external API."""
 
-import logging
-
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 from plugin import InvenTreePlugin
 from plugin.mixins import APICallMixin, CurrencyExchangeMixin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePlugin):

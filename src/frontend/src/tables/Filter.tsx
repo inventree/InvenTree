@@ -205,3 +205,47 @@ export function HasProjectCodeFilter(): TableFilter {
     description: t`Show orders with an assigned project code`
   };
 }
+
+export function OrderStatusFilter({
+  model
+}: { model: ModelType }): TableFilter {
+  return {
+    name: 'status',
+    label: t`Status`,
+    description: t`Filter by order status`,
+    choiceFunction: StatusFilterOptions(model)
+  };
+}
+
+export function ProjectCodeFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  return {
+    name: 'project_code',
+    label: t`Project Code`,
+    description: t`Filter by project code`,
+    choices: choices
+  };
+}
+
+export function ResponsibleFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  return {
+    name: 'assigned_to',
+    label: t`Responsible`,
+    description: t`Filter by responsible owner`,
+    choices: choices
+  };
+}
+
+export function CreatedByFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  return {
+    name: 'created_by',
+    label: t`Created By`,
+    description: t`Filter by user who created the order`,
+    choices: choices
+  };
+}

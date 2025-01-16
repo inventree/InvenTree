@@ -36,7 +36,18 @@ export const useIconState = create<IconState>()((set, get) => ({
   fetchIcons: async () => {
     if (get().hasLoaded) return;
 
-    const packs = await api.get(apiUrl(ApiEndpoints.icons));
+    const packs = await api.get(apiUrl(ApiEndpoints.icons)).catch((_error) => {
+      console.error('ERR: Could not fetch icon packages');
+      showNotification({
+        title: t`Error`,
+        message: t`Error loading icon package from server`,
+        color: 'red'
+      });
+    });
+
+    if (!packs) {
+      return;
+    }
 
     await Promise.all(
       packs.data.map(async (pack: any) => {

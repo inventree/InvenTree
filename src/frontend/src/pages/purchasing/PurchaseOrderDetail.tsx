@@ -217,6 +217,13 @@ export default function PurchaseOrderDetail() {
         icon: 'reference',
         copy: true,
         hidden: !order.project_code
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
       }
     ];
 
@@ -225,6 +232,7 @@ export default function PurchaseOrderDetail() {
         type: 'date',
         name: 'creation_date',
         label: t`Creation Date`,
+        copy: true,
         icon: 'calendar'
       },
       {
@@ -240,6 +248,7 @@ export default function PurchaseOrderDetail() {
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !order.target_date
       },
       {
@@ -249,28 +258,19 @@ export default function PurchaseOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
       }
     ];
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
-              src={order.supplier_detail?.image}
-              pk={order.supplier}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={ApiEndpoints.company_list}
+            src={order.supplier_detail?.image}
+            pk={order.supplier}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={order} />
           </Grid.Col>
         </Grid>
