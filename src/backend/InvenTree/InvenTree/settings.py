@@ -83,11 +83,13 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
+CONSOLE_LOG = get_boolean_setting('INVENTREE_CONSOLE_LOG', 'console_log', True)
 
 logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
 if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     LOG_LEVEL = 'WARNING'  # pragma: no cover
+DEFAULT_LOG_HANDLER = ['console'] if CONSOLE_LOG else []
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -114,10 +116,12 @@ LOGGING = {
     },
     'handlers': {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
-    },
+    }
+    if CONSOLE_LOG
+    else {},
     'loggers': {
-        'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
-        'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
+        'django_structlog': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
+        'inventree': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
     },
 }
 
@@ -129,14 +133,14 @@ if WRITE_LOG and JSON_LOG:  # pragma: no cover
         'filename': str(BASE_DIR.joinpath('logs.json')),
         'formatter': 'json_formatter',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 elif WRITE_LOG:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.log')),
         'formatter': 'key_value',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 
 structlog.configure(
     processors=[
@@ -377,7 +381,7 @@ if LDAP_AUTH:
             LOGGING['loggers'] = {}
         LOGGING['loggers']['django_auth_ldap'] = {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': DEFAULT_LOG_HANDLER,
         }
 
     # get global options from dict and use ldap.OPT_* as keys and values
