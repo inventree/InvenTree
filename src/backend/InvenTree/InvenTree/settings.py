@@ -83,6 +83,7 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
+CONSOLE_LOG = get_boolean_setting('INVENTREE_CONSOLE_LOG', 'console_log', True)
 
 logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
