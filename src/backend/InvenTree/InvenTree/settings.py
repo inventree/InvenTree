@@ -115,7 +115,9 @@ LOGGING = {
     },
     'handlers': {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
-    },
+    }
+    if CONSOLE_LOG
+    else {},
     'loggers': {
         'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
         'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
