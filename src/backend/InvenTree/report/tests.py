@@ -91,11 +91,9 @@ class ReportTest(InvenTreeAPITestCase):
                 'Select a valid choice. part is not one of the available choices.',
                 str(response.data),
             )
-            return
+            return  # pragma: no cover
         except AssertionError:
-            print('noerr')
             response = self.get(url, {'model_type': 'part', 'items': part_pk})
-            print('rsp', response.data, 'rsp', response)
 
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], report.pk)
