@@ -65,7 +65,7 @@
         "react-router-dom": "^6.26.2",
         "react-select": "^5.9.0",
         "react-simplemde-editor": "^5.2.0",
-        "react-window": "^1.8.11",
+        "react-window": "^1.8.10",
         "recharts": "^2.15.0",
         "styled-components": "^6.1.14",
         "zustand": "^4.5.5"
