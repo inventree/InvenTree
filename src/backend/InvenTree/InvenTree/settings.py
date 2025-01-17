@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
 import django.core.exceptions
@@ -21,7 +22,6 @@ from django.http import Http404
 
 import structlog
 from dotenv import load_dotenv
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting

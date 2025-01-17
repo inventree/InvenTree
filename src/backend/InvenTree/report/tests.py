@@ -1,6 +1,7 @@
 """Unit testing for the various report models."""
 
 from io import StringIO
+from zoneinfo import ZoneInfo
 
 from django.apps import apps
 from django.conf import settings
@@ -11,7 +12,6 @@ from django.utils import timezone
 from django.utils.safestring import SafeString
 
 from PIL import Image
-from zoneinfo import ZoneInfo
 
 import report.models as report_models
 from build.models import Build
