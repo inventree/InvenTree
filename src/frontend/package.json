@@ -78,7 +78,7 @@
         "@lingui/cli": "^4.11.4",
         "@lingui/macro": "^4.11.4",
         "@playwright/test": "^1.49.1",
-        "@types/node": "^22.10.7",
+        "@types/node": "^22.6.0",
         "@types/qrcode": "^1.5.5",
         "@types/react": "^18.3.8",
         "@types/react-dom": "^18.3.0",
