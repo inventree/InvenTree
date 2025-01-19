@@ -1,5 +1,7 @@
 """Test for custom report tags."""
 
+from zoneinfo import ZoneInfo
+
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -7,7 +9,6 @@ from django.utils.safestring import SafeString
 
 from djmoney.money import Money
 from PIL import Image
-from zoneinfo import ZoneInfo
 
 from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeTestCase
