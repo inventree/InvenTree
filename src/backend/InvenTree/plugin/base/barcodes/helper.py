@@ -1,6 +1,6 @@
 """Helper functions for barcode generation."""
 
-from typing import Type, cast
+from typing import cast
 
 import structlog
 
@@ -44,7 +44,7 @@ def generate_barcode(model_instance: InvenTreeBarcodeMixin):
 
 
 @cache
-def get_supported_barcode_models() -> list[Type[InvenTreeBarcodeMixin]]:
+def get_supported_barcode_models() -> list[type[InvenTreeBarcodeMixin]]:
     """Returns a list of database models which support barcode functionality."""
     return InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 

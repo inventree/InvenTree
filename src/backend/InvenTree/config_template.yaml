@@ -55,6 +55,9 @@ db_logging: False
 # Enable writing a log file, or use the environment variable INVENTREE_WRITE_LOG
 write_log: False
 
+# Enable writing logs to the console (stdout), or use the environment variable INVENTREE_CONSOLE_LOG
+console_log: True
+
 # Select default system language , or use the environment variable INVENTREE_LANGUAGE
 language: en-us
 

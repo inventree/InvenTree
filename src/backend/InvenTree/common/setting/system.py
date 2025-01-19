@@ -29,8 +29,8 @@ def validate_part_name_format(value):
     # Make sure that the field_name exists in Part model
     from part.models import Part
 
-    jinja_template_regex = re.compile('{{.*?}}')
-    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
+    jinja_template_regex = re.compile(r'{{.*?}}')
+    field_name_regex = re.compile(r'(?<=part\.)[A-z]+')
 
     for jinja_template in jinja_template_regex.findall(str(value)):
         # make sure at least one and only one field is present inside the parser
