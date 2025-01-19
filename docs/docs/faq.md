@@ -26,7 +26,7 @@ Refer to the [invoke guide](./start/invoke.md#cant-find-any-collection-named-tas
 
 If the installed version of invoke is too old, users may see error messages during the installation procedure. Refer to the [invoke guide](./start/invoke.md#minimum-version) for more information.
 
-### No module named 'django'
+### No module named <xxx>
 
 During the install or update process, you may be presented with an error like:
 
@@ -34,9 +34,27 @@ During the install or update process, you may be presented with an error like:
 ModuleNotFoundError: No module named 'django'
 ```
 
-Most likely you are trying to run the InvenTree server from outside the context of the virtual environment where the required python libraries are installed.
+Either the named modules are not installed, or the virtual environment is not correctly activated.
 
-Always activate the virtual environment before running server commands!
+**Check Virtual Environment**
+
+Ensure that the virtual environment is correctly activated before running any InvenTree commands.
+
+**Check Invoke Tool**
+
+Ensure that the invoke tool is correctly installed inside the virtual environment, with:
+
+```bash
+pip install --upgrade --ignore-installed invoke
+```
+
+**Install Required Python Packages**
+
+Ensure that all required python packages are installed by running:
+
+```bash
+invoke install
+```
 
 ### 'str' object has no attribute 'removeSuffix'
 
@@ -44,11 +62,32 @@ This error occurs because your installed python version is not up to date. We [r
 
 You (or your system administrator) needs to update python to meet the minimum requirements for InvenTree.
 
+### InvenTree Site URL
+
+During the installation or update process, you may see an error similar to:
+
+```
+'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+```
+
+If you see this error, it means that the `INVENTREE_SITE_URL` environment variable has not correctly specified. Refer to the [configuration documentation](./start/config.md#site-url) for more information.
+
+### Login Issues
+
+If you have successfully started the InvenTree server, but are experiencing issues logging in, it may be due to the security interactions between your web browser and the server. While the default configuration should work for most users, if you do experience login issues, ensure that your [server access settings](./start/config.md#server-access) are correctly configured.
+
+### Session Cookies
+
+The [0.17.0 release](https://github.com/inventree/InvenTree/releases/tag/0.17.0) included [a change to the way that session cookies were handled](https://github.com/inventree/InvenTree/pull/8269). This change may cause login issues for existing InvenTree installs which are upgraded from an older version. System administrators should refer to the [server access settings](./start/config.md#server-access) and ensure that the following settings are correctly configured:
+
+- **INVENTREE_SESSION_COOKIE_SECURE**: `False`
+- **INVENTREE_COOKIE_SAMESITE**: `False`
+
 ## Update Issues
 
 Sometimes, users may encounter unexpected error messages when updating their InvenTree installation to a newer version.
 
-The most common problem here is that the correct sequenct of steps has not been followed:
+The most common problem here is that the correct sequence of steps has not been followed:
 
 1. Ensure that the InvenTree web server and background worker processes are *halted*
 1. Update the InvenTree software (e.g. using git or docker, depending on installation method)

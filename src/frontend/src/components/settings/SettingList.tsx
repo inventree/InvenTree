@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import type { ModelType } from '../../enums/ModelType';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
@@ -39,6 +39,8 @@ export function SettingList({
   useEffect(() => {
     settingsState.fetchSettings();
   }, []);
+
+  const api = useApi();
 
   const allKeys = useMemo(
     () => settingsState?.settings?.map((s) => s.key) ?? [],
@@ -158,7 +160,7 @@ export function SettingList({
             </React.Fragment>
           );
         })}
-        {(keys || allKeys).length === 0 && (
+        {(keys || allKeys)?.length === 0 && (
           <Text style={{ fontStyle: 'italic' }}>
             <Trans>No settings specified</Trans>
           </Text>

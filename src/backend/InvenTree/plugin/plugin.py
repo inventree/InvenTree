@@ -1,7 +1,6 @@
 """Base Class for InvenTree plugins."""
 
 import inspect
-import logging
 import warnings
 from datetime import datetime
 from distutils.sysconfig import get_python_lib
@@ -10,14 +9,15 @@ from pathlib import Path
 from typing import Optional
 
 from django.conf import settings
-from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import InvenTree.helpers
 from plugin.helpers import get_git_log
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MetaBase:
@@ -377,8 +377,6 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self) -> str:
         """URL to the settings panel for this plugin."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return f'{reverse("settings")}#select-plugin-{self.slug}'
         if config := self.db:
             return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
         return InvenTree.helpers.pui_url('/settings/admin/plugin/')

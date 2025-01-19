@@ -50,6 +50,7 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
+    UserSerializer,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -158,6 +159,8 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         required=False, allow_null=True, label=_('Creation Date')
     )
 
+    created_by = UserSerializer(read_only=True)
+
     duplicate = DuplicateOrderSerializer(
         label=_('Duplicate Order'),
         help_text=_('Specify options for duplicating this order'),
@@ -174,6 +177,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     def annotate_queryset(queryset):
         """Add extra information to the queryset."""
         queryset = queryset.annotate(line_items=SubqueryCount('lines'))
+        queryset = queryset.select_related('created_by')
 
         return queryset
 
@@ -183,6 +187,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         return [
             'pk',
             'creation_date',
+            'created_by',
             'target_date',
             'description',
             'line_items',
@@ -712,6 +717,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
             'quantity',
             'status',
             'batch_code',
+            'expiry_date',
             'serial_numbers',
             'packaging',
             'note',
@@ -760,6 +766,14 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         allow_blank=True,
     )
 
+    expiry_date = serializers.DateField(
+        label=_('Expiry Date'),
+        help_text=_('Enter expiry date for incoming stock items'),
+        required=False,
+        allow_null=True,
+        default=None,
+    )
+
     serial_numbers = serializers.CharField(
         label=_('Serial Numbers'),
         help_text=_('Enter serial numbers for incoming stock items'),
@@ -769,7 +783,9 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=StockStatus.items(), default=StockStatus.OK.value, label=_('Status')
+        choices=StockStatus.items(custom=True),
+        default=StockStatus.OK.value,
+        label=_('Status'),
     )
 
     packaging = serializers.CharField(
@@ -960,6 +976,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                         status=item['status'],
                         barcode=item.get('barcode', ''),
                         batch_code=item.get('batch_code', ''),
+                        expiry_date=item.get('expiry_date', None),
                         packaging=item.get('packaging', ''),
                         serials=item.get('serials', None),
                         notes=item.get('note', None),
@@ -1935,7 +1952,7 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(),
+        choices=stock.status_codes.StockStatus.items(custom=True),
         default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),

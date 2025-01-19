@@ -1,10 +1,10 @@
 """Plugin mixin classes."""
 
-import logging
+import structlog
 
 from plugin.helpers import MixinNotImplementedError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class NavigationMixin:

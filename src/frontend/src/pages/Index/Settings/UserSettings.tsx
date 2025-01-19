@@ -3,7 +3,6 @@ import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
-  IconDeviceDesktopAnalytics,
   IconFileAnalytics,
   IconLock,
   IconSearch,
@@ -42,38 +41,6 @@ export default function UserSettings() {
         label: t`Security`,
         icon: <IconLock />,
         content: <SecurityContent />
-      },
-      {
-        name: 'dashboard',
-        label: t`Dashboard`,
-        icon: <IconDeviceDesktopAnalytics />,
-        content: (
-          <UserSettingList
-            keys={[
-              // TODO: These will be replaced with "dashboard" settings,
-              // once the new dashboard is implemented
-              'HOMEPAGE_HIDE_INACTIVE',
-              'HOMEPAGE_PART_STARRED',
-              'HOMEPAGE_CATEGORY_STARRED',
-              'HOMEPAGE_PART_LATEST',
-              'HOMEPAGE_BOM_REQUIRES_VALIDATION',
-              'HOMEPAGE_STOCK_RECENT',
-              'HOMEPAGE_STOCK_LOW',
-              'HOMEPAGE_SHOW_STOCK_DEPLETED',
-              'HOMEPAGE_BUILD_STOCK_NEEDED',
-              'HOMEPAGE_STOCK_EXPIRED',
-              'HOMEPAGE_STOCK_STALE',
-              'HOMEPAGE_BUILD_PENDING',
-              'HOMEPAGE_BUILD_OVERDUE',
-              'HOMEPAGE_PO_OUTSTANDING',
-              'HOMEPAGE_PO_OVERDUE',
-              'HOMEPAGE_SO_OUTSTANDING',
-              'HOMEPAGE_SO_OVERDUE',
-              'HOMEPAGE_SO_SHIPMENTS_PENDING',
-              'HOMEPAGE_NEWS'
-            ]}
-          />
-        )
       },
       {
         name: 'display',

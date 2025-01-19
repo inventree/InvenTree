@@ -124,6 +124,15 @@ export default function SalesOrderDetail() {
         name: 'status',
         label: t`Status`,
         model: ModelType.salesorder
+      },
+      {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.salesorder,
+        icon: 'status',
+        hidden:
+          !order.status_custom_key || order.status_custom_key == order.status
       }
     ];
 
@@ -190,6 +199,13 @@ export default function SalesOrderDetail() {
         icon: 'reference',
         copy: true,
         hidden: !order.project_code
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
       }
     ];
 
@@ -222,28 +238,19 @@ export default function SalesOrderDetail() {
         label: t`Completion Date`,
         hidden: !order.shipment_date,
         copy: true
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
       }
     ];
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
-              src={order.customer_detail?.image}
-              pk={order.customer}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={ApiEndpoints.company_list}
+            src={order.customer_detail?.image}
+            pk={order.customer}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={order} />
           </Grid.Col>
         </Grid>
@@ -399,6 +406,17 @@ export default function SalesOrderDetail() {
     successMessage: t`Order placed on hold`
   });
 
+  const shipOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
+    title: t`Ship Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Ship this order?`,
+    successMessage: t`Order shipped`,
+    fields: {
+      accept_incomplete: {}
+    }
+  });
+
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
     title: t`Complete Sales Order`,
@@ -444,7 +462,7 @@ export default function SalesOrderDetail() {
         icon='deliver'
         hidden={!canShip}
         color='blue'
-        onClick={completeOrder.open}
+        onClick={shipOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
@@ -510,10 +528,15 @@ export default function SalesOrderDetail() {
       {issueOrder.modal}
       {cancelOrder.modal}
       {holdOrder.modal}
+      {shipOrder.modal}
       {completeOrder.modal}
       {editSalesOrder.modal}
       {duplicateSalesOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.sales_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Sales Order`}: ${order.reference}`}

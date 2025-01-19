@@ -2,20 +2,21 @@ import { Trans, t } from '@lingui/macro';
 import { Group, Stack, Table, Title } from '@mantine/core';
 import { IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
-
-import { useShallow } from 'zustand/shallow';
+import { useNavigate } from 'react-router-dom';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { notYetImplemented } from '../../../../functions/notifications';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
-  const [user, fetchUserState] = useUserState(
-    useShallow((state) => [state.user, state.fetchUserState])
-  );
+  const navigate = useNavigate();
+
+  const [user, fetchUserState] = useUserState((state) => [
+    state.user,
+    state.fetchUserState
+  ]);
 
   const userFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -51,10 +52,12 @@ export function AccountDetailPanel() {
                 onClick: editUser.open
               },
               {
-                name: t`Set Password`,
+                name: t`Change Password`,
                 icon: <IconKey />,
-                tooltip: t`Set User Password`,
-                onClick: notYetImplemented
+                tooltip: t`Change User Password`,
+                onClick: () => {
+                  navigate('/change-password');
+                }
               }
             ]}
           />

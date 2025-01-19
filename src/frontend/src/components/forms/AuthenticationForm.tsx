@@ -15,6 +15,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { showNotification } from '@mantine/notifications';
 import { useShallow } from 'zustand/shallow';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -47,26 +48,31 @@ export function AuthenticationForm() {
     setIsLoggingIn(true);
 
     if (classicLoginMode === true) {
-      doBasicLogin(
-        classicForm.values.username,
-        classicForm.values.password
-      ).then(() => {
-        setIsLoggingIn(false);
+      doBasicLogin(classicForm.values.username, classicForm.values.password)
+        .then(() => {
+          setIsLoggingIn(false);
 
-        if (isLoggedIn()) {
-          showLoginNotification({
-            title: t`Login successful`,
-            message: t`Logged in successfully`
-          });
-          followRedirect(navigate, location?.state);
-        } else {
-          showLoginNotification({
+          if (isLoggedIn()) {
+            showLoginNotification({
+              title: t`Login successful`,
+              message: t`Logged in successfully`
+            });
+            followRedirect(navigate, location?.state);
+          } else {
+            showLoginNotification({
+              title: t`Login failed`,
+              message: t`Check your input and try again.`,
+              success: false
+            });
+          }
+        })
+        .catch(() => {
+          showNotification({
             title: t`Login failed`,
             message: t`Check your input and try again.`,
-            success: false
+            color: 'red'
           });
-        }
-      });
+        });
     } else {
       doSimpleLogin(simpleForm.values.email).then((ret) => {
         setIsLoggingIn(false);
@@ -197,7 +203,7 @@ export function RegistrationForm() {
         headers: { Authorization: '' }
       })
       .then((ret) => {
-        if (ret?.status === 204) {
+        if (ret?.status === 204 || ret?.status === 201) {
           setIsRegistering(false);
           showLoginNotification({
             title: t`Registration successful`,
@@ -207,7 +213,7 @@ export function RegistrationForm() {
         }
       })
       .catch((err) => {
-        if (err.response.status === 400) {
+        if (err.response?.status === 400) {
           setIsRegistering(false);
           for (const [key, value] of Object.entries(err.response.data)) {
             registrationForm.setFieldError(key, value as string);

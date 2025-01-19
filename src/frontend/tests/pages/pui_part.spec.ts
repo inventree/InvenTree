@@ -118,6 +118,8 @@ test('Parts - Allocations', async ({ page }) => {
   await page.getByText('5 / 109').waitFor();
 
   // Navigate to the "Allocations" tab
+  await page.waitForTimeout(500);
+
   await page.getByRole('tab', { name: 'Allocations' }).click();
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();

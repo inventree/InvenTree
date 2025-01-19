@@ -13,13 +13,13 @@ import logging
 import os
 import sys
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
 from django.http import Http404
 
-import pytz
 import structlog
 from dotenv import load_dotenv
 
@@ -77,29 +77,19 @@ if version_file.exists():
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
-
-ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
-    'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
-)
-
-# Disable CUI parts if CUI tests are disabled
-if TESTING and '--exclude-tag=cui' in sys.argv:
-    ENABLE_CLASSIC_FRONTEND = False
-
-ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
-    'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
-)
+DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
+CONSOLE_LOG = get_boolean_setting('INVENTREE_CONSOLE_LOG', 'console_log', True)
 
 logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
 if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     LOG_LEVEL = 'WARNING'  # pragma: no cover
+DEFAULT_LOG_HANDLER = ['console'] if CONSOLE_LOG else []
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -126,10 +116,12 @@ LOGGING = {
     },
     'handlers': {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
-    },
+    }
+    if CONSOLE_LOG
+    else {},
     'loggers': {
-        'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
-        'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
+        'django_structlog': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
+        'inventree': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
     },
 }
 
@@ -141,14 +133,14 @@ if WRITE_LOG and JSON_LOG:  # pragma: no cover
         'filename': str(BASE_DIR.joinpath('logs.json')),
         'formatter': 'json_formatter',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 elif WRITE_LOG:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.log')),
         'formatter': 'key_value',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 
 structlog.configure(
     processors=[
@@ -223,18 +215,6 @@ PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
-# Translated Template settings
-STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
-STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
-
-# Create the target directory if it does not exist
-if not STATICFILES_I18_TRG.exists():
-    STATICFILES_I18_TRG.mkdir(parents=True)
-
-STATICFILES_DIRS.append(STATICFILES_I18_TRG)
-STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
-
 # Append directory for compiled react files if debug server is running
 if DEBUG and 'collectstatic' not in sys.argv:
     web_dir = BASE_DIR.joinpath('..', 'web', 'static').absolute()
@@ -243,14 +223,8 @@ if DEBUG and 'collectstatic' not in sys.argv:
 
     # Append directory for sample plugin static content (if in debug mode)
     if PLUGINS_ENABLED:
-        print('Adding plugin sample static content')
+        logger.info('Adding plugin sample static content')
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
-
-        print('-', STATICFILES_DIRS[-1])
-STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
-
-# Color Themes Directory
-STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -310,8 +284,6 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'crispy_forms',  # Improved form rendering
-    'import_export',  # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering
@@ -319,7 +291,6 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',  # django-money exchange rates
     'error_report',  # Error reporting in the admin interface
     'django_q',
-    'formtools',  # Form wizard tools
     'dbbackup',  # Backups - django-dbbackup
     'taggit',  # Tagging
     'flags',  # Flagging - django-flags
@@ -384,29 +355,6 @@ QUERYCOUNT = {
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
-ADMIN_SHELL_ENABLE = False
-ADMIN_SHELL_IMPORT_DJANGO = False
-ADMIN_SHELL_IMPORT_MODELS = False
-
-# In DEBUG mode, add support for django-admin-shell
-# Ref: https://github.com/djk2/django-admin-shell
-if (
-    DEBUG
-    and INVENTREE_ADMIN_ENABLED
-    and not TESTING
-    and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):
-    try:
-        import django_admin_shell  # noqa: F401
-
-        INSTALLED_APPS.append('django_admin_shell')
-        ADMIN_SHELL_ENABLE = True
-
-        logger.warning('Admin shell is enabled')
-    except ModuleNotFoundError:
-        logger.warning(
-            'django-admin-shell is not installed - Admin shell is not enabled'
-        )
 
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
@@ -433,7 +381,7 @@ if LDAP_AUTH:
             LOGGING['loggers'] = {}
         LOGGING['loggers']['django_auth_ldap'] = {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': DEFAULT_LOG_HANDLER,
         }
 
     # get global options from dict and use ldap.OPT_* as keys and values
@@ -565,10 +513,6 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Custom InvenTree context processors
-                'InvenTree.context.health_status',
-                'InvenTree.context.status_codes',
-                'InvenTree.context.user_roles',
             ],
             'loaders': [
                 (
@@ -620,12 +564,10 @@ REST_AUTH = {
     'TOKEN_MODEL': 'users.models.ApiToken',
     'TOKEN_CREATOR': 'users.models.default_create_token',
     'USE_JWT': USE_JWT,
+    'REGISTER_SERIALIZER': 'InvenTree.auth_overrides.RegisterSerializer',
 }
 
 OLD_PASSWORD_FIELD_ENABLED = True
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
-}
 
 # JWT settings - rest_framework_simplejwt
 if USE_JWT:
@@ -1074,8 +1016,8 @@ TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 # Check that the timezone is valid
 try:
-    pytz.timezone(TIME_ZONE)
-except pytz.exceptions.UnknownTimeZoneError:  # pragma: no cover
+    ZoneInfo(TIME_ZONE)
+except ZoneInfoNotFoundError:  # pragma: no cover
     raise ValueError(f"Specified timezone '{TIME_ZONE}' is not valid")
 
 USE_I18N = True
@@ -1085,12 +1027,6 @@ USE_I18N = True
 USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
-
-# crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# Use database transactions when importing / exporting data
-IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
@@ -1103,8 +1039,16 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        logger.error(msg)
+        print(msg)
         sys.exit(-1)
+
+else:
+    logger.warning('No SITE_URL specified. Some features may not work correctly')
+    logger.warning(
+        'Specify a SITE_URL in the configuration file or via an environment variable'
+    )
 
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
@@ -1196,12 +1140,7 @@ COOKIE_MODE = (
 # Valid modes (as per the django settings documentation)
 valid_cookie_modes = ['lax', 'strict', 'none']
 
-if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
-    # Set the cookie mode (in production mode only)
-    COOKIE_MODE = COOKIE_MODE.capitalize()
-else:
-    # Default to False, as per the Django settings
-    COOKIE_MODE = False
+COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -1209,20 +1148,39 @@ CSRF_COOKIE_NAME = 'csrftoken'
 
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
+LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 
 """Set the SESSION_COOKIE_SECURE value based on the following rules:
 - False if the server is running in DEBUG mode
 - True if samesite cookie setting is set to 'None'
 - Otherwise, use the value specified in the configuration file (or env var)
 """
-SESSION_COOKIE_SECURE = (
+COOKIE_SECURE = (
     False
     if DEBUG
     else (
         SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', True)
+        or get_boolean_setting(
+            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+        )
     )
 )
+
+CSRF_COOKIE_SECURE = COOKIE_SECURE
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+LANGUAGE_COOKIE_SECURE = COOKIE_SECURE
+
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
+if ssl_header := get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PROTO', 'use_x_forwarded_proto', False
+):
+    # The default header name is 'HTTP_X_FORWARDED_PROTO', but can be adjusted
+    ssl_header_name = get_setting(
+        'INVENTREE_X_FORWARDED_PROTO_NAME',
+        'x_forwarded_proto_name',
+        'HTTP_X_FORWARDED_PROTO',
+    )
+    SECURE_PROXY_SSL_HEADER = (ssl_header_name, 'https')
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
@@ -1252,7 +1210,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
 )
 
 # Only allow CORS access to the following URL endpoints
-CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
+CORS_URLS_REGEX = r'^/(api|auth|media|plugin|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
@@ -1344,8 +1302,8 @@ REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
-    'login': 'InvenTree.forms.CustomLoginForm',
-    'signup': 'InvenTree.forms.CustomSignupForm',
+    'login': 'InvenTree.auth_overrides.CustomLoginForm',
+    'signup': 'InvenTree.auth_overrides.CustomSignupForm',
     'add_email': 'allauth.account.forms.AddEmailForm',
     'change_password': 'allauth.account.forms.ChangePasswordForm',
     'set_password': 'allauth.account.forms.SetPasswordForm',
@@ -1353,12 +1311,13 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
-ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
+
+ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.auth_overrides.CustomTOTPDeviceForm'}
 # Determine if multi-factor authentication is enabled for this server (default = True)
 MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
-SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
-ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
@@ -1427,7 +1386,7 @@ CUSTOMIZE = get_setting(
 
 # Load settings for the frontend interface
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')

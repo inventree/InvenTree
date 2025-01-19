@@ -1,9 +1,9 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
 import {
-  clickButtonIfVisible,
+  clearTableFilters,
   getRowFromCell,
-  openFilterDrawer
+  setTableChoiceFilter
 } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
@@ -90,10 +90,8 @@ test('Build Order - Basic Tests', async ({ page }) => {
 test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/`);
-
-  // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.goto(`${baseUrl}/manufacturing/index/`);
+  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -268,8 +266,24 @@ test('Build Order - Filters', async ({ page }) => {
 
   await page.goto(`${baseUrl}/manufacturing/index/buildorders`);
 
-  await openFilterDrawer(page);
-  await clickButtonIfVisible(page, 'Clear Filters');
+  await clearTableFilters(page);
+  await page.getByText('1 - 24 / 24').waitFor();
 
-  await page.waitForTimeout(2500);
+  // Toggle 'Outstanding' filter
+  await setTableChoiceFilter(page, 'Outstanding', 'Yes');
+  await page.getByText('1 - 18 / 18').waitFor();
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Outstanding', 'No');
+  await page.getByText('1 - 6 / 6').waitFor();
+  await clearTableFilters(page);
+
+  // Filter by custom status code
+  await setTableChoiceFilter(page, 'Status', 'Pending Approval');
+
+  // Single result - navigate through to the build order
+  await page.getByText('1 - 1 / 1').waitFor();
+  await page.getByRole('cell', { name: 'BO0023' }).click();
+
+  await page.getByText('On Hold').first().waitFor();
+  await page.getByText('Pending Approval').first().waitFor();
 });

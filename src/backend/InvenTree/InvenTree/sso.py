@@ -1,18 +1,18 @@
 """Helper functions for Single Sign On functionality."""
 
 import json
-import logging
 
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+import structlog
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.settings import get_global_setting
 from InvenTree.helpers import str2bool
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_provider_app(provider):
@@ -69,12 +69,12 @@ def provider_display_name(provider):
     return provider.name
 
 
-def login_enabled() -> bool:
+def sso_login_enabled() -> bool:
     """Return True if SSO login is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))
 
 
-def registration_enabled() -> bool:
+def sso_registration_enabled() -> bool:
     """Return True if SSO registration is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO_REG'))
 

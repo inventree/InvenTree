@@ -7,7 +7,6 @@
 import importlib
 import importlib.machinery
 import importlib.util
-import logging
 import os
 import sys
 import time
@@ -15,7 +14,7 @@ from collections import OrderedDict
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -24,6 +23,8 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
@@ -38,7 +39,7 @@ from .helpers import (
 )
 from .plugin import InvenTreePlugin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PluginsRegistry:
@@ -212,17 +213,20 @@ class PluginsRegistry:
     # endregion
 
     # region loading / unloading
-    def _load_plugins(self, full_reload: bool = False):
+    def _load_plugins(
+        self, full_reload: bool = False, _internal: Optional[list] = None
+    ):
         """Load and activate all IntegrationPlugins.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
         logger.info('Loading plugins')
 
         try:
             self._init_plugins()
-            self._activate_plugins(full_reload=full_reload)
+            self._activate_plugins(full_reload=full_reload, _internal=_internal)
         except (OperationalError, ProgrammingError, IntegrityError):
             # Exception if the database has not been migrated yet, or is not ready
             pass
@@ -262,6 +266,7 @@ class PluginsRegistry:
         full_reload: bool = False,
         force_reload: bool = False,
         collect: bool = False,
+        _internal: Optional[list] = None,
     ):
         """Reload the plugin registry.
 
@@ -271,6 +276,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             collect (bool, optional): Collect plugins before reloading. Defaults to False.
+            _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
         # Do not reload when currently loading
         if self.is_loading:
@@ -285,7 +291,7 @@ class PluginsRegistry:
                 collect,
             )
 
-            if collect:
+            if collect and not settings.PLUGINS_INSTALL_DISABLED:
                 logger.info('Collecting plugins')
                 self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
@@ -293,7 +299,7 @@ class PluginsRegistry:
             self.plugins_loaded = False
             self._unload_plugins(force_reload=force_reload)
             self.plugins_loaded = True
-            self._load_plugins(full_reload=full_reload)
+            self._load_plugins(full_reload=full_reload, _internal=_internal)
 
             self.update_plugin_hash()
 
@@ -574,9 +580,7 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(
-                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                        )
+                        handle_error(error, log_name='init', do_raise=True)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
@@ -601,7 +605,12 @@ class PluginsRegistry:
         # Final list of mixins
         return order
 
-    def _activate_plugins(self, force_reload=False, full_reload: bool = False):
+    def _activate_plugins(
+        self,
+        force_reload=False,
+        full_reload: bool = False,
+        _internal: Optional[list] = None,
+    ):
         """Run activation functions for all plugins.
 
         Args:
@@ -618,7 +627,11 @@ class PluginsRegistry:
         for mixin in self.__get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
                 mixin._activate_mixin(
-                    self, plugins, force_reload=force_reload, full_reload=full_reload
+                    self,
+                    plugins,
+                    force_reload=force_reload,
+                    full_reload=full_reload,
+                    _internal=_internal,
                 )
 
         logger.debug('Done activating')
@@ -649,21 +662,31 @@ class PluginsRegistry:
         except Exception as error:  # pragma: no cover
             handle_error(error, do_raise=False)
 
-    def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
+    def _reload_apps(
+        self,
+        force_reload: bool = False,
+        full_reload: bool = False,
+        _internal: Optional[list] = None,
+    ):
         """Internal: reload apps using django internal functions.
 
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            _internal (list, optional): Internal use only (for testing). Defaults to None.
         """
+        loadable_apps = settings.INSTALLED_APPS
+        if _internal:
+            loadable_apps += _internal
+
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
-            self._try_reload(apps.populate, settings.INSTALLED_APPS)
+            self._try_reload(apps.populate, loadable_apps)
         else:
-            self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
+            self._try_reload(apps.set_installed_apps, loadable_apps)
 
     def _clean_installed_apps(self):
         for plugin in self.installed_apps:

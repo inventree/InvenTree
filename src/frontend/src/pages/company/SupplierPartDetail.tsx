@@ -217,18 +217,16 @@ export default function SupplierPartDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              src={supplierPart?.part_detail?.image}
-              apiPath={apiUrl(
-                ApiEndpoints.part_list,
-                supplierPart?.part_detail?.pk
-              )}
-              pk={supplierPart?.part_detail?.pk}
-            />
-          </Grid.Col>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            src={supplierPart?.part_detail?.image}
+            apiPath={apiUrl(
+              ApiEndpoints.part_list,
+              supplierPart?.part_detail?.pk
+            )}
+            pk={supplierPart?.part_detail?.pk}
+          />
           <Grid.Col span={8}>
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
@@ -318,7 +316,7 @@ export default function SupplierPartDetail() {
     ];
   }, [user, supplierPart]);
 
-  const supplierPartFields = useSupplierPartFields();
+  const supplierPartFields = useSupplierPartFields({});
 
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
@@ -398,7 +396,11 @@ export default function SupplierPartDetail() {
       {deleteSupplierPart.modal}
       {duplicateSupplierPart.modal}
       {editSupplierPart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.purchase_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={t`Supplier Part`}

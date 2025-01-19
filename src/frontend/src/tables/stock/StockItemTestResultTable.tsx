@@ -10,12 +10,12 @@ import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
 import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -47,6 +47,7 @@ export default function StockItemTestResultTable({
   partId: number;
   itemId: number;
 }>) {
+  const api = useApi();
   const user = useUserState();
   const table = useTable('stocktests');
 
@@ -395,6 +396,11 @@ export default function StockItemTestResultTable({
         name: 'result',
         label: t`Passed`,
         description: t`Show only passed tests`
+      },
+      {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Show results for enabled tests`
       }
     ];
   }, []);
@@ -441,6 +447,7 @@ export default function StockItemTestResultTable({
         return (
           <DataTable
             key={record.pk}
+            idAccessor={'test'}
             noHeader
             columns={cols}
             records={results.slice(0, -1)}
@@ -470,8 +477,7 @@ export default function StockItemTestResultTable({
             stock_item: itemId,
             user_detail: true,
             attachment_detail: true,
-            template_detail: true,
-            enabled: true
+            template_detail: true
           }
         }}
       />

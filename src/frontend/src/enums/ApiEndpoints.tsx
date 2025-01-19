@@ -18,6 +18,7 @@ export enum ApiEndpoints {
   user_simple_login = 'email/generate/',
   user_reset = 'auth/password/reset/',
   user_reset_set = 'auth/password/reset/confirm/',
+  user_change_password = 'auth/password/change/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
   user_emails = 'auth/emails/',
@@ -220,6 +221,5 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  ui_preference = 'web/ui_preference/',
   notes_image_upload = 'notes-image-upload/'
 }

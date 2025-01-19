@@ -1,6 +1,5 @@
 """JSON serializers for Stock app."""
 
-import logging
 from datetime import timedelta
 from decimal import Decimal
 
@@ -10,6 +9,7 @@ from django.db.models import BooleanField, Case, Count, Prefetch, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -40,7 +40,7 @@ from .models import (
     StockLocationType,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class GenerateBatchCodeSerializer(serializers.Serializer):
@@ -980,7 +980,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(),
+        choices=stock.status_codes.StockStatus.items(custom=True),
         default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),
@@ -996,7 +996,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
     )
 
     def save(self):
-        """Save the serialzier to return the item into stock."""
+        """Save the serializer to return the item into stock."""
         item = self.context['item']
         request = self.context['request']
 
@@ -1037,7 +1037,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
         return items
 
     status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(),
+        choices=stock.status_codes.StockStatus.items(custom=True),
         default=stock.status_codes.StockStatus.OK.value,
         label=_('Status'),
     )
@@ -1533,11 +1533,11 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change')), *stock.status_codes.StockStatus.items()]
+    return [(None, _('No Change')), *stock.status_codes.StockStatus.items(custom=True)]
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):
-    """Serializer for a single StockItem within a stock adjument request.
+    """Serializer for a single StockItem within a stock adjustment request.
 
     Required Fields:
         - item: StockItem object
@@ -1571,7 +1571,9 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not pk.is_in_stock(check_status=False):
+        if not allow_out_of_stock_transfer and not pk.is_in_stock(
+            check_status=False, check_quantity=False
+        ):
             raise ValidationError(_('Stock item is not in stock'))
 
         return pk

@@ -1,6 +1,5 @@
 """Tasks (processes that get offloaded) for common app."""
 
-import logging
 import os
 from datetime import timedelta
 
@@ -11,13 +10,14 @@ from django.utils import timezone
 
 import feedparser
 import requests
+import structlog
 
 import InvenTree.helpers
 from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -50,7 +50,9 @@ def update_news_feed():
         return
 
     # News feed isn't defined, no need to continue
-    if not settings.INVENTREE_NEWS_URL or type(settings.INVENTREE_NEWS_URL) != str:
+    if not settings.INVENTREE_NEWS_URL or not isinstance(
+        settings.INVENTREE_NEWS_URL, str
+    ):
         return
 
     # Fetch and parse feed

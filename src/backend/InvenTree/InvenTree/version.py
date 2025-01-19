@@ -18,7 +18,7 @@ from django.conf import settings
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '0.17.0 dev'
+INVENTREE_SW_VERSION = '0.18.0 dev'
 
 
 logger = logging.getLogger('inventree')
@@ -30,7 +30,7 @@ try:
 
     main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     logger.warning(
         'Warning: Dulwich module not found, git information will not be available.'
     )

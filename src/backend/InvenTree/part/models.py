@@ -5,7 +5,6 @@ from __future__ import annotations
 import decimal
 import hashlib
 import inspect
-import logging
 import math
 import os
 import re
@@ -25,6 +24,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
@@ -67,7 +67,7 @@ from order.status_codes import (
 )
 from stock import models as StockModels
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PartCategory(InvenTree.models.InvenTreeTree):
@@ -165,8 +165,6 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('category-detail', kwargs={'pk': self.id})
         return helpers.pui_url(f'/part/category/{self.id}')
 
     def clean(self):
@@ -459,48 +457,6 @@ class Part(
             'test_template_list': self.getTestTemplates(),
             'test_templates': self.getTestTemplateMap(),
         }
-
-    def get_context_data(self, request, **kwargs):
-        """Return some useful context data about this part for template rendering.
-
-        TODO: 2024-04-21 - Remove this method once the legacy UI code is removed
-        """
-        context = {}
-
-        context['disabled'] = not self.active
-
-        # Subscription status
-        context['starred'] = self.is_starred_by(request.user)
-        context['starred_directly'] = context['starred'] and self.is_starred_by(
-            request.user, include_variants=False, include_categories=False
-        )
-
-        # Pre-calculate complex queries so they only need to be performed once
-        context['total_stock'] = self.total_stock
-
-        context['quantity_being_built'] = self.quantity_being_built
-
-        context['required_build_order_quantity'] = self.required_build_order_quantity()
-        context['allocated_build_order_quantity'] = self.build_order_allocation_count()
-
-        context['required_sales_order_quantity'] = self.required_sales_order_quantity()
-        context['allocated_sales_order_quantity'] = self.sales_order_allocation_count(
-            pending=True
-        )
-
-        context['available'] = self.available_stock
-        context['on_order'] = self.on_order
-
-        context['required'] = (
-            context['required_build_order_quantity']
-            + context['required_sales_order_quantity']
-        )
-        context['allocated'] = (
-            context['allocated_build_order_quantity']
-            + context['allocated_sales_order_quantity']
-        )
-
-        return context
 
     def delete(self, **kwargs):
         """Custom delete method for the Part model.
@@ -934,8 +890,6 @@ class Part(
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('part-detail', kwargs={'pk': self.id})
         return helpers.pui_url(f'/part/{self.id}')
 
     def get_image_url(self):

@@ -12,8 +12,9 @@ import {
 } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useQuery } from '@tanstack/react-query';
-import { type JSX, useCallback, useEffect, useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { JSX } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type FieldValues,
   FormProvider,
@@ -23,7 +24,7 @@ import {
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import { api, queryClient } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import type { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import {
@@ -94,7 +95,7 @@ export interface ApiFormProps {
   postFormContent?: JSX.Element;
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
-  onFormError?: () => void;
+  onFormError?: (response: any) => void;
   processFormData?: (data: any) => any;
   table?: TableState;
   modelType?: ModelType;
@@ -110,6 +111,8 @@ export function OptionsApiForm({
   props: ApiFormProps;
   id?: string;
 }>) {
+  const api = useApi();
+
   const props = useMemo(
     () => ({
       ..._props,
@@ -205,6 +208,8 @@ export function ApiForm({
   props: ApiFormProps;
   optionsLoading: boolean;
 }>) {
+  const api = useApi();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [fields, setFields] = useState<ApiFormFieldSet>(
@@ -431,11 +436,18 @@ export function ApiForm({
       }
     });
 
+    /* Set the timeout for the request:
+     * - If a timeout is provided in the props, use that
+     * - If the form contains files, use a longer timeout
+     * - Otherwise, use the default timeout
+     */
+    const timeout = props.timeout ?? (hasFiles ? 30000 : undefined);
+
     return api({
       method: method,
       url: url,
       data: hasFiles ? formData : jsonData,
-      timeout: props.timeout,
+      timeout: timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
       }
@@ -482,7 +494,7 @@ export function ApiForm({
           default:
             // Unexpected state on form success
             invalidResponse(response.status);
-            props.onFormError?.();
+            props.onFormError?.(response);
             break;
         }
 
@@ -534,26 +546,30 @@ export function ApiForm({
 
               processErrors(error.response.data);
               setNonFieldErrors(_nonFieldErrors);
+              props.onFormError?.(error);
 
               break;
             default:
               // Unexpected state on form error
               invalidResponse(error.response.status);
-              props.onFormError?.();
+              props.onFormError?.(error);
               break;
           }
         } else {
           showTimeoutNotification();
-          props.onFormError?.();
+          props.onFormError?.(error);
         }
 
         return error;
       });
   };
 
-  const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
-    props.onFormError?.();
-  }, [props.onFormError]);
+  const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(
+    (error: any) => {
+      props.onFormError?.(error);
+    },
+    [props.onFormError]
+  );
 
   if (optionsLoading || initialDataQuery.isFetching) {
     return (

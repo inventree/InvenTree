@@ -15,9 +15,6 @@ import {
 } from '@tabler/icons-react';
 
 import { t } from '@lingui/macro';
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 import type { Provider } from '../../states/states';
 
 import type { JSX } from 'react';
@@ -38,17 +35,7 @@ const brandIcons: { [key: string]: JSX.Element } = {
 
 export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
   function login() {
-    // set preferred provider
-    api
-      .put(
-        apiUrl(ApiEndpoints.ui_preference),
-        { preferred_method: 'pui' },
-        { headers: { Authorization: '' } }
-      )
-      .then(() => {
-        // redirect to login
-        window.location.href = provider.login;
-      });
+    window.location.href = provider.login;
   }
 
   return (

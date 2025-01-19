@@ -12,9 +12,10 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../App';
+import { showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useApi } from '../contexts/ApiContext';
 import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
@@ -80,7 +81,6 @@ export type InvenTreeTableProps<T = any> = {
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   rowExpansion?: DataTableRowExpansionProps<T>;
-  idAccessor?: string;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
@@ -110,8 +110,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   defaultSortColumn: '',
   barcodeActions: [],
   tableFilters: [],
-  tableActions: [],
-  idAccessor: 'pk'
+  tableActions: []
 };
 
 /**
@@ -120,11 +119,13 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
+  tableData,
   columns,
   props
 }: Readonly<{
-  url: string;
+  url?: string;
   tableState: TableState;
+  tableData?: any[];
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }>) {
@@ -138,6 +139,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
+  const api = useApi();
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
 
@@ -157,12 +159,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: true,
+    enabled: !!url && !tableData,
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
     queryFn: async () => {
+      if (!url) {
+        return null;
+      }
+
       if (props.enableColumnCaching == false) {
         return null;
       }
@@ -197,6 +203,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
+
+          return null;
+        })
+        .catch(() => {
+          showNotification({
+            title: t`API Error`,
+            message: t`Failed to load table options`,
+            color: 'red'
+          });
 
           return null;
         });
@@ -435,6 +450,10 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const fetchTableData = async () => {
     const queryParams = getTableFilters(true);
 
+    if (!url) {
+      return [];
+    }
+
     return api
       .get(url, {
         params: queryParams,
@@ -489,7 +508,12 @@ export function InvenTreeTable<T extends Record<string, any>>({
       });
   };
 
-  const { data, isFetching, isLoading, refetch } = useQuery({
+  const {
+    data: apiData,
+    isFetching,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: [
       'tabledata',
       url,
@@ -501,6 +525,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.activeFilters,
       tableState.searchTerm
     ],
+    enabled: !!url && !tableData,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
@@ -521,13 +546,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update tableState.records when new data received
   useEffect(() => {
-    tableState.setRecords(data ?? []);
+    const data = tableData ?? apiData ?? [];
+
+    tableState.setRecords(data);
 
     // set pagesize to length if pagination is disabled
     if (!tableProps.enablePagination) {
       tableState.setPageSize(data?.length ?? defaultPageSize);
     }
-  }, [data]);
+  }, [tableData, apiData]);
 
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
@@ -635,13 +662,29 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]);
 
   const optionalParams = useMemo(() => {
-    const optionalParamsa: Record<string, any> = {};
+    let _params: Record<string, any> = {};
+
     if (tableProps.enablePagination) {
-      optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
-      optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
+      _params = {
+        ..._params,
+        totalRecords: tableState.recordCount,
+        recordsPerPage: tableState.pageSize,
+        page: tableState.page,
+        onPageChange: tableState.setPage,
+        recordsPerPageOptions: PAGE_SIZES,
+        onRecordsPerPageChange: updatePageSize
+      };
     }
-    return optionalParamsa;
-  }, [tableProps.enablePagination]);
+
+    return _params;
+  }, [
+    tableProps.enablePagination,
+    tableState.recordCount,
+    tableState.pageSize,
+    tableState.page,
+    tableState.setPage,
+    updatePageSize
+  ]);
 
   return (
     <>
@@ -668,12 +711,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
               highlightOnHover
               loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
-              idAccessor={tableProps.idAccessor}
+              idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}
-              totalRecords={tableState.recordCount}
-              recordsPerPage={tableState.pageSize}
-              page={tableState.page}
-              onPageChange={tableState.setPage}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={

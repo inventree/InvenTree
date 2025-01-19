@@ -1,6 +1,7 @@
 """Custom model/serializer fields for InvenTree models that support custom states."""
 
-from typing import Any, Iterable, Optional
+from collections.abc import Iterable
+from typing import Any, Optional
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -90,6 +91,20 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
     Models using this model field must also include the InvenTreeCustomStatusSerializerMixin in all serializers that create or update the value.
     """
 
+    def __init__(self, *args, **kwargs):
+        """Initialize the field."""
+        from generic.states.validators import CustomStatusCodeValidator
+
+        self.status_class = kwargs.pop('status_class', None)
+
+        validators = kwargs.pop('validators', None) or []
+
+        if self.status_class:
+            validators.append(CustomStatusCodeValidator(status_class=self.status_class))
+
+        kwargs['validators'] = validators
+        super().__init__(*args, **kwargs)
+
     def deconstruct(self):
         """Deconstruct the field for migrations."""
         name, path, args, kwargs = super().deconstruct()
@@ -109,14 +124,23 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
         """Ensure that the value is not an empty string."""
         if value == '':
             value = None
+
         return super().clean(value, model_instance)
 
     def add_field(self, cls, name):
         """Adds custom_key_field to the model class to save additional status information."""
+        from generic.states.validators import CustomStatusCodeValidator
+
+        validators = []
+
+        if self.status_class:
+            validators.append(CustomStatusCodeValidator(status_class=self.status_class))
+
         custom_key_field = ExtraInvenTreeCustomStatusModelField(
             default=None,
             verbose_name=_('Custom status key'),
             help_text=_('Additional status information for this item'),
+            validators=validators,
             blank=True,
             null=True,
         )
@@ -129,6 +153,10 @@ class ExtraInvenTreeCustomStatusModelField(models.PositiveIntegerField):
 
     This is not intended to be used directly, if you want to support custom states in your model use InvenTreeCustomStatusModelField.
     """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the field."""
+        super().__init__(*args, **kwargs)
 
 
 class InvenTreeCustomStatusSerializerMixin:

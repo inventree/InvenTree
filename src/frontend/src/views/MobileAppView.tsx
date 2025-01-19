@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
 import { useShallow } from 'zustand/shallow';
-import { BaseContext } from '../contexts/BaseContext';
+import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
 import { IS_DEV } from '../main';
 import { useLocalState } from '../states/LocalState';
@@ -17,7 +17,7 @@ export default function MobileAppView() {
     window.location.reload();
   }
   return (
-    <BaseContext>
+    <ThemeContext>
       <Center h='100vh'>
         <Container>
           <Stack>
@@ -41,6 +41,6 @@ export default function MobileAppView() {
           </Stack>
         </Container>
       </Center>
-    </BaseContext>
+    </ThemeContext>
   );
 }

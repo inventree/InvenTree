@@ -52,6 +52,7 @@ export type ApiFormFieldChoice = {
  * @param required : Whether the field is required
  * @param hidden : Whether the field is hidden
  * @param disabled : Whether the field is disabled
+ * @param error : Optional error message to display
  * @param exclude : Whether to exclude the field from the submitted data
  * @param placeholder : The placeholder text to display
  * @param description : The description to display for the field
@@ -94,6 +95,7 @@ export type ApiFormFieldType = {
   child?: ApiFormFieldType;
   children?: { [key: string]: ApiFormFieldType };
   required?: boolean;
+  error?: string;
   choices?: ApiFormFieldChoice[];
   hidden?: boolean;
   disabled?: boolean;
@@ -262,7 +264,7 @@ export function ApiFormField({
             aria-label={`boolean-field-${fieldName}`}
             radius='lg'
             size='sm'
-            error={error?.message}
+            error={definition.error ?? error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
         );
@@ -283,7 +285,7 @@ export function ApiFormField({
             id={fieldId}
             aria-label={`number-field-${field.name}`}
             value={numericalValue}
-            error={error?.message}
+            error={definition.error ?? error?.message}
             decimalScale={definition.field_type == 'integer' ? 0 : 10}
             onChange={(value: number | string | null) => onChange(value)}
             step={1}
@@ -305,7 +307,7 @@ export function ApiFormField({
             ref={field.ref}
             radius='sm'
             value={value}
-            error={error?.message}
+            error={definition.error ?? error?.message}
             onChange={(payload: File | null) => onChange(payload)}
           />
         );
@@ -349,6 +351,7 @@ export function ApiFormField({
     booleanValue,
     control,
     controller,
+    definition,
     field,
     fieldId,
     fieldName,

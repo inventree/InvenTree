@@ -1,7 +1,6 @@
 """DRF API definition for the 'users' app."""
 
 import datetime
-import logging
 
 from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import Group, User
@@ -10,6 +9,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path, reverse
 from django.views.generic.base import RedirectView
 
+import structlog
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
 from allauth_2fa.utils import user_has_valid_totp_device
@@ -48,7 +48,7 @@ from users.serializers import (
     RoleSerializer,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class OwnerList(ListAPI):
@@ -239,6 +239,7 @@ class Login(LoginView):
         _data.update(request.POST.copy())
 
         if not _data.get('mfa', None):
+            logger.info('No MFA requested - Proceeding')
             return super().post(request, *args, **kwargs)
 
         # Check if login credentials valid
@@ -246,13 +247,15 @@ class Login(LoginView):
             request, username=_data.get('username'), password=_data.get('password')
         )
         if user is None:
+            logger.info('Invalid login - Aborting')
             return HttpResponse(status=401)
 
-            # Check if user has mfa set up
+        # Check if user has mfa set up
         if not user_has_valid_totp_device(user):
+            logger.info('No MFA set up - Proceeding')
             return super().post(request, *args, **kwargs)
 
-            # Stage login and redirect to 2fa
+        # Stage login and redirect to 2fa
         request.session['allauth_2fa_user_id'] = str(user.id)
         request.session['allauth_2fa_login'] = {
             'email_verification': app_settings.EMAIL_VERIFICATION,
@@ -261,6 +264,7 @@ class Login(LoginView):
             'email': None,
             'redirect_url': reverse('platform'),
         }
+        logger.info('Redirecting to 2fa - Proceeding')
         return redirect(reverse('two-factor-authenticate'))
 
     def process_login(self):
@@ -275,6 +279,7 @@ class Login(LoginView):
             'LOGIN_ENFORCE_MFA'
         ):
             logout(self.request)
+            logger.info('User was logged out because MFA is required - Aborting')
             raise exceptions.PermissionDenied('MFA required for this user')
         return ret
 
@@ -386,10 +391,7 @@ class LoginRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
-        session = self.request.session
-        if session.get('preferred_method', 'cui') == 'pui':
-            return f'/{FRONTEND_URL_BASE}/logged-in/'
-        return '/index/'
+        return f'/{FRONTEND_URL_BASE}/logged-in/'
 
 
 user_urls = [

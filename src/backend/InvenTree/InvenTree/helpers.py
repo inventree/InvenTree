@@ -4,7 +4,6 @@ import datetime
 import hashlib
 import inspect
 import io
-import logging
 import os
 import os.path
 import re
@@ -12,6 +11,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
@@ -22,15 +22,16 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import bleach
-import pytz
+import structlog
 from bleach import clean
 from djmoney.money import Money
+from PIL import Image
 
 from common.currency import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
@@ -138,8 +139,6 @@ def getStaticUrl(filename):
 
 def TestIfImage(img):
     """Test if an image file is indeed an image."""
-    from PIL import Image
-
     try:
         Image.open(img).verify()
         return True
@@ -962,15 +961,15 @@ def to_local_time(time, target_tz: Optional[str] = None):
 
     if not source_tz:
         # Default to UTC if not provided
-        source_tz = pytz.utc
+        source_tz = ZoneInfo('UTC')
 
     if not target_tz:
         target_tz = server_timezone()
 
     try:
-        target_tz = pytz.timezone(str(target_tz))
-    except pytz.UnknownTimeZoneError:
-        target_tz = pytz.utc
+        target_tz = ZoneInfo(str(target_tz))
+    except ZoneInfoNotFoundError:
+        target_tz = ZoneInfo('UTC')
 
     target_time = time.replace(tzinfo=source_tz).astimezone(target_tz)
 

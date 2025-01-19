@@ -13,6 +13,7 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { type JSX, Suspense, useEffect, useMemo, useState } from 'react';
 
+import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -68,6 +69,8 @@ export function useStockFields({
   const [nextBatchCode, setNextBatchCode] = useState<string>('');
   const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
 
+  const [expiryDate, setExpiryDate] = useState<string | null>(null);
+
   const batchGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
       setNextBatchCode(`${t`Next batch code`}: ${value}`);
@@ -106,6 +109,14 @@ export function useStockFields({
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
+
+          // Adjust the 'expiry date' for the stock item
+          const expiry_days = record?.default_expiry ?? 0;
+
+          if (expiry_days && expiry_days > 0) {
+            // Adjust the expiry date based on the part default expiry
+            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
+          }
         }
       },
       supplier_part: {
@@ -171,7 +182,11 @@ export function useStockFields({
       },
       expiry_date: {
         icon: <IconCalendarExclamation />,
-        hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY')
+        hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY'),
+        value: expiryDate,
+        onValueChange: (value) => {
+          setExpiryDate(value);
+        }
       },
       purchase_price: {
         icon: <IconCurrencyDollar />
@@ -194,9 +209,15 @@ export function useStockFields({
     // TODO: Handle custom field management based on provided options
     // TODO: refer to stock.py in original codebase
 
+    // Remove the expiry date field if it is not enabled
+    if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
+      delete fields.expiry_date;
+    }
+
     return fields;
   }, [
     stockItem,
+    expiryDate,
     partInstance,
     partId,
     globalSettings,
@@ -486,8 +507,8 @@ function StockOperationsRow({
 
   const [statusOpen, statusHandlers] = useDisclosure(false, {
     onOpen: () => {
-      setStatus(record?.status || undefined);
-      callChangeFn(props.idx, 'status', record?.status || undefined);
+      setStatus(record?.status_custom_key || record?.status || undefined);
+      props.changeFn(props.idx, 'status', record?.status || undefined);
     },
     onClose: () => {
       setStatus(undefined);

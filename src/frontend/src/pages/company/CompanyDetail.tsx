@@ -13,7 +13,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import {
@@ -66,6 +66,7 @@ export type CompanyDetailProps = {
 export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const {
@@ -144,22 +145,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-              src={company.image}
-              pk={company.pk}
-              refresh={refreshInstance}
-              imageActions={{
-                uploadFile: true,
-                downloadImage: true,
-                deleteFile: true
-              }}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
+            src={company.image}
+            pk={company.pk}
+            refresh={refreshInstance}
+            imageActions={{
+              uploadFile: true,
+              downloadImage: true,
+              deleteFile: true
+            }}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable item={company} fields={tl} />
           </Grid.Col>
         </Grid>
@@ -283,7 +282,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Delete Company`,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => {
+      navigate('/');
+    }
   });
 
   const companyActions = useMemo(() => {

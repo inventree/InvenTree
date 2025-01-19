@@ -47,7 +47,7 @@
         "@vanilla-extract/css": "^1.16.1",
         "axios": "^1.7.9",
         "clsx": "^2.1.1",
-        "codemirror": "^6.0.1",
+        "codemirror": "6.0.1",
         "dayjs": "^1.11.13",
         "dompurify": "^3.2.3",
         "easymde": "^2.18.0",

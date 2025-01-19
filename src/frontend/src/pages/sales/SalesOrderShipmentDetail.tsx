@@ -175,22 +175,20 @@ export default function SalesOrderShipmentDetail() {
     return (
       <>
         <ItemDetailsGrid>
-          <Grid>
-            <Grid.Col span={4}>
-              <DetailsImage
-                appRole={UserRoles.sales_order}
-                apiPath={ApiEndpoints.company_list}
-                src={customer?.image}
-                pk={customer?.pk}
-                imageActions={{
-                  selectExisting: false,
-                  downloadImage: false,
-                  uploadFile: false,
-                  deleteFile: false
-                }}
-              />
-            </Grid.Col>
-            <Grid.Col span={8}>
+          <Grid grow>
+            <DetailsImage
+              appRole={UserRoles.sales_order}
+              apiPath={ApiEndpoints.company_list}
+              src={customer?.image}
+              pk={customer?.pk}
+              imageActions={{
+                selectExisting: false,
+                downloadImage: false,
+                uploadFile: false,
+                deleteFile: false
+              }}
+            />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>
@@ -295,7 +293,7 @@ export default function SalesOrderShipmentDetail() {
         visible={!!shipment.delivery_date}
       />
     ];
-  }, [shipment, shipmentQuery]);
+  }, [isPending, shipment.deliveryDate, shipmentQuery.isFetching]);
 
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
@@ -352,6 +350,7 @@ export default function SalesOrderShipmentDetail() {
       <InstanceDetail
         status={shipmentStatus}
         loading={shipmentQuery.isFetching || customerQuery.isFetching}
+        requiredRole={UserRoles.sales_order}
       >
         <Stack gap='xs'>
           <PageDetail

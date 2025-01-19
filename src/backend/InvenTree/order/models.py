@@ -1,10 +1,8 @@
 """Order model definitions."""
 
-import logging
 from datetime import datetime
 from decimal import Decimal
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -16,6 +14,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -35,7 +34,7 @@ from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
-from generic.states import StateTransitionMixin
+from generic.states import StateTransitionMixin, StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (
@@ -59,7 +58,7 @@ from part import models as PartModels
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class TotalPriceMixin(models.Model):
@@ -180,6 +179,7 @@ class TotalPriceMixin(models.Model):
 
 
 class Order(
+    StatusCodeMixin,
     StateTransitionMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -380,6 +380,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = PurchaseOrderStatus
 
     class Meta:
         """Model meta options."""
@@ -397,8 +398,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('po-detail', kwargs={'pk': self.pk})
         return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
@@ -486,6 +485,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     status = InvenTreeCustomStatusModelField(
         default=PurchaseOrderStatus.PENDING.value,
         choices=PurchaseOrderStatus.items(),
+        status_class=PurchaseOrderStatus,
         verbose_name=_('Status'),
         help_text=_('Purchase order status'),
     )
@@ -558,6 +558,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         group: bool = True,
         reference: str = '',
         purchase_price=None,
+        destination=None,
     ):
         """Add a new line item to this purchase order.
 
@@ -565,12 +566,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         * The supplier part matches the supplier specified for this purchase order
         * The quantity is greater than zero
 
-        Args:
+        Arguments:
             supplier_part: The supplier_part to add
             quantity : The number of items to add
             group (bool, optional): If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists). Defaults to True.
             reference (str, optional): Reference to item. Defaults to ''.
             purchase_price (optional): Price of item. Defaults to None.
+            destination (optional): Destination for item. Defaults to None.
 
         Returns:
             The newly created PurchaseOrderLineItem instance
@@ -619,6 +621,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             quantity=quantity,
             reference=reference,
             purchase_price=purchase_price,
+            destination=destination,
         )
 
         line.save()
@@ -793,9 +796,31 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def receive_line_item(
         self, line, location, quantity, user, status=StockStatus.OK.value, **kwargs
     ):
-        """Receive a line item (or partial line item) against this PurchaseOrder."""
+        """Receive a line item (or partial line item) against this PurchaseOrder.
+
+        Arguments:
+            line: The PurchaseOrderLineItem to receive against
+            location: The StockLocation to receive the item into
+            quantity: The quantity to receive
+            user: The User performing the action
+            status: The StockStatus to assign to the item (default: StockStatus.OK)
+
+        Keyword Arguments:
+            barch_code: Optional batch code for the new StockItem
+            serials: Optional list of serial numbers to assign to the new StockItem(s)
+            notes: Optional notes field for the StockItem
+            packaging: Optional packaging field for the StockItem
+            barcode: Optional barcode field for the StockItem
+
+        Raises:
+            ValidationError: If the quantity is negative or otherwise invalid
+            ValidationError: If the order is not in the 'PLACED' state
+        """
         # Extract optional batch code for the new stock item
         batch_code = kwargs.get('batch_code', '')
+
+        # Extract optional expiry date for the new stock item
+        expiry_date = kwargs.get('expiry_date')
 
         # Extract optional list of serial numbers
         serials = kwargs.get('serials')
@@ -860,6 +885,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
+                    expiry_date=expiry_date,
                     packaging=packaging,
                     serial=sn,
                     purchase_price=unit_purchase_price,
@@ -912,6 +938,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = SalesOrderStatus
 
     class Meta:
         """Model meta options."""
@@ -929,8 +956,6 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('so-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
@@ -1031,6 +1056,7 @@ class SalesOrder(TotalPriceMixin, Order):
     status = InvenTreeCustomStatusModelField(
         default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
+        status_class=SalesOrderStatus,
         verbose_name=_('Status'),
         help_text=_('Sales order status'),
     )
@@ -1608,6 +1634,10 @@ class PurchaseOrderLineItem(OrderLineItem):
         r = self.quantity - self.received
         return max(r, 0)
 
+    def is_completed(self) -> bool:
+        """Determine if this lien item has been fully received."""
+        return self.received >= self.quantity
+
     def update_pricing(self):
         """Update pricing information based on the supplier part data."""
         if self.part:
@@ -2153,6 +2183,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+    STATUS_CLASS = ReturnOrderStatus
 
     class Meta:
         """Model meta options."""
@@ -2171,8 +2202,6 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return reverse('return-order-detail', kwargs={'pk': self.pk})
         return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod
@@ -2231,6 +2260,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     status = InvenTreeCustomStatusModelField(
         default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
+        status_class=ReturnOrderStatus,
         verbose_name=_('Status'),
         help_text=_('Return order status'),
     )
@@ -2446,8 +2476,11 @@ class ReturnOrder(TotalPriceMixin, Order):
         )
 
 
-class ReturnOrderLineItem(OrderLineItem):
+class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
     """Model for a single LineItem in a ReturnOrder."""
+
+    STATUS_CLASS = ReturnOrderLineStatus
+    STATUS_FIELD = 'outcome'
 
     class Meta:
         """Metaclass options for this model."""
@@ -2522,6 +2555,7 @@ class ReturnOrderLineItem(OrderLineItem):
     outcome = InvenTreeCustomStatusModelField(
         default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
+        status_class=ReturnOrderLineStatus,
         verbose_name=_('Outcome'),
         help_text=_('Outcome for this line item'),
     )

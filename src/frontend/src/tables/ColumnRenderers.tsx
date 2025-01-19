@@ -9,7 +9,7 @@ import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner } from '../components/render/User';
+import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
@@ -199,6 +199,18 @@ export function StatusColumn({
     title: title,
     hidden: hidden,
     render: TableStatusRenderer(model, accessor ?? 'status_custom_key')
+  };
+}
+
+export function CreatedByColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'created_by',
+    title: t`Created By`,
+    sortable: true,
+    switchable: true,
+    render: (record: any) =>
+      record.created_by && RenderUser({ instance: record.created_by }),
+    ...props
   };
 }
 

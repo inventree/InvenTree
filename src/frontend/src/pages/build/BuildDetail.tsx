@@ -108,6 +108,15 @@ export default function BuildDetail() {
         model: ModelType.build
       },
       {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.build,
+        icon: 'status',
+        hidden:
+          !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
         type: 'text',
         name: 'reference',
         label: t`Reference`,
@@ -230,16 +239,14 @@ export default function BuildDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-              pk={build.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            pk={build.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={build} />
           </Grid.Col>
         </Grid>
@@ -510,7 +517,11 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.build}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Build Order`}: ${build.reference}`}

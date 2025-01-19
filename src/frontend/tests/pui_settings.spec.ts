@@ -153,7 +153,7 @@ test('Settings - Admin - Barcode History', async ({ page, request }) => {
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Barcode Scans' }).click();
 
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(500);
 
   // Barcode history is displayed in table
   barcodes.forEach(async (barcode) => {

@@ -1,12 +1,14 @@
 """Base classes and functions for notifications."""
 
-import logging
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import common.models
 import InvenTree.helpers
@@ -15,7 +17,7 @@ from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 # region methods
@@ -315,7 +317,7 @@ class NotificationBody:
     name: str
     slug: str
     message: str
-    template: str = None
+    template: Optional[str] = None
 
 
 class InvenTreeNotificationBodies:

@@ -1,12 +1,45 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 292
+INVENTREE_API_VERSION = 302
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v302 - 2025-01-18 - https://github.com/inventree/InvenTree/pull/8905
+    - Fix schema definition on the /label/print endpoint
+
+v301 - 2025-01-14 - https://github.com/inventree/InvenTree/pull/8894
+    - Remove ui preferences from the API
+
+v300 - 2025-01-13 - https://github.com/inventree/InvenTree/pull/8886
+    - Allow null value for 'expiry_date' field introduced in #8867
+
+v299 - 2025-01-10 - https://github.com/inventree/InvenTree/pull/8867
+    - Adds 'expiry_date' field to the PurchaseOrderReceive API endpoint
+    - Adds 'default_expiry` field to the PartBriefSerializer, affecting API endpoints which use it
+
+v298 - 2025-01-07 - https://github.com/inventree/InvenTree/pull/8848
+    - Adds 'created_by' field to PurchaseOrder API endpoints
+    - Adds 'created_by' field to SalesOrder API endpoints
+    - Adds 'created_by' field to ReturnOrder API endpoints
+
+v297 - 2024-12-29 - https://github.com/inventree/InvenTree/pull/8438
+    - Adjustments to the CustomUserState API endpoints and serializers
+
+v296 - 2024-12-25 : https://github.com/inventree/InvenTree/pull/8732
+    - Adjust default "part_detail" behaviour for StockItem API endpoints
+
+v295 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8746
+    - Improve API documentation for build APIs
+
+v294 - 2024-12-23 : https://github.com/inventree/InvenTree/pull/8738
+    - Extends registration API documentation
+
+v293 - 2024-12-14 : https://github.com/inventree/InvenTree/pull/8658
+    - Adds new fields to the supplier barcode API endpoints
 
 v292 - 2024-12-03 : https://github.com/inventree/InvenTree/pull/8625
     - Add "on_order" and "in_stock" annotations to SupplierPart API

@@ -8,13 +8,18 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
   CompletionDateColumn,
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -30,12 +35,15 @@ import {
   CompletedBeforeFilter,
   CreatedAfterFilter,
   CreatedBeforeFilter,
+  CreatedByFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
+  OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
-  StatusFilterOptions,
+  ProjectCodeFilter,
+  ResponsibleFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -54,15 +62,11 @@ export function ReturnOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
+  const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.returnorder)
-      },
+      OrderStatusFilter({ model: ModelType.returnorder }),
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
@@ -74,19 +78,10 @@ export function ReturnOrderTable({
       TargetDateAfterFilter(),
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
       HasProjectCodeFilter(),
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
-      }
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ResponsibleFilter({ choices: responsibleFilters.choices }),
+      CreatedByFilter({ choices: createdByFilters.choices })
     ];
 
     if (!!partId) {
@@ -99,7 +94,12 @@ export function ReturnOrderTable({
     }
 
     return filters;
-  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    responsibleFilters.choices,
+    createdByFilters.choices
+  ]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -128,6 +128,7 @@ export function ReturnOrderTable({
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),
+      CreatedByColumn({}),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
