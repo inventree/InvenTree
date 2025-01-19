@@ -391,10 +391,7 @@ class LoginRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
-        session = self.request.session
-        if session.get('preferred_method', 'cui') == 'pui':
-            return f'/{FRONTEND_URL_BASE}/logged-in/'
-        return '/index/'
+        return f'/{FRONTEND_URL_BASE}/logged-in/'
 
 
 user_urls = [

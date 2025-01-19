@@ -1,12 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 300
+INVENTREE_API_VERSION = 302
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v302 - 2025-01-18 - https://github.com/inventree/InvenTree/pull/8905
+    - Fix schema definition on the /label/print endpoint
+
+v301 - 2025-01-14 - https://github.com/inventree/InvenTree/pull/8894
+    - Remove ui preferences from the API
 
 v300 - 2025-01-13 - https://github.com/inventree/InvenTree/pull/8886
     - Allow null value for 'expiry_date' field introduced in #8867
