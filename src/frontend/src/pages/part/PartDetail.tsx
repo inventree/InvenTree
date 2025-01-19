@@ -5,7 +5,6 @@ import {
   Grid,
   Loader,
   Skeleton,
-  Space,
   Stack,
   Text
 } from '@mantine/core';
@@ -439,23 +438,21 @@ export default function PartDetail() {
 
     return part ? (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              imageActions={{
-                selectExisting: true,
-                downloadImage: true,
-                uploadFile: true,
-                deleteFile: true
-              }}
-              src={part.image}
-              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-              refresh={refreshInstance}
-              pk={part.pk}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            imageActions={{
+              selectExisting: true,
+              downloadImage: true,
+              uploadFile: true,
+              deleteFile: true
+            }}
+            src={part.image}
+            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+            refresh={refreshInstance}
+            pk={part.pk}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
@@ -1040,9 +1037,7 @@ export default function PartDetail() {
                     }}
                   />
                 </Stack>
-              ) : (
-                <Space />
-              )
+              ) : null
             }
           />
           <PanelGroup

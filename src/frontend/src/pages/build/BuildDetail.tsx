@@ -239,16 +239,14 @@ export default function BuildDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-              pk={build.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            pk={build.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={build} />
           </Grid.Col>
         </Grid>

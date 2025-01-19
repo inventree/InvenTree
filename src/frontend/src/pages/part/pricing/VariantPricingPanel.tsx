@@ -73,7 +73,7 @@ export default function VariantPricingPanel({
 
   return (
     <Stack gap='xs'>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           tableState={table}
           url={apiUrl(ApiEndpoints.part_list)}

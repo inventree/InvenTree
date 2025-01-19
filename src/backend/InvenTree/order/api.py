@@ -410,6 +410,7 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
         - supplier_part: pk value of the supplier part
         - quantity: quantity to receive
         - status: stock item status
+        - expiry_date: stock item expiry date (optional)
         - location: destination for stock item (optional)
         - batch_code: the batch code for this stock item
         - serial_numbers: serial numbers for this stock item

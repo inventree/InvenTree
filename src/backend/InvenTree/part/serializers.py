@@ -352,6 +352,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
             'category_default_location',
             'default_location',
+            'default_expiry',
             'name',
             'revision',
             'full_name',

@@ -209,7 +209,7 @@ export default function PartStocktakeDetail({
       {generateReport.modal}
       {editStocktakeEntry.modal}
       {deleteStocktakeEntry.modal}
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.part_stocktake_list)}
           tableState={table}

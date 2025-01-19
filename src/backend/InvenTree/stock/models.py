@@ -472,7 +472,7 @@ class StockItem(
         Returns:
             QuerySet: The created StockItem objects
 
-        raises:
+        Raises:
             ValidationError: If any of the provided serial numbers are invalid
 
         This method uses bulk_create to create multiple StockItem objects in a single query,
