@@ -429,10 +429,10 @@ def render_html_text(text: str, **kwargs):
     """
     tags = []
 
-    if kwargs.get('bold', False):
+    if kwargs.get('bold'):
         tags.append('strong')
 
-    if kwargs.get('italic', False):
+    if kwargs.get('italic'):
         tags.append('em')
 
     if heading := kwargs.get('heading', ''):

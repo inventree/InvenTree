@@ -59,7 +59,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         label: LabelTemplate,
         items: QuerySet[models.Model],
         **kwargs,
-    ) -> Union[None, JsonResponse]:
+    ) -> Union[JsonResponse, None]:
         """Print one or more labels with the provided template and items.
 
         Arguments:
