@@ -172,10 +172,16 @@ export function handleReset(
   navigate: NavigateFunction,
   values: { email: string }
 ) {
+  ensureCsrf();
   api
-    .post(apiUrl(ApiEndpoints.user_reset), values, {
+    .post(
+      apiUrl(ApiEndpoints.user_reset),
+      values
+      /*{
       headers: { Authorization: '' }
-    })
+    }
+      */
+    )
     .then((val) => {
       if (val.status === 200) {
         notifications.show({

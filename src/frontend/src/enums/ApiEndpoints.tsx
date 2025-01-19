@@ -16,8 +16,8 @@ export enum ApiEndpoints {
   user_token = 'user/token/',
   user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
-  user_reset = 'auth/password/reset/', // TODO change
-  user_reset_set = 'auth/password/reset/confirm/', // TODO change
+  user_reset = 'auth/v1/auth/password/request',
+  user_reset_set = 'auth/v1/auth/password/reset',
   auth_pwd_change = 'auth/v1/account/password/change',
   auth_login = 'auth/v1/auth/login',
   auth_login_2fa = 'auth/v1/auth/2fa/authenticate',
