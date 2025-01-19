@@ -1224,6 +1224,10 @@ else:
     if CORS_ALLOWED_ORIGIN_REGEXES:
         logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
+# Load settings for the frontend interface
+FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
+FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
+
 # region auth
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
@@ -1302,7 +1306,9 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 HEADLESS_FRONTEND_URLS = {
     'account_confirm_email': 'http://localhost:8000/verify-email/{key}',  # noqa: RUF027
     'account_reset_password': 'http://localhost:8000/password-reset',
-    'account_reset_password_from_key': 'http://localhost:8000/password-reset-key/{key}',  # noqa: RUF027
+    'account_reset_password_from_key': 'http://localhost:8000/'
+    + FRONTEND_URL_BASE
+    + '/set-password?key={key}',  # noqa: RUF027
     'account_signup': 'http://localhost:8000/signup',
     'socialaccount_login_error': 'http://localhost:8000/social-login-error',
 }
@@ -1387,10 +1393,6 @@ CUSTOM_SPLASH = get_custom_file(
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
 )
-
-# Load settings for the frontend interface
-FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
-FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
