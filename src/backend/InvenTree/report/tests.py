@@ -1,6 +1,7 @@
 """Unit testing for the various report models."""
 
 from io import StringIO
+from zoneinfo import ZoneInfo
 
 from django.apps import apps
 from django.conf import settings
@@ -11,7 +12,6 @@ from django.utils import timezone
 from django.utils.safestring import SafeString
 
 from PIL import Image
-from zoneinfo import ZoneInfo
 
 import report.models as report_models
 from build.models import Build
@@ -240,6 +240,10 @@ class BarcodeTagTest(TestCase):
         self.assertIsInstance(barcode, str)
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.barcode('')
+
     def test_qrcode(self):
         """Test the qrcode generation tag."""
         # Test with default settings
@@ -255,6 +259,31 @@ class BarcodeTagTest(TestCase):
         self.assertIsInstance(qrcode, str)
         self.assertTrue(qrcode.startswith('data:image/bmp;'))
         self.assertEqual(len(qrcode), 309720)
+
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.qrcode('')
+
+    def test_datamatrix(self):
+        """Test the datamatrix generation tag."""
+        # Test with default settings
+        datamatrix = barcode_tags.datamatrix('hello world')
+        self.assertEqual(
+            datamatrix,
+            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
+        )
+
+        datamatrix = barcode_tags.datamatrix(
+            'hello world', border=3, fill_color='red', back_color='blue'
+        )
+        self.assertEqual(
+            datamatrix,
+            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAIAAABL1vtsAAAAqElEQVR4nN1UQQ6AMAgrxv9/GQ9mpJYSY/QkBxM3KLUUA0i8i+1l/dcQiXj09CwSEU2aQJ7nE8ou2faVUXoPZSEkq+dZKVxWg4UqxUHnVdkp6IdwMXMulGvzNBDMk4WwPSrUF3LNnQNZBJmOsZaVXa44QSEKnvWb5mIgKon1E1H6aPyOcIa15uhONP9aR4hSCiGmYAoYpj4uO+vK4+ybMhr8Nkjmn/z4Dvoldi8uJu4iAAAAAElFTkSuQmCC',
+        )
+
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.datamatrix('')
 
 
 class ReportTest(InvenTreeAPITestCase):

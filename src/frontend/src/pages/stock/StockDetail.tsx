@@ -14,7 +14,6 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -43,6 +42,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -78,6 +78,7 @@ import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 export default function StockDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const user = useUserState();
 
   const globalSettings = useGlobalSettingsState();
@@ -345,19 +346,16 @@ export default function StockDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={
-                stockitem.part_detail?.image ??
-                stockitem?.part_detail?.thumbnail
-              }
-              pk={stockitem.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={
+              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
+            }
+            pk={stockitem.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
@@ -377,7 +375,7 @@ export default function StockDetail() {
     ); // Must not be installed into another item
   }, [stockitem]);
 
-  const showSalesAlloctions: boolean = useMemo(() => {
+  const showSalesAllocations: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
 
@@ -452,14 +450,14 @@ export default function StockDetail() {
         icon: <IconBookmark />,
         hidden:
           !stockitem.in_stock ||
-          (!showSalesAlloctions && !showBuildAllocations),
+          (!showSalesAllocations && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
+            defaultValue={['buildAllocations', 'salesAllocations']}
           >
             {showBuildAllocations && (
-              <Accordion.Item value='buildallocations' key='buildallocations'>
+              <Accordion.Item value='buildAllocations' key='buildAllocations'>
                 <Accordion.Control>
                   <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
@@ -473,8 +471,8 @@ export default function StockDetail() {
                 </Accordion.Panel>
               </Accordion.Item>
             )}
-            {showSalesAlloctions && (
-              <Accordion.Item value='salesallocations' key='salesallocations'>
+            {showSalesAllocations && (
+              <Accordion.Item value='salesAllocations' key='salesAllocations'>
                 <Accordion.Control>
                   <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
@@ -536,7 +534,7 @@ export default function StockDetail() {
       })
     ];
   }, [
-    showSalesAlloctions,
+    showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,
     stockitem,

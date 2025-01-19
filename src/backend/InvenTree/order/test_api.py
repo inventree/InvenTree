@@ -3,7 +3,7 @@
 import base64
 import io
 import json
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -255,7 +255,10 @@ class PurchaseOrderTest(OrderTest):
 
         order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
 
-        self.assertEqual(order.reference, 'PO-92233720368547758089999999999999999')
+        # Check that the created_by field is set correctly
+        self.assertEqual(order.created_by.username, 'testuser')
+
+        self.assertEqual(order.reference, huge_number)
         self.assertEqual(order.reference_int, 0x7FFFFFFF)
 
     def test_po_reference_wildcard_default(self):
@@ -1058,12 +1061,20 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(line_1.received, 0)
         self.assertEqual(line_2.received, 50)
 
+        one_week_from_today = date.today() + timedelta(days=7)
+
         valid_data = {
             'items': [
-                {'line_item': 1, 'quantity': 50, 'barcode': 'MY-UNIQUE-BARCODE-123'},
+                {
+                    'line_item': 1,
+                    'quantity': 50,
+                    'expiry_date': one_week_from_today.strftime(r'%Y-%m-%d'),
+                    'barcode': 'MY-UNIQUE-BARCODE-123',
+                },
                 {
                     'line_item': 2,
                     'quantity': 200,
+                    'expiry_date': one_week_from_today.strftime(r'%Y-%m-%d'),
                     'location': 2,  # Explicit location
                     'barcode': 'MY-UNIQUE-BARCODE-456',
                 },
@@ -1107,6 +1118,10 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Check received locations
         self.assertEqual(stock_1.last().location.pk, 1)
         self.assertEqual(stock_2.last().location.pk, 2)
+
+        # Expiry dates should be set
+        self.assertEqual(stock_1.last().expiry_date, one_week_from_today)
+        self.assertEqual(stock_2.last().expiry_date, one_week_from_today)
 
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
@@ -1406,6 +1421,11 @@ class SalesOrderTest(OrderTest):
 
         # Grab the PK for the newly created SalesOrder
         pk = response.data['pk']
+
+        # Basic checks against the newly created SalesOrder
+        so = models.SalesOrder.objects.get(pk=pk)
+        self.assertEqual(so.reference, 'SO-12345')
+        self.assertEqual(so.created_by.username, 'testuser')
 
         # Try to create a SO with identical reference (should fail)
         response = self.post(

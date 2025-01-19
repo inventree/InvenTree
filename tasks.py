@@ -614,7 +614,7 @@ def update(
     # If:
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
-    if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
+    if (os.environ.get('INVENTREE_DOCKER', 'False') and not frontend) or no_frontend:
         if no_frontend:
             info('Skipping frontend update (no_frontend flag set)')
         else:
@@ -1041,7 +1041,7 @@ def test(
 
     pty = not disable_pty
 
-    _apps = ' '.join(apps())
+    tested_apps = ' '.join(apps())
 
     cmd = 'test'
 
@@ -1050,7 +1050,7 @@ def test(
         cmd += f' {runtest}'
     else:
         # Run all tests
-        cmd += f' {_apps}'
+        cmd += f' {tested_apps}'
 
     if report:
         cmd += ' --slowreport'
@@ -1351,9 +1351,12 @@ def frontend_download(
 
     def handle_download(url):
         # download frontend-build.zip to temporary file
-        with requests.get(
-            url, headers=default_headers, stream=True, allow_redirects=True
-        ) as response, NamedTemporaryFile(suffix='.zip') as dst:
+        with (
+            requests.get(
+                url, headers=default_headers, stream=True, allow_redirects=True
+            ) as response,
+            NamedTemporaryFile(suffix='.zip') as dst,
+        ):
             response.raise_for_status()
 
             # auto decode the gzipped raw data

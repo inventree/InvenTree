@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import {
   AspectRatio,
   Button,
+  Grid,
   Group,
   Image,
   Overlay,
@@ -421,31 +422,39 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   return (
     <>
       {downloadImage.modal}
-      <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1} pos='relative'>
-        <>
-          <ApiImage
-            src={img}
-            mah={IMAGE_DIMENSION}
-            maw={IMAGE_DIMENSION}
-            onClick={expandImage}
-          />
-          {permissions.hasChangeRole(props.appRole) &&
-            hasOverlay &&
-            hovered && (
-              <Overlay color='black' opacity={0.8} onClick={expandImage}>
-                <ImageActionButtons
-                  visible={hovered}
-                  actions={props.imageActions}
-                  apiPath={props.apiPath}
-                  hasImage={!!props.src}
-                  pk={props.pk}
-                  setImage={setAndRefresh}
-                  downloadImage={downloadImage.open}
-                />
-              </Overlay>
-            )}
-        </>
-      </AspectRatio>
+      <Grid.Col span={{ base: 12, sm: 4 }}>
+        <AspectRatio
+          ref={ref}
+          maw={IMAGE_DIMENSION}
+          ratio={1}
+          pos='relative'
+          visibleFrom='xs'
+        >
+          <>
+            <ApiImage
+              src={img}
+              mah={IMAGE_DIMENSION}
+              maw={IMAGE_DIMENSION}
+              onClick={expandImage}
+            />
+            {permissions.hasChangeRole(props.appRole) &&
+              hasOverlay &&
+              hovered && (
+                <Overlay color='black' opacity={0.8} onClick={expandImage}>
+                  <ImageActionButtons
+                    visible={hovered}
+                    actions={props.imageActions}
+                    apiPath={props.apiPath}
+                    hasImage={!!props.src}
+                    pk={props.pk}
+                    setImage={setAndRefresh}
+                    downloadImage={downloadImage.open}
+                  />
+                </Overlay>
+              )}
+          </>
+        </AspectRatio>
+      </Grid.Col>
     </>
   );
 }

@@ -1,6 +1,7 @@
 """Custom model/serializer fields for InvenTree models that support custom states."""
 
-from typing import Any, Iterable, Optional
+from collections.abc import Iterable
+from typing import Any, Optional
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models

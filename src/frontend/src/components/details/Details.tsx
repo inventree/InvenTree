@@ -14,7 +14,7 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
@@ -101,6 +101,8 @@ function NameBadge({
   pk,
   type
 }: Readonly<{ pk: string | number; type: BadgeType }>) {
+  const api = useApi();
+
   const { data } = useQuery({
     queryKey: ['badge', type, pk],
     queryFn: async () => {
@@ -217,6 +219,7 @@ function BooleanValue(props: Readonly<FieldProps>) {
 }
 
 function TableAnchorValue(props: Readonly<FieldProps>) {
+  const api = useApi();
   const navigate = useNavigate();
 
   const { data } = useQuery({
@@ -375,18 +378,22 @@ export function DetailsTableField({
 
   return (
     <Table.Tr style={{ verticalAlign: 'top' }}>
+      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
+        <Group gap='xs' wrap='nowrap'>
+          <InvenTreeIcon
+            icon={field.icon ?? (field.name as InvenTreeIconType)}
+          />
+          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+        </Group>
+      </Table.Td>
       <Table.Td
         style={{
-          width: '50',
-          maxWidth: '50'
+          lineBreak: 'anywhere',
+          minWidth: 100,
+          flex: 10,
+          display: 'inline-block'
         }}
       >
-        <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
-      </Table.Td>
-      <Table.Td style={{ maxWidth: '65%', lineBreak: 'auto' }}>
-        <Text>{field.label}</Text>
-      </Table.Td>
-      <Table.Td style={{ lineBreak: 'anywhere' }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>
@@ -406,7 +413,11 @@ export function DetailsTable({
   title?: string;
 }>) {
   return (
-    <Paper p='xs' withBorder radius='xs'>
+    <Paper
+      p='xs'
+      withBorder
+      style={{ overflowX: 'hidden', width: '100%', minWidth: 200 }}
+    >
       <Stack gap='xs'>
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
