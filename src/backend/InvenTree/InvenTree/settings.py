@@ -1300,6 +1300,8 @@ ACCOUNT_FORMS = {
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
+MFA_ADAPTER = 'InvenTree.auth_overrides.CustomMFAAdapter'
+HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 
@@ -1307,7 +1309,7 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 def get_frontend_url(pui_path: str):
     """Generate frontend url.
 
-    #TODO This function should be moved to the adapter once https://codeberg.org/allauth/django-allauth/issues/4226 is resolved.
+    #TODO remove this https://codeberg.org/allauth/django-allauth/issues/4226 is merged.
     """
     host: str = 'http://localhost:8000'
     if not host.endswith('/'):

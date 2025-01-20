@@ -3,14 +3,16 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import structlog
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
+from allauth.headless.adapter import DefaultHeadlessAdapter
 from allauth.headless.tokens.sessions import SessionTokenStrategy
+from allauth.mfa.adapter import DefaultMFAAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 import InvenTree.helpers_model
@@ -208,6 +210,40 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
         # Log the error to the database
         log_error(path, error_name=error, error_data=exception)
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
+
+
+class CustomMFAAdapter(DefaultMFAAdapter):
+    """Override of adapter to use dynamic settings."""
+
+    def block_email_registering(self, user) -> bool:
+        """Statically disable email registration blocking."""
+        return False
+
+
+class CustomHeadlessAdapter(DefaultHeadlessAdapter):
+    """Override of adapter to use dynamic settings."""
+
+    def get_frontend_url(self, request: HttpRequest, urlname, **kwargs):
+        """Get the frontend URL for the given URL name respecting the request."""
+        HEADLESS_FRONTEND_URLS = {
+            'account_confirm_email': ['verify-email/', '{key}'],
+            'account_reset_password': 'reset-password',
+            'account_reset_password_from_key': ['set-password?key=', '{key}'],
+            'account_signup': 'register',
+            'socialaccount_login_error': 'social-login-error',
+        }
+        if urlname not in HEADLESS_FRONTEND_URLS:
+            raise ValueError(
+                f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
+            )
+
+        url = HEADLESS_FRONTEND_URLS[urlname]
+        if isinstance(url, list):
+            return (
+                request.build_absolute_uri(f'/{settings.FRONTEND_URL_BASE}/{url[0]}')
+                + url[1]
+            )
+        return request.build_absolute_uri(f'/{settings.FRONTEND_URL_BASE}/{url}')
 
 
 class DRFTokenStrategy(SessionTokenStrategy):
