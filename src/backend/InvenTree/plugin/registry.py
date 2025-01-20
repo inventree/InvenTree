@@ -453,6 +453,8 @@ class PluginsRegistry:
 
         Args:
             plugin: Plugin module
+            configs: Plugin configuration dictionary
+            force_reload (bool, optional): Force reload of plugin. Defaults to False.
         """
         from InvenTree import version
 
@@ -485,6 +487,7 @@ class PluginsRegistry:
 
         # Check if this is a 'builtin' plugin
         builtin = plugin.check_is_builtin()
+        sample = plugin.check_is_sample()
 
         package_name = None
 
@@ -510,6 +513,17 @@ class PluginsRegistry:
             # Initialize package - we can be sure that an admin has activated the plugin
             logger.debug('Loading plugin `%s`', plg_name)
 
+            # If this is a third-party plugin, reload the source module
+            # This is required to ensure that separate processes are using the same code
+            if not builtin and not sample:
+                if plugin_module := sys.modules.get(plugin.__module__):
+                    logger.debug('Reloading plugin `%s`', plg_name)
+                    # Reload the module
+                    try:
+                        importlib.reload(plugin_module)
+                        plugin = getattr(plugin_module, plugin.__name__)
+                    except Exception:
+                        logger.exception('Failed to reload plugin `%s`', plg_name)
             try:
                 t_start = time.time()
                 plg_i: InvenTreePlugin = plugin()
@@ -745,7 +759,7 @@ class PluginsRegistry:
 
         if old_hash != self.registry_hash:
             try:
-                logger.debug(
+                logger.info(
                     'Updating plugin registry hash: %s', str(self.registry_hash)
                 )
                 set_global_setting(
