@@ -43,10 +43,10 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByPlaceholder('Select filter').fill(filter);
   await page.getByPlaceholder('Select filter').click();
-  await page.getByRole('option', { name: filter }).click();
+  await page.getByRole('option', { name: filter, exact: true }).click();
 
   await page.getByPlaceholder('Select filter value').click();
-  await page.getByRole('option', { name: value }).click();
+  await page.getByRole('option', { name: value, exact: true }).click();
 
   await closeFilterDrawer(page);
 };
