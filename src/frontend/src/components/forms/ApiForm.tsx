@@ -442,8 +442,6 @@ export function ApiForm({
      */
     const timeout = props.timeout ?? (hasFiles ? 30000 : undefined);
 
-    console.log('submit:', jsonData);
-
     return api({
       method: method,
       url: url,
