@@ -3,6 +3,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -185,6 +186,12 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
         url = InvenTree.helpers_model.construct_absolute_url(url)
         return url
 
+    def send_password_reset_mail(self, user, email, context):
+        """Send the password reset mail."""
+        if not get_global_setting('LOGIN_ENABLE_PWD_FORGOT'):
+            raise PermissionDenied('Password reset is disabled')
+        return super().send_password_reset_mail(self, user, email, context)
+
 
 class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
@@ -210,6 +217,10 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
         # Log the error to the database
         log_error(path, error_name=error, error_data=exception)
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
+
+    def get_connect_redirect_url(self, request, socialaccount):
+        """Redirect to the frontend after connecting an account."""
+        return request.build_absolute_uri(f'/{settings.FRONTEND_URL_BASE}/')
 
 
 class CustomMFAAdapter(DefaultMFAAdapter):
