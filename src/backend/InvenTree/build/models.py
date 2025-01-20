@@ -67,7 +67,7 @@ class Build(
     Attributes:
         part: The part to be built (from component BOM items)
         reference: Build order reference (required, must be unique)
-        title: Brief title describing the build (required)
+        title: Brief title describing the build (optional)
         quantity: Number of units to be built
         parent: Reference to a Build object for which this Build is required
         sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
