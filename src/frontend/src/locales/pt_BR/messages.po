@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-11 21:22\n"
+"PO-Revision-Date: 2025-01-15 03:50\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -85,7 +85,6 @@ msgstr ""
 #: src/components/barcodes/BarcodeInput.tsx:110
 #: src/components/buttons/PrintingActions.tsx:120
 #: src/components/buttons/PrintingActions.tsx:158
-#: src/components/buttons/SSOButton.tsx:53
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
 #: src/components/forms/fields/ApiFormField.tsx:338
@@ -112,8 +111,8 @@ msgstr ""
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:32
 #: src/components/nav/NavigationDrawer.tsx:117
-#: src/forms/PurchaseOrderForms.tsx:383
-#: src/forms/PurchaseOrderForms.tsx:477
+#: src/forms/PurchaseOrderForms.tsx:404
+#: src/forms/PurchaseOrderForms.tsx:508
 msgid "Scan Barcode"
 msgstr "Ler Código de Barras"
 
@@ -163,7 +162,7 @@ msgid "Failed to link barcode"
 msgstr ""
 
 #: src/components/barcodes/QRCode.tsx:178
-#: src/pages/part/PartDetail.tsx:240
+#: src/pages/part/PartDetail.tsx:239
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:199
 #: src/pages/sales/ReturnOrderDetail.tsx:169
 #: src/pages/sales/SalesOrderDetail.tsx:181
@@ -177,7 +176,7 @@ msgstr "Isto irá remover o link com o código de barras associado"
 
 #: src/components/barcodes/QRCode.tsx:204
 #: src/components/items/ActionDropdown.tsx:183
-#: src/forms/PurchaseOrderForms.tsx:468
+#: src/forms/PurchaseOrderForms.tsx:499
 msgid "Unlink Barcode"
 msgstr "Desvincular Código de Barras"
 
@@ -245,17 +244,17 @@ msgstr "Imprimir Relatórios"
 msgid "Remove this row"
 msgstr "Remover esta linha"
 
-#: src/components/buttons/SSOButton.tsx:54
-msgid "Sign in redirect failed."
-msgstr ""
-
-#: src/components/buttons/SSOButton.tsx:64
+#: src/components/buttons/SSOButton.tsx:43
 msgid "You will be redirected to the provider for further actions."
 msgstr ""
 
-#: src/components/buttons/SSOButton.tsx:65
+#: src/components/buttons/SSOButton.tsx:44
 msgid "This provider is not full set up."
 msgstr ""
+
+#: src/components/buttons/SSOButton.tsx:54
+#~ msgid "Sign in redirect failed."
+#~ msgstr "Sign in redirect failed."
 
 #: src/components/buttons/ScanButton.tsx:15
 #~ msgid "Scan QR code"
@@ -553,23 +552,23 @@ msgstr ""
 msgid "No name defined"
 msgstr "Sem nome definido"
 
-#: src/components/details/DetailsImage.tsx:75
+#: src/components/details/DetailsImage.tsx:76
 msgid "Remove Image"
 msgstr "Remover Imagem"
 
-#: src/components/details/DetailsImage.tsx:78
+#: src/components/details/DetailsImage.tsx:79
 msgid "Remove the associated image from this item?"
 msgstr "Remover imagem associada a este item?"
 
-#: src/components/details/DetailsImage.tsx:81
+#: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:737
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:199
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:306
-#: src/pages/stock/StockDetail.tsx:728
+#: src/pages/stock/StockDetail.tsx:725
 msgid "Remove"
 msgstr "Remover"
 
-#: src/components/details/DetailsImage.tsx:81
+#: src/components/details/DetailsImage.tsx:82
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:179
 #: src/components/items/ActionDropdown.tsx:268
 #: src/components/items/ActionDropdown.tsx:269
@@ -581,66 +580,66 @@ msgstr "Remover"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/components/details/DetailsImage.tsx:107
+#: src/components/details/DetailsImage.tsx:108
 msgid "Drag and drop to upload"
 msgstr "Arraste e solte para carregar"
 
-#: src/components/details/DetailsImage.tsx:110
+#: src/components/details/DetailsImage.tsx:111
 msgid "Click to select file(s)"
 msgstr "Clique para selecionar o(s) arquivo(s)"
 
-#: src/components/details/DetailsImage.tsx:170
+#: src/components/details/DetailsImage.tsx:171
 msgid "Image uploaded"
 msgstr ""
 
-#: src/components/details/DetailsImage.tsx:171
+#: src/components/details/DetailsImage.tsx:172
 msgid "Image has been uploaded successfully"
 msgstr ""
 
-#: src/components/details/DetailsImage.tsx:178
-#: src/tables/general/AttachmentTable.tsx:149
+#: src/components/details/DetailsImage.tsx:179
+#: src/tables/general/AttachmentTable.tsx:151
 msgid "Upload Error"
 msgstr "Erro no carregamento"
 
-#: src/components/details/DetailsImage.tsx:248
+#: src/components/details/DetailsImage.tsx:249
 msgid "Clear"
 msgstr "Limpar"
 
-#: src/components/details/DetailsImage.tsx:254
-#: src/components/forms/ApiForm.tsx:668
+#: src/components/details/DetailsImage.tsx:255
+#: src/components/forms/ApiForm.tsx:675
 #: src/contexts/ThemeContext.tsx:47
 msgid "Submit"
 msgstr "Enviar"
 
-#: src/components/details/DetailsImage.tsx:298
+#: src/components/details/DetailsImage.tsx:299
 msgid "Select from existing images"
 msgstr "Selecionar de imagens existentes"
 
-#: src/components/details/DetailsImage.tsx:306
+#: src/components/details/DetailsImage.tsx:307
 msgid "Select Image"
 msgstr "Selecionar Imagem"
 
-#: src/components/details/DetailsImage.tsx:322
+#: src/components/details/DetailsImage.tsx:323
 msgid "Download remote image"
 msgstr ""
 
-#: src/components/details/DetailsImage.tsx:337
+#: src/components/details/DetailsImage.tsx:338
 msgid "Upload new image"
 msgstr "Carregar nova imagem"
 
-#: src/components/details/DetailsImage.tsx:344
+#: src/components/details/DetailsImage.tsx:345
 msgid "Upload Image"
 msgstr "Enviar Imagem"
 
-#: src/components/details/DetailsImage.tsx:357
+#: src/components/details/DetailsImage.tsx:358
 msgid "Delete image"
 msgstr "Excluir imagem"
 
-#: src/components/details/DetailsImage.tsx:391
+#: src/components/details/DetailsImage.tsx:392
 msgid "Download Image"
 msgstr ""
 
-#: src/components/details/DetailsImage.tsx:396
+#: src/components/details/DetailsImage.tsx:397
 msgid "Image downloaded successfully"
 msgstr ""
 
@@ -678,7 +677,7 @@ msgstr "Upload da imagem falhou"
 
 #: src/components/editors/NotesEditor.tsx:84
 #: src/components/editors/NotesEditor.tsx:120
-#: src/components/forms/ApiForm.tsx:479
+#: src/components/forms/ApiForm.tsx:486
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagmentPanel.tsx:45
 #: src/tables/bom/BomTable.tsx:446
 msgid "Success"
@@ -859,7 +858,7 @@ msgid "A server error occurred"
 msgstr "Ocorreu um erro no servidor"
 
 #: src/components/forms/ApiForm.tsx:156
-#: src/components/forms/ApiForm.tsx:587
+#: src/components/forms/ApiForm.tsx:594
 msgid "Form Error"
 msgstr "Erro no formulário"
 
@@ -867,16 +866,16 @@ msgstr "Erro no formulário"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:595
+#: src/components/forms/ApiForm.tsx:602
 msgid "Errors exist for one or more form fields"
 msgstr "Existem erros para um ou mais campos de formulário"
 
-#: src/components/forms/ApiForm.tsx:706
+#: src/components/forms/ApiForm.tsx:713
 #: src/tables/plugin/PluginListTable.tsx:196
 msgid "Update"
 msgstr "Atualizar"
 
-#: src/components/forms/ApiForm.tsx:726
+#: src/components/forms/ApiForm.tsx:733
 #: src/components/items/ActionDropdown.tsx:248
 #: src/hooks/UseForm.tsx:121
 #: src/pages/Notifications.tsx:130
@@ -1060,7 +1059,7 @@ msgstr "Servidor"
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:410
 #: src/pages/Index/Settings/AdminCenter/UnitManagmentPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:86
-#: src/pages/part/PartDetail.tsx:165
+#: src/pages/part/PartDetail.tsx:164
 #: src/pages/stock/LocationDetail.tsx:85
 #: src/tables/machine/MachineTypeTable.tsx:70
 #: src/tables/machine/MachineTypeTable.tsx:119
@@ -1739,7 +1738,7 @@ msgstr "Sair"
 #: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/CategoryDetail.tsx:265
 #: src/pages/part/CategoryDetail.tsx:304
-#: src/pages/part/PartDetail.tsx:733
+#: src/pages/part/PartDetail.tsx:730
 msgid "Parts"
 msgstr "Peças"
 
@@ -1748,16 +1747,16 @@ msgstr "Peças"
 #: src/defaults/links.tsx:13
 #: src/forms/StockForms.tsx:700
 #: src/pages/Index/Settings/SystemSettings.tsx:204
-#: src/pages/part/PartDetail.tsx:500
+#: src/pages/part/PartDetail.tsx:497
 #: src/pages/stock/LocationDetail.tsx:351
-#: src/pages/stock/StockDetail.tsx:550
+#: src/pages/stock/StockDetail.tsx:547
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Stock"
 msgstr "Estoque"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:15
-#: src/pages/build/BuildDetail.tsx:536
+#: src/pages/build/BuildDetail.tsx:534
 #: src/pages/build/BuildIndex.tsx:36
 msgid "Manufacturing"
 msgstr ""
@@ -1765,10 +1764,10 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:20
 #: src/pages/company/ManufacturerDetail.tsx:9
-#: src/pages/company/ManufacturerPartDetail.tsx:263
+#: src/pages/company/ManufacturerPartDetail.tsx:261
 #: src/pages/company/SupplierDetail.tsx:9
-#: src/pages/company/SupplierPartDetail.tsx:354
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:498
+#: src/pages/company/SupplierPartDetail.tsx:352
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:496
 #: src/pages/purchasing/PurchasingIndex.tsx:61
 msgid "Purchasing"
 msgstr "Comprando"
@@ -1776,10 +1775,10 @@ msgstr "Comprando"
 #: src/components/nav/NavigationDrawer.tsx:105
 #: src/defaults/links.tsx:24
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:485
+#: src/pages/sales/ReturnOrderDetail.tsx:483
 #: src/pages/sales/SalesIndex.tsx:55
-#: src/pages/sales/SalesOrderDetail.tsx:549
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:362
+#: src/pages/sales/SalesOrderDetail.tsx:547
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:360
 msgid "Sales"
 msgstr "Vendas"
 
@@ -1803,7 +1802,7 @@ msgid "Navigation"
 msgstr "Navegação"
 
 #: src/components/nav/NavigationDrawer.tsx:186
-#: src/forms/PurchaseOrderForms.tsx:693
+#: src/forms/PurchaseOrderForms.tsx:740
 #: src/forms/StockForms.tsx:700
 #: src/forms/StockForms.tsx:737
 #: src/forms/StockForms.tsx:769
@@ -1922,7 +1921,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:143
 #: src/pages/part/CategoryDetail.tsx:106
-#: src/pages/part/PartDetail.tsx:179
+#: src/pages/part/PartDetail.tsx:178
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:139
 #: src/pages/sales/ReturnOrderDetail.tsx:110
 #: src/pages/sales/SalesOrderDetail.tsx:119
@@ -1964,7 +1963,7 @@ msgstr "Versão"
 #: src/components/plugins/PluginDrawer.tsx:93
 #: src/forms/selectionListFields.tsx:103
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:398
-#: src/pages/part/PartDetail.tsx:332
+#: src/pages/part/PartDetail.tsx:331
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/company/CompanyTable.tsx:62
 #: src/tables/company/CompanyTable.tsx:96
@@ -2074,7 +2073,7 @@ msgstr "Modelo desconhecido: {model}"
 #: src/forms/BuildForms.tsx:340
 #: src/forms/BuildForms.tsx:388
 #: src/forms/BuildForms.tsx:518
-#: src/forms/PurchaseOrderForms.tsx:693
+#: src/forms/PurchaseOrderForms.tsx:740
 #: src/forms/ReturnOrderForms.tsx:220
 #: src/forms/SalesOrderForms.tsx:248
 #: src/forms/StockForms.tsx:283
@@ -2087,7 +2086,7 @@ msgstr "Modelo desconhecido: {model}"
 #: src/forms/StockForms.tsx:907
 #: src/forms/StockForms.tsx:945
 #: src/pages/build/BuildDetail.tsx:93
-#: src/pages/part/PartDetail.tsx:993
+#: src/pages/part/PartDetail.tsx:990
 #: src/tables/build/BuildAllocatedStockTable.tsx:95
 #: src/tables/build/BuildLineTable.tsx:71
 #: src/tables/part/PartTable.tsx:32
@@ -2118,7 +2117,7 @@ msgstr "Teste de Modelos de Peças"
 
 #: src/components/render/ModelType.tsx:54
 #: src/components/wizards/OrderPartsWizard.tsx:141
-#: src/pages/company/SupplierPartDetail.tsx:408
+#: src/pages/company/SupplierPartDetail.tsx:406
 #: src/pages/stock/StockDetail.tsx:213
 #: src/tables/build/BuildAllocatedStockTable.tsx:152
 #: src/tables/part/PartPurchaseOrdersTable.tsx:49
@@ -2148,7 +2147,7 @@ msgstr "Categoria da Peça"
 
 #: src/components/render/ModelType.tsx:73
 #: src/pages/part/CategoryDetail.tsx:327
-#: src/pages/part/PartDetail.tsx:982
+#: src/pages/part/PartDetail.tsx:979
 msgid "Part Categories"
 msgstr "Categorias de Peça"
 
@@ -2157,14 +2156,14 @@ msgstr "Categorias de Peça"
 #: src/forms/BuildForms.tsx:388
 #: src/forms/BuildForms.tsx:518
 #: src/forms/SalesOrderForms.tsx:248
-#: src/pages/stock/StockDetail.tsx:905
+#: src/pages/stock/StockDetail.tsx:902
 #: src/tables/stock/StockTrackingTable.tsx:49
 #: src/tables/stock/StockTrackingTable.tsx:56
 msgid "Stock Item"
 msgstr "Item de estoque"
 
 #: src/components/render/ModelType.tsx:82
-#: src/pages/company/CompanyDetail.tsx:207
+#: src/pages/company/CompanyDetail.tsx:205
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/PartStocktakeDetail.tsx:115
 #: src/pages/stock/LocationDetail.tsx:124
@@ -2180,7 +2179,7 @@ msgstr "Localização do estoque"
 #: src/components/render/ModelType.tsx:91
 #: src/pages/stock/LocationDetail.tsx:191
 #: src/pages/stock/LocationDetail.tsx:372
-#: src/pages/stock/StockDetail.tsx:896
+#: src/pages/stock/StockDetail.tsx:893
 msgid "Stock Locations"
 msgstr "Locais de estoque"
 
@@ -2193,7 +2192,7 @@ msgid "Stock Location Types"
 msgstr "Categoria de Localização de Estoque"
 
 #: src/components/render/ModelType.tsx:105
-#: src/pages/part/PartDetail.tsx:605
+#: src/pages/part/PartDetail.tsx:602
 msgid "Stock History"
 msgstr "Histórico de estoque"
 
@@ -2226,7 +2225,7 @@ msgid "Build Items"
 msgstr "Criar itens"
 
 #: src/components/render/ModelType.tsx:134
-#: src/pages/company/CompanyDetail.tsx:328
+#: src/pages/company/CompanyDetail.tsx:326
 msgid "Company"
 msgstr "Empresa"
 
@@ -2253,7 +2252,7 @@ msgstr "Códigos de Projeto"
 #: src/components/render/ModelType.tsx:151
 #: src/components/wizards/OrderPartsWizard.tsx:180
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:495
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:493
 #: src/pages/stock/StockDetail.tsx:275
 #: src/tables/part/PartPurchaseOrdersTable.tsx:31
 #: src/tables/stock/StockItemTable.tsx:229
@@ -2263,9 +2262,9 @@ msgstr "Pedido de Compra"
 
 #: src/components/render/ModelType.tsx:152
 #: src/pages/Index/Settings/SystemSettings.tsx:248
-#: src/pages/company/CompanyDetail.tsx:200
-#: src/pages/company/SupplierPartDetail.tsx:267
-#: src/pages/part/PartDetail.tsx:576
+#: src/pages/company/CompanyDetail.tsx:198
+#: src/pages/company/SupplierPartDetail.tsx:265
+#: src/pages/part/PartDetail.tsx:573
 #: src/pages/purchasing/PurchasingIndex.tsx:25
 msgid "Purchase Orders"
 msgstr "Pedidos de compra"
@@ -2281,9 +2280,9 @@ msgstr "Linhas do Pedido de Compra"
 #: src/components/render/ModelType.tsx:166
 #: src/pages/build/BuildDetail.tsx:160
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:24
-#: src/pages/sales/SalesOrderDetail.tsx:544
+#: src/pages/sales/SalesOrderDetail.tsx:542
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:95
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:360
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:358
 #: src/pages/stock/StockDetail.tsx:284
 #: src/tables/part/PartSalesAllocationsTable.tsx:38
 #: src/tables/sales/SalesOrderAllocationTable.tsx:99
@@ -2293,14 +2292,14 @@ msgstr "Pedido de Venda"
 
 #: src/components/render/ModelType.tsx:167
 #: src/pages/Index/Settings/SystemSettings.tsx:263
-#: src/pages/company/CompanyDetail.tsx:220
-#: src/pages/part/PartDetail.tsx:588
+#: src/pages/company/CompanyDetail.tsx:218
+#: src/pages/part/PartDetail.tsx:585
 #: src/pages/sales/SalesIndex.tsx:26
 msgid "Sales Orders"
 msgstr "Pedidos de vendas"
 
 #: src/components/render/ModelType.tsx:175
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:359
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:357
 msgid "Sales Order Shipment"
 msgstr "Envio do Pedido Venda"
 
@@ -2309,15 +2308,15 @@ msgid "Sales Order Shipments"
 msgstr "Envios do Pedido Venda"
 
 #: src/components/render/ModelType.tsx:183
-#: src/pages/sales/ReturnOrderDetail.tsx:480
+#: src/pages/sales/ReturnOrderDetail.tsx:478
 #: src/tables/stock/StockTrackingTable.tsx:143
 msgid "Return Order"
 msgstr "Pedido de Devolução"
 
 #: src/components/render/ModelType.tsx:184
 #: src/pages/Index/Settings/SystemSettings.tsx:279
-#: src/pages/company/CompanyDetail.tsx:227
-#: src/pages/part/PartDetail.tsx:595
+#: src/pages/company/CompanyDetail.tsx:225
+#: src/pages/part/PartDetail.tsx:592
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Return Orders"
 msgstr "Pedidos de Devolução"
@@ -2336,7 +2335,7 @@ msgid "Address"
 msgstr "Endereço"
 
 #: src/components/render/ModelType.tsx:199
-#: src/pages/company/CompanyDetail.tsx:260
+#: src/pages/company/CompanyDetail.tsx:258
 msgid "Addresses"
 msgstr "Endereços"
 
@@ -2348,7 +2347,7 @@ msgid "Contact"
 msgstr "Contato"
 
 #: src/components/render/ModelType.tsx:207
-#: src/pages/company/CompanyDetail.tsx:254
+#: src/pages/company/CompanyDetail.tsx:252
 msgid "Contacts"
 msgstr "Contatos"
 
@@ -2465,9 +2464,9 @@ msgstr "Remessa"
 
 #: src/components/render/Part.tsx:25
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:314
-#: src/pages/company/SupplierPartDetail.tsx:367
-#: src/pages/part/PartDetail.tsx:787
+#: src/pages/company/CompanyDetail.tsx:312
+#: src/pages/company/SupplierPartDetail.tsx:365
+#: src/pages/part/PartDetail.tsx:784
 msgid "Inactive"
 msgstr "Inativo"
 
@@ -2479,7 +2478,7 @@ msgstr "Sem Estoque"
 
 #: src/components/render/Stock.tsx:61
 #: src/pages/stock/StockDetail.tsx:185
-#: src/pages/stock/StockDetail.tsx:832
+#: src/pages/stock/StockDetail.tsx:829
 #: src/tables/build/BuildAllocatedStockTable.tsx:123
 #: src/tables/build/BuildOutputTable.tsx:81
 #: src/tables/sales/SalesOrderAllocationTable.tsx:125
@@ -2490,7 +2489,7 @@ msgstr "Número de Série"
 #: src/components/render/Stock.tsx:63
 #: src/forms/BuildForms.tsx:206
 #: src/forms/BuildForms.tsx:518
-#: src/forms/PurchaseOrderForms.tsx:693
+#: src/forms/PurchaseOrderForms.tsx:740
 #: src/forms/ReturnOrderForms.tsx:220
 #: src/forms/SalesOrderForms.tsx:248
 #: src/pages/part/PartSchedulingDetail.tsx:82
@@ -2501,7 +2500,7 @@ msgstr "Número de Série"
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
 #: src/pages/stock/StockDetail.tsx:180
-#: src/pages/stock/StockDetail.tsx:838
+#: src/pages/stock/StockDetail.tsx:835
 #: src/tables/build/BuildLineTable.tsx:78
 #: src/tables/build/BuildOrderTestTable.tsx:205
 #: src/tables/part/PartPurchaseOrdersTable.tsx:93
@@ -3121,30 +3120,34 @@ msgid "Slovenian"
 msgstr "Esloveno"
 
 #: src/contexts/LanguageContext.tsx:50
+msgid "Serbian"
+msgstr ""
+
+#: src/contexts/LanguageContext.tsx:51
 msgid "Swedish"
 msgstr "Sueco"
 
-#: src/contexts/LanguageContext.tsx:51
+#: src/contexts/LanguageContext.tsx:52
 msgid "Thai"
 msgstr "Tailandês"
 
-#: src/contexts/LanguageContext.tsx:52
+#: src/contexts/LanguageContext.tsx:53
 msgid "Turkish"
 msgstr "Turco"
 
-#: src/contexts/LanguageContext.tsx:53
+#: src/contexts/LanguageContext.tsx:54
 msgid "Ukrainian"
 msgstr "Ucraniano"
 
-#: src/contexts/LanguageContext.tsx:54
+#: src/contexts/LanguageContext.tsx:55
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: src/contexts/LanguageContext.tsx:55
+#: src/contexts/LanguageContext.tsx:56
 msgid "Chinese (Simplified)"
 msgstr "Chinês (Simplificado)"
 
-#: src/contexts/LanguageContext.tsx:56
+#: src/contexts/LanguageContext.tsx:57
 msgid "Chinese (Traditional)"
 msgstr "Chinês (Tradicional)"
 
@@ -3473,7 +3476,7 @@ msgstr "Lote"
 #: src/forms/BuildForms.tsx:272
 #: src/forms/BuildForms.tsx:340
 #: src/forms/BuildForms.tsx:388
-#: src/forms/PurchaseOrderForms.tsx:607
+#: src/forms/PurchaseOrderForms.tsx:653
 #: src/forms/ReturnOrderForms.tsx:176
 #: src/forms/ReturnOrderForms.tsx:220
 #: src/forms/StockForms.tsx:625
@@ -3567,7 +3570,7 @@ msgstr "Itens de estoque alocados"
 #: src/forms/PartForms.tsx:70
 #: src/forms/PartForms.tsx:157
 #: src/pages/part/CategoryDetail.tsx:122
-#: src/pages/part/PartDetail.tsx:385
+#: src/pages/part/PartDetail.tsx:384
 #: src/tables/part/PartCategoryTable.tsx:90
 #: src/tables/part/PartTable.tsx:296
 msgid "Subscribed"
@@ -3597,31 +3600,31 @@ msgstr "Categoria de peça parental"
 msgid "Subscribe to notifications for this category"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:317
+#: src/forms/PurchaseOrderForms.tsx:338
 msgid "Assign Batch Code and Serial Numbers"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:319
+#: src/forms/PurchaseOrderForms.tsx:340
 msgid "Assign Batch Code"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:339
+#: src/forms/PurchaseOrderForms.tsx:360
 msgid "Choose Location"
 msgstr "Escolher local"
 
-#: src/forms/PurchaseOrderForms.tsx:347
+#: src/forms/PurchaseOrderForms.tsx:368
 msgid "Item Destination selected"
 msgstr "Destino do item selecionado"
 
-#: src/forms/PurchaseOrderForms.tsx:357
+#: src/forms/PurchaseOrderForms.tsx:378
 msgid "Part category default location selected"
 msgstr "Localização padrão da categoria de peça selecionada"
 
-#: src/forms/PurchaseOrderForms.tsx:367
+#: src/forms/PurchaseOrderForms.tsx:388
 msgid "Received stock location selected"
 msgstr "Localização do estoque recebida selecionada"
 
-#: src/forms/PurchaseOrderForms.tsx:372
+#: src/forms/PurchaseOrderForms.tsx:393
 msgid "Default location selected"
 msgstr "Localização padrão selecionada"
 
@@ -3629,30 +3632,34 @@ msgstr "Localização padrão selecionada"
 #~ msgid "Assign Batch Code{0}"
 #~ msgstr "Assign Batch Code{0}"
 
-#: src/forms/PurchaseOrderForms.tsx:431
-msgid "Set Location"
-msgstr "Definir Localização"
-
 #: src/forms/PurchaseOrderForms.tsx:444
 #: src/forms/StockForms.tsx:428
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:446
+#: src/forms/PurchaseOrderForms.tsx:452
+msgid "Set Location"
+msgstr "Definir Localização"
+
+#: src/forms/PurchaseOrderForms.tsx:469
+msgid "Set Expiry Date"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:477
 #: src/forms/StockForms.tsx:606
 msgid "Adjust Packaging"
 msgstr "Ajustar Pacotes"
 
-#: src/forms/PurchaseOrderForms.tsx:454
+#: src/forms/PurchaseOrderForms.tsx:485
 #: src/forms/StockForms.tsx:597
 msgid "Change Status"
 msgstr "Alterar Status"
 
-#: src/forms/PurchaseOrderForms.tsx:460
+#: src/forms/PurchaseOrderForms.tsx:491
 msgid "Add Note"
 msgstr "Adicionar observação"
 
-#: src/forms/PurchaseOrderForms.tsx:507
+#: src/forms/PurchaseOrderForms.tsx:538
 #: src/forms/StockForms.tsx:700
 #: src/forms/StockForms.tsx:737
 #: src/forms/StockForms.tsx:769
@@ -3667,26 +3674,26 @@ msgstr "Adicionar observação"
 msgid "Location"
 msgstr "Localização"
 
-#: src/forms/PurchaseOrderForms.tsx:522
+#: src/forms/PurchaseOrderForms.tsx:553
 msgid "Store at default location"
 msgstr "Armazenar no local padrão"
-
-#: src/forms/PurchaseOrderForms.tsx:537
-msgid "Store at line item destination"
-msgstr "Armazenar no destino do item de linha"
-
-#: src/forms/PurchaseOrderForms.tsx:549
-msgid "Store with already received stock"
-msgstr "Armazenar com estoque já recebido"
 
 #: src/forms/PurchaseOrderForms.tsx:566
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:570
+#: src/forms/PurchaseOrderForms.tsx:568
+msgid "Store at line item destination"
+msgstr "Armazenar no destino do item de linha"
+
+#: src/forms/PurchaseOrderForms.tsx:580
+msgid "Store with already received stock"
+msgstr "Armazenar com estoque já recebido"
+
+#: src/forms/PurchaseOrderForms.tsx:601
 #: src/pages/build/BuildDetail.tsx:234
 #: src/pages/stock/StockDetail.tsx:204
-#: src/pages/stock/StockDetail.tsx:854
+#: src/pages/stock/StockDetail.tsx:851
 #: src/tables/build/BuildAllocatedStockTable.tsx:130
 #: src/tables/build/BuildOrderTestTable.tsx:196
 #: src/tables/build/BuildOutputTable.tsx:86
@@ -3695,45 +3702,55 @@ msgstr "Armazenar com estoque já recebido"
 msgid "Batch Code"
 msgstr "Código de Lote"
 
-#: src/forms/PurchaseOrderForms.tsx:571
+#: src/forms/PurchaseOrderForms.tsx:602
 msgid "Enter batch code for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:583
+#: src/forms/PurchaseOrderForms.tsx:614
 #: src/forms/StockForms.tsx:164
 msgid "Serial Numbers"
 msgstr "Números de Série"
 
-#: src/forms/PurchaseOrderForms.tsx:584
+#: src/forms/PurchaseOrderForms.tsx:615
 msgid "Enter serial numbers for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:594
+#: src/forms/PurchaseOrderForms.tsx:628
+#: src/pages/stock/StockDetail.tsx:305
+#: src/tables/stock/StockItemTable.tsx:279
+msgid "Expiry Date"
+msgstr "Data de Validade"
+
+#: src/forms/PurchaseOrderForms.tsx:629
+msgid "Enter an expiry date for received items"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:640
 #: src/forms/StockForms.tsx:641
 #: src/pages/company/SupplierPartDetail.tsx:171
-#: src/pages/company/SupplierPartDetail.tsx:237
+#: src/pages/company/SupplierPartDetail.tsx:235
 #: src/pages/stock/StockDetail.tsx:342
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:200
 msgid "Packaging"
 msgstr "Embalagem"
 
-#: src/forms/PurchaseOrderForms.tsx:616
+#: src/forms/PurchaseOrderForms.tsx:658
+#~ msgid "Receive line items"
+#~ msgstr "Receive line items"
+
+#: src/forms/PurchaseOrderForms.tsx:662
 #: src/pages/company/SupplierPartDetail.tsx:118
 #: src/tables/ColumnRenderers.tsx:143
 msgid "Note"
 msgstr "Anotação"
 
-#: src/forms/PurchaseOrderForms.tsx:658
-#~ msgid "Receive line items"
-#~ msgstr "Receive line items"
-
-#: src/forms/PurchaseOrderForms.tsx:693
+#: src/forms/PurchaseOrderForms.tsx:740
 #: src/pages/company/SupplierPartDetail.tsx:136
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
 msgstr "Código (SKU)"
 
-#: src/forms/PurchaseOrderForms.tsx:693
+#: src/forms/PurchaseOrderForms.tsx:740
 #: src/tables/part/PartPurchaseOrdersTable.tsx:126
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:186
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:249
@@ -3741,7 +3758,7 @@ msgstr "Código (SKU)"
 msgid "Received"
 msgstr "Recebido"
 
-#: src/forms/PurchaseOrderForms.tsx:705
+#: src/forms/PurchaseOrderForms.tsx:752
 msgid "Receive Line Items"
 msgstr "Excluir Itens de Linha"
 
@@ -3787,7 +3804,7 @@ msgid "Stock Status"
 msgstr "Situação do Estoque"
 
 #: src/forms/StockForms.tsx:240
-#: src/pages/stock/StockDetail.tsx:577
+#: src/pages/stock/StockDetail.tsx:574
 #: src/tables/stock/StockItemTable.tsx:533
 #: src/tables/stock/StockItemTable.tsx:665
 msgid "Add Stock Item"
@@ -3821,28 +3838,28 @@ msgstr "Mover"
 #: src/forms/StockForms.tsx:907
 #: src/forms/StockForms.tsx:945
 #: src/pages/company/SupplierPartDetail.tsx:189
-#: src/pages/company/SupplierPartDetail.tsx:372
-#: src/pages/part/PartDetail.tsx:252
-#: src/pages/part/PartDetail.tsx:751
+#: src/pages/company/SupplierPartDetail.tsx:370
+#: src/pages/part/PartDetail.tsx:251
+#: src/pages/part/PartDetail.tsx:748
 #: src/tables/purchasing/SupplierPartTable.tsx:207
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
 msgstr "Em Estoque"
 
 #: src/forms/StockForms.tsx:769
-#: src/pages/stock/StockDetail.tsx:719
+#: src/pages/stock/StockDetail.tsx:716
 #: src/tables/stock/StockItemTestResultTable.tsx:350
 msgid "Add"
 msgstr "Adicionar"
 
 #: src/forms/StockForms.tsx:798
 #: src/pages/Index/Scan.tsx:177
-#: src/pages/stock/StockDetail.tsx:708
+#: src/pages/stock/StockDetail.tsx:705
 msgid "Count"
 msgstr "Contar"
 
 #: src/forms/StockForms.tsx:1050
-#: src/pages/stock/StockDetail.tsx:720
+#: src/pages/stock/StockDetail.tsx:717
 #: src/tables/stock/StockItemTable.tsx:583
 msgid "Add Stock"
 msgstr "Adicionar Estoque"
@@ -3852,7 +3869,7 @@ msgid "Stock added"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1060
-#: src/pages/stock/StockDetail.tsx:729
+#: src/pages/stock/StockDetail.tsx:726
 #: src/tables/stock/StockItemTable.tsx:592
 msgid "Remove Stock"
 msgstr "Remover Estoque"
@@ -3862,8 +3879,8 @@ msgid "Stock removed"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1070
-#: src/pages/part/PartDetail.tsx:919
-#: src/pages/stock/StockDetail.tsx:738
+#: src/pages/part/PartDetail.tsx:916
+#: src/pages/stock/StockDetail.tsx:735
 #: src/tables/stock/StockItemTable.tsx:601
 msgid "Transfer Stock"
 msgstr "Transferir Estoque"
@@ -3873,7 +3890,7 @@ msgid "Stock transferred"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1080
-#: src/pages/part/PartDetail.tsx:908
+#: src/pages/part/PartDetail.tsx:905
 #: src/pages/stock/LocationDetail.tsx:313
 #: src/pages/stock/LocationDetail.tsx:317
 #: src/tables/stock/StockItemTable.tsx:572
@@ -5066,8 +5083,8 @@ msgstr "Relatórios"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:230
 #: src/pages/build/BuildIndex.tsx:27
-#: src/pages/part/PartDetail.tsx:543
-#: src/pages/sales/SalesOrderDetail.tsx:367
+#: src/pages/part/PartDetail.tsx:540
+#: src/pages/sales/SalesOrderDetail.tsx:365
 msgid "Build Orders"
 msgstr "Ordens de Produções"
 
@@ -5126,7 +5143,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:100
 #: src/pages/company/ManufacturerPartDetail.tsx:84
 #: src/pages/company/SupplierPartDetail.tsx:94
-#: src/pages/part/PartDetail.tsx:172
+#: src/pages/part/PartDetail.tsx:171
 #: src/pages/stock/StockDetail.tsx:131
 #: src/tables/bom/BomTable.tsx:120
 #: src/tables/bom/UsedInTable.tsx:39
@@ -5166,7 +5183,7 @@ msgid "Build Quantity"
 msgstr "Quantidade de Produção"
 
 #: src/pages/build/BuildDetail.tsx:155
-#: src/pages/build/BuildDetail.tsx:291
+#: src/pages/build/BuildDetail.tsx:289
 msgid "Completed Outputs"
 msgstr "Saídas Completas"
 
@@ -5176,7 +5193,7 @@ msgid "Issued By"
 msgstr "Emitido por"
 
 #: src/pages/build/BuildDetail.tsx:179
-#: src/pages/part/PartDetail.tsx:407
+#: src/pages/part/PartDetail.tsx:406
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:224
 #: src/pages/sales/ReturnOrderDetail.tsx:194
 #: src/pages/sales/SalesOrderDetail.tsx:206
@@ -5245,39 +5262,39 @@ msgstr "Local de Destino"
 #~ msgid "Delete build order"
 #~ msgstr "Delete build order"
 
-#: src/pages/build/BuildDetail.tsx:266
+#: src/pages/build/BuildDetail.tsx:264
 msgid "Build Details"
 msgstr "Detalhes da Produção"
 
-#: src/pages/build/BuildDetail.tsx:272
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:296
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:305
+#: src/pages/build/BuildDetail.tsx:270
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:294
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:303
 #: src/pages/sales/ReturnOrderDetail.tsx:134
-#: src/pages/sales/ReturnOrderDetail.tsx:266
-#: src/pages/sales/ReturnOrderDetail.tsx:275
-#: src/pages/sales/SalesOrderDetail.tsx:306
-#: src/pages/sales/SalesOrderDetail.tsx:315
+#: src/pages/sales/ReturnOrderDetail.tsx:264
+#: src/pages/sales/ReturnOrderDetail.tsx:273
+#: src/pages/sales/SalesOrderDetail.tsx:304
+#: src/pages/sales/SalesOrderDetail.tsx:313
 msgid "Line Items"
 msgstr "Itens de linha"
 
-#: src/pages/build/BuildDetail.tsx:278
+#: src/pages/build/BuildDetail.tsx:276
 msgid "Incomplete Outputs"
 msgstr "Saídas Incompletas"
 
-#: src/pages/build/BuildDetail.tsx:306
-#: src/pages/sales/SalesOrderDetail.tsx:353
+#: src/pages/build/BuildDetail.tsx:304
+#: src/pages/sales/SalesOrderDetail.tsx:351
 msgid "Allocated Stock"
 msgstr "Estoque Alocado"
 
-#: src/pages/build/BuildDetail.tsx:319
+#: src/pages/build/BuildDetail.tsx:317
 msgid "Consumed Stock"
 msgstr "Estoque Consumido"
 
-#: src/pages/build/BuildDetail.tsx:334
+#: src/pages/build/BuildDetail.tsx:332
 msgid "Child Build Orders"
 msgstr "Pedido de Produção Filhos"
 
-#: src/pages/build/BuildDetail.tsx:344
+#: src/pages/build/BuildDetail.tsx:342
 #: src/tables/build/BuildOutputTable.tsx:539
 #: src/tables/stock/StockItemTestResultTable.tsx:157
 msgid "Test Results"
@@ -5288,143 +5305,143 @@ msgstr "Resultados do teste"
 #~ msgid "Test Statistics"
 #~ msgstr "Test Statistics"
 
+#: src/pages/build/BuildDetail.tsx:367
+msgid "Edit Build Order"
+msgstr "Editar Pedido de Produção"
+
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
 #~ msgstr "Reporting Actions"
 
-#: src/pages/build/BuildDetail.tsx:369
-msgid "Edit Build Order"
-msgstr "Editar Pedido de Produção"
-
 #: src/pages/build/BuildDetail.tsx:374
-#~ msgid "Print build report"
-#~ msgstr "Print build report"
-
-#: src/pages/build/BuildDetail.tsx:376
 #: src/tables/build/BuildOrderTable.tsx:178
 #: src/tables/build/BuildOrderTable.tsx:193
 msgid "Add Build Order"
 msgstr "Adicionar Pedido de Produção"
 
-#: src/pages/build/BuildDetail.tsx:388
+#: src/pages/build/BuildDetail.tsx:374
+#~ msgid "Print build report"
+#~ msgstr "Print build report"
+
+#: src/pages/build/BuildDetail.tsx:386
 msgid "Cancel Build Order"
 msgstr "Cancelar Pedido de Produção"
 
-#: src/pages/build/BuildDetail.tsx:390
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:371
-#: src/pages/sales/ReturnOrderDetail.tsx:366
-#: src/pages/sales/SalesOrderDetail.tsx:400
+#: src/pages/build/BuildDetail.tsx:388
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:369
+#: src/pages/sales/ReturnOrderDetail.tsx:364
+#: src/pages/sales/SalesOrderDetail.tsx:398
 msgid "Order cancelled"
 msgstr "Pedido cancelado"
 
-#: src/pages/build/BuildDetail.tsx:391
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:370
-#: src/pages/sales/ReturnOrderDetail.tsx:365
-#: src/pages/sales/SalesOrderDetail.tsx:399
+#: src/pages/build/BuildDetail.tsx:389
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:368
+#: src/pages/sales/ReturnOrderDetail.tsx:363
+#: src/pages/sales/SalesOrderDetail.tsx:397
 msgid "Cancel this order"
 msgstr "Cancelar este pedido"
 
-#: src/pages/build/BuildDetail.tsx:400
+#: src/pages/build/BuildDetail.tsx:398
 msgid "Hold Build Order"
 msgstr "Manter Pedido de Produção"
 
-#: src/pages/build/BuildDetail.tsx:402
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:378
-#: src/pages/sales/ReturnOrderDetail.tsx:373
-#: src/pages/sales/SalesOrderDetail.tsx:407
+#: src/pages/build/BuildDetail.tsx:400
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:376
+#: src/pages/sales/ReturnOrderDetail.tsx:371
+#: src/pages/sales/SalesOrderDetail.tsx:405
 msgid "Place this order on hold"
 msgstr "Colocar este pedido em espera"
 
-#: src/pages/build/BuildDetail.tsx:403
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:379
-#: src/pages/sales/ReturnOrderDetail.tsx:374
-#: src/pages/sales/SalesOrderDetail.tsx:408
+#: src/pages/build/BuildDetail.tsx:401
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:377
+#: src/pages/sales/ReturnOrderDetail.tsx:372
+#: src/pages/sales/SalesOrderDetail.tsx:406
 msgid "Order placed on hold"
 msgstr "Pedido colocado em espera"
 
-#: src/pages/build/BuildDetail.tsx:408
+#: src/pages/build/BuildDetail.tsx:406
 msgid "Issue Build Order"
 msgstr "Pedido de produção vencido"
 
-#: src/pages/build/BuildDetail.tsx:410
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:362
-#: src/pages/sales/ReturnOrderDetail.tsx:357
-#: src/pages/sales/SalesOrderDetail.tsx:391
+#: src/pages/build/BuildDetail.tsx:408
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:360
+#: src/pages/sales/ReturnOrderDetail.tsx:355
+#: src/pages/sales/SalesOrderDetail.tsx:389
 msgid "Issue this order"
 msgstr "Cancelar este pedido"
 
-#: src/pages/build/BuildDetail.tsx:411
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:363
-#: src/pages/sales/ReturnOrderDetail.tsx:358
-#: src/pages/sales/SalesOrderDetail.tsx:392
+#: src/pages/build/BuildDetail.tsx:409
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:361
+#: src/pages/sales/ReturnOrderDetail.tsx:356
+#: src/pages/sales/SalesOrderDetail.tsx:390
 msgid "Order issued"
 msgstr "Problemas com o pedido"
 
-#: src/pages/build/BuildDetail.tsx:416
+#: src/pages/build/BuildDetail.tsx:414
 msgid "Complete Build Order"
 msgstr "Completar Pedido de Produção"
 
-#: src/pages/build/BuildDetail.tsx:418
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:391
-#: src/pages/sales/ReturnOrderDetail.tsx:381
-#: src/pages/sales/SalesOrderDetail.tsx:426
+#: src/pages/build/BuildDetail.tsx:416
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:389
+#: src/pages/sales/ReturnOrderDetail.tsx:379
+#: src/pages/sales/SalesOrderDetail.tsx:424
 msgid "Mark this order as complete"
 msgstr "Marcar este pedido como completo"
 
-#: src/pages/build/BuildDetail.tsx:419
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:385
-#: src/pages/sales/ReturnOrderDetail.tsx:382
-#: src/pages/sales/SalesOrderDetail.tsx:427
+#: src/pages/build/BuildDetail.tsx:417
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:383
+#: src/pages/sales/ReturnOrderDetail.tsx:380
+#: src/pages/sales/SalesOrderDetail.tsx:425
 msgid "Order completed"
 msgstr "Pedido concluído"
 
-#: src/pages/build/BuildDetail.tsx:450
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:414
-#: src/pages/sales/ReturnOrderDetail.tsx:411
-#: src/pages/sales/SalesOrderDetail.tsx:456
+#: src/pages/build/BuildDetail.tsx:448
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:412
+#: src/pages/sales/ReturnOrderDetail.tsx:409
+#: src/pages/sales/SalesOrderDetail.tsx:454
 msgid "Issue Order"
 msgstr "Emitir Pedido"
 
-#: src/pages/build/BuildDetail.tsx:457
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:421
-#: src/pages/sales/ReturnOrderDetail.tsx:418
-#: src/pages/sales/SalesOrderDetail.tsx:470
+#: src/pages/build/BuildDetail.tsx:455
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:419
+#: src/pages/sales/ReturnOrderDetail.tsx:416
+#: src/pages/sales/SalesOrderDetail.tsx:468
 msgid "Complete Order"
 msgstr "Completar Pedido"
 
-#: src/pages/build/BuildDetail.tsx:475
+#: src/pages/build/BuildDetail.tsx:473
 msgid "Build Order Actions"
 msgstr "Ações do Pedido de Produção"
 
-#: src/pages/build/BuildDetail.tsx:480
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:443
-#: src/pages/sales/ReturnOrderDetail.tsx:440
-#: src/pages/sales/SalesOrderDetail.tsx:493
+#: src/pages/build/BuildDetail.tsx:478
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:441
+#: src/pages/sales/ReturnOrderDetail.tsx:438
+#: src/pages/sales/SalesOrderDetail.tsx:491
 msgid "Edit order"
 msgstr "Editar pedido"
 
-#: src/pages/build/BuildDetail.tsx:484
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:451
-#: src/pages/sales/ReturnOrderDetail.tsx:446
-#: src/pages/sales/SalesOrderDetail.tsx:498
+#: src/pages/build/BuildDetail.tsx:482
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:449
+#: src/pages/sales/ReturnOrderDetail.tsx:444
+#: src/pages/sales/SalesOrderDetail.tsx:496
 msgid "Duplicate order"
 msgstr "Duplicar pedido"
 
-#: src/pages/build/BuildDetail.tsx:488
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:454
-#: src/pages/sales/ReturnOrderDetail.tsx:451
-#: src/pages/sales/SalesOrderDetail.tsx:501
+#: src/pages/build/BuildDetail.tsx:486
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:452
+#: src/pages/sales/ReturnOrderDetail.tsx:449
+#: src/pages/sales/SalesOrderDetail.tsx:499
 msgid "Hold order"
 msgstr "Manter ordem"
 
-#: src/pages/build/BuildDetail.tsx:493
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:459
-#: src/pages/sales/ReturnOrderDetail.tsx:456
-#: src/pages/sales/SalesOrderDetail.tsx:506
+#: src/pages/build/BuildDetail.tsx:491
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:457
+#: src/pages/sales/ReturnOrderDetail.tsx:454
+#: src/pages/sales/SalesOrderDetail.tsx:504
 msgid "Cancel order"
 msgstr "Cancelar pedido"
 
-#: src/pages/build/BuildDetail.tsx:529
+#: src/pages/build/BuildDetail.tsx:527
 #: src/pages/stock/StockDetail.tsx:267
 #: src/tables/build/BuildAllocatedStockTable.tsx:77
 #: src/tables/part/PartBuildAllocationsTable.tsx:41
@@ -5459,8 +5476,8 @@ msgstr "Moeda Padrão"
 #: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierDetail.tsx:8
 #: src/pages/company/SupplierPartDetail.tsx:128
-#: src/pages/company/SupplierPartDetail.tsx:236
-#: src/pages/company/SupplierPartDetail.tsx:358
+#: src/pages/company/SupplierPartDetail.tsx:234
+#: src/pages/company/SupplierPartDetail.tsx:356
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:133
 #: src/tables/company/CompanyTable.tsx:101
 #: src/tables/part/PartPurchaseOrdersTable.tsx:42
@@ -5472,7 +5489,7 @@ msgstr "Fornecedor"
 #: src/pages/company/CompanyDetail.tsx:135
 #: src/pages/company/ManufacturerDetail.tsx:8
 #: src/pages/company/ManufacturerPartDetail.tsx:103
-#: src/pages/company/ManufacturerPartDetail.tsx:267
+#: src/pages/company/ManufacturerPartDetail.tsx:265
 #: src/pages/company/SupplierPartDetail.tsx:150
 #: src/tables/company/CompanyTable.tsx:106
 msgid "Manufacturer"
@@ -5492,40 +5509,40 @@ msgstr "Fabricante"
 msgid "Customer"
 msgstr "Cliente"
 
+#: src/pages/company/CompanyDetail.tsx:174
+msgid "Company Details"
+msgstr ""
+
 #: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
 #~ msgstr "Edit company"
 
-#: src/pages/company/CompanyDetail.tsx:176
-msgid "Company Details"
-msgstr ""
-
-#: src/pages/company/CompanyDetail.tsx:182
+#: src/pages/company/CompanyDetail.tsx:180
 msgid "Manufactured Parts"
 msgstr "Peças Fabricadas"
+
+#: src/pages/company/CompanyDetail.tsx:189
+msgid "Supplied Parts"
+msgstr "Peças Fornecidas"
 
 #: src/pages/company/CompanyDetail.tsx:189
 #~ msgid "Delete company"
 #~ msgstr "Delete company"
 
-#: src/pages/company/CompanyDetail.tsx:191
-msgid "Supplied Parts"
-msgstr "Peças Fornecidas"
-
-#: src/pages/company/CompanyDetail.tsx:238
+#: src/pages/company/CompanyDetail.tsx:236
 msgid "Assigned Stock"
 msgstr "Estoque Atribuído"
 
-#: src/pages/company/CompanyDetail.tsx:278
+#: src/pages/company/CompanyDetail.tsx:276
 #: src/tables/company/CompanyTable.tsx:87
 msgid "Edit Company"
 msgstr "Editar Empresa"
 
-#: src/pages/company/CompanyDetail.tsx:286
+#: src/pages/company/CompanyDetail.tsx:284
 msgid "Delete Company"
 msgstr "Excluir Empresa"
 
-#: src/pages/company/CompanyDetail.tsx:296
+#: src/pages/company/CompanyDetail.tsx:294
 msgid "Company Actions"
 msgstr "Ações da Empresa"
 
@@ -5545,53 +5562,53 @@ msgstr "Número de Peça do Fabricante"
 msgid "External Link"
 msgstr "Link Externo"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:149
-#: src/pages/company/SupplierPartDetail.tsx:233
-#: src/pages/part/PartDetail.tsx:483
+#: src/pages/company/ManufacturerPartDetail.tsx:147
+#: src/pages/company/SupplierPartDetail.tsx:231
+#: src/pages/part/PartDetail.tsx:480
 msgid "Part Details"
 msgstr "Detalhes da Peça"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:152
+#: src/pages/company/ManufacturerPartDetail.tsx:150
 msgid "Manufacturer Details"
 msgstr "Detalhes do Fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:161
+#: src/pages/company/ManufacturerPartDetail.tsx:159
 msgid "Manufacturer Part Details"
 msgstr "Detalhes de peça do Fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:167
-#: src/pages/part/PartDetail.tsx:489
+#: src/pages/company/ManufacturerPartDetail.tsx:165
+#: src/pages/part/PartDetail.tsx:486
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:179
-#: src/pages/part/PartDetail.tsx:563
+#: src/pages/company/ManufacturerPartDetail.tsx:177
+#: src/pages/part/PartDetail.tsx:560
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:32
 msgid "Suppliers"
 msgstr "Fornecedores"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:207
+#: src/pages/company/ManufacturerPartDetail.tsx:205
 #: src/tables/purchasing/ManufacturerPartTable.tsx:86
 msgid "Edit Manufacturer Part"
 msgstr "Editar Peça do Fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:214
+#: src/pages/company/ManufacturerPartDetail.tsx:212
 #: src/tables/purchasing/ManufacturerPartTable.tsx:74
 #: src/tables/purchasing/ManufacturerPartTable.tsx:106
 msgid "Add Manufacturer Part"
 msgstr "Adicionar Peça do Fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:226
+#: src/pages/company/ManufacturerPartDetail.tsx:224
 #: src/tables/purchasing/ManufacturerPartTable.tsx:94
 msgid "Delete Manufacturer Part"
 msgstr "Excluir Peça do Fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:241
+#: src/pages/company/ManufacturerPartDetail.tsx:239
 msgid "Manufacturer Part Actions"
 msgstr "Ações de peça do Fabricante"
 
-#: src/pages/company/ManufacturerPartDetail.tsx:281
+#: src/pages/company/ManufacturerPartDetail.tsx:279
 msgid "ManufacturerPart"
 msgstr "Peça do Fabricante"
 
@@ -5609,8 +5626,8 @@ msgid "Pack Quantity"
 msgstr "Quantidade de embalagens"
 
 #: src/pages/company/SupplierPartDetail.tsx:196
-#: src/pages/company/SupplierPartDetail.tsx:388
-#: src/pages/part/PartDetail.tsx:775
+#: src/pages/company/SupplierPartDetail.tsx:386
+#: src/pages/part/PartDetail.tsx:772
 #: src/tables/bom/BomTable.tsx:330
 #: src/tables/part/PartTable.tsx:90
 msgid "On Order"
@@ -5624,46 +5641,46 @@ msgstr "Disponibilidade do fornecedor"
 msgid "Availability Updated"
 msgstr "Disponibilidade Atualizada"
 
-#: src/pages/company/SupplierPartDetail.tsx:238
+#: src/pages/company/SupplierPartDetail.tsx:236
 msgid "Availability"
 msgstr "Disponibilidade"
 
-#: src/pages/company/SupplierPartDetail.tsx:247
+#: src/pages/company/SupplierPartDetail.tsx:245
 msgid "Supplier Part Details"
 msgstr "Detalhes de Peça do Fornecedor"
 
-#: src/pages/company/SupplierPartDetail.tsx:253
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:334
+#: src/pages/company/SupplierPartDetail.tsx:251
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:332
 msgid "Received Stock"
 msgstr "Estoque Recebido"
 
-#: src/pages/company/SupplierPartDetail.tsx:277
+#: src/pages/company/SupplierPartDetail.tsx:275
 #: src/pages/part/PartPricingPanel.tsx:116
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:194
 msgid "Supplier Pricing"
 msgstr "Preço do fornecedor"
 
-#: src/pages/company/SupplierPartDetail.tsx:302
+#: src/pages/company/SupplierPartDetail.tsx:300
 msgid "Supplier Part Actions"
 msgstr "Ações de Peças do Fornecedor"
 
-#: src/pages/company/SupplierPartDetail.tsx:326
+#: src/pages/company/SupplierPartDetail.tsx:324
 #: src/tables/purchasing/SupplierPartTable.tsx:220
 msgid "Edit Supplier Part"
 msgstr "Editar Peça do Fornecedor"
 
-#: src/pages/company/SupplierPartDetail.tsx:334
+#: src/pages/company/SupplierPartDetail.tsx:332
 #: src/tables/purchasing/SupplierPartTable.tsx:228
 msgid "Delete Supplier Part"
 msgstr "Excluir Peça do Fornecedor"
 
-#: src/pages/company/SupplierPartDetail.tsx:342
+#: src/pages/company/SupplierPartDetail.tsx:340
 #: src/tables/purchasing/SupplierPartTable.tsx:167
 msgid "Add Supplier Part"
 msgstr "Adicionar Peça do Fornecedor"
 
-#: src/pages/company/SupplierPartDetail.tsx:382
-#: src/pages/part/PartDetail.tsx:763
+#: src/pages/company/SupplierPartDetail.tsx:380
+#: src/pages/part/PartDetail.tsx:760
 msgid "No Stock"
 msgstr "Sem Estoque"
 
@@ -5747,55 +5764,55 @@ msgid "Category Details"
 msgstr "Detalhes da categoria"
 
 #: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:465
+#: src/pages/stock/StockDetail.tsx:462
 #: src/tables/part/PartTable.tsx:103
 msgid "Build Order Allocations"
 msgstr "Alocações de Pedido de Produção"
 
 #: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:480
+#: src/pages/stock/StockDetail.tsx:477
 #: src/tables/part/PartTable.tsx:111
 msgid "Sales Order Allocations"
 msgstr "Alocações do Pedido de Vendas"
 
-#: src/pages/part/PartDetail.tsx:185
+#: src/pages/part/PartDetail.tsx:184
 msgid "Variant of"
 msgstr "Variante de"
 
-#: src/pages/part/PartDetail.tsx:192
+#: src/pages/part/PartDetail.tsx:191
 msgid "Revision of"
 msgstr "Revisão"
 
-#: src/pages/part/PartDetail.tsx:199
+#: src/pages/part/PartDetail.tsx:198
 #: src/tables/stock/StockItemTable.tsx:65
 msgid "Revision"
 msgstr "Revisão"
 
-#: src/pages/part/PartDetail.tsx:206
+#: src/pages/part/PartDetail.tsx:205
 #: src/tables/notifications/NotificationTable.tsx:32
 #: src/tables/part/PartCategoryTemplateTable.tsx:67
 msgid "Category"
 msgstr "Categoria"
 
-#: src/pages/part/PartDetail.tsx:212
+#: src/pages/part/PartDetail.tsx:211
 msgid "Default Location"
 msgstr "Local Padrão"
 
-#: src/pages/part/PartDetail.tsx:219
+#: src/pages/part/PartDetail.tsx:218
 msgid "Category Default Location"
 msgstr "Localização padrão da categoria"
 
-#: src/pages/part/PartDetail.tsx:226
+#: src/pages/part/PartDetail.tsx:225
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
 msgstr "Unidades"
 
-#: src/pages/part/PartDetail.tsx:233
+#: src/pages/part/PartDetail.tsx:232
 #: src/tables/settings/PendingTasksTable.tsx:46
 msgid "Keywords"
 msgstr "Palavras-chave"
 
-#: src/pages/part/PartDetail.tsx:258
+#: src/pages/part/PartDetail.tsx:257
 #: src/tables/bom/BomTable.tsx:325
 #: src/tables/build/BuildLineTable.tsx:293
 #: src/tables/part/PartTable.tsx:290
@@ -5803,30 +5820,30 @@ msgstr "Palavras-chave"
 msgid "Available Stock"
 msgstr "Estoque Disponível"
 
-#: src/pages/part/PartDetail.tsx:265
+#: src/pages/part/PartDetail.tsx:264
 msgid "Variant Stock"
 msgstr "Estoque de variante"
 
-#: src/pages/part/PartDetail.tsx:273
+#: src/pages/part/PartDetail.tsx:272
 msgid "Minimum Stock"
 msgstr "Estoque Mínimo"
 
-#: src/pages/part/PartDetail.tsx:279
+#: src/pages/part/PartDetail.tsx:278
 #: src/tables/bom/BomTable.tsx:239
 #: src/tables/build/BuildLineTable.tsx:255
 #: src/tables/sales/SalesOrderLineItemTable.tsx:165
 msgid "On order"
 msgstr "No pedido"
 
-#: src/pages/part/PartDetail.tsx:286
+#: src/pages/part/PartDetail.tsx:285
 msgid "Required for Orders"
 msgstr "Necessário para Pedidos"
 
-#: src/pages/part/PartDetail.tsx:295
+#: src/pages/part/PartDetail.tsx:294
 msgid "Allocated to Build Orders"
 msgstr "Alocado para Pedidos de Construção"
 
-#: src/pages/part/PartDetail.tsx:306
+#: src/pages/part/PartDetail.tsx:305
 msgid "Allocated to Sales Orders"
 msgstr "Alocado para Pedidos de Venda"
 
@@ -5834,70 +5851,70 @@ msgstr "Alocado para Pedidos de Venda"
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
 
-#: src/pages/part/PartDetail.tsx:316
+#: src/pages/part/PartDetail.tsx:315
 #: src/tables/bom/BomTable.tsx:263
 #: src/tables/bom/BomTable.tsx:298
 msgid "Can Build"
 msgstr "Pode Produzir"
 
 #: src/pages/part/PartDetail.tsx:322
-#~ msgid "Duplicate part"
-#~ msgstr "Duplicate part"
-
-#: src/pages/part/PartDetail.tsx:323
-#: src/pages/part/PartDetail.tsx:781
-#: src/pages/stock/StockDetail.tsx:827
+#: src/pages/part/PartDetail.tsx:778
+#: src/pages/stock/StockDetail.tsx:824
 #: src/tables/build/BuildOrderTestTable.tsx:227
 #: src/tables/stock/StockItemTable.tsx:347
 msgid "In Production"
 msgstr "Em Produção"
 
+#: src/pages/part/PartDetail.tsx:322
+#~ msgid "Duplicate part"
+#~ msgstr "Duplicate part"
+
 #: src/pages/part/PartDetail.tsx:327
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:337
+#: src/pages/part/PartDetail.tsx:336
 #: src/tables/part/ParametricPartTable.tsx:229
 #: src/tables/part/PartTable.tsx:186
 msgid "Locked"
 msgstr "Bloqueado"
 
-#: src/pages/part/PartDetail.tsx:343
+#: src/pages/part/PartDetail.tsx:342
 msgid "Template Part"
 msgstr "Modelo de peça"
 
-#: src/pages/part/PartDetail.tsx:348
+#: src/pages/part/PartDetail.tsx:347
 #: src/tables/bom/BomTable.tsx:320
 msgid "Assembled Part"
 msgstr "Peça Montada"
 
-#: src/pages/part/PartDetail.tsx:353
+#: src/pages/part/PartDetail.tsx:352
 msgid "Component Part"
 msgstr "Parte do componente"
 
-#: src/pages/part/PartDetail.tsx:358
+#: src/pages/part/PartDetail.tsx:357
 #: src/tables/bom/BomTable.tsx:310
 msgid "Testable Part"
 msgstr "Parte Testável"
 
-#: src/pages/part/PartDetail.tsx:364
+#: src/pages/part/PartDetail.tsx:363
 #: src/tables/bom/BomTable.tsx:315
 msgid "Trackable Part"
 msgstr "Peça Rastreável"
 
-#: src/pages/part/PartDetail.tsx:369
+#: src/pages/part/PartDetail.tsx:368
 msgid "Purchaseable Part"
 msgstr "Parte comprável"
 
-#: src/pages/part/PartDetail.tsx:375
+#: src/pages/part/PartDetail.tsx:374
 msgid "Saleable Part"
 msgstr "Parte vendível"
 
-#: src/pages/part/PartDetail.tsx:380
+#: src/pages/part/PartDetail.tsx:379
 msgid "Virtual Part"
 msgstr "Parte Virtual"
 
-#: src/pages/part/PartDetail.tsx:394
+#: src/pages/part/PartDetail.tsx:393
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:234
 #: src/pages/sales/ReturnOrderDetail.tsx:204
 #: src/pages/sales/SalesOrderDetail.tsx:216
@@ -5905,24 +5922,24 @@ msgstr "Parte Virtual"
 msgid "Creation Date"
 msgstr "Criado em"
 
-#: src/pages/part/PartDetail.tsx:399
+#: src/pages/part/PartDetail.tsx:398
 #: src/tables/ColumnRenderers.tsx:208
 #: src/tables/Filter.tsx:247
 msgid "Created By"
 msgstr "Criado por"
 
-#: src/pages/part/PartDetail.tsx:414
+#: src/pages/part/PartDetail.tsx:413
 msgid "Default Supplier"
 msgstr "Fornecedor Padrão"
 
-#: src/pages/part/PartDetail.tsx:425
+#: src/pages/part/PartDetail.tsx:424
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:163
 msgid "Price Range"
 msgstr "Faixa de Preço"
 
-#: src/pages/part/PartDetail.tsx:435
+#: src/pages/part/PartDetail.tsx:434
 msgid "Latest Serial Number"
 msgstr ""
 
@@ -5930,42 +5947,42 @@ msgstr ""
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
 
-#: src/pages/part/PartDetail.tsx:518
+#: src/pages/part/PartDetail.tsx:515
 msgid "Variants"
 msgstr "Variantes"
 
-#: src/pages/part/PartDetail.tsx:525
-#: src/pages/stock/StockDetail.tsx:452
+#: src/pages/part/PartDetail.tsx:522
+#: src/pages/stock/StockDetail.tsx:449
 msgid "Allocations"
 msgstr "Alocações"
 
-#: src/pages/part/PartDetail.tsx:532
+#: src/pages/part/PartDetail.tsx:529
 msgid "Bill of Materials"
 msgstr "Lista de Materiais"
 
-#: src/pages/part/PartDetail.tsx:550
+#: src/pages/part/PartDetail.tsx:547
 msgid "Used In"
 msgstr "Usado em"
 
-#: src/pages/part/PartDetail.tsx:557
+#: src/pages/part/PartDetail.tsx:554
 msgid "Part Pricing"
 msgstr "Preço de Peça"
 
-#: src/pages/part/PartDetail.tsx:615
+#: src/pages/part/PartDetail.tsx:612
 msgid "Scheduling"
 msgstr "Agendamento"
 
-#: src/pages/part/PartDetail.tsx:622
+#: src/pages/part/PartDetail.tsx:619
 msgid "Test Templates"
 msgstr "Testar Modelos"
 
-#: src/pages/part/PartDetail.tsx:633
+#: src/pages/part/PartDetail.tsx:630
 msgid "Related Parts"
 msgstr "Peças Relacionadas"
 
-#: src/pages/part/PartDetail.tsx:757
+#: src/pages/part/PartDetail.tsx:754
 #: src/pages/stock/StockDetail.tsx:191
-#: src/pages/stock/StockDetail.tsx:844
+#: src/pages/stock/StockDetail.tsx:841
 #: src/tables/build/BuildLineTable.tsx:186
 #: src/tables/part/PartTable.tsx:119
 #: src/tables/stock/StockItemTable.tsx:172
@@ -5973,62 +5990,62 @@ msgstr "Peças Relacionadas"
 msgid "Available"
 msgstr "Disponível"
 
-#: src/pages/part/PartDetail.tsx:769
+#: src/pages/part/PartDetail.tsx:766
 #: src/tables/part/PartTestTemplateTable.tsx:111
 #: src/tables/stock/StockItemTestResultTable.tsx:387
 msgid "Required"
 msgstr "Obrigatório"
 
-#: src/pages/part/PartDetail.tsx:800
+#: src/pages/part/PartDetail.tsx:797
 msgid "Edit Part"
 msgstr "Editar Peça"
 
-#: src/pages/part/PartDetail.tsx:835
+#: src/pages/part/PartDetail.tsx:832
 #: src/tables/part/PartTable.tsx:333
 #: src/tables/part/PartTable.tsx:362
 msgid "Add Part"
 msgstr "Adicionar Parte"
 
-#: src/pages/part/PartDetail.tsx:849
+#: src/pages/part/PartDetail.tsx:846
 msgid "Delete Part"
 msgstr "Excluir Peça"
 
-#: src/pages/part/PartDetail.tsx:858
+#: src/pages/part/PartDetail.tsx:855
 msgid "Deleting this part cannot be reversed"
 msgstr "Excluir esta peça não é reversível"
 
-#: src/pages/part/PartDetail.tsx:901
+#: src/pages/part/PartDetail.tsx:898
 #: src/pages/stock/LocationDetail.tsx:309
 #: src/tables/stock/StockItemTable.tsx:567
 msgid "Stock Actions"
 msgstr "Ações de Estoque"
 
-#: src/pages/part/PartDetail.tsx:909
+#: src/pages/part/PartDetail.tsx:906
 msgid "Count part stock"
 msgstr "Contagem do estoque"
 
-#: src/pages/part/PartDetail.tsx:920
+#: src/pages/part/PartDetail.tsx:917
 msgid "Transfer part stock"
 msgstr "Transferir estoque de peça"
 
-#: src/pages/part/PartDetail.tsx:927
+#: src/pages/part/PartDetail.tsx:924
 #: src/pages/part/PartSchedulingDetail.tsx:70
-#: src/pages/stock/StockDetail.tsx:760
+#: src/pages/stock/StockDetail.tsx:757
 msgid "Order"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:928
-#: src/pages/stock/StockDetail.tsx:761
+#: src/pages/part/PartDetail.tsx:925
+#: src/pages/stock/StockDetail.tsx:758
 #: src/tables/build/BuildLineTable.tsx:594
 msgid "Order Stock"
 msgstr "Pedir estoque"
 
-#: src/pages/part/PartDetail.tsx:941
+#: src/pages/part/PartDetail.tsx:938
 #: src/tables/part/PartTable.tsx:345
 msgid "Part Actions"
 msgstr "Ações da Peça"
 
-#: src/pages/part/PartDetail.tsx:1016
+#: src/pages/part/PartDetail.tsx:1013
 msgid "Select Part Revision"
 msgstr "Selecionar Revisão de Parte"
 
@@ -6422,37 +6439,37 @@ msgstr ""
 msgid "Completion Date"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:290
-#: src/pages/sales/ReturnOrderDetail.tsx:260
-#: src/pages/sales/SalesOrderDetail.tsx:300
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:288
+#: src/pages/sales/ReturnOrderDetail.tsx:258
+#: src/pages/sales/SalesOrderDetail.tsx:298
 msgid "Order Details"
 msgstr "Detalhes do pedido"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:318
-#: src/pages/sales/ReturnOrderDetail.tsx:288
-#: src/pages/sales/SalesOrderDetail.tsx:331
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:316
+#: src/pages/sales/ReturnOrderDetail.tsx:286
+#: src/pages/sales/SalesOrderDetail.tsx:329
 msgid "Extra Line Items"
 msgstr "Itens de linha extra"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:360
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:358
 msgid "Issue Purchase Order"
 msgstr "Emitir Pedido de Compra"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:368
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:366
 msgid "Cancel Purchase Order"
 msgstr "Cancelar Pedido de Compra"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:376
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:374
 msgid "Hold Purchase Order"
 msgstr "Reter pedido de compra"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:384
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:382
 msgid "Complete Purchase Order"
 msgstr "Concluir Pedido de Compra"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:439
-#: src/pages/sales/ReturnOrderDetail.tsx:436
-#: src/pages/sales/SalesOrderDetail.tsx:488
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:437
+#: src/pages/sales/ReturnOrderDetail.tsx:434
+#: src/pages/sales/SalesOrderDetail.tsx:486
 msgid "Order Actions"
 msgstr "Ações de Pedido"
 
@@ -6463,11 +6480,11 @@ msgstr "Ações de Pedido"
 msgid "Customer Reference"
 msgstr "Referência do Cliente"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:334
+#: src/pages/sales/ReturnOrderDetail.tsx:332
 msgid "Edit Return Order"
 msgstr "Editar Pedido de Devolução"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:343
+#: src/pages/sales/ReturnOrderDetail.tsx:341
 #: src/tables/sales/ReturnOrderTable.tsx:154
 #: src/tables/sales/ReturnOrderTable.tsx:167
 msgid "Add Return Order"
@@ -6477,19 +6494,19 @@ msgstr "Adicionar Pedido de Devolução"
 #~ msgid "Order canceled"
 #~ msgstr "Order canceled"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:355
+#: src/pages/sales/ReturnOrderDetail.tsx:353
 msgid "Issue Return Order"
 msgstr "Emitir Pedido de Devolução"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:363
+#: src/pages/sales/ReturnOrderDetail.tsx:361
 msgid "Cancel Return Order"
 msgstr "Cancelar Pedido de Devolução"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:371
+#: src/pages/sales/ReturnOrderDetail.tsx:369
 msgid "Hold Return Order"
 msgstr "Adicionar Pedido de Devolução"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:379
+#: src/pages/sales/ReturnOrderDetail.tsx:377
 msgid "Complete Return Order"
 msgstr "Completar Pedido de Devolução"
 
@@ -6505,50 +6522,50 @@ msgstr "Envios Concluídos"
 #~ msgid "Pending Shipments"
 #~ msgstr "Pending Shipments"
 
-#: src/pages/sales/SalesOrderDetail.tsx:273
+#: src/pages/sales/SalesOrderDetail.tsx:271
 msgid "Edit Sales Order"
 msgstr "Editar Pedido de Venda"
 
-#: src/pages/sales/SalesOrderDetail.tsx:286
+#: src/pages/sales/SalesOrderDetail.tsx:284
 #: src/tables/sales/SalesOrderTable.tsx:109
 #: src/tables/sales/SalesOrderTable.tsx:122
 msgid "Add Sales Order"
 msgstr "Adicionar Pedido de Vendas"
 
-#: src/pages/sales/SalesOrderDetail.tsx:347
+#: src/pages/sales/SalesOrderDetail.tsx:345
 #: src/tables/sales/SalesOrderTable.tsx:156
 msgid "Shipments"
 msgstr "Envios"
 
-#: src/pages/sales/SalesOrderDetail.tsx:389
+#: src/pages/sales/SalesOrderDetail.tsx:387
 msgid "Issue Sales Order"
 msgstr "Emitir Pedido de Venda"
 
-#: src/pages/sales/SalesOrderDetail.tsx:397
+#: src/pages/sales/SalesOrderDetail.tsx:395
 msgid "Cancel Sales Order"
 msgstr "Cancelar Pedido de Venda"
 
-#: src/pages/sales/SalesOrderDetail.tsx:405
+#: src/pages/sales/SalesOrderDetail.tsx:403
 msgid "Hold Sales Order"
 msgstr "Adicionar Pedido de Vendas"
 
-#: src/pages/sales/SalesOrderDetail.tsx:413
+#: src/pages/sales/SalesOrderDetail.tsx:411
 msgid "Ship Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:415
+#: src/pages/sales/SalesOrderDetail.tsx:413
 msgid "Ship this order?"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:416
+#: src/pages/sales/SalesOrderDetail.tsx:414
 msgid "Order shipped"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:424
+#: src/pages/sales/SalesOrderDetail.tsx:422
 msgid "Complete Sales Order"
 msgstr "Concluir Pedido de Venda"
 
-#: src/pages/sales/SalesOrderDetail.tsx:463
+#: src/pages/sales/SalesOrderDetail.tsx:461
 msgid "Ship Order"
 msgstr "Ordem de envio"
 
@@ -6581,53 +6598,53 @@ msgstr "Data de envio"
 msgid "Delivery Date"
 msgstr "Data de Entrega"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:207
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:205
 msgid "Shipment Details"
 msgstr ""
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:213
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:211
 msgid "Assigned Items"
 msgstr ""
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:244
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:335
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:242
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:333
 #: src/tables/sales/SalesOrderShipmentTable.tsx:72
 msgid "Edit Shipment"
 msgstr "Editar Remessa"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:251
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:340
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:249
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:338
 #: src/tables/sales/SalesOrderShipmentTable.tsx:64
 msgid "Cancel Shipment"
 msgstr ""
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:264
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:262
 #: src/tables/sales/SalesOrderShipmentTable.tsx:80
 #: src/tables/sales/SalesOrderShipmentTable.tsx:143
 msgid "Complete Shipment"
 msgstr "Remessa Completa"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:281
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:279
 #: src/tables/part/PartPurchaseOrdersTable.tsx:121
 msgid "Pending"
 msgstr "Pendentes"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:287
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:285
 #: src/tables/sales/SalesOrderShipmentTable.tsx:105
 #: src/tables/sales/SalesOrderShipmentTable.tsx:189
 msgid "Shipped"
 msgstr "Enviado"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:293
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:291
 #: src/tables/sales/SalesOrderShipmentTable.tsx:194
 msgid "Delivered"
 msgstr "Entregue"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:308
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:306
 msgid "Send Shipment"
 msgstr ""
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:330
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:328
 msgid "Shipment Actions"
 msgstr ""
 
@@ -6744,60 +6761,55 @@ msgstr ""
 msgid "Consumed By"
 msgstr "Consumido por"
 
-#: src/pages/stock/StockDetail.tsx:305
-#: src/tables/stock/StockItemTable.tsx:279
-msgid "Expiry Date"
-msgstr "Data de Validade"
+#: src/pages/stock/StockDetail.tsx:433
+msgid "Stock Details"
+msgstr "Detalhes do Estoque"
 
 #: src/pages/stock/StockDetail.tsx:433
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:436
-msgid "Stock Details"
-msgstr "Detalhes do Estoque"
-
-#: src/pages/stock/StockDetail.tsx:442
+#: src/pages/stock/StockDetail.tsx:439
 msgid "Stock Tracking"
 msgstr "Rastreamento de Estoque"
 
-#: src/pages/stock/StockDetail.tsx:497
+#: src/pages/stock/StockDetail.tsx:494
 msgid "Test Data"
 msgstr "Dados de Teste"
 
-#: src/pages/stock/StockDetail.tsx:511
+#: src/pages/stock/StockDetail.tsx:508
 msgid "Installed Items"
 msgstr "Itens Instalados"
 
-#: src/pages/stock/StockDetail.tsx:518
+#: src/pages/stock/StockDetail.tsx:515
 msgid "Child Items"
 msgstr "Itens Filhos"
 
-#: src/pages/stock/StockDetail.tsx:568
+#: src/pages/stock/StockDetail.tsx:565
 msgid "Edit Stock Item"
 msgstr "Editar Item do Estoque"
 
-#: src/pages/stock/StockDetail.tsx:595
+#: src/pages/stock/StockDetail.tsx:592
 msgid "Delete Stock Item"
 msgstr "Excluir Item de Estoque"
 
-#: src/pages/stock/StockDetail.tsx:628
+#: src/pages/stock/StockDetail.tsx:625
 msgid "Serialize Stock Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:641
+#: src/pages/stock/StockDetail.tsx:638
 msgid "Stock item serialized"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:647
+#: src/pages/stock/StockDetail.tsx:644
 msgid "Return Stock Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:650
+#: src/pages/stock/StockDetail.tsx:647
 msgid "Return this item into stock. This will remove the customer assignment."
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:662
+#: src/pages/stock/StockDetail.tsx:659
 msgid "Item returned to stock"
 msgstr ""
 
@@ -6816,57 +6828,57 @@ msgstr ""
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:704
+#: src/pages/stock/StockDetail.tsx:701
 msgid "Stock Operations"
 msgstr "Operações de Estoque"
 
-#: src/pages/stock/StockDetail.tsx:709
+#: src/pages/stock/StockDetail.tsx:706
 msgid "Count stock"
 msgstr "Contagem de estoque"
 
-#: src/pages/stock/StockDetail.tsx:737
+#: src/pages/stock/StockDetail.tsx:734
 msgid "Transfer"
 msgstr "Transferir"
 
-#: src/pages/stock/StockDetail.tsx:748
+#: src/pages/stock/StockDetail.tsx:745
 msgid "Serialize"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:749
+#: src/pages/stock/StockDetail.tsx:746
 msgid "Serialize stock"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:772
+#: src/pages/stock/StockDetail.tsx:769
 msgid "Return"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:773
+#: src/pages/stock/StockDetail.tsx:770
 msgid "Return from customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:786
+#: src/pages/stock/StockDetail.tsx:783
 msgid "Assign to Customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:787
+#: src/pages/stock/StockDetail.tsx:784
 msgid "Assign to a customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:799
+#: src/pages/stock/StockDetail.tsx:796
 msgid "Stock Item Actions"
 msgstr "Ações de Estoque"
 
-#: src/pages/stock/StockDetail.tsx:868
+#: src/pages/stock/StockDetail.tsx:865
 #: src/tables/stock/StockItemTable.tsx:422
 msgid "Stale"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:874
+#: src/pages/stock/StockDetail.tsx:871
 #: src/tables/stock/StockItemTable.tsx:416
 msgid "Expired"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:880
+#: src/pages/stock/StockDetail.tsx:877
 msgid "Unavailable"
 msgstr ""
 
@@ -7788,47 +7800,47 @@ msgstr "Excluir Contato"
 msgid "Add contact"
 msgstr "Adicionar contato"
 
-#: src/tables/general/AttachmentTable.tsx:137
+#: src/tables/general/AttachmentTable.tsx:139
 msgid "File uploaded"
 msgstr "Arquivo enviado"
 
-#: src/tables/general/AttachmentTable.tsx:138
+#: src/tables/general/AttachmentTable.tsx:140
 msgid "File {0} uploaded successfully"
 msgstr "Arquivo {0} carregado com sucesso"
 
-#: src/tables/general/AttachmentTable.tsx:150
+#: src/tables/general/AttachmentTable.tsx:152
 msgid "File could not be uploaded"
 msgstr "Arquivo não pode ser carregado"
 
-#: src/tables/general/AttachmentTable.tsx:198
+#: src/tables/general/AttachmentTable.tsx:200
 msgid "Upload Attachment"
 msgstr "Carregar Anexo"
 
-#: src/tables/general/AttachmentTable.tsx:208
+#: src/tables/general/AttachmentTable.tsx:210
 msgid "Edit Attachment"
 msgstr "Editar Anexo"
 
-#: src/tables/general/AttachmentTable.tsx:222
+#: src/tables/general/AttachmentTable.tsx:224
 msgid "Delete Attachment"
 msgstr "Excluir Anexo"
 
-#: src/tables/general/AttachmentTable.tsx:232
+#: src/tables/general/AttachmentTable.tsx:234
 msgid "Is Link"
 msgstr "É um link"
 
-#: src/tables/general/AttachmentTable.tsx:233
+#: src/tables/general/AttachmentTable.tsx:235
 msgid "Show link attachments"
 msgstr "Mostrar anexos de links"
 
-#: src/tables/general/AttachmentTable.tsx:237
+#: src/tables/general/AttachmentTable.tsx:239
 msgid "Is File"
 msgstr "É um arquivo"
 
-#: src/tables/general/AttachmentTable.tsx:238
+#: src/tables/general/AttachmentTable.tsx:240
 msgid "Show file attachments"
 msgstr "Mostrar arquivos anexados"
 
-#: src/tables/general/AttachmentTable.tsx:247
+#: src/tables/general/AttachmentTable.tsx:249
 msgid "Add attachment"
 msgstr "Adicionar anexo"
 
@@ -7836,15 +7848,15 @@ msgstr "Adicionar anexo"
 #~ msgid "Upload attachment"
 #~ msgstr "Upload attachment"
 
-#: src/tables/general/AttachmentTable.tsx:258
+#: src/tables/general/AttachmentTable.tsx:260
 msgid "Add external link"
 msgstr "Adicionar um link externo"
 
-#: src/tables/general/AttachmentTable.tsx:306
+#: src/tables/general/AttachmentTable.tsx:308
 msgid "No attachments found"
 msgstr "Nenhum anexo encontrado"
 
-#: src/tables/general/AttachmentTable.tsx:345
+#: src/tables/general/AttachmentTable.tsx:347
 msgid "Drag attachment file here to upload"
 msgstr "Arraste o arquivo de anexo aqui para enviar"
 
