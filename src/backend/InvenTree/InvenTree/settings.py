@@ -275,7 +275,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'user_sessions',  # db user sessions
     'whitenoise.runserver_nostatic',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
     # Maintenance
@@ -324,7 +323,6 @@ MIDDLEWARE = CONFIG.get(
         'django_otp.middleware.OTPMiddleware',  # MFA support
         'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',  # Flow control for allauth
         'allauth.account.middleware.AccountMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
@@ -512,7 +510,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
             ],
             'loaders': [
                 (
