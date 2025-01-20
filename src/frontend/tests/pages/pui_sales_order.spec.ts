@@ -155,7 +155,7 @@ test('Sales Orders - Shipments', async ({ page }) => {
   // Click through the various tabs
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Assigned Items' }).click();
+  await page.getByRole('tab', { name: 'Allocated Stock' }).click();
 
   // Ensure assigned items table loads correctly
   await page.getByRole('cell', { name: 'BATCH-001' }).first().waitFor();
