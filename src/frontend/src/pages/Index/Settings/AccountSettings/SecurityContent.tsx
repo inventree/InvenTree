@@ -94,9 +94,13 @@ function EmailSection() {
     <Grid>
       <Grid.Col span={6}>
         {data.length == 0 ? (
-          <Text>
-            <Trans>Currently no email adreesses are registered</Trans>
-          </Text>
+          <Alert
+            icon={<IconAlertCircle size='1rem' />}
+            title={t`Not configured`}
+            color='yellow'
+          >
+            <Trans>Currently no email addresses are registered.</Trans>
+          </Alert>
         ) : (
           <Radio.Group
             value={value}
@@ -230,7 +234,7 @@ function ProviderSection({
             title={t`Not configured`}
             color='yellow'
           >
-            <Trans>There are no providers connected to this account. </Trans>
+            <Trans>There are no providers connected to this account.</Trans>
           </Alert>
         ) : (
           <Stack>
