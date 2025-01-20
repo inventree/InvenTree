@@ -105,6 +105,11 @@ export function BuildOrderTable({
         sortable: true
       },
       CreationDateColumn({}),
+      DateColumn({
+        accessor: 'start_date',
+        title: t`Start Date`,
+        sortable: true
+      }),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
@@ -138,6 +143,30 @@ export function BuildOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      {
+        name: 'start_date_before',
+        type: 'date',
+        label: t`Start Date Before`,
+        description: t`Show items with a start date before this date`
+      },
+      {
+        name: 'start_date_after',
+        type: 'date',
+        label: t`Start Date After`,
+        description: t`Show items with a start date after this date`
+      },
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       ProjectCodeFilter({ choices: projectCodeFilters.choices }),

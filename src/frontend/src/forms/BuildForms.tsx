@@ -101,6 +101,9 @@ export function useBuildOrderFields({
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
+      start_date: {
+        icon: <IconCalendar />
+      },
       target_date: {
         icon: <IconCalendar />
       },

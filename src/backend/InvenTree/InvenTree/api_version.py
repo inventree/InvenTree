@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 302
+INVENTREE_API_VERSION = 303
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v303 - 2025-01-20 - https://github.com/inventree/InvenTree/pull/8915
+    - Adds "start_date" field to Build model and API endpoints
+    - Adds additional API filtering and sorting options for Build list
 
 v302 - 2025-01-18 - https://github.com/inventree/InvenTree/pull/8905
     - Fix schema definition on the /label/print endpoint
