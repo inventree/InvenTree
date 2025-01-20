@@ -16,6 +16,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
@@ -23,6 +24,8 @@ export function useSalesOrderFields({
 }: {
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {},
@@ -76,8 +79,12 @@ export function useSalesOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, globalSettings]);
 }
 
 export function useSalesOrderLineItemFields({

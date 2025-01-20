@@ -178,6 +178,12 @@ class Build(
         if self.has_field_changed('part'):
             raise ValidationError({'part': _('Build order part cannot be changed')})
 
+        # Target date should be *after* the start date
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date')
+            })
+
     def report_context(self) -> dict:
         """Generate custom report context data."""
         return {
@@ -342,6 +348,13 @@ class Build(
 
     creation_date = models.DateField(
         auto_now_add=True, editable=False, verbose_name=_('Creation Date')
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Build start date'),
+        help_text=_('Scheduled start date for this build order'),
     )
 
     target_date = models.DateField(

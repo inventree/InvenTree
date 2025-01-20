@@ -26,6 +26,7 @@ import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
+import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
 
@@ -144,6 +145,7 @@ export default function AdminCenter() {
         icon: <IconListDetails />,
         content: (
           <Stack gap='xs'>
+            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <ProjectCodeTable />
           </Stack>
         )

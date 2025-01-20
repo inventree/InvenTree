@@ -15,6 +15,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { StatusFilterOptions } from '../tables/Filter';
 
 export function useReturnOrderFields({
@@ -22,6 +23,8 @@ export function useReturnOrderFields({
 }: {
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {},
@@ -82,8 +85,12 @@ export function useReturnOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, globalSettings]);
 }
 
 export function useReturnOrderLineItemFields({
