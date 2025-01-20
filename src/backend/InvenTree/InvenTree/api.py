@@ -20,7 +20,10 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
+from common.settings import get_global_setting
+from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.sso import sso_registration_enabled
 from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
 from plugin.serializers import MetadataSerializer
@@ -198,6 +201,13 @@ class VersionTextView(ListAPI):
 class InfoApiSerializer(serializers.Serializer):
     """InvenTree server information - some information might be blanked if called without elevated credentials."""
 
+    class SettingsSerializer(serializers.Serializer):
+        """Serializer for InfoApiSerializer."""
+
+        sso_registration = serializers.BooleanField()
+        registration_enabled = serializers.BooleanField()
+        password_forgotten_enabled = serializers.BooleanField()
+
     server = serializers.CharField(read_only=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
@@ -220,6 +230,7 @@ class InfoApiSerializer(serializers.Serializer):
     installer = serializers.CharField(read_only=True)
     target = serializers.CharField(read_only=True)
     django_admin = serializers.CharField(read_only=True)
+    settings = SettingsSerializer(read_only=True, many=False)
 
 
 class InfoView(APIView):
@@ -272,6 +283,13 @@ class InfoView(APIView):
             'django_admin': settings.INVENTREE_ADMIN_URL
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
             else None,
+            'settings': {
+                'sso_registration': sso_registration_enabled(),
+                'registration_enabled': registration_enabled(),
+                'password_forgotten_enabled': get_global_setting(
+                    'LOGIN_ENABLE_PWD_FORGOT'
+                ),
+            },
         }
 
         return JsonResponse(data)

@@ -48,6 +48,11 @@ export interface ServerAPIProps {
   target: null | string;
   default_locale: null | string;
   django_admin: null | string;
+  settings: {
+    sso_registration: null | boolean;
+    registration_enabled: null | boolean;
+    password_forgotten_enabled: null | boolean;
+  } | null;
 }
 
 export interface AuthContext {

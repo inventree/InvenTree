@@ -19,6 +19,13 @@ interface ServerApiStateProps {
   password_forgotten_enabled: () => boolean;
 }
 
+function get_server_setting(val: any) {
+  if (val === null || val === undefined) {
+    return false;
+  }
+  return val;
+}
+
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
     (set, get) => ({
@@ -58,16 +65,15 @@ export const useServerApiState = create<ServerApiStateProps>()(
         return !(data === undefined || data.length == 0);
       },
       registration_enabled: () => {
-        // TODO
-        return false;
+        return get_server_setting(get().server?.settings?.registration_enabled);
       },
       sso_registration_enabled: () => {
-        // TODO
-        return false;
+        return get_server_setting(get().server?.settings?.sso_registration);
       },
       password_forgotten_enabled: () => {
-        // TODO
-        return false;
+        return get_server_setting(
+          get().server?.settings?.password_forgotten_enabled
+        );
       }
     }),
     {

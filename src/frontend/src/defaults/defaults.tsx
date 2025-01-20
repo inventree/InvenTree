@@ -19,7 +19,8 @@ export const emptyServerAPI = {
   installer: null,
   target: null,
   default_locale: null,
-  django_admin: null
+  django_admin: null,
+  settings: null
 };
 
 export interface SiteMarkProps {
