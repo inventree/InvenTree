@@ -42,6 +42,8 @@ test('Tables - Filters', async ({ page }) => {
   // Head to the "purchase order list" page
   await page.goto(`${baseUrl}/purchasing/index/purchaseorders/`);
 
+  await clearTableFilters(page);
+
   await setFilter(page, 'Status', 'Complete');
   await setFilter(page, 'Responsible', 'readers');
   await setFilter(page, 'Assigned to me', 'No');
