@@ -178,6 +178,12 @@ class Build(
         if self.has_field_changed('part'):
             raise ValidationError({'part': _('Build order part cannot be changed')})
 
+        # Target date should be *after* the start date
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date')
+            })
+
     def report_context(self) -> dict:
         """Generate custom report context data."""
         return {
