@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 import tablib
 from rest_framework import fields, serializers
+from taggit.serializers import TagListSerializerField
 
 import importer.operations
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
@@ -79,6 +80,11 @@ class DataImportSerializerMixin:
 
             # Skip file fields
             if issubclass(field.__class__, fields.FileField):
+                continue
+
+            # Skip tags fields
+            # TODO: Implement tag field support
+            if issubclass(field.__class__, TagListSerializerField):
                 continue
 
             importable_fields[name] = field
