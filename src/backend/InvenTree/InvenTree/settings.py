@@ -1302,16 +1302,28 @@ SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
-# TDOO: Implement dynamic lookup for those
+
+# region to_be_moved
+def get_frontend_url(pui_path: str):
+    """Generate frontend url.
+
+    #TODO This function should be moved to the adapter once https://codeberg.org/allauth/django-allauth/issues/4226 is resolved.
+    """
+    host: str = 'http://localhost:8000'
+    if not host.endswith('/'):
+        host += '/'
+    return f'{host}{FRONTEND_URL_BASE}/{pui_path}'
+
+
 HEADLESS_FRONTEND_URLS = {
-    'account_confirm_email': 'http://localhost:8000/verify-email/{key}',  # noqa: RUF027
-    'account_reset_password': 'http://localhost:8000/password-reset',
-    'account_reset_password_from_key': 'http://localhost:8000/'
-    + FRONTEND_URL_BASE
-    + '/set-password?key={key}',  # noqa: RUF027
-    'account_signup': 'http://localhost:8000/signup',
-    'socialaccount_login_error': 'http://localhost:8000/social-login-error',
+    'account_confirm_email': get_frontend_url('verify-email/{key}'),  # noqa: RUF027
+    'account_reset_password': get_frontend_url('reset-password'),
+    'account_reset_password_from_key': get_frontend_url('set-password?key={key}'),  # noqa: RUF027
+    'account_signup': get_frontend_url('register'),
+    'socialaccount_login_error': get_frontend_url('social-login-error'),
 }
+# endregion to_be_moved
+
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
 MFA_ENABLED = get_boolean_setting(
