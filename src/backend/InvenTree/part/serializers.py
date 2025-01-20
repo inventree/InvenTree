@@ -683,7 +683,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['duplicate', 'tags']
+    import_exclude_fields = ['duplicate']
 
     class Meta:
         """Metaclass defining serializer fields."""

@@ -344,7 +344,7 @@ class StockItemSerializer(
 
     export_only_fields = ['part_pricing_min', 'part_pricing_max']
 
-    import_exclude_fields = ['use_pack_size', 'tags']
+    import_exclude_fields = ['use_pack_size']
 
     class Meta:
         """Metaclass options."""
@@ -1142,7 +1142,7 @@ class LocationSerializer(
 ):
     """Detailed information about a stock location."""
 
-    import_exclude_fields = ['tags']
+    import_exclude_fields = []
 
     class Meta:
         """Metaclass options."""
