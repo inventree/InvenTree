@@ -50,6 +50,30 @@ export interface ServerAPIProps {
   django_admin: null | string;
 }
 
+export interface AuthContext {
+  status: number;
+  data: { flows: Flow[] };
+  meta: { is_authenticated: boolean };
+}
+
+export enum FlowEnum {
+  VerifyEmail = 'verify_email',
+  Login = 'login',
+  Signup = 'signup',
+  ProviderRedirect = 'provider_redirect',
+  ProviderSignup = 'provider_signup',
+  ProviderToken = 'provider_token',
+  MfaAuthenticate = 'mfa_authenticate',
+  Reauthenticate = 'reauthenticate',
+  MfaReauthenticate = 'mfa_reauthenticate'
+}
+
+export interface Flow {
+  id: FlowEnum;
+  providers?: string[];
+  is_pending?: boolean[];
+}
+
 export interface AuthConfig {
   account: {
     authentication_method: string;

@@ -574,7 +574,9 @@ async function runActionWithFallback(
   action: () => Promise<ResultType>,
   getReauthText: (props: any) => any
 ) {
+  const { setAuthContext } = useServerApiState.getState();
   const rslt = await action().catch((err) => {
+    setAuthContext(err.response.data?.data);
     // check if we need to re-authenticate
     if (err.status == 401) {
       if (
@@ -603,9 +605,14 @@ async function runActionWithFallback(
         name: 'TOTP',
         description: t`Enter your TOTP or recovery code`
       })
-    }).then(() => {
-      action();
-    });
+    })
+      .then((response) => {
+        setAuthContext(response.data?.data);
+        action();
+      })
+      .catch((err) => {
+        setAuthContext(err.response.data?.data);
+      });
   } else if (rslt == ResultType.reauth) {
     authApi(apiUrl(ApiEndpoints.auth_reauthenticate), undefined, 'post', {
       password: await getReauthText({
@@ -613,9 +620,14 @@ async function runActionWithFallback(
         name: 'password',
         description: t`Enter your password`
       })
-    }).then(() => {
-      action();
-    });
+    })
+      .then((response) => {
+        setAuthContext(response.data?.data);
+        action();
+      })
+      .catch((err) => {
+        setAuthContext(err.response.data?.data);
+      });
   }
 }
 

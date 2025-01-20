@@ -5,7 +5,7 @@ import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { type Provider, fetchGlobalStates } from '../states/states';
@@ -66,6 +66,7 @@ export const doBasicLogin = async (
 ) => {
   const { host } = useLocalState.getState();
   const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -90,6 +91,7 @@ export const doBasicLogin = async (
       }
     )
     .then((response) => {
+      setAuthContext(response.data?.data);
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
         setToken(response.data.meta.access_token);
         loginDone = true;
@@ -98,6 +100,7 @@ export const doBasicLogin = async (
     })
     .catch((err) => {
       if (err?.response?.status == 401) {
+        setAuthContext(err.response.data?.data);
         const mfa_flow = err.response.data.data.flows.find(
           (flow: any) => flow.id == 'mfa_authenticate'
         );
@@ -173,32 +176,23 @@ export function handleReset(
   values: { email: string }
 ) {
   ensureCsrf();
-  api
-    .post(
-      apiUrl(ApiEndpoints.user_reset),
-      values
-      /*{
-      headers: { Authorization: '' }
+  api.post(apiUrl(ApiEndpoints.user_reset), values).then((val) => {
+    if (val.status === 200) {
+      notifications.show({
+        title: t`Mail delivery successful`,
+        message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
+        color: 'green',
+        autoClose: false
+      });
+      navigate('/login');
+    } else {
+      notifications.show({
+        title: t`Reset failed`,
+        message: t`Check your input and try again.`,
+        color: 'red'
+      });
     }
-      */
-    )
-    .then((val) => {
-      if (val.status === 200) {
-        notifications.show({
-          title: t`Mail delivery successful`,
-          message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
-          color: 'green',
-          autoClose: false
-        });
-        navigate('/login');
-      } else {
-        notifications.show({
-          title: t`Reset failed`,
-          message: t`Check your input and try again.`,
-          color: 'red'
-        });
-      }
-    });
+  });
 }
 
 export function handleMfaLogin(
@@ -207,9 +201,11 @@ export function handleMfaLogin(
   values: { code: string }
 ) {
   const { setToken } = useUserState.getState();
+  const { setAuthContext } = useServerApiState.getState();
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   }).then((response) => {
+    setAuthContext(response.data?.data);
     setToken(response.data.meta.access_token);
     followRedirect(navigate, location?.state);
   });

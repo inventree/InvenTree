@@ -4,13 +4,15 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import type { AuthConfig, ServerAPIProps } from './states';
+import type { AuthConfig, AuthContext, ServerAPIProps } from './states';
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
   auth_config?: AuthConfig;
+  auth_context?: AuthContext;
+  setAuthContext: (auth_context: AuthContext) => void;
   sso_enabled: () => boolean;
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
@@ -47,6 +49,10 @@ export const useServerApiState = create<ServerApiStateProps>()(
           });
       },
       auth_config: undefined,
+      auth_context: undefined,
+      setAuthContext(auth_context) {
+        set({ auth_context });
+      },
       sso_enabled: () => {
         const data = get().auth_config?.socialaccount.providers;
         return !(data === undefined || data.length == 0);
