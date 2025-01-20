@@ -75,6 +75,9 @@ function EmailSection() {
     queryFn: () =>
       authApi(apiUrl(ApiEndpoints.auth_email)).then((res) => res.data.data)
   });
+  const emailAvailable = useMemo(() => {
+    return data == undefined || data.length == 0;
+  }, [data]);
 
   function runServerAction(
     action: 'post' | 'put' | 'delete' = 'post',
@@ -96,7 +99,7 @@ function EmailSection() {
   return (
     <Grid>
       <Grid.Col span={6}>
-        {data.length == 0 ? (
+        {emailAvailable ? (
           <Alert
             icon={<IconAlertCircle size='1rem' />}
             title={t`Not configured`}
@@ -161,13 +164,20 @@ function EmailSection() {
             onClick={() =>
               runServerAction('post', { email: value, primary: true })
             }
+            disabled={emailAvailable}
           >
             <Trans>Make Primary</Trans>
           </Button>
-          <Button onClick={() => runServerAction('put')}>
+          <Button
+            onClick={() => runServerAction('put')}
+            disabled={emailAvailable}
+          >
             <Trans>Re-send Verification</Trans>
           </Button>
-          <Button onClick={() => runServerAction('delete')}>
+          <Button
+            onClick={() => runServerAction('delete')}
+            disabled={emailAvailable}
+          >
             <Trans>Remove</Trans>
           </Button>
         </Group>
