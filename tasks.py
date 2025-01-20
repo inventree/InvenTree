@@ -418,7 +418,7 @@ def remove_mfa(c, mail=''):
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
-        frontend_trans(c)
+        frontend_trans(c, extract=False)
         frontend_build(c)
 
     info('Collecting static files...')
@@ -1227,7 +1227,7 @@ def frontend_compile(c):
     """
     info('Compiling frontend code...')
     frontend_install(c)
-    frontend_trans(c)
+    frontend_trans(c, extract=False)
     frontend_build(c)
     success('Frontend compilation complete')
 
@@ -1243,15 +1243,16 @@ def frontend_install(c):
     yarn(c, 'yarn install')
 
 
-@task
-def frontend_trans(c):
+@task(help={'extract': 'Extract translations (changes sourcecode), default: True'})
+def frontend_trans(c, extract: bool = True):
     """Compile frontend translations.
 
     Args:
         c: Context variable
     """
     info('Compiling frontend translations')
-    yarn(c, 'yarn run extract')
+    if extract:
+        yarn(c, 'yarn run extract')
     yarn(c, 'yarn run compile')
 
 

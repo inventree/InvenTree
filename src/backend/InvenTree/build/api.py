@@ -188,6 +188,30 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Created after'), field_name='creation_date', lookup_expr='gt'
     )
 
+    has_start_date = rest_filters.BooleanFilter(
+        label=_('Has start date'), method='filter_has_start_date'
+    )
+
+    def filter_has_start_date(self, queryset, name, value):
+        """Filter by whether or not the order has a start date."""
+        return queryset.filter(start_date__isnull=not str2bool(value))
+
+    start_date_before = InvenTreeDateFilter(
+        label=_('Start date before'), field_name='start_date', lookup_expr='lt'
+    )
+
+    start_date_after = InvenTreeDateFilter(
+        label=_('Start date after'), field_name='start_date', lookup_expr='gt'
+    )
+
+    has_target_date = rest_filters.BooleanFilter(
+        label=_('Has target date'), method='filter_has_target_date'
+    )
+
+    def filter_has_target_date(self, queryset, name, value):
+        """Filter by whether or not the order has a target date."""
+        return queryset.filter(target_date__isnull=not str2bool(value))
+
     target_date_before = InvenTreeDateFilter(
         label=_('Target date before'), field_name='target_date', lookup_expr='lt'
     )
@@ -244,6 +268,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'part__name',
         'status',
         'creation_date',
+        'start_date',
         'target_date',
         'completion_date',
         'quantity',

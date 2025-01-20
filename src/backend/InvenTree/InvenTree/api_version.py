@@ -11,6 +11,10 @@ v303 - 2025-01-20 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
 
+v303 - 2025-01-20 - https://github.com/inventree/InvenTree/pull/8915
+    - Adds "start_date" field to Build model and API endpoints
+    - Adds additional API filtering and sorting options for Build list
+
 v302 - 2025-01-18 - https://github.com/inventree/InvenTree/pull/8905
     - Fix schema definition on the /label/print endpoint
 
