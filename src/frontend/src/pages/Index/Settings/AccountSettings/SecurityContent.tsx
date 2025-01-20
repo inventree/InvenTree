@@ -81,11 +81,14 @@ function EmailSection() {
     data?: any
   ) {
     const vals: any = data || { email: value };
-    authApi(apiUrl(ApiEndpoints.auth_email), undefined, action, vals)
-      .then(() => {
-        refetch();
-      })
-      .catch((res: any) => console.log(res.data));
+    return authApi(
+      apiUrl(ApiEndpoints.auth_email),
+      undefined,
+      action,
+      vals
+    ).then(() => {
+      refetch();
+    });
   }
 
   if (isLoading) return <Loader />;
@@ -171,7 +174,20 @@ function EmailSection() {
       </Grid.Col>
       <Grid.Col span={6}>
         <Button
-          onClick={() => runServerAction('post', { email: newEmailValue })}
+          onClick={() =>
+            runServerAction('post', { email: newEmailValue }).catch((err) => {
+              if (err.status == 400) {
+                showNotification({
+                  title: t`Error while adding email`,
+                  message: err.response.data.errors
+                    .map((error: any) => error.message)
+                    .join('\n'),
+                  color: 'red',
+                  icon: <IconX />
+                });
+              }
+            })
+          }
         >
           <Trans>Add Email</Trans>
         </Button>
