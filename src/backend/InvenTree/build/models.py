@@ -344,6 +344,13 @@ class Build(
         auto_now_add=True, editable=False, verbose_name=_('Creation Date')
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Build start date'),
+        help_text=_('Scheduled start date for this build order'),
+    )
+
     target_date = models.DateField(
         null=True,
         blank=True,
