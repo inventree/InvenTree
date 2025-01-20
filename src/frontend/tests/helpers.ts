@@ -43,10 +43,14 @@ export const setTableChoiceFilter = async (page, filter, value) => {
   await page.getByRole('button', { name: 'Add Filter' }).click();
   await page.getByPlaceholder('Select filter').fill(filter);
   await page.getByPlaceholder('Select filter').click();
-  await page.getByRole('option', { name: filter, exact: true }).click();
+
+  // Construct a regex to match the filter name exactly
+  const filterRegex = new RegExp(`^${filter}$`, 'i');
+
+  await page.getByRole('option', { name: filterRegex }).click();
 
   await page.getByPlaceholder('Select filter value').click();
-  await page.getByRole('option', { name: value, exact: true }).click();
+  await page.getByRole('option', { name: value }).click();
 
   await closeFilterDrawer(page);
 };
