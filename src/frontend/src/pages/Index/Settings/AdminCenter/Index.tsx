@@ -104,7 +104,7 @@ export default function AdminCenter() {
     return [
       {
         name: 'user',
-        label: t`Users`,
+        label: t`User Management`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
       },
