@@ -87,6 +87,33 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 });
 
+test('Build Order - Edit', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/manufacturing/build-order/22/`);
+
+  // Check for expected text items
+  await page.getByText('Building for sales order').first().waitFor();
+  await page.getByText('2024-08-08').waitFor(); // Created date
+  await page.getByText('2025-01-01').waitFor(); // Start date
+  await page.getByText('2025-01-22').waitFor(); // Target date
+
+  await page.keyboard.press('Control+E');
+
+  // Edit start date
+  await page.getByLabel('date-field-start_date').fill('2026-09-09');
+
+  // Submit the form
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Expect error
+  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByText('Target date must be after start date').waitFor();
+
+  // Cancel the form
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
 test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
