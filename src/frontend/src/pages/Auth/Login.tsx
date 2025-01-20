@@ -39,6 +39,14 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
+  useEffect(() => {
+    if (location.pathname === '/register') {
+      setMode.close();
+    } else {
+      setMode.open();
+    }
+  }, [location]);
+
   // Data manipulation functions
   function ChangeHost(newHost: string | null): void {
     if (newHost === null) return;
@@ -95,7 +103,10 @@ export default function Login() {
                 )}
               </Text>
               {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
-              <ModeSelector loginMode={loginMode} setMode={setMode} />
+              <ModeSelector
+                loginMode={loginMode}
+                changePage={(newPage) => navigate(`/${newPage}`)}
+              />
             </Paper>
             <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
           </>

@@ -332,10 +332,10 @@ export function RegistrationForm() {
 
 export function ModeSelector({
   loginMode,
-  setMode
+  changePage
 }: Readonly<{
   loginMode: boolean;
-  setMode: any;
+  changePage: (state: string) => void;
 }>) {
   const [sso_registration, registration_enabled] = useServerApiState(
     (state) => [state.sso_registration_enabled, state.registration_enabled]
@@ -354,7 +354,7 @@ export function ModeSelector({
             type='button'
             c='dimmed'
             size='xs'
-            onClick={() => setMode.close()}
+            onClick={() => changePage('register')}
           >
             <Trans>Register</Trans>
           </Anchor>
@@ -365,7 +365,7 @@ export function ModeSelector({
           type='button'
           c='dimmed'
           size='xs'
-          onClick={() => setMode.open()}
+          onClick={() => changePage('login')}
         >
           <Trans>Go back to login</Trans>
         </Anchor>

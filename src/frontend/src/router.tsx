@@ -171,6 +171,7 @@ export const routes = (
     </Route>
     <Route path='/' errorElement={<ErrorPage />}>
       <Route path='/login' element={<Login />} />,
+      <Route path='/register' element={<Login />} />,
       <Route path='/mfa' element={<MFALogin />} />,
       <Route path='/logout' element={<Logout />} />,
       <Route path='/logged-in' element={<Logged_In />} />
