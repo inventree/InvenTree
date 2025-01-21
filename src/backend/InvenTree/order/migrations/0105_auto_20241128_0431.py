@@ -18,7 +18,7 @@ def update_shipment_date(apps, schema_editor):
         shipment_date__isnull=True
     )
 
-    updated_orders = 0
+    order_to_update = []
 
     for order in orders:
         # Find the latest shipment date for any associated allocations
@@ -30,12 +30,18 @@ def update_shipment_date(apps, schema_editor):
 
         # Update the order with the new shipment date
         order.shipment_date = latest_shipment.shipment_date
-        order.save()
 
-        updated_orders += 1
+        order_to_update.append(order)
     
-    if updated_orders > 0:
-        print(f"Updated {updated_orders} SalesOrder objects with missing shipment_date")
+    if len(order_to_update) > 0:
+        # Bulk update the SalesOrder objects
+        SalesOrder.objects.bulk_update(order_to_update, ['shipment_date'])
+
+        print(f"Updated {len(order_to_update)} SalesOrder objects with missing shipment_date")
+
+        # Assert that the orders now have a shipment date
+        for order in order_to_update:
+            assert order.shipment_date is not None, f"SalesOrder {order.pk} still has missing shipment_date"
 
 
 class Migration(migrations.Migration):
