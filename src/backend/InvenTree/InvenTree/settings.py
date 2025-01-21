@@ -558,9 +558,6 @@ USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
-    )
     INSTALLED_APPS.append('rest_framework_simplejwt')
 
 # WSGI default setting
