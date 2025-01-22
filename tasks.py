@@ -1186,11 +1186,11 @@ def export_definitions(c):
 
     export_settings_definitions(c, overwrite=True)
 
-    filename = 'inventree_tags.json'
+    filename = Path('inventree_tags.yaml').resolve()
     check_file_existence(filename, overwrite=True)
     manage(c, f'export_tags {filename}', pty=True)
 
-    filename = 'inventree_filters.json'
+    filename = Path('inventree_filters.yaml').resolve()
     check_file_existence(filename, overwrite=True)
     manage(c, f'export_filters {filename}', pty=True)
 

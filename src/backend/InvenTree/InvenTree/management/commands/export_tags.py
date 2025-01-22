@@ -1,18 +1,18 @@
 """Custom management command to export all tags.
 
-This is used to generate a JSON file which contains all of the tags available in InvenTree.
+This is used to generate a YAML file which contains all of the tags available in InvenTree.
 """
-
-import json
 
 from django.contrib.admindocs import utils
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.template.engine import Engine
 
+import yaml
+
 
 class Command(BaseCommand):
-    """Extract tag information, and export to a JSON file."""
+    """Extract tag information, and export to a YAML file."""
 
     def add_arguments(self, parser):
         """Add custom arguments for this command."""
@@ -21,13 +21,13 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
-        """Export tag information to a JSON file."""
+        """Export tag information to a YAML file."""
         tags = discover_tags()
 
         # Write
-        filename = kwargs.get('filename', 'inventree_tags.json')
+        filename = kwargs.get('filename', 'inventree_tags.yaml')
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(tags, f, indent=4)
+            yaml.dump(tags, f, indent=4)
         print(f"Exported InvenTree tag definitions to '{filename}'")
 
 

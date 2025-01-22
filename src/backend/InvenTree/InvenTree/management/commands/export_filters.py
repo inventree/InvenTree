@@ -1,18 +1,18 @@
 """Custom management command to export all filters.
 
-This is used to generate a JSON file which contains all of the filters available in InvenTree.
+This is used to generate a YAML file which contains all of the filters available in InvenTree.
 """
-
-import json
 
 from django.contrib.admindocs import utils
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.template.engine import Engine
 
+import yaml
+
 
 class Command(BaseCommand):
-    """Extract filter information, and export to a JSON file."""
+    """Extract filter information, and export to a YAML file."""
 
     def add_arguments(self, parser):
         """Add custom arguments for this command."""
@@ -21,12 +21,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
-        """Export filter information to a JSON file."""
+        """Export filter information to a YAML file."""
         filters = discover_filters()
         # Write
-        filename = kwargs.get('filename', 'inventree_filters.json')
+        filename = kwargs.get('filename', 'inventree_filters.yaml')
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(filters, f, indent=4)
+            yaml.dump(filters, f, indent=4)
         print(f"Exported InvenTree filter definitions to '{filename}'")
 
 
