@@ -255,6 +255,7 @@ INVENTREE_ADMIN_URL = get_setting(
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
+    'django.contrib.admindocs',
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
