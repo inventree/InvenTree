@@ -516,19 +516,34 @@ class PluginsRegistry:
             # If this is a third-party plugin, reload the source module
             # This is required to ensure that separate processes are using the same code
             if not builtin and not sample:
-                if plugin_module := sys.modules.get(plugin.__module__):
+                plugin_name = plugin.__name__
+                module_name = plugin.__module__
+
+                if plugin_module := sys.modules.get(module_name):
                     logger.debug('Reloading plugin `%s`', plg_name)
                     # Reload the module
                     try:
                         importlib.reload(plugin_module)
-                        plugin = getattr(plugin_module, plugin.__name__)
+                        plugin = getattr(plugin_module, plugin_name)
+                    except ModuleNotFoundError:
+                        # No module found - try to import it directly
+                        try:
+                            raw_module = _load_source(
+                                module_name, plugin_module.__file__
+                            )
+                            plugin = getattr(raw_module, plugin_name)
+                        except Exception:
+                            pass
                     except Exception:
                         logger.exception('Failed to reload plugin `%s`', plg_name)
+
             try:
                 t_start = time.time()
                 plg_i: InvenTreePlugin = plugin()
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+            except ModuleNotFoundError as e:
+                raise e
             except Exception as error:
                 handle_error(
                     error, log_name='init'
@@ -853,11 +868,16 @@ def _load_source(modname, filename):
 
     See https://docs.python.org/3/whatsnew/3.12.html#imp
     """
-    loader = importlib.machinery.SourceFileLoader(modname, filename)
-    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    if modname in sys.modules:
+        del sys.modules[modname]
+
+    # loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
     module = importlib.util.module_from_spec(spec)
-    # The module is always executed and not cached in sys.modules.
-    # Uncomment the following line to cache the module.
-    # sys.modules[module.__name__] = module
-    loader.exec_module(module)
+
+    sys.modules[module.__name__] = module
+
+    if spec.loader:
+        spec.loader.exec_module(module)
+
     return module
