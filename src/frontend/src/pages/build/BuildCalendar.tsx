@@ -1,27 +1,23 @@
-import type { DatesSetArg } from '@fullcalendar/core';
+import type { DatesSetArg, EventClickArg } from '@fullcalendar/core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import Calendar from '../../components/calendar/Calendar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { navigateToLink } from '../../functions/navigation';
 import { showApiErrorMessage } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 
 export default function BuildCalendar() {
+  const navigate = useNavigate();
+
   const [minDate, setMinDate] = useState<Date | null>(null);
   const [maxDate, setMaxDate] = useState<Date | null>(null);
-
-  const onDatesChange = (dateInfo: DatesSetArg) => {
-    if (!!dateInfo.start) {
-      setMinDate(dayjs(dateInfo.start).subtract(1, 'month').toDate());
-    }
-
-    if (!!dateInfo.end) {
-      setMaxDate(dayjs(dateInfo.end).add(1, 'month').toDate());
-    }
-  };
 
   const buildQuery = useQuery({
     enabled: !!minDate && !!maxDate,
@@ -46,6 +42,7 @@ export default function BuildCalendar() {
         })
   });
 
+  // Build the calendar events
   const events = useMemo(() => {
     const today = dayjs().toISOString().split('T')[0];
 
@@ -70,11 +67,39 @@ export default function BuildCalendar() {
           description: build.title,
           start: start,
           end: end,
-          borderColor: color
+          backgroundColor: color
         };
       }) ?? []
     );
   }, [buildQuery.data]);
 
-  return <Calendar events={events} datesSet={onDatesChange} />;
+  // Callback when data range changes
+  const onDatesChange = (dateInfo: DatesSetArg) => {
+    if (!!dateInfo.start) {
+      setMinDate(dayjs(dateInfo.start).subtract(1, 'month').toDate());
+    }
+
+    if (!!dateInfo.end) {
+      setMaxDate(dayjs(dateInfo.end).add(1, 'month').toDate());
+    }
+  };
+
+  // Callback when a build is clicked on
+  const onEventClick = (info: EventClickArg) => {
+    if (!!info.event.id) {
+      navigateToLink(
+        getDetailUrl(ModelType.build, info.event.id),
+        navigate,
+        info.jsEvent
+      );
+    }
+  };
+
+  return (
+    <Calendar
+      events={events}
+      datesSet={onDatesChange}
+      eventClick={onEventClick}
+    />
+  );
 }
