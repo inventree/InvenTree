@@ -170,9 +170,9 @@ jobs:
         id: breaking_changes
         uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
         with:
-          base: 'api.yaml'
-          revision: 'src/backend/InvenTree/schema.yml'
-          format: 'html'
+          base: "api.yaml"
+          revision: "src/backend/InvenTree/schema.yml"
+          format: "html"
       - name: Echoing diff to step
         env:
           DIFF: ${{ steps.breaking_changes.outputs.diff }}
@@ -535,7 +535,6 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-
   platform_ui:
     name: Tests - Platform UI
     runs-on: ubuntu-20.04
@@ -626,7 +625,7 @@ jobs:
   zizmor:
     name: Security [Zizmor]
     runs-on: ubuntu-20.04
-    needs: ['pre-commit', 'paths-filter']
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
     permissions:
