@@ -1189,6 +1189,11 @@ def export_definitions(c):
     filename = 'inventree_tags.json'
     check_file_existence(filename, overwrite=True)
     manage(c, f'export_tags {filename}', pty=True)
+
+    filename = 'inventree_filters.json'
+    check_file_existence(filename, overwrite=True)
+    manage(c, f'export_filters {filename}', pty=True)
+
     info('Exporting definitions complete')
 
 
