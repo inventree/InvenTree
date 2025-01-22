@@ -1179,6 +1179,19 @@ def export_settings_definitions(c, filename='inventree_settings.json', overwrite
     manage(c, f'export_settings_definitions {filename}', pty=True)
 
 
+@task
+def export_definitions(c):
+    """Export various definitions."""
+    info('Exporting definitions...')
+
+    export_settings_definitions(c, overwrite=True)
+
+    filename = 'inventree_tags.json'
+    check_file_existence(filename, overwrite=True)
+    manage(c, f'export_tags {filename}', pty=True)
+    info('Exporting definitions complete')
+
+
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
@@ -1569,6 +1582,7 @@ internal = Collection(
     clean_settings,
     clear_generated,
     export_settings_definitions,
+    export_definitions,
     frontend_build,
     frontend_check,
     frontend_compile,

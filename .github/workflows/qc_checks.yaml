@@ -194,6 +194,9 @@ jobs:
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Extract settings / tags
+        run:
+          invoke dev.definitions
 
   schema-push:
     name: Push new schema
