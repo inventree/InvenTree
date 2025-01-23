@@ -81,6 +81,7 @@ class BuildSerializer(
             'reference',
             'sales_order',
             'quantity',
+            'start_date',
             'status',
             'status_text',
             'status_custom_key',

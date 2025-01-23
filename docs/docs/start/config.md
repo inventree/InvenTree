@@ -97,6 +97,7 @@ The following debugging / logging options are available:
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
+| INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
 
 ### Debug Mode
 

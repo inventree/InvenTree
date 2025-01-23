@@ -762,8 +762,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         pathstring = self.construct_pathstring()
 
         if pathstring != self.pathstring:
-            if 'force_insert' in kwargs:
-                del kwargs['force_insert']
+            kwargs.pop('force_insert', None)
 
             kwargs['force_update'] = True
 

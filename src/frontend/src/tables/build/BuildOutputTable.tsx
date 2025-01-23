@@ -575,6 +575,7 @@ export default function BuildOutputTable({
         props={{
           params: {
             part_detail: true,
+            location_detail: true,
             tests: true,
             is_building: true,
             build: buildId

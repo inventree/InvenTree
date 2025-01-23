@@ -11,6 +11,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
@@ -25,7 +26,6 @@ import structlog
 from bleach import clean
 from djmoney.money import Money
 from PIL import Image
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from common.currency import currency_code_default
 

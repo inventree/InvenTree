@@ -49,6 +49,7 @@ The following parameters are available for each Build Order, and can be edited b
 | Sales Order | Link to a *Sales Order* to which the build outputs will be allocated |
 | Source Location | Stock location to source stock items from (blank = all locations) |
 | Destination Location | Stock location where the build outputs will be located |
+| Start Date | The scheduled start date for the build |
 | Target Date | Target date for build completion |
 | Responsible | User (or group of users) who is responsible for the build |
 | External Link | Link to external webpage |
@@ -262,12 +263,18 @@ The `Cancel Build` form will be displayed, click on the confirmation switch then
 !!! warning "Cancelled Build"
 	**A cancelled build cannot be re-opened**. Make sure to use the cancel option only if you are certain that the build won't be processed.
 
-## Overdue Builds
+## Build Scheduling
 
-Build orders may (optionally) have a target complete date specified. If this date is reached but the build order remains incomplete, then the build is considered *overdue*.
+### Start Date
 
-- Builds can be filtered by overdue status in the build list
-- Overdue builds will be displayed on the home page
+Build orders can be optionally scheduled to *start* at a specified date. This may be useful for planning production schedules.
+
+### Overdue Builds
+
+Build orders may (optionally) have a target completion date specified. If this date is reached but the build order remains incomplete, then the build is considered *overdue*.
+
+This can be useful for tracking production delays, and can be used to generate reports on build order performance.
+
 
 ## Build Order Settings
 

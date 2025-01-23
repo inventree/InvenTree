@@ -150,7 +150,7 @@ def on_config(config, *args, **kwargs):
 
     We can use these to determine (at run time) where we are hosting
     """
-    rtd = os.environ.get('READTHEDOCS', False)
+    rtd = os.environ.get('READTHEDOCS', 'False')
 
     # Note: version selection is handled by RTD internally
     # Check for 'versions.json' file
