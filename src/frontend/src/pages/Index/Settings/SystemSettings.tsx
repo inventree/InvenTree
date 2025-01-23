@@ -17,7 +17,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import PageTitle from '../../../components/nav/PageTitle';

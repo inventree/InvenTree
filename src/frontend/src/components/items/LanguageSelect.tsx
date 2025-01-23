@@ -1,7 +1,7 @@
 import { Select } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { getSupportedLanguages } from '../../contexts/LanguageContext';
 import { useLocalState } from '../../states/LocalState';
 

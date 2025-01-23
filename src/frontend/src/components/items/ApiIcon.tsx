@@ -1,4 +1,4 @@
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { useIconState } from '../../states/IconState';
 import * as classes from './ApiIcon.css';
 

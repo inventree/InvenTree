@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { useUserState } from '../../states/UserState';
 
 export const OnlyStaff = ({ children }: { children: any }) => {

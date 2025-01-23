@@ -22,7 +22,7 @@ import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
 
 import type { JSX } from 'react';
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 
 type AboutLookupRef = {
   ref: string;

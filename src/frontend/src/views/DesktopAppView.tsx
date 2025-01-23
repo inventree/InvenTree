@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../App';
 import { ApiProvider } from '../contexts/ApiContext';
 import { ThemeContext } from '../contexts/ThemeContext';

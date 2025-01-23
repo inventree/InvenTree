@@ -18,7 +18,7 @@ import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';

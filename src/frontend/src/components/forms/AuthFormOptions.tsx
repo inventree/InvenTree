@@ -1,7 +1,7 @@
 import { Center, Group, Text, Tooltip } from '@mantine/core';
 import { IconServer } from '@tabler/icons-react';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { useServerApiState } from '../../states/ApiState';
 import { ColorToggle } from '../items/ColorToggle';
 import { LanguageToggle } from '../items/LanguageToggle';

@@ -1,7 +1,7 @@
 import '@mantine/core/styles.css';
 import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 
 import { setApiDefaults } from '../App';
 import { Loadable } from '../functions/loading';

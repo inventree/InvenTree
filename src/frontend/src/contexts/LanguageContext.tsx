@@ -4,7 +4,7 @@ import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';

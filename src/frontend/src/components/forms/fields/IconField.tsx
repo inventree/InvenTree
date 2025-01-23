@@ -20,7 +20,7 @@ import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';
 import type { ApiFormFieldType } from './ApiFormField';

@@ -3,7 +3,7 @@ import { Divider, Group, Select, Text, Title } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { IconCheck } from '@tabler/icons-react';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import type { HostList } from '../../states/states';

@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
 import { IS_DEV } from '../main';

@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import type { QueryClient } from '@tanstack/react-query';
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../App';
 import { useLocalState } from '../../states/LocalState';
 import {
