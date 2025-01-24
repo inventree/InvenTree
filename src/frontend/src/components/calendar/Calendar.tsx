@@ -3,9 +3,11 @@ import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
 import { t } from '@lingui/macro';
-import { Group, Stack } from '@mantine/core';
+import { Button, Group, Popover, Stack, Tooltip } from '@mantine/core';
+import { type DateValue, MonthPicker } from '@mantine/dates';
 import {
   IconCalendarDot,
+  IconCalendarMonth,
   IconChevronLeft,
   IconChevronRight
 } from '@tabler/icons-react';
@@ -16,6 +18,8 @@ import { StylishText } from '../items/StylishText';
 
 export default function Calendar(props: CalendarOptions) {
   const calendarRef = useRef<FullCalendar | null>(null);
+
+  const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [locale] = useLocalState((s) => [s.language]);
 
@@ -36,6 +40,20 @@ export default function Calendar(props: CalendarOptions) {
     calendarRef.current?.getApi().today();
   }, [calendarRef]);
 
+  // Callback to select a specific month from a picker
+  const selectMonth = useCallback(
+    (date: DateValue) => {
+      if (date && calendarRef?.current) {
+        const api = calendarRef.current.getApi();
+
+        api.gotoDate(date);
+      }
+
+      setMonthSelectOpened(false);
+    },
+    [calendarRef]
+  );
+
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
     (dateInfo: DatesSetArg) => {
@@ -55,6 +73,29 @@ export default function Calendar(props: CalendarOptions) {
     <Stack gap='xs'>
       <Group justify='space-between' gap='xs'>
         <Group gap='xs' justify='left'>
+          <Popover
+            opened={monthSelectOpened}
+            onClose={() => setMonthSelectOpened(false)}
+            position='bottom-start'
+            shadow='md'
+          >
+            <Popover.Target>
+              <Tooltip label={t`Select month`} position='top'>
+                <Button
+                  m={0}
+                  variant='transparent'
+                  onClick={() => {
+                    setMonthSelectOpened(!monthSelectOpened);
+                  }}
+                >
+                  <IconCalendarMonth />
+                </Button>
+              </Tooltip>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <MonthPicker onChange={selectMonth} />
+            </Popover.Dropdown>
+          </Popover>
           <ActionButton
             icon={<IconChevronLeft />}
             onClick={prevMonth}
