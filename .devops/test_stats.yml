@@ -38,7 +38,6 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip setuptools wheel uv
-    uv 
     uv pip install --system --require-hashes -r requirements.txt
     uv pip install --system --require-hashes -r requirements-dev.txt
     uv pip install --system unittest-xml-reporting coverage invoke
