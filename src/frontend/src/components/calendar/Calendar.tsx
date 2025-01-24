@@ -114,8 +114,8 @@ export default function Calendar(props: CalendarOptions) {
             tooltipAlignment='top'
             tooltip={t`Next month`}
           />
+          <StylishText size='lg'>{monthName}</StylishText>
         </Group>
-        <StylishText size='lg'>{monthName}</StylishText>
         <Group justify='right' gap='xs' wrap='nowrap'>
           <div>hello world</div>
         </Group>
