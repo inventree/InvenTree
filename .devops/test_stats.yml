@@ -38,12 +38,14 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip setuptools wheel uv
-    uv pip install --system --require-hashes -r src/backend/requirements.txt
-    uv pip install --system --require-hashes -r src/backend/requirements-dev.txt
-    uv pip install --system unittest-xml-reporting coverage invoke
+    uv pip install --require-hashes -r src/backend/requirements.txt
+    uv pip install --require-hashes -r src/backend/requirements-dev.txt
     sudo apt-get install poppler-utils
     sudo apt-get install libpoppler-dev
+    uv pip install unittest-xml-reporting coverage invoke
   displayName: 'Install prerequisites'
+  env:
+    UV_SYSTEM_PYTHON: 1
 
 - script: |
     pushd '$(projectRoot)'
@@ -58,6 +60,7 @@ steps:
     INVENTREE_STATIC_ROOT: ./static
     INVENTREE_BACKUP_DIR: ./backup
     INVENTREE_PLUGINS_ENABLED: true
+    UV_SYSTEM_PYTHON: 1
 
 - task: PublishTestResults@2
   inputs:
