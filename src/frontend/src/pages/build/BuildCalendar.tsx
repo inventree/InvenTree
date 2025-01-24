@@ -32,6 +32,7 @@ export default function BuildCalendar() {
       api
         .get(apiUrl(ApiEndpoints.build_order_list), {
           params: {
+            part_detail: true,
             outstanding: true,
             min_date: minDate?.toISOString().split('T')[0],
             max_date: maxDate?.toISOString().split('T')[0]
