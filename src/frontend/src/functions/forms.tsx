@@ -139,12 +139,6 @@ export function constructField({
   };
 
   switch (def.field_type) {
-    case 'date':
-      // Change value to a date object if required
-      if (def.value) {
-        def.value = new Date(def.value);
-      }
-      break;
     case 'nested object':
       def.children = {};
       for (const k of Object.keys(field.children ?? {})) {
