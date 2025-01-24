@@ -1,4 +1,4 @@
-import type { CalendarOptions } from '@fullcalendar/core';
+import type { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
@@ -9,7 +9,7 @@ import {
   IconChevronLeft,
   IconChevronRight
 } from '@tabler/icons-react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useLocalState } from '../../states/LocalState';
 import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
@@ -18,6 +18,8 @@ export default function Calendar(props: CalendarOptions) {
   const calendarRef = useRef<FullCalendar | null>(null);
 
   const [locale] = useLocalState((s) => [s.language]);
+
+  const [monthName, setMonthName] = useState<string>('');
 
   // Navigate to the previous month
   const prevMonth = useCallback(() => {
@@ -33,6 +35,21 @@ export default function Calendar(props: CalendarOptions) {
   const currentMonth = useCallback(() => {
     calendarRef.current?.getApi().today();
   }, [calendarRef]);
+
+  // Callback when the calendar date range is adjusted
+  const datesSet = useCallback(
+    (dateInfo: DatesSetArg) => {
+      if (calendarRef?.current) {
+        const api = calendarRef.current.getApi();
+
+        setMonthName(api.view.title);
+      }
+
+      // Pass the dates set to the parent component
+      props.datesSet?.(dateInfo);
+    },
+    [calendarRef, props.datesSet, setMonthName]
+  );
 
   return (
     <Stack gap='xs'>
@@ -57,7 +74,7 @@ export default function Calendar(props: CalendarOptions) {
             tooltip={t`Next month`}
           />
         </Group>
-        <StylishText size='lg'>MONTHY</StylishText>
+        <StylishText size='lg'>{monthName}</StylishText>
         <Group justify='right' gap='xs' wrap='nowrap'>
           <div>hello world</div>
         </Group>
@@ -71,6 +88,7 @@ export default function Calendar(props: CalendarOptions) {
         headerToolbar={false}
         footerToolbar={false}
         {...props}
+        datesSet={datesSet}
       />
     </Stack>
   );
