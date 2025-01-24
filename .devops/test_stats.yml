@@ -38,8 +38,8 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip setuptools wheel uv
-    uv pip install --system --require-hashes -r requirements.txt
-    uv pip install --system --require-hashes -r requirements-dev.txt
+    uv pip install --system --require-hashes -r src/backend/requirements.txt
+    uv pip install --system --require-hashes -r src/backend/requirements-dev.txt
     uv pip install --system unittest-xml-reporting coverage invoke
     sudo apt-get install poppler-utils
     sudo apt-get install libpoppler-dev
@@ -47,7 +47,7 @@ steps:
 
 - script: |
     pushd '$(projectRoot)'
-    invoke update
+    invoke update --uv
     coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
     coverage xml -i
   displayName: 'Run tests'
