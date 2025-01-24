@@ -1,8 +1,14 @@
-import type { DatesSetArg, EventClickArg } from '@fullcalendar/core';
+import type {
+  DatesSetArg,
+  EventClickArg,
+  EventContentArg
+} from '@fullcalendar/core';
 import { t } from '@lingui/macro';
+import { ActionIcon, Group, Text } from '@mantine/core';
+import { IconCalendarExclamation } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import Calendar from '../../components/calendar/Calendar';
@@ -56,7 +62,7 @@ export default function BuildCalendar() {
         const overdue = dayjs(end).isBefore(today);
 
         const color: string = overdue
-          ? 'var(--mantine-color-red-3)'
+          ? 'var(--mantine-color-orange-7)'
           : inProgress
             ? 'var(--mantine-color-green-3)'
             : 'var(--mantine-color-blue-3)';
@@ -95,9 +101,44 @@ export default function BuildCalendar() {
     }
   };
 
+  const renderBuildOrder = useCallback(
+    (event: EventContentArg) => {
+      // Find the matching build order
+      const build = buildQuery.data?.find(
+        (b: any) => b.pk.toString() == event.event.id.toString()
+      );
+
+      if (!build) {
+        // Fallback to the title if no description is available
+        return event.event.title;
+      }
+
+      return (
+        <Group gap='xs' wrap='nowrap'>
+          {build.overdue && (
+            <ActionIcon
+              color='orange-7'
+              variant='transparent'
+              title={t`Overdue`}
+              size='xs'
+            >
+              <IconCalendarExclamation />
+            </ActionIcon>
+          )}
+          <Text size='sm' fw={700}>
+            {build.reference}
+          </Text>
+          <Text size='xs'>{build.title}</Text>
+        </Group>
+      );
+    },
+    [buildQuery.data]
+  );
+
   return (
     <Calendar
       events={events}
+      eventContent={renderBuildOrder}
       datesSet={onDatesChange}
       eventClick={onEventClick}
     />
