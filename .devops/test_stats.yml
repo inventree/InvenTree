@@ -10,8 +10,8 @@ pool:
   vmImage: ubuntu-latest
 strategy:
   matrix:
-    Python39:
-      PYTHON_VERSION: '3.9'
+    Python311:
+      PYTHON_VERSION: '3.11'
   maxParallel: 3
 
 steps:
@@ -37,10 +37,11 @@ steps:
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
 
 - script: |
-    python -m pip install --upgrade pip setuptools wheel
-    pip install --require-hashes -r requirements.txt
-    pip install --require-hashes -r requirements-dev.txt
-    pip install unittest-xml-reporting coverage invoke
+    python -m pip install --upgrade pip setuptools wheel uv
+    uv 
+    uv pip install --system --require-hashes -r requirements.txt
+    uv pip install --system --require-hashes -r requirements-dev.txt
+    uv pip install --system unittest-xml-reporting coverage invoke
     sudo apt-get install poppler-utils
     sudo apt-get install libpoppler-dev
   displayName: 'Install prerequisites'
@@ -65,7 +66,6 @@ steps:
     testRunTitle: 'Python $(PYTHON_VERSION)'
   condition: succeededOrFailed()
 
-- task: PublishCodeCoverageResults@1
+- task: PublishCodeCoverageResults@2
   inputs:
-    codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
