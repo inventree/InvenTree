@@ -59,9 +59,12 @@ steps:
     INVENTREE_MEDIA_ROOT: ./media
     INVENTREE_STATIC_ROOT: ./static
     INVENTREE_BACKUP_DIR: ./backup
+    INVENTREE_SITE_URL: http://localhost:8000
     INVENTREE_PLUGINS_ENABLED: true
     UV_SYSTEM_PYTHON: 1
-
+    INVENTREE_DEBUG: true
+    INVENTREE_LOG_LEVEL: INFO
+  
 - task: PublishTestResults@2
   inputs:
     testResultsFiles: "**/TEST-*.xml"
