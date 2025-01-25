@@ -7,7 +7,6 @@ import tablib
 from rest_framework import fields, serializers
 from taggit.serializers import TagListSerializerField
 
-import importer.operations
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
 
 
@@ -93,7 +92,13 @@ class DataImportSerializerMixin:
 
 
 class DataExportSerializerMixin:
-    """Mixin class for adding data export functionality to a DRF serializer."""
+    """Mixin class for adding data export functionality to a DRF serializer.
+
+    Attributes:
+        export_only_fields: List of field names which are only used during data export
+        export_exclude_fields: List of field names which are excluded during data export
+        export_child_fields: List of child fields which are exported (using dot notation)
+    """
 
     export_only_fields = []
     export_exclude_fields = []
@@ -142,19 +147,35 @@ class DataExportSerializerMixin:
 
         for name, field in self.fields.items():
             # Skip write-only fields
-            if getattr(field, 'write_only', False):
+            if getattr(field, 'write_only', False) or name in write_only_fields:
                 continue
 
-            if name in write_only_fields:
-                continue
-
+            # Top-level serializer fields can be exported with dot notation
             # Skip fields which are themselves serializers
             if issubclass(field.__class__, serializers.Serializer):
+                fields.update(self.get_child_fields(name, field))
                 continue
 
             fields[name] = field
 
         return fields
+
+    def get_child_fields(self, field_name: str, field) -> dict:
+        """Return a dictionary of child fields for a given field.
+
+        Only child fields which match the 'export_child_fields' list will be returned.
+        """
+        child_fields = {}
+
+        if sub_fields := getattr(field, 'fields', None):
+            for sub_name, sub_field in sub_fields.items():
+                name = f'{field_name}.{sub_name}'
+
+                if name in self.export_child_fields:
+                    sub_field.parent_field = field
+                    child_fields[name] = sub_field
+
+        return child_fields
 
     def get_exported_filename(self, export_format) -> str:
         """Return the filename for the exported data file.
@@ -203,7 +224,12 @@ class DataExportSerializerMixin:
         for field_name, field in fields.items():
             field = fields[field_name]
 
-            headers.append(importer.operations.get_field_label(field) or field_name)
+            label = getattr(field, 'label', field_name)
+
+            if parent := getattr(field, 'parent_field', None):
+                label = f'{parent.label}.{label}'
+
+            headers.append(label)
 
         dataset = tablib.Dataset(headers=headers)
 
