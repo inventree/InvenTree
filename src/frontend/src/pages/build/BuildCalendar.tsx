@@ -17,6 +17,7 @@ import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
+import useCalendar from '../../hooks/UseCalendar';
 import { apiUrl } from '../../states/ApiState';
 
 export default function BuildCalendar() {
@@ -24,6 +25,8 @@ export default function BuildCalendar() {
 
   const [minDate, setMinDate] = useState<Date | null>(null);
   const [maxDate, setMaxDate] = useState<Date | null>(null);
+
+  const calendarState = useCalendar('buildorder-index');
 
   const buildQuery = useQuery({
     enabled: !!minDate && !!maxDate,
@@ -139,6 +142,8 @@ export default function BuildCalendar() {
   return (
     <Calendar
       events={events}
+      state={calendarState}
+      isLoading={buildQuery.isFetching}
       eventContent={renderBuildOrder}
       datesSet={onDatesChange}
       eventClick={onEventClick}

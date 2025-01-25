@@ -3,7 +3,15 @@ import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
 import { t } from '@lingui/macro';
-import { Button, Group, Popover, Stack, Tooltip } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  LoadingOverlay,
+  Popover,
+  Stack,
+  Tooltip
+} from '@mantine/core';
 import { type DateValue, MonthPicker } from '@mantine/dates';
 import {
   IconCalendarDot,
@@ -11,62 +19,43 @@ import {
   IconChevronLeft,
   IconChevronRight
 } from '@tabler/icons-react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
+import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
 
-export default function Calendar(props: CalendarOptions) {
-  const calendarRef = useRef<FullCalendar | null>(null);
+export interface InvenTreeCalendarProps extends CalendarOptions {
+  state: CalendarState;
+  isLoading?: boolean;
+}
 
+export default function Calendar(props: InvenTreeCalendarProps) {
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [locale] = useLocalState((s) => [s.language]);
 
-  const [monthName, setMonthName] = useState<string>('');
-
-  // Navigate to the previous month
-  const prevMonth = useCallback(() => {
-    calendarRef.current?.getApi().prev();
-  }, [calendarRef]);
-
-  // Navigate to the next month
-  const nextMonth = useCallback(() => {
-    calendarRef.current?.getApi().next();
-  }, [calendarRef]);
-
-  // Navigate to the current month
-  const currentMonth = useCallback(() => {
-    calendarRef.current?.getApi().today();
-  }, [calendarRef]);
-
-  // Callback to select a specific month from a picker
   const selectMonth = useCallback(
     (date: DateValue) => {
-      if (date && calendarRef?.current) {
-        const api = calendarRef.current.getApi();
-
-        api.gotoDate(date);
-      }
-
+      props.state.selectMonth(date);
       setMonthSelectOpened(false);
     },
-    [calendarRef]
+    [props.state.selectMonth]
   );
 
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
     (dateInfo: DatesSetArg) => {
-      if (calendarRef?.current) {
-        const api = calendarRef.current.getApi();
+      if (props.state.ref?.current) {
+        const api = props.state.ref.current.getApi();
 
-        setMonthName(api.view.title);
+        props.state.setMonthName(api.view.title);
       }
 
       // Pass the dates set to the parent component
       props.datesSet?.(dateInfo);
     },
-    [calendarRef, props.datesSet, setMonthName]
+    [props.datesSet, props.state.ref, props.state.setMonthName]
   );
 
   return (
@@ -98,39 +87,42 @@ export default function Calendar(props: CalendarOptions) {
           </Popover>
           <ActionButton
             icon={<IconChevronLeft />}
-            onClick={prevMonth}
+            onClick={props.state.prevMonth}
             tooltipAlignment='top'
             tooltip={t`Previous month`}
           />
           <ActionButton
             icon={<IconCalendarDot />}
-            onClick={currentMonth}
+            onClick={props.state.currentMonth}
             tooltipAlignment='top'
             tooltip={t`Today`}
           />
           <ActionButton
             icon={<IconChevronRight />}
-            onClick={nextMonth}
+            onClick={props.state.nextMonth}
             tooltipAlignment='top'
             tooltip={t`Next month`}
           />
-          <StylishText size='lg'>{monthName}</StylishText>
+          <StylishText size='lg'>{props.state.monthName}</StylishText>
         </Group>
         <Group justify='right' gap='xs' wrap='nowrap'>
           <div>hello world</div>
         </Group>
       </Group>
-      <FullCalendar
-        ref={calendarRef}
-        plugins={[dayGridPlugin]}
-        initialView='dayGridMonth'
-        locales={allLocales}
-        locale={locale}
-        headerToolbar={false}
-        footerToolbar={false}
-        {...props}
-        datesSet={datesSet}
-      />
+      <Box pos='relative'>
+        <LoadingOverlay visible={props.isLoading} />
+        <FullCalendar
+          ref={props.state.ref}
+          plugins={[dayGridPlugin]}
+          initialView='dayGridMonth'
+          locales={allLocales}
+          locale={locale}
+          headerToolbar={false}
+          footerToolbar={false}
+          {...props}
+          datesSet={datesSet}
+        />
+      </Box>
     </Stack>
   );
 }
