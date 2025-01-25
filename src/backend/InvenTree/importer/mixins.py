@@ -102,6 +102,7 @@ class DataExportSerializerMixin:
 
     export_only_fields = []
     export_exclude_fields = []
+    export_child_fields = []
 
     def get_export_only_fields(self, **kwargs) -> list:
         """Return the list of field names which are only used during data export."""
