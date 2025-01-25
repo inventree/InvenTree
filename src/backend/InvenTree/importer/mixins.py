@@ -199,6 +199,33 @@ class DataExportSerializerMixin:
         """Optional method to arrange the export headers."""
         return headers
 
+    def get_nested_value(self, row: dict, key: str) -> any:
+        """Get a nested value from a dictionary.
+
+        This method allows for dot notation to access nested fields.
+
+        Arguments:
+            row: The dictionary to extract the value from
+            key: The key to extract
+
+        Returns:
+            any: The extracted value
+        """
+        keys = key.split('.')
+
+        value = row
+
+        for key in keys:
+            if not value:
+                break
+
+            if not key:
+                continue
+
+            value = value.get(key, None)
+
+        return value
+
     def process_row(self, row):
         """Optional method to process a row before exporting it."""
         return row
@@ -236,7 +263,7 @@ class DataExportSerializerMixin:
 
         for row in data:
             row = self.process_row(row)
-            dataset.append([row.get(field, None) for field in field_names])
+            dataset.append([self.get_nested_value(row, f) for f in field_names])
 
         return dataset.export(file_format)
 

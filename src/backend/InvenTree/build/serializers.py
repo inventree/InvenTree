@@ -1280,7 +1280,16 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     export_exclude_fields = ['allocations']
 
-    export_only_fields = ['part_description', 'part_category_name']
+    export_child_fields = [
+        'build_detail.reference',
+        'part_detail.name',
+        'part_detail.description',
+        'part_detail.IPN',
+        'part_detail.category',
+        'bom_item_detail.reference',
+    ]
+
+    export_only_fields = ['part_category_name']
 
     class Meta:
         """Serializer metaclass."""
@@ -1291,6 +1300,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'build',
             'bom_item',
             'quantity',
+            'part',
             # Build detail fields
             'build_reference',
             # BOM item detail fields
@@ -1301,11 +1311,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'trackable',
             'inherited',
             'allow_variants',
-            # Part detail fields
-            'part',
-            'part_name',
-            'part_IPN',
-            'part_category_id',
             # Annotated fields
             'allocated',
             'in_production',
@@ -1317,7 +1322,6 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             # Related fields
             'allocations',
             # Extra fields only for data export
-            'part_description',
             'part_category_name',
             # Extra detail (related field) serializers
             'bom_item_detail',
@@ -1330,7 +1334,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     def __init__(self, *args, **kwargs):
         """Determine which extra details fields should be included."""
         part_detail = kwargs.pop('part_detail', True)
-        build_detail = kwargs.pop('build_detail', False)
+        build_detail = kwargs.pop('build_detail', True)
 
         super().__init__(*args, **kwargs)
 
@@ -1349,21 +1353,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part = serializers.PrimaryKeyRelatedField(
         source='bom_item.sub_part', label=_('Part'), many=False, read_only=True
     )
-    part_name = serializers.CharField(
-        source='bom_item.sub_part.name', label=_('Part Name'), read_only=True
-    )
-    part_IPN = serializers.CharField(  # noqa: N815
-        source='bom_item.sub_part.IPN', label=_('Part IPN'), read_only=True
-    )
 
-    part_description = serializers.CharField(
-        source='bom_item.sub_part.description',
-        label=_('Part Description'),
-        read_only=True,
-    )
-    part_category_id = serializers.PrimaryKeyRelatedField(
-        source='bom_item.sub_part.category', label=_('Part Category ID'), read_only=True
-    )
     part_category_name = serializers.CharField(
         source='bom_item.sub_part.category.name',
         label=_('Part Category Name'),
@@ -1401,6 +1391,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     # Foreign key fields
     bom_item_detail = part_serializers.BomItemSerializer(
+        label=_('BOM Item'),
         source='bom_item',
         many=False,
         read_only=True,
