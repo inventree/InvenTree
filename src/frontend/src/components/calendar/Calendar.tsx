@@ -32,35 +32,40 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
   enableSearch?: boolean;
 }
 
-export default function Calendar(props: InvenTreeCalendarProps) {
+export default function Calendar({
+  state,
+  isLoading,
+  enableSearch,
+  ...calendarProps
+}: InvenTreeCalendarProps) {
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
 
   const [locale] = useLocalState((s) => [s.language]);
 
   const selectMonth = useCallback(
     (date: DateValue) => {
-      props.state.selectMonth(date);
+      state.selectMonth(date);
       setMonthSelectOpened(false);
     },
-    [props.state.selectMonth]
+    [state.selectMonth]
   );
 
   // Callback when the calendar date range is adjusted
   const datesSet = useCallback(
     (dateInfo: DatesSetArg) => {
-      if (props.state.ref?.current) {
-        const api = props.state.ref.current.getApi();
+      if (state.ref?.current) {
+        const api = state.ref.current.getApi();
 
         // Update calendar state
-        props.state.setMonthName(api.view.title);
-        props.state.setStartDate(dateInfo.start);
-        props.state.setEndDate(dateInfo.end);
+        state.setMonthName(api.view.title);
+        state.setStartDate(dateInfo.start);
+        state.setEndDate(dateInfo.end);
       }
 
       // Pass the dates set to the parent component
-      props.datesSet?.(dateInfo);
+      calendarProps.datesSet?.(dateInfo);
     },
-    [props.datesSet, props.state.ref, props.state.setMonthName]
+    [calendarProps.datesSet, state.ref, state.setMonthName]
   );
 
   return (
@@ -92,41 +97,41 @@ export default function Calendar(props: InvenTreeCalendarProps) {
           </Popover>
           <ActionButton
             icon={<IconChevronLeft />}
-            onClick={props.state.prevMonth}
+            onClick={state.prevMonth}
             tooltipAlignment='top'
             tooltip={t`Previous month`}
           />
           <ActionButton
             icon={<IconCalendarDot />}
-            onClick={props.state.currentMonth}
+            onClick={state.currentMonth}
             tooltipAlignment='top'
             tooltip={t`Today`}
           />
           <ActionButton
             icon={<IconChevronRight />}
-            onClick={props.state.nextMonth}
+            onClick={state.nextMonth}
             tooltipAlignment='top'
             tooltip={t`Next month`}
           />
-          <StylishText size='lg'>{props.state.monthName}</StylishText>
+          <StylishText size='lg'>{state.monthName}</StylishText>
         </Group>
         <Group justify='right' gap='xs' wrap='nowrap'>
-          {(props.enableSearch ?? true) && (
-            <TableSearchInput searchCallback={props.state.setSearchTerm} />
+          {(enableSearch ?? true) && (
+            <TableSearchInput searchCallback={state.setSearchTerm} />
           )}
         </Group>
       </Group>
       <Box pos='relative'>
-        <LoadingOverlay visible={props.isLoading} />
+        <LoadingOverlay visible={isLoading} />
         <FullCalendar
-          ref={props.state.ref}
+          ref={state.ref}
           plugins={[dayGridPlugin]}
           initialView='dayGridMonth'
           locales={allLocales}
           locale={locale}
           headerToolbar={false}
           footerToolbar={false}
-          {...props}
+          {...calendarProps}
           datesSet={datesSet}
         />
       </Box>
