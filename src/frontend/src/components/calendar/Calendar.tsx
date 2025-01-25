@@ -4,9 +4,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
 import { t } from '@lingui/macro';
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
+  Indicator,
   LoadingOverlay,
   Popover,
   Stack,
@@ -14,31 +16,40 @@ import {
 } from '@mantine/core';
 import { type DateValue, MonthPicker } from '@mantine/dates';
 import {
-  IconCalendarDot,
   IconCalendarMonth,
   IconChevronLeft,
-  IconChevronRight
+  IconChevronRight,
+  IconFilter
 } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
+import { DownloadAction } from '../../tables/DownloadAction';
 import { TableSearchInput } from '../../tables/Search';
 import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
-  state: CalendarState;
-  isLoading?: boolean;
+  downloadData?: (fileFormat: string) => void;
+  enableDownload?: boolean;
+  enableFilters?: boolean;
   enableSearch?: boolean;
+  isLoading?: boolean;
+  state: CalendarState;
 }
 
 export default function Calendar({
-  state,
-  isLoading,
+  downloadData,
+  enableDownload,
+  enableFilters,
   enableSearch,
+  isLoading,
+  state,
   ...calendarProps
 }: InvenTreeCalendarProps) {
   const [monthSelectOpened, setMonthSelectOpened] = useState<boolean>(false);
+
+  const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   const [locale] = useLocalState((s) => [s.language]);
 
@@ -69,72 +80,92 @@ export default function Calendar({
   );
 
   return (
-    <Stack gap='xs'>
-      <Group justify='space-between' gap='xs'>
-        <Group gap='xs' justify='left'>
-          <Popover
-            opened={monthSelectOpened}
-            onClose={() => setMonthSelectOpened(false)}
-            position='bottom-start'
-            shadow='md'
-          >
-            <Popover.Target>
-              <Tooltip label={t`Select month`} position='top'>
-                <Button
-                  m={0}
+    <>
+      <Stack gap='xs'>
+        <Group justify='space-between' gap='xs'>
+          <Group gap={0} justify='left'>
+            <ActionButton
+              icon={<IconChevronLeft />}
+              onClick={state.prevMonth}
+              tooltipAlignment='top'
+              tooltip={t`Previous month`}
+            />
+            <Popover
+              opened={monthSelectOpened}
+              onClose={() => setMonthSelectOpened(false)}
+              position='bottom-start'
+              shadow='md'
+            >
+              <Popover.Target>
+                <Tooltip label={t`Select month`} position='top'>
+                  <Button
+                    m={0}
+                    variant='transparent'
+                    onClick={() => {
+                      setMonthSelectOpened(!monthSelectOpened);
+                    }}
+                  >
+                    <IconCalendarMonth />
+                  </Button>
+                </Tooltip>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <MonthPicker onChange={selectMonth} />
+              </Popover.Dropdown>
+            </Popover>
+            <ActionButton
+              icon={<IconChevronRight />}
+              onClick={state.nextMonth}
+              tooltipAlignment='top'
+              tooltip={t`Next month`}
+            />
+            <StylishText size='lg'>{state.monthName}</StylishText>
+          </Group>
+          <Group justify='right' gap='xs' wrap='nowrap'>
+            {enableSearch && (
+              <TableSearchInput searchCallback={state.setSearchTerm} />
+            )}
+            {enableFilters && ( // && filters.length > 0 && (
+              <Indicator
+                size='xs'
+                label={state.activeFilters?.length ?? 0}
+                disabled={state.activeFilters?.length == 0}
+              >
+                <ActionIcon
                   variant='transparent'
-                  onClick={() => {
-                    setMonthSelectOpened(!monthSelectOpened);
-                  }}
+                  aria-label='table-select-filters'
                 >
-                  <IconCalendarMonth />
-                </Button>
-              </Tooltip>
-            </Popover.Target>
-            <Popover.Dropdown>
-              <MonthPicker onChange={selectMonth} />
-            </Popover.Dropdown>
-          </Popover>
-          <ActionButton
-            icon={<IconChevronLeft />}
-            onClick={state.prevMonth}
-            tooltipAlignment='top'
-            tooltip={t`Previous month`}
-          />
-          <ActionButton
-            icon={<IconCalendarDot />}
-            onClick={state.currentMonth}
-            tooltipAlignment='top'
-            tooltip={t`Today`}
-          />
-          <ActionButton
-            icon={<IconChevronRight />}
-            onClick={state.nextMonth}
-            tooltipAlignment='top'
-            tooltip={t`Next month`}
-          />
-          <StylishText size='lg'>{state.monthName}</StylishText>
+                  <Tooltip label={t`Table Filters`}>
+                    <IconFilter
+                      onClick={() => {}} // setFiltersVisible(!filtersVisible)}
+                    />
+                  </Tooltip>
+                </ActionIcon>
+              </Indicator>
+            )}
+            {enableDownload && (
+              <DownloadAction
+                key='download-action'
+                downloadCallback={downloadData}
+              />
+            )}
+          </Group>
         </Group>
-        <Group justify='right' gap='xs' wrap='nowrap'>
-          {(enableSearch ?? true) && (
-            <TableSearchInput searchCallback={state.setSearchTerm} />
-          )}
-        </Group>
-      </Group>
-      <Box pos='relative'>
-        <LoadingOverlay visible={isLoading} />
-        <FullCalendar
-          ref={state.ref}
-          plugins={[dayGridPlugin]}
-          initialView='dayGridMonth'
-          locales={allLocales}
-          locale={locale}
-          headerToolbar={false}
-          footerToolbar={false}
-          {...calendarProps}
-          datesSet={datesSet}
-        />
-      </Box>
-    </Stack>
+        <Box pos='relative'>
+          <LoadingOverlay visible={isLoading} />
+          <FullCalendar
+            ref={state.ref}
+            plugins={[dayGridPlugin]}
+            initialView='dayGridMonth'
+            locales={allLocales}
+            locale={locale}
+            headerToolbar={false}
+            footerToolbar={false}
+            {...calendarProps}
+            datesSet={datesSet}
+          />
+        </Box>
+      </Stack>
+    </>
   );
 }

@@ -65,30 +65,30 @@ export default function BuildCalendar() {
         const start: string = build.start_date || today;
         const end: string = build.target_date || build.start_date || today;
 
-        const inProgress =
-          dayjs(start).isBefore(today) && dayjs(end).isAfter(today);
-        const overdue = dayjs(end).isBefore(today);
+        // const inProgress =
+        //   dayjs(start).isBefore(today) && dayjs(end).isAfter(today);
+        // const overdue = dayjs(end).isBefore(today);
 
-        const color: string = overdue
-          ? 'var(--mantine-color-orange-7)'
-          : inProgress
-            ? 'var(--mantine-color-green-3)'
-            : 'var(--mantine-color-blue-3)';
+        // const color: string = overdue
+        //   ? 'var(--mantine-color-orange-7)'
+        //   : inProgress
+        //     ? 'var(--mantine-color-green-3)'
+        //     : 'var(--mantine-color-blue-3)';
 
         return {
           id: build.pk,
           title: build.reference,
           description: build.title,
           start: start,
-          end: end,
-          backgroundColor: color
+          end: end
+          // backgroundColor: color
         };
       }) ?? []
     );
   }, [buildQuery.data]);
 
   // Callback when a build is clicked on
-  const onEventClick = (info: EventClickArg) => {
+  const onClickBuild = (info: EventClickArg) => {
     if (!!info.event.id) {
       navigateToLink(
         getDetailUrl(ModelType.build, info.event.id),
@@ -134,11 +134,14 @@ export default function BuildCalendar() {
 
   return (
     <Calendar
+      enableDownload
+      enableFilters
+      enableSearch
       events={events}
       state={calendarState}
       isLoading={buildQuery.isFetching}
       eventContent={renderBuildOrder}
-      eventClick={onEventClick}
+      eventClick={onClickBuild}
     />
   );
 }

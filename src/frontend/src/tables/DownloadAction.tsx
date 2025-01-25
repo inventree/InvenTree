@@ -15,7 +15,7 @@ import {
 export function DownloadAction({
   downloadCallback
 }: Readonly<{
-  downloadCallback: (fileFormat: string) => void;
+  downloadCallback?: (fileFormat: string) => void;
 }>) {
   const formatOptions = [
     { value: 'csv', label: t`CSV`, icon: <IconFileTypeCsv /> },
@@ -27,7 +27,7 @@ export function DownloadAction({
     return formatOptions.map((format) => ({
       name: format.label,
       icon: format.icon,
-      onClick: () => downloadCallback(format.value)
+      onClick: () => downloadCallback?.(format.value)
     }));
   }, [formatOptions, downloadCallback]);
 
