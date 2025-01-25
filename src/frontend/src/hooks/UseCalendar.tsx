@@ -15,6 +15,10 @@ import type { TableFilter } from '../tables/Filter';
  * setMonthName: A function to set the month name
  * searchTerm: The current search term for the calendar
  * setSearchTerm: A function to set the search term
+ * startDate: The start date of the current date range
+ * setStartDate: A function to set the start date
+ * endDate: The end date of the current date range
+ * setEndDate: A function to set the end date
  * nextMonth: A function to navigate to the next month
  * prevMonth: A function to navigate to the previous month
  * currentMonth: A function to navigate to the current month
@@ -28,6 +32,10 @@ export type CalendarState = {
   monthName: string;
   setMonthName: (name: string) => void;
   searchTerm: string;
+  startDate: Date | null;
+  setStartDate: (date: Date | null) => void;
+  endDate: Date | null;
+  setEndDate: (date: Date | null) => void;
   setSearchTerm: (term: string) => void;
   nextMonth: () => void;
   prevMonth: () => void;
@@ -41,6 +49,10 @@ export default function useCalendar(calendarName: string): CalendarState {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const [monthName, setMonthName] = useState<string>('');
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   // Array of active filters (saved to local storage)
   const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({
@@ -93,6 +105,10 @@ export default function useCalendar(calendarName: string): CalendarState {
     nextMonth,
     prevMonth,
     currentMonth,
-    selectMonth
+    selectMonth,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate
   };
 }

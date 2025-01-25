@@ -22,12 +22,14 @@ import {
 import { useCallback, useState } from 'react';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
+import { TableSearchInput } from '../../tables/Search';
 import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   state: CalendarState;
   isLoading?: boolean;
+  enableSearch?: boolean;
 }
 
 export default function Calendar(props: InvenTreeCalendarProps) {
@@ -49,7 +51,10 @@ export default function Calendar(props: InvenTreeCalendarProps) {
       if (props.state.ref?.current) {
         const api = props.state.ref.current.getApi();
 
+        // Update calendar state
         props.state.setMonthName(api.view.title);
+        props.state.setStartDate(dateInfo.start);
+        props.state.setEndDate(dateInfo.end);
       }
 
       // Pass the dates set to the parent component
@@ -106,7 +111,9 @@ export default function Calendar(props: InvenTreeCalendarProps) {
           <StylishText size='lg'>{props.state.monthName}</StylishText>
         </Group>
         <Group justify='right' gap='xs' wrap='nowrap'>
-          <div>hello world</div>
+          {(props.enableSearch ?? true) && (
+            <TableSearchInput searchCallback={props.state.setSearchTerm} />
+          )}
         </Group>
       </Group>
       <Box pos='relative'>

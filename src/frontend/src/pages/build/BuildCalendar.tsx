@@ -1,14 +1,10 @@
-import type {
-  DatesSetArg,
-  EventClickArg,
-  EventContentArg
-} from '@fullcalendar/core';
+import type { EventClickArg, EventContentArg } from '@fullcalendar/core';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import Calendar from '../../components/calendar/Calendar';
@@ -23,22 +19,29 @@ import { apiUrl } from '../../states/ApiState';
 export default function BuildCalendar() {
   const navigate = useNavigate();
 
-  const [minDate, setMinDate] = useState<Date | null>(null);
-  const [maxDate, setMaxDate] = useState<Date | null>(null);
-
   const calendarState = useCalendar('buildorder-index');
 
   const buildQuery = useQuery({
-    enabled: !!minDate && !!maxDate,
-    queryKey: ['builds', minDate, maxDate],
-    queryFn: async () =>
-      api
+    enabled: !!calendarState.startDate && !!calendarState.endDate,
+    queryKey: [
+      'builds',
+      calendarState.startDate,
+      calendarState.endDate,
+      calendarState.searchTerm
+    ],
+    queryFn: async () => {
+      // Expand the
+      const min_date = dayjs(calendarState.startDate).subtract(1, 'month');
+      const max_date = dayjs(calendarState.endDate).add(1, 'month');
+
+      return api
         .get(apiUrl(ApiEndpoints.build_order_list), {
           params: {
             part_detail: true,
             outstanding: true,
-            min_date: minDate?.toISOString().split('T')[0],
-            max_date: maxDate?.toISOString().split('T')[0]
+            min_date: min_date?.toISOString().split('T')[0],
+            max_date: max_date?.toISOString().split('T')[0],
+            search: calendarState.searchTerm
           }
         })
         .then((response) => {
@@ -49,7 +52,8 @@ export default function BuildCalendar() {
             error: error,
             title: t`Error fetching build orders`
           });
-        })
+        });
+    }
   });
 
   // Build the calendar events
@@ -82,17 +86,6 @@ export default function BuildCalendar() {
       }) ?? []
     );
   }, [buildQuery.data]);
-
-  // Callback when data range changes
-  const onDatesChange = (dateInfo: DatesSetArg) => {
-    if (!!dateInfo.start) {
-      setMinDate(dayjs(dateInfo.start).subtract(1, 'month').toDate());
-    }
-
-    if (!!dateInfo.end) {
-      setMaxDate(dayjs(dateInfo.end).add(1, 'month').toDate());
-    }
-  };
 
   // Callback when a build is clicked on
   const onEventClick = (info: EventClickArg) => {
@@ -145,7 +138,6 @@ export default function BuildCalendar() {
       state={calendarState}
       isLoading={buildQuery.isFetching}
       eventContent={renderBuildOrder}
-      datesSet={onDatesChange}
       eventClick={onEventClick}
     />
   );
