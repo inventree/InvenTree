@@ -161,8 +161,8 @@ def on_config(config, *args, **kwargs):
     #    fetch_rtd_versions()
 
     if rtd:
-        rtd_version = os.environ['READTHEDOCS_VERSION']
-        rtd_language = os.environ['READTHEDOCS_LANGUAGE']
+        rtd_version = os.environ.get('READTHEDOCS_VERSION')
+        rtd_language = os.environ.get('READTHEDOCS_LANGUAGE')
 
         site_url = f'https://docs.inventree.org/{rtd_language}/{rtd_version}'
         assets_dir = f'/{rtd_language}/{rtd_version}/assets'
