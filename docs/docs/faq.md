@@ -28,12 +28,8 @@ If the installed version of invoke is too old, users may see error messages duri
 
 ### INVE-E1 - No frontend included
 
-Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource saving and attack surfcace reduction. If you want to use the frontend panel, you can either:″
-- use a docker image that is version tagged or the stable version
-- use a package version that is from the stable or version stream
-- install node and yarn on the server to build the frontend with the [invoke](./start/invoke.md) task `int.frontend-build`
-
-Raise an issue if none of these options work.
+Make sure you are running a stable or production release of InvenTree. The frontend panel is not included in development releases.
+More Information: [Error Codes - INVE-E1](./settings/error_codes.md#inve-e1)
 
 ### No module named <xxx>
 
