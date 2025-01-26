@@ -227,15 +227,20 @@ jobs:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
           persist-credentials: true
+      - name: Create artifact directory
+        run: mkdir -p artifact
       - name: Download schema artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
-          name: schema.yml
-      - name: Move schema to correct location
+          path: artifact
+      - name: Move files to correct location
         run: |
           echo "Version: $version"
           mkdir export/${version}
-          mv schema.yml export/${version}/api.yaml
+          mv artifact/schema.yml export/${version}/api.yaml
+          mv artifact/inventree_settings.json export/${version}/inventree_settings.json
+          mv artifact/inventree_tags.yaml export/${version}/inventree_tags.yaml
+          mv artifact/inventree_filters.yaml export/${version}/inventree_filters.yaml
       - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
         name: Commit schema changes
         with:
