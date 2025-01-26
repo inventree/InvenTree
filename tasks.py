@@ -11,6 +11,7 @@ from pathlib import Path
 from platform import python_version
 from typing import Optional
 
+import invoke
 from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
@@ -62,6 +63,19 @@ def info(*args):
     print(f'\033[94m{msg}\033[0m')
 
 
+def checkInvokeVersion():
+    """Check that the installed invoke version meets minimum requirements."""
+    MIN_INVOKE_VERSION = '2.0.0'
+
+    min_version = tuple(map(int, MIN_INVOKE_VERSION.split('.')))
+    invoke_version = tuple(map(int, invoke.__version__.split('.')))  # noqa: RUF048
+
+    if invoke_version < min_version:
+        error(f'The installed invoke version ({invoke.__version__}) is not supported!')
+        error(f'InvenTree requires invoke version {MIN_INVOKE_VERSION} or above')
+        sys.exit(1)
+
+
 def checkPythonVersion():
     """Check that the installed python version meets minimum requirements.
 
@@ -86,6 +100,7 @@ def checkPythonVersion():
 
 
 if __name__ in ['__main__', 'tasks']:
+    checkInvokeVersion()
     checkPythonVersion()
 
 
