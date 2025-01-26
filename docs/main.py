@@ -25,7 +25,7 @@ for key in [
     'READTHEDOCS_VERSION_NAME',
     'READTHEDOCS_VERSION_TYPE',
 ]:
-    val = os.environ.get(key) or '-- MISSING --'
+    val = os.environ.get(key, None) or '-- MISSING --'
     print(f' - {key}: {val}')
 
 # Cached settings dict values
@@ -266,14 +266,19 @@ def define_env(env):
         return includefile(fn, f'Template: {base}', fmt='html')
 
     @env.macro
-    def rendersetting(setting: dict):
+    def rendersetting(key: str, setting: dict):
         """Render a provided setting object into a table row."""
         name = setting['name']
         description = setting['description']
         default = setting.get('default')
         units = setting.get('units')
 
-        return f'| {name} | {description} | {default if default is not None else ""} | {units if units is not None else ""} |'
+        default = f'`{default}`' if default else ''
+        units = f'`{units}`' if units else ''
+
+        return (
+            f'| <div title="{key}">{name}</div> | {description} | {default} | {units} |'
+        )
 
     @env.macro
     def globalsetting(key: str):
@@ -285,7 +290,7 @@ def define_env(env):
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
 
-        return rendersetting(setting)
+        return rendersetting(key, setting)
 
     @env.macro
     def usersetting(key: str):
@@ -297,4 +302,4 @@ def define_env(env):
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
 
-        return rendersetting(setting)
+        return rendersetting(key, setting)
