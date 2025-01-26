@@ -39,7 +39,7 @@ class TemplateTagTest(InvenTreeTestCase):
             manifest_file.with_suffix('.json.bak')
         )  # Rename
         resp = spa_helper.spa_bundle()
-        self.assertIsNone(resp)
+        self.assertEqual(resp, 'NOT_FOUND')
 
         # Try with differing name
         resp = spa_helper.spa_bundle(new_name)
@@ -48,7 +48,7 @@ class TemplateTagTest(InvenTreeTestCase):
         # Broken manifest file
         manifest_file.write_text('broken')
         resp = spa_helper.spa_bundle(manifest_file)
-        self.assertIsNone(resp)
+        self.assertEqual(resp, '')
 
         new_name.rename(manifest_file.with_suffix('.json'))  # Name back
 
