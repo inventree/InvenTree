@@ -401,6 +401,7 @@ class SupplierPartSerializer(
         if brief:
             self.fields.pop('tags')
             self.fields.pop('available')
+            self.fields.pop('on_order')
             self.fields.pop('availability_updated')
 
     # Annotated field showing total in-stock quantity

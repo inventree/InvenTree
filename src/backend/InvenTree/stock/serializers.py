@@ -601,6 +601,7 @@ class StockItemSerializer(
     supplier_part_detail = company_serializers.SupplierPartSerializer(
         label=_('Supplier Part'),
         source='supplier_part',
+        brief=True,
         supplier_detail=False,
         manufacturer_detail=False,
         part_detail=False,
