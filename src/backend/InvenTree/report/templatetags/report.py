@@ -302,11 +302,11 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
         raise TypeError(_('part_image tag requires a Part instance'))
 
     if preview:
-        if part.image and hasattr(part.image, 'preview'):
+        if part.image and not hasattr(part.image, 'preview'):
             return None
         img = part.image.preview.name
     elif thumbnail:
-        if part.image and hasattr(part.image, 'thumbnail'):
+        if part.image and not hasattr(part.image, 'thumbnail'):
             return None
         img = part.image.thumbnail.name
     else:
