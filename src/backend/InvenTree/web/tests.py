@@ -24,9 +24,8 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_spa_bundle(self):
         """Test the 'spa_bundle' template tag."""
         resp = spa_helper.spa_bundle()
-        if not resp:
+        if resp == 'NOT_FOUND':
             # No Vite, no test
-            # TODO: Add a test for the non-Vite case (docker)
             return  # pragma: no cover
 
         shipped_js = resp.split('<script type="module" src="')[1:]
