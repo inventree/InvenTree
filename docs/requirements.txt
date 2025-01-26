@@ -179,9 +179,9 @@ idna==3.7 \
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==8.5.0 \
-    --hash=sha256:45e54197d28b7a7f1559e60b95e7c567032b602131fbd588f1497f47880aa68b \
-    --hash=sha256:71522656f0abace1d072b9e5481a48f07c138e00f079c38c8f883823f9c26bd7
+importlib-metadata==8.6.1 \
+    --hash=sha256:02a89390c1e15fdfdc0d7c6b25cb3e62650d0494005c97d6f148bf5b9787525e \
+    --hash=sha256:310b41d755445d74569f993ccfc22838295d9fe005425094fad953d7f15c8580
     # via
     #   markdown
     #   mkdocs
@@ -319,9 +319,9 @@ mkdocs-macros-plugin==1.3.7 \
     --hash=sha256:02432033a5b77fb247d6ec7924e72fc4ceec264165b1644ab8d0dc159c22ce59 \
     --hash=sha256:17c7fd1a49b94defcdb502fd453d17a1e730f8836523379d21292eb2be4cb523
     # via -r docs/requirements.in
-mkdocs-material==9.5.49 \
-    --hash=sha256:3671bb282b4f53a1c72e08adbe04d2481a98f85fed392530051f80ff94a9621d \
-    --hash=sha256:c3c2d8176b18198435d3a3e119011922f3e11424074645c24019c2dcf08a360e
+mkdocs-material==9.5.50 \
+    --hash=sha256:ae5fe16f3d7c9ccd05bb6916a7da7420cf99a9ce5e33debd9d40403a090d5825 \
+    --hash=sha256:f24100f234741f4d423a9d672a909d859668a4f404796be3cf035f10d6050385
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1 \
     --hash=sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443 \
