@@ -110,3 +110,18 @@ def get_cache_config(global_cache: bool) -> dict:
 
     # Default: Use django local memory cache
     return {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
+
+
+def get_session_cache(key: str) -> any:
+    """Return a cached value from the session cache."""
+    request_cache = getattr(thread_data, 'request_cache', None)
+    if request_cache is not None:
+        return request_cache.get(key, None)
+
+
+def set_session_cache(key: str, value: any) -> None:
+    """Set a cached value in the session cache."""
+    request_cache = getattr(thread_data, 'request_cache', None)
+
+    if request_cache is not None:
+        request_cache[key] = value

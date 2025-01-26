@@ -233,15 +233,11 @@ class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
         """Create a request-specific cache object."""
         # Create a new cache object for this request
         thread_data.request_cache = {}
-        print('CREATING CACHE:')
 
     def process_response(self, request, response):
         """Clear the cache object."""
         # Remove the cache object from the request once the response has been generated
         if hasattr(thread_data, 'request_cache'):
-            print('CLEARING CACHE:')
-            for k, v in thread_data.request_cache.items():
-                print(f'  {k} -> {v}')
             del thread_data.request_cache
 
         return response
