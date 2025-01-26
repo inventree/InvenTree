@@ -29,6 +29,7 @@ export enum ApiEndpoints {
   auth_totp = 'auth/v1/account/authenticators/totp',
   auth_reauthenticate = 'auth/v1/auth/reauthenticate',
   auth_email = 'auth/v1/account/email',
+  auth_email_verify = 'auth/v1/auth/email/verify',
   auth_providers = 'auth/v1/account/providers',
   auth_provider_redirect = 'auth/v1/auth/provider/redirect',
   auth_config = 'auth/v1/config',

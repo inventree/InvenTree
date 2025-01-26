@@ -116,6 +116,9 @@ export const ChangePassword = Loadable(
 export const ResetPassword = Loadable(
   lazy(() => import('./pages/Auth/ResetPassword'))
 );
+export const VerifyEmail = Loadable(
+  lazy(() => import('./pages/Auth/VerifyEmail'))
+);
 
 // Routes
 export const routes = (
@@ -178,6 +181,7 @@ export const routes = (
       <Route path='/reset-password' element={<Reset />} />
       <Route path='/set-password' element={<ResetPassword />} />
       <Route path='/change-password' element={<ChangePassword />} />
+      <Route path='/verify-email/:key' element={<VerifyEmail />} />
     </Route>
   </Routes>
 );
