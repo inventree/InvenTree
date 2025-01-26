@@ -160,8 +160,9 @@ nav:
       - Currency Support: settings/currency.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
-    - Error Logs: settings/logs.md
-    - Background Tasks: settings/tasks.md
+    - Operations:
+      - Background Tasks: settings/tasks.md
+      - Error Logs: settings/logs.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md
