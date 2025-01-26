@@ -10,6 +10,7 @@ import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { type Provider, fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
+import { generateUrl } from './urls';
 
 export function followRedirect(navigate: NavigateFunction, redirect: any) {
   let url = redirect?.redirectUrl ?? '/home';
@@ -287,21 +288,17 @@ export function clearCsrfCookie() {
     'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
 
-export function ProviderLogin(
+export async function ProviderLogin(
   provider: Provider,
   process: 'login' | 'connect' = 'login'
 ) {
-  const { host } = useLocalState.getState();
-  // TODO
-  const loc = window.location;
-  const values = {
+  await ensureCsrf();
+  post(generateUrl(apiUrl(ApiEndpoints.auth_provider_redirect)), {
     provider: provider.id,
-    callback_url: 'http://localhost:8000/logged-in',
+    callback_url: generateUrl('/logged-in'),
     process: process,
     csrfmiddlewaretoken: getCsrfCookie()
-  };
-  const url = `${host}${apiUrl(ApiEndpoints.auth_provider_redirect)}`;
-  post(url, values);
+  });
 }
 
 /**
