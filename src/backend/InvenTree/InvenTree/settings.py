@@ -1299,7 +1299,6 @@ ACCOUNT_FORMS = {
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.auth_overrides.CustomAccountAdapter'
-MFA_ADAPTER = 'InvenTree.auth_overrides.CustomMFAAdapter'
 HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 

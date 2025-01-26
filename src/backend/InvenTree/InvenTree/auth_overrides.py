@@ -13,7 +13,6 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.headless.adapter import DefaultHeadlessAdapter
 from allauth.headless.tokens.sessions import SessionTokenStrategy
-from allauth.mfa.adapter import DefaultMFAAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 import InvenTree.helpers_model
@@ -221,14 +220,6 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
     def get_connect_redirect_url(self, request, socialaccount):
         """Redirect to the frontend after connecting an account."""
         return request.build_absolute_uri(f'/{settings.FRONTEND_URL_BASE}/')
-
-
-class CustomMFAAdapter(DefaultMFAAdapter):
-    """Override of adapter to use dynamic settings."""
-
-    def block_email_registering(self, user) -> bool:
-        """Statically disable email registration blocking."""
-        return False
 
 
 class CustomHeadlessAdapter(DefaultHeadlessAdapter):
