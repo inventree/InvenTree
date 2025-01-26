@@ -412,8 +412,7 @@ django==4.2.18 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[mfa, openid, saml, socialaccount]==65.3.1 \
-    --hash=sha256:e02e951b71a2753a746459f2efa114c7c72bf2cef6887dbe8607a577c0350587
+django-allauth[mfa, openid, saml, socialaccount] @ git+https://codeberg.org/allauth/django-allauth@b802a0ff6206a8b7b6c9ecf7148d414f6868d47a
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \

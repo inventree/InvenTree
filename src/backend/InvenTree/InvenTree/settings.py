@@ -1303,28 +1303,6 @@ MFA_ADAPTER = 'InvenTree.auth_overrides.CustomMFAAdapter'
 HEADLESS_ADAPTER = 'InvenTree.auth_overrides.CustomHeadlessAdapter'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
-
-# region to_be_moved
-def get_frontend_url(pui_path: str):
-    """Generate frontend url.
-
-    #TODO remove this https://codeberg.org/allauth/django-allauth/issues/4226 is merged.
-    """
-    host: str = 'http://localhost:8000'
-    if not host.endswith('/'):
-        host += '/'
-    return f'{host}{FRONTEND_URL_BASE}/{pui_path}'
-
-
-HEADLESS_FRONTEND_URLS = {
-    'account_confirm_email': get_frontend_url('verify-email/{key}'),  # noqa: RUF027
-    'account_reset_password': get_frontend_url('reset-password'),
-    'account_reset_password_from_key': get_frontend_url('set-password?key={key}'),  # noqa: RUF027
-    'account_signup': get_frontend_url('register'),
-    'socialaccount_login_error': get_frontend_url('social-login-error'),
-}
-# endregion to_be_moved
-
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
 MFA_ENABLED = get_boolean_setting(
