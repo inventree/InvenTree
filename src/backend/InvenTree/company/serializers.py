@@ -315,6 +315,16 @@ class SupplierPartSerializer(
 ):
     """Serializer for SupplierPart object."""
 
+    export_exclude_fields = ['tags']
+
+    export_child_fields = [
+        'part_detail.name',
+        'part_detail.description',
+        'part_detail.IPN',
+        'supplier_detail.name',
+        'manufacturer_detail.name',
+    ]
+
     class Meta:
         """Metaclass options."""
 
@@ -327,12 +337,10 @@ class SupplierPartSerializer(
             'on_order',
             'link',
             'active',
-            'manufacturer',
             'manufacturer_detail',
             'manufacturer_part',
             'manufacturer_part_detail',
             'MPN',
-            'name',
             'note',
             'pk',
             'barcode_hash',
@@ -405,32 +413,36 @@ class SupplierPartSerializer(
     pack_quantity_native = serializers.FloatField(read_only=True)
 
     part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True
     )
 
     supplier_detail = CompanyBriefSerializer(
-        source='supplier', many=False, read_only=True
+        label=_('Supplier'), source='supplier', many=False, read_only=True
     )
 
     manufacturer_detail = CompanyBriefSerializer(
-        source='manufacturer_part.manufacturer', many=False, read_only=True
+        label=_('Manufacturer'),
+        source='manufacturer_part.manufacturer',
+        many=False,
+        read_only=True,
     )
 
     pretty_name = serializers.CharField(read_only=True)
 
     supplier = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.filter(is_supplier=True)
+        label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
     )
-
-    manufacturer = serializers.CharField(read_only=True)
-
-    MPN = serializers.CharField(read_only=True)
 
     manufacturer_part_detail = ManufacturerPartSerializer(
-        source='manufacturer_part', part_detail=False, read_only=True
+        label=_('Manufacturer Part'),
+        source='manufacturer_part',
+        part_detail=False,
+        read_only=True,
     )
 
-    name = serializers.CharField(read_only=True)
+    MPN = serializers.CharField(
+        source='manufacturer_part.MPN', read_only=True, label=_('MPN')
+    )
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
