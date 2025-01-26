@@ -89,3 +89,37 @@ jobs:
           file: ${{ steps.attest.outputs.bundle-path}}
           tag: ${{ github.ref }}
           overwrite: true
+
+  docs:
+    runs-on: ubuntu-latest
+    name: Build and publish documentation
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+          npm: true
+      - name: Install dependencies
+        run: |
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes -r docs/requirements.txt
+      - name: Build documentation
+        run: |
+          invoke migrate
+          invoke int.export-settings-definitions --filename docs/inventree_settings.json --overwrite
+          invoke dev.schema --filename docs/schema.yml --ignore-warnings
+          python docs/extract_schema.py docs/schema.yml
+          mkdocs build  -f docs/mkdocs.yml
+      - name: Publish documentation
+        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: docs/site
+          asset_name: documentation
+          tag: ${{ github.ref }}
+          overwrite: true
