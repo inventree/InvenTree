@@ -1,6 +1,13 @@
 trigger:
-- master
-- stable
+  batch: true
+  branches:
+    include:
+    - master
+    - stable
+    - refs/tags/*
+  paths:
+    include:
+    - src/backend
 
 pool:
   vmImage: ubuntu-latest
