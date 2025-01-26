@@ -61,6 +61,15 @@ def inventree_instance_name(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_logo(**kwargs):
+    """Return the InvenTree logo, *or* a custom logo if the user has provided one.
+
+    Returns a path to an image file, which can be rendered in the web interface.
+    """
+    return InvenTree.helpers.getLogoImage(**kwargs)
+
+
+@register.simple_tag()
 def inventree_title(*args, **kwargs):
     """Return the title for the current instance - respecting the settings."""
     return version.inventreeInstanceTitle()
