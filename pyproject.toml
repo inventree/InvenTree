@@ -91,7 +91,6 @@ line-ending = "auto"
 [tool.uv.pip]
 python-version = "3.9"
 no-strip-extras=true
-generate-hashes=true
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
