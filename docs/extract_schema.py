@@ -14,7 +14,6 @@ GENERAL_PATH = 'general'
 
 # List of special paths we want to split out
 SPECIAL_PATHS = {
-    'auth': 'Authorization and Authentication',
     'background-task': 'Background Task Management',
     'barcode': 'Barcode Scanning',
     'bom': 'Bill of Materials',
