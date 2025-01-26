@@ -147,6 +147,8 @@ export function usePurchaseOrderFields({
   supplierId?: number;
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {
@@ -217,8 +219,12 @@ export function usePurchaseOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId, supplierId]);
+  }, [duplicateOrderId, supplierId, globalSettings]);
 }
 
 /**

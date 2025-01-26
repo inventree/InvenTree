@@ -344,7 +344,7 @@ class StockItemSerializer(
 
     export_only_fields = ['part_pricing_min', 'part_pricing_max']
 
-    import_exclude_fields = ['use_pack_size', 'tags']
+    import_exclude_fields = ['use_pack_size']
 
     class Meta:
         """Metaclass options."""
@@ -1142,7 +1142,7 @@ class LocationSerializer(
 ):
     """Detailed information about a stock location."""
 
-    import_exclude_fields = ['tags']
+    import_exclude_fields = []
 
     class Meta:
         """Metaclass options."""
@@ -1565,18 +1565,18 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         help_text=_('StockItem primary key value'),
     )
 
-    def validate_pk(self, pk):
+    def validate_pk(self, stock_item: StockItem) -> StockItem:
         """Ensure the stock item is valid."""
         allow_out_of_stock_transfer = get_global_setting(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not pk.is_in_stock(
+        if not allow_out_of_stock_transfer and not stock_item.is_in_stock(
             check_status=False, check_quantity=False
         ):
             raise ValidationError(_('Stock item is not in stock'))
 
-        return pk
+        return stock_item
 
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, min_value=Decimal(0), required=True

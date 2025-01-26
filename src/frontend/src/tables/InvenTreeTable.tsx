@@ -12,7 +12,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
@@ -207,7 +207,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
           return null;
         })
         .catch(() => {
+          hideNotification('table-options-error');
           showNotification({
+            id: 'table-options-error',
             title: t`API Error`,
             message: t`Failed to load table options`,
             color: 'red'

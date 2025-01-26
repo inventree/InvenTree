@@ -181,21 +181,28 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
         label: t`Created`,
         icon: 'calendar',
         hidden: !build.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        hidden: !build.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
         hidden: !build.target_date
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'completion_date',
         label: t`Completed`,
         icon: 'calendar',
