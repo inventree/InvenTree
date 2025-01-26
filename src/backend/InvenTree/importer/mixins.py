@@ -82,7 +82,7 @@ class DataImportSerializerMixin:
                 continue
 
             # Skip tags fields
-            # TODO: Implement tag field support
+            # TODO: Implement tag field import support
             if issubclass(field.__class__, TagListSerializerField):
                 continue
 
@@ -149,6 +149,11 @@ class DataExportSerializerMixin:
         for name, field in self.fields.items():
             # Skip write-only fields
             if getattr(field, 'write_only', False) or name in write_only_fields:
+                continue
+
+            # Skip tags fields
+            # TODO: Implement tag field export support
+            if issubclass(field.__class__, TagListSerializerField):
                 continue
 
             # Top-level serializer fields can be exported with dot notation
