@@ -163,6 +163,7 @@ nav:
     - Operations:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md
+      - Error Codes: settings/error_codes.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md
