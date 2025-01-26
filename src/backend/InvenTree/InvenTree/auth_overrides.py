@@ -179,12 +179,6 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
 
         return False
 
-    def get_email_confirmation_url(self, request, emailconfirmation):
-        """Construct the email confirmation url."""
-        url = super().get_email_confirmation_url(request, emailconfirmation)
-        url = InvenTree.helpers_model.construct_absolute_url(url)
-        return url
-
     def send_password_reset_mail(self, user, email, context):
         """Send the password reset mail."""
         if not get_global_setting('LOGIN_ENABLE_PWD_FORGOT'):
@@ -228,9 +222,9 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
     def get_frontend_url(self, request: HttpRequest, urlname, **kwargs):
         """Get the frontend URL for the given URL name respecting the request."""
         HEADLESS_FRONTEND_URLS = {
-            'account_confirm_email': ['verify-email/', '{key}'],
+            'account_confirm_email': 'verify-email/{key}',
             'account_reset_password': 'reset-password',
-            'account_reset_password_from_key': ['set-password?key=', '{key}'],
+            'account_reset_password_from_key': 'set-password?key={key}',
             'account_signup': 'register',
             'socialaccount_login_error': 'social-login-error',
         }
@@ -239,13 +233,9 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
                 f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
             )
 
-        url = HEADLESS_FRONTEND_URLS[urlname]
-        if isinstance(url, list):
-            return (
-                request.build_absolute_uri(f'/{settings.FRONTEND_URL_BASE}/{url[0]}')
-                + url[1]
-            )
-        return request.build_absolute_uri(f'/{settings.FRONTEND_URL_BASE}/{url}')
+        return request.build_absolute_uri(
+            f'/{settings.FRONTEND_URL_BASE}/{HEADLESS_FRONTEND_URLS[urlname].format(**kwargs)}'
+        )
 
 
 class DRFTokenStrategy(SessionTokenStrategy):
