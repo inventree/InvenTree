@@ -52,6 +52,7 @@ import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from generic.states import ColorEnum
 from generic.states.custom import state_color_mappings
+from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 
 logger = structlog.get_logger('inventree')
@@ -485,22 +486,20 @@ class BaseInvenTreeSetting(models.Model):
         - Key is case-insensitive
         - Returns None if no match is made
 
-        First checks the cache to see if this object has recently been accessed,
-        and returns the cached version if so.
+        As settings are accessed frequently, this function will attempt to access the cache first:
+
+        1. Check the ephemeral request cache
+        2. Check the global cache
+        3. Query the database
         """
         key = str(key).strip().upper()
 
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
-        # Specify if cache lookup should be performed
-        do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
-
-        filters = {
-            'key__iexact': key,
-            # Optionally filter by other keys
-            **cls.get_filters(**kwargs),
-        }
+        # Specify if global cache lookup should be performed
+        # If not specified, determine based on whether global cache is enabled
+        access_global_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
         # Prevent saving to the database during certain operations
         if (
@@ -510,21 +509,36 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningBackup()
         ):
             create = False
-            do_cache = False
+            access_global_cache = False
 
         cache_key = cls.create_cache_key(key, **kwargs)
 
-        if do_cache:
+        # Fist, attempt to pull the setting from the request cache
+        if setting := get_session_cache(cache_key):
+            return setting
+
+        if access_global_cache:
             try:
                 # First attempt to find the setting object in the cache
                 cached_setting = cache.get(cache_key)
 
                 if cached_setting is not None:
+                    # Store the cached setting into the session cache
+
+                    set_session_cache(cache_key, cached_setting)
                     return cached_setting
 
             except Exception:
                 # Cache is not ready yet
-                do_cache = False
+                access_global_cache = False
+
+        # At this point, we need to query the database
+
+        filters = {
+            'key__iexact': key,
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
+        }
 
         try:
             settings = cls.objects.all()
@@ -551,9 +565,13 @@ class BaseInvenTreeSetting(models.Model):
                 # The setting failed validation - might be due to duplicate keys
                 pass
 
-        if setting and do_cache:
-            # Cache this setting object
-            setting.save_to_cache()
+        if setting:
+            # Cache this setting object to the request cache
+            set_session_cache(cache_key, setting)
+
+            if access_global_cache:
+                # Cache this setting object to the global cache
+                setting.save_to_cache()
 
         return setting
 
