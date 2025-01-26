@@ -4,7 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -219,7 +219,7 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
 class CustomHeadlessAdapter(DefaultHeadlessAdapter):
     """Override of adapter to use dynamic settings."""
 
-    def get_frontend_url(self, request: HttpRequest, urlname, **kwargs):
+    def get_frontend_url(self, urlname, **kwargs):
         """Get the frontend URL for the given URL name respecting the request."""
         HEADLESS_FRONTEND_URLS = {
             'account_confirm_email': 'verify-email/{key}',
@@ -233,7 +233,7 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
                 f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
             )
 
-        return request.build_absolute_uri(
+        return self.request.build_absolute_uri(
             f'/{settings.FRONTEND_URL_BASE}/{HEADLESS_FRONTEND_URLS[urlname].format(**kwargs)}'
         )
 
