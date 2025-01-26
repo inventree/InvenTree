@@ -7,12 +7,14 @@ from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 
 import structlog
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
+from InvenTree.cache import thread_data
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
@@ -215,3 +217,31 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         )
 
         error.save()
+
+
+class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
+    """Middleware to perform caching against the request object.
+
+    This middleware is used to cache data against the request object,
+    which can be used to store data for the duration of the request.
+
+    In this fashion, we can avoid hitting the external cache multiple times,
+    much less the database!
+    """
+
+    def process_request(self, request):
+        """Create a request-specific cache object."""
+        # Create a new cache object for this request
+        thread_data.request_cache = {}
+        print('CREATING CACHE:')
+
+    def process_response(self, request, response):
+        """Clear the cache object."""
+        # Remove the cache object from the request once the response has been generated
+        if hasattr(thread_data, 'request_cache'):
+            print('CLEARING CACHE:')
+            for k, v in thread_data.request_cache.items():
+                print(f'  {k} -> {v}')
+            del thread_data.request_cache
+
+        return response

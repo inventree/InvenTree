@@ -1,6 +1,7 @@
 """Configuration options for InvenTree external cache."""
 
 import socket
+import threading
 
 import structlog
 
@@ -9,9 +10,18 @@ import InvenTree.ready
 
 logger = structlog.get_logger('inventree')
 
+# Thread-local cache for caching data against the request object
+thread_data = threading.local()
+
 
 def cache_setting(name, default=None, **kwargs):
-    """Return a cache setting."""
+    """Return the value of a particular cache setting.
+
+    Arguments:
+        name: The name of the cache setting
+        default: The default value to return if the setting is not found
+        kwargs: Additional arguments to pass to the cache setting request
+    """
     return InvenTree.config.get_setting(
         f'INVENTREE_CACHE_{name.upper()}', f'cache.{name.lower()}', default, **kwargs
     )
@@ -22,12 +32,12 @@ def cache_host():
     return cache_setting('host', None)
 
 
-def cache_port():
+def cache_port() -> int:
     """Return the cache port."""
     return cache_setting('port', '6379', typecast=int)
 
 
-def is_global_cache_enabled():
+def is_global_cache_enabled() -> bool:
     """Check if the global cache is enabled.
 
     - Test if the user has enabled and configured global cache
