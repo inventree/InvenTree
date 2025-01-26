@@ -434,8 +434,9 @@ class StockItemSerializer(
         part_detail = kwargs.pop('part_detail', True)
         location_detail = kwargs.pop('location_detail', True)
         supplier_part_detail = kwargs.pop('supplier_part_detail', True)
-        tests = kwargs.pop('tests', False)
         path_detail = kwargs.pop('path_detail', False)
+
+        tests = kwargs.pop('tests', False)
 
         super().__init__(*args, **kwargs)
 
@@ -502,7 +503,9 @@ class StockItemSerializer(
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
         queryset = queryset.prefetch_related(
             'location',
+            'allocations',
             'sales_order',
+            'sales_order_allocations',
             'purchase_order',
             Prefetch(
                 'part',
@@ -514,6 +517,8 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
+            'part__supplier_parts',
+            'part__supplier_parts__purchase_order_line_items',
             'part__pricing_data',
             'part__tags',
             'supplier_part',
@@ -522,6 +527,7 @@ class StockItemSerializer(
             'supplier_part__manufacturer_part',
             'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__manufacturer_part__tags',
+            'supplier_part__purchase_order_line_items',
             'supplier_part__tags',
             'test_results',
             'customer',
