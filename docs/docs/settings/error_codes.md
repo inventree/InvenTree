@@ -12,7 +12,7 @@ Errors - These are critical errors which should be addressed as soon as possible
 Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource saving and attack surfcace reduction. If you want to use the frontend panel, you can either:″
 - use a docker image that is version tagged or the stable version
 - use a package version that is from the stable or version stream
-- install node and yarn on the server to build the frontend with the [invoke](./start/invoke.md) task `int.frontend-build`
+- install node and yarn on the server to build the frontend with the [invoke](../start/invoke.md) task `int.frontend-build`
 
 Raise an issue if none of these options work.
 
