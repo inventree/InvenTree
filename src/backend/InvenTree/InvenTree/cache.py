@@ -112,6 +112,11 @@ def get_cache_config(global_cache: bool) -> dict:
     return {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
 
 
+def clear_session_cache() -> None:
+    """Reset the session cache."""
+    thread_data.request_cache = {}
+
+
 def get_session_cache(key: str) -> any:
     """Return a cached value from the session cache."""
     request_cache = getattr(thread_data, 'request_cache', None)

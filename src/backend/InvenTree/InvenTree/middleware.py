@@ -14,7 +14,7 @@ from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMid
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
-from InvenTree.cache import thread_data
+from InvenTree.cache import clear_session_cache
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
@@ -231,13 +231,9 @@ class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         """Create a request-specific cache object."""
-        # Create a new cache object for this request
-        thread_data.request_cache = {}
+        clear_session_cache()
 
     def process_response(self, request, response):
         """Clear the cache object."""
-        # Remove the cache object from the request once the response has been generated
-        if hasattr(thread_data, 'request_cache'):
-            del thread_data.request_cache
-
+        clear_session_cache()
         return response
