@@ -1194,20 +1194,26 @@ def export_settings_definitions(c, filename='inventree_settings.json', overwrite
     manage(c, f'export_settings_definitions {filename}', pty=True)
 
 
-@task
-def export_definitions(c):
+@task(help={'basedir': 'Export to a base directory (default = False)'})
+def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
+    if basedir != '' and basedir.endswith('/') is False:
+        basedir += '/'
+
+    filenames = [
+        Path(basedir + 'inventree_settings.json').resolve(),
+        Path(basedir + 'inventree_tags.yaml').resolve(),
+        Path(basedir + 'inventree_filters.yaml').resolve(),
+    ]
+
     info('Exporting definitions...')
+    export_settings_definitions(c, overwrite=True, filename=filenames[0])
 
-    export_settings_definitions(c, overwrite=True)
+    check_file_existence(filenames[1], overwrite=True)
+    manage(c, f'export_tags {filenames[1]}', pty=True)
 
-    filename = Path('inventree_tags.yaml').resolve()
-    check_file_existence(filename, overwrite=True)
-    manage(c, f'export_tags {filename}', pty=True)
-
-    filename = Path('inventree_filters.yaml').resolve()
-    check_file_existence(filename, overwrite=True)
-    manage(c, f'export_filters {filename}', pty=True)
+    check_file_existence(filenames[2], overwrite=True)
+    manage(c, f'export_filters {filenames[2]}', pty=True)
 
     info('Exporting definitions complete')
 
