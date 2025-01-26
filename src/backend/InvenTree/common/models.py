@@ -157,6 +157,9 @@ class BaseInvenTreeSetting(models.Model):
         if do_cache:
             self.save_to_cache()
 
+        # Remove the setting from the request cache
+        set_session_cache(self.cache_key, None)
+
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
 
