@@ -222,7 +222,6 @@ nav:
     - Machines:
       - Overview: extend/machines/overview.md
       - Label Printer: extend/machines/label_printer.md
-    - Themes: extend/themes.md
     - Third-Party: extend/integrate.md
 
 # Plugins
