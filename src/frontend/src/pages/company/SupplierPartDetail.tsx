@@ -64,7 +64,8 @@ export default function SupplierPartDetail() {
     hasPrimaryKey: true,
     params: {
       part_detail: true,
-      supplier_detail: true
+      supplier_detail: true,
+      manufacturer_detail: true
     }
   });
 
