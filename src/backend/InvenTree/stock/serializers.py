@@ -355,7 +355,7 @@ class StockItemSerializer(
         'supplier_part_detail.MPN',
     ]
 
-    import_exclude_fields = ['use_pack_size']
+    import_exclude_fields = ['use_pack_size', 'location_path']
 
     class Meta:
         """Metaclass options."""
@@ -403,6 +403,7 @@ class StockItemSerializer(
             'expired',
             'installed_items',
             'child_items',
+            'location_path',
             'stale',
             'tracking_items',
             'tags',
@@ -468,6 +469,10 @@ class StockItemSerializer(
         read_only=True,
         label=_('Parent Item'),
         help_text=_('Parent stock item'),
+    )
+
+    location_path = serializers.ListField(
+        child=serializers.DictField(), source='location.get_path', read_only=True
     )
 
     in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
@@ -1182,6 +1187,9 @@ class LocationSerializer(
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
+
+        queryset = queryset.prefetch_related('tags')
+
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items(),
             sublocations=stock.filters.annotate_sub_locations(),

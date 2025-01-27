@@ -389,7 +389,7 @@ class StockLocationList(DataExportViewMixin, StockLocationMixin, ListCreateAPI):
     ordering = ['tree_id', 'lft', 'name']
 
 
-class LocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
+class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
     """API endpoint for detail view of StockLocation object."""
 
     def destroy(self, request, *args, **kwargs):
@@ -1521,7 +1521,7 @@ stock_api_urls = [
                         {'model': StockLocation},
                         name='api-location-metadata',
                     ),
-                    path('', LocationDetail.as_view(), name='api-location-detail'),
+                    path('', StockLocationDetail.as_view(), name='api-location-detail'),
                 ]),
             ),
             path('', StockLocationList.as_view(), name='api-location-list'),
