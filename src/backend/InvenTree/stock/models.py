@@ -1985,9 +1985,18 @@ class StockItem(
         Returns:
             The new StockItem object
 
+        Raises:
+            ValidationError: If the stock item cannot be split
+
         - The provided quantity will be subtracted from this item and given to the new one.
         - The new item will have a different StockItem ID, while this will remain the same.
         """
+        # Run initial checks to test if the stock item can actually be "split"
+
+        # Cannot split a stock item which is in production
+        if self.is_building:
+            raise ValidationError(_('Stock item is currently in production'))
+
         notes = kwargs.get('notes', '')
 
         # Do not split a serialized part

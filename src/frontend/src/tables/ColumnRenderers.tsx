@@ -14,6 +14,7 @@ import { formatCurrency, formatDate } from '../defaults/formatters';
 import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
@@ -161,11 +162,15 @@ export function LineItemsProgressColumn(): TableColumn {
 }
 
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
+  const globalSettings = useGlobalSettingsState.getState();
+  const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
+
   return {
     accessor: 'project_code',
     ordering: 'project_code',
     sortable: true,
     title: t`Project Code`,
+    hidden: !enabled,
     render: (record: any) => {
       const project_code = resolveItem(
         record,

@@ -11,6 +11,7 @@ from pathlib import Path
 from platform import python_version
 from typing import Optional
 
+import invoke
 from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
@@ -62,6 +63,19 @@ def info(*args):
     print(f'\033[94m{msg}\033[0m')
 
 
+def checkInvokeVersion():
+    """Check that the installed invoke version meets minimum requirements."""
+    MIN_INVOKE_VERSION = '2.0.0'
+
+    min_version = tuple(map(int, MIN_INVOKE_VERSION.split('.')))
+    invoke_version = tuple(map(int, invoke.__version__.split('.')))  # noqa: RUF048
+
+    if invoke_version < min_version:
+        error(f'The installed invoke version ({invoke.__version__}) is not supported!')
+        error(f'InvenTree requires invoke version {MIN_INVOKE_VERSION} or above')
+        sys.exit(1)
+
+
 def checkPythonVersion():
     """Check that the installed python version meets minimum requirements.
 
@@ -86,6 +100,7 @@ def checkPythonVersion():
 
 
 if __name__ in ['__main__', 'tasks']:
+    checkInvokeVersion()
     checkPythonVersion()
 
 
@@ -419,7 +434,7 @@ def remove_mfa(c, mail=''):
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     if frontend and node_available():
-        frontend_trans(c)
+        frontend_trans(c, extract=False)
         frontend_build(c)
 
     info('Collecting static files...')
@@ -911,13 +926,28 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
     run(c, cmd, pty=True)
 
 
-@task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
-def server(c, address='127.0.0.1:8000'):
+@task(
+    pre=[wait],
+    help={
+        'address': 'Server address:port (default=127.0.0.1:8000)',
+        'no_reload': 'Do not automatically reload the server in response to code changes',
+        'no_threading': 'Disable multi-threading for the development server',
+    },
+)
+def server(c, address='127.0.0.1:8000', no_reload=False, no_threading=False):
     """Launch a (development) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
-    manage(c, f'runserver {address}', pty=True)
+    cmd = f'runserver {address}'
+
+    if no_reload:
+        cmd += ' --noreload'
+
+    if no_threading:
+        cmd += ' --nothreading'
+
+    manage(c, cmd, pty=True)
 
 
 @task(pre=[wait])
@@ -1228,7 +1258,7 @@ def frontend_compile(c):
     """
     info('Compiling frontend code...')
     frontend_install(c)
-    frontend_trans(c)
+    frontend_trans(c, extract=False)
     frontend_build(c)
     success('Frontend compilation complete')
 
@@ -1244,15 +1274,16 @@ def frontend_install(c):
     yarn(c, 'yarn install')
 
 
-@task
-def frontend_trans(c):
+@task(help={'extract': 'Extract translations (changes sourcecode), default: True'})
+def frontend_trans(c, extract: bool = True):
     """Compile frontend translations.
 
     Args:
         c: Context variable
     """
     info('Compiling frontend translations')
-    yarn(c, 'yarn run extract')
+    if extract:
+        yarn(c, 'yarn run extract')
     yarn(c, 'yarn run compile')
 
 

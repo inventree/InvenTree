@@ -121,6 +121,18 @@ export default function SalesOrderAllocationTable({
         render: (record: any) => PartColumn({ part: record.part_detail })
       },
       {
+        accessor: 'part_detail.description',
+        title: t`Description`,
+        hidden: showPartInfo != true,
+        sortable: false
+      },
+      {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`,
+        hidden: showPartInfo != true,
+        sortable: false
+      },
+      {
         accessor: 'serial',
         title: t`Serial Number`,
         sortable: true,

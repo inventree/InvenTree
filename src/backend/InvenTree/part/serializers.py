@@ -683,7 +683,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['duplicate', 'tags']
+    import_exclude_fields = ['duplicate']
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -1556,7 +1556,11 @@ class BomItemSerializer(
 
     import_exclude_fields = ['validated', 'substitutes']
 
-    export_only_fields = ['sub_part_name', 'sub_part_ipn', 'sub_part_description']
+    export_child_fields = [
+        'sub_part_detail.name',
+        'sub_part_detail.IPN',
+        'sub_part_detail.description',
+    ]
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -1565,10 +1569,6 @@ class BomItemSerializer(
         fields = [
             'part',
             'sub_part',
-            # Extra fields only for export
-            'sub_part_name',
-            'sub_part_ipn',
-            'sub_part_description',
             'reference',
             'quantity',
             'overage',
@@ -1646,17 +1646,8 @@ class BomItemSerializer(
 
     substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    # Extra fields only for export
-    sub_part_name = serializers.CharField(
-        source='sub_part.name', read_only=True, label=_('Component Name')
-    )
-    sub_part_ipn = serializers.CharField(
-        source='sub_part.IPN', read_only=True, label=_('Component IPN')
-    )
-    sub_part_description = serializers.CharField(
-        source='sub_part.description', read_only=True, label=_('Component Description')
+    part_detail = PartBriefSerializer(
+        source='part', label=_('Assembly'), many=False, read_only=True
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1665,7 +1656,9 @@ class BomItemSerializer(
         help_text=_('Select the component part'),
     )
 
-    sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
+    sub_part_detail = PartBriefSerializer(
+        source='sub_part', label=_('Component'), many=False, read_only=True
+    )
 
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
 

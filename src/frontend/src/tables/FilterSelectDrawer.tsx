@@ -179,10 +179,17 @@ function FilterAddGroup({
 
   // Determine the "type" of filter (default = boolean)
   const filterType: TableFilterType = useMemo(() => {
-    return (
-      availableFilters?.find((flt) => flt.name === selectedFilter)?.type ??
-      'boolean'
-    );
+    const filter = availableFilters?.find((flt) => flt.name === selectedFilter);
+
+    if (filter?.type) {
+      return filter.type;
+    } else if (filter?.choices) {
+      // If choices are provided, it is a choice filter
+      return 'choice';
+    } else {
+      // Default fallback
+      return 'boolean';
+    }
   }, [selectedFilter]);
 
   const setSelectedValue = useCallback(
