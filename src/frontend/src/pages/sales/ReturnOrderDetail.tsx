@@ -216,6 +216,13 @@ export default function ReturnOrderDetail() {
       },
       {
         type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        hidden: !order.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         copy: true,
