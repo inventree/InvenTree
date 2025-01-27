@@ -323,8 +323,8 @@ def define_env(env):
         for ref in [['Tags', TAGS], ['Filters', FILTERS]]:
             ret_data += f'## {ref[0]}\n\n| Namespace | Name | Description |\n| --- | --- | --- |\n'
             for value in ref[1]:
-                ret_data += (
-                    f'| {value["library"]} | {value["name"]} | {value["title"]} |\n'
-                )
+                title = value['title'].replace('\n', ' ')
+                ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
+            ret_data += '\n'
 
         return ret_data
