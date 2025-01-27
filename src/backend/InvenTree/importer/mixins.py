@@ -7,7 +7,6 @@ import tablib
 from rest_framework import fields, serializers
 from taggit.serializers import TagListSerializerField
 
-import importer.operations
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
 
 
@@ -83,7 +82,7 @@ class DataImportSerializerMixin:
                 continue
 
             # Skip tags fields
-            # TODO: Implement tag field support
+            # TODO: Implement tag field import support
             if issubclass(field.__class__, TagListSerializerField):
                 continue
 
@@ -93,10 +92,17 @@ class DataImportSerializerMixin:
 
 
 class DataExportSerializerMixin:
-    """Mixin class for adding data export functionality to a DRF serializer."""
+    """Mixin class for adding data export functionality to a DRF serializer.
+
+    Attributes:
+        export_only_fields: List of field names which are only used during data export
+        export_exclude_fields: List of field names which are excluded during data export
+        export_child_fields: List of child fields which are exported (using dot notation)
+    """
 
     export_only_fields = []
     export_exclude_fields = []
+    export_child_fields = []
 
     def get_export_only_fields(self, **kwargs) -> list:
         """Return the list of field names which are only used during data export."""
@@ -142,19 +148,40 @@ class DataExportSerializerMixin:
 
         for name, field in self.fields.items():
             # Skip write-only fields
-            if getattr(field, 'write_only', False):
+            if getattr(field, 'write_only', False) or name in write_only_fields:
                 continue
 
-            if name in write_only_fields:
+            # Skip tags fields
+            # TODO: Implement tag field export support
+            if issubclass(field.__class__, TagListSerializerField):
                 continue
 
+            # Top-level serializer fields can be exported with dot notation
             # Skip fields which are themselves serializers
             if issubclass(field.__class__, serializers.Serializer):
+                fields.update(self.get_child_fields(name, field))
                 continue
 
             fields[name] = field
 
         return fields
+
+    def get_child_fields(self, field_name: str, field) -> dict:
+        """Return a dictionary of child fields for a given field.
+
+        Only child fields which match the 'export_child_fields' list will be returned.
+        """
+        child_fields = {}
+
+        if sub_fields := getattr(field, 'fields', None):
+            for sub_name, sub_field in sub_fields.items():
+                name = f'{field_name}.{sub_name}'
+
+                if name in self.export_child_fields:
+                    sub_field.parent_field = field
+                    child_fields[name] = sub_field
+
+        return child_fields
 
     def get_exported_filename(self, export_format) -> str:
         """Return the filename for the exported data file.
@@ -176,6 +203,33 @@ class DataExportSerializerMixin:
     def arrange_export_headers(cls, headers: list) -> list:
         """Optional method to arrange the export headers."""
         return headers
+
+    def get_nested_value(self, row: dict, key: str) -> any:
+        """Get a nested value from a dictionary.
+
+        This method allows for dot notation to access nested fields.
+
+        Arguments:
+            row: The dictionary to extract the value from
+            key: The key to extract
+
+        Returns:
+            any: The extracted value
+        """
+        keys = key.split('.')
+
+        value = row
+
+        for key in keys:
+            if not value:
+                break
+
+            if not key:
+                continue
+
+            value = value.get(key, None)
+
+        return value
 
     def process_row(self, row):
         """Optional method to process a row before exporting it."""
@@ -203,13 +257,18 @@ class DataExportSerializerMixin:
         for field_name, field in fields.items():
             field = fields[field_name]
 
-            headers.append(importer.operations.get_field_label(field) or field_name)
+            label = getattr(field, 'label', field_name)
+
+            if parent := getattr(field, 'parent_field', None):
+                label = f'{parent.label}.{label}'
+
+            headers.append(label)
 
         dataset = tablib.Dataset(headers=headers)
 
         for row in data:
             row = self.process_row(row)
-            dataset.append([row.get(field, None) for field in field_names])
+            dataset.append([self.get_nested_value(row, f) for f in field_names])
 
         return dataset.export(file_format)
 
