@@ -206,7 +206,7 @@ class TestShipmentDateMigration(MigratorTestCase):
     Ref: 0105_auto_20241128_0431.py
     """
 
-    migrate_from = ('order', '0102_purchaseorder_destination_and_more')
+    migrate_from = ('order', '0100_remove_returnorderattachment_order_and_more')
     migrate_to = ('order', '0105_auto_20241128_0431')
 
     def prepare(self):
@@ -246,4 +246,4 @@ class TestShipmentDateMigration(MigratorTestCase):
 
         order = SalesOrder.objects.get(reference='SO-999')
         self.assertIsNotNone(order.shipment_date)
-        self.assertEqual(order.shipment_date, '2024-11-28')
+        self.assertEqual(order.shipment_date.isoformat(), '2024-11-28')
