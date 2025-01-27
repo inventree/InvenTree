@@ -246,6 +246,13 @@ class Order(
                     'contact': _('Contact does not match selected company')
                 })
 
+        # Target date should be *after* the start date
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date'),
+                'start_date': _('Start date must be before target date'),
+            })
+
     def clean_line_item(self, line):
         """Clean a line item for this order.
 
