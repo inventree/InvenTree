@@ -1,6 +1,7 @@
 """This module provides template tags for extra functionality, over and above the built-in Django tags."""
 
 from django import template
+from django.conf import settings as djangosettings
 
 import common.models
 import InvenTree.helpers
@@ -61,18 +62,18 @@ def inventree_instance_name(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_title(*args, **kwargs):
+    """Return the title for the current instance - respecting the settings."""
+    return version.inventreeInstanceTitle()
+
+
+@register.simple_tag()
 def inventree_logo(**kwargs):
     """Return the InvenTree logo, *or* a custom logo if the user has provided one.
 
     Returns a path to an image file, which can be rendered in the web interface.
     """
     return InvenTree.helpers.getLogoImage(**kwargs)
-
-
-@register.simple_tag()
-def inventree_title(*args, **kwargs):
-    """Return the title for the current instance - respecting the settings."""
-    return version.inventreeInstanceTitle()
 
 
 @register.simple_tag()
@@ -153,3 +154,9 @@ def keyvalue(dict, key):
     {% mydict|keyvalue:mykey %}
     """
     return dict.get(key)
+
+
+@register.simple_tag()
+def inventree_customize(reference, *args, **kwargs):
+    """Return customization values for the user interface."""
+    return djangosettings.CUSTOMIZE.get(reference, '')
