@@ -112,20 +112,39 @@ def get_cache_config(global_cache: bool) -> dict:
     return {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}
 
 
-def clear_session_cache() -> None:
-    """Reset the session cache."""
+def create_session_cache(request) -> None:
+    """Create an empty session cache."""
+    thread_data.request = request
     thread_data.request_cache = {}
+
+
+def delete_session_cache() -> None:
+    """Remove the session cache once the request is complete."""
+    if hasattr(thread_data, 'request'):
+        del thread_data.request
+
+    if hasattr(thread_data, 'request_cache'):
+        del thread_data.request_cache
 
 
 def get_session_cache(key: str) -> any:
     """Return a cached value from the session cache."""
+    # Only return a cached value if the request object is available too
+    if not hasattr(thread_data, 'request'):
+        return None
+
     request_cache = getattr(thread_data, 'request_cache', None)
     if request_cache is not None:
-        return request_cache.get(key, None)
+        val = request_cache.get(key, None)
+        return val
 
 
 def set_session_cache(key: str, value: any) -> None:
     """Set a cached value in the session cache."""
+    # Only set a cached value if the request object is available too
+    if not hasattr(thread_data, 'request'):
+        return
+
     request_cache = getattr(thread_data, 'request_cache', None)
 
     if request_cache is not None:
