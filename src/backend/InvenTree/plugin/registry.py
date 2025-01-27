@@ -26,6 +26,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 
+import InvenTree.cache
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -835,6 +836,12 @@ class PluginsRegistry:
         if not canAppAccessDatabase(allow_shell=True):
             # Skip check if database cannot be accessed
             return
+
+        if InvenTree.cache.get_session_cache('plugin_registry_checked'):
+            # Return early if the registry has already been checked (for this request)
+            return
+
+        InvenTree.cache.set_session_cache('plugin_registry_checked', True)
 
         logger.debug('Checking plugin registry hash')
 
