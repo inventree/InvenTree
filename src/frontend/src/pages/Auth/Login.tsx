@@ -1,9 +1,15 @@
 import { Trans, t } from '@lingui/macro';
-import { Center, Container, Divider, Paper, Text } from '@mantine/core';
+import {
+  BackgroundImage,
+  Center,
+  Container,
+  Divider,
+  Paper,
+  Text
+} from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import {
@@ -18,6 +24,7 @@ import {
   doBasicLogin,
   followRedirect
 } from '../../functions/auth';
+import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
@@ -41,6 +48,16 @@ export default function Login() {
 
   const loginMessage = useMemo(() => {
     return server.customize?.login_message;
+  }, [server.customize]);
+
+  const SplashComponent = useMemo(() => {
+    const temp = server.customize?.splash;
+    if (temp) {
+      return ({ children }: { children: React.ReactNode }) => (
+        <BackgroundImage src={generateUrl(temp)}>{children}</BackgroundImage>
+      );
+    }
+    return ({ children }: { children: React.ReactNode }) => <>{children}</>;
   }, [server.customize]);
 
   // Data manipulation functions
@@ -79,40 +96,55 @@ export default function Login() {
 
   // Main rendering block
   return (
-    <Center mih='100vh'>
-      <Container w='md' miw={400}>
-        {hostEdit ? (
-          <InstanceOptions
-            hostKey={hostKey}
-            ChangeHost={ChangeHost}
-            setHostEdit={setHostEdit}
-          />
-        ) : (
-          <>
-            <Paper radius='md' p='xl' withBorder>
-              <Text size='lg' fw={500}>
-                {loginMode ? (
-                  <Trans>Welcome, log in below</Trans>
-                ) : (
-                  <Trans>Register below</Trans>
-                )}
-              </Text>
-              {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
-              <ModeSelector loginMode={loginMode} setMode={setMode} />
-              {loginMessage && (
-                <>
-                  <Divider my='md' />
-                  <Text>
-                    {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
-                    <div dangerouslySetInnerHTML={{ __html: loginMessage }} />
+    <SplashComponent>
+      <Center mih='100vh'>
+        <div
+          style={{
+            padding: '10px',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            boxShadow: '0 0 15px 10px rgba(0,0,0,0.5)'
+          }}
+        >
+          <Container w='md' miw={400}>
+            {hostEdit ? (
+              <InstanceOptions
+                hostKey={hostKey}
+                ChangeHost={ChangeHost}
+                setHostEdit={setHostEdit}
+              />
+            ) : (
+              <>
+                <Paper radius='md' p='xl' withBorder>
+                  <Text size='lg' fw={500}>
+                    {loginMode ? (
+                      <Trans>Welcome, log in below</Trans>
+                    ) : (
+                      <Trans>Register below</Trans>
+                    )}
                   </Text>
-                </>
-              )}
-            </Paper>
-            <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
-          </>
-        )}
-      </Container>
-    </Center>
+                  {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
+                  <ModeSelector loginMode={loginMode} setMode={setMode} />
+                  {loginMessage && (
+                    <>
+                      <Divider my='md' />
+                      <Text>
+                        <span
+                          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+                          dangerouslySetInnerHTML={{ __html: loginMessage }}
+                        />
+                      </Text>
+                    </>
+                  )}
+                </Paper>
+                <AuthFormOptions
+                  hostname={hostname}
+                  toggleHostEdit={setHostEdit}
+                />
+              </>
+            )}
+          </Container>
+        </div>
+      </Center>
+    </SplashComponent>
   );
 }
