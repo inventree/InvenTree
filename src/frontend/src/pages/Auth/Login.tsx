@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
-import { Center, Container, Paper, Text } from '@mantine/core';
+import { Center, Container, Divider, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { setApiDefaults } from '../../App';
@@ -38,6 +38,10 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+
+  const loginMessage = useMemo(() => {
+    return server.customize?.login_message;
+  }, [server.customize]);
 
   // Data manipulation functions
   function ChangeHost(newHost: string | null): void {
@@ -95,6 +99,15 @@ export default function Login() {
               </Text>
               {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
               <ModeSelector loginMode={loginMode} setMode={setMode} />
+              {loginMessage && (
+                <>
+                  <Divider my='md' />
+                  <Text>
+                    {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
+                    <div dangerouslySetInnerHTML={{ __html: loginMessage }} />
+                  </Text>
+                </>
+              )}
             </Paper>
             <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
           </>
