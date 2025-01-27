@@ -227,6 +227,13 @@ export default function SalesOrderDetail() {
       },
       {
         type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        hidden: !order.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         hidden: !order.target_date,
