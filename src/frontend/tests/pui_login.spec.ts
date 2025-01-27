@@ -8,23 +8,6 @@ test('Login - Basic Test', async ({ page }) => {
   // Check that the username is provided
   await page.getByText(user.username);
 
-  await expect(page).toHaveTitle(/^InvenTree/);
-
-  // Go to the dashboard
-  await page.goto(baseUrl);
-  await page.waitForURL('**/platform');
-
-  await page.getByText('InvenTree Demo Server -').waitFor();
-
-  // Check that the username is provided
-  await page.getByText(user.username);
-
-  await expect(page).toHaveTitle(/^InvenTree/);
-
-  // Go to the dashboard
-  await page.goto(baseUrl);
-  await page.waitForURL('**/platform');
-
   // Logout (via menu)
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
