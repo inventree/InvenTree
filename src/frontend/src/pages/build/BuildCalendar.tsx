@@ -1,6 +1,11 @@
-import type { EventClickArg, EventContentArg } from '@fullcalendar/core';
+import type {
+  EventChangeArg,
+  EventClickArg,
+  EventContentArg
+} from '@fullcalendar/core';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -10,14 +15,21 @@ import { api } from '../../App';
 import Calendar from '../../components/calendar/Calendar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 export default function BuildCalendar() {
   const navigate = useNavigate();
+  const user = useUserState();
+
+  const canEdit = useMemo(() => {
+    return user.hasChangeRole(UserRoles.build);
+  }, [user]);
 
   const calendarState = useCalendar('buildorder-index');
 
@@ -80,12 +92,49 @@ export default function BuildCalendar() {
           title: build.reference,
           description: build.title,
           start: start,
-          end: end
+          end: end,
+          startEditable: canEdit && !!build.start_date,
+          durationEditable: canEdit
           // backgroundColor: color
         };
       }) ?? []
     );
-  }, [buildQuery.data]);
+  }, [buildQuery.data, canEdit]);
+
+  // Callback when a build is edited
+  const onEditBuild = (info: EventChangeArg) => {
+    const buildId = info.event.id;
+
+    const patch: Record<string, string> = {};
+
+    if (info.event.start && info.event.start != info.oldEvent.start) {
+      patch['start_date'] = info.event.start.toISOString().split('T')[0];
+    }
+
+    if (info.event.end && info.event.end != info.oldEvent.end) {
+      patch['target_date'] = info.event.end.toISOString().split('T')[0];
+    }
+
+    api
+      .patch(apiUrl(ApiEndpoints.build_order_list, buildId), patch)
+      .then(() => {
+        hideNotification('calendar-edit-success');
+        showNotification({
+          id: 'calendar-edit-success',
+          message: t`Build order updated`,
+          color: 'green'
+        });
+      })
+      .catch(() => {
+        info.revert();
+        hideNotification('calendar-edit-error');
+        showNotification({
+          id: 'calendar-edit-error',
+          message: t`Error updating build order`,
+          color: 'red'
+        });
+      });
+  };
 
   // Callback when a build is clicked on
   const onClickBuild = (info: EventClickArg) => {
@@ -139,9 +188,11 @@ export default function BuildCalendar() {
       enableSearch
       events={events}
       state={calendarState}
+      editable={true}
       isLoading={buildQuery.isFetching}
       eventContent={renderBuildOrder}
       eventClick={onClickBuild}
+      eventChange={onEditBuild}
     />
   );
 }

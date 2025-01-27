@@ -1,7 +1,9 @@
 import type { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
+
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
@@ -137,7 +139,7 @@ export default function Calendar({
                 >
                   <Tooltip label={t`Table Filters`}>
                     <IconFilter
-                      onClick={() => {}} // setFiltersVisible(!filtersVisible)}
+                      onClick={() => setFiltersVisible(!filtersVisible)}
                     />
                   </Tooltip>
                 </ActionIcon>
@@ -155,7 +157,7 @@ export default function Calendar({
           <LoadingOverlay visible={isLoading} />
           <FullCalendar
             ref={state.ref}
-            plugins={[dayGridPlugin]}
+            plugins={[dayGridPlugin, interactionPlugin]}
             initialView='dayGridMonth'
             locales={allLocales}
             locale={locale}
