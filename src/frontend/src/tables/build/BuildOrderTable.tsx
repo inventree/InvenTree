@@ -26,6 +26,7 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -107,11 +108,7 @@ export function BuildOrderTable({
         sortable: true
       },
       CreationDateColumn({}),
-      DateColumn({
-        accessor: 'start_date',
-        title: t`Start Date`,
-        sortable: true
-      }),
+      StartDateColumn({}),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',

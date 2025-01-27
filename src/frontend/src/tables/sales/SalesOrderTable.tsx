@@ -27,6 +27,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   ShipmentDateColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -166,6 +167,7 @@ export function SalesOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),
