@@ -157,7 +157,7 @@ If you use InvenTree and find it to be useful, please consider [sponsoring the p
 ## :gem: Acknowledgements
 
 We want to acknowledge [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration.
-Find a full list of used third-party libraries in [our documentation](https://docs.inventree.org/en/latest/credits/).
+Find a full list of used third-party libraries in the license information dialog of your instance.
 
 ## :heart: Support
 
