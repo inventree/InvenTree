@@ -11,6 +11,10 @@ v305 - 2025-01-25 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth based REST API
 
+v305 - 2025-01-26 : https://github.com/inventree/InvenTree/pull/8950
+    - Bug fixes for the SupplierPart API
+    - Refactoring for data export via API
+
 v304 - 2025-01-22 : https://github.com/inventree/InvenTree/pull/8940
     - Adds "category" filter to build list API
 

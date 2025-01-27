@@ -1193,6 +1193,30 @@ def export_settings_definitions(c, filename='inventree_settings.json', overwrite
     manage(c, f'export_settings_definitions {filename}', pty=True)
 
 
+@task(help={'basedir': 'Export to a base directory (default = False)'})
+def export_definitions(c, basedir: str = ''):
+    """Export various definitions."""
+    if basedir != '' and basedir.endswith('/') is False:
+        basedir += '/'
+
+    filenames = [
+        Path(basedir + 'inventree_settings.json').resolve(),
+        Path(basedir + 'inventree_tags.yml').resolve(),
+        Path(basedir + 'inventree_filters.yml').resolve(),
+    ]
+
+    info('Exporting definitions...')
+    export_settings_definitions(c, overwrite=True, filename=filenames[0])
+
+    check_file_existence(filenames[1], overwrite=True)
+    manage(c, f'export_tags {filenames[1]}', pty=True)
+
+    check_file_existence(filenames[2], overwrite=True)
+    manage(c, f'export_filters {filenames[2]}', pty=True)
+
+    info('Exporting definitions complete')
+
+
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
@@ -1583,6 +1607,7 @@ internal = Collection(
     clean_settings,
     clear_generated,
     export_settings_definitions,
+    export_definitions,
     frontend_build,
     frontend_check,
     frontend_compile,

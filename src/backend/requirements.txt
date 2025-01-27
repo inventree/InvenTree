@@ -140,6 +140,8 @@ djangorestframework==3.14.0
     #   drf-spectacular
 djangorestframework-simplejwt[crypto]==5.4.0
     # via -r src/backend/requirements.in
+docutils==0.21.2
+    # via -r src/backend/requirements.in
 drf-spectacular==0.28.0
     # via -r src/backend/requirements.in
 dulwich==0.22.7
