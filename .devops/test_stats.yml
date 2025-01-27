@@ -67,7 +67,7 @@ steps:
     UV_SYSTEM_PYTHON: 1
     INVENTREE_DEBUG: true
     INVENTREE_LOG_LEVEL: INFO
-  
+
 - task: PublishTestResults@2
   inputs:
     testResultsFiles: "**/TEST-*.xml"
