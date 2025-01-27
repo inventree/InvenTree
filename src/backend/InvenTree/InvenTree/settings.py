@@ -255,6 +255,7 @@ INVENTREE_ADMIN_URL = get_setting(
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
+    'django.contrib.admindocs',
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -330,6 +331,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+        'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
