@@ -142,7 +142,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
-        reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
+        no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
         super().save(force_insert, force_update, *args, **kwargs)
 
@@ -150,10 +150,10 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             # Force active if builtin
             self.active = True
 
-        if not reload and self.active != self.__org_active:
+        if not no_reload and self.active != self.__org_active:
             if settings.PLUGIN_TESTING:
-                warnings.warn('A reload was triggered', stacklevel=2)
-            registry.reload_plugins()
+                warnings.warn('A plugin registry reload was triggered', stacklevel=2)
+            registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
