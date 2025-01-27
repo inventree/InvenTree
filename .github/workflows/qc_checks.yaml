@@ -204,13 +204,13 @@ jobs:
       - name: Upload tags
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
         with:
-          name: inventree_tags.yaml
-          path: src/backend/InvenTree/inventree_tags.yaml
+          name: inventree_tags.yml
+          path: src/backend/InvenTree/inventree_tags.yml
       - name: Upload filters
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
         with:
-          name: inventree_filters.yaml
-          path: src/backend/InvenTree/inventree_filters.yaml
+          name: inventree_filters.yml
+          path: src/backend/InvenTree/inventree_filters.yml
 
   schema-push:
     name: Push new schema
@@ -239,8 +239,8 @@ jobs:
           mkdir export/${version}
           mv artifact/schema.yml export/${version}/api.yaml
           mv artifact/inventree_settings.json export/${version}/inventree_settings.json
-          mv artifact/inventree_tags.yaml export/${version}/inventree_tags.yaml
-          mv artifact/inventree_filters.yaml export/${version}/inventree_filters.yaml
+          mv artifact/inventree_tags.yml export/${version}/inventree_tags.yml
+          mv artifact/inventree_filters.yml export/${version}/inventree_filters.yml
       - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
         name: Commit schema changes
         with:

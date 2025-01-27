@@ -24,7 +24,7 @@ class Command(BaseCommand):
         """Export filter information to a YAML file."""
         filters = discover_filters()
         # Write
-        filename = kwargs.get('filename', 'inventree_filters.yaml')
+        filename = kwargs.get('filename', 'inventree_filters.yml')
         with open(filename, 'w', encoding='utf-8') as f:
             yaml.dump(filters, f, indent=4)
         print(f"Exported InvenTree filter definitions to '{filename}'")

@@ -25,7 +25,7 @@ class Command(BaseCommand):
         tags = discover_tags()
 
         # Write
-        filename = kwargs.get('filename', 'inventree_tags.yaml')
+        filename = kwargs.get('filename', 'inventree_tags.yml')
         with open(filename, 'w', encoding='utf-8') as f:
             yaml.dump(tags, f, indent=4)
         print(f"Exported InvenTree tag definitions to '{filename}'")
