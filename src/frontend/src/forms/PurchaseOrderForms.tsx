@@ -113,6 +113,9 @@ export function usePurchaseOrderLineItemFields({
         value: autoPricing,
         onValueChange: setAutoPricing
       },
+      start_date: {
+        icon: <IconCalendar />
+      },
       target_date: {
         icon: <IconCalendar />
       },
