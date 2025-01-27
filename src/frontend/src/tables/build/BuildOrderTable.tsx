@@ -44,6 +44,8 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -153,18 +155,8 @@ export function BuildOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
-      {
-        name: 'start_date_before',
-        type: 'date',
-        label: t`Start Date Before`,
-        description: t`Show items with a start date before this date`
-      },
-      {
-        name: 'start_date_after',
-        type: 'date',
-        label: t`Start Date After`,
-        description: t`Show items with a start date after this date`
-      },
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
       {
         name: 'has_target_date',
         type: 'boolean',
