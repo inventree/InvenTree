@@ -171,7 +171,8 @@ export default function BuildDetail() {
         name: 'issued_by',
         label: t`Issued By`,
         icon: 'user',
-        badge: 'user'
+        badge: 'user',
+        hidden: !build.issued_by
       },
       {
         type: 'text',
