@@ -46,8 +46,21 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const loginMessage = useMemo(() => {
-    return server.customize?.login_message;
+  const LoginMessage = useMemo(() => {
+    const val = server.customize?.login_message;
+    if (val) {
+      return (
+        <>
+          <Divider my='md' />
+          <Text>
+            <span
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+              dangerouslySetInnerHTML={{ __html: val }}
+            />
+          </Text>
+        </>
+      );
+    }
   }, [server.customize]);
 
   const SplashComponent = useMemo(() => {
@@ -124,17 +137,7 @@ export default function Login() {
                   </Text>
                   {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
                   <ModeSelector loginMode={loginMode} setMode={setMode} />
-                  {loginMessage && (
-                    <>
-                      <Divider my='md' />
-                      <Text>
-                        <span
-                          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-                          dangerouslySetInnerHTML={{ __html: loginMessage }}
-                        />
-                      </Text>
-                    </>
-                  )}
+                  {LoginMessage}
                 </Paper>
                 <AuthFormOptions
                   hostname={hostname}
