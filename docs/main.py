@@ -31,6 +31,8 @@ for key in [
 # Cached settings dict values
 global GLOBAL_SETTINGS
 global USER_SETTINGS
+global TAGS
+global FILTERS
 
 # Read in the InvenTree settings file
 here = os.path.dirname(__file__)
@@ -41,6 +43,13 @@ with open(settings_file, encoding='utf-8') as sf:
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
+
+# Tags
+with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
+    TAGS = yaml.load(f, yaml.BaseLoader)
+# Filters
+with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
+    FILTERS = yaml.load(f, yaml.BaseLoader)
 
 
 def get_repo_url(raw=False):
@@ -303,3 +312,19 @@ def define_env(env):
         setting = USER_SETTINGS[key]
 
         return rendersetting(key, setting)
+
+    @env.macro
+    def tags_and_filters():
+        """Return a list of all tags and filters."""
+        global TAGS
+        global FILTERS
+
+        ret_data = ''
+        for ref in [['Tags', TAGS], ['Filters', FILTERS]]:
+            ret_data += f'## {ref[0]}\n\n| Namespace | Name | Description |\n| --- | --- | --- |\n'
+            for _, value in ref[1].items():
+                ret_data += (
+                    f'| {value["library"]} | {value["name"]} | {value["title"]} |\n'
+                )
+
+        return ret_data

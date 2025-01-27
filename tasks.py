@@ -1202,8 +1202,8 @@ def export_definitions(c, basedir: str = ''):
 
     filenames = [
         Path(basedir + 'inventree_settings.json').resolve(),
-        Path(basedir + 'inventree_tags.yaml').resolve(),
-        Path(basedir + 'inventree_filters.yaml').resolve(),
+        Path(basedir + 'inventree_tags.yml').resolve(),
+        Path(basedir + 'inventree_filters.yml').resolve(),
     ]
 
     info('Exporting definitions...')
