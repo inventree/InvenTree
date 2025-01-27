@@ -1,7 +1,5 @@
 """Tests for state transition mechanism."""
 
-from unittest import skip
-
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .transition import StateTransitionMixin, TransitionMethod, storage
@@ -40,7 +38,6 @@ class TransitionTests(InvenTreeTestCase):
 
         _clean_storage([ErrorImplementation])
 
-    @skip
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
         global raise_storage
