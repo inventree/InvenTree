@@ -517,4 +517,4 @@ A [Part Parameter](../part/parameter.md) has the following available attributes:
 
 The following tags and filters are available.
 
-{{ tags_and_filters }}
+{{ tags_and_filters() }}
