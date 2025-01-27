@@ -61,6 +61,7 @@ export default function Login() {
         </>
       );
     }
+    return null;
   }, [server.customize]);
 
   const SplashComponent = useMemo(() => {
