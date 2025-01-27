@@ -26,6 +26,7 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -129,6 +130,7 @@ export function ReturnOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
