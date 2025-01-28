@@ -21,6 +21,11 @@ def is_docker_environment():
     return os.environ.get('INVENTREE_DOCKER', 'False')
 
 
+def is_rtd_environment():
+    """Check if the InvenTree environment is running on ReadTheDocs."""
+    return os.environ.get('READTHEDOCS', 'False') == 'True'
+
+
 def task_exception_handler(t, v, tb):
     """Handle exceptions raised by tasks.
 
@@ -83,7 +88,7 @@ def checkInvokeVersion():
 
 def chceckInvokePath():
     """Check that the path of the used invoke is correct."""
-    if is_docker_environment():
+    if is_docker_environment() or is_rtd_environment():
         return
 
     invoke_path = Path(invoke.__file__)
