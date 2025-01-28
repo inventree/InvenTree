@@ -76,6 +76,18 @@ def checkInvokeVersion():
         sys.exit(1)
 
 
+def chceckInvokePath():
+    """Check that the path of the used invoke is correct."""
+    invoke_path = Path(invoke.__file__)
+    loc_path = Path(__file__).parent.resolve()
+    if not invoke_path.is_relative_to(loc_path):
+        error('INVE-E2 - Wrong Invoke Path')
+        error(
+            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` !'
+        )
+        sys.exit(1)
+
+
 def checkPythonVersion():
     """Check that the installed python version meets minimum requirements.
 
@@ -101,6 +113,7 @@ def checkPythonVersion():
 
 if __name__ in ['__main__', 'tasks']:
     checkInvokeVersion()
+    chceckInvokePath()
     checkPythonVersion()
 
 
