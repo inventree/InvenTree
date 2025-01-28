@@ -1,14 +1,21 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
-import { clickButtonIfVisible, openFilterDrawer } from '../helpers.ts';
+import {
+  clearTableFilters,
+  clickButtonIfVisible,
+  openFilterDrawer,
+  setTableChoiceFilter
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Purchase Orders', async ({ page }) => {
+test('Purchase Orders - List', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
+  await clearTableFilters(page);
 
   // Check for expected values
   await page.getByRole('cell', { name: 'PO0014' }).waitFor();
@@ -17,10 +24,17 @@ test('Purchase Orders', async ({ page }) => {
   await page.getByText('Pending').first().waitFor();
   await page.getByText('On Hold').first().waitFor();
 
-  // Click through to a particular purchase order
-  await page.getByRole('cell', { name: 'PO0013' }).click();
+  // Filter by 'has start date'
+  await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
+  await page.getByRole('cell', { name: 'Scheduled purchase order' }).waitFor();
 
+  // Click through to a particular purchase order
+  await page.getByRole('cell', { name: 'PO0015' }).click();
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Expected values
+  await page.getByText('2025-06-12').waitFor(); // Start Date
+  await page.getByText('2025-07-17').waitFor(); // Target Date
 });
 
 test('Purchase Orders - Barcodes', async ({ page }) => {
