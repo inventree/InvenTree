@@ -117,3 +117,5 @@ docs/schema.yml
 docs/docs/api/*.yml
 docs/docs/api/schema/*.yml
 inventree_settings.json
+inventree_filters.yml
+inventree_tags.yml
