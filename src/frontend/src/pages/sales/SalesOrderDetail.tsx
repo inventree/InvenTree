@@ -230,7 +230,8 @@ export default function SalesOrderDetail() {
         name: 'start_date',
         label: t`Start Date`,
         icon: 'calendar',
-        hidden: !order.start_date
+        hidden: !order.start_date,
+        copy: true
       },
       {
         type: 'date',

@@ -248,6 +248,7 @@ export default function PurchaseOrderDetail() {
         name: 'start_date',
         label: t`Start Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !order.start_date
       },
       {
