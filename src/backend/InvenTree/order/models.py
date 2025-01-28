@@ -865,7 +865,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
             # Calculate unit purchase price (in base units)
             if line.purchase_price:
                 unit_purchase_price = line.purchase_price
+
+                # Convert purchase price to base units
                 unit_purchase_price /= line.part.base_quantity(1)
+
+                # Convert to base currency
+                if get_global_setting('PURCHASEORDER_CONVERT_CURRENCY'):
+                    try:
+                        unit_purchase_price = convert_money(
+                            unit_purchase_price, currency_code_default()
+                        )
+                    except Exception:
+                        log_error('PurchaseOrder.receive_line_item')
+
             else:
                 unit_purchase_price = None
 
