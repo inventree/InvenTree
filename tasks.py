@@ -1561,9 +1561,7 @@ via your signed in browser, or consider using a point release download via invok
 def docs_server(c, address='localhost:8080', compile_schema=False):
     """Start a local mkdocs server to view the documentation."""
     # Extract settings definitions
-    export_settings_definitions(
-        c, filename='docs/inventree_settings.json', overwrite=True
-    )
+    export_definitions(c, basedir='docs')
 
     if compile_schema:
         # Build the schema docs first
