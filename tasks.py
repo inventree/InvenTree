@@ -45,7 +45,7 @@ def checkInvokeVersion():
     MIN_INVOKE_VERSION = '2.0.0'
 
     min_version = tuple(map(int, MIN_INVOKE_VERSION.split('.')))
-    invoke_version = tuple(map(int, invoke.__version__.split('.')))  # noqa: RUF048
+    invoke_version = tuple(map(int, invoke.__version__.split('.')))
 
     if invoke_version < min_version:
         error(f'The installed invoke version ({invoke.__version__}) is not supported!')
