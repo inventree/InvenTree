@@ -42,7 +42,14 @@ Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Purchase Order Currency
 
-The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
+The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used. Additionally, the currency can be specified separately for each line item.
+
+So, when determining the cost of each line item in the purchase order, the following order of precedence is used:
+
+1. Line item currency
+2. Purchase order currency
+3. Supplier currency
+4. Default (base) currency
 
 ## Create Purchase Order
 
@@ -77,11 +84,11 @@ It is possible to upload an exported purchase order from the supplier instead of
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
 
-### Issue Order
+## Issue Order
 
 Once all the line items were added, click on the <span class='fas fa-paper-plane'></span> button on the main purchase order detail panel and confirm the order has been submitted.
 
-### Receive Line Items
+## Receive Line Items
 
 After receiving all the items from the order, the purchase order will convert the line items into stock items / inventory.
 
@@ -107,19 +114,25 @@ Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side"><span class='fas fa-sign-in-alt'></span> Received Items</span> tab.
 
-### Complete Order
+### Item Value Currency
+
+The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
+
+However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/) of the system.
+
+## Complete Order
 
 Once the quantity of all __received__ items is equal or above the quantity of all line items, the order will be automatically marked as __complete__.
 
 It is also possible to complete the order before all items were received (or if there were missing items).
 To do so, click on the <span class='fas fa-check-circle'></span> button on the main purchase order detail panel and confirm the order was completed.
 
-### Cancel Order
+## Cancel Order
 
 In the event that the order won't be processed, user has the option of cancelling the order instead.
 To do so, simply click on the <span class='fas fa-times-circle'></span> button on the main purchase order detail panel and confirm the purchase order has been cancelled.
 
-### Duplicate Purchase Order
+## Duplicate Purchase Order
 
 Duplicating a Purchase Order allows the user to quickly create a new *copy* of an existing order, using the same supplier and line item information.
 
@@ -158,5 +171,6 @@ The following [global settings](../settings/global.md) are available for purchas
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}

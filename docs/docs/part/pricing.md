@@ -2,23 +2,10 @@
 title: Pricing
 ---
 
-## Pricing
+## Part Pricing
 
-Pricing is an inherently complex topic, often subject to the particular requirements of the user. InvenTree attempts to provide a comprehensive pricing architecture which is useful without being proscriptive.
-
-!!! warning "Raw Data Only"
-    InvenTree stores raw pricing data, as provided by the user. Any calculations or decisions based on this data must take into consideration the context in which the data are entered.
-
-### Terminology
-
-Throughout this documentation (and within InvenTree) the concepts of *cost* and *price* are separated as follows:
-
-| Term | Description |
-| --- | --- |
-| Price | The theoretical amount of money required to pay for something. |
-| Cost | The actual amount of money paid. |
-
-### Pricing Sources
+!!! info "Pricing Support"
+    Refer to the [Pricing Support](../concepts/pricing.md) documentation for more information on pricing support in InvenTree.
 
 Pricing information can be determined from multiple sources:
 
@@ -41,26 +28,6 @@ Additionally, the following information is stored for each part, in relation to 
 | --- | --- | --- |
 | Sale Price | How much a salable item is sold for (with price-breaks) | [Part](../part/part.md) |
 | Sale Cost | How much an item was sold for | [Sales Order](../order/sales_order.md) |
-
-### Currency Support
-
-InvenTree supports pricing data in multiple currencies, allowing integration with suppliers and customers using different currency systems.
-
-Supported currencies can be configured in the [InvenTree settings](../settings/currency.md).
-
-!!! info "Currency Support"
-    InvenTree provides multi-currency pricing support via the [django-money](https://django-money.readthedocs.io/en/latest/) library.
-
-#### Default Currency
-
-Many of the pricing operations are performed in reference to a *Default Currency* (which can be selected for the particular InvenTree installation).
-
-#### Conversion Rates
-
-To facilitate conversion between different currencies, exchange rate data is provided via the [exchangerate.host](https://exchangerate.host/#/) API. Currency exchange rates are updated once per day.
-
-!!! tip "Custom Exchange Rates"
-    Custom exchange rates or databases can be used if desired.
 
 ## Pricing Tab
 
