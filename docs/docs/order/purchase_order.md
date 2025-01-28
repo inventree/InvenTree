@@ -118,7 +118,7 @@ To see the list of stock items created from the purchase order, click on the <sp
 
 The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
 
-However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/) of the system.
+However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/pricing.md#default-currency) of the system. This may be useful when ordering stock in a different currency, to ensure that the unit cost of the stock item is converted to the base currency at the time of receipt.
 
 ## Complete Order
 
