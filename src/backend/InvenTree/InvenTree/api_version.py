@@ -1,15 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 305
+INVENTREE_API_VERSION = 306
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v305 - 2025-01-27 : https://github.com/inventree/InvenTree/pull/8969
+v306 - 2025-01-29 : https://github.com/inventree/InvenTree/pull/8969
     - Extend Info Endpoint to include customizations
+
+v305 - 2025-01-26 : https://github.com/inventree/InvenTree/pull/8950
+    - Bug fixes for the SupplierPart API
+    - Refactoring for data export via API
 
 v304 - 2025-01-22 : https://github.com/inventree/InvenTree/pull/8940
     - Adds "category" filter to build list API
