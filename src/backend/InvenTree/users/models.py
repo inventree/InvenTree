@@ -666,14 +666,20 @@ def update_group_roles(group, debug=False):
                         )
 
 
-def check_user_permission(user: User, model, permission):
+def check_user_permission(user: User, model, permission) -> bool:
     """Check if the user has a particular permission against a given model type.
 
     Arguments:
         user: The user object to check
-        model: The model class to check (e.g. Part)
+        model: The model class to check (e.g. 'part')
         permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        bool: True if the user has the specified permission
     """
+    if not user:
+        return False
+
     if user.is_superuser:
         return True
 
@@ -681,11 +687,20 @@ def check_user_permission(user: User, model, permission):
     return user.has_perm(permission_name)
 
 
-def check_user_role(user: User, role, permission):
+def check_user_role(user: User, role, permission) -> bool:
     """Check if a user has a particular role:permission combination.
 
-    If the user is a superuser, this will return True
+    Arguments:
+        user: The user object to check
+        role: The role to check (e.g. 'part' / 'stock')
+        permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        bool: True if the user has the specified role:permission combination
     """
+    if not user:
+        return False
+
     if user.is_superuser:
         return True
 
