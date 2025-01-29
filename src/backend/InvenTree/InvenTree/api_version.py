@@ -8,7 +8,7 @@ INVENTREE_API_VERSION = 306
 
 INVENTREE_API_TEXT = """
 
-v3-6 0 2025-01-28 : https://github.com/inventree/InvenTree/pull/8966
+v306 - 2025-01-28 : https://github.com/inventree/InvenTree/pull/8966
     - Adds "start_date" to PurchasesOrder API
     - Adds "start_date" to SalesOrder API
     - Adds "start_date" to ReturnOrder API
