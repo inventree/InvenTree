@@ -11,7 +11,6 @@ import { doQuickLogin } from '../login.ts';
 test('Purchase Orders - List', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
 
