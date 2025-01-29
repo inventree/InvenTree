@@ -36,6 +36,10 @@ export const doQuickLogin = async (
 
   await page.getByLabel('navigation-menu').waitFor();
   await page.getByText(/InvenTree Demo Server -/).waitFor();
+
+  // Wait for the dashboard to load
+  await page.getByText('No widgets selected').waitFor();
+  await page.waitForTimeout(250);
 };
 
 export const doLogout = async (page) => {
