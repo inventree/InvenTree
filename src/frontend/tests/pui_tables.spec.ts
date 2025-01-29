@@ -55,7 +55,7 @@ test('Tables - Columns', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Stocktake' }).click();
   await page.keyboard.press('Escape');
 
-  await page.goto(`${baseUrl}/sales/index/salesorders`);
+  await navigate(page, '/sales/index/salesorders');
 
   // Open column selector
   await page.getByLabel('table-select-columns').click();

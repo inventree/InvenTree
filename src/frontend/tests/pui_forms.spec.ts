@@ -1,5 +1,6 @@
 /** Unit tests for form validation, rendering, etc */
 import test from 'playwright/test';
+import { navigate } from './helpers';
 import { doQuickLogin } from './login';
 
 test('Forms - Stock Item Validation', async ({ page }) => {

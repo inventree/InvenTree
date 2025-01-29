@@ -11,7 +11,7 @@ import { setPluginState } from './settings.js';
 test('Label Printing', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'vstock/location/index/');
+  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/platform/stock/location/**');
 
   await page.getByRole('tab', { name: 'Stock Items' }).click();
