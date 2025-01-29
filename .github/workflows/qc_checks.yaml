@@ -196,7 +196,7 @@ jobs:
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract settings / tags
-        run: invoke int.export-definitions
+        run: invoke int.export-definitions --basedir src/backend/InvenTree
       - name: Upload settings
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
         with:
