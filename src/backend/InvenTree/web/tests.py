@@ -24,9 +24,8 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_spa_bundle(self):
         """Test the 'spa_bundle' template tag."""
         resp = spa_helper.spa_bundle()
-        if not resp:
+        if resp == 'NOT_FOUND':
             # No Vite, no test
-            # TODO: Add a test for the non-Vite case (docker)
             return  # pragma: no cover
 
         shipped_js = resp.split('<script type="module" src="')[1:]
@@ -39,7 +38,7 @@ class TemplateTagTest(InvenTreeTestCase):
             manifest_file.with_suffix('.json.bak')
         )  # Rename
         resp = spa_helper.spa_bundle()
-        self.assertIsNone(resp)
+        self.assertEqual(resp, 'NOT_FOUND')
 
         # Try with differing name
         resp = spa_helper.spa_bundle(new_name)
@@ -48,7 +47,7 @@ class TemplateTagTest(InvenTreeTestCase):
         # Broken manifest file
         manifest_file.write_text('broken')
         resp = spa_helper.spa_bundle(manifest_file)
-        self.assertIsNone(resp)
+        self.assertEqual(resp, '')
 
         new_name.rename(manifest_file.with_suffix('.json'))  # Name back
 

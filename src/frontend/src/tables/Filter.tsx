@@ -169,6 +169,24 @@ export function CreatedAfterFilter(): TableFilter {
   };
 }
 
+export function StartDateBeforeFilter(): TableFilter {
+  return {
+    name: 'start_date_before',
+    label: t`Start Date Before`,
+    description: t`Show items with a start date before this date`,
+    type: 'date'
+  };
+}
+
+export function StartDateAfterFilter(): TableFilter {
+  return {
+    name: 'start_date_after',
+    label: t`Start Date After`,
+    description: t`Show items with a start date after this date`,
+    type: 'date'
+  };
+}
+
 export function TargetDateBeforeFilter(): TableFilter {
   return {
     name: 'target_date_before',
