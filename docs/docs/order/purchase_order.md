@@ -107,19 +107,19 @@ Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side"><span class='fas fa-sign-in-alt'></span> Received Items</span> tab.
 
-### Complete Order
+## Complete Order
 
 Once the quantity of all __received__ items is equal or above the quantity of all line items, the order will be automatically marked as __complete__.
 
 It is also possible to complete the order before all items were received (or if there were missing items).
 To do so, click on the <span class='fas fa-check-circle'></span> button on the main purchase order detail panel and confirm the order was completed.
 
-### Cancel Order
+## Cancel Order
 
 In the event that the order won't be processed, user has the option of cancelling the order instead.
 To do so, simply click on the <span class='fas fa-times-circle'></span> button on the main purchase order detail panel and confirm the purchase order has been cancelled.
 
-### Duplicate Purchase Order
+## Duplicate Purchase Order
 
 Duplicating a Purchase Order allows the user to quickly create a new *copy* of an existing order, using the same supplier and line item information.
 
@@ -141,7 +141,23 @@ A new purchase order is then created based on the currently selected order:
 {% include "img.html" %}
 {% endwith %}
 
-### Calendar view
+## Order Scheduling
+
+Purchase orders can be scheduled for a future date, to allow for planning of future orders.
+
+### Start Date
+
+The *Start Date* of the purchase order is the date on which the order is scheduled to be issued to the supplier.
+
+### Target Date
+
+The *Target Date* of the purchase order is the date on which the order is expected to be completed / received from the supplier.
+
+### Overdue Orders
+
+If the *Target Date* of the purchase order is reached but the order has not been completed, the order will be marked as *overdue*.
+
+## Calendar view
 
 Using the button to the top right of the list of Purchase Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 

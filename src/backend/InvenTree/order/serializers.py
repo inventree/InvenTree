@@ -186,8 +186,9 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         """Construct a set of fields for this serializer."""
         return [
             'pk',
-            'creation_date',
             'created_by',
+            'creation_date',
+            'start_date',
             'target_date',
             'description',
             'line_items',

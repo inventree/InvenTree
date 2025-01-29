@@ -1,6 +1,11 @@
 import { t } from '@lingui/macro';
 import { Table } from '@mantine/core';
-import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
+import {
+  IconAddressBook,
+  IconCalendar,
+  IconUser,
+  IconUsers
+} from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -40,7 +45,12 @@ export function useSalesOrderFields({
       customer_reference: {},
       project_code: {},
       order_currency: {},
-      target_date: {},
+      start_date: {
+        icon: <IconCalendar />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
       link: {},
       contact: {
         icon: <IconUser />,
