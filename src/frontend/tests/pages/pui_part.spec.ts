@@ -1,5 +1,5 @@
 import { test } from '../baseFixtures';
-import { clearTableFilters, getRowFromCell } from '../helpers';
+import { clearTableFilters, getRowFromCell, navigate } from '../helpers';
 import { doQuickLogin } from '../login';
 
 /**
