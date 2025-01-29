@@ -1,7 +1,11 @@
 """This module provides template tags for extra functionality, over and above the built-in Django tags."""
 
+from datetime import date, datetime
+
 from django import template
 from django.conf import settings as djangosettings
+
+import structlog
 
 import common.models
 import InvenTree.helpers
@@ -12,6 +16,9 @@ from InvenTree import version
 from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
+
+
+logger = structlog.get_logger('inventree')
 
 
 @register.simple_tag()
@@ -29,6 +36,58 @@ def define(value, *args, **kwargs):
 def decimal(x, *args, **kwargs):
     """Simplified rendering of a decimal number."""
     return InvenTree.helpers.decimal2string(x)
+
+
+@register.simple_tag(takes_context=True)
+def render_date(context, date_object):
+    """Renders a date according to the preference of the provided user.
+
+    Note that the user preference is stored using the formatting adopted by moment.js,
+    which differs from the python formatting!
+    """
+    if date_object is None:
+        return None
+
+    if isinstance(date_object, str):
+        date_object = date_object.strip()
+
+        # Check for empty string
+        if len(date_object) == 0:
+            return None
+
+        # If a string is passed, first convert it to a datetime
+        try:
+            date_object = date.fromisoformat(date_object)
+        except ValueError:
+            logger.warning('Tried to convert invalid date string: %s', date_object)
+            return None
+
+    # We may have already pre-cached the date format by calling this already!
+    user_date_format = context.get('user_date_format', None)
+
+    if user_date_format is None:
+        user = context.get('user', None)
+
+        if user and user.is_authenticated:
+            # User is specified - look for their date display preference
+            user_date_format = common.models.InvenTreeUserSetting.get_setting(
+                'DATE_DISPLAY_FORMAT', user=user
+            )
+        else:
+            user_date_format = 'YYYY-MM-DD'
+
+        # Convert the format string to Pythonic equivalent
+        replacements = [('YYYY', '%Y'), ('MMM', '%b'), ('MM', '%m'), ('DD', '%d')]
+
+        for o, n in replacements:
+            user_date_format = user_date_format.replace(o, n)
+
+        # Update the context cache
+        context['user_date_format'] = user_date_format
+
+    if isinstance(date_object, (datetime, date)):
+        return date_object.strftime(user_date_format)
+    return date_object
 
 
 @register.simple_tag
