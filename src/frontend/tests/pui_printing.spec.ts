@@ -55,11 +55,10 @@ test('Label Printing', async ({ page }) => {
 test('Report Printing', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock/location/index/`);
-  await page.waitForURL('**/platform/stock/location/**');
-
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
   await page.getByRole('cell', { name: 'PO0009' }).click();
 
   // Select "print report"
