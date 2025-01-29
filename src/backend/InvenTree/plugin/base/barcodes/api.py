@@ -654,7 +654,7 @@ class BarcodeSOAllocate(BarcodeView):
             return shipment
 
         shipments = order.models.SalesOrderShipment.objects.filter(
-            order=sales_order, delivery_date=None
+            order=sales_order, shipment_date=None
         )
 
         if shipments.count() == 1:
