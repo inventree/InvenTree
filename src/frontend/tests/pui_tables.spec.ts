@@ -33,6 +33,7 @@ test('Tables - Filters', async ({ page }) => {
   await setTableChoiceFilter(page, 'Responsible', 'readers');
   await setTableChoiceFilter(page, 'Assigned to me', 'No');
   await setTableChoiceFilter(page, 'Project Code', 'PRO-ZEN');
+  await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
 
   await clearTableFilters(page);
 });
@@ -49,4 +50,17 @@ test('Tables - Columns', async ({ page }) => {
   // De-select some items
   await page.getByRole('menuitem', { name: 'Description' }).click();
   await page.getByRole('menuitem', { name: 'Stocktake' }).click();
+  await page.keyboard.press('Escape');
+
+  await page.goto(`${baseUrl}/sales/index/salesorders`);
+
+  // Open column selector
+  await page.getByLabel('table-select-columns').click();
+
+  await page.getByRole('menuitem', { name: 'Start Date' }).click();
+  await page.getByRole('menuitem', { name: 'Target Date' }).click();
+  await page.getByRole('menuitem', { name: 'Reference', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Project Code' }).click();
+
+  await page.waitForTimeout(1000);
 });
