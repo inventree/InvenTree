@@ -321,7 +321,7 @@ class StockLocationFilter(rest_filters.FilterSet):
     def filter_parent(self, queryset, name, value):
         """Filter by parent location.
 
-        Note that the filtering behaviour here varies,
+        Note that the filtering behavior here varies,
         depending on whether the 'cascade' value is set.
 
         So, we have to check the "cascade" value here.
