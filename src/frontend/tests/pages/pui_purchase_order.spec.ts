@@ -78,7 +78,7 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Ensure we can scan back to this page, with the associated barcode
-  await page.goto(`${baseUrl}/`);
+  await page.getByRole('tab', { name: 'Sales' }).click();
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByPlaceholder('Enter barcode data').fill('1234567890');

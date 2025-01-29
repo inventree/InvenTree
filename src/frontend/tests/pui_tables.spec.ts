@@ -59,7 +59,7 @@ test('Tables - Columns', async ({ page }) => {
 
   await page.getByRole('menuitem', { name: 'Start Date' }).click();
   await page.getByRole('menuitem', { name: 'Target Date' }).click();
-  await page.getByRole('menuitem', { name: 'Reference' }).click();
+  await page.getByRole('menuitem', { name: 'Reference', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Project Code' }).click();
 
   await page.waitForTimeout(1000);
