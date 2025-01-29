@@ -564,7 +564,7 @@ jobs:
           install: true
           update: true
       - name: Set up test data
-        run: invoke dev.setup-test -i
+        run: invoke dev.setup-test -i -v
       - name: Rebuild thumbnails
         run: invoke int.rebuild-thumbnails
       - name: Install dependencies
