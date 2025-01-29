@@ -1,14 +1,19 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
-import { clickButtonIfVisible, openFilterDrawer } from '../helpers.ts';
+import {
+  clearTableFilters,
+  clickButtonIfVisible,
+  openFilterDrawer
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
 test('Purchase Orders', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
+  await clearTableFilters(page);
 
   // Check for expected values
   await page.getByRole('cell', { name: 'PO0014' }).waitFor();

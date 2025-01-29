@@ -546,6 +546,10 @@ djangorestframework-simplejwt[crypto]==5.4.0 \
     --hash=sha256:7aec953db9ed4163430c16d086eecb0f028f814ce6bba62b06c25919261e9077 \
     --hash=sha256:cccecce1a0e1a4a240fae80da73e5fc23055bababb8b67de88fa47cd36822320
     # via -r src/backend/requirements.in
+docutils==0.21.2 \
+    --hash=sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f \
+    --hash=sha256:dafca5b9e384f0e419294eb4d2ff9fa826435bf15f15b7bd45723e8ad76811b2
+    # via -r src/backend/requirements.in
 drf-spectacular==0.28.0 \
     --hash=sha256:2c778a47a40ab2f5078a7c42e82baba07397bb35b074ae4680721b2805943061 \
     --hash=sha256:856e7edf1056e49a4245e87a61e8da4baff46c83dbc25be1da2df77f354c7cb4
