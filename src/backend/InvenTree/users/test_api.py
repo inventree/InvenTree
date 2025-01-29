@@ -206,7 +206,7 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         self.client.get(me, expected_code=200)
 
-    def test_buildin_token(self):
+    def test_builtin_token(self):
         """Test the built-in token authentication."""
         response = self.post(
             reverse('rest_login'),
