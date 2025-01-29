@@ -57,14 +57,7 @@ def render_date(date_object):
             logger.warning('Tried to convert invalid date string: %s', date_object)
             return None
 
-    user_date_format = 'YYYY-MM-DD'
-
-    # Convert the format string to Pythonic equivalent
-    replacements = [('YYYY', '%Y'), ('MMM', '%b'), ('MM', '%m'), ('DD', '%d')]
-
-    for o, n in replacements:
-        user_date_format = user_date_format.replace(o, n)
-
+    user_date_format = '%y-%b-%d'
     if isinstance(date_object, (datetime, date)):
         return date_object.strftime(user_date_format)
     return date_object
