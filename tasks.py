@@ -402,7 +402,9 @@ def rebuild_models(c):
 @task
 def rebuild_thumbnails(c):
     """Rebuild missing image thumbnails."""
-    info('Rebuilding image thumbnails')
+    from src.backend.InvenTree.InvenTree.config import get_media_dir
+
+    info(f'Rebuilding image thumbnails in {get_media_dir()}')
     manage(c, 'rebuild_thumbnails', pty=True)
 
 
@@ -1141,10 +1143,8 @@ def setup_test(
     import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
 
     # Copy media files
-    info('Copying media files ...')
     src = template_dir.joinpath('media')
     dst = get_media_dir()
-
     info(f'Copying media files - "{src}" to "{dst}"')
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
