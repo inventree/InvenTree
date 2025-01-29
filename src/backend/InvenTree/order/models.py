@@ -203,6 +203,8 @@ class Order(
         creation_date: Automatic date of order creation
         created_by: User who created this order (automatically captured)
         issue_date: Date the order was issued
+        start_date: Date the order is scheduled to be started
+        target_date: Expected or desired completion date
         complete_date: Date the order was completed
         responsible: User (or group) responsible for managing the order
     """
@@ -243,6 +245,13 @@ class Order(
                 raise ValidationError({
                     'contact': _('Contact does not match selected company')
                 })
+
+        # Target date should be *after* the start date
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date'),
+                'start_date': _('Start date must be before target date'),
+            })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -308,6 +317,13 @@ class Order(
 
     link = InvenTreeURLField(
         blank=True, verbose_name=_('Link'), help_text=_('Link to external page')
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Start date'),
+        help_text=_('Scheduled start date for this order'),
     )
 
     target_date = models.DateField(

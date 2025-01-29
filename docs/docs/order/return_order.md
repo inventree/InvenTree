@@ -115,7 +115,23 @@ While [line items](#line-items) must reference a particular stock item, extra li
 
 Custom [reports](../report/templates.md) can be generated against each Return Order.
 
-### Calendar view
+## Order Scheduling
+
+Return Orders can be scheduled to be completed on a specific date. This can be useful for planning and tracking the return of items.
+
+### Start Date
+
+The *Start Date* of the return order is the date on which the order is scheduled to be issued to the customer.
+
+### Target Date
+
+The *Target Date* of the return order is the date on which the order is scheduled to be completed.
+
+### Overdue Orders
+
+If the *Target Date* of a return order has passed, the order will be marked as *Overdue*. This can be useful for tracking orders which are behind schedule.
+
+## Calendar view
 
 Using the button to the top right of the list of Return Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 
