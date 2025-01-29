@@ -1,19 +1,20 @@
 """Machine registry."""
 
-import logging
 from typing import Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
 
+import structlog
+
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MachineRegistry(
-    get_shared_class_instance_state_mixin(lambda _x: f'machine:registry')
+    get_shared_class_instance_state_mixin(lambda _x: 'machine:registry')
 ):
     """Machine registry class."""
 
@@ -38,13 +39,13 @@ class MachineRegistry(
 
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""
-        self.set_shared_state('errors', self.errors + [error])
+        self.set_shared_state('errors', [*self.errors, error])
 
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""
         # clear cache for machines (only needed for global redis cache)
         if main and hasattr(cache, 'delete_pattern'):  # pragma: no cover
-            cache.delete_pattern(f'machine:*')
+            cache.delete_pattern('machine:*')
 
         self.discover_machine_types()
         self.discover_drivers()

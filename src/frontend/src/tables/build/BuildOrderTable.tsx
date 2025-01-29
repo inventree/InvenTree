@@ -8,7 +8,9 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { shortenString } from '../../functions/tables';
 import {
+  useFilters,
   useOwnerFilters,
   useProjectCodeFilters,
   useUserFilters
@@ -17,7 +19,6 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
   DateColumn,
@@ -25,62 +26,31 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import {
+  AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  OrderStatusFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-
-/**
- * Construct a list of columns for the build order table
- */
-function buildOrderTableColumns(): TableColumn[] {
-  return [
-    ReferenceColumn({}),
-    {
-      accessor: 'part',
-      sortable: true,
-      switchable: false,
-      render: (record: any) => PartColumn(record.part_detail)
-    },
-    {
-      accessor: 'title',
-      sortable: false
-    },
-    {
-      accessor: 'completed',
-      sortable: true,
-      switchable: false,
-      render: (record: any) => (
-        <ProgressBar
-          progressLabel={true}
-          value={record.completed}
-          maximum={record.quantity}
-        />
-      )
-    },
-    StatusColumn({ model: ModelType.build }),
-    ProjectCodeColumn({}),
-    {
-      accessor: 'priority',
-      sortable: true
-    },
-    CreationDateColumn({}),
-    TargetDateColumn({}),
-    DateColumn({
-      accessor: 'completion_date',
-      sortable: true
-    }),
-    {
-      accessor: 'issued_by',
-      sortable: true,
-      render: (record: any) => (
-        <RenderUser instance={record?.issued_by_detail} />
-      )
-    },
-    ResponsibleColumn({})
-  ];
-}
 
 /*
  * Construct a table of build orders, according to the provided parameters
@@ -89,76 +59,155 @@ export function BuildOrderTable({
   partId,
   parentBuildId,
   salesOrderId
-}: {
+}: Readonly<{
   partId?: number;
   parentBuildId?: number;
   salesOrderId?: number;
-}) {
-  const tableColumns = useMemo(() => buildOrderTableColumns(), []);
+}>) {
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+
+  const tableColumns = useMemo(() => {
+    return [
+      ReferenceColumn({}),
+      {
+        accessor: 'part',
+        sortable: true,
+        switchable: false,
+        render: (record: any) => PartColumn({ part: record.part_detail })
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: true,
+        switchable: true,
+        title: t`IPN`
+      },
+      {
+        accessor: 'title',
+        sortable: false
+      },
+      {
+        accessor: 'completed',
+        sortable: true,
+        switchable: false,
+        render: (record: any) => (
+          <ProgressBar
+            progressLabel={true}
+            value={record.completed}
+            maximum={record.quantity}
+          />
+        )
+      },
+      StatusColumn({ model: ModelType.build }),
+      ProjectCodeColumn({}),
+      {
+        accessor: 'level',
+        sortable: true,
+        switchable: true,
+        hidden: !parentBuildId
+      },
+      {
+        accessor: 'priority',
+        sortable: true
+      },
+      CreationDateColumn({}),
+      StartDateColumn({}),
+      TargetDateColumn({}),
+      DateColumn({
+        accessor: 'completion_date',
+        title: t`Completion Date`,
+        sortable: true
+      }),
+      {
+        accessor: 'issued_by',
+        sortable: true,
+        render: (record: any) => (
+          <RenderUser instance={record?.issued_by_detail} />
+        )
+      },
+      ResponsibleColumn({})
+    ];
+  }, [parentBuildId]);
 
   const projectCodeFilters = useProjectCodeFilters();
+  const ownerFilters = useOwnerFilters();
   const userFilters = useUserFilters();
-  const responsibleFilters = useOwnerFilters();
+
+  const categoryFilters = useFilters({
+    url: apiUrl(ApiEndpoints.category_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: shortenString({
+        str: item.pathstring,
+        len: 50
+      })
+    })
+  });
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
+    const filters: TableFilter[] = [
+      OutstandingFilter(),
+      OrderStatusFilter({ model: ModelType.build }),
+      OverdueFilter(),
+      AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
       {
-        name: 'active',
+        name: 'has_target_date',
         type: 'boolean',
-        label: t`Active`,
-        description: t`Show active orders`
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
       },
       {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.build)
-      },
-      {
-        name: 'overdue',
-        label: t`Overdue`,
+        name: 'has_start_date',
         type: 'boolean',
-        description: t`Show overdue status`
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
       },
-      {
-        name: 'assigned_to_me',
-        type: 'boolean',
-        label: t`Assigned to me`,
-        description: t`Show orders assigned to me`
-      },
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
-      {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
-      },
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      HasProjectCodeFilter(),
       {
         name: 'issued_by',
         label: t`Issued By`,
         description: t`Filter by user who issued this order`,
         choices: userFilters.choices
       },
+      ResponsibleFilter({ choices: ownerFilters.choices }),
       {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
+        name: 'category',
+        label: t`Category`,
+        description: t`Filter by part category`,
+        choices: categoryFilters.choices
       }
     ];
+
+    // If we are filtering on a specific part, we can include the "include variants" filter
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
   }, [
+    partId,
+    categoryFilters.choices,
     projectCodeFilters.choices,
-    userFilters.choices,
-    responsibleFilters.choices
+    ownerFilters.choices,
+    userFilters.choices
   ]);
 
   const user = useUserState();
-
-  const table = useTable('buildorder');
 
   const buildOrderFields = useBuildOrderFields({ create: true });
 
@@ -181,7 +230,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
-        key="add-build-order"
+        key='add-build-order'
       />
     ];
   }, [user]);
@@ -196,8 +245,8 @@ export function BuildOrderTable({
         props={{
           params: {
             part: partId,
+            ancestor: parentBuildId,
             sales_order: salesOrderId,
-            parent: parentBuildId,
             part_detail: true
           },
           tableActions: tableActions,

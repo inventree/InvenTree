@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup } from '../../components/nav/PanelGroup';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
@@ -24,7 +24,8 @@ export default function PurchasingIndex() {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        content: <PurchaseOrderTable />
+        content: <PurchaseOrderTable />,
+        hidden: !user.hasViewRole(UserRoles.purchase_order)
       },
       {
         name: 'suppliers',
@@ -32,7 +33,7 @@ export default function PurchasingIndex() {
         icon: <IconBuildingStore />,
         content: (
           <CompanyTable
-            path="purchasing/supplier"
+            path='purchasing/supplier'
             params={{ is_supplier: true }}
           />
         )
@@ -43,13 +44,13 @@ export default function PurchasingIndex() {
         icon: <IconBuildingFactory2 />,
         content: (
           <CompanyTable
-            path="purchasing/manufacturer"
+            path='purchasing/manufacturer'
             params={{ is_manufacturer: true }}
           />
         )
       }
     ];
-  }, []);
+  }, [user]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.purchase_order)) {
     return <PermissionDenied />;
@@ -58,7 +59,12 @@ export default function PurchasingIndex() {
   return (
     <Stack>
       <PageDetail title={t`Purchasing`} />
-      <PanelGroup pageKey="purchasing-index" panels={panels} />
+      <PanelGroup
+        pageKey='purchasing-index'
+        panels={panels}
+        model={'purchasing'}
+        id={null}
+      />
     </Stack>
   );
 }

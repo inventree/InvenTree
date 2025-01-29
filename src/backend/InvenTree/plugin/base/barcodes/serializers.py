@@ -5,10 +5,38 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+import common.models
+import company.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
+from InvenTree.serializers import UserSerializer
 from order.status_codes import PurchaseOrderStatus, SalesOrderStatus
+
+
+class BarcodeScanResultSerializer(serializers.ModelSerializer):
+    """Serializer for barcode scan results."""
+
+    class Meta:
+        """Meta class for BarcodeScanResultSerializer."""
+
+        model = common.models.BarcodeScanResult
+
+        fields = [
+            'pk',
+            'data',
+            'timestamp',
+            'endpoint',
+            'context',
+            'response',
+            'result',
+            'user',
+            'user_detail',
+        ]
+
+        read_only_fields = fields
+
+    user_detail = UserSerializer(source='user', read_only=True)
 
 
 class BarcodeSerializer(serializers.Serializer):
@@ -41,7 +69,7 @@ class BarcodeGenerateSerializer(serializers.Serializer):
             plugin.base.barcodes.helper.get_supported_barcode_models_map()
         )
 
-        if model not in supported_models.keys():
+        if model not in supported_models:
             raise ValidationError(_('Model is not supported'))
 
         return model
@@ -122,6 +150,13 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
     - location: Location to receive items into
     """
 
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text=_('Supplier to receive items from'),
+    )
+
     purchase_order = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrder.objects.all(),
         required=False,
@@ -149,6 +184,19 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
             raise ValidationError(_('Cannot select a structural location'))
 
         return location
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrderLineItem.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text=_('Purchase order line item to receive items against'),
+    )
+
+    auto_allocate = serializers.BooleanField(
+        required=False,
+        default=True,
+        help_text=_('Automatically allocate stock items to the purchase order'),
+    )
 
 
 class BarcodeSOAllocateSerializer(BarcodeSerializer):

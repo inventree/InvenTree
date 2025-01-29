@@ -7,6 +7,9 @@
             "pattern": "http://localhost"
         },
         {
+            "pattern": "https://localhost:5173/"
+        },
+        {
             "pattern": "http://127.0.0.1"
         },
         {
@@ -14,6 +17,9 @@
         },
         {
             "pattern": "https://www.reddit.com/r/InvenTree/"
+        },
+        {
+            "pattern": "https://opensource.org/license/MIT"
         }
     ]
 }

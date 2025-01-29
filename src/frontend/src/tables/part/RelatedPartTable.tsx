@@ -1,28 +1,32 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
-  useDeleteApiFormModal
+  useDeleteApiFormModal,
+  useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
+import { NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
  */
-export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
+export function RelatedPartTable({
+  partId
+}: Readonly<{ partId: number }>): ReactNode {
   const table = useTable('relatedparts');
 
   const navigate = useNavigate();
@@ -43,12 +47,13 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {
         accessor: 'part',
         title: t`Part`,
+        switchable: false,
         render: (record: any) => {
-          let part = getPart(record);
+          const part = getPart(record);
           return (
             <Group
-              wrap="nowrap"
-              justify="left"
+              wrap='nowrap'
+              justify='left'
               onClick={() => {
                 navigate(`/part/${part.pk}/`);
               }}
@@ -60,13 +65,23 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
         }
       },
       {
+        accessor: 'ipn',
+        title: t`IPN`,
+        switchable: true,
+        render: (record: any) => {
+          const part = getPart(record);
+          return part.IPN;
+        }
+      },
+      {
         accessor: 'description',
-        title: t`Description`,
+        title: t`Part Description`,
         ellipsis: true,
         render: (record: any) => {
           return getPart(record).description;
         }
-      }
+      },
+      NoteColumn({})
     ];
   }, [partId]);
 
@@ -100,10 +115,21 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
     table: table
   });
 
+  const editRelatedPart = useEditApiFormModal({
+    url: ApiEndpoints.related_part_list,
+    pk: selectedRelatedPart,
+    title: t`Edit Related Part`,
+    fields: {
+      note: {}
+    },
+    table: table
+  });
+
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <AddItemButton
-        tooltip={t`Add related part`}
+        key='add-related-part'
+        tooltip={t`Add Related Part`}
         hidden={!user.hasAddRole(UserRoles.part)}
         onClick={() => newRelatedPart.open()}
       />
@@ -111,8 +137,15 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.part),
+          onClick: () => {
+            setSelectedRelatedPart(record.pk);
+            editRelatedPart.open();
+          }
+        }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
@@ -128,6 +161,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   return (
     <>
       {newRelatedPart.modal}
+      {editRelatedPart.modal}
       {deleteRelatedPart.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.related_part_list)}

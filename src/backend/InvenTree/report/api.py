@@ -6,13 +6,12 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.cache import never_cache
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions
 from rest_framework.generics import GenericAPIView
-from rest_framework.request import clone_request
 from rest_framework.response import Response
 
 import common.models
@@ -25,12 +24,7 @@ import report.serializers
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import (
-    ListAPI,
-    ListCreateAPI,
-    RetrieveAPI,
-    RetrieveUpdateDestroyAPI,
-)
+from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
 
@@ -43,52 +37,6 @@ class TemplatePermissionMixin:
         permissions.IsAuthenticated,
         InvenTree.permissions.IsStaffOrReadOnly,
     ]
-
-
-@method_decorator(cache_page(5), name='dispatch')
-class TemplatePrintBase(RetrieveAPI):
-    """Base class for printing against templates."""
-
-    @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates."""
-        return super().dispatch(*args, **kwargs)
-
-    def check_permissions(self, request):
-        """Override request method to GET so that also non superusers can print using a post request."""
-        if request.method == 'POST':
-            request = clone_request(request, 'GET')
-        return super().check_permissions(request)
-
-    def post(self, request, *args, **kwargs):
-        """Respond as if a POST request was provided."""
-        return self.get(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        """GET action for a template printing endpoint.
-
-        - Items are expected to be passed as a list of valid IDs
-        """
-        # Extract a list of items to print from the queryset
-        item_ids = []
-
-        for value in request.query_params.get('items', '').split(','):
-            try:
-                item_ids.append(int(value))
-            except Exception:
-                pass
-
-        template = self.get_object()
-
-        items = template.get_model().objects.filter(pk__in=item_ids)
-
-        if len(items) == 0:
-            # At least one item must be provided
-            return Response(
-                {'error': _('No valid objects provided to template')}, status=400
-            )
-
-        return self.print(request, items)
 
 
 class ReportFilterBase(rest_filters.FilterSet):
@@ -350,11 +298,20 @@ class ReportPrint(GenericAPIView):
 
                 output = template.render(instance, request)
 
+                if template.attach_to_model:
+                    # Attach the generated report to the model instance
+                    data = output.get_document().write_pdf()
+                    instance.create_attachment(
+                        attachment=ContentFile(data, report_name),
+                        comment=_('Report saved at time of printing'),
+                        upload_user=request.user,
+                    )
+
                 # Provide generated report to any interested plugins
                 for plugin in registry.with_mixin('report'):
                     try:
                         plugin.report_callback(self, instance, output, request)
-                    except Exception as e:
+                    except Exception:
                         InvenTree.exceptions.log_error(
                             f'plugins.{plugin.slug}.report_callback'
                         )

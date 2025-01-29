@@ -14,7 +14,7 @@ import {
   Text
 } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { useImportSession } from '../../hooks/UseImportSession';
@@ -27,7 +27,9 @@ import ImporterImportProgress from './ImporterImportProgress';
 /*
  * Stepper component showing the current step of the data import process.
  */
-function ImportDrawerStepper({ currentStep }: { currentStep: number }) {
+function ImportDrawerStepper({
+  currentStep
+}: Readonly<{ currentStep: number }>) {
   /* TODO: Enhance this with:
    * - Custom icons
    * - Loading indicators for "background" states
@@ -39,7 +41,7 @@ function ImportDrawerStepper({ currentStep }: { currentStep: number }) {
       onStepClick={undefined}
       allowNextStepsSelect={false}
       iconSize={20}
-      size="xs"
+      size='xs'
     >
       <Stepper.Step label={t`Upload File`} />
       <Stepper.Step label={t`Map Columns`} />
@@ -54,11 +56,11 @@ export default function ImporterDrawer({
   sessionId,
   opened,
   onClose
-}: {
+}: Readonly<{
   sessionId: number;
   opened: boolean;
   onClose: () => void;
-}) {
+}>) {
   const session = useImportSession({ sessionId: sessionId });
 
   const importSessionStatus = useStatusCodes({
@@ -68,7 +70,6 @@ export default function ImporterDrawer({
   // Map from import steps to stepper steps
   const currentStep = useMemo(() => {
     switch (session.status) {
-      default:
       case importSessionStatus.INITIAL:
         return 0;
       case importSessionStatus.MAPPING:
@@ -79,6 +80,8 @@ export default function ImporterDrawer({
         return 3;
       case importSessionStatus.COMPLETE:
         return 4;
+      default:
+        return 0;
     }
   }, [session.status]);
 
@@ -98,24 +101,24 @@ export default function ImporterDrawer({
         return <ImporterDataSelector session={session} />;
       case importSessionStatus.COMPLETE:
         return (
-          <Stack gap="xs">
+          <Stack gap='xs'>
             <Alert
-              color="green"
+              color='green'
               title={t`Import Complete`}
               icon={<IconCheck />}
             >
               {t`Data has been imported successfully`}
             </Alert>
-            <Button color="blue" onClick={onClose}>{t`Close`}</Button>
+            <Button color='blue' onClick={onClose}>{t`Close`}</Button>
           </Stack>
         );
       default:
         return (
-          <Stack gap="xs">
-            <Alert color="red" title={t`Unknown Status`} icon={<IconCheck />}>
+          <Stack gap='xs'>
+            <Alert color='red' title={t`Unknown Status`} icon={<IconCheck />}>
               {t`Import session has unknown status`}: {session.status}
             </Alert>
-            <Button color="red" onClick={onClose}>{t`Close`}</Button>
+            <Button color='red' onClick={onClose}>{t`Close`}</Button>
           </Stack>
         );
     }
@@ -123,15 +126,15 @@ export default function ImporterDrawer({
 
   const title: ReactNode = useMemo(() => {
     return (
-      <Stack gap="xs" style={{ width: '100%' }}>
+      <Stack gap='xs' style={{ width: '100%' }}>
         <Group
-          gap="xs"
-          wrap="nowrap"
-          justify="space-apart"
+          gap='xs'
+          wrap='nowrap'
+          justify='space-apart'
           grow
           preventGrowOverflow={false}
         >
-          <StylishText size="lg">
+          <StylishText size='lg'>
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
           <ImportDrawerStepper currentStep={currentStep} />
@@ -144,8 +147,8 @@ export default function ImporterDrawer({
 
   return (
     <Drawer
-      position="bottom"
-      size="80%"
+      position='bottom'
+      size='80%'
       title={title}
       opened={opened}
       onClose={onClose}
@@ -161,9 +164,9 @@ export default function ImporterDrawer({
         }
       }}
     >
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <LoadingOverlay visible={session.sessionQuery.isFetching} />
-        <Paper p="md">{session.sessionQuery.isFetching || widget}</Paper>
+        <Paper p='md'>{session.sessionQuery.isFetching || widget}</Paper>
       </Stack>
     </Drawer>
   );

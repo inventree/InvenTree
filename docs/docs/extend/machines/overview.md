@@ -7,7 +7,7 @@ title: Machines
 InvenTree has a builtin machine registry. There are different machine types available where each type can have different drivers. Drivers and even custom machine types can be provided by plugins.
 
 !!! info "Requires Redis"
-    If the machines features is used in production setup using workers, a shared [redis cache](../../start/docker.md#redis-cache) is required to function properly.
+    If the machines features is used in production setup using workers, a shared [redis cache](../../start/processes.md#cache-server) is required to function properly.
 
 ### Registry
 
@@ -47,6 +47,8 @@ If you want to create your own machine type, please also take a look at the alre
 
 ```py
 from django.utils.translation import gettext_lazy as _
+
+from generic.states import ColorEnum
 from plugin.machine import BaseDriver, BaseMachineType, MachineStatus
 
 class ABCBaseDriver(BaseDriver):
@@ -72,9 +74,9 @@ class ABCMachine(BaseMachineType):
     base_driver = ABCBaseDriver
 
     class ABCStatus(MachineStatus):
-        CONNECTED = 100, _('Connected'), 'success'
-        STANDBY = 101, _('Standby'), 'success'
-        PRINTING = 110, _('Printing'), 'primary'
+        CONNECTED = 100, _('Connected'), ColorEnum.success
+        STANDBY = 101, _('Standby'), ColorEnum.success
+        PRINTING = 110, _('Printing'), ColorEnum.primary
 
     MACHINE_STATUS = ABCStatus
     default_machine_status = ABCStatus.DISCONNECTED

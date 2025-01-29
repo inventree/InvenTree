@@ -5,22 +5,23 @@ import {
   IconBellCheck,
   IconBellExclamation,
   IconCircleCheck,
-  IconCircleX,
+  IconMail,
   IconMailOpened,
   IconTrash
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { PageDetail } from '../components/nav/PageDetail';
-import { PanelGroup } from '../components/nav/PanelGroup';
+import { PanelGroup } from '../components/panels/PanelGroup';
+import { useApi } from '../contexts/ApiContext';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
-import { NotificationTable } from '../tables/notifications/NotificationsTable';
+import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {
+  const api = useApi();
   const unreadTable = useTable('unreadnotifications');
   const readTable = useTable('readnotifications');
 
@@ -63,7 +64,7 @@ export default function NotificationsPage() {
       {
         name: 'unread',
         label: t`Notifications`,
-        icon: <IconBellExclamation size="18" />,
+        icon: <IconBellExclamation size='18' />,
         content: (
           <NotificationTable
             params={{ read: false }}
@@ -74,7 +75,10 @@ export default function NotificationsPage() {
                 color: 'green',
                 icon: <IconCircleCheck />,
                 onClick: () => {
-                  let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
+                  const url = apiUrl(
+                    ApiEndpoints.notifications_list,
+                    record.pk
+                  );
                   api
                     .patch(url, {
                       read: true
@@ -88,7 +92,7 @@ export default function NotificationsPage() {
             tableActions={[
               <ActionButton
                 icon={<IconMailOpened />}
-                tooltip={`Mark all as read`}
+                tooltip={t`Mark all as read`}
                 onClick={markAllAsRead}
               />
             ]}
@@ -98,7 +102,7 @@ export default function NotificationsPage() {
       {
         name: 'history',
         label: t`History`,
-        icon: <IconBellCheck size="18" />,
+        icon: <IconBellCheck size='18' />,
         content: (
           <NotificationTable
             params={{ read: true }}
@@ -106,9 +110,12 @@ export default function NotificationsPage() {
             actions={(record) => [
               {
                 title: t`Mark as unread`,
-                icon: <IconCircleX />,
+                icon: <IconMail />,
                 onClick: () => {
-                  let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
+                  const url = apiUrl(
+                    ApiEndpoints.notifications_list,
+                    record.pk
+                  );
 
                   api
                     .patch(url, {
@@ -134,9 +141,9 @@ export default function NotificationsPage() {
             ]}
             tableActions={[
               <ActionButton
-                color="red"
+                color='red'
                 icon={<IconTrash />}
-                tooltip={`Delete notifications`}
+                tooltip={t`Delete notifications`}
                 onClick={deleteNotifications}
               />
             ]}
@@ -149,7 +156,7 @@ export default function NotificationsPage() {
   return (
     <Stack>
       <PageDetail title={t`Notifications`} />
-      <PanelGroup pageKey="notifications" panels={notificationPanels} />
+      <PanelGroup pageKey='notifications' panels={notificationPanels} />
     </Stack>
   );
 }

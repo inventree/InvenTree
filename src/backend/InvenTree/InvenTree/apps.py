@@ -1,6 +1,5 @@
 """AppConfig for InvenTree app."""
 
-import logging
 from importlib import import_module
 from pathlib import Path
 
@@ -11,7 +10,8 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
-from allauth.socialaccount.signals import social_account_added, social_account_updated
+import structlog
+from allauth.socialaccount.signals import social_account_updated
 
 import InvenTree.conversion
 import InvenTree.ready
@@ -19,7 +19,7 @@ import InvenTree.tasks
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeConfig(AppConfig):
@@ -40,9 +40,14 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
+
+        if not InvenTree.ready.isPluginRegistryLoaded():
+            return
+
+        # Skip if not in worker or main thread
         if (
-            not InvenTree.ready.isPluginRegistryLoaded()
-            or not InvenTree.ready.isInMainThread()
+            not InvenTree.ready.isInMainThread()
+            and not InvenTree.ready.isInWorkerThread()
         ):
             return
 
@@ -52,7 +57,6 @@ class InvenTreeConfig(AppConfig):
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.remove_obsolete_tasks()
-
             self.collect_tasks()
             self.start_background_tasks()
 
@@ -125,7 +129,7 @@ class InvenTreeConfig(AppConfig):
         for task in tasks:
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
-            if ref_name in existing_tasks.keys():
+            if ref_name in existing_tasks:
                 # This task already exists - update the details if required
                 existing_task = existing_tasks[ref_name]
 

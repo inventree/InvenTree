@@ -39,7 +39,9 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -66,9 +68,11 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: false
       - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
         with:
           python-version: ${{ env.python_version }}
       - name: Version Check
@@ -81,6 +85,7 @@ jobs:
         id: test-docker
         run: |
           docker build . --target production --tag inventree-test -f contrib/container/Dockerfile
+          docker run --rm inventree-test invoke version
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
@@ -96,8 +101,9 @@ jobs:
       - name: Update Docker Image
         run: |
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke install
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke version
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke setup-dev
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke dev.setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke wait
       - name: Check Data Directory
@@ -115,29 +121,29 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke test --disable-pty
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
       - name: Run Migration Tests
         run: |
-          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke test --migrations
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --migrations --translations
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
-        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # pin@v3.2.0
+        uses: docker/setup-qemu-action@53851d14592bedcffcf25ea515637cff71ef929a # pin@v3.3.0
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@aa33708b10e362ff993539393ff100fa93ed6a27 # pin@v3.5.0
+        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 # pin@v3.8.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # pin@v3.5.0
+        uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # pin@v3.7.0
       - name: Check if Dockerhub login is required
         id: docker_login
         run: |
           if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
-            echo "skip_dockerhub_login=true" >> $GITHUB_ENV
+            echo "skip_dockerhub_login=true" >> $GITHUB_OUTPUT
           else
-            echo "skip_dockerhub_login=false" >> $GITHUB_ENV
+            echo "skip_dockerhub_login=false" >> $GITHUB_OUTPUT
           fi
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
@@ -157,17 +163,18 @@ jobs:
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
+        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # pin@v5.6.1
         with:
           images: |
             inventree/inventree
             ghcr.io/${{ github.repository }}
-
+      - uses: depot/setup-action@v1
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@5176d81f87c23d6fc96624dfdbcd9f3830bbe445 # pin@v6.5.0
+        uses: depot/build-push-action@v1
         with:
+          project: jczzbjkk68
           context: .
           file: ./contrib/container/Dockerfile
           platforms: linux/amd64,linux/arm64

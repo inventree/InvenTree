@@ -4,15 +4,10 @@ import {
   IconChecklist,
   IconClipboardCheck,
   IconClipboardList,
-  IconDots,
   IconInfoCircle,
   IconList,
   IconListCheck,
   IconListNumbers,
-  IconNotes,
-  IconPaperclip,
-  IconQrcode,
-  IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -21,29 +16,32 @@ import { useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
-  ActionDropdown,
   BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -57,9 +55,7 @@ import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
 /**
  * Detail page for a single Build Order
@@ -68,6 +64,8 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const {
     instance: build,
@@ -88,12 +86,20 @@ export default function BuildDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
         label: t`Part`,
         model: ModelType.part
+      },
+      {
+        type: 'text',
+        name: 'part_detail.IPN',
+        icon: 'part',
+        label: t`IPN`,
+        hidden: !build.part_detail?.IPN,
+        copy: true
       },
       {
         type: 'status',
@@ -102,15 +108,26 @@ export default function BuildDetail() {
         model: ModelType.build
       },
       {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.build,
+        icon: 'status',
+        hidden:
+          !build.status_custom_key || build.status_custom_key == build.status
+      },
+      {
         type: 'text',
         name: 'reference',
-        label: t`Reference`
+        label: t`Reference`,
+        copy: true
       },
       {
         type: 'text',
         name: 'title',
         label: t`Description`,
-        icon: 'description'
+        icon: 'description',
+        copy: true
       },
       {
         type: 'link',
@@ -123,7 +140,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'quantity',
@@ -148,13 +165,14 @@ export default function BuildDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'text',
         name: 'issued_by',
         label: t`Issued By`,
         icon: 'user',
-        badge: 'user'
+        badge: 'user',
+        hidden: !build.issued_by
       },
       {
         type: 'text',
@@ -164,29 +182,48 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
         label: t`Created`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !build.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.target_date
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'completion_date',
         label: t`Completed`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.completion_date
+      },
+      {
+        type: 'text',
+        name: 'project_code_label',
+        label: t`Project Code`,
+        icon: 'reference',
+        copy: true,
+        hidden: !build.project_code
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'link',
         name: 'take_from',
@@ -214,16 +251,14 @@ export default function BuildDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-              pk={build.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            pk={build.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={build} />
           </Grid.Col>
         </Grid>
@@ -246,18 +281,20 @@ export default function BuildDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconListNumbers />,
-        content: build?.pk ? (
-          <BuildLineTable buildId={build.pk} />
-        ) : (
-          <Skeleton />
-        )
+        content: build?.pk ? <BuildLineTable build={build} /> : <Skeleton />
       },
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
-        // TODO: Hide if build is complete
+        content: build.pk ? (
+          <BuildOutputTable build={build} refreshBuild={refreshInstance} />
+        ) : (
+          <Skeleton />
+        ),
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED
       },
       {
         name: 'complete-outputs',
@@ -266,7 +303,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-outputs"
+            tableName='build-outputs'
             params={{
               build: id,
               is_building: false
@@ -278,6 +315,9 @@ export default function BuildDetail() {
         name: 'allocated-stock',
         label: t`Allocated Stock`,
         icon: <IconList />,
+        hidden:
+          build.status == buildStatus.COMPLETE ||
+          build.status == buildStatus.CANCELLED,
         content: build.pk ? (
           <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
         ) : (
@@ -291,7 +331,8 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-consumed"
+            tableName='build-consumed'
+            showLocation={false}
             params={{
               consumed_by: id
             }}
@@ -312,49 +353,23 @@ export default function BuildDetail() {
         name: 'test-results',
         label: t`Test Results`,
         icon: <IconChecklist />,
-        hidden: !build.part_detail?.trackable,
+        hidden: !build.part_detail?.testable,
         content: build.pk ? (
           <BuildOrderTestTable buildId={build.pk} partId={build.part} />
         ) : (
           <Skeleton />
         )
       },
-      {
-        name: 'test-statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        content: (
-          <TestStatisticsTable
-            params={{
-              pk: build.pk,
-              apiEndpoint: ApiEndpoints.build_test_statistics
-            }}
-          />
-        ),
-        hidden: !build?.part_detail?.trackable
-      },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable model_type={ModelType.build} model_id={Number(id)} />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.build}
-            modelId={build.pk}
-            editable={user.hasChangeRole(UserRoles.build)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.build,
+        model_id: build.pk
+      })
     ];
-  }, [build, id, user]);
+  }, [build, id, user, buildStatus]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
@@ -377,8 +392,6 @@ export default function BuildDetail() {
     follow: true,
     modelType: ModelType.build
   });
-
-  const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
@@ -445,41 +458,31 @@ export default function BuildDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.build} pk={build.pk} />,
+      <AdminButton model={ModelType.build} id={build.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.build,
-            pk: build.pk
-          }),
-          LinkBarcodeAction({
-            hidden: build?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash
-          })
-        ]}
+        model={ModelType.build}
+        pk={build.pk}
+        hash={build?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
         enableReports
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Build Order Actions`}
-        icon={<IconDots />}
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
@@ -511,7 +514,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status}
+            status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />
@@ -526,20 +529,35 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.build}
+      >
+        <Stack gap='xs'>
           <PageDetail
-            title={build.reference}
+            title={`${t`Build Order`}: ${build.reference}`}
             subtitle={build.title}
             badges={buildBadges}
+            editAction={editBuild.open}
+            editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
-              { name: t`Build Orders`, url: '/build' },
-              { name: build.reference, url: `/build/${build.pk}` }
+              { name: t`Manufacturing`, url: '/manufacturing' },
+              {
+                name: build.reference,
+                url: getDetailUrl(ModelType.build, build.pk)
+              }
             ]}
             actions={buildActions}
           />
-          <PanelGroup pageKey="build" panels={buildPanels} />
+          <PanelGroup
+            pageKey='build'
+            panels={buildPanels}
+            instance={build}
+            model={ModelType.build}
+            id={build.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

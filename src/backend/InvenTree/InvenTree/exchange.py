@@ -1,16 +1,15 @@
 """Custom exchange backend which hooks into the InvenTree plugin system to fetch exchange rates from an external API."""
 
-import logging
-
 from django.db.transaction import atomic
 
+import structlog
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
 from common.currency import currency_code_default, currency_codes
 from common.settings import get_global_setting
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class InvenTreeExchange(SimpleExchangeBackend):
@@ -31,10 +30,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         # Find the selected exchange rate plugin
         slug = get_global_setting('CURRENCY_UPDATE_PLUGIN', create=False)
 
-        if slug:
-            plugin = registry.get_plugin(slug)
-        else:
-            plugin = None
+        plugin = registry.get_plugin(slug) if slug else None
 
         if not plugin:
             # Find the first active currency exchange plugin

@@ -1,53 +1,60 @@
 import { t } from '@lingui/macro';
-import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Alert, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconDots,
   IconHistory,
   IconInfoCircle,
-  IconNotes,
   IconPackages,
-  IconPaperclip,
+  IconShoppingCart,
   IconSitemap
 } from '@tabler/icons-react';
-import { ReactNode, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import NotesPanel from '../../components/panels/NotesPanel';
+import type { PanelType } from '../../components/panels/Panel';
+import { PanelGroup } from '../../components/panels/PanelGroup';
+import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
-  StockOperationProps,
+  type StockOperationProps,
   useAddStockItem,
+  useAssignStockItem,
   useCountStockItem,
   useRemoveStockItem,
   useStockFields,
+  useStockItemSerializeFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -58,9 +65,10 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
-import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -70,7 +78,15 @@ import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 export default function StockDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
+
+  const enableExpiry = useMemo(
+    () => globalSettings.isSet('STOCK_ENABLE_EXPIRY'),
+    [globalSettings]
+  );
 
   const navigate = useNavigate();
 
@@ -79,6 +95,7 @@ export default function StockDetail() {
   const {
     instance: stockitem,
     refreshInstance,
+    refreshInstancePromise,
     instanceQuery,
     requestStatus
   } = useInstance({
@@ -92,8 +109,8 @@ export default function StockDetail() {
   });
 
   const detailsPanel = useMemo(() => {
-    let data = stockitem;
-    let part = stockitem?.part_detail ?? {};
+    const data = { ...stockitem };
+    const part = stockitem?.part_detail ?? {};
 
     data.available_stock = Math.max(0, data.quantity - data.allocated);
 
@@ -102,7 +119,7 @@ export default function StockDetail() {
     }
 
     // Top left - core part information
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         name: 'part',
         label: t`Base Part`,
@@ -110,17 +127,35 @@ export default function StockDetail() {
         model: ModelType.part
       },
       {
+        name: 'part_detail.IPN',
+        label: t`IPN`,
+        type: 'text',
+        copy: true,
+        icon: 'part',
+        hidden: !part.IPN
+      },
+      {
         name: 'status',
         type: 'status',
-        label: t`Stock Status`,
+        label: t`Status`,
         model: ModelType.stockitem
+      },
+      {
+        name: 'status_custom_key',
+        type: 'status',
+        label: t`Custom Status`,
+        model: ModelType.stockitem,
+        icon: 'status',
+        hidden:
+          !stockitem.status_custom_key ||
+          stockitem.status_custom_key == stockitem.status
       },
       {
         type: 'text',
         name: 'tests',
-        label: `Completed Tests`,
+        label: t`Completed Tests`,
         icon: 'progress',
-        hidden: !part?.trackable
+        hidden: !part?.testable
       },
       {
         type: 'text',
@@ -138,7 +173,7 @@ export default function StockDetail() {
     ];
 
     // Top right - available stock information
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'quantity',
@@ -154,7 +189,14 @@ export default function StockDetail() {
         type: 'text',
         name: 'available_stock',
         label: t`Available`,
-        icon: 'quantity'
+        icon: 'stock'
+      },
+      {
+        type: 'text',
+        name: 'allocated',
+        label: t`Allocated to Orders`,
+        icon: 'tick_off',
+        hidden: !stockitem.allocated
       },
       {
         type: 'text',
@@ -162,12 +204,10 @@ export default function StockDetail() {
         label: t`Batch Code`,
         hidden: !stockitem.batch
       }
-      // TODO: allocated_to_sales_orders
-      // TODO: allocated_to_build_orders
     ];
 
     // Bottom left: location information
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         name: 'supplier_part',
         label: t`Supplier Part`,
@@ -186,10 +226,13 @@ export default function StockDetail() {
         type: 'link',
         name: 'belongs_to',
         label: t`Installed In`,
+        model_filters: {
+          part_detail: true
+        },
         model_formatter: (model: any) => {
           let text = model?.part_detail?.full_name ?? model?.name;
           if (model.serial && model.quantity == 1) {
-            text += `# ${model.serial}`;
+            text += ` # ${model.serial}`;
           }
 
           return text;
@@ -197,6 +240,17 @@ export default function StockDetail() {
         icon: 'stock',
         model: ModelType.stockitem,
         hidden: !stockitem.belongs_to
+      },
+      {
+        type: 'link',
+        name: 'parent',
+        icon: 'sitemap',
+        label: t`Parent Item`,
+        model: ModelType.stockitem,
+        hidden: !stockitem.parent,
+        model_formatter: (model: any) => {
+          return t`Parent stock item`;
+        }
       },
       {
         type: 'link',
@@ -213,6 +267,15 @@ export default function StockDetail() {
         label: t`Build Order`,
         model: ModelType.build,
         hidden: !stockitem.build,
+        model_field: 'reference'
+      },
+      {
+        type: 'link',
+        name: 'purchase_order',
+        label: t`Purchase Order`,
+        model: ModelType.purchaseorder,
+        hidden: !stockitem.purchase_order,
+        icon: 'purchase_orders',
         model_field: 'reference'
       },
       {
@@ -234,9 +297,44 @@ export default function StockDetail() {
     ];
 
     // Bottom right - any other information
-    let br: DetailsField[] = [
-      // TODO: Expiry date
+    const br: DetailsField[] = [
+      // Expiry date
+      {
+        type: 'date',
+        name: 'expiry_date',
+        label: t`Expiry Date`,
+        hidden: !enableExpiry || !stockitem.expiry_date,
+        icon: 'calendar'
+      },
       // TODO: Ownership
+      {
+        type: 'text',
+        name: 'purchase_price',
+        label: t`Unit Price`,
+        icon: 'currency',
+        hidden: !stockitem.purchase_price,
+        value_formatter: () => {
+          return formatCurrency(stockitem.purchase_price, {
+            currency: stockitem.purchase_price_currency
+          });
+        }
+      },
+      {
+        type: 'text',
+        name: 'stock_value',
+        label: t`Stock Value`,
+        icon: 'currency',
+        hidden:
+          !stockitem.purchase_price ||
+          stockitem.quantity == 1 ||
+          stockitem.quantity == 0,
+        value_formatter: () => {
+          return formatCurrency(stockitem.purchase_price, {
+            currency: stockitem.purchase_price_currency,
+            multiplier: stockitem.quantity
+          });
+        }
+      },
       {
         type: 'text',
         name: 'packaging',
@@ -248,30 +346,27 @@ export default function StockDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={
-                stockitem.part_detail?.image ??
-                stockitem?.part_detail?.thumbnail
-              }
-              pk={stockitem.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={stockitem} />
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={
+              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
+            }
+            pk={stockitem.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
+            <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={stockitem} />
-        <DetailsTable fields={bl} item={stockitem} />
-        <DetailsTable fields={br} item={stockitem} />
+        <DetailsTable fields={tr} item={data} />
+        <DetailsTable fields={bl} item={data} />
+        <DetailsTable fields={br} item={data} />
       </ItemDetailsGrid>
     );
-  }, [stockitem, instanceQuery]);
+  }, [stockitem, instanceQuery.isFetching, enableExpiry]);
 
-  const showBuildAllocations = useMemo(() => {
+  const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
     return (
       stockitem?.part_detail?.component && // Must be a "component"
@@ -280,9 +375,56 @@ export default function StockDetail() {
     ); // Must not be installed into another item
   }, [stockitem]);
 
-  const showSalesAlloctions = useMemo(() => {
+  const showSalesAllocations: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
+
+  // API query to determine if this stock item has trackable BOM items
+  const trackedBomItemQuery = useQuery({
+    queryKey: ['tracked-bom-item', stockitem.pk, stockitem.part],
+    queryFn: () => {
+      if (
+        !stockitem.pk ||
+        !stockitem.part ||
+        !stockitem.part_detail?.assembly
+      ) {
+        return false;
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.bom_list), {
+          params: {
+            part: stockitem.part,
+            sub_part_trackable: true,
+            limit: 1
+          }
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.data.count > 0;
+          } else {
+            return null;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+    }
+  });
+
+  const showInstalledItems: boolean = useMemo(() => {
+    if (stockitem?.installed_items) {
+      // There are installed items in this stock item
+      return true;
+    }
+
+    if (trackedBomItemQuery.data != null) {
+      return trackedBomItemQuery.data;
+    }
+
+    // Fall back to whether this is an assembly or not
+    return stockitem?.part_detail?.assembly;
+  }, [trackedBomItemQuery, stockitem]);
 
   const stockPanels: PanelType[] = useMemo(() => {
     return [
@@ -306,36 +448,38 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        hidden: !showSalesAlloctions && !showBuildAllocations,
+        hidden:
+          !stockitem.in_stock ||
+          (!showSalesAllocations && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
+            defaultValue={['buildAllocations', 'salesAllocations']}
           >
             {showBuildAllocations && (
-              <Accordion.Item value="buildallocations" key="buildallocations">
+              <Accordion.Item value='buildAllocations' key='buildAllocations'>
                 <Accordion.Control>
-                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <BuildAllocatedStockTable
                     stockId={stockitem.pk}
-                    modelField="build"
+                    modelField='build'
                     modelTarget={ModelType.build}
                     showBuildInfo
                   />
                 </Accordion.Panel>
               </Accordion.Item>
             )}
-            {showSalesAlloctions && (
-              <Accordion.Item value="salesallocations" key="salesallocations">
+            {showSalesAllocations && (
+              <Accordion.Item value='salesAllocations' key='salesAllocations'>
                 <Accordion.Control>
-                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <SalesOrderAllocationTable
                     stockId={stockitem.pk}
-                    modelField="order"
+                    modelField='order'
                     modelTarget={ModelType.salesorder}
                     showOrderInfo
                   />
@@ -349,7 +493,7 @@ export default function StockDetail() {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable,
+        hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (
           <StockItemTestResultTable
             itemId={stockitem.pk}
@@ -363,8 +507,8 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        hidden: !stockitem?.part_detail?.assembly,
-        content: <InstalledItemsTable parentId={stockitem.pk} />
+        hidden: !showInstalledItems,
+        content: <InstalledItemsTable stockItem={stockitem} />
       },
       {
         name: 'child_items',
@@ -373,38 +517,30 @@ export default function StockDetail() {
         hidden: (stockitem?.child_items ?? 0) == 0,
         content: stockitem?.pk ? (
           <StockItemTable
-            tableName="child-stock"
+            tableName='child-stock'
             params={{ ancestor: stockitem.pk }}
           />
         ) : (
           <Skeleton />
         )
       },
-      {
-        name: 'attachments',
-        label: t`Attachments`,
-        icon: <IconPaperclip />,
-        content: (
-          <AttachmentTable
-            model_type={ModelType.stockitem}
-            model_id={stockitem.pk}
-          />
-        )
-      },
-      {
-        name: 'notes',
-        label: t`Notes`,
-        icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            modelType={ModelType.stockitem}
-            modelId={stockitem.pk}
-            editable={user.hasChangeRole(UserRoles.stock)}
-          />
-        )
-      }
+      AttachmentPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk
+      }),
+      NotesPanel({
+        model_type: ModelType.stockitem,
+        model_id: stockitem.pk
+      })
     ];
-  }, [stockitem, id, user]);
+  }, [
+    showSalesAllocations,
+    showBuildAllocations,
+    showInstalledItems,
+    stockitem,
+    id,
+    user
+  ]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -417,7 +553,11 @@ export default function StockDetail() {
     [stockitem]
   );
 
-  const editStockItemFields = useStockFields({ create: false });
+  const editStockItemFields = useStockFields({
+    create: false,
+    stockItem: stockitem,
+    partId: stockitem.part
+  });
 
   const editStockItem = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
@@ -459,7 +599,7 @@ export default function StockDetail() {
 
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
-      items: stockitem,
+      items: [stockitem],
       model: ModelType.stockitem,
       refresh: refreshInstance,
       filters: {
@@ -472,25 +612,86 @@ export default function StockDetail() {
   const addStockItem = useAddStockItem(stockActionProps);
   const removeStockItem = useRemoveStockItem(stockActionProps);
   const transferStockItem = useTransferStockItem(stockActionProps);
+  const assignToCustomer = useAssignStockItem(stockActionProps);
 
-  const stockActions = useMemo(
-    () => [
-      <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
+  const serializeStockFields = useStockItemSerializeFields({
+    partId: stockitem.part,
+    trackable: stockitem.part_detail?.trackable
+  });
+
+  const serializeStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_serialize,
+    pk: stockitem.pk,
+    title: t`Serialize Stock Item`,
+    fields: serializeStockFields,
+    initialData: {
+      quantity: stockitem.quantity,
+      destination: stockitem.location ?? stockitem.part_detail?.default_location
+    },
+    onFormSuccess: () => {
+      const partId = stockitem.part;
+      refreshInstancePromise().catch(() => {
+        // Part may have been deleted - redirect to the part detail page
+        navigate(getDetailUrl(ModelType.part, partId));
+      });
+    },
+    successMessage: t`Stock item serialized`
+  });
+
+  const returnStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_return,
+    pk: stockitem.pk,
+    title: t`Return Stock Item`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Return this item into stock. This will remove the customer assignment.`}
+      </Alert>
+    ),
+    fields: {
+      location: {},
+      status: {},
+      notes: {}
+    },
+    initialData: {
+      location: stockitem.location ?? stockitem.part_detail?.default_location,
+      status: stockitem.status_custom_key ?? stockitem.status
+    },
+    successMessage: t`Item returned to stock`,
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: stockitem.part_detail ? [stockitem.part_detail] : []
+  });
+
+  const stockActions = useMemo(() => {
+    // Can this stock item be transferred to a different location?
+    const canTransfer =
+      user.hasChangeRole(UserRoles.stock) &&
+      !stockitem.sales_order &&
+      !stockitem.belongs_to &&
+      !stockitem.customer &&
+      !stockitem.consumed_by;
+
+    const isBuilding = stockitem.is_building;
+
+    const serial = stockitem.serial;
+    const serialized =
+      serial != null &&
+      serial != undefined &&
+      serial != '' &&
+      stockitem.quantity == 1;
+
+    return [
+      <AdminButton model={ModelType.stockitem} id={stockitem.pk} />,
+      <LocateItemButton stockId={stockitem.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.stockitem,
-            pk: stockitem.pk
-          }),
-          LinkBarcodeAction({
-            hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
-          }),
-          UnlinkBarcodeAction({
-            hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
-          })
-        ]}
+        model={ModelType.stockitem}
+        pk={stockitem.pk}
+        hash={stockitem?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.stock)}
       />,
       <PrintingActions
         modelType={ModelType.stockitem}
@@ -505,8 +706,9 @@ export default function StockDetail() {
           {
             name: t`Count`,
             tooltip: t`Count stock`,
+            hidden: serialized || !canTransfer || isBuilding,
             icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             onClick: () => {
               stockitem.pk && countStockItem.open();
@@ -514,35 +716,92 @@ export default function StockDetail() {
           },
           {
             name: t`Add`,
-            tooltip: t`Add stock`,
-            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            tooltip: t`Add Stock`,
+            hidden: serialized || !canTransfer || isBuilding,
+            icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
             }
           },
           {
             name: t`Remove`,
-            tooltip: t`Remove stock`,
-            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            tooltip: t`Remove Stock`,
+            hidden:
+              serialized ||
+              !canTransfer ||
+              isBuilding ||
+              stockitem.quantity <= 0,
+            icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
             }
           },
           {
             name: t`Transfer`,
-            tooltip: t`Transfer stock`,
+            tooltip: t`Transfer Stock`,
+            hidden: !canTransfer,
             icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
             onClick: () => {
               stockitem.pk && transferStockItem.open();
             }
+          },
+          {
+            name: t`Serialize`,
+            tooltip: t`Serialize stock`,
+            hidden:
+              !canTransfer ||
+              isBuilding ||
+              serialized ||
+              stockitem?.quantity != 1 ||
+              stockitem?.part_detail?.trackable != true,
+            icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
+            onClick: () => {
+              serializeStockItem.open();
+            }
+          },
+          {
+            name: t`Order`,
+            tooltip: t`Order Stock`,
+            hidden:
+              !user.hasAddRole(UserRoles.purchase_order) ||
+              !stockitem.part_detail?.active ||
+              !stockitem.part_detail?.purchaseable,
+            icon: <IconShoppingCart color='blue' />,
+            onClick: () => {
+              orderPartsWizard.openWizard();
+            }
+          },
+          {
+            name: t`Return`,
+            tooltip: t`Return from customer`,
+            hidden: !stockitem.customer,
+            icon: (
+              <InvenTreeIcon
+                icon='return_orders'
+                iconProps={{ color: 'blue' }}
+              />
+            ),
+            onClick: () => {
+              stockitem.pk && returnStockItem.open();
+            }
+          },
+          {
+            name: t`Assign to Customer`,
+            tooltip: t`Assign to a customer`,
+            hidden: !!stockitem.customer,
+            icon: (
+              <InvenTreeIcon icon='customer' iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && assignToCustomer.open();
+            }
           }
         ]}
       />,
-      <ActionDropdown
+      <OptionsActionDropdown
         tooltip={t`Stock Item Actions`}
-        icon={<IconDots />}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.stock),
@@ -558,9 +817,8 @@ export default function StockDetail() {
           })
         ]}
       />
-    ],
-    [id, stockitem, user]
-  );
+    ];
+  }, [id, stockitem, user]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
@@ -570,66 +828,106 @@ export default function StockDetail() {
       ? []
       : [
           <DetailsBadge
-            color="yellow"
+            color='yellow'
             label={t`In Production`}
             visible={stockitem.is_building}
           />,
           <DetailsBadge
-            color="blue"
-            label={t`Serial Number` + `: ${stockitem.serial}`}
+            color='blue'
+            label={`${t`Serial Number`}: ${stockitem.serial}`}
             visible={!!stockitem.serial}
-            key="serial"
+            key='serial'
           />,
           <DetailsBadge
-            color="blue"
-            label={t`Quantity` + `: ${stockitem.quantity}`}
+            color='blue'
+            label={`${t`Quantity`}: ${stockitem.quantity}`}
             visible={!stockitem.serial}
-            key="quantity"
+            key='quantity'
           />,
           <DetailsBadge
-            color="yellow"
-            label={t`Available` + `: ${available}`}
-            visible={!stockitem.serial && available != stockitem.quantity}
-            key="available"
+            color='yellow'
+            label={`${t`Available`}: ${available}`}
+            visible={
+              stockitem.in_stock &&
+              !stockitem.serial &&
+              available != stockitem.quantity
+            }
+            key='available'
           />,
           <DetailsBadge
-            color="blue"
-            label={t`Batch Code` + `: ${stockitem.batch}`}
+            color='blue'
+            label={`${t`Batch Code`}: ${stockitem.batch}`}
             visible={!!stockitem.batch}
-            key="batch"
+            key='batch'
           />,
           <StatusRenderer
-            status={stockitem.status}
+            status={stockitem.status_custom_key || stockitem.status}
             type={ModelType.stockitem}
-            options={{ size: 'lg' }}
-            key="status"
+            options={{
+              size: 'lg'
+            }}
+            key='status'
+          />,
+          <DetailsBadge
+            color='yellow'
+            label={t`Stale`}
+            visible={enableExpiry && stockitem.stale && !stockitem.expired}
+            key='stale'
+          />,
+          <DetailsBadge
+            color='orange'
+            label={t`Expired`}
+            visible={enableExpiry && stockitem.expired}
+            key='expired'
+          />,
+          <DetailsBadge
+            color='red'
+            label={t`Unavailable`}
+            visible={stockitem.in_stock == false}
+            key='unavailable'
           />
         ];
-  }, [stockitem, instanceQuery]);
+  }, [stockitem, instanceQuery, enableExpiry]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail
+      requiredRole={UserRoles.stock}
+      status={requestStatus}
+      loading={instanceQuery.isFetching}
+    >
       <Stack>
-        <NavigationTree
-          title={t`Stock Locations`}
-          modelType={ModelType.stocklocation}
-          endpoint={ApiEndpoints.stock_location_tree}
-          opened={treeOpen}
-          onClose={() => setTreeOpen(false)}
-          selectedId={stockitem?.location}
-        />
+        {user.hasViewRole(UserRoles.stock_location) && (
+          <NavigationTree
+            title={t`Stock Locations`}
+            modelType={ModelType.stocklocation}
+            endpoint={ApiEndpoints.stock_location_tree}
+            opened={treeOpen}
+            onClose={() => setTreeOpen(false)}
+            selectedId={stockitem?.location}
+          />
+        )}
         <PageDetail
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
           imageUrl={stockitem.part_detail?.thumbnail}
+          editAction={editStockItem.open}
+          editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
-          breadcrumbs={breadcrumbs}
+          breadcrumbs={
+            user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
+          }
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}
           actions={stockActions}
         />
-        <PanelGroup pageKey="stockitem" panels={stockPanels} />
+        <PanelGroup
+          pageKey='stockitem'
+          panels={stockPanels}
+          model={ModelType.stockitem}
+          id={stockitem.pk}
+          instance={stockitem}
+        />
         {editStockItem.modal}
         {duplicateStockItem.modal}
         {deleteStockItem.modal}
@@ -637,6 +935,10 @@ export default function StockDetail() {
         {addStockItem.modal}
         {removeStockItem.modal}
         {transferStockItem.modal}
+        {serializeStockItem.modal}
+        {returnStockItem.modal}
+        {assignToCustomer.modal}
+        {orderPartsWizard.wizard}
       </Stack>
     </InstanceDetail>
   );

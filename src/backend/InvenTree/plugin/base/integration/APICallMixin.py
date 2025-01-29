@@ -1,14 +1,15 @@
 """Mixin class for making calls to an external API."""
 
 import json as json_pkg
-import logging
 from collections.abc import Iterable
+from typing import Optional
 
 import requests
+import structlog
 
 from plugin.helpers import MixinNotImplementedError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class APICallMixin:
@@ -117,10 +118,10 @@ class APICallMixin:
         self,
         endpoint: str,
         method: str = 'GET',
-        url_args: dict = None,
+        url_args: Optional[dict] = None,
         data=None,
         json=None,
-        headers: dict = None,
+        headers: Optional[dict] = None,
         simple_response: bool = True,
         endpoint_is_url: bool = False,
     ):

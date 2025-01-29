@@ -1,18 +1,19 @@
 """Helper functions for currency support."""
 
 import decimal
-import logging
 import math
+from typing import Optional
 
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def currency_code_default():
@@ -113,7 +114,9 @@ def after_change_currency(setting) -> None:
     InvenTree.tasks.update_exchange_rates(force=True)
 
     # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
+    InvenTree.tasks.offload_task(
+        part_tasks.check_missing_pricing, force_async=True, group='pricing'
+    )
 
 
 def validate_currency_codes(value):
@@ -141,7 +144,7 @@ def validate_currency_codes(value):
     return list(valid_currencies)
 
 
-def currency_exchange_plugins() -> list:
+def currency_exchange_plugins() -> Optional[list]:
     """Return a list of plugin choices which can be used for currency exchange."""
     try:
         from plugin import registry

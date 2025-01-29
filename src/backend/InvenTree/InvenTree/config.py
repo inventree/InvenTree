@@ -131,7 +131,7 @@ def load_config_data(set_cache: bool = False) -> map:
 
     cfg_file = get_config_file()
 
-    with open(cfg_file, 'r') as cfg:
+    with open(cfg_file, encoding='utf-8') as cfg:
         data = yaml.safe_load(cfg)
 
     # Set the cache if requested
@@ -419,20 +419,9 @@ def get_frontend_settings(debug=True):
 
     # Set the base URL
     if 'base_url' not in settings:
-        base_url = get_setting('INVENTREE_PUI_URL_BASE', 'pui_url_base', '')
-
-        if base_url:
-            warnings.warn(
-                "The 'INVENTREE_PUI_URL_BASE' key is deprecated. Please use 'INVENTREE_FRONTEND_URL_BASE' instead",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-        else:
-            base_url = get_setting(
-                'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
-            )
-
-        settings['base_url'] = base_url
+        settings['base_url'] = get_setting(
+            'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
+        )
 
     # Set the server list
     settings['server_list'] = settings.get('server_list', [])

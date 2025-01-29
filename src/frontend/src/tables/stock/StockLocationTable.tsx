@@ -16,16 +16,16 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * Stock location table
  */
-export function StockLocationTable({ parentId }: { parentId?: any }) {
+export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('stocklocation');
   const user = useUserState();
 
@@ -73,7 +73,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         accessor: 'name',
         switchable: false,
         render: (record: any) => (
-          <Group gap="xs">
+          <Group gap='xs'>
             {record.icon && <ApiIcon name={record.icon} />}
             {record.name}
           </Group>
@@ -126,10 +126,11 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   });
 
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.stock_location);
+    const can_add = user.hasAddRole(UserRoles.stock_location);
 
     return [
       <AddItemButton
+        key='add-stock-location'
         tooltip={t`Add Stock Location`}
         onClick={() => newLocation.open()}
         hidden={!can_add}
@@ -138,8 +139,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
-      let can_edit = user.hasChangeRole(UserRoles.stock_location);
+    (record: any): RowAction[] => {
+      const can_edit = user.hasChangeRole(UserRoles.stock_location);
 
       return [
         RowEditAction({

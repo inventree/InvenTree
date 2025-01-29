@@ -1,14 +1,10 @@
 """This module provides template tags for extra functionality, over and above the built-in Django tags."""
 
-import logging
-import os
 from datetime import date, datetime
 
 from django import template
 from django.conf import settings as djangosettings
-from django.templatetags.static import StaticNode
 from django.urls import NoReverseMatch, reverse
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -25,7 +21,9 @@ from plugin.plugin import InvenTreePlugin
 register = template.Library()
 
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 @register.simple_tag()
@@ -119,35 +117,6 @@ def add(x, y, *args, **kwargs):
 def to_list(*args):
     """Return the input arguments as list."""
     return args
-
-
-@register.simple_tag()
-def part_allocation_count(build, part, *args, **kwargs):
-    """Return the total number of <part> allocated to <build>."""
-    return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
-
-
-@register.simple_tag()
-def inventree_in_debug_mode(*args, **kwargs):
-    """Return True if the server is running in DEBUG mode."""
-    return djangosettings.DEBUG
-
-
-@register.simple_tag()
-def inventree_show_about(user, *args, **kwargs):
-    """Return True if the about modal should be shown."""
-    if get_global_setting('INVENTREE_RESTRICT_ABOUT'):
-        # Return False if the user is not a superuser, or no user information is provided
-        if not user or not user.is_superuser:
-            return False
-
-    return True
-
-
-@register.simple_tag()
-def inventree_docker_mode(*args, **kwargs):
-    """Return True if the server is running as a Docker image."""
-    return djangosettings.DOCKER
 
 
 @register.simple_tag()
@@ -395,120 +364,6 @@ def visible_global_settings(*args, **kwargs):
     return common.models.InvenTreeSetting.allValues(exclude_hidden=True)
 
 
-@register.simple_tag()
-def progress_bar(val, max_val, *args, **kwargs):
-    """Render a progress bar element."""
-    item_id = kwargs.get('id', 'progress-bar')
-
-    val = InvenTree.helpers.normalize(val)
-    max_val = InvenTree.helpers.normalize(max_val)
-
-    if val > max_val:
-        style = 'progress-bar-over'
-    elif val < max_val:
-        style = 'progress-bar-under'
-    else:
-        style = ''
-
-    if max_val != 0:
-        percent = float(val / max_val) * 100
-    else:
-        percent = 0
-
-    if percent > 100:
-        percent = 100
-    elif percent < 0:
-        percent = 0
-
-    style_tags = []
-
-    max_width = kwargs.get('max_width', None)
-
-    if max_width:
-        style_tags.append(f'max-width: {max_width};')
-
-    html = f"""
-    <div id='{item_id}' class='progress' style='{' '.join(style_tags)}'>
-        <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
-        <div class='progress-value'>{val} / {max_val}</div>
-    </div>
-    """
-
-    return mark_safe(html)
-
-
-@register.simple_tag()
-def get_color_theme_css(user):
-    """Return the custom theme .css file for the selected user."""
-    user_theme_name = get_user_color_theme(user)
-    # Build path to CSS sheet
-    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
-
-    # Build static URL
-    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
-
-    return inventree_css_static_url
-
-
-@register.simple_tag()
-def get_user_color_theme(user):
-    """Get current user color theme."""
-    from common.models import ColorTheme
-
-    try:
-        if not user.is_authenticated:
-            return 'default'
-    except Exception:
-        return 'default'
-
-    try:
-        user_theme = ColorTheme.objects.filter(user_obj=user).get()
-        user_theme_name = user_theme.name
-        if not user_theme_name or not ColorTheme.is_valid_choice(user_theme):
-            user_theme_name = 'default'
-    except ColorTheme.DoesNotExist:
-        user_theme_name = 'default'
-
-    return user_theme_name
-
-
-@register.simple_tag()
-def get_available_themes(*args, **kwargs):
-    """Return the available theme choices."""
-    themes = []
-
-    from common.models import ColorTheme
-
-    for key, name in ColorTheme.get_color_themes_choices():
-        themes.append({'key': key, 'name': name})
-
-    return themes
-
-
-@register.simple_tag()
-def primitive_to_javascript(primitive):
-    """Convert a python primitive to a javascript primitive.
-
-    e.g. True -> true
-         'hello' -> '"hello"'
-    """
-    if type(primitive) is bool:
-        return str(primitive).lower()
-
-    elif type(primitive) in [int, float]:
-        return primitive
-    # Wrap with quotes
-    return format_html("'{}'", primitive)  # noqa: P103
-
-
-@register.simple_tag()
-def js_bool(val):
-    """Return a javascript boolean value (true or false)."""
-    if val:
-        return 'true'
-    return 'false'
-
-
 @register.filter
 def keyvalue(dict, key):
     """Access to key of supplied dict.
@@ -557,72 +412,6 @@ def mail_configured():
 def inventree_customize(reference, *args, **kwargs):
     """Return customization values for the user interface."""
     return djangosettings.CUSTOMIZE.get(reference, '')
-
-
-class I18nStaticNode(StaticNode):
-    """Custom StaticNode.
-
-    Replaces a variable named *lng* in the path with the current language
-    """
-
-    def render(self, context):  # pragma: no cover
-        """Render this node with the determined locale context."""
-        self.original = getattr(self, 'original', None)
-
-        if not self.original:
-            # Store the original (un-rendered) path template, as it gets overwritten below
-            self.original = self.path.var
-
-        if hasattr(context, 'request'):
-            # Convert the "requested" language code to a standard format
-            language_code = context.request.LANGUAGE_CODE.lower().strip()
-            language_code = language_code.replace('_', '-')
-
-            # Find the first "best" match:
-            # - First, try the original requested code, e.g. 'pt-br'
-            # - Next, try a simpler version of the code e.g. 'pt'
-            # - Finally, fall back to english
-            options = [language_code, language_code.split('-')[0], 'en']
-
-            for lng in options:
-                lng_file = os.path.join(
-                    djangosettings.STATIC_ROOT, self.original.format(lng=lng)
-                )
-
-                if os.path.exists(lng_file):
-                    self.path.var = self.original.format(lng=lng)
-                    break
-
-        ret = super().render(context)
-
-        return ret
-
-
-# use the dynamic url - tag if in Debugging-Mode
-if settings.DEBUG:
-
-    @register.simple_tag()
-    def i18n_static(url_name):
-        """Simple tag to enable {% url %} functionality instead of {% static %}."""
-        return reverse(url_name)
-
-else:  # pragma: no cover
-
-    @register.tag('i18n_static')
-    def do_i18n_static(parser, token):
-        """Overrides normal static, adds language - lookup for prerenderd files #1485.
-
-        Usage (like static):
-        {% i18n_static path [as varname] %}
-        """
-        bits = token.split_contents()
-        loc_name = settings.STATICFILES_I18_PREFIX
-
-        # change path to called resource
-        bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
-        token.contents = ' '.join(bits)
-
-        return I18nStaticNode.handle_token(parser, token)
 
 
 @register.simple_tag()

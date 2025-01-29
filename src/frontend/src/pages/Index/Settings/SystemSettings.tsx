@@ -1,9 +1,8 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
-  IconClipboardCheck,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
@@ -11,7 +10,6 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconSitemap,
   IconTag,
   IconTools,
   IconTruckDelivery,
@@ -21,8 +19,10 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import type { PanelType } from '../../../components/panels/Panel';
+import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -50,9 +50,7 @@ export default function SystemSettings() {
               'INVENTREE_DOWNLOAD_FROM_URL',
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
               'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
-              'INVENTREE_REQUIRE_CONFIRM',
               'INVENTREE_STRICT_URLS',
-              'INVENTREE_TREE_DEPTH',
               'INVENTREE_BACKUP_ENABLE',
               'INVENTREE_BACKUP_DAYS',
               'INVENTREE_DELETE_TASKS_DAYS',
@@ -99,7 +97,9 @@ export default function SystemSettings() {
               'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
               'BARCODE_SHOW_TEXT',
-              'BARCODE_GENERATION_PLUGIN'
+              'BARCODE_GENERATION_PLUGIN',
+              'BARCODE_STORE_RESULTS',
+              'BARCODE_RESULTS_MAX_NUM'
             ]}
           />
         )
@@ -161,9 +161,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
-              'REPORT_LOG_ERRORS',
-              'REPORT_ENABLE_TEST_REPORT',
-              'REPORT_ATTACH_TEST_REPORT'
+              'REPORT_LOG_ERRORS'
             ]}
           />
         )
@@ -221,16 +219,11 @@ export default function SystemSettings() {
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
               'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
-              'TEST_STATION_DATA'
+              'TEST_STATION_DATA',
+              'TEST_UPLOAD_CREATE_TEMPLATE'
             ]}
           />
         )
-      },
-      {
-        name: 'stocktake',
-        label: t`Stocktake`,
-        icon: <IconClipboardCheck />,
-        content: <PlaceholderPanel />
       },
       {
         name: 'buildorders',
@@ -244,6 +237,7 @@ export default function SystemSettings() {
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
               'BUILDORDER_REQUIRE_VALID_BOM',
+              'BUILDORDER_REQUIRE_CLOSED_CHILDS',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />
@@ -308,15 +302,20 @@ export default function SystemSettings() {
 
   return (
     <>
+      <PageTitle title={t`System Settings`} />
       {user.isStaff() ? (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <SettingsHeader
+            label='system'
             title={t`System Settings`}
             subtitle={server.instance || ''}
-            switch_link="/settings/user"
-            switch_text={<Trans>Switch to User Setting</Trans>}
           />
-          <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
+          <PanelGroup
+            pageKey='system-settings'
+            panels={systemSettingsPanels}
+            model='systemsettings'
+            id={null}
+          />
         </Stack>
       ) : (
         <PermissionDenied />

@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
-import { Group } from '@mantine/core';
+import { Group, Tooltip } from '@mantine/core';
+import { IconBell } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -16,16 +17,16 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { type RowAction, RowEditAction } from '../RowActions';
 
 /**
  * PartCategoryTable - Displays a table of part categories
  */
-export function PartCategoryTable({ parentId }: { parentId?: any }) {
+export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   const table = useTable('partcategory');
   const user = useUserState();
 
@@ -36,9 +37,20 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         sortable: true,
         switchable: false,
         render: (record: any) => (
-          <Group gap="xs">
-            {record.icon && <ApiIcon name={record.icon} />}
-            {record.name}
+          <Group gap='xs' wrap='nowrap' justify='space-between'>
+            <Group gap='xs' wrap='nowrap'>
+              {record.icon && <ApiIcon name={record.icon} />}
+              {record.name}
+            </Group>
+            <Group gap='xs' justify='flex-end' wrap='nowrap'>
+              {record.starred && (
+                <Tooltip
+                  label={t`You are subscribed to notifications for this category`}
+                >
+                  <IconBell color='green' size={16} />
+                </Tooltip>
+              )}
+            </Group>
           </Group>
         )
       },
@@ -81,10 +93,12 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     ];
   }, []);
 
+  const newCategoryFields = partCategoryFields({ create: true });
+
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
-    fields: partCategoryFields(),
+    fields: newCategoryFields,
     focus: 'name',
     initialData: {
       parent: parentId
@@ -96,19 +110,22 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
 
+  const editCategoryFields = partCategoryFields({ create: false });
+
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
-    fields: partCategoryFields(),
+    fields: editCategoryFields,
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
-    let can_add = user.hasAddRole(UserRoles.part_category);
+    const can_add = user.hasAddRole(UserRoles.part_category);
 
     return [
       <AddItemButton
+        key='add-part-category'
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
         hidden={!can_add}
@@ -117,8 +134,8 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
-      let can_edit = user.hasChangeRole(UserRoles.part_category);
+    (record: any): RowAction[] => {
+      const can_edit = user.hasChangeRole(UserRoles.part_category);
 
       return [
         RowEditAction({

@@ -1,23 +1,27 @@
-import { Badge, Center, MantineSize } from '@mantine/core';
+import { Badge, Center, type MantineSize } from '@mantine/core';
 
-import { colorMap } from '../../defaults/backendMappings';
-import { ModelType } from '../../enums/ModelType';
+import { statusColorMap } from '../../defaults/backendMappings';
+import type { ModelType } from '../../enums/ModelType';
 import { resolveItem } from '../../functions/conversion';
 import { useGlobalStatusState } from '../../states/StatusState';
 
-interface StatusCodeInterface {
-  key: string;
+export interface StatusCodeInterface {
+  key: number;
   label: string;
   name: string;
   color: string;
 }
 
 export interface StatusCodeListInterface {
-  [key: string]: StatusCodeInterface;
+  status_class: string;
+  values: {
+    [key: string]: StatusCodeInterface;
+  };
 }
 
 interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
+  hidden?: boolean;
 }
 
 /*
@@ -32,10 +36,10 @@ function renderStatusLabel(
   let color = null;
 
   // Find the entry which matches the provided key
-  for (let name in codes) {
-    let entry = codes[name];
+  for (const name in codes.values) {
+    const entry: StatusCodeInterface = codes.values[name];
 
-    if (entry.key == key) {
+    if (entry?.key == key) {
       text = entry.label;
       color = entry.color;
       break;
@@ -50,7 +54,7 @@ function renderStatusLabel(
 
   // Fallbacks
   if (color == null) color = 'default';
-  color = colorMap[color] || colorMap['default'];
+  color = statusColorMap[color] || statusColorMap['default'];
   const size = options.size || 'xs';
 
   if (!text) {
@@ -58,13 +62,15 @@ function renderStatusLabel(
   }
 
   return (
-    <Badge color={color} variant="filled" size={size}>
+    <Badge color={color} variant='filled' size={size}>
       {text}
     </Badge>
   );
 }
 
-export function getStatusCodes(type: ModelType | string) {
+export function getStatusCodes(
+  type: ModelType | string
+): StatusCodeListInterface | null {
   const statusCodeList = useGlobalStatusState.getState().status;
 
   if (statusCodeList === undefined) {
@@ -95,8 +101,8 @@ export function getStatusCodeName(
     return null;
   }
 
-  for (let name in statusCodes) {
-    let entry = statusCodes[name];
+  for (const name in statusCodes) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
 
     if (entry.key == key) {
       return entry.name;
@@ -120,6 +126,10 @@ export const StatusRenderer = ({
   options?: RenderStatusLabelOptionsInterface;
 }) => {
   const statusCodes = getStatusCodes(type);
+
+  if (options?.hidden) {
+    return null;
+  }
 
   if (statusCodes === undefined || statusCodes === null) {
     console.warn('StatusRenderer: statusCodes is undefined');

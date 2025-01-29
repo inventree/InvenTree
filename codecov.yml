@@ -27,3 +27,11 @@ flag_management:
       statuses:
         - type: project
           target: 45%
+
+comment:
+  require_bundle_changes: True
+  bundle_change_threshold: "1Kb"
+
+bundle_analysis:
+  warning_threshold: "5%"
+  status: "informational"

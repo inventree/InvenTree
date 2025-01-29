@@ -38,6 +38,8 @@ Refer to the source code for the Purchase Order status codes:
         show_source: True
         members: []
 
+Purchase Order Status supports [custom states](../concepts/custom_states.md).
+
 ### Purchase Order Currency
 
 The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
@@ -91,25 +93,33 @@ There are two options to mark items as "received":
 !!! note "Permissions"
 	Marking line items as received requires the "Purchase order" ADD permission.
 
+### Item Location
+
+When receiving items from a purchase order, the location of the items must be specified. There are multiple ways to specify the location:
+
+* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location.
+
+* **Line Item Location**: Each line item can have a specific location set. When receiving items, the location will default to the line item location. *Note: A destination specified at the line item level will override the destination specified at the order level.*
+
 ### Received Items
 
 Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side"><span class='fas fa-sign-in-alt'></span> Received Items</span> tab.
 
-### Complete Order
+## Complete Order
 
 Once the quantity of all __received__ items is equal or above the quantity of all line items, the order will be automatically marked as __complete__.
 
 It is also possible to complete the order before all items were received (or if there were missing items).
 To do so, click on the <span class='fas fa-check-circle'></span> button on the main purchase order detail panel and confirm the order was completed.
 
-### Cancel Order
+## Cancel Order
 
 In the event that the order won't be processed, user has the option of cancelling the order instead.
 To do so, simply click on the <span class='fas fa-times-circle'></span> button on the main purchase order detail panel and confirm the purchase order has been cancelled.
 
-### Duplicate Purchase Order
+## Duplicate Purchase Order
 
 Duplicating a Purchase Order allows the user to quickly create a new *copy* of an existing order, using the same supplier and line item information.
 
@@ -131,7 +141,23 @@ A new purchase order is then created based on the currently selected order:
 {% include "img.html" %}
 {% endwith %}
 
-### Calendar view
+## Order Scheduling
+
+Purchase orders can be scheduled for a future date, to allow for planning of future orders.
+
+### Start Date
+
+The *Start Date* of the purchase order is the date on which the order is scheduled to be issued to the supplier.
+
+### Target Date
+
+The *Target Date* of the purchase order is the date on which the order is expected to be completed / received from the supplier.
+
+### Overdue Orders
+
+If the *Target Date* of the purchase order is reached but the order has not been completed, the order will be marked as *overdue*.
+
+## Calendar view
 
 Using the button to the top right of the list of Purchase Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 
@@ -139,3 +165,14 @@ This view can be accessed externally as an ICS calendar using a URL like the fol
 `http://inventree.example.org/api/order/calendar/purchase-order/calendar.ics`
 
 by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.
+
+## Purchase Order Settings
+
+The following [global settings](../settings/global.md) are available for purchase orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
+{{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}

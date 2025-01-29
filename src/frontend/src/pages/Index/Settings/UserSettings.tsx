@@ -1,9 +1,8 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
-  IconDeviceDesktopAnalytics,
   IconFileAnalytics,
   IconLock,
   IconSearch,
@@ -11,9 +10,10 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PlaceholderPanel } from '../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
+import type { PanelType } from '../../../components/panels/Panel';
+import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
 import { SecurityContent } from './AccountSettings/SecurityContent';
@@ -41,12 +41,6 @@ export default function UserSettings() {
         label: t`Security`,
         icon: <IconLock />,
         content: <SecurityContent />
-      },
-      {
-        name: 'dashboard',
-        label: t`Dashboard`,
-        icon: <IconDeviceDesktopAnalytics />,
-        content: <PlaceholderPanel />
       },
       {
         name: 'display',
@@ -120,16 +114,26 @@ export default function UserSettings() {
   }
 
   return (
-    <Stack gap="xs">
-      <SettingsHeader
-        title={t`Account Settings`}
-        subtitle={`${user?.first_name} ${user?.last_name}`}
-        shorthand={user?.username || ''}
-        switch_link="/settings/system"
-        switch_text={<Trans>Switch to System Setting</Trans>}
-        switch_condition={user?.is_staff || false}
-      />
-      <PanelGroup pageKey="user-settings" panels={userSettingsPanels} />
-    </Stack>
+    <>
+      <PageTitle title={t`User Settings`} />
+      <Stack gap='xs'>
+        <SettingsHeader
+          label='user'
+          title={t`Account Settings`}
+          subtitle={
+            user?.first_name && user?.last_name
+              ? `${user?.first_name} ${user?.last_name}`
+              : null
+          }
+          shorthand={user?.username || ''}
+        />
+        <PanelGroup
+          pageKey='user-settings'
+          panels={userSettingsPanels}
+          model='usersettings'
+          id={null}
+        />
+      </Stack>
+    </>
   );
 }

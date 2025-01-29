@@ -26,9 +26,9 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export interface GroupDetailI {
   pk: number;
@@ -38,10 +38,10 @@ export interface GroupDetailI {
 export function GroupDrawer({
   id,
   refreshTable
-}: {
+}: Readonly<{
   id: string;
   refreshTable: () => void;
-}) {
+}>) {
   const {
     instance,
     refreshInstance,
@@ -111,11 +111,11 @@ export function GroupDrawer({
         }}
         id={`group-detail-drawer-${id}`}
       />
-      <Group justify="space-between">
+      <Group justify='space-between'>
         <Title order={5}>
           <Trans>Permission set</Trans>
         </Title>
-        <AdminButton model={ModelType.group} pk={instance.pk} />
+        <AdminButton model={ModelType.group} id={instance.pk} />
       </Group>
       <Group>{permissionsAccordion}</Group>
     </Stack>
@@ -188,7 +188,7 @@ export function GroupTable() {
   });
 
   const tableActions = useMemo(() => {
-    let actions = [];
+    const actions = [];
 
     actions.push(
       <AddItemButton

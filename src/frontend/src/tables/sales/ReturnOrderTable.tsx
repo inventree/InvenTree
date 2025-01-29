@@ -7,68 +7,116 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useReturnOrderFields } from '../../forms/SalesOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import { useReturnOrderFields } from '../../forms/ReturnOrderForms';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CompletionDateColumn,
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
+  CreatedAfterFilter,
+  CreatedBeforeFilter,
+  CreatedByFilter,
+  HasProjectCodeFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
-  StatusFilterOptions,
-  TableFilter
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
+  type TableFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function ReturnOrderTable({ params }: { params?: any }) {
-  const table = useTable('return-orders');
+export function ReturnOrderTable({
+  partId,
+  customerId
+}: Readonly<{
+  partId?: number;
+  customerId?: number;
+}>) {
+  const table = useTable(!!partId ? 'returnorders-part' : 'returnorders-index');
   const user = useUserState();
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
+  const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.returnorder)
-      },
+    const filters: TableFilter[] = [
+      OrderStatusFilter({ model: ModelType.returnorder }),
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
+      MinDateFilter(),
+      MaxDateFilter(),
+      CreatedBeforeFilter(),
+      CreatedAfterFilter(),
+      TargetDateBeforeFilter(),
+      TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
       {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
       },
       {
-        name: 'has_project_code',
-        label: t`Has Project Code`,
-        description: t`Filter by whether the purchase order has a project code`
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
       },
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
-      }
+      CompletedBeforeFilter(),
+      CompletedAfterFilter(),
+      HasProjectCodeFilter(),
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ResponsibleFilter({ choices: responsibleFilters.choices }),
+      CreatedByFilter({ choices: createdByFilters.choices })
     ];
-  }, [projectCodeFilters.choices, responsibleFilters.choices]);
+
+    if (!!partId) {
+      filters.push({
+        name: 'include_variants',
+        type: 'boolean',
+        label: t`Include Variants`,
+        description: t`Include orders for part variants`
+      });
+    }
+
+    return filters;
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    responsibleFilters.choices,
+    createdByFilters.choices
+  ]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -77,8 +125,8 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer__name',
         title: t`Customer`,
         sortable: true,
-        render: function (record: any) {
-          let customer = record.customer_detail ?? {};
+        render: (record: any) => {
+          const customer = record.customer_detail ?? {};
 
           return (
             <Thumbnail
@@ -97,7 +145,12 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),
+      CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
+      CompletionDateColumn({
+        accessor: 'complete_date'
+      }),
       ResponsibleColumn({}),
       {
         accessor: 'total_price',
@@ -112,12 +165,15 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  const returnOrderFields = useReturnOrderFields();
+  const returnOrderFields = useReturnOrderFields({});
 
   const newReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: returnOrderFields,
+    initialData: {
+      customer: customerId
+    },
     follow: true,
     modelType: ModelType.returnorder
   });
@@ -125,6 +181,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add-return-order'
         tooltip={t`Add Return Order`}
         onClick={() => newReturnOrder.open()}
         hidden={!user.hasAddRole(UserRoles.return_order)}
@@ -141,7 +198,8 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            part: partId,
+            customer: customerId,
             customer_detail: true
           },
           tableFilters: tableFilters,

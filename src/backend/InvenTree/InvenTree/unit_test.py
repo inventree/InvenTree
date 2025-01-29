@@ -3,17 +3,20 @@
 import csv
 import io
 import json
+import os
 import re
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.db import connections
+from django.db import connections, models
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
+from django.urls import reverse
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework.test import APITestCase
@@ -91,6 +94,73 @@ def getNewestMigrationFile(app, exclude_extension=True):
         newest_file = newest_file.replace('.py', '')
 
     return newest_file
+
+
+def findOffloadedTask(
+    task_name: str,
+    clear_after: bool = False,
+    reverse: bool = False,
+    matching_args=None,
+    matching_kwargs=None,
+):
+    """Find an offloaded tasks in the background worker queue.
+
+    Arguments:
+        task_name: The name of the task to search for
+        clear_after: Clear the task queue after searching
+        reverse: Search in reverse order (most recent first)
+        matching_args: List of argument names to match against
+        matching_kwargs: List of keyword argument names to match against
+    """
+    from django_q.models import OrmQ
+
+    tasks = OrmQ.objects.all()
+
+    if reverse:
+        tasks = tasks.order_by('-pk')
+
+    task = None
+
+    for t in tasks:
+        if t.func() == task_name:
+            found = True
+
+            if matching_args:
+                for arg in matching_args:
+                    if arg not in t.args():
+                        found = False
+                        break
+
+            if matching_kwargs:
+                for kwarg in matching_kwargs:
+                    if kwarg not in t.kwargs():
+                        found = False
+                        break
+
+            if found:
+                task = t
+                break
+
+    if clear_after:
+        OrmQ.objects.all().delete()
+
+    return task
+
+
+def findOffloadedEvent(
+    event_name: str,
+    clear_after: bool = False,
+    reverse: bool = False,
+    matching_kwargs=None,
+):
+    """Find an offloaded event in the background worker queue."""
+    return findOffloadedTask(
+        'plugin.base.event.events.register_event',
+        matching_args=[str(event_name)],
+        matching_kwargs=matching_kwargs,
+        clear_after=clear_after,
+        reverse=reverse,
+    )
 
 
 class UserMixin:
@@ -246,8 +316,6 @@ class ExchangeRateMixin:
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup build in."""
 
-    pass
-
 
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
@@ -264,7 +332,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     MAX_QUERY_TIME = 7.5
 
     @contextmanager
-    def assertNumQueriesLessThan(self, value, using='default', verbose=None, url=None):
+    def assertNumQueriesLessThan(
+        self, value, using='default', verbose=False, url=None, log_to_file=False
+    ):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -282,10 +352,14 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
 
-        if verbose or n >= value:
-            msg = '\r\n%s' % json.dumps(
-                context.captured_queries, indent=4
-            )  # pragma: no cover
+            # Useful for debugging, disabled by default
+            if log_to_file:
+                with open('queries.txt', 'w', encoding='utf-8') as f:
+                    for q in context.captured_queries:
+                        f.write(str(q['sql']) + '\n')
+
+        if verbose and n >= value:
+            msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover
         else:
             msg = None
 
@@ -293,6 +367,18 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             print(f'Warning: {n} queries executed at {url}')
 
         self.assertLess(n, value, msg=msg)
+
+    @classmethod
+    def setUpTestData(cls):
+        """Setup for API tests.
+
+        - Ensure that all global settings are assigned default values.
+        """
+        from common.models import InvenTreeSetting
+
+        InvenTreeSetting.build_default_values()
+
+        super().setUpTestData()
 
     def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
@@ -393,7 +479,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
-        kwargs['data'] = kwargs.get('data', None)
+        kwargs['data'] = kwargs.get('data')
 
         return self.query(
             url, self.client.options, expected_code=expected_code, **kwargs
@@ -490,3 +576,35 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     def assertDictContainsSubset(self, a, b):
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
+
+
+class AdminTestCase(InvenTreeAPITestCase):
+    """Tests for the admin interface integration."""
+
+    superuser = True
+
+    def helper(self, model: type[models.Model], model_kwargs=None):
+        """Test the admin URL."""
+        if model_kwargs is None:
+            model_kwargs = {}
+
+        # Add object
+        obj = model.objects.create(**model_kwargs)
+        app_app, app_mdl = model._meta.app_label, model._meta.model_name
+
+        # 'Test listing
+        response = self.get(reverse(f'admin:{app_app}_{app_mdl}_changelist'))
+        self.assertEqual(response.status_code, 200)
+
+        # Test change view
+        response = self.get(
+            reverse(f'admin:{app_app}_{app_mdl}_change', kwargs={'object_id': obj.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return obj
+
+
+def in_env_context(envs):
+    """Patch the env to include the given dict."""
+    return mock.patch.dict(os.environ, envs)

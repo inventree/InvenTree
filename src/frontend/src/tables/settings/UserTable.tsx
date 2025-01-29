@@ -20,7 +20,6 @@ import {
 } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { UserPermissions } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -29,12 +28,12 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { GroupDetailI } from './GroupTable';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {
   pk: number;
@@ -51,10 +50,10 @@ export interface UserDetailI {
 export function UserDrawer({
   id,
   refreshTable
-}: {
+}: Readonly<{
   id: string;
   refreshTable: () => void;
-}) {
+}>) {
   const {
     instance: userDetail,
     refreshInstance,
@@ -67,7 +66,7 @@ export function UserDrawer({
 
   const currentUserPk = useUserState((s) => s.user?.pk);
   const isCurrentUser = useMemo(
-    () => currentUserPk === parseInt(id, 10),
+    () => currentUserPk === Number.parseInt(id, 10),
     [currentUserPk, id]
   );
 
@@ -117,7 +116,7 @@ export function UserDrawer({
           postFormContent: isCurrentUser ? (
             <Alert
               title={<Trans>Info</Trans>}
-              color="blue"
+              color='blue'
               icon={<IconInfoCircle />}
             >
               <Trans>
@@ -137,11 +136,11 @@ export function UserDrawer({
         <Title order={5}>
           <Trans>Groups</Trans>
         </Title>
-        <Spoiler maxHeight={125} showLabel="Show More" hideLabel="Show Less">
+        <Spoiler maxHeight={125} showLabel='Show More' hideLabel='Show Less'>
           <Text ml={'md'}>
             {userDetail?.groups && userDetail?.groups?.length > 0 ? (
               <List>
-                {userDetail?.groups?.map((group) => (
+                {userDetail?.groups?.map((group: any) => (
                   <List.Item key={group.pk}>
                     <DetailDrawerLink
                       to={`../group-${group.pk}`}
@@ -263,11 +262,11 @@ export function UserTable() {
   });
 
   const tableActions = useMemo(() => {
-    let actions = [];
+    const actions = [];
 
     actions.push(
       <AddItemButton
-        key="add-user"
+        key='add-user'
         onClick={newUser.open}
         tooltip={t`Add user`}
         hidden={!user.hasAddPermission(ModelType.user)}

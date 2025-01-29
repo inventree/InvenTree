@@ -45,7 +45,7 @@ def validate_attachment_model_type(value):
     """Ensure that the provided attachment model is valid."""
     model_names = [el[0] for el in attachment_model_options()]
     if value not in model_names:
-        raise ValidationError(f'Model type does not support attachments')
+        raise ValidationError('Model type does not support attachments')
 
 
 def validate_notes_model_type(value):
@@ -113,3 +113,17 @@ def validate_icon(name: Union[str, None]):
         return
 
     common.icons.validate_icon(name)
+
+
+def validate_uppercase(value: str):
+    """Ensure that the provided value is uppercase."""
+    value = str(value)
+
+    if value != value.upper():
+        raise ValidationError(_('Value must be uppercase'))
+
+
+def validate_variable_string(value: str):
+    """The passed value must be a valid variable identifier string."""
+    if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', value):
+        raise ValidationError(_('Value must be a valid variable identifier'))

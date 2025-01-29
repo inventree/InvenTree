@@ -23,7 +23,7 @@ To setup a development environment using [docker](../start/docker.md), run the f
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke install
-docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke setup-test --dev
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-test --dev
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 ```
 
@@ -34,25 +34,30 @@ A "bare metal" development setup can be installed as follows:
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
-pip install invoke && invoke
-pip install invoke && invoke setup-dev --tests
+pip install --upgrade --ignore-installed invoke
+invoke install
+invoke update
+invoke dev.setup-dev --tests
 ```
 
 Read the [InvenTree setup documentation](../start/intro.md) for a complete installation reference guide.
+
+!!! note "Required Packages"
+    Depending on your system, you may need to install additional software packages as required.
 
 ### Setup Devtools
 
 Run the following command to set up all toolsets for development.
 
 ```bash
-invoke setup-dev
+invoke dev.setup-dev
 ```
 
 *We recommend you run this command before starting to contribute. This will install and set up `pre-commit` to run some checks before each commit and help reduce errors.*
 
 ## Branches and Versioning
 
-InvenTree roughly follow the [GitLab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
+InvenTree roughly follow the [GitLab flow](https://about.gitlab.com/topics/version-control/what-are-gitlab-flow-best-practices/) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
 
 There are nominally 5 active branches:
 - `master` - The main development branch
@@ -143,10 +148,6 @@ pyupgrade `find . -name "*.py"`
 django-upgrade --target-version {{ config.extra.django_version }} `find . -name "*.py"`
 ```
 
-## Credits
-
-If you add any new dependencies / libraries, they should be added to [the credits page](../credits.md).
-
 ## Migration Files
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
@@ -169,20 +170,34 @@ The various github actions can be found in the `./github/workflows` directory
 ### Run tests locally
 
 To run test locally, use:
+
 ```
-invoke test
+invoke dev.test
 ```
 
 To run only partial tests, for example for a module use:
 ```
-invoke test --runtest order
+invoke dev.test --runtest order
 ```
 
 To see all the available options:
 
 ```
-invoke test --help
+invoke dev.test --help
 ```
+
+#### Database Permission Issues
+
+For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
+
+For example, in PostgreSQL, run:
+
+```
+alter user myuser createdb;
+```
+
+!!! info "Devcontainer"
+    The default database container which is provided in the devcontainer is already setup with the required permissions
 
 ## Code Style
 

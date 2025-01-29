@@ -1,6 +1,5 @@
 """JSON serializers for Stock app."""
 
-import logging
 from datetime import timedelta
 from decimal import Decimal
 
@@ -10,6 +9,7 @@ from django.db.models import BooleanField, Case, Count, Prefetch, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -27,6 +27,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
@@ -39,7 +40,7 @@ from .models import (
     StockLocationType,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class GenerateBatchCodeSerializer(serializers.Serializer):
@@ -238,7 +239,10 @@ class StockItemTestResultSerializer(
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
-        required=False
+        required=False,
+        allow_null=True,
+        label=_('Attachment'),
+        help_text=_('Test result attachment'),
     )
 
     def validate(self, data):
@@ -264,13 +268,13 @@ class StockItemTestResultSerializer(
             ).first():
                 data['template'] = template
 
-            else:
+            elif get_global_setting('TEST_UPLOAD_CREATE_TEMPLATE', False):
                 logger.debug(
                     "No matching test template found for '%s' - creating a new template",
                     test_name,
                 )
 
-                # Create a new test template based on the provided dasta
+                # Create a new test template based on the provided data
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
                 )
@@ -326,7 +330,9 @@ class StockItemSerializerBrief(
 
 @register_importer()
 class StockItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for a StockItem.
 
@@ -334,51 +340,60 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['tracking_items']
+    export_exclude_fields = ['tags', 'tracking_items']
 
-    export_only_fields = ['part_pricing_min', 'part_pricing_max']
+    export_child_fields = [
+        'part_detail.name',
+        'part_detail.description',
+        'part_detail.IPN',
+        'part_detail.revision',
+        'part_detail.pricing_min',
+        'part_detail.pricing_max',
+        'location_detail.name',
+        'location_detail.pathstring',
+        'supplier_part_detail.SKU',
+        'supplier_part_detail.MPN',
+    ]
 
-    import_exclude_fields = ['use_pack_size', 'tags']
+    import_exclude_fields = ['use_pack_size', 'location_path']
 
     class Meta:
         """Metaclass options."""
 
         model = StockItem
         fields = [
+            'pk',
+            'part',
+            'quantity',
+            'serial',
             'batch',
+            'location',
             'belongs_to',
             'build',
             'consumed_by',
             'customer',
             'delete_on_deplete',
             'expiry_date',
+            'in_stock',
             'is_building',
             'link',
-            'location',
-            'location_name',
-            'location_detail',
-            'location_path',
             'notes',
             'owner',
             'packaging',
             'parent',
-            'part',
-            'part_detail',
             'purchase_order',
             'purchase_order_reference',
-            'pk',
-            'quantity',
             'sales_order',
             'sales_order_reference',
-            'serial',
             'status',
             'status_text',
-            'stocktake_date',
+            'status_custom_key',
             'supplier_part',
-            'sku',
-            'supplier_part_detail',
+            'SKU',
+            'MPN',
             'barcode_hash',
             'updated',
+            'stocktake_date',
             'purchase_price',
             'purchase_price_currency',
             'use_pack_size',
@@ -388,12 +403,14 @@ class StockItemSerializer(
             'expired',
             'installed_items',
             'child_items',
+            'location_path',
             'stale',
             'tracking_items',
             'tags',
-            # Export only fields
-            'part_pricing_min',
-            'part_pricing_max',
+            # Detail fields (FK relationships)
+            'supplier_part_detail',
+            'part_detail',
+            'location_detail',
         ]
 
         """
@@ -415,13 +432,14 @@ class StockItemSerializer(
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
-        part_detail = kwargs.pop('part_detail', False)
-        location_detail = kwargs.pop('location_detail', False)
-        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
-        tests = kwargs.pop('tests', False)
+        part_detail = kwargs.pop('part_detail', True)
+        location_detail = kwargs.pop('location_detail', True)
+        supplier_part_detail = kwargs.pop('supplier_part_detail', True)
         path_detail = kwargs.pop('path_detail', False)
 
-        super(StockItemSerializer, self).__init__(*args, **kwargs)
+        tests = kwargs.pop('tests', False)
+
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -453,13 +471,11 @@ class StockItemSerializer(
         help_text=_('Parent stock item'),
     )
 
-    location_name = serializers.CharField(
-        source='location.name', read_only=True, label=_('Location Name')
-    )
-
     location_path = serializers.ListField(
         child=serializers.DictField(), source='location.get_path', read_only=True
     )
+
+    in_stock = serializers.BooleanField(read_only=True, label=_('In Stock'))
 
     """
     Field used when creating a stock item
@@ -492,7 +508,9 @@ class StockItemSerializer(
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
         queryset = queryset.prefetch_related(
             'location',
+            'allocations',
             'sales_order',
+            'sales_order_allocations',
             'purchase_order',
             Prefetch(
                 'part',
@@ -504,14 +522,23 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
+            'part__supplier_parts',
+            'part__supplier_parts__purchase_order_line_items',
             'part__pricing_data',
+            'part__tags',
             'supplier_part',
             'supplier_part__part',
             'supplier_part__supplier',
             'supplier_part__manufacturer_part',
             'supplier_part__manufacturer_part__manufacturer',
+            'supplier_part__manufacturer_part__tags',
+            'supplier_part__purchase_order_line_items',
             'supplier_part__tags',
             'test_results',
+            'customer',
+            'belongs_to',
+            'sales_order',
+            'consumed_by',
             'tags',
         )
 
@@ -561,25 +588,38 @@ class StockItemSerializer(
 
         return queryset
 
-    status_text = serializers.CharField(source='get_status_display', read_only=True)
+    status_text = serializers.CharField(
+        source='get_status_display', read_only=True, label=_('Status')
+    )
 
-    sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
+    SKU = serializers.CharField(
+        source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
+    )
+
+    MPN = serializers.CharField(
+        source='supplier_part.manufacturer_part.MPN',
+        read_only=True,
+        label=_('Manufacturer Part Number'),
+    )
 
     # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = company_serializers.SupplierPartSerializer(
+        label=_('Supplier Part'),
         source='supplier_part',
+        brief=True,
         supplier_detail=False,
         manufacturer_detail=False,
         part_detail=False,
         many=False,
         read_only=True,
     )
+
     part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True
     )
 
     location_detail = LocationBriefSerializer(
-        source='location', many=False, read_only=True
+        label=_('Location'), source='location', many=False, read_only=True
     )
 
     tests = StockItemTestResultSerializer(
@@ -619,23 +659,12 @@ class StockItemSerializer(
     purchase_order_reference = serializers.CharField(
         source='purchase_order.reference', read_only=True
     )
+
     sales_order_reference = serializers.CharField(
         source='sales_order.reference', read_only=True
     )
 
     tags = TagListSerializerField(required=False)
-
-    part_pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='part.pricing_data.overall_min',
-        read_only=True,
-        label=_('Minimum Pricing'),
-    )
-
-    part_pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='part.pricing_data.overall_max',
-        read_only=True,
-        label=_('Maximum Pricing'),
-    )
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -714,7 +743,10 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
         try:
             serials = InvenTree.helpers.extract_serial_numbers(
-                serial_numbers, quantity, item.part.get_latest_serial_number()
+                serial_numbers,
+                quantity,
+                item.part.get_latest_serial_number(),
+                part=item.part,
             )
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
@@ -741,6 +773,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
             data['serial_numbers'],
             data['quantity'],
             item.part.get_latest_serial_number(),
+            part=item.part,
         )
 
         item.serializeStock(
@@ -813,9 +846,9 @@ class InstallStockItemSerializer(serializers.Serializer):
         quantity = data.get('quantity', stock_item.quantity)
 
         if quantity > stock_item.quantity:
-            raise ValidationError(
-                _('Quantity to install must not exceed available quantity')
-            )
+            raise ValidationError({
+                'quantity': _('Quantity to install must not exceed available quantity')
+            })
 
         return data
 
@@ -871,36 +904,6 @@ class UninstallStockItemSerializer(serializers.Serializer):
         note = data.get('note', '')
 
         item.uninstall_into_location(location, request.user, note)
-
-
-class TestStatisticsLineField(serializers.DictField):
-    """DRF field definition for one column of the test statistics."""
-
-    test_name = serializers.CharField()
-    results = serializers.DictField(child=serializers.IntegerField(min_value=0))
-
-
-class TestStatisticsSerializer(serializers.Serializer):
-    """DRF serializer class for the test statistics."""
-
-    results = serializers.ListField(child=TestStatisticsLineField(), read_only=True)
-
-    def to_representation(self, obj):
-        """Just pass through the test statistics from the model."""
-        if self.context['type'] == 'by-part':
-            return obj.part_test_statistics(
-                self.context['pk'],
-                self.context['finished_datetime_after'],
-                self.context['finished_datetime_before'],
-            )
-        elif self.context['type'] == 'by-build':
-            return obj.build_test_statistics(
-                self.context['pk'],
-                self.context['finished_datetime_after'],
-                self.context['finished_datetime_before'],
-            )
-
-        raise ValidationError(_('Unsupported statistic type: ' + self.context['type']))
 
 
 class ConvertStockItemSerializer(serializers.Serializer):
@@ -967,7 +970,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['location', 'note']
+        fields = ['location', 'status', 'notes']
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -978,6 +981,15 @@ class ReturnStockItemSerializer(serializers.Serializer):
         help_text=_('Destination location for returned item'),
     )
 
+    status = serializers.ChoiceField(
+        choices=stock.status_codes.StockStatus.items(custom=True),
+        default=None,
+        label=_('Status'),
+        help_text=_('Stock item status code'),
+        required=False,
+        allow_blank=True,
+    )
+
     notes = serializers.CharField(
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
@@ -986,16 +998,20 @@ class ReturnStockItemSerializer(serializers.Serializer):
     )
 
     def save(self):
-        """Save the serialzier to return the item into stock."""
+        """Save the serializer to return the item into stock."""
         item = self.context['item']
         request = self.context['request']
 
         data = self.validated_data
 
         location = data['location']
-        notes = data.get('notes', '')
 
-        item.return_from_customer(location, user=request.user, notes=notes)
+        item.return_from_customer(
+            location,
+            user=request.user,
+            notes=data.get('notes', ''),
+            status=data.get('status', None),
+        )
 
 
 class StockChangeStatusSerializer(serializers.Serializer):
@@ -1023,7 +1039,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
         return items
 
     status = serializers.ChoiceField(
-        choices=stock.status_codes.StockStatus.items(),
+        choices=stock.status_codes.StockStatus.items(custom=True),
         default=stock.status_codes.StockStatus.OK.value,
         label=_('Status'),
     )
@@ -1128,7 +1144,7 @@ class LocationSerializer(
 ):
     """Detailed information about a stock location."""
 
-    import_exclude_fields = ['tags']
+    import_exclude_fields = []
 
     class Meta:
         """Metaclass options."""
@@ -1171,6 +1187,9 @@ class LocationSerializer(
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
+
+        queryset = queryset.prefetch_related('tags')
+
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items(),
             sublocations=stock.filters.annotate_sub_locations(),
@@ -1519,11 +1538,11 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change'))] + stock.status_codes.StockStatus.items()
+    return [(None, _('No Change')), *stock.status_codes.StockStatus.items(custom=True)]
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):
-    """Serializer for a single StockItem within a stock adjument request.
+    """Serializer for a single StockItem within a stock adjustment request.
 
     Required Fields:
         - item: StockItem object
@@ -1540,7 +1559,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['item', 'quantity']
+        fields = ['pk', 'quantity', 'batch', 'status', 'packaging']
 
     pk = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -1550,6 +1569,19 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         label='stock_item',
         help_text=_('StockItem primary key value'),
     )
+
+    def validate_pk(self, stock_item: StockItem) -> StockItem:
+        """Ensure the stock item is valid."""
+        allow_out_of_stock_transfer = get_global_setting(
+            'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
+        )
+
+        if not allow_out_of_stock_transfer and not stock_item.is_in_stock(
+            check_status=False, check_quantity=False
+        ):
+            raise ValidationError(_('Stock item is not in stock'))
+
+        return stock_item
 
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
@@ -1626,7 +1658,14 @@ class StockCountSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.stocktake(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.stocktake(quantity, request.user, notes=notes, **extra)
 
 
 class StockAddSerializer(StockAdjustmentSerializer):
@@ -1644,7 +1683,14 @@ class StockAddSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.add_stock(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.add_stock(quantity, request.user, notes=notes, **extra)
 
 
 class StockRemoveSerializer(StockAdjustmentSerializer):
@@ -1662,7 +1708,14 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                 stock_item = item['pk']
                 quantity = item['quantity']
 
-                stock_item.take_stock(quantity, request.user, notes=notes)
+                # Optional fields
+                extra = {}
+
+                for field_name in StockItem.optional_transfer_fields():
+                    if field_value := item.get(field_name, None):
+                        extra[field_name] = field_value
+
+                stock_item.take_stock(quantity, request.user, notes=notes, **extra)
 
 
 class StockTransferSerializer(StockAdjustmentSerializer):

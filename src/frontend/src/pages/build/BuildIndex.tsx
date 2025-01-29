@@ -1,8 +1,11 @@
 import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
+import { IconTools } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
+import { PanelGroup } from '../../components/panels/PanelGroup';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
@@ -17,10 +20,26 @@ export default function BuildIndex() {
     return <PermissionDenied />;
   }
 
+  const panels = useMemo(() => {
+    return [
+      {
+        name: 'buildorders',
+        label: t`Build Orders`,
+        content: <BuildOrderTable />,
+        icon: <IconTools />
+      }
+    ];
+  }, []);
+
   return (
     <Stack>
-      <PageDetail title={t`Build Orders`} actions={[]} />
-      <BuildOrderTable />
+      <PageDetail title={t`Manufacturing`} actions={[]} />
+      <PanelGroup
+        pageKey='build-index'
+        panels={panels}
+        model='manufacturing'
+        id={null}
+      />
     </Stack>
   );
 }

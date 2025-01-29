@@ -1,61 +1,36 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Alert,
-  Box,
-  Group,
-  Indicator,
-  LoadingOverlay,
-  Space,
-  Stack,
-  Tooltip
-} from '@mantine/core';
-import {
-  IconBarcode,
-  IconFilter,
-  IconRefresh,
-  IconTrash
-} from '@tabler/icons-react';
+import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { useContextMenu } from 'mantine-contextmenu';
 import {
   DataTable,
-  DataTableCellClickHandler,
-  DataTableSortStatus
+  type DataTableCellClickHandler,
+  type DataTableRowExpansionProps,
+  type DataTableSortStatus
 } from 'mantine-datatable';
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../App';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
-import { ActionButton } from '../components/buttons/ActionButton';
-import { ButtonMenu } from '../components/buttons/ButtonMenu';
-import { PrintingActions } from '../components/buttons/PrintingActions';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ModelType } from '../enums/ModelType';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useApi } from '../contexts/ApiContext';
+import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
-import { useDeleteApiFormModal } from '../hooks/UseForm';
-import { TableState } from '../hooks/UseTable';
+import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
-import { TableColumn } from './Column';
-import { TableColumnSelect } from './ColumnSelect';
-import { DownloadAction } from './DownloadAction';
-import { TableFilter } from './Filter';
-import { FilterSelectDrawer } from './FilterSelectDrawer';
-import { RowAction, RowActions } from './RowActions';
-import { TableSearchInput } from './Search';
-import { UploadAction } from './UploadAction';
+import type { TableColumn } from './Column';
+import type { TableFilter } from './Filter';
+import InvenTreeTableHeader from './InvenTreeTableHeader';
+import { type RowAction, RowActions } from './RowActions';
 
 const defaultPageSize: number = 25;
+const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
@@ -66,7 +41,6 @@ const defaultPageSize: number = 25;
  * @param noRecordsText : string - Text to display when no records are found
  * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
- * @param enableUpload : boolean - Enable upload actions
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
@@ -76,15 +50,16 @@ const defaultPageSize: number = 25;
  * @param enableRefresh : boolean - Enable refresh actions
  * @param enableColumnSwitching : boolean - Enable column switching
  * @param enableColumnCaching : boolean - Enable caching of column names via API
- * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
- * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
+ * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
+ * @param minHeight: number - Minimum height of the table (default 300px)
+ * @param noHeader: boolean - Hide the table header
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
@@ -92,7 +67,6 @@ export type InvenTreeTableProps<T = any> = {
   noRecordsText?: string;
   enableBulkDelete?: boolean;
   enableDownload?: boolean;
-  enableUpload?: boolean;
   enableFilters?: boolean;
   enableSelection?: boolean;
   enableSearch?: boolean;
@@ -103,12 +77,10 @@ export type InvenTreeTableProps<T = any> = {
   enableLabels?: boolean;
   enableReports?: boolean;
   afterBulkDelete?: () => void;
-  pageSize?: number;
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
-  rowExpansion?: any;
-  idAccessor?: string;
+  rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
@@ -116,6 +88,9 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
+  onCellContextMenu?: (record: T, event: any) => void;
+  minHeight?: number;
+  noHeader?: boolean;
 };
 
 /**
@@ -125,7 +100,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
-  enableUpload: false,
   enableLabels: false,
   enableReports: false,
   enableFilters: true,
@@ -133,60 +107,77 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableRefresh: true,
   enableSearch: true,
   enableSelection: false,
-  pageSize: defaultPageSize,
   defaultSortColumn: '',
   barcodeActions: [],
   tableFilters: [],
-  tableActions: [],
-  idAccessor: 'pk'
+  tableActions: []
 };
 
 /**
  * Table Component which extends DataTable with custom InvenTree functionality
  */
-export function InvenTreeTable<T = any>({
+export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
+  tableData,
   columns,
   props
-}: {
-  url: string;
+}: Readonly<{
+  url?: string;
   tableState: TableState;
+  tableData?: any[];
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-}) {
+}>) {
   const {
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
-    setTableSorting
+    setTableSorting,
+    loader
   } = useLocalState();
+
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
+  const api = useApi();
   const navigate = useNavigate();
+  const { showContextMenu } = useContextMenu();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
-      props.tableFilters?.map((filter) => {
-        return {
-          ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
-        };
-      }) ?? []
+      props.tableFilters
+        ?.filter((f: any) => f.active != false)
+        ?.map((filter) => {
+          return {
+            ...filter,
+            label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
+          };
+        }) ?? []
     );
   }, [props.tableFilters, fieldNames]);
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: true,
+    enabled: !!url && !tableData,
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
+    gcTime: 5000,
     queryFn: async () => {
+      if (!url) {
+        return null;
+      }
+
       if (props.enableColumnCaching == false) {
         return null;
       }
+
+      // If we already have field names, no need to fetch them again
+      if (fieldNames && Object.keys(fieldNames).length > 0) {
+        return null;
+      }
+
       return api
         .options(url, {
           params: tableProps.params
@@ -195,9 +186,10 @@ export function InvenTreeTable<T = any>({
           if (response.status == 200) {
             // Extract field information from the API
 
-            let names: Record<string, string> = {};
-            let fields: ApiFormFieldSet =
-              extractAvailableFields(response, 'POST', true) || {};
+            const names: Record<string, string> = {};
+
+            const fields: ApiFormFieldSet =
+              extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
             mapFields(fields, (path, field) => {
@@ -206,11 +198,22 @@ export function InvenTreeTable<T = any>({
               }
             });
 
-            const cacheKey = tableState.tableKey.split('-')[0];
+            const cacheKey = tableState.tableKey.replaceAll('-', '');
 
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
+
+          return null;
+        })
+        .catch(() => {
+          hideNotification('table-options-error');
+          showNotification({
+            id: 'table-options-error',
+            title: t`API Error`,
+            message: t`Failed to load table options`,
+            color: 'red'
+          });
 
           return null;
         });
@@ -223,20 +226,19 @@ export function InvenTreeTable<T = any>({
       return;
     }
 
-    const cacheKey = tableState.tableKey.split('-')[0];
+    const cacheKey = tableState.tableKey.replaceAll('-', '');
 
     // First check the local cache
     const cachedNames = getTableColumnNames(cacheKey);
 
-    if (Object.keys(cachedNames).length > 0) {
+    if (cachedNames != null) {
       // Cached names are available - use them!
       setFieldNames(cachedNames);
       return;
     }
 
-    // Otherwise, fetch the data from the API
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
+  }, [url, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -245,6 +247,10 @@ export function InvenTreeTable<T = any>({
       ...props
     };
   }, [props]);
+
+  const enableSelection: boolean = useMemo(() => {
+    return tableProps.enableSelection || tableProps.enableBulkDelete || false;
+  }, [tableProps]);
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
@@ -273,7 +279,7 @@ export function InvenTreeTable<T = any>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols = columns
+    const cols: TableColumn[] = columns
       .filter((col) => col?.hidden != true)
       .map((col) => {
         let hidden: boolean = col.hidden ?? false;
@@ -285,6 +291,7 @@ export function InvenTreeTable<T = any>({
         return {
           ...col,
           hidden: hidden,
+          noWrap: true,
           title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
         };
       });
@@ -312,16 +319,15 @@ export function InvenTreeTable<T = any>({
     columns,
     fieldNames,
     tableProps.rowActions,
-    tableProps.enableSelection,
     tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {
-    let newColumns = [...dataColumns];
+    const newColumns = [...dataColumns];
 
-    let colIdx = newColumns.findIndex((col) => col.accessor == columnName);
+    const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
 
     if (colIdx >= 0 && colIdx < newColumns.length) {
       newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
@@ -332,77 +338,78 @@ export function InvenTreeTable<T = any>({
     );
   }
 
-  // Filter list visibility
-  const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
-
   // Reset the pagination state when the search term changes
   useEffect(() => {
     tableState.setPage(1);
   }, [tableState.searchTerm]);
 
-  /*
-   * Construct query filters for the current table
-   */
-  function getTableFilters(paginate: boolean = false) {
-    let queryParams = {
-      ...tableProps.params
-    };
-
-    // Add custom filters
-    if (tableState.activeFilters) {
-      tableState.activeFilters.forEach(
-        (flt) => (queryParams[flt.name] = flt.value)
-      );
-    }
-
-    // Add custom search term
-    if (tableState.searchTerm) {
-      queryParams.search = tableState.searchTerm;
-    }
-
-    // Pagination
-    if (tableProps.enablePagination && paginate) {
-      let pageSize = tableProps.pageSize ?? defaultPageSize;
-      queryParams.limit = pageSize;
-      queryParams.offset = (tableState.page - 1) * pageSize;
-    }
-
-    // Ordering
-    let ordering = getOrderingTerm();
-
-    if (ordering) {
-      if (sortStatus.direction == 'asc') {
-        queryParams.ordering = ordering;
-      } else {
-        queryParams.ordering = `-${ordering}`;
-      }
-    }
-
-    return queryParams;
-  }
-
-  // Data download callback
-  function downloadData(fileFormat: string) {
-    // Download entire dataset (no pagination)
-    let queryParams = getTableFilters(false);
-
-    // Specify file format
-    queryParams.export = fileFormat;
-
-    let downloadUrl = api.getUri({
-      url: url,
-      params: queryParams
-    });
-
-    // Download file in a new window (to force download)
-    window.open(downloadUrl, '_blank');
-  }
-
   // Data Sorting
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<T>>({
     columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
+
+  /*
+   * Construct query filters for the current table
+   */
+  const getTableFilters = useCallback(
+    (paginate = false) => {
+      const queryParams = {
+        ...tableProps.params
+      };
+
+      // Add custom filters
+      if (tableState.activeFilters) {
+        tableState.activeFilters.forEach((flt) => {
+          queryParams[flt.name] = flt.value;
+        });
+      }
+
+      // Allow override of filters based on URL query parameters
+      if (tableState.queryFilters) {
+        for (const [key, value] of tableState.queryFilters) {
+          queryParams[key] = value;
+        }
+      }
+
+      // Add custom search term
+      if (tableState.searchTerm) {
+        queryParams.search = tableState.searchTerm;
+      }
+
+      // Pagination
+      if (tableProps.enablePagination && paginate) {
+        const pageSize = tableState.pageSize ?? defaultPageSize;
+        if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
+        queryParams.limit = pageSize;
+        queryParams.offset = (tableState.page - 1) * pageSize;
+      }
+
+      // Ordering
+      const ordering = getOrderingTerm();
+
+      if (ordering) {
+        if (sortStatus.direction == 'asc') {
+          queryParams.ordering = ordering;
+        } else {
+          queryParams.ordering = `-${ordering}`;
+        }
+      }
+
+      return queryParams;
+    },
+    [
+      tableProps.params,
+      tableProps.enablePagination,
+      tableState.activeFilters,
+      tableState.queryFilters,
+      tableState.searchTerm,
+      tableState.pageSize,
+      tableState.setPageSize,
+      sortStatus,
+      getOrderingTerm
+    ]
+  );
 
   useEffect(() => {
     const tableKey: string = tableState.tableKey.split('-')[0];
@@ -415,7 +422,7 @@ export function InvenTreeTable<T = any>({
 
   // Return the ordering parameter
   function getOrderingTerm() {
-    let key = sortStatus.columnAccessor;
+    const key = sortStatus.columnAccessor;
 
     // Sorting column not specified
     if (key == '') {
@@ -424,7 +431,7 @@ export function InvenTreeTable<T = any>({
 
     // Find matching column:
     // If column provides custom ordering term, use that
-    let column = dataColumns.find((col: any) => col.accessor == key);
+    const column = dataColumns.find((col: any) => col.accessor == key);
     return column?.ordering || key;
   }
 
@@ -433,7 +440,7 @@ export function InvenTreeTable<T = any>({
     tableProps.noRecordsText ?? t`No records found`
   );
 
-  const handleSortStatusChange = (status: DataTableSortStatus) => {
+  const handleSortStatusChange = (status: DataTableSortStatus<T>) => {
     tableState.setPage(1);
     setSortStatus(status);
 
@@ -443,14 +450,18 @@ export function InvenTreeTable<T = any>({
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
-    let queryParams = getTableFilters(true);
+    const queryParams = getTableFilters(true);
+
+    if (!url) {
+      return [];
+    }
 
     return api
       .get(url, {
         params: queryParams,
         timeout: 5 * 1000
       })
-      .then(function (response) {
+      .then((response) => {
         switch (response.status) {
           case 200:
             setMissingRecordsText(
@@ -486,21 +497,28 @@ export function InvenTreeTable<T = any>({
             break;
           default:
             setMissingRecordsText(
-              t`Unknown error` + ': ' + response.statusText
+              `${t`Unknown error`}: ${response.statusText}`
             );
             break;
         }
 
         return [];
       })
-      .catch(function (error) {
-        setMissingRecordsText(t`Error` + ': ' + error.message);
+      .catch((error) => {
+        setMissingRecordsText(`${t`Error`}: ${error.message}`);
         return [];
       });
   };
 
-  const { data, isFetching, refetch } = useQuery({
+  const {
+    data: apiData,
+    isFetching,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: [
+      'tabledata',
+      url,
       tableState.page,
       props.params,
       sortStatus.columnAccessor,
@@ -509,47 +527,36 @@ export function InvenTreeTable<T = any>({
       tableState.activeFilters,
       tableState.searchTerm
     ],
+    enabled: !!url && !tableData,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
 
+  // Refetch data when the query parameters change
   useEffect(() => {
-    tableState.setIsLoading(isFetching);
-  }, [isFetching]);
+    refetch();
+  }, [tableState.queryFilters]);
+
+  useEffect(() => {
+    tableState.setIsLoading(
+      isFetching ||
+        isLoading ||
+        tableOptionQuery.isFetching ||
+        tableOptionQuery.isLoading
+    );
+  }, [isFetching, isLoading, tableOptionQuery]);
 
   // Update tableState.records when new data received
   useEffect(() => {
-    tableState.setRecords(data ?? []);
-  }, [data]);
+    const data = tableData ?? apiData ?? [];
 
-  const deleteRecords = useDeleteApiFormModal({
-    url: url,
-    title: t`Delete Selected Items`,
-    preFormContent: (
-      <Alert
-        color="red"
-        title={t`Are you sure you want to delete the selected items?`}
-      >
-        {t`This action cannot be undone!`}
-      </Alert>
-    ),
-    initialData: {
-      items: tableState.selectedIds
-    },
-    fields: {
-      items: {
-        hidden: true
-      }
-    },
-    onFormSuccess: () => {
-      tableState.clearSelectedRecords();
-      tableState.refreshTable();
+    tableState.setRecords(data);
 
-      if (props.afterBulkDelete) {
-        props.afterBulkDelete();
-      }
+    // set pagesize to length if pagination is disabled
+    if (!tableProps.enablePagination) {
+      tableState.setPageSize(data?.length ?? defaultPageSize);
     }
-  });
+  }, [tableData, apiData]);
 
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
@@ -582,7 +589,7 @@ export function InvenTreeTable<T = any>({
         if (pk) {
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model
-          let url = getDetailUrl(tableProps.modelType, pk);
+          const url = getDetailUrl(tableProps.modelType, pk);
           navigateToLink(url, navigate, event);
         }
       }
@@ -590,143 +597,140 @@ export function InvenTreeTable<T = any>({
     [props.onRowClick, props.onCellClick]
   );
 
+  // Callback when a cell is right-clicked
+  const handleCellContextMenu = ({
+    record,
+    column,
+    event
+  }: {
+    record: any;
+    column: any;
+    event: any;
+  }) => {
+    if (column?.noContext === true) {
+      return;
+    }
+    if (props.onCellContextMenu) {
+      return props.onCellContextMenu(record, event);
+    } else if (props.rowActions) {
+      const empty = () => {};
+      const items = props.rowActions(record).map((action) => ({
+        key: action.title ?? '',
+        title: action.title ?? '',
+        color: action.color,
+        icon: action.icon,
+        onClick: action.onClick ?? empty,
+        hidden: action.hidden,
+        disabled: action.disabled
+      }));
+      return showContextMenu(items)(event);
+    } else {
+      return showContextMenu([])(event);
+    }
+  };
+
+  // pagination refresth table if pageSize changes
+  function updatePageSize(newData: number) {
+    tableState.setPageSize(newData);
+    tableState.setPage(1);
+    tableState.refreshTable();
+  }
+
+  /**
+   * Memoize row expansion options:
+   * - If rowExpansion is not provided, return undefined
+   * - Otherwise, return the rowExpansion object
+   * - Utilize the useTable hook to track expanded rows
+   */
+  const rowExpansion: DataTableRowExpansionProps<T> | undefined =
+    useMemo(() => {
+      if (!props.rowExpansion) {
+        return undefined;
+      }
+
+      return {
+        ...props.rowExpansion,
+        expanded: {
+          recordIds: tableState.expandedRecords,
+          onRecordIdsChange: (ids: any[]) => {
+            tableState.setExpandedRecords(ids);
+          }
+        }
+      };
+    }, [
+      tableState.expandedRecords,
+      tableState.setExpandedRecords,
+      props.rowExpansion
+    ]);
+
+  const optionalParams = useMemo(() => {
+    let _params: Record<string, any> = {};
+
+    if (tableProps.enablePagination) {
+      _params = {
+        ..._params,
+        totalRecords: tableState.recordCount,
+        recordsPerPage: tableState.pageSize,
+        page: tableState.page,
+        onPageChange: tableState.setPage,
+        recordsPerPageOptions: PAGE_SIZES,
+        onRecordsPerPageChange: updatePageSize
+      };
+    }
+
+    return _params;
+  }, [
+    tableProps.enablePagination,
+    tableState.recordCount,
+    tableState.pageSize,
+    tableState.page,
+    tableState.setPage,
+    updatePageSize
+  ]);
+
   return (
     <>
-      {deleteRecords.modal}
-      {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
-        <Boundary label="table-filter-drawer">
-          <FilterSelectDrawer
-            availableFilters={filters}
-            tableState={tableState}
-            opened={filtersVisible}
-            onClose={() => setFiltersVisible(false)}
-          />
-        </Boundary>
-      )}
-      <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
-        <Stack gap="sm">
-          <Group justify="apart" grow wrap="nowrap">
-            <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
-              {tableProps.enableUpload && <UploadAction key="upload-action" />}
-              <PrintingActions
-                items={tableState.selectedIds}
-                modelType={tableProps.modelType}
-                enableLabels={tableProps.enableLabels}
-                enableReports={tableProps.enableReports}
-              />
-              {(tableProps.barcodeActions?.length ?? 0) > 0 && (
-                <ButtonMenu
-                  key="barcode-actions"
-                  icon={<IconBarcode />}
-                  label={t`Barcode actions`}
-                  tooltip={t`Barcode actions`}
-                  actions={tableProps.barcodeActions ?? []}
-                />
-              )}
-              {(tableProps.enableBulkDelete ?? false) && (
-                <ActionButton
-                  disabled={!tableState.hasSelectedRecords}
-                  icon={<IconTrash />}
-                  color="red"
-                  tooltip={t`Delete selected records`}
-                  onClick={() => {
-                    deleteRecords.open();
-                  }}
-                />
-              )}
-              {tableProps.tableActions?.map((group, idx) => (
-                <Fragment key={idx}>{group}</Fragment>
-              ))}
-            </Group>
-            <Space />
-            <Group justify="right" gap={5} wrap="nowrap">
-              {tableProps.enableSearch && (
-                <TableSearchInput
-                  searchCallback={(term: string) =>
-                    tableState.setSearchTerm(term)
-                  }
-                />
-              )}
-              {tableProps.enableRefresh && (
-                <ActionIcon variant="transparent" aria-label="table-refresh">
-                  <Tooltip label={t`Refresh data`}>
-                    <IconRefresh
-                      onClick={() => {
-                        refetch();
-                        tableState.clearSelectedRecords();
-                      }}
-                    />
-                  </Tooltip>
-                </ActionIcon>
-              )}
-              {hasSwitchableColumns && (
-                <TableColumnSelect
-                  columns={dataColumns}
-                  onToggleColumn={toggleColumn}
-                />
-              )}
-              {tableProps.enableFilters && filters.length > 0 && (
-                <Indicator
-                  size="xs"
-                  label={tableState.activeFilters?.length ?? 0}
-                  disabled={tableState.activeFilters?.length == 0}
-                >
-                  <ActionIcon
-                    variant="transparent"
-                    aria-label="table-select-filters"
-                  >
-                    <Tooltip label={t`Table filters`}>
-                      <IconFilter
-                        onClick={() => setFiltersVisible(!filtersVisible)}
-                      />
-                    </Tooltip>
-                  </ActionIcon>
-                </Indicator>
-              )}
-              {tableProps.enableDownload && (
-                <DownloadAction
-                  key="download-action"
-                  downloadCallback={downloadData}
-                />
-              )}
-            </Group>
-          </Group>
-          <Box pos="relative">
-            <LoadingOverlay
-              visible={
-                tableOptionQuery.isLoading || tableOptionQuery.isFetching
-              }
+      <Stack gap='xs'>
+        {!tableProps.noHeader && (
+          <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
+            <InvenTreeTableHeader
+              tableUrl={url}
+              tableState={tableState}
+              tableProps={tableProps}
+              hasSwitchableColumns={hasSwitchableColumns}
+              columns={dataColumns}
+              filters={filters}
+              toggleColumn={toggleColumn}
             />
-
+          </Boundary>
+        )}
+        <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
+          <Box pos='relative'>
             <DataTable
-              withTableBorder
+              withTableBorder={!tableProps.noHeader}
+              withColumnBorders
               striped
               highlightOnHover
-              loaderType="dots"
+              loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
-              idAccessor={tableProps.idAccessor}
-              minHeight={300}
-              totalRecords={tableState.recordCount}
-              recordsPerPage={tableProps.pageSize ?? defaultPageSize}
-              page={tableState.page}
-              onPageChange={tableState.setPage}
+              idAccessor={tableState.idAccessor ?? 'pk'}
+              minHeight={tableProps.minHeight ?? 300}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
-                tableProps.enableSelection
-                  ? tableState.selectedRecords
-                  : undefined
+                enableSelection ? tableState.selectedRecords : undefined
               }
               onSelectedRecordsChange={
-                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+                enableSelection ? onSelectedRecordsChange : undefined
               }
-              rowExpansion={tableProps.rowExpansion}
+              rowExpansion={rowExpansion}
               rowStyle={tableProps.rowStyle}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
               records={tableState.records}
               columns={dataColumns}
               onCellClick={handleCellClick}
+              noHeader={tableProps.noHeader ?? false}
               defaultColumnProps={{
                 noWrap: true,
                 textAlign: 'left',
@@ -735,10 +739,12 @@ export function InvenTreeTable<T = any>({
                   overflow: 'hidden'
                 })
               }}
+              onCellContextMenu={handleCellContextMenu}
+              {...optionalParams}
             />
           </Box>
-        </Stack>
-      </Boundary>
+        </Boundary>
+      </Stack>
     </>
   );
 }

@@ -3,44 +3,21 @@
 Primarily BOM upload tools.
 """
 
-from collections import OrderedDict
+from typing import Optional
 
-from django.utils.translation import gettext as _
+from .models import Part
 
-from company.models import ManufacturerPart, SupplierPart
-from InvenTree.helpers import DownloadFile, GetExportFormats, normalize, str2bool
-
-from .admin import BomItemResource
-from .models import BomItem, BomItemSubstitute, Part
-
-
-def IsValidBOMFormat(fmt):
-    """Test if a file format specifier is in the valid list of BOM file formats."""
-    return fmt.strip().lower() in GetExportFormats()
-
-
-def MakeBomTemplate(fmt):
-    """Generate a Bill of Materials upload template file (for user download)."""
-    fmt = fmt.strip().lower()
-
-    if not IsValidBOMFormat(fmt):
-        fmt = 'csv'
-
-    # Create an "empty" queryset, essentially.
-    # This will then export just the row headers!
-    query = BomItem.objects.filter(pk=None)
-
-    dataset = BomItemResource().export(queryset=query, importing=True)
-
-    data = dataset.export(fmt)
-
-    filename = 'InvenTree_BOM_Template.' + fmt
-
-    return DownloadFile(data, filename)
+# TODO: 2024-12-17 - This entire file is to be removed
+# TODO: Ref: https://github.com/inventree/InvenTree/pull/8685
+# TODO: To be removed as part of https://github.com/inventree/InvenTree/issues/8686
 
 
 def ExportBom(
-    part: Part, fmt='csv', cascade: bool = False, max_levels: int = None, **kwargs
+    part: Part,
+    fmt='csv',
+    cascade: bool = False,
+    max_levels: Optional[int] = None,
+    **kwargs,
 ):
     """Export a BOM (Bill of Materials) for a given part.
 
@@ -61,15 +38,14 @@ def ExportBom(
     Returns:
         StreamingHttpResponse: Response that can be passed to the endpoint
     """
+    # TODO: All this will be pruned!!!
+    """
     parameter_data = str2bool(kwargs.get('parameter_data', False))
     stock_data = str2bool(kwargs.get('stock_data', False))
     supplier_data = str2bool(kwargs.get('supplier_data', False))
     manufacturer_data = str2bool(kwargs.get('manufacturer_data', False))
     pricing_data = str2bool(kwargs.get('pricing_data', False))
     substitute_part_data = str2bool(kwargs.get('substitute_part_data', False))
-
-    if not IsValidBOMFormat(fmt):
-        fmt = 'csv'
 
     bom_items = []
 
@@ -109,7 +85,7 @@ def ExportBom(
             pass
 
     if substitute_part_data:
-        """If requested, add extra columns for all substitute part numbers associated with each line item."""
+        # If requested, add extra columns for all substitute part numbers associated with each line item.
 
         col_index = 0
         substitute_cols = {}
@@ -117,7 +93,7 @@ def ExportBom(
         for bom_item in bom_items:
             substitutes = BomItemSubstitute.objects.filter(bom_item=bom_item)
             for s_idx, substitute in enumerate(substitutes):
-                """Create substitute part IPN column"""
+                # Create substitute part IPN column.
                 name = f'{_("Substitute IPN")}{s_idx + 1}'
                 value = substitute.part.IPN
                 try:
@@ -125,7 +101,7 @@ def ExportBom(
                 except KeyError:
                     substitute_cols[name] = {col_index: value}
 
-                """Create substitute part name column"""
+                # Create substitute part name column.
                 name = f'{_("Substitute Part")}{s_idx + 1}'
                 value = substitute.part.name
                 try:
@@ -133,7 +109,7 @@ def ExportBom(
                 except KeyError:
                     substitute_cols[name] = {col_index: value}
 
-                """Create substitute part description column"""
+                # Create substitute part description column.
                 name = f'{_("Substitute Description")}{s_idx + 1}'
                 value = substitute.part.description
                 try:
@@ -147,8 +123,8 @@ def ExportBom(
         add_columns_to_dataset(substitute_cols, len(bom_items))
 
     if parameter_data:
-        """If requested, add extra columns for each PartParameter associated with each line item."""
-
+        # If requested, add extra columns for each PartParameter associated with each line item.
+3
         parameter_cols = {}
 
         for b_idx, bom_item in enumerate(bom_items):
@@ -172,7 +148,7 @@ def ExportBom(
         add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
 
     if stock_data:
-        """If requested, add extra columns for stock data associated with each line item."""
+        # If requested, add extra columns for stock data associated with each line item.
 
         stock_headers = [
             _('Default Location'),
@@ -218,7 +194,7 @@ def ExportBom(
         add_columns_to_dataset(stock_cols, len(bom_items))
 
     if manufacturer_data or supplier_data:
-        """If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item."""
+        # If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item.
 
         # Keep track of the supplier parts we have already exported
         supplier_parts_used = set()
@@ -244,10 +220,7 @@ def ExportBom(
                         manufacturer_name = ''
 
                     # Extract the "MPN" field from the Manufacturer Part
-                    if mp_part:
-                        manufacturer_mpn = mp_part.MPN
-                    else:
-                        manufacturer_mpn = ''
+                    manufacturer_mpn = mp_part.MPN if mp_part else ''
 
                     # Generate a column name for this manufacturer
                     k_man = f'{_("Manufacturer")}_{mp_idx}'
@@ -270,10 +243,7 @@ def ExportBom(
                             else:
                                 supplier_name = ''
 
-                            if sp_part:
-                                supplier_sku = sp_part.SKU
-                            else:
-                                supplier_sku = ''
+                            supplier_sku = sp_part.SKU if sp_part else ''
 
                             # Generate column names for this supplier
                             k_sup = (
@@ -307,10 +277,7 @@ def ExportBom(
 
                     supplier_parts_used.add(sp_part)
 
-                    if sp_part.supplier:
-                        supplier_name = sp_part.supplier.name
-                    else:
-                        supplier_name = ''
+                    supplier_name = sp_part.supplier.name if sp_part.supplier else ''
 
                     supplier_sku = sp_part.SKU
 
@@ -333,3 +300,4 @@ def ExportBom(
     filename = f'{part.full_name}_BOM.{fmt}'
 
     return DownloadFile(data, filename)
+    """

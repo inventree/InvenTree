@@ -7,7 +7,6 @@
 import importlib
 import importlib.machinery
 import importlib.util
-import logging
 import os
 import sys
 import time
@@ -15,7 +14,7 @@ from collections import OrderedDict
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
-from typing import Any
+from typing import Any, Optional, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -25,6 +24,9 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+
+import InvenTree.cache
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -38,7 +40,7 @@ from .helpers import (
 )
 from .plugin import InvenTreePlugin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PluginsRegistry:
@@ -104,7 +106,7 @@ class PluginsRegistry:
 
         return plg
 
-    def get_plugin_config(self, slug: str, name: [str, None] = None):
+    def get_plugin_config(self, slug: str, name: Union[str, None] = None):
         """Return the matching PluginConfig instance for a given plugin.
 
         Args:
@@ -159,7 +161,7 @@ class PluginsRegistry:
         # Update the registry hash value
         self.update_plugin_hash()
 
-    def call_plugin_function(self, slug, func, *args, **kwargs):
+    def call_plugin_function(self, slug: str, func: str, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
         As this is intended to be run by the background worker,
@@ -212,17 +214,20 @@ class PluginsRegistry:
     # endregion
 
     # region loading / unloading
-    def _load_plugins(self, full_reload: bool = False):
+    def _load_plugins(
+        self, full_reload: bool = False, _internal: Optional[list] = None
+    ):
         """Load and activate all IntegrationPlugins.
 
         Args:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
         logger.info('Loading plugins')
 
         try:
             self._init_plugins()
-            self._activate_plugins(full_reload=full_reload)
+            self._activate_plugins(full_reload=full_reload, _internal=_internal)
         except (OperationalError, ProgrammingError, IntegrityError):
             # Exception if the database has not been migrated yet, or is not ready
             pass
@@ -237,9 +242,9 @@ class PluginsRegistry:
 
         # Trigger plugins_loaded event
         if canAppAccessDatabase():
-            from plugin.events import trigger_event
+            from plugin.events import PluginEvents, trigger_event
 
-            trigger_event('plugins_loaded')
+            trigger_event(PluginEvents.PLUGINS_LOADED)
 
     def _unload_plugins(self, force_reload: bool = False):
         """Unload and deactivate all IntegrationPlugins.
@@ -262,6 +267,7 @@ class PluginsRegistry:
         full_reload: bool = False,
         force_reload: bool = False,
         collect: bool = False,
+        _internal: Optional[list] = None,
     ):
         """Reload the plugin registry.
 
@@ -271,6 +277,7 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             collect (bool, optional): Collect plugins before reloading. Defaults to False.
+            _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
         """
         # Do not reload when currently loading
         if self.is_loading:
@@ -285,14 +292,15 @@ class PluginsRegistry:
                 collect,
             )
 
-            if collect:
+            if collect and not settings.PLUGINS_INSTALL_DISABLED:
                 logger.info('Collecting plugins')
+                self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
 
             self.plugins_loaded = False
             self._unload_plugins(force_reload=force_reload)
             self.plugins_loaded = True
-            self._load_plugins(full_reload=full_reload)
+            self._load_plugins(full_reload=full_reload, _internal=_internal)
 
             self.update_plugin_hash()
 
@@ -365,31 +373,32 @@ class PluginsRegistry:
         collected_plugins = []
 
         # Collect plugins from paths
-        for plugin in self.plugin_dirs():
-            logger.debug("Loading plugins from directory '%s'", plugin)
+        for plugin_dir in self.plugin_dirs():
+            logger.debug("Loading plugins from directory '%s'", plugin_dir)
 
             parent_path = None
-            parent_obj = Path(plugin)
+            parent_obj = Path(plugin_dir)
 
             # If a "path" is provided, some special handling is required
-            if parent_obj.name is not plugin and len(parent_obj.parts) > 1:
+            if parent_obj.name is not plugin_dir and len(parent_obj.parts) > 1:
                 # Ensure PosixPath object is converted to a string, before passing to get_plugins
                 parent_path = str(parent_obj.parent)
-                plugin = parent_obj.name
+                plugin_dir = parent_obj.name
 
             # Gather Modules
             if parent_path:
                 # On python 3.12 use new loader method
                 if sys.version_info < (3, 12):
                     raw_module = _load_source(
-                        plugin, str(parent_obj.joinpath('__init__.py'))
+                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
                     )
                 else:
                     raw_module = SourceFileLoader(
-                        plugin, str(parent_obj.joinpath('__init__.py'))
+                        plugin_dir, str(parent_obj.joinpath('__init__.py'))
                     ).load_module()
             else:
-                raw_module = importlib.import_module(plugin)
+                raw_module = importlib.import_module(plugin_dir)
+
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
             for item in modules or []:
@@ -429,16 +438,13 @@ class PluginsRegistry:
 
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current environment."""
-        if settings.PLUGIN_FILE_CHECKED:
-            logger.info('Plugin file was already checked')
-            return True
+        from plugin.installer import install_plugins_file, plugins_file_hash
 
-        from plugin.installer import install_plugins_file
+        file_hash = plugins_file_hash()
 
-        if install_plugins_file():
-            settings.PLUGIN_FILE_CHECKED = True
-            return 'first_run'
-        return False
+        if file_hash != settings.PLUGIN_FILE_HASH:
+            install_plugins_file()
+            settings.PLUGIN_FILE_HASH = file_hash
 
     # endregion
 
@@ -448,6 +454,8 @@ class PluginsRegistry:
 
         Args:
             plugin: Plugin module
+            configs: Plugin configuration dictionary
+            force_reload (bool, optional): Force reload of plugin. Defaults to False.
         """
         from InvenTree import version
 
@@ -480,6 +488,7 @@ class PluginsRegistry:
 
         # Check if this is a 'builtin' plugin
         builtin = plugin.check_is_builtin()
+        sample = plugin.check_is_sample()
 
         package_name = None
 
@@ -505,11 +514,37 @@ class PluginsRegistry:
             # Initialize package - we can be sure that an admin has activated the plugin
             logger.debug('Loading plugin `%s`', plg_name)
 
+            # If this is a third-party plugin, reload the source module
+            # This is required to ensure that separate processes are using the same code
+            if not builtin and not sample:
+                plugin_name = plugin.__name__
+                module_name = plugin.__module__
+
+                if plugin_module := sys.modules.get(module_name):
+                    logger.debug('Reloading plugin `%s`', plg_name)
+                    # Reload the module
+                    try:
+                        importlib.reload(plugin_module)
+                        plugin = getattr(plugin_module, plugin_name)
+                    except ModuleNotFoundError:
+                        # No module found - try to import it directly
+                        try:
+                            raw_module = _load_source(
+                                module_name, plugin_module.__file__
+                            )
+                            plugin = getattr(raw_module, plugin_name)
+                        except Exception:
+                            pass
+                    except Exception:
+                        logger.exception('Failed to reload plugin `%s`', plg_name)
+
             try:
                 t_start = time.time()
                 plg_i: InvenTreePlugin = plugin()
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+            except ModuleNotFoundError as e:
+                raise e
             except Exception as error:
                 handle_error(
                     error, log_name='init'
@@ -572,16 +607,11 @@ class PluginsRegistry:
                 try:
                     self._init_plugin(plg, plugin_configs)
                     break
-                except IntegrationPluginError as error:
-                    # Error has been handled downstream
-                    pass
                 except Exception as error:
                     # Handle the error, log it and try again
-                    handle_error(
-                        error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                    )
-
                     if attempts == 0:
+                        handle_error(error, log_name='init', do_raise=True)
+
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
                             error.path,
@@ -605,7 +635,12 @@ class PluginsRegistry:
         # Final list of mixins
         return order
 
-    def _activate_plugins(self, force_reload=False, full_reload: bool = False):
+    def _activate_plugins(
+        self,
+        force_reload=False,
+        full_reload: bool = False,
+        _internal: Optional[list] = None,
+    ):
         """Run activation functions for all plugins.
 
         Args:
@@ -622,7 +657,11 @@ class PluginsRegistry:
         for mixin in self.__get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
                 mixin._activate_mixin(
-                    self, plugins, force_reload=force_reload, full_reload=full_reload
+                    self,
+                    plugins,
+                    force_reload=force_reload,
+                    full_reload=full_reload,
+                    _internal=_internal,
                 )
 
         logger.debug('Done activating')
@@ -653,21 +692,31 @@ class PluginsRegistry:
         except Exception as error:  # pragma: no cover
             handle_error(error, do_raise=False)
 
-    def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
+    def _reload_apps(
+        self,
+        force_reload: bool = False,
+        full_reload: bool = False,
+        _internal: Optional[list] = None,
+    ):
         """Internal: reload apps using django internal functions.
 
         Args:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+            _internal (list, optional): Internal use only (for testing). Defaults to None.
         """
+        loadable_apps = settings.INSTALLED_APPS
+        if _internal:
+            loadable_apps += _internal
+
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
-            self._try_reload(apps.populate, settings.INSTALLED_APPS)
+            self._try_reload(apps.populate, loadable_apps)
         else:
-            self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
+            self._try_reload(apps.set_installed_apps, loadable_apps)
 
     def _clean_installed_apps(self):
         for plugin in self.installed_apps:
@@ -726,7 +775,7 @@ class PluginsRegistry:
 
         if old_hash != self.registry_hash:
             try:
-                logger.debug(
+                logger.info(
                     'Updating plugin registry hash: %s', str(self.registry_hash)
                 )
                 set_global_setting(
@@ -742,11 +791,12 @@ class PluginsRegistry:
     def plugin_settings_keys(self):
         """A list of keys which are used to store plugin settings."""
         return [
-            'ENABLE_PLUGINS_URL',
-            'ENABLE_PLUGINS_NAVIGATION',
             'ENABLE_PLUGINS_APP',
-            'ENABLE_PLUGINS_SCHEDULE',
             'ENABLE_PLUGINS_EVENTS',
+            'ENABLE_PLUGINS_INTERFACE',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_URL',
         ]
 
     def calculate_plugin_hash(self):
@@ -768,7 +818,7 @@ class PluginsRegistry:
 
         for k in self.plugin_settings_keys():
             try:
-                val = get_global_setting(k)
+                val = get_global_setting(k, create=False)
                 msg = f'{k}-{val}'
 
                 data.update(msg.encode())
@@ -786,6 +836,12 @@ class PluginsRegistry:
         if not canAppAccessDatabase(allow_shell=True):
             # Skip check if database cannot be accessed
             return
+
+        if InvenTree.cache.get_session_cache('plugin_registry_checked'):
+            # Return early if the registry has already been checked (for this request)
+            return
+
+        InvenTree.cache.set_session_cache('plugin_registry_checked', True)
 
         logger.debug('Checking plugin registry hash')
 
@@ -809,7 +865,7 @@ class PluginsRegistry:
 registry: PluginsRegistry = PluginsRegistry()
 
 
-def call_function(plugin_name, function_name, *args, **kwargs):
+def call_plugin_function(plugin_name: str, function_name: str, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
 
@@ -819,11 +875,16 @@ def _load_source(modname, filename):
 
     See https://docs.python.org/3/whatsnew/3.12.html#imp
     """
-    loader = importlib.machinery.SourceFileLoader(modname, filename)
-    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    if modname in sys.modules:
+        del sys.modules[modname]
+
+    # loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
     module = importlib.util.module_from_spec(spec)
-    # The module is always executed and not cached in sys.modules.
-    # Uncomment the following line to cache the module.
-    # sys.modules[module.__name__] = module
-    loader.exec_module(module)
+
+    sys.modules[module.__name__] = module
+
+    if spec.loader:
+        spec.loader.exec_module(module)
+
     return module

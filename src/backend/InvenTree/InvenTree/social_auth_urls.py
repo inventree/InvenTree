@@ -1,11 +1,12 @@
 """API endpoints for social authentication with allauth."""
 
-import logging
 from importlib import import_module
 
 from django.conf import settings
 from django.urls import NoReverseMatch, include, path, reverse
 
+import allauth.socialaccount.providers.openid_connect.views as oidc_views
+import structlog
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter, OAuth2LoginView
@@ -17,10 +18,11 @@ from rest_framework.response import Response
 
 import InvenTree.sso
 from common.settings import get_global_setting
+from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
 from InvenTree.serializers import EmptySerializer, InvenTreeModelSerializer
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class GenericOAuth2ApiLoginView(OAuth2LoginView):
@@ -44,7 +46,7 @@ class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
         return super().dispatch(request, *args, **kwargs)
 
 
-def handle_oauth2(adapter: OAuth2Adapter):
+def handle_oauth2(adapter: OAuth2Adapter, provider=None):
     """Define urls for oauth2 endpoints."""
     return [
         path(
@@ -60,6 +62,22 @@ def handle_oauth2(adapter: OAuth2Adapter):
     ]
 
 
+def handle_oidc(provider):
+    """Define urls for oidc endpoints."""
+    return [
+        path(
+            'login/',
+            lambda x: oidc_views.login(x, provider.id),
+            name=f'{provider.id}_api_login',
+        ),
+        path(
+            'connect/',
+            lambda x: oidc_views.callback(x, provider.id),
+            name=f'{provider.id}_api_connect',
+        ),
+    ]
+
+
 legacy = {
     'twitter': 'twitter_oauth2',
     'bitbucket': 'bitbucket_oauth2',
@@ -70,32 +88,38 @@ legacy = {
 
 
 # Collect urls for all loaded providers
-social_auth_urlpatterns = []
+def get_provider_urls() -> list:
+    """Collect urls for all loaded providers.
 
-provider_urlpatterns = []
+    Returns:
+        list: List of urls for all loaded providers.
+    """
+    auth_provider_routes = []
 
-for name, provider in providers.registry.provider_map.items():
-    try:
-        prov_mod = import_module(provider.get_package() + '.views')
-    except ImportError:
-        logger.exception('Could not import authentication provider %s', name)
-        continue
+    for name, provider in providers.registry.provider_map.items():
+        try:
+            prov_mod = import_module(provider.get_package() + '.views')
+        except ImportError:
+            logger.exception('Could not import authentication provider %s', name)
+            continue
 
-    # Try to extract the adapter class
-    adapters = [
-        cls
-        for cls in prov_mod.__dict__.values()
-        if isinstance(cls, type)
-        and cls != OAuth2Adapter
-        and issubclass(cls, OAuth2Adapter)
-    ]
+        # Try to extract the adapter class
+        adapters = [
+            cls
+            for cls in prov_mod.__dict__.values()
+            if isinstance(cls, type)
+            and cls != OAuth2Adapter
+            and issubclass(cls, OAuth2Adapter)
+        ]
 
-    # Get urls
-    urls = []
-    if len(adapters) == 1:
-        urls = handle_oauth2(adapter=adapters[0])
-    else:
-        if provider.id in legacy:
+        # Get urls
+        urls = []
+        if len(adapters) == 1:
+            if provider.id == 'openid_connect':
+                urls = handle_oidc(provider)
+            else:
+                urls = handle_oauth2(adapter=adapters[0], provider=provider)
+        elif provider.id in legacy:
             logger.warning(
                 '`%s` is not supported on platform UI. Use `%s` instead.',
                 provider.id,
@@ -108,10 +132,9 @@ for name, provider in providers.registry.provider_map.items():
                 provider.id,
             )
             continue
-    provider_urlpatterns += [path(f'{provider.id}/', include(urls))]
+        auth_provider_routes += [path(f'{provider.id}/', include(urls))]
 
-
-social_auth_urlpatterns += provider_urlpatterns
+    return auth_provider_routes
 
 
 class SocialProviderListResponseSerializer(serializers.Serializer):
@@ -176,13 +199,13 @@ class SocialProviderListView(ListAPI):
             provider_list.append(provider_data)
 
         data = {
-            'sso_enabled': InvenTree.sso.login_enabled(),
-            'sso_registration': InvenTree.sso.registration_enabled(),
+            'sso_enabled': InvenTree.sso.sso_login_enabled(),
+            'sso_registration': InvenTree.sso.sso_registration_enabled(),
             'mfa_required': settings.MFA_ENABLED
             and get_global_setting('LOGIN_ENFORCE_MFA'),
             'mfa_enabled': settings.MFA_ENABLED,
             'providers': provider_list,
-            'registration_enabled': get_global_setting('LOGIN_ENABLE_REG'),
+            'registration_enabled': registration_enabled(),
             'password_forgotten_enabled': get_global_setting('LOGIN_ENABLE_PWD_FORGOT'),
         }
         return Response(data)

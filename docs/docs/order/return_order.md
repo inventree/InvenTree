@@ -61,6 +61,8 @@ Refer to the source code for the Return Order status codes:
         show_source: True
         members: []
 
+Return Order Status supports [custom states](../concepts/custom_states.md).
+
 ## Create a Return Order
 
 From the Return Order index, click on <span class='badge inventree add'><span class='fas fa-plus-circle'></span> New Return Order</span> which opens the "Create Return Order" form.
@@ -113,7 +115,23 @@ While [line items](#line-items) must reference a particular stock item, extra li
 
 Custom [reports](../report/templates.md) can be generated against each Return Order.
 
-### Calendar view
+## Order Scheduling
+
+Return Orders can be scheduled to be completed on a specific date. This can be useful for planning and tracking the return of items.
+
+### Start Date
+
+The *Start Date* of the return order is the date on which the order is scheduled to be issued to the customer.
+
+### Target Date
+
+The *Target Date* of the return order is the date on which the order is scheduled to be completed.
+
+### Overdue Orders
+
+If the *Target Date* of a return order has passed, the order will be marked as *Overdue*. This can be useful for tracking orders which are behind schedule.
+
+## Calendar view
 
 Using the button to the top right of the list of Return Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 
@@ -121,3 +139,14 @@ This view can be accessed externally as an ICS calendar using a URL like the fol
 `http://inventree.example.org/api/order/calendar/return-order/calendar.ics`
 
 by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.
+
+## Return Order Settings
+
+The following [global settings](../settings/global.md) are available for return orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("RETURNORDER_ENABLED") }}
+{{ globalsetting("RETURNORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("RETURNORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("RETURNORDER_EDIT_COMPLETED_ORDERS") }}

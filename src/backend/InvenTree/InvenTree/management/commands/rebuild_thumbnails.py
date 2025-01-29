@@ -3,18 +3,18 @@
 - May be required after importing a new dataset, for example
 """
 
-import logging
 import os
 
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
 
+import structlog
 from PIL import UnidentifiedImageError
 
 from company.models import Company
 from part.models import Part
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class Command(BaseCommand):
@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 img_paths.append(x.path)
 
         if len(img_paths) > 0:
-            if all((os.path.exists(path) for path in img_paths)):
+            if all(os.path.exists(path) for path in img_paths):
                 # All images exist - skip further work
                 return
 

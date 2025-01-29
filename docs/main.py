@@ -1,5 +1,6 @@
 """Main entry point for the documentation build process."""
 
+import json
 import os
 import subprocess
 import textwrap
@@ -7,12 +8,55 @@ import textwrap
 import requests
 import yaml
 
+# Debugging output - useful for diagnosing CI build issues
+print('loading ./docs/main.py...')
+
+# Print out some useful debugging information
+# Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
+for key in [
+    'GITHUB_ACTIONS',
+    'GITHUB_REF',
+    'READTHEDOCS',
+    'READTHEDOCS_GIT_IDENTIFIER',
+    'READTHEDOCS_GIT_CLONE_URL',
+    'READTHEDOCS_GIT_COMMIT_HASH',
+    'READTHEDOCS_PROJECT',
+    'READTHEDOCS_VERSION',
+    'READTHEDOCS_VERSION_NAME',
+    'READTHEDOCS_VERSION_TYPE',
+]:
+    val = os.environ.get(key, None) or '-- MISSING --'
+    print(f' - {key}: {val}')
+
+# Cached settings dict values
+global GLOBAL_SETTINGS
+global USER_SETTINGS
+global TAGS
+global FILTERS
+
+# Read in the InvenTree settings file
+here = os.path.dirname(__file__)
+settings_file = os.path.join(here, 'inventree_settings.json')
+
+with open(settings_file, encoding='utf-8') as sf:
+    settings = json.load(sf)
+
+    GLOBAL_SETTINGS = settings['global']
+    USER_SETTINGS = settings['user']
+
+# Tags
+with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
+    TAGS = yaml.load(f, yaml.BaseLoader)
+# Filters
+with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
+    FILTERS = yaml.load(f, yaml.BaseLoader)
+
 
 def get_repo_url(raw=False):
     """Return the repository URL for the current project."""
     mkdocs_yml = os.path.join(os.path.dirname(__file__), 'mkdocs.yml')
 
-    with open(mkdocs_yml, 'r') as f:
+    with open(mkdocs_yml, encoding='utf-8') as f:
         mkdocs_config = yaml.safe_load(f)
         repo_name = mkdocs_config['repo_name']
 
@@ -32,11 +76,13 @@ def check_link(url) -> bool:
 
     # Keep a local cache file of URLs we have already checked
     if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE, 'r') as f:
+        with open(CACHE_FILE, encoding='utf-8') as f:
             cache = f.read().splitlines()
 
         if url in cache:
             return True
+
+    print(f'Checking external URL: {url}')
 
     attempts = 5
 
@@ -44,12 +90,14 @@ def check_link(url) -> bool:
         response = requests.head(url, timeout=5000)
         if response.status_code == 200:
             # Update the cache file
-            with open(CACHE_FILE, 'a') as f:
+            with open(CACHE_FILE, 'a', encoding='utf-8') as f:
                 f.write(f'{url}\n')
 
             return True
 
         attempts -= 1
+
+        print(f' - URL check failed with status code {response.status_code}')
 
     return False
 
@@ -58,12 +106,15 @@ def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
-        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+        for var in ['READTHEDOCS_GIT_COMMIT_HASH', 'READTHEDOCS_GIT_IDENTIFIER']:
+            if val := os.environ.get(var):
+                return val
     # We are in GitHub Actions
     elif os.environ.get('GITHUB_ACTIONS') == 'true':
         return os.environ.get('GITHUB_REF')
-    else:
-        return 'master'
+
+    # Default to 'master' branch
+    return 'master'
 
 
 def define_env(env):
@@ -136,16 +187,18 @@ def define_env(env):
         if not os.path.exists(file_path):
             raise FileNotFoundError(f'Source file {filename} does not exist.')
 
-        repo_url = get_repo_url(raw=raw)
-
-        if raw:
-            url = f'{repo_url}/{branch}/{filename}'
-        else:
-            url = f'{repo_url}/blob/{branch}/{filename}'
+        # Construct repo URL
+        repo_url = get_repo_url(raw=False)
+        url = f'{repo_url}/blob/{branch}/{filename}'
 
         # Check that the URL exists before returning it
         if not check_link(url):
             raise FileNotFoundError(f'URL {url} does not exist.')
+
+        if raw:
+            # If requesting the 'raw' URL, take this into account here...
+            repo_url = get_repo_url(raw=True)
+            url = f'{repo_url}/{branch}/{filename}'
 
         return url
 
@@ -162,7 +215,7 @@ def define_env(env):
 
         assert subprocess.call(command, shell=True) == 0
 
-        with open(output, 'r') as f:
+        with open(output, encoding='utf-8') as f:
             content = f.read()
 
         return content
@@ -185,12 +238,13 @@ def define_env(env):
         return assets
 
     @env.macro
-    def includefile(filename: str, title: str, format: str = ''):
+    def includefile(filename: str, title: str, fmt: str = ''):
         """Include a file in the documentation, in a 'collapse' block.
 
         Arguments:
             - filename: The name of the file to include (relative to the top-level directory)
             - title:
+            - fmt:
         """
         here = os.path.dirname(__file__)
         path = os.path.join(here, '..', filename)
@@ -199,11 +253,11 @@ def define_env(env):
         if not os.path.exists(path):
             raise FileNotFoundError(f'Required file {path} does not exist.')
 
-        with open(path, 'r') as f:
+        with open(path, encoding='utf-8') as f:
             content = f.read()
 
         data = f'??? abstract "{title}"\n\n'
-        data += f'    ```{format}\n'
+        data += f'    ```{fmt}\n'
         data += textwrap.indent(content, '    ')
         data += '\n\n'
         data += '    ```\n\n'
@@ -218,4 +272,65 @@ def define_env(env):
             'src', 'backend', 'InvenTree', 'report', 'templates', filename
         )
 
-        return includefile(fn, f'Template: {base}', format='html')
+        return includefile(fn, f'Template: {base}', fmt='html')
+
+    @env.macro
+    def rendersetting(key: str, setting: dict):
+        """Render a provided setting object into a table row."""
+        name = setting['name']
+        description = setting['description']
+        default = setting.get('default')
+        units = setting.get('units')
+
+        default = f'`{default}`' if default else ''
+        units = f'`{units}`' if units else ''
+
+        return (
+            f'| <div title="{key}">{name}</div> | {description} | {default} | {units} |'
+        )
+
+    @env.macro
+    def globalsetting(key: str):
+        """Extract information on a particular global setting.
+
+        Arguments:
+            - key: The name of the global setting to extract information for.
+        """
+        global GLOBAL_SETTINGS
+        setting = GLOBAL_SETTINGS[key]
+
+        return rendersetting(key, setting)
+
+    @env.macro
+    def usersetting(key: str):
+        """Extract information on a particular user setting.
+
+        Arguments:
+            - key: The name of the user setting to extract information for.
+        """
+        global USER_SETTINGS
+        setting = USER_SETTINGS[key]
+
+        return rendersetting(key, setting)
+
+    @env.macro
+    def tags_and_filters():
+        """Return a list of all tags and filters."""
+        global TAGS
+        global FILTERS
+
+        ret_data = ''
+        for ref in [['Tags', TAGS], ['Filters', FILTERS]]:
+            ret_data += f'### {ref[0]}\n\n| Namespace | Name | Description |\n| --- | --- | --- |\n'
+            for value in ref[1]:
+                title = (
+                    value['title']
+                    .replace('\n', ' ')
+                    .replace('<', '&lt;')
+                    .replace('>', '&gt;')
+                )
+                ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
+            ret_data += '\n'
+        ret_data += '\n'
+
+        return ret_data

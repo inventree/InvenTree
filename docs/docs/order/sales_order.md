@@ -39,6 +39,8 @@ Refer to the source code for the Sales Order status codes:
         show_source: True
         members: []
 
+Sales Order Status supports [custom states](../concepts/custom_states.md).
+
 ### Sales Order Currency
 
 The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./company.md#customers) will be used.
@@ -58,7 +60,7 @@ Fill out the rest of the form with the sales order information then click on <sp
 
 Each Sales Order is uniquely identified by its *Reference* field. Read more about [reference fields](../settings/reference.md).
 
-#### Add Line Items
+### Add Line Items
 
 On the sales order detail page, user can link parts to the sales order selecting the <span class="badge inventree nav side"><span class='fas fa-list-ol'></span> Line Items</span> tab then clicking on the <span class="badge inventree add"><span class='fas fa-plus-circle'></span> Add Line Item</span> button.
 
@@ -69,7 +71,7 @@ Once the "Add Line Item" form opens, select a part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
-#### Shipments
+## Shipments
 
 After all line items were added to the sales order, user needs to create one or more [shipments](#sales-order-shipments) in order to allocate stock for those parts.
 
@@ -80,7 +82,7 @@ In order to create a new shipment:
 
 Repeat the two steps above to create more shipments.
 
-#### Allocate Stock Items
+### Allocate Stock Items
 
 After shipments were created, user can either:
 
@@ -89,7 +91,7 @@ After shipments were created, user can either:
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
 
-#### Complete Shipment
+### Complete Shipment
 
 To complete a shipment, click on the <span class="badge inventree nav side"><span class='fas fa-truck-loading'></span> Pending Shipments</span> tab then click on <span class='fas fa-truck'></span> button shown in the shipment table.
 
@@ -97,16 +99,31 @@ Fill out the "Complete Shipment" form then click on <span class="badge inventree
 
 To view all the completed shipment, click on the <span class="badge inventree nav side"><span class='fas fa-truck'></span> Completed Shipments</span> tab. In the completed shipments table, click on the <span class='fas fa-plus'></span> icon next to each shipment reference to see the items and quantities which were shipped.
 
-### Complete Order
+## Complete Order
 
 Once all items in the sales order have been shipped, click on <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> to mark the sales order as shipped. Confirm then click on <span class="badge inventree confirm">Submit</span> to complete the order.
 
-### Cancel Order
+## Cancel Order
 
 To cancel the order, click on the <span class='fas fa-tools'></span> menu button next to the <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> button, then click on the "<span class='fas fa-tools'></span> Cancel Order" menu option. Confirm then click on the <span class="badge inventree confirm">Submit</span> to cancel the order.
 
+## Order Scheduling
 
-### Calendar view
+Sales orders can be scheduled for a future date, to allow for order scheduling.
+
+### Start Date
+
+The *Start Date* of the sales order is the date on which the order is scheduled to be issued, allowing work to begin on the order.
+
+### Target Date
+
+The *Target Date* of the sales order is the date on which the order is scheduled to be completed and shipped.
+
+### Overdue Orders
+
+If the *Target Date* of the sales order has passed, the order will be marked as *overdue*.
+
+## Calendar view
 
 Using the button to the top right of the list of Sales Orders, the view can be switched to a calendar view using the button <span class='fas fa-calendar-alt'></span>. This view shows orders with a defined target date only.
 
@@ -183,3 +200,15 @@ All these fields can be edited by the user:
 {% with id="edit-shipment", url="order/edit_shipment.png", description="Edit shipment" %}
 {% include "img.html" %}
 {% endwith %}
+
+## Sales Order Settings
+
+The following [global settings](../settings/global.md) are available for sales orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("SALESORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("SALESORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
+{{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
+{{ globalsetting("SALESORDER_SHIP_COMPLETE") }}

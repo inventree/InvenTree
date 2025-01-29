@@ -49,6 +49,7 @@ The following parameters are available for each Build Order, and can be edited b
 | Sales Order | Link to a *Sales Order* to which the build outputs will be allocated |
 | Source Location | Stock location to source stock items from (blank = all locations) |
 | Destination Location | Stock location where the build outputs will be located |
+| Start Date | The scheduled start date for the build |
 | Target Date | Target date for build completion |
 | Responsible | User (or group of users) who is responsible for the build |
 | External Link | Link to external webpage |
@@ -95,7 +96,7 @@ When a *Build Order* is created, we then have the ability to *allocate* stock it
 !!! info "Example - Stock Allocation"
 	Let's say that to assembly a single "Widget", we require 2 "flanges". So, to complete a build of 10 "Widgets", 20 "flanges" will be required. We *allocate* 20 flanged against this build order.
 
-Allocating stock to a build does not actually subtrack the stock from the database. Allocations signal an *intent* to take that stock for the purpose of this build. Stock allocations are actioned at the completion of a build.
+Allocating stock to a build does not actually subtract the stock from the database. Allocations signal an *intent* to take that stock for the purpose of this build. Stock allocations are subtracted from stock at the completion of a build.
 
 !!! info "Part Allocation Information"
     Any part which has stock allocated to a build order will indicate this on the part information page.
@@ -221,6 +222,10 @@ To create a build order for your part, you have two options:
 
 Fill-out the form as required, then click the "Submit" button to create the build.
 
+### Create Child Builds
+
+When creating a new build order, you have the option to automatically generate build orders for any subassembly parts. This can be useful to create a complete tree of build orders for a complex assembly. *However*, it must be noted that any build orders created for subassemblies will use the default BOM quantity for that part. Any child build orders created in this manner must be manually reviewed, to ensure that the correct quantity is being built as per your production requirements.
+
 ## Complete Build Order
 
 To complete a build, click on <span class='fas fa-tools'></span> icon on the build detail page, the `Complete Build` form will be displayed.
@@ -238,7 +243,7 @@ The form will validate the build order is ready to be completed, and will preven
 	If you wish to complete the build despite the missing parts, toggle the `Accept Unallocated` option to true to override the warning and allow completion with unallocated parts.
 
 !!! info "Overallocated Stock Items"
-	If the warning message `Some stock items have been overallocated` is shown, you have more stock than required by the BOM for the part being built allocated to the build order. By default the `Not permissted` option is selected and you will need to return to the allocation screen and remove the extra items before the build can be completed.
+	If the warning message `Some stock items have been overallocated` is shown, you have more stock than required by the BOM for the part being built allocated to the build order. By default the `Not permitted` option is selected and you will need to return to the allocation screen and remove the extra items before the build can be completed.
 
 	Alternatively, you can select `Accept as consumed by this build order` to continue with the allocation and remove the extra items from stock (e.g. if they were destroyed during build), or select `Deallocate before completing this build order` if you would like the extra items to be returned to stock for use in future builds.
 
@@ -258,25 +263,34 @@ The `Cancel Build` form will be displayed, click on the confirmation switch then
 !!! warning "Cancelled Build"
 	**A cancelled build cannot be re-opened**. Make sure to use the cancel option only if you are certain that the build won't be processed.
 
-## Overdue Builds
+## Build Scheduling
 
-Build orders may (optionally) have a target complete date specified. If this date is reached but the build order remains incomplete, then the build is considered *overdue*.
+Build orders can be scheduled for a future date, to allow for planning of production schedules.
 
-- Builds can be filtered by overdue status in the build list
-- Overdue builds will be displayed on the home page
+### Start Date
 
-## Build Order Restrictions
+Build orders can be optionally scheduled to *start* at a specified date, by setting the *Start Date* field. This field can be left blank if the build is to start immediately.
 
-There are a number of optional restrictions which can be applied to build orders, which may be enabled or disabled in the system settings:
+### Target Date
 
-### Require Active Part
+Build orders can be optionally scheduled to be completed by a certain date, by setting the *Target Date* field. This field can be left blank if the build has no specific deadline.
 
-If this option is enabled, build orders can only be created for parts which are marked as [Active](../part/part.md#active-parts).
+### Overdue Builds
 
-### Require Locked Part
+If the *Target Date* is reached but the build order remains incomplete, then the build is considered *overdue*.
 
-If this option is enabled, build orders can only be created for parts which are marked as [Locked](../part/part.md#locked-parts).
+This can be useful for tracking production delays, and can be used to generate reports on build order performance.
 
-### Require Valid BOM
+## Build Order Settings
 
-If this option is enabled, build orders can only be created for parts which have a valid [Bill of Materials](./bom.md) defined.
+The following [global settings](../settings/global.md) are available for adjusting the behavior of build orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("BUILDORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("BUILDORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("BUILDORDER_REQUIRE_ACTIVE_PART") }}
+{{ globalsetting("BUILDORDER_REQUIRE_LOCKED_PART") }}
+{{ globalsetting("BUILDORDER_REQUIRE_VALID_BOM") }}
+{{ globalsetting("BUILDORDER_REQUIRE_CLOSED_CHILDS") }}
+{{ globalsetting("PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS") }}

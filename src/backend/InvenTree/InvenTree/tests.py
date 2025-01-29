@@ -1,23 +1,22 @@
 """Test general functions and helpers."""
 
-import json
 import os
 import time
 from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings, tag
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
-import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -33,7 +32,7 @@ from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase, in_env_context
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -544,22 +543,22 @@ class FormatTest(TestCase):
     def test_currency_formatting(self):
         """Test that currency formatting works correctly for multiple currencies."""
         test_data = (
-            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),  # noqa: E201,E202
-            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),  # noqa: E201,E202
-            (Money(0.348102, 'EUR'), 1, False, '0.3'),  # noqa: E201,E202
-            (Money(0.916530, 'GBP'), 1, True, '£0.9'),  # noqa: E201,E202
-            (Money(61.031024, 'JPY'), 3, False, '61.031'),  # noqa: E201,E202
-            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),  # noqa: E201,E202
-            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),  # noqa: E201,E202
-            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),  # noqa: E201,E202
-            (Money(0.348102, 'GBP'), 3, False, '0.348'),  # noqa: E201,E202
-            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),  # noqa: E201,E202
-            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),  # noqa: E201,E202
-            (Money(0.585787, 'USD'), 1, True, '$0.6'),  # noqa: E201,E202
-            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),  # noqa: E201,E202
-            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),  # noqa: E201,E202
+            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),
+            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),
+            (Money(0.348102, 'EUR'), 1, False, '0.3'),
+            (Money(0.916530, 'GBP'), 1, True, '£0.9'),
+            (Money(61.031024, 'JPY'), 3, False, '61.031'),
+            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),
+            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),
+            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),
+            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),
+            (Money(0.348102, 'GBP'), 3, False, '0.348'),
+            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),
+            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),
+            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),
+            (Money(0.585787, 'USD'), 1, True, '$0.6'),
+            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),
+            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),
         )
 
         with self.settings(LANGUAGE_CODE='en-us'):
@@ -737,14 +736,14 @@ class TestTimeFormat(TestCase):
             month=1,
             day=1,
             hour=0,
-            minute=0,
+            minute=1,
             second=0,
-            tzinfo=pytz.timezone('Europe/London'),
+            tzinfo=ZoneInfo('Europe/London'),
         )
 
         tests = [
             ('UTC', '2000-01-01 00:01:00+00:00'),
-            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('Europe/London', '2000-01-01 00:01:00+00:00'),
             ('America/New_York', '1999-12-31 19:01:00-05:00'),
             # All following tests should result in the same value
             ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),
@@ -795,7 +794,7 @@ class TestDownloadFile(TestCase):
     def test_download(self):
         """Tests for DownloadFile."""
         helpers.DownloadFile('hello world', 'out.txt')
-        helpers.DownloadFile(bytes(b'hello world'), 'out.bin')
+        helpers.DownloadFile(b'hello world', 'out.bin')
 
 
 class TestMPTT(TestCase):
@@ -1034,15 +1033,15 @@ class TestVersionNumber(TestCase):
 
         # Check that the current .git values work too
 
-        hash = str(
-            subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
+        git_hash = str(
+            subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']), 'utf-8'
         ).strip()
 
         # On some systems the hash is a different length, so just check the first 6 characters
-        self.assertEqual(hash[:6], version.inventreeCommitHash()[:6])
+        self.assertEqual(git_hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
-            str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
+            str(subprocess.check_output(['git', 'show', '-s', '--format=%ci']), 'utf-8')
             .strip()
             .split(' ')[0]
         )
@@ -1122,10 +1121,6 @@ class TestSettings(InvenTreeTestCase):
 
     superuser = True
 
-    def in_env_context(self, envs):
-        """Patch the env to include the given dict."""
-        return mock.patch.dict(os.environ, envs)
-
     def run_reload(self, envs=None):
         """Helper function to reload InvenTree."""
         # Set default - see B006
@@ -1134,7 +1129,7 @@ class TestSettings(InvenTreeTestCase):
 
         from plugin import registry
 
-        with self.in_env_context(envs):
+        with in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -1185,18 +1180,8 @@ class TestSettings(InvenTreeTestCase):
         """Test if install of plugins on startup works."""
         from plugin import registry
 
-        if not settings.DOCKER:
-            # Check an install run
-            response = registry.install_plugin_file()
-            self.assertEqual(response, 'first_run')
-
-            # Set dynamic setting to True and rerun to launch install
-            InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-            registry.reload_plugins(full_reload=True)
-
-        # Check that there was another run
-        response = registry.install_plugin_file()
-        self.assertEqual(response, True)
+        registry.reload_plugins(full_reload=True, collect=True)
+        self.assertGreater(len(settings.PLUGIN_FILE_HASH), 0)
 
     def test_helpers_cfg_file(self):
         """Test get_config_file."""
@@ -1209,7 +1194,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({
+        with in_env_context({
             'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
         }):
             self.assertIn(
@@ -1228,7 +1213,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({
+        with in_env_context({
             'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
         }):
             self.assertIn(
@@ -1242,7 +1227,7 @@ class TestSettings(InvenTreeTestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.in_env_context({TEST_ENV_NAME: '321'}):
+        with in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
         # test typecasting to dict - None should be mapped to empty dict
@@ -1251,13 +1236,13 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # test typecasting to dict - valid JSON string should be mapped to corresponding dict
-        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+        with in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
             self.assertEqual(
                 config.get_setting(TEST_ENV_NAME, None, typecast=dict), {'a': 1}
             )
 
         # test typecasting to dict - invalid JSON string should be mapped to empty dict
-        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+        with in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
@@ -1372,14 +1357,17 @@ class TestOffloadTask(InvenTreeTestCase):
             # First call should run without issue
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertTrue(result)
-            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+            self.assertIn(
+                'Logging task attempt for dummy_task', str(cm.output).replace("\\'", '')
+            )
 
         with self.assertLogs(logger='inventree', level='INFO') as cm:
             # An attempt has been logged, but it is too recent
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Mark last attempt a few days ago - should now return True
@@ -1400,7 +1388,8 @@ class TestOffloadTask(InvenTreeTestCase):
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Configure so a task was successful too recently
@@ -1439,8 +1428,8 @@ class BarcodeMixinTest(InvenTreeTestCase):
             '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
         }
 
-        for barcode, hash in hashing_tests.items():
-            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+        for barcode, expected in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), expected)
 
 
 class SanitizerTest(TestCase):
@@ -1494,8 +1483,6 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
-# TODO - refactor to not use CUI
-@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 
@@ -1558,23 +1545,18 @@ class ClassValidationMixinTest(TestCase):
 
         def test(self):
             """Test function."""
-            ...
 
         def test1(self):
             """Test function."""
-            ...
 
         def test2(self):
             """Test function."""
-            ...
 
         required_attributes = ['NAME']
         required_overrides = [test, [test1, test2]]
 
     class InvalidClass:
         """An invalid class that does not inherit from ClassValidationMixin."""
-
-        pass
 
     def test_valid_class(self):
         """Test that a valid class passes the validation."""
@@ -1586,11 +1568,9 @@ class ClassValidationMixinTest(TestCase):
 
             def test(self):
                 """Test function."""
-                ...
 
             def test2(self):
                 """Test function."""
-                ...
 
         TestClass.validate()
 
@@ -1613,7 +1593,6 @@ class ClassValidationMixinTest(TestCase):
 
             def test2(self):
                 """Test function."""
-                ...
 
         with self.assertRaisesRegex(
             NotImplementedError,
@@ -1627,8 +1606,6 @@ class ClassProviderMixinTest(TestCase):
 
     class TestClass(ClassProviderMixin):
         """This class is a dummy class to test the ClassProviderMixin."""
-
-        pass
 
     def test_get_provider_file(self):
         """Test the get_provider_file function."""

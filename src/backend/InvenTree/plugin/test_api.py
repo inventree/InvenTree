@@ -35,7 +35,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
                 'packagename': 'invalid_package_name-asdads-asfd-asdf-asdf-asdf',
             },
             expected_code=400,
-            max_query_time=30,
+            max_query_time=60,
         )
 
         # valid - Pypi
@@ -195,8 +195,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         mixin_dict = plg.mixins()
         self.assertIn('base', mixin_dict)
         self.assertEqual(
-            mixin_dict,
-            {**mixin_dict, **{'base': {'key': 'base', 'human_name': 'base'}}},
+            mixin_dict, {**mixin_dict, 'base': {'key': 'base', 'human_name': 'base'}}
         )
 
         # check reload on save
@@ -206,7 +205,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
             plg_inactive.active = True
             plg_inactive.save()
-        self.assertEqual(cm.warning.args[0], 'A reload was triggered')
+        self.assertEqual(cm.warning.args[0], 'A plugin registry reload was triggered')
 
     def test_check_plugin(self):
         """Test check_plugin function."""

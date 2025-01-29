@@ -1,7 +1,7 @@
 """Model definitions for the 'importer' app."""
 
 import json
-import logging
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -10,6 +10,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
@@ -19,7 +20,7 @@ import importer.validators
 import InvenTree.helpers
 from importer.status_codes import DataImportStatusCode
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DataImportSession(models.Model):
@@ -117,10 +118,18 @@ class DataImportSession(models.Model):
         """
         mapping = {}
 
-        for map in self.column_mappings.all():
-            mapping[map.field] = map.column
+        for i in self.column_mappings.all():
+            mapping[i.field] = i.column
 
         return mapping
+
+    @property
+    def model_class(self):
+        """Return the model class for this importer."""
+        serializer = self.serializer_class
+
+        if serializer:
+            return serializer.Meta.model
 
     @property
     def serializer_class(self):
@@ -209,13 +218,13 @@ class DataImportSession(models.Model):
 
         missing_fields = []
 
-        for field in required_fields.keys():
+        for field in required_fields:
             # An override value exists
             if field in field_overrides:
                 continue
 
             # A default value exists
-            if field in field_defaults and field_defaults[field]:
+            if field_defaults.get(field):
                 continue
 
             # The field has been mapped to a data column
@@ -537,7 +546,10 @@ class DataImportRow(models.Model):
         return overrides
 
     def extract_data(
-        self, available_fields: dict = None, field_mapping: dict = None, commit=True
+        self,
+        available_fields: Optional[dict] = None,
+        field_mapping: Optional[dict] = None,
+        commit=True,
     ):
         """Extract row data from the provided data dictionary."""
         if not field_mapping:

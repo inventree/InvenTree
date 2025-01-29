@@ -14,6 +14,7 @@ import common.models
 import InvenTree.models
 import plugin.staticfiles
 from plugin import InvenTreePlugin, registry
+from plugin.events import PluginEvents, trigger_event
 
 
 class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
@@ -70,7 +71,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Nice name for printing."""
         name = f'{self.name} - {self.key}'
         if not self.active:
-            name += '(not active)'
+            name += ' (not active)'
         return name
 
     # extra attributes from the registry
@@ -141,7 +142,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
-        reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
+        no_reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
         super().save(force_insert, force_update, *args, **kwargs)
 
@@ -149,10 +150,10 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             # Force active if builtin
             self.active = True
 
-        if not reload and self.active != self.__org_active:
+        if not no_reload and self.active != self.__org_active:
             if settings.PLUGIN_TESTING:
-                warnings.warn('A reload was triggered', stacklevel=2)
-            registry.reload_plugins()
+                warnings.warn('A plugin registry reload was triggered', stacklevel=2)
+            registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
@@ -187,6 +188,43 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
         return getattr(self.plugin, 'is_package', False)
 
+    @property
+    def admin_source(self) -> str:
+        """Return the path to the javascript file which renders custom admin content for this plugin.
+
+        - It is required that the file provides a 'renderPluginSettings' function!
+        """
+        if not self.plugin:
+            return None
+
+        if not self.is_installed() or not self.active:
+            return None
+
+        if hasattr(self.plugin, 'get_admin_source'):
+            try:
+                return self.plugin.get_admin_source()
+            except Exception:
+                pass
+
+        return None
+
+    @property
+    def admin_context(self) -> dict:
+        """Return the context data for the admin integration."""
+        if not self.plugin:
+            return None
+
+        if not self.is_installed() or not self.active:
+            return None
+
+        if hasattr(self.plugin, 'get_admin_context'):
+            try:
+                return self.plugin.get_admin_context()
+            except Exception:
+                pass
+
+        return {}
+
     def activate(self, active: bool) -> None:
         """Set the 'active' status of this plugin instance."""
         from InvenTree.tasks import check_for_migrations, offload_task
@@ -197,9 +235,13 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         self.active = active
         self.save()
 
+        trigger_event(PluginEvents.PLUGIN_ACTIVATED, slug=self.key, active=active)
+
         if active:
             offload_task(check_for_migrations)
-            offload_task(plugin.staticfiles.copy_plugin_static_files, self.key)
+            offload_task(
+                plugin.staticfiles.copy_plugin_static_files, self.key, group='plugin'
+            )
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

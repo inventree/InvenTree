@@ -4,9 +4,11 @@ import os
 import shutil
 import subprocess
 import tempfile
+import textwrap
 from datetime import datetime
 from pathlib import Path
 from unittest import mock
+from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 
@@ -17,6 +19,9 @@ from plugin.samples.integration.another_sample import (
     WrongIntegrationPlugin,
 )
 from plugin.samples.integration.sample import SampleIntegrationPlugin
+
+# Directory for testing plugins during CI
+PLUGIN_TEST_DIR = '_testfolder/test_plugins'
 
 
 class PluginTagTests(TestCase):
@@ -252,7 +257,7 @@ class RegistryTests(TestCase):
     def test_package_loading(self):
         """Test that package distributed plugins work."""
         # Install sample package
-        subprocess.check_output('pip install inventree-zapier'.split())
+        subprocess.check_output(['pip', 'install', 'inventree-zapier'])
 
         # Reload to discover plugin
         registry.reload_plugins(full_reload=True, collect=True)
@@ -287,3 +292,111 @@ class RegistryTests(TestCase):
         self.assertEqual(
             registry.errors.get('init')[0]['broken_sample'], "'This is a dummy error'"
         )
+
+    @override_settings(PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
+    @patch.dict(os.environ, {'INVENTREE_PLUGIN_TEST_DIR': PLUGIN_TEST_DIR})
+    def test_registry_reload(self):
+        """Test that the registry correctly reloads plugin modules.
+
+        - Create a simple plugin which we can change the version
+        - Ensure that the "hash" of the plugin registry changes
+        """
+        dummy_file = os.path.join(PLUGIN_TEST_DIR, 'dummy_ci_plugin.py')
+
+        # Ensure the plugin dir exists
+        os.makedirs(PLUGIN_TEST_DIR, exist_ok=True)
+
+        # Create an __init__.py file
+        init_file = os.path.join(PLUGIN_TEST_DIR, '__init__.py')
+        if not os.path.exists(init_file):
+            with open(os.path.join(init_file), 'w', encoding='utf-8') as f:
+                f.write('')
+
+        def plugin_content(version):
+            """Return the content of the plugin file."""
+            content = f"""
+            from plugin import InvenTreePlugin
+
+            PLG_VERSION = "{version}"
+
+            print(">>> LOADING DUMMY PLUGIN v" + PLG_VERSION + " <<<")
+
+            class DummyCIPlugin(InvenTreePlugin):
+
+                NAME = "DummyCIPlugin"
+                SLUG = "dummyci"
+                TITLE = "Dummy plugin for CI testing"
+
+                VERSION = PLG_VERSION
+
+            """
+
+            return textwrap.dedent(content)
+
+        def create_plugin_file(
+            version: str, enabled: bool = True, reload: bool = True
+        ) -> str:
+            """Create a plugin file with the given version.
+
+            Arguments:
+                version: The version string to use for the plugin file
+                enabled: Whether the plugin should be enabled or not
+
+            Returns:
+                str: The plugin registry hash
+            """
+            import time
+
+            content = plugin_content(version)
+
+            with open(dummy_file, 'w', encoding='utf-8') as f:
+                f.write(content)
+
+            # Wait for the file to be written
+            time.sleep(2)
+
+            if reload:
+                # Ensure the plugin is activated
+                registry.set_plugin_state('dummyci', enabled)
+                registry.reload_plugins(
+                    full_reload=True, collect=True, force_reload=True
+                )
+
+            registry.update_plugin_hash()
+
+            return registry.registry_hash
+
+        # Initial hash, with plugin disabled
+        hash_disabled = create_plugin_file('0.0.1', enabled=False, reload=False)
+
+        # Perform initial registry reload
+        registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+
+        # Start plugin in known state
+        registry.set_plugin_state('dummyci', False)
+
+        hash_disabled = create_plugin_file('0.0.1', enabled=False)
+
+        # Enable the plugin
+        hash_enabled = create_plugin_file('0.1.0', enabled=True)
+
+        # Hash must be different!
+        self.assertNotEqual(hash_disabled, hash_enabled)
+
+        plugin_hash = hash_enabled
+
+        for v in ['0.1.1', '7.1.2', '1.2.1', '4.0.1']:
+            h = create_plugin_file(v, enabled=True)
+            self.assertNotEqual(plugin_hash, h)
+            plugin_hash = h
+
+        # Revert back to original 'version'
+        h = create_plugin_file('0.1.0', enabled=True)
+        self.assertEqual(hash_enabled, h)
+
+        # Disable the plugin
+        h = create_plugin_file('0.0.1', enabled=False)
+        self.assertEqual(hash_disabled, h)
+
+        # Finally, ensure that the plugin file is removed after testing
+        os.remove(dummy_file)

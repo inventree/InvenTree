@@ -1,7 +1,6 @@
 """DRF API definition for the 'users' app."""
 
 import datetime
-import logging
 
 from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import Group, User
@@ -10,6 +9,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path, reverse
 from django.views.generic.base import RedirectView
 
+import structlog
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
 from allauth_2fa.utils import user_has_valid_totp_device
@@ -19,11 +19,12 @@ from rest_framework import exceptions, permissions
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import authentication_classes
 from rest_framework.generics import DestroyAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.helpers
+import InvenTree.permissions
 from common.models import InvenTreeSetting
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
@@ -33,7 +34,11 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.serializers import (
+    ExtendedUserSerializer,
+    MeUserSerializer,
+    UserCreateSerializer,
+)
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner
 from users.serializers import (
@@ -43,7 +48,7 @@ from users.serializers import (
     RoleSerializer,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class OwnerList(ListAPI):
@@ -134,16 +139,27 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = ExendedUserSerializer
+    serializer_class = ExtendedUserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """Detail endpoint for current user."""
 
+    serializer_class = MeUserSerializer
+
+    rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
+
     def get_object(self):
         """Always return the current user object."""
         return self.request.user
+
+    def get_permission_model(self):
+        """Return the model for the permission check.
+
+        Note that for this endpoint, the current user can *always* edit their own details.
+        """
+        return None
 
 
 class UserList(ListCreateAPI):
@@ -151,7 +167,10 @@ class UserList(ListCreateAPI):
 
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsSuperuserOrReadOnly,
+    ]
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['first_name', 'last_name', 'username']
@@ -175,13 +194,10 @@ class GroupMixin:
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
-        try:
-            params = self.request.query_params
-            kwargs['permission_detail'] = InvenTree.helpers.str2bool(
-                params.get('permission_detail', None)
-            )
-        except AttributeError:
-            pass
+        params = self.request.query_params
+        kwargs['permission_detail'] = InvenTree.helpers.str2bool(
+            params.get('permission_detail', None)
+        )
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args, **kwargs)
 
@@ -223,6 +239,7 @@ class Login(LoginView):
         _data.update(request.POST.copy())
 
         if not _data.get('mfa', None):
+            logger.info('No MFA requested - Proceeding')
             return super().post(request, *args, **kwargs)
 
         # Check if login credentials valid
@@ -230,13 +247,15 @@ class Login(LoginView):
             request, username=_data.get('username'), password=_data.get('password')
         )
         if user is None:
+            logger.info('Invalid login - Aborting')
             return HttpResponse(status=401)
 
-            # Check if user has mfa set up
+        # Check if user has mfa set up
         if not user_has_valid_totp_device(user):
+            logger.info('No MFA set up - Proceeding')
             return super().post(request, *args, **kwargs)
 
-            # Stage login and redirect to 2fa
+        # Stage login and redirect to 2fa
         request.session['allauth_2fa_user_id'] = str(user.id)
         request.session['allauth_2fa_login'] = {
             'email_verification': app_settings.EMAIL_VERIFICATION,
@@ -245,6 +264,7 @@ class Login(LoginView):
             'email': None,
             'redirect_url': reverse('platform'),
         }
+        logger.info('Redirecting to 2fa - Proceeding')
         return redirect(reverse('two-factor-authenticate'))
 
     def process_login(self):
@@ -259,6 +279,7 @@ class Login(LoginView):
             'LOGIN_ENFORCE_MFA'
         ):
             logout(self.request)
+            logger.info('User was logged out because MFA is required - Aborting')
             raise exceptions.PermissionDenied('MFA required for this user')
         return ret
 
@@ -346,7 +367,7 @@ class GetAuthToken(APIView):
             return Response(data)
 
         else:
-            raise exceptions.NotAuthenticated()
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
 class TokenListView(DestroyAPIView, ListAPI):
@@ -370,10 +391,7 @@ class LoginRedirect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
-        session = self.request.session
-        if session.get('preferred_method', 'cui') == 'pui':
-            return f'/{FRONTEND_URL_BASE}/logged-in/'
-        return '/index/'
+        return f'/{FRONTEND_URL_BASE}/logged-in/'
 
 
 user_urls = [

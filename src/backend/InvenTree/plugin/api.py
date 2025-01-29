@@ -21,15 +21,17 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
+    RetrieveAPI,
+    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
-    RetrieveUpdateDestroyAPI,
     UpdateAPI,
 )
-from InvenTree.permissions import IsSuperuser
+from InvenTree.permissions import IsSuperuser, IsSuperuserOrReadOnly
 from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
 
@@ -63,7 +65,7 @@ class PluginFilter(rest_filters.FilterSet):
             match = True
 
             for mixin in mixins:
-                if mixin not in result.mixins().keys():
+                if mixin not in result.mixins():
                     match = False
                     break
 
@@ -142,7 +144,7 @@ class PluginList(ListAPI):
     search_fields = ['key', 'name']
 
 
-class PluginDetail(RetrieveUpdateDestroyAPI):
+class PluginDetail(RetrieveDestroyAPI):
     """API detail endpoint for PluginConfig object.
 
     get:
@@ -157,6 +159,7 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
+    permission_classes = [IsSuperuserOrReadOnly]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -173,6 +176,18 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
             })
 
         return super().delete(request, *args, **kwargs)
+
+
+class PluginAdminDetail(RetrieveAPI):
+    """Endpoint for viewing admin integration plugin details.
+
+    This endpoint is used to view the available admin integration options for a plugin.
+    """
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginAdminDetailSerializer
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
 
 class PluginInstall(CreateAPI):
@@ -428,6 +443,8 @@ plugin_api_urls = [
     path(
         'plugins/',
         include([
+            # UI plugins
+            path('ui/', include(ui_plugins_api_urls)),
             # Plugin management
             path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
             path('install/', PluginInstall.as_view(), name='api-plugin-install'),
@@ -479,6 +496,9 @@ plugin_api_urls = [
                         'uninstall/',
                         PluginUninstall.as_view(),
                         name='api-plugin-uninstall',
+                    ),
+                    path(
+                        'admin/', PluginAdminDetail.as_view(), name='api-plugin-admin'
                     ),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),

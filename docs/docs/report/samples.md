@@ -19,6 +19,7 @@ The following report templates are provided "out of the box" and can be used as 
 | [Purchase Order](#purchase-order) | [PurchaseOrder](../order/purchase_order.md) | Purchase Order report |
 | [Return Order](#return-order) | [ReturnOrder](../order/return_order.md) | Return Order report |
 | [Sales Order](#sales-order) | [SalesOrder](../order/sales_order.md) | Sales Order report |
+| [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../order/sales_order.md) | Sales Order Shipment report |
 | [Stock Location](#stock-location) | [StockLocation](../stock/stock.md#stock-location) | Stock Location report |
 | [Test Report](#test-report) | [StockItem](../stock/stock.md#stock-item) | Test Report |
 
@@ -41,6 +42,10 @@ The following report templates are provided "out of the box" and can be used as 
 ### Sales Order
 
 {{ templatefile("report/inventree_sales_order_report.html") }}
+
+### Sales Order Shipment
+
+{{ templatefile("report/inventree_sales_order_shipment_report.html") }}
 
 ### Stock Location
 
