@@ -1099,8 +1099,19 @@ def test(
         manage(c, cmd, pty=pty)
 
 
-@task(help={'dev': 'Set up development environment at the end'})
-def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset'):
+@task(
+    help={
+        'dev': 'Set up development environment at the end',
+        'validate_files': 'Validate media files are correctly copied',
+    }
+)
+def setup_test(
+    c,
+    ignore_update=False,
+    dev=False,
+    validate_files=False,
+    path='inventree-demo-dataset',
+):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import get_media_dir
 
@@ -1136,6 +1147,30 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
 
     info(f'Copying media files - "{src}" to "{dst}"')
     shutil.copytree(src, dst, dirs_exist_ok=True)
+
+    if validate_files:
+        info(' - Validating media files')
+        missing = False
+        # Check that the media files are correctly copied across
+        for dirpath, _dirnames, filenames in os.walk(src):
+            rel_path = os.path.relpath(dirpath, src)
+            dst_path = os.path.join(dst, rel_path)
+
+            if not os.path.exists(dst_path):
+                error(f' - Missing directory: {dst_path}')
+                missing = True
+                continue
+
+            for filename in filenames:
+                dst_file = os.path.join(dst_path, filename)
+                if not os.path.exists(dst_file):
+                    missing = True
+                    error(f' - Missing file: {dst_file}')
+
+        if missing:
+            raise FileNotFoundError('Media files not correctly copied')
+        else:
+            success(' - All media files correctly copied')
 
     info('Done setting up test environment...')
 
