@@ -561,7 +561,7 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Return JSON-ified data
+        # Return JSON data
         return response.data
 
     def test_top_level_filtering(self):
@@ -1305,7 +1305,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=201,
         )
 
-    def test_stock_item_create_withsupplierpart(self):
+    def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
         # POST with non-existent supplier part
         response = self.post(
@@ -1543,7 +1543,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
     def test_install(self):
-        """Test that stock item can be installed into antoher item, via the API."""
+        """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
         parent_part = part.models.Part.objects.get(pk=100)
 

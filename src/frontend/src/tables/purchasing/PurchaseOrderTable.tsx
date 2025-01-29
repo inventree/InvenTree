@@ -26,6 +26,7 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -44,6 +45,8 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -79,6 +82,20 @@ export function PurchaseOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       ProjectCodeFilter({ choices: projectCodeFilters.choices }),
@@ -120,6 +137,7 @@ export function PurchaseOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       CompletionDateColumn({
         accessor: 'complete_date'
