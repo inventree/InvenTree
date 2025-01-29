@@ -1,8 +1,8 @@
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
 import {
   clearTableFilters,
   clickButtonIfVisible,
+  navigate,
   openFilterDrawer
 } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
@@ -31,7 +31,7 @@ test('Purchase Orders', async ({ page }) => {
 test('Purchase Orders - Barcodes', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
+  await navigate(page, 'purchasing/purchase-order/13/detail');
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
@@ -70,7 +70,7 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Ensure we can scan back to this page, with the associated barcode
-  await page.goto(`${baseUrl}/`);
+  await navigate(page, '');
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByPlaceholder('Enter barcode data').fill('1234567890');
@@ -203,7 +203,7 @@ test('Purchase Orders - Order Parts', async ({ page }) => {
   await page.getByRole('banner').getByRole('button').click();
 
   // Order from the part detail page
-  await page.goto(`${baseUrl}/part/69/`);
+  await navigate(page, 'part/69/');
   await page.waitForURL('**/part/69/**');
 
   await page.getByLabel('action-menu-stock-actions').click();

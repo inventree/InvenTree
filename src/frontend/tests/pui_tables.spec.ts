@@ -1,13 +1,16 @@
 import { test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
-import { clearTableFilters, setTableChoiceFilter } from './helpers.js';
+import {
+  clearTableFilters,
+  navigate,
+  setTableChoiceFilter
+} from './helpers.js';
 import { doQuickLogin } from './login.js';
 
 test('Tables - Filters', async ({ page }) => {
   await doQuickLogin(page);
 
   // Head to the "build order list" page
-  await page.goto(`${baseUrl}/manufacturing/index/`);
+  await navigate(page, 'manufacturing/index/');
 
   await clearTableFilters(page);
 
@@ -18,14 +21,14 @@ test('Tables - Filters', async ({ page }) => {
   await clearTableFilters(page);
 
   // Head to the "part list" page
-  await page.goto(`${baseUrl}/part/category/index/parts/`);
+  await navigate(page, 'part/category/index/parts/');
 
   await setTableChoiceFilter(page, 'Assembly', 'Yes');
 
   await clearTableFilters(page);
 
   // Head to the "purchase order list" page
-  await page.goto(`${baseUrl}/purchasing/index/purchaseorders/`);
+  await navigate(page, 'purchasing/index/purchaseorders/');
 
   await clearTableFilters(page);
 
@@ -41,7 +44,7 @@ test('Tables - Columns', async ({ page }) => {
   await doQuickLogin(page);
 
   // Go to the "stock list" page
-  await page.goto(`${baseUrl}/stock/location/index/stock-items`);
+  await navigate(page, 'stock/location/index/stock-items');
 
   // Open column selector
   await page.getByLabel('table-select-columns').click();
