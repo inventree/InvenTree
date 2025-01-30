@@ -234,14 +234,20 @@ jobs:
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
           path: artifact
+          merge-multiple: true
       - name: Move files to correct location
         run: |
-          echo "Version: $version"
+          echo "Version: ${version}"
+          echo "before move"
+          ls -la artifact
           mkdir export/${version}
           mv artifact/schema.yml export/${version}/api.yaml
           mv artifact/inventree_settings.json export/${version}/inventree_settings.json
           mv artifact/inventree_tags.yml export/${version}/inventree_tags.yml
           mv artifact/inventree_filters.yml export/${version}/inventree_filters.yml
+          echo "after move"
+          ls -la artifact
+          rm -rf artifact
       - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
         name: Commit schema changes
         with:
