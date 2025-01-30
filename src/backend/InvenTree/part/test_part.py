@@ -105,6 +105,39 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertEqual(inventree_extras.render_date('aaaa'), None)
         self.assertEqual(inventree_extras.render_date(1234), 1234)
 
+    def test_setting_object(self):
+        """Test the 'setting_object' template tag."""
+        # Normal
+        self.assertEqual(
+            inventree_extras.setting_object('PART_ALLOW_DUPLICATE_IPN').value, True
+        )
+
+        # User
+        self.assertEqual(
+            inventree_extras.setting_object(
+                'PART_ALLOW_DUPLICATE_IPN', user=self.user
+            ).value,
+            '',
+        )
+
+    def test_settings_value(self):
+        """Test the 'settings_value' template tag."""
+        # Normal
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN'), True
+        )
+
+        # User
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN', user=self.user),
+            '',
+        )
+        self.logout()
+        self.assertEqual(
+            inventree_extras.settings_value('PART_ALLOW_DUPLICATE_IPN', user=self.user),
+            '',
+        )
+
 
 class PartTest(TestCase):
     """Tests for the Part model."""
