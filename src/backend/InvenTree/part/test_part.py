@@ -51,6 +51,14 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
+    def test_inventree_title(self):
+        """Test the 'inventree_title' setting."""
+        self.assertEqual(inventree_extras.inventree_title(), 'InvenTree')
+
+    def test_inventree_customize(self):
+        """Test the 'inventree_customize' template tag."""
+        self.assertEqual(inventree_extras.inventree_customize('abc'), '')
+
     def test_inventree_version(self):
         """Test the 'version' setting."""
         self.assertEqual(
@@ -84,6 +92,18 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_keyvalue(self):
         """Test keyvalue template tag."""
         self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
+
+    def test_to_list(self):
+        """Test the 'to_list' template tag."""
+        self.assertEqual(inventree_extras.to_list(1, 2, 3), (1, 2, 3))
+
+    def test_render_date(self):
+        """Test the 'render_date' template tag."""
+        self.assertEqual(inventree_extras.render_date('2021-01-01'), '2021-01-01')
+
+        self.assertEqual(inventree_extras.render_date('  '), None)
+        self.assertEqual(inventree_extras.render_date('aaaa'), None)
+        self.assertEqual(inventree_extras.render_date(1234), 1234)
 
 
 class PartTest(TestCase):
