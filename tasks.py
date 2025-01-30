@@ -11,6 +11,7 @@ from pathlib import Path
 from platform import python_version
 from typing import Optional
 
+import invoke
 from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
@@ -62,6 +63,19 @@ def info(*args):
     print(f'\033[94m{msg}\033[0m')
 
 
+def checkInvokeVersion():
+    """Check that the installed invoke version meets minimum requirements."""
+    MIN_INVOKE_VERSION = '2.0.0'
+
+    min_version = tuple(map(int, MIN_INVOKE_VERSION.split('.')))
+    invoke_version = tuple(map(int, invoke.__version__.split('.')))  # noqa: RUF048
+
+    if invoke_version < min_version:
+        error(f'The installed invoke version ({invoke.__version__}) is not supported!')
+        error(f'InvenTree requires invoke version {MIN_INVOKE_VERSION} or above')
+        sys.exit(1)
+
+
 def checkPythonVersion():
     """Check that the installed python version meets minimum requirements.
 
@@ -86,6 +100,7 @@ def checkPythonVersion():
 
 
 if __name__ in ['__main__', 'tasks']:
+    checkInvokeVersion()
     checkPythonVersion()
 
 
@@ -1179,6 +1194,30 @@ def export_settings_definitions(c, filename='inventree_settings.json', overwrite
     manage(c, f'export_settings_definitions {filename}', pty=True)
 
 
+@task(help={'basedir': 'Export to a base directory (default = False)'})
+def export_definitions(c, basedir: str = ''):
+    """Export various definitions."""
+    if basedir != '' and basedir.endswith('/') is False:
+        basedir += '/'
+
+    filenames = [
+        Path(basedir + 'inventree_settings.json').resolve(),
+        Path(basedir + 'inventree_tags.yml').resolve(),
+        Path(basedir + 'inventree_filters.yml').resolve(),
+    ]
+
+    info('Exporting definitions...')
+    export_settings_definitions(c, overwrite=True, filename=filenames[0])
+
+    check_file_existence(filenames[1], overwrite=True)
+    manage(c, f'export_tags {filenames[1]}', pty=True)
+
+    check_file_existence(filenames[2], overwrite=True)
+    manage(c, f'export_filters {filenames[2]}', pty=True)
+
+    info('Exporting definitions complete')
+
+
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
@@ -1569,6 +1608,7 @@ internal = Collection(
     clean_settings,
     clear_generated,
     export_settings_definitions,
+    export_definitions,
     frontend_build,
     frontend_check,
     frontend_compile,

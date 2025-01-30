@@ -1,6 +1,6 @@
 import { test } from '../baseFixtures';
 import { baseUrl } from '../defaults';
-import { getRowFromCell } from '../helpers';
+import { clearTableFilters, getRowFromCell } from '../helpers';
 import { doQuickLogin } from '../login';
 
 /**
@@ -11,12 +11,17 @@ test('Parts - Tabs', async ({ page }) => {
 
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Parts' }).click();
+  await page
+    .getByLabel('panel-tabs-partcategory')
+    .getByRole('tab', { name: 'Parts' })
+    .click();
 
-  await page.waitForURL('**/platform/part/category/index/details');
-  await page.goto(`${baseUrl}/part/category/index/parts`);
+  // Select a particular part from the table
+  await clearTableFilters(page);
+  await page.getByPlaceholder('Search').fill('1551');
   await page.getByText('1551ABK').click();
+
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
@@ -32,11 +37,12 @@ test('Parts - Tabs', async ({ page }) => {
   await page.getByText('1551ACLR').click();
   await page.getByRole('tab', { name: 'Part Details' }).click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
+
   await page
-    .getByRole('tab', { name: 'Part Details' })
-    .locator('xpath=..')
+    .getByLabel('panel-tabs-part')
     .getByRole('tab', { name: 'Stock', exact: true })
     .click();
+
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();

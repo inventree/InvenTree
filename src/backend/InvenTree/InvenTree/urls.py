@@ -188,6 +188,7 @@ if settings.INVENTREE_ADMIN_ENABLED:
 
     urlpatterns += [
         path(f'{admin_url}/error_log/', include('error_report.urls')),
+        path(f'{admin_url}/doc/', include('django.contrib.admindocs.urls')),
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
     ]
 
