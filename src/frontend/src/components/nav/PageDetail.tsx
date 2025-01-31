@@ -1,6 +1,5 @@
 import { Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
-import {} from 'react';
 
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { shortenString } from '../../functions/tables';
