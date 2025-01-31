@@ -18,6 +18,7 @@ export enum ApiEndpoints {
   user_simple_login = 'email/generate/',
   user_reset = 'auth/password/reset/',
   user_reset_set = 'auth/password/reset/confirm/',
+  user_change_password = 'auth/password/change/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
   user_emails = 'auth/emails/',
@@ -49,6 +50,8 @@ export enum ApiEndpoints {
   owner_list = 'user/owner/',
   content_type_list = 'contenttype/',
   icons = 'icons/',
+  selectionlist_list = 'selection/',
+  selectionlist_detail = 'selection/:id/',
 
   // Barcode API endpoints
   barcode = 'barcode/',
@@ -138,8 +141,6 @@ export enum ApiEndpoints {
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
   stock_return = 'stock/:id/return/',
-  build_test_statistics = 'test-statistics/by-build/:id/',
-  part_test_statistics = 'test-statistics/by-part/:id/',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
@@ -203,6 +204,9 @@ export enum ApiEndpoints {
   // User interface plugin endpoints
   plugin_ui_features_list = 'plugins/ui/features/:feature_type/',
 
+  // Special plugin endpoints
+  plugin_locate_item = 'locate/',
+
   // Machine API endpoints
   machine_types_list = 'machine/types/',
   machine_driver_list = 'machine/drivers/',
@@ -217,6 +221,5 @@ export enum ApiEndpoints {
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  ui_preference = 'web/ui_preference/',
   notes_image_upload = 'notes-image-upload/'
 }

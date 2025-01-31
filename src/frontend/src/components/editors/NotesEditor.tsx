@@ -2,14 +2,14 @@ import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
-import EasyMDE, { default as SimpleMde } from 'easymde';
+import EasyMDE, { type default as SimpleMde } from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { ModelInformationDict } from '../render/ModelType';
 
@@ -31,6 +31,7 @@ export default function NotesEditor({
   modelId: number;
   editable?: boolean;
 }>) {
+  const api = useApi();
   // In addition to the editable prop, we also need to check if the user has "enabled" editing
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -126,7 +127,7 @@ export default function NotesEditor({
         .catch((error) => {
           notifications.hide('notes');
 
-          let msg =
+          const msg =
             error?.response?.data?.non_field_errors[0] ??
             t`Failed to save notes`;
 
@@ -142,7 +143,7 @@ export default function NotesEditor({
   );
 
   const editorOptions: SimpleMde.Options = useMemo(() => {
-    let icons: any[] = [];
+    const icons: any[] = [];
 
     if (editing) {
       icons.push({
@@ -201,13 +202,14 @@ export default function NotesEditor({
 
   useEffect(() => {
     if (mdeInstance) {
-      let previewMode = !(editable && editing);
+      const previewMode = !(editable && editing);
 
       mdeInstance.codemirror?.setOption('readOnly', previewMode);
 
       // Ensure the preview mode is toggled if required
       if (mdeInstance.isPreviewActive() != previewMode) {
-        let sibling = mdeInstance?.codemirror.getWrapperElement()?.nextSibling;
+        const sibling =
+          mdeInstance?.codemirror.getWrapperElement()?.nextSibling;
 
         if (sibling != null) {
           EasyMDE.togglePreview(mdeInstance);

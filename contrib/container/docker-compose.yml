@@ -71,6 +71,7 @@ services:
             - 8000
         depends_on:
             - inventree-db
+            - inventree-cache
         env_file:
             - .env
         volumes:

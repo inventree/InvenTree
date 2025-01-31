@@ -68,7 +68,7 @@ python3 -m venv env
 
 The virtual environment needs to be activated to ensure the correct python binaries and libraries are used. The InvenTree instructions assume that the virtual environment is always correctly activated.
 
-To configure Inventree inside a virtual environment, ``cd`` into the inventree base directory and run the following command:
+To configure InvenTree inside a virtual environment, ``cd`` into the inventree base directory and run the following command:
 
 ```
 source env/bin/activate
@@ -81,6 +81,24 @@ Or, if that does not work, try:
 ```
 
 This will place the current shell session inside a virtual environment - the terminal should display the ``(env)`` prefix.
+
+### Invoke in Virtual Environment
+
+If you are using a virtual environment (and you should be!) you will need to ensure that you have installed the `invoke` package inside the virtual environment! If the invoke commands are run from outside the virtual environment, they may not work correctly - and may be extremely difficult to debug!
+
+To install the `invoke` package inside the virtual environment, run the following command (after activating the virtual environment):
+
+```
+pip install --upgrade --ignore-installed invoke
+```
+
+To check that the `invoke` package is correctly installed, run the following command:
+
+```
+which invoke
+```
+
+This should return the path to the `invoke` binary inside the virtual environment. If the path is *not* inside the virtual environment, the `invoke` package is not correctly installed!
 
 ## InvenTree Source Code
 
@@ -106,7 +124,7 @@ So, for a production setup, you should set `INVENTREE_DEBUG=false` in the [confi
 
 ### Potential Issues
 
-Turning off DEBUG mode creates further work for the system administrator. In particular, when running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that the InvenTree server can run "monolithically" without the need for a separate web server.
+Turning off DEBUG mode creates further work for the system administrator. In particular, when running in DEBUG mode, the InvenTree web server natively manages *static* and *media* files, which means that when DEBUG mode is *disabled*, the InvenTree server can no longer run as a monolithic process.
 
 !!! info "Read More"
     Refer to the [proxy server documentation](./processes.md#proxy-server) for more details

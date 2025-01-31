@@ -5,7 +5,6 @@ import {
   Grid,
   Loader,
   Skeleton,
-  Space,
   Stack,
   Text
 } from '@mantine/core';
@@ -21,7 +20,6 @@ import {
   IconListTree,
   IconLock,
   IconPackages,
-  IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -30,19 +28,21 @@ import {
   IconTruckReturn,
   IconVersions
 } from '@tabler/icons-react';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -57,16 +57,18 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import {
-  StockOperationProps,
+  type StockOperationProps,
   useCountStockItem,
   useTransferStockItem
 } from '../../forms/StockForms';
@@ -95,7 +97,6 @@ import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartAllocationPanel from './PartAllocationPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartSchedulingDetail from './PartSchedulingDetail';
@@ -108,6 +109,7 @@ import PartSupplierDetail from './PartSupplierDetail';
 export default function PartDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const navigate = useNavigate();
   const user = useUserState();
 
@@ -143,7 +145,7 @@ export default function PartDetail() {
       return <Skeleton />;
     }
 
-    let data = { ...part };
+    const data = { ...part };
 
     data.required =
       (data?.required_for_build_orders ?? 0) +
@@ -155,7 +157,7 @@ export default function PartDetail() {
     }
 
     // Construct the details tables
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'string',
         name: 'name',
@@ -241,7 +243,7 @@ export default function PartDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'total_in_stock',
@@ -322,7 +324,7 @@ export default function PartDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'boolean',
         name: 'active',
@@ -384,7 +386,7 @@ export default function PartDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'creation_date',
@@ -415,41 +417,13 @@ export default function PartDetail() {
     ];
 
     // Add in price range data
-    if (id) {
+    if (part.pricing_min || part.pricing_max) {
       br.push({
         type: 'string',
         name: 'pricing',
         label: t`Price Range`,
         value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['pricing', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_pricing, null, {
-                id: id
-              });
-
-              return api
-                .get(url)
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data;
-                    default:
-                      return {};
-                  }
-                })
-                .catch(() => {
-                  return {};
-                });
-            }
-          });
-
-          return (
-            data.overall_min &&
-            `${formatPriceRange(data.overall_min, data.overall_max)}${
-              part.units && ' / ' + part.units
-            }`
-          );
+          return formatPriceRange(part.pricing_min, part.pricing_max);
         }
       });
     }
@@ -462,98 +436,23 @@ export default function PartDetail() {
       icon: 'serial'
     });
 
-    // Add in stocktake information
-    if (id && part.last_stocktake) {
-      br.push({
-        type: 'string',
-        name: 'stocktake',
-        label: t`Last Stocktake`,
-        unit: true,
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['stocktake', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-              return api
-                .get(url, { params: { part: id, ordering: 'date' } })
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      if (response.data.length > 0) {
-                        return response.data[response.data.length - 1];
-                      } else {
-                        return {};
-                      }
-                    default:
-                      return {};
-                  }
-                })
-                .catch(() => {
-                  return {};
-                });
-            }
-          });
-
-          if (data && data.quantity) {
-            return `${data.quantity} (${data.date})`;
-          } else {
-            return '-';
-          }
-        }
-      });
-
-      br.push({
-        type: 'string',
-        name: 'stocktake_user',
-        label: t`Stocktake By`,
-        badge: 'user',
-        icon: 'user',
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['stocktake', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-              return api
-                .get(url, { params: { part: id, ordering: 'date' } })
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data[response.data.length - 1];
-                    default:
-                      return {};
-                  }
-                })
-                .catch(() => {
-                  return {};
-                });
-            }
-          });
-          return data?.user;
-        }
-      });
-    }
-
     return part ? (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              imageActions={{
-                selectExisting: true,
-                downloadImage: true,
-                uploadFile: true,
-                deleteFile: true
-              }}
-              src={part.image}
-              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-              refresh={refreshInstance}
-              pk={part.pk}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            imageActions={{
+              selectExisting: true,
+              downloadImage: true,
+              uploadFile: true,
+              deleteFile: true
+            }}
+            src={part.image}
+            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+            refresh={refreshInstance}
+            pk={part.pk}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
@@ -564,7 +463,14 @@ export default function PartDetail() {
     ) : (
       <Skeleton />
     );
-  }, [globalSettings, part, serials, instanceQuery]);
+  }, [
+    globalSettings,
+    part,
+    id,
+    serials,
+    instanceQuery.isFetching,
+    instanceQuery.data
+  ]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -592,7 +498,7 @@ export default function PartDetail() {
         icon: <IconPackages />,
         content: part.pk ? (
           <StockItemTable
-            tableName="part-stock"
+            tableName='part-stock'
             allowAdd
             params={{
               part: part.pk
@@ -720,22 +626,6 @@ export default function PartDetail() {
         )
       },
       {
-        name: 'test_statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        hidden: !part.testable,
-        content: part?.pk ? (
-          <TestStatisticsTable
-            params={{
-              pk: part.pk,
-              apiEndpoint: ApiEndpoints.part_test_statistics
-            }}
-          />
-        ) : (
-          <Skeleton />
-        )
-      },
-      {
         name: 'related_parts',
         label: t`Related Parts`,
         icon: <IconLayersLinked />,
@@ -750,7 +640,7 @@ export default function PartDetail() {
         model_id: part?.pk
       })
     ];
-  }, [id, part, user, globalSettings, userSettings]);
+  }, [id, part, user, globalSettings, userSettings, detailsPanel]);
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
@@ -766,7 +656,7 @@ export default function PartDetail() {
         return [];
       }
 
-      let revisions = [];
+      const revisions = [];
 
       // First, fetch information for the top-level part
       if (part.revision_of) {
@@ -813,7 +703,7 @@ export default function PartDetail() {
       return [];
     }
 
-    let options: any[] = partRevisionQuery.data.map((revision: any) => {
+    const options: any[] = partRevisionQuery.data.map((revision: any) => {
       return {
         value: revision.pk,
         label: revision.full_name,
@@ -831,23 +721,22 @@ export default function PartDetail() {
     }
 
     return options.sort((a, b) => {
-      return ('' + a.part.revision).localeCompare(b.part.revision);
+      return `${a.part.revision}`.localeCompare(b.part.revision);
     });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
-  const breadcrumbs = useMemo(
-    () => [
+  const breadcrumbs = useMemo(() => {
+    return [
       { name: t`Parts`, url: '/part' },
       ...(part.category_path ?? []).map((c: any) => ({
         name: c.name,
         url: getDetailUrl(ModelType.partcategory, c.pk)
       }))
-    ],
-    [part]
-  );
+    ];
+  }, [part]);
 
   const badges: ReactNode[] = useMemo(() => {
-    if (instanceQuery.isLoading || instanceQuery.isFetching) {
+    if (instanceQuery.isFetching) {
       return [];
     }
 
@@ -856,49 +745,49 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={t`In Stock` + `: ${part.total_in_stock}`}
+        label={`${t`In Stock`}: ${part.total_in_stock}`}
         color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.total_in_stock > 0}
-        key="in_stock"
+        key='in_stock'
       />,
       <DetailsBadge
-        label={t`Available` + `: ${part.unallocated_stock}`}
-        color="yellow"
-        key="available_stock"
+        label={`${t`Available`}: ${part.unallocated_stock}`}
+        color='yellow'
+        key='available_stock'
         visible={part.unallocated_stock != part.total_in_stock}
       />,
       <DetailsBadge
         label={t`No Stock`}
-        color="orange"
+        color='orange'
         visible={part.total_in_stock == 0}
-        key="no_stock"
+        key='no_stock'
       />,
       <DetailsBadge
-        label={t`Required` + `: ${required}`}
-        color="grape"
+        label={`${t`Required`}: ${required}`}
+        color='grape'
         visible={required > 0}
-        key="required"
+        key='required'
       />,
       <DetailsBadge
-        label={t`On Order` + `: ${part.ordering}`}
-        color="blue"
+        label={`${t`On Order`}: ${part.ordering}`}
+        color='blue'
         visible={part.ordering > 0}
-        key="on_order"
+        key='on_order'
       />,
       <DetailsBadge
-        label={t`In Production` + `: ${part.building}`}
-        color="blue"
+        label={`${t`In Production`}: ${part.building}`}
+        color='blue'
         visible={part.building > 0}
-        key="in_production"
+        key='in_production'
       />,
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
-        visible={part.active == false}
-        key="inactive"
+        color='red'
+        visible={!part.active}
+        key='inactive'
       />
     ];
-  }, [part, instanceQuery]);
+  }, [part, instanceQuery.isFetching]);
 
   const partFields = usePartFields({ create: false });
 
@@ -963,8 +852,8 @@ export default function PartDetail() {
       }
     },
     preFormContent: (
-      <Alert color="red" title={t`Deleting this part cannot be reversed`}>
-        <Stack gap="xs">
+      <Alert color='red' title={t`Deleting this part cannot be reversed`}>
+        <Stack gap='xs'>
           <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
         </Stack>
       </Alert>
@@ -985,15 +874,19 @@ export default function PartDetail() {
   const countStockItems = useCountStockItem(stockActionProps);
   const transferStockItems = useTransferStockItem(stockActionProps);
 
+  const orderPartsWizard = OrderPartsWizard({
+    parts: [part]
+  });
+
   const partActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.part} pk={part.pk} />,
+      <AdminButton model={ModelType.part} id={part.pk} />,
       <BarcodeActionDropdown
         model={ModelType.part}
         pk={part.pk}
         hash={part?.barcode_hash}
         perm={user.hasChangeRole(UserRoles.part)}
-        key="action_dropdown"
+        key='action_dropdown'
       />,
       <PrintingActions
         modelType={ModelType.part}
@@ -1007,7 +900,7 @@ export default function PartDetail() {
         actions={[
           {
             icon: (
-              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
             name: t`Count Stock`,
             tooltip: t`Count part stock`,
@@ -1018,13 +911,25 @@ export default function PartDetail() {
           },
           {
             icon: (
-              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+              <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
             name: t`Transfer Stock`,
             tooltip: t`Transfer part stock`,
             hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => {
               part.pk && transferStockItems.open();
+            }
+          },
+          {
+            name: t`Order`,
+            tooltip: t`Order Stock`,
+            hidden:
+              !user.hasAddRole(UserRoles.purchase_order) ||
+              !part?.active ||
+              !part?.purchaseable,
+            icon: <IconShoppingCart color='blue' />,
+            onClick: () => {
+              orderPartsWizard.openWizard();
             }
           }
         ]}
@@ -1062,29 +967,40 @@ export default function PartDetail() {
       {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
-          <NavigationTree
-            title={t`Part Categories`}
-            modelType={ModelType.partcategory}
-            endpoint={ApiEndpoints.category_tree}
-            opened={treeOpen}
-            onClose={() => {
-              setTreeOpen(false);
-            }}
-            selectedId={part?.category}
-          />
+      {orderPartsWizard.wizard}
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.part}
+      >
+        <Stack gap='xs'>
+          {user.hasViewRole(UserRoles.part_category) && (
+            <NavigationTree
+              title={t`Part Categories`}
+              modelType={ModelType.partcategory}
+              endpoint={ApiEndpoints.category_tree}
+              opened={treeOpen}
+              onClose={() => {
+                setTreeOpen(false);
+              }}
+              selectedId={part?.category}
+            />
+          )}
           <PageDetail
-            title={t`Part` + ': ' + part.full_name}
+            title={`${t`Part`}: ${part.full_name}`}
             icon={
               part?.locked ? (
-                <IconLock aria-label="part-lock-icon" />
+                <IconLock aria-label='part-lock-icon' />
               ) : undefined
             }
             subtitle={part.description}
             imageUrl={part.image}
             badges={badges}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={
+              user.hasViewRole(UserRoles.part_category)
+                ? breadcrumbs
+                : undefined
+            }
             last_crumb={[
               {
                 name: part.name,
@@ -1092,18 +1008,18 @@ export default function PartDetail() {
               }
             ]}
             breadcrumbAction={() => {
-              setTreeOpen(true); // Open the category tree
+              setTreeOpen(true);
             }}
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
             detail={
               enableRevisionSelection ? (
-                <Stack gap="xs">
+                <Stack gap='xs'>
                   <Text>{t`Select Part Revision`}</Text>
                   <Select
-                    id="part-revision-select"
-                    aria-label="part-revision-select"
+                    id='part-revision-select'
+                    aria-label='part-revision-select'
                     options={partRevisionOptions}
                     value={{
                       value: part.pk,
@@ -1127,13 +1043,11 @@ export default function PartDetail() {
                     }}
                   />
                 </Stack>
-              ) : (
-                <Space />
-              )
+              ) : null
             }
           />
           <PanelGroup
-            pageKey="part"
+            pageKey='part'
             panels={partPanels}
             instance={part}
             model={ModelType.part}

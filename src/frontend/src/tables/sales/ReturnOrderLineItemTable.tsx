@@ -21,7 +21,7 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import {
   DateColumn,
   LinkColumn,
@@ -30,9 +30,9 @@ import {
   ReferenceColumn,
   StatusColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -111,13 +111,21 @@ export default function ReturnOrderLineItemTable({
       },
       {
         accessor: 'item_detail.serial',
-        title: t`Serial Number`,
-        switchable: false
+        title: t`Quantity`,
+        switchable: false,
+        render: (record: any) => {
+          if (record.item_detail.serial && record.quantity == 1) {
+            return `# ${record.item_detail.serial}`;
+          } else {
+            return record.quantity;
+          }
+        }
       },
       StatusColumn({
         model: ModelType.stockitem,
         sortable: false,
-        accessor: 'item_detail.status'
+        accessor: 'item_detail.status',
+        title: t`Status`
       }),
       ReferenceColumn({}),
       StatusColumn({
@@ -164,7 +172,7 @@ export default function ReturnOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
+        key='add-line-item'
         tooltip={t`Add Line Item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
@@ -172,7 +180,7 @@ export default function ReturnOrderLineItemTable({
         }}
       />,
       <ActionButton
-        key="receive-items"
+        key='receive-items'
         tooltip={t`Receive selected items`}
         icon={<IconSquareArrowRight />}
         hidden={!inProgress || !user.hasChangeRole(UserRoles.return_order)}
@@ -201,7 +209,10 @@ export default function ReturnOrderLineItemTable({
 
       return [
         {
-          hidden: received || !user.hasChangeRole(UserRoles.return_order),
+          hidden:
+            received ||
+            !inProgress ||
+            !user.hasChangeRole(UserRoles.return_order),
           title: t`Receive Item`,
           icon: <IconSquareArrowRight />,
           onClick: () => {
@@ -225,7 +236,7 @@ export default function ReturnOrderLineItemTable({
         })
       ];
     },
-    [user]
+    [user, inProgress]
   );
 
   return (

@@ -150,18 +150,19 @@ def on_config(config, *args, **kwargs):
 
     We can use these to determine (at run time) where we are hosting
     """
-    rtd = os.environ.get('READTHEDOCS', False)
+    rtd = os.environ.get('READTHEDOCS', 'False')
 
+    # Note: version selection is handled by RTD internally
     # Check for 'versions.json' file
     # If it does not exist, we need to fetch it from the RTD API
-    if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
-        print("Found 'versions.json' file")
-    else:
-        fetch_rtd_versions()
+    # if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
+    #    print("Found 'versions.json' file")
+    # else:
+    #    fetch_rtd_versions()
 
     if rtd:
-        rtd_version = os.environ['READTHEDOCS_VERSION']
-        rtd_language = os.environ['READTHEDOCS_LANGUAGE']
+        rtd_version = os.environ.get('READTHEDOCS_VERSION')
+        rtd_language = os.environ.get('READTHEDOCS_LANGUAGE')
 
         site_url = f'https://docs.inventree.org/{rtd_language}/{rtd_version}'
         assets_dir = f'/{rtd_language}/{rtd_version}/assets'

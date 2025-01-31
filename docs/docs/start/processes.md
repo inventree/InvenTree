@@ -44,6 +44,12 @@ Further, it provides an authentication endpoint for accessing files in the `/sta
 
 Finally, it provides a [Let's Encrypt](https://letsencrypt.org/) endpoint for automatic SSL certificate generation and renewal.
 
+### Proxy Functionality
+
+#### API and Web Requests
+
+All API and web requests are reverse-proxied to the InvenTree django server. This allows the InvenTree web server to be accessed via a standard HTTP/HTTPS port, and allows the proxy server to handle SSL termination.
+
 #### Static Files
 
 Static files can be served without any need for authentication. In fact, they must be accessible *without* authentication, otherwise the unauthenticated views (such as the login screen) will not function correctly.
@@ -52,15 +58,34 @@ Static files can be served without any need for authentication. In fact, they mu
 
 It is highly recommended that the *media* files are served behind an authentication layer. This is because the media files are user-uploaded, and may contain sensitive information. Most modern web servers provide a way to serve files behind an authentication layer.
 
-#### Example Configuration
+### Proxy Configuration
 
-The [docker production example](./docker.md) provides an example using [Caddy](https://caddyserver.com) to serve *static* and *media* files, and redirecting other requests to the InvenTree web server itself.
+We provide some *sample* configuration files for getting your proxy server off the ground. The exact setup and configuration of your proxy server will depend on your specific requirements, and the software you choose to use. You may be integrating InvenTree with an existing web server, and the configuration may be different to the provided examples.
 
-Caddy is a modern web server which is easy to configure and provides a number of useful features, including automatic SSL certificate generation.
+#### Example Configurations
 
-#### Alternatives to Caddy
+**Caddy**
 
-An alternative is to run nginx as the reverse proxy. A sample configuration file is provided in the `./contrib/container/` source directory.
+The [docker production example](./docker.md) provides an example using [Caddy](https://caddyserver.com) to serve *static* and *media* files, and redirecting other requests to the InvenTree web server itself. Caddy is a modern web server which is easy to configure and provides a number of useful features, including automatic SSL certificate generation.
+
+You can find the sample Caddy configuration [here]({{ sourcefile("contrib/container/Caddyfile") }}).
+
+**Nginx**
+
+An alternative is to run nginx as the reverse proxy. A sample configuration file is provided [here]({{ sourcefile("contrib/container/nginx.conf") }}).
+
+#### Extending the Proxy Configuration
+
+You may wish to extend the proxy configuration to include additional features, based on your particular requirements. Some examples of where additional configuration may be required include:
+
+- **Upstream Proxy**: You may be running the InvenTree server behind another proxy server, and need to configure the proxy server to forward requests to the upstream proxy.
+- **Authentication**: You may wish to add an authentication layer to the proxy server, to restrict access to the InvenTree web interface.
+- **SSL Termination**: You may wish to terminate SSL connections at the proxy server, and forward unencrypted traffic to the InvenTree web server.
+- **Load Balancing**: You may wish to run multiple instances of the InvenTree web server, and use the proxy server to load balance between them.
+- **Custom Error Pages**: You may wish to provide custom error pages for certain HTTP status codes.
+
+!!! warning "No Support"
+    We do not provide support for configuring your proxy server. The configuration of the proxy server is outside the scope of this documentation. If you require assistance with configuring your proxy server, please refer to the documentation for the specific software you are using.
 
 #### Integrating with Existing Proxy
 
@@ -100,4 +125,4 @@ InvenTree uses the [Redis](https://redis.io/) cache server to manage cache data.
     To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
 
 !!! tip "Enable Cache"
-    While a redis container is provided in the default configuration, by default it is not enabled in the Inventree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)
+    While a redis container is provided in the default configuration, by default it is not enabled in the InvenTree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)

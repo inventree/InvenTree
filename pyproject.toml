@@ -3,8 +3,6 @@
 exclude = [
     ".git",
     "__pycache__",
-    "dist",
-    "build",
     "test.py",
     "tests",
     "venv",
@@ -36,6 +34,8 @@ ignore = [
     # - RUF015 - Prefer next({iterable}) over single element slice
     "RUF012",
     # - RUF012 - Mutable class attributes should be annotated with typing.ClassVar
+    "RUF052",
+    # - RUF052 - Local dummy variable is accessed
     "SIM117",
     # - SIM117 - Use a single with statement with multiple contexts instead of nested with statements
     "SIM102",
@@ -106,4 +106,4 @@ known_django="django"
 sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
-ignore-words-list = ["assertIn","SME","intoto"]
+ignore-words-list = ["assertIn","SME","intoto","fitH"]

@@ -22,7 +22,7 @@ test('Quick Command - No Keys', async ({ page }) => {
     .getByRole('button', { name: 'Dashboard Go to the InvenTree' })
     .click();
 
-  await page.getByText('InvenTree Demo Server').waitFor();
+  await page.getByText('InvenTree Demo Server - ').waitFor();
   await page.waitForURL('**/platform/home');
 
   // Use navigation menu
@@ -49,7 +49,7 @@ test('Quick Command - No Keys', async ({ page }) => {
   await page.getByLabel('open-spotlight').click();
   await page
     .getByRole('button', {
-      name: 'Server Information About this Inventree instance'
+      name: 'Server Information About this InvenTree instance'
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();

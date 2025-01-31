@@ -8,7 +8,6 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
-  IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -17,7 +16,10 @@ import { useParams } from 'react-router-dom';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -32,7 +34,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -54,7 +56,6 @@ import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
 /**
  * Detail page for a single Build Order
@@ -85,7 +86,7 @@ export default function BuildDetail() {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         name: 'part',
@@ -105,6 +106,15 @@ export default function BuildDetail() {
         name: 'status',
         label: t`Status`,
         model: ModelType.build
+      },
+      {
+        type: 'status',
+        name: 'status_custom_key',
+        label: t`Custom Status`,
+        model: ModelType.build,
+        icon: 'status',
+        hidden:
+          !build.status_custom_key || build.status_custom_key == build.status
       },
       {
         type: 'text',
@@ -130,7 +140,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'quantity',
@@ -155,13 +165,14 @@ export default function BuildDetail() {
       }
     ];
 
-    let bl: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'text',
         name: 'issued_by',
         label: t`Issued By`,
         icon: 'user',
-        badge: 'user'
+        badge: 'user',
+        hidden: !build.issued_by
       },
       {
         type: 'text',
@@ -171,24 +182,35 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
         label: t`Created`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !build.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.target_date
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'completion_date',
         label: t`Completed`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.completion_date
       },
       {
@@ -201,7 +223,7 @@ export default function BuildDetail() {
       }
     ];
 
-    let br: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'link',
         name: 'take_from',
@@ -229,16 +251,14 @@ export default function BuildDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-              pk={build.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            pk={build.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={build} />
           </Grid.Col>
         </Grid>
@@ -283,7 +303,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-outputs"
+            tableName='build-outputs'
             params={{
               build: id,
               is_building: false
@@ -311,7 +331,8 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             allowAdd={false}
-            tableName="build-consumed"
+            tableName='build-consumed'
+            showLocation={false}
             params={{
               consumed_by: id
             }}
@@ -338,20 +359,6 @@ export default function BuildDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      {
-        name: 'test-statistics',
-        label: t`Test Statistics`,
-        icon: <IconReportAnalytics />,
-        content: (
-          <TestStatisticsTable
-            params={{
-              pk: build.pk,
-              apiEndpoint: ApiEndpoints.build_test_statistics
-            }}
-          />
-        ),
-        hidden: !build?.part_detail?.testable
       },
       AttachmentPanel({
         model_type: ModelType.build,
@@ -451,19 +458,19 @@ export default function BuildDetail() {
     return [
       <PrimaryActionButton
         title={t`Issue Order`}
-        icon="issue"
+        icon='issue'
         hidden={!canIssue}
-        color="blue"
+        color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
-        icon="complete"
+        icon='complete'
         hidden={!canComplete}
-        color="green"
+        color='green'
         onClick={completeOrder.open}
       />,
-      <AdminButton model={ModelType.build} pk={build.pk} />,
+      <AdminButton model={ModelType.build} id={build.pk} />,
       <BarcodeActionDropdown
         model={ModelType.build}
         pk={build.pk}
@@ -522,10 +529,14 @@ export default function BuildDetail() {
       {holdOrder.modal}
       {issueOrder.modal}
       {completeOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.build}
+      >
+        <Stack gap='xs'>
           <PageDetail
-            title={build.reference}
+            title={`${t`Build Order`}: ${build.reference}`}
             subtitle={build.title}
             badges={buildBadges}
             editAction={editBuild.open}
@@ -541,7 +552,7 @@ export default function BuildDetail() {
             actions={buildActions}
           />
           <PanelGroup
-            pageKey="build"
+            pageKey='build'
             panels={buildPanels}
             instance={build}
             model={ModelType.build}

@@ -1,9 +1,8 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
-  IconDeviceDesktopAnalytics,
   IconFileAnalytics,
   IconLock,
   IconSearch,
@@ -11,8 +10,9 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
-import { PanelType } from '../../../components/panels/Panel';
+import type { PanelType } from '../../../components/panels/Panel';
 import { PanelGroup } from '../../../components/panels/PanelGroup';
 import { UserSettingList } from '../../../components/settings/SettingList';
 import { useUserState } from '../../../states/UserState';
@@ -41,38 +41,6 @@ export default function UserSettings() {
         label: t`Security`,
         icon: <IconLock />,
         content: <SecurityContent />
-      },
-      {
-        name: 'dashboard',
-        label: t`Dashboard`,
-        icon: <IconDeviceDesktopAnalytics />,
-        content: (
-          <UserSettingList
-            keys={[
-              // TODO: These will be replaced with "dashboard" settings,
-              // once the new dashboard is implemented
-              'HOMEPAGE_HIDE_INACTIVE',
-              'HOMEPAGE_PART_STARRED',
-              'HOMEPAGE_CATEGORY_STARRED',
-              'HOMEPAGE_PART_LATEST',
-              'HOMEPAGE_BOM_REQUIRES_VALIDATION',
-              'HOMEPAGE_STOCK_RECENT',
-              'HOMEPAGE_STOCK_LOW',
-              'HOMEPAGE_SHOW_STOCK_DEPLETED',
-              'HOMEPAGE_BUILD_STOCK_NEEDED',
-              'HOMEPAGE_STOCK_EXPIRED',
-              'HOMEPAGE_STOCK_STALE',
-              'HOMEPAGE_BUILD_PENDING',
-              'HOMEPAGE_BUILD_OVERDUE',
-              'HOMEPAGE_PO_OUTSTANDING',
-              'HOMEPAGE_PO_OVERDUE',
-              'HOMEPAGE_SO_OUTSTANDING',
-              'HOMEPAGE_SO_OVERDUE',
-              'HOMEPAGE_SO_SHIPMENTS_PENDING',
-              'HOMEPAGE_NEWS'
-            ]}
-          />
-        )
       },
       {
         name: 'display',
@@ -147,23 +115,26 @@ export default function UserSettings() {
   }
 
   return (
-    <Stack gap="xs">
-      <SettingsHeader
-        label="user"
-        title={t`Account Settings`}
-        subtitle={
-          user?.first_name && user?.last_name
-            ? `${user?.first_name} ${user?.last_name}`
-            : null
-        }
-        shorthand={user?.username || ''}
-      />
-      <PanelGroup
-        pageKey="user-settings"
-        panels={userSettingsPanels}
-        model="usersettings"
-        id={null}
-      />
-    </Stack>
+    <>
+      <PageTitle title={t`User Settings`} />
+      <Stack gap='xs'>
+        <SettingsHeader
+          label='user'
+          title={t`Account Settings`}
+          subtitle={
+            user?.first_name && user?.last_name
+              ? `${user?.first_name} ${user?.last_name}`
+              : null
+          }
+          shorthand={user?.username || ''}
+        />
+        <PanelGroup
+          pageKey='user-settings'
+          panels={userSettingsPanels}
+          model='usersettings'
+          id={null}
+        />
+      </Stack>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 """Unit testing for the various report models."""
 
 from io import StringIO
+from zoneinfo import ZoneInfo
 
 from django.apps import apps
 from django.conf import settings
@@ -10,7 +11,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import SafeString
 
-import pytz
 from PIL import Image
 
 import report.models as report_models
@@ -156,6 +156,18 @@ class ReportTagTest(TestCase):
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
         self.assertEqual(report_tags.divide(100, 5), 20)
 
+    def test_number_tags(self):
+        """Simple tests for number formatting tags."""
+        fn = report_tags.format_number
+
+        self.assertEqual(fn(1234), '1234')
+        self.assertEqual(fn(1234.5678, decimal_places=2), '1234.57')
+        self.assertEqual(fn(1234.5678, decimal_places=3), '1234.568')
+        self.assertEqual(fn(-9999.5678, decimal_places=2, separator=','), '-9,999.57')
+        self.assertEqual(
+            fn(9988776655.4321, integer=True, separator=' '), '9 988 776 655'
+        )
+
     @override_settings(TIME_ZONE='America/New_York')
     def test_date_tags(self):
         """Test for date formatting tags.
@@ -170,17 +182,17 @@ class ReportTagTest(TestCase):
             hour=12,
             minute=30,
             second=0,
-            tzinfo=pytz.timezone('Australia/Sydney'),
+            tzinfo=ZoneInfo('Australia/Sydney'),
         )
 
         # Format a set of tests: timezone, format, expected
         tests = [
-            (None, None, '2024-03-12T22:25:00-04:00'),
+            (None, None, '2024-03-12T21:30:00-04:00'),
             (None, '%d-%m-%y', '12-03-24'),
-            ('UTC', None, '2024-03-13T02:25:00+00:00'),
+            ('UTC', None, '2024-03-13T01:30:00+00:00'),
             ('UTC', '%d-%B-%Y', '13-March-2024'),
-            ('Europe/Amsterdam', None, '2024-03-13T03:25:00+01:00'),
-            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 03:25'),
+            ('Europe/Amsterdam', None, '2024-03-13T02:30:00+01:00'),
+            ('Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 02:30'),
         ]
 
         for tz, fmt, expected in tests:
@@ -228,6 +240,10 @@ class BarcodeTagTest(TestCase):
         self.assertIsInstance(barcode, str)
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.barcode('')
+
     def test_qrcode(self):
         """Test the qrcode generation tag."""
         # Test with default settings
@@ -243,6 +259,31 @@ class BarcodeTagTest(TestCase):
         self.assertIsInstance(qrcode, str)
         self.assertTrue(qrcode.startswith('data:image/bmp;'))
         self.assertEqual(len(qrcode), 309720)
+
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.qrcode('')
+
+    def test_datamatrix(self):
+        """Test the datamatrix generation tag."""
+        # Test with default settings
+        datamatrix = barcode_tags.datamatrix('hello world')
+        self.assertEqual(
+            datamatrix,
+            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
+        )
+
+        datamatrix = barcode_tags.datamatrix(
+            'hello world', border=3, fill_color='red', back_color='blue'
+        )
+        self.assertEqual(
+            datamatrix,
+            'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAIAAABL1vtsAAAAqElEQVR4nN1UQQ6AMAgrxv9/GQ9mpJYSY/QkBxM3KLUUA0i8i+1l/dcQiXj09CwSEU2aQJ7nE8ou2faVUXoPZSEkq+dZKVxWg4UqxUHnVdkp6IdwMXMulGvzNBDMk4WwPSrUF3LNnQNZBJmOsZaVXa44QSEKnvWb5mIgKon1E1H6aPyOcIa15uhONP9aR4hSCiGmYAoYpj4uO+vK4+ybMhr8Nkjmn/z4Dvoldi8uJu4iAAAAAElFTkSuQmCC',
+        )
+
+        # Test empty tag
+        with self.assertRaises(ValueError):
+            barcode_tags.datamatrix('')
 
 
 class ReportTest(InvenTreeAPITestCase):

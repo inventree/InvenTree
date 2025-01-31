@@ -2,7 +2,6 @@
 
 import imghdr
 import io
-import logging
 import os
 from decimal import Decimal
 
@@ -15,6 +14,7 @@ from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework import serializers
@@ -56,7 +56,7 @@ from .models import (
     PartTestTemplate,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 @register_importer()
@@ -316,7 +316,16 @@ class PartParameterTemplateSerializer(
         """Metaclass defining serializer fields."""
 
         model = PartParameterTemplate
-        fields = ['pk', 'name', 'units', 'description', 'parts', 'checkbox', 'choices']
+        fields = [
+            'pk',
+            'name',
+            'units',
+            'description',
+            'parts',
+            'checkbox',
+            'choices',
+            'selectionlist',
+        ]
 
     parts = serializers.IntegerField(
         read_only=True,
@@ -343,6 +352,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'barcode_hash',
             'category_default_location',
             'default_location',
+            'default_expiry',
             'name',
             'revision',
             'full_name',
@@ -1505,7 +1515,7 @@ class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass defining serializer fields."""
 
         model = PartRelated
-        fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail']
+        fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail', 'note']
 
     part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
     part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
@@ -1546,7 +1556,11 @@ class BomItemSerializer(
 
     import_exclude_fields = ['validated', 'substitutes']
 
-    export_only_fields = ['sub_part_name', 'sub_part_ipn', 'sub_part_description']
+    export_child_fields = [
+        'sub_part_detail.name',
+        'sub_part_detail.IPN',
+        'sub_part_detail.description',
+    ]
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -1555,10 +1569,6 @@ class BomItemSerializer(
         fields = [
             'part',
             'sub_part',
-            # Extra fields only for export
-            'sub_part_name',
-            'sub_part_ipn',
-            'sub_part_description',
             'reference',
             'quantity',
             'overage',
@@ -1636,17 +1646,8 @@ class BomItemSerializer(
 
     substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    # Extra fields only for export
-    sub_part_name = serializers.CharField(
-        source='sub_part.name', read_only=True, label=_('Component Name')
-    )
-    sub_part_ipn = serializers.CharField(
-        source='sub_part.IPN', read_only=True, label=_('Component IPN')
-    )
-    sub_part_description = serializers.CharField(
-        source='sub_part.description', read_only=True, label=_('Component Description')
+    part_detail = PartBriefSerializer(
+        source='part', label=_('Assembly'), many=False, read_only=True
     )
 
     sub_part = serializers.PrimaryKeyRelatedField(
@@ -1655,7 +1656,9 @@ class BomItemSerializer(
         help_text=_('Select the component part'),
     )
 
-    sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
+    sub_part_detail = PartBriefSerializer(
+        source='sub_part', label=_('Component'), many=False, read_only=True
+    )
 
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
 

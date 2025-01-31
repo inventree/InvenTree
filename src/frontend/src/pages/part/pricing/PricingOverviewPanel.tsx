@@ -20,10 +20,9 @@ import {
   IconShoppingCart,
   IconTriangleSquareCircle
 } from '@tabler/icons-react';
-import { UseQueryResult } from '@tanstack/react-query';
-import { toggleUnorderedList } from 'easymde';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
@@ -72,7 +71,7 @@ export default function PricingOverviewPanel({
       autoClose: false
     });
 
-    let success: boolean = false;
+    let success = false;
 
     api
       .patch(url, { update: true })
@@ -126,7 +125,7 @@ export default function PricingOverviewPanel({
         render: (record: PricingOverviewEntry) => {
           const is_link = record.name !== panelOptions.overall;
           return (
-            <Group justify="left" gap="xs">
+            <Group justify='left' gap='xs'>
               {record.icon}
               {is_link ? (
                 <Anchor fw={700} onClick={() => doNavigation(record.name)}>
@@ -169,6 +168,20 @@ export default function PricingOverviewPanel({
 
   const overviewData: PricingOverviewEntry[] = useMemo(() => {
     return [
+      {
+        name: panelOptions.override,
+        title: t`Override Pricing`,
+        icon: <IconExclamationCircle />,
+        min_value: pricing?.override_min,
+        max_value: pricing?.override_max
+      },
+      {
+        name: panelOptions.overall,
+        title: t`Overall Pricing`,
+        icon: <IconReportAnalytics />,
+        min_value: pricing?.overall_min,
+        max_value: pricing?.overall_max
+      },
       {
         name: panelOptions.internal,
         title: t`Internal Pricing`,
@@ -217,20 +230,6 @@ export default function PricingOverviewPanel({
         icon: <IconTriangleSquareCircle />,
         min_value: pricing?.sale_history_min,
         max_value: pricing?.sale_history_max
-      },
-      {
-        name: panelOptions.override,
-        title: t`Override Pricing`,
-        icon: <IconExclamationCircle />,
-        min_value: pricing?.override_min,
-        max_value: pricing?.override_max
-      },
-      {
-        name: panelOptions.overall,
-        title: t`Overall Pricing`,
-        icon: <IconReportAnalytics />,
-        min_value: pricing?.overall_min,
-        max_value: pricing?.overall_max
       }
     ].filter((entry) => {
       return !(entry.min_value == null || entry.max_value == null);
@@ -240,17 +239,17 @@ export default function PricingOverviewPanel({
   return (
     <>
       {editPricing.modal}
-      <Stack gap="xs">
-        <SimpleGrid cols={2}>
-          <Stack gap="xs">
-            <Paper p="xs">
-              <Group justify="space-between" wrap="nowrap">
+      <Stack gap='xs'>
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
+          <Stack gap='xs'>
+            <Paper p='xs'>
+              <Group justify='space-between' wrap='nowrap'>
                 {pricing?.updated ? (
-                  <Alert color="blue" title={t`Last Updated`} flex={1}>
+                  <Alert color='blue' title={t`Last Updated`} flex={1}>
                     <Text>{formatDate(pricing.updated)}</Text>
                   </Alert>
                 ) : (
-                  <Alert color="orange" title={t`Pricing Not Set`} flex={1}>
+                  <Alert color='orange' title={t`Pricing Not Set`} flex={1}>
                     <Text>{t`Pricing data has not been calculated for this part`}</Text>
                   </Alert>
                 )}
@@ -262,7 +261,7 @@ export default function PricingOverviewPanel({
                       tooltip: t`Refresh pricing data`,
                       icon: (
                         <InvenTreeIcon
-                          icon="refresh"
+                          icon='refresh'
                           iconProps={{ color: 'green' }}
                         />
                       ),
@@ -281,14 +280,14 @@ export default function PricingOverviewPanel({
               </Group>
             </Paper>
             <DataTable
-              idAccessor="name"
+              idAccessor='name'
               records={overviewData}
               columns={columns}
             />
           </Stack>
           <BarChart
-            aria-label="pricing-overview-chart"
-            dataKey="title"
+            aria-label='pricing-overview-chart'
+            dataKey='title'
             data={overviewData}
             title={t`Pricing Overview`}
             series={[

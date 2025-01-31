@@ -1,11 +1,9 @@
-import { useLocalState } from '../../states/LocalState';
+import { generateUrl } from '../../functions/urls';
 
 /*
  * Load an external plugin source from a URL.
  */
 export async function loadExternalPluginSource(source: string) {
-  const host = useLocalState.getState().host;
-
   source = source.trim();
 
   // If no source is provided, clear the plugin content
@@ -13,14 +11,11 @@ export async function loadExternalPluginSource(source: string) {
     return null;
   }
 
-  // If the source is a relative URL, prefix it with the host URL
-  if (source.startsWith('/')) {
-    source = `${host}${source}`;
-  }
+  const url = generateUrl(source);
 
-  const module = await import(/* @vite-ignore */ source)
+  const module = await import(/* @vite-ignore */ url)
     .catch((error) => {
-      console.error(`ERR: Failed to load plugin from ${source}:`, error);
+      console.error(`ERR: Failed to load plugin from ${url}:`, error);
       return null;
     })
     .then((module) => {
@@ -45,7 +40,7 @@ export async function findExternalPluginFunction(
 
   const module = await loadExternalPluginSource(source);
 
-  if (module && module[functionName]) {
+  if (module?.[functionName]) {
     return module[functionName];
   }
 

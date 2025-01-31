@@ -94,3 +94,32 @@ test('Plugins - Custom Admin', async ({ page, request }) => {
   await page.getByText('foo: bar').waitFor();
   await page.getByText('hello: world').waitFor();
 });
+
+test('Plugins - Locate Item', async ({ page, request }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Ensure that the sample location plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'samplelocate',
+    state: true
+  });
+
+  await page.waitForTimeout(500);
+
+  // Navigate to the "stock item" page
+  await page.goto(`${baseUrl}/stock/item/287/`);
+
+  // "Locate" this item
+  await page.getByLabel('action-button-locate-item').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item location requested').waitFor();
+
+  // Show the location
+  await page.getByLabel('breadcrumb-1-factory').click();
+  await page.waitForTimeout(500);
+
+  await page.getByLabel('action-button-locate-item').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item location requested').waitFor();
+});

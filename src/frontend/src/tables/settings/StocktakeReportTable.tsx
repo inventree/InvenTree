@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -13,10 +13,10 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction } from '../RowActions';
+import { type RowAction, RowDeleteAction } from '../RowActions';
 
 export default function StocktakeReportTable() {
   const table = useTable('stocktake-report');
@@ -28,7 +28,8 @@ export default function StocktakeReportTable() {
         title: t`Report`,
         sortable: false,
         switchable: false,
-        render: (record: any) => <AttachmentLink attachment={record.report} />
+        render: (record: any) => <AttachmentLink attachment={record.report} />,
+        noContext: true
       },
       {
         accessor: 'part_count',

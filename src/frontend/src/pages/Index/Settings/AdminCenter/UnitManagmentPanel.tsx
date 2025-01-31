@@ -11,7 +11,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 import CustomUnitsTable from '../../../../tables/settings/CustomUnitsTable';
 
 function AllUnitTable() {
-  const table = useTable('all-units');
+  const table = useTable('all-units', 'name');
   const columns = useMemo(() => {
     return [
       {
@@ -29,12 +29,11 @@ function AllUnitTable() {
       tableState={table}
       columns={columns}
       props={{
-        idAccessor: 'name',
         enableSearch: false,
         enablePagination: false,
         enableColumnSwitching: false,
         dataFormatter: (data: any) => {
-          let units = data.available_units ?? {};
+          const units = data.available_units ?? {};
           return Object.entries(units).map(([key, values]: [string, any]) => {
             return {
               name: values.name,
@@ -51,19 +50,19 @@ function AllUnitTable() {
 
 export default function UnitManagmentPanel() {
   return (
-    <Stack gap="xs">
-      <Accordion defaultValue="custom">
-        <Accordion.Item value="custom" key="custom">
+    <Stack gap='xs'>
+      <Accordion defaultValue='custom'>
+        <Accordion.Item value='custom' key='custom'>
           <Accordion.Control>
-            <StylishText size="lg">{t`Custom Units`}</StylishText>
+            <StylishText size='lg'>{t`Custom Units`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
             <CustomUnitsTable />
           </Accordion.Panel>
         </Accordion.Item>
-        <Accordion.Item value="all" key="all">
+        <Accordion.Item value='all' key='all'>
           <Accordion.Control>
-            <StylishText size="lg">{t`All units`}</StylishText>
+            <StylishText size='lg'>{t`All units`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
             <AllUnitTable />

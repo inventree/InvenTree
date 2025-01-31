@@ -9,6 +9,7 @@ import { ActionButton } from '../../../../components/buttons/ActionButton';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
+import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useTable } from '../../../../hooks/UseTable';
 import { apiUrl } from '../../../../states/ApiState';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
@@ -19,7 +20,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 export function CurrencyTable({
   setInfo
 }: Readonly<{ setInfo: (info: any) => void }>) {
-  const table = useTable('currency');
+  const table = useTable('currency', 'currency');
   const columns = useMemo(() => {
     return [
       {
@@ -41,15 +42,15 @@ export function CurrencyTable({
       .then(() => {
         table.refreshTable();
         showNotification({
+          title: t`Success`,
           message: t`Exchange rates updated`,
           color: 'green'
         });
       })
       .catch((error) => {
-        showNotification({
-          title: t`Exchange rate update error`,
-          message: error,
-          color: 'red'
+        showApiErrorMessage({
+          error: error,
+          title: t`Exchange rate update error`
         });
       });
   }, []);
@@ -57,7 +58,7 @@ export function CurrencyTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
-        key="refresh"
+        key='refresh'
         onClick={refreshCurrencies}
         tooltip={t`Refresh currency exchange rates`}
         icon={<IconReload />}
@@ -71,11 +72,10 @@ export function CurrencyTable({
       tableState={table}
       columns={columns}
       props={{
-        idAccessor: 'currency',
         tableActions: tableActions,
         dataFormatter: (data: any) => {
           setInfo(data);
-          let rates = data.exchange_rates ?? {};
+          const rates = data.exchange_rates ?? {};
 
           return Object.entries(rates).map(([currency, rate]) => {
             return {
@@ -93,7 +93,7 @@ export default function CurrencyManagmentPanel() {
   const [info, setInfo] = useState<any>({});
 
   return (
-    <Stack gap="xs">
+    <Stack gap='xs'>
       <FactCollection
         items={[
           { title: t`Last fetched`, value: info?.updated },

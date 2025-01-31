@@ -23,9 +23,9 @@ import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
 import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {
@@ -84,7 +84,7 @@ function MachineTypeDrawer({
   return (
     <>
       <Stack>
-        <Group wrap="nowrap">
+        <Group wrap='nowrap'>
           <Title order={4}>
             {machineType ? machineType.name : machineTypeSlug}
           </Title>
@@ -92,7 +92,7 @@ function MachineTypeDrawer({
 
         {!machineType && (
           <Alert
-            color="red"
+            color='red'
             title={t`Not Found`}
             icon={<IconExclamationCircle />}
           >
@@ -104,13 +104,13 @@ function MachineTypeDrawer({
           multiple
           defaultValue={['machine-type-info', 'machine-drivers']}
         >
-          <Accordion.Item value="machine-type-info">
+          <Accordion.Item value='machine-type-info'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Machine Type Information`}</StylishText>
+              <StylishText size='lg'>{t`Machine Type Information`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <Stack pos="relative" gap="xs">
+                <Stack pos='relative' gap='xs'>
                   <LoadingOverlay
                     visible={isFetching}
                     overlayProps={{ opacity: 0 }}
@@ -118,23 +118,23 @@ function MachineTypeDrawer({
                   <InfoItem
                     name={t`Name`}
                     value={machineType?.name}
-                    type="text"
+                    type='text'
                   />
                   <InfoItem
                     name={t`Slug`}
                     value={machineType?.slug}
-                    type="text"
+                    type='text'
                   />
                   <InfoItem
                     name={t`Description`}
                     value={machineType?.description}
-                    type="text"
+                    type='text'
                   />
                   {!machineType?.is_builtin && (
                     <InfoItem
                       name={t`Provider plugin`}
                       value={machineType?.provider_plugin?.name}
-                      type="text"
+                      type='text'
                       link={
                         machineType?.provider_plugin?.pk !== null
                           ? `../../plugin/${machineType?.provider_plugin?.pk}/`
@@ -146,20 +146,20 @@ function MachineTypeDrawer({
                   <InfoItem
                     name={t`Provider file`}
                     value={machineType?.provider_file}
-                    type="code"
+                    type='code'
                   />
                   <InfoItem
                     name={t`Builtin`}
                     value={machineType?.is_builtin}
-                    type="boolean"
+                    type='boolean'
                   />
                 </Stack>
               </Card>
             </Accordion.Panel>
           </Accordion.Item>
-          <Accordion.Item value="machine-drivers">
+          <Accordion.Item value='machine-drivers'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Available Drivers`}</StylishText>
+              <StylishText size='lg'>{t`Available Drivers`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
@@ -206,7 +206,7 @@ function MachineDriverDrawer({
 
   return (
     <Stack>
-      <Group justify="center">
+      <Group justify='center'>
         <Title order={4}>
           {machineDriver ? machineDriver.name : machineDriverSlug}
         </Title>
@@ -219,34 +219,34 @@ function MachineDriverDrawer({
       )}
 
       <Card withBorder>
-        <Stack gap="md">
-          <Group justify="space-between">
+        <Stack gap='md'>
+          <Group justify='space-between'>
             <Title order={4}>
               <Trans>Machine driver information</Trans>
             </Title>
-            <ActionIcon variant="outline" onClick={() => refresh()}>
+            <ActionIcon variant='outline' onClick={() => refresh()}>
               <IconRefresh />
             </ActionIcon>
           </Group>
 
-          <Stack pos="relative" gap="xs">
+          <Stack pos='relative' gap='xs'>
             <LoadingOverlay
               visible={isFetching}
               overlayProps={{ opacity: 0 }}
             />
-            <InfoItem name={t`Name`} value={machineDriver?.name} type="text" />
-            <InfoItem name={t`Slug`} value={machineDriver?.slug} type="text" />
+            <InfoItem name={t`Name`} value={machineDriver?.name} type='text' />
+            <InfoItem name={t`Slug`} value={machineDriver?.slug} type='text' />
             <InfoItem
               name={t`Description`}
               value={machineDriver?.description}
-              type="text"
+              type='text'
             />
             <InfoItem
               name={t`Machine type`}
               value={
                 machineType ? machineType.name : machineDriver?.machine_type
               }
-              type="text"
+              type='text'
               link={
                 machineType
                   ? `../type-${machineDriver?.machine_type}`
@@ -258,7 +258,7 @@ function MachineDriverDrawer({
               <InfoItem
                 name={t`Provider plugin`}
                 value={machineDriver?.provider_plugin?.name}
-                type="text"
+                type='text'
                 link={
                   machineDriver?.provider_plugin?.pk !== null
                     ? `../../plugin/${machineDriver?.provider_plugin?.pk}/`
@@ -270,29 +270,29 @@ function MachineDriverDrawer({
             <InfoItem
               name={t`Provider file`}
               value={machineDriver?.provider_file}
-              type="code"
+              type='code'
             />
             <InfoItem
               name={t`Builtin`}
               value={machineDriver?.is_builtin}
-              type="boolean"
+              type='boolean'
             />
-            <Group justify="space-between" gap="xs">
-              <Text fz="sm" fw={700}>
+            <Group justify='space-between' gap='xs'>
+              <Text fz='sm' fw={700}>
                 <Trans>Errors</Trans>:
               </Text>
               {machineDriver && machineDriver?.driver_errors.length > 0 ? (
-                <Badge color="red" style={{ marginLeft: '10px' }}>
+                <Badge color='red' style={{ marginLeft: '10px' }}>
                   {machineDriver.driver_errors.length}
                 </Badge>
               ) : (
-                <Text fz="xs">
+                <Text fz='xs'>
                   <Trans>No errors reported</Trans>
                 </Text>
               )}
-              <List w="100%">
+              <List w='100%'>
                 {machineDriver?.driver_errors.map((error, i) => (
-                  <List.Item key={i}>
+                  <List.Item key={`${i}-${error}`}>
                     <Code>{error}</Code>
                   </List.Item>
                 ))}
@@ -303,7 +303,7 @@ function MachineDriverDrawer({
       </Card>
 
       <Card withBorder>
-        <Stack gap="md">
+        <Stack gap='md'>
           <Title order={4}>
             <Trans>Machines</Trans>
           </Title>

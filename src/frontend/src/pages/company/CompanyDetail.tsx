@@ -12,11 +12,14 @@ import {
   IconTruckReturn,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { type ReactNode, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -25,12 +28,12 @@ import {
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
-import { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import type { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -64,6 +67,7 @@ export type CompanyDetailProps = {
 export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const {
@@ -83,7 +87,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       return <Skeleton />;
     }
 
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'text',
         name: 'description',
@@ -114,7 +118,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       }
     ];
 
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'currency',
@@ -142,22 +146,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-              src={company.image}
-              pk={company.pk}
-              refresh={refreshInstance}
-              imageActions={{
-                uploadFile: true,
-                downloadImage: true,
-                deleteFile: true
-              }}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
+            src={company.image}
+            pk={company.pk}
+            refresh={refreshInstance}
+            imageActions={{
+              uploadFile: true,
+              downloadImage: true,
+              deleteFile: true
+            }}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable item={company} fields={tl} />
           </Grid.Col>
         </Grid>
@@ -207,7 +209,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: company?.pk && (
           <StockItemTable
             allowAdd={false}
-            tableName="company-stock"
+            tableName='company-stock'
             params={{ company: company.pk }}
           />
         )
@@ -238,7 +240,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: company?.pk ? (
           <StockItemTable
             allowAdd={false}
-            tableName="assigned-stock"
+            tableName='assigned-stock'
+            showLocation={false}
             params={{ customer: company.pk }}
           />
         ) : (
@@ -280,12 +283,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Delete Company`,
-    onFormSuccess: refreshInstance
+    onFormSuccess: () => {
+      navigate('/');
+    }
   });
 
   const companyActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.company} pk={company.pk} />,
+      <AdminButton model={ModelType.company} id={company.pk} />,
       <OptionsActionDropdown
         tooltip={t`Company Actions`}
         actions={[
@@ -306,7 +311,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       <DetailsBadge
         label={t`Inactive`}
-        color="red"
+        color='red'
         visible={company.active == false}
       />
     ];
@@ -317,9 +322,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {editCompany.modal}
       {deleteCompany.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Company` + `: ${company.name}`}
+            title={`${t`Company`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
             imageUrl={company.image}
@@ -335,7 +340,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             editEnabled={user.hasChangePermission(ModelType.company)}
           />
           <PanelGroup
-            pageKey="company"
+            pageKey='company'
             panels={companyPanels}
             instance={company}
             model={ModelType.company}

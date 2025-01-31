@@ -1,7 +1,6 @@
 """Helpers for plugin app."""
 
 import inspect
-import logging
 import os
 import pathlib
 import pkgutil
@@ -11,12 +10,13 @@ import traceback
 from importlib.metadata import entry_points
 from importlib.util import module_from_spec
 
-from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 
 # region logging / errors
@@ -177,7 +177,17 @@ def get_modules(pkg, path=None):
     elif type(path) is not list:
         path = [path]
 
-    for finder, name, _ in pkgutil.walk_packages(path):
+    packages = pkgutil.walk_packages(path)
+
+    while True:
+        try:
+            finder, name, _ = next(packages)
+        except StopIteration:
+            break
+        except Exception as error:
+            log_error({pkg.__name__: str(error)}, 'discovery')
+            continue
+
         try:
             if sys.version_info < (3, 12):
                 module = finder.find_module(name).load_module(name)
@@ -202,9 +212,13 @@ def get_modules(pkg, path=None):
     return [v for k, v in context.items()]
 
 
-def get_classes(module):
+def get_classes(module) -> list:
     """Get all classes in a given module."""
-    return inspect.getmembers(module, inspect.isclass)
+    try:
+        return inspect.getmembers(module, inspect.isclass)
+    except Exception:
+        log_error({module.__name__: 'Could not get classes'}, 'discovery')
+        return []
 
 
 def get_plugins(pkg, baseclass, path=None):
@@ -226,38 +240,6 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
-
-
-# endregion
-
-
-# region templates
-def render_template(plugin, template_file, context=None):
-    """Locate and render a template file, available in the global template context."""
-    try:
-        tmp = template.loader.get_template(template_file)
-    except template.TemplateDoesNotExist:
-        logger.exception(
-            "Plugin %s could not locate template '%s'", plugin.slug, template_file
-        )
-
-        return f"""
-        <div class='alert alert-block alert-danger'>
-        Template file <em>{template_file}</em> does not exist.
-        </div>
-        """
-
-    # Render with the provided context
-    html = tmp.render(context)
-
-    return html
-
-
-def render_text(text, context=None):
-    """Locate a raw string with provided context."""
-    ctx = template.Context(context)
-
-    return template.Template(text).render(ctx)
 
 
 # endregion

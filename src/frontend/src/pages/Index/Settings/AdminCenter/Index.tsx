@@ -1,13 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import {
-  Divider,
-  Paper,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
+import { Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconCoins,
@@ -30,8 +22,9 @@ import { lazy, useMemo } from 'react';
 
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
+import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import { PanelType } from '../../../../components/panels/Panel';
+import type { PanelType } from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
@@ -65,6 +58,8 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
+const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
+
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
@@ -83,6 +78,10 @@ const ProjectCodeTable = Loadable(
 
 const CustomStateTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomStateTable'))
+);
+
+const CustomUnitsTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
 );
 
 const PartParameterTemplateTable = Loadable(
@@ -106,7 +105,7 @@ export default function AdminCenter() {
     return [
       {
         name: 'user',
-        label: t`Users`,
+        label: t`User Management`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
       },
@@ -145,9 +144,8 @@ export default function AdminCenter() {
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
-          <Stack gap="xs">
+          <Stack gap='xs'>
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
-            <Divider />
             <ProjectCodeTable />
           </Stack>
         )
@@ -168,7 +166,7 @@ export default function AdminCenter() {
         name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
-        content: <PartParameterTemplateTable />
+        content: <PartParameterPanel />
       },
       {
         name: 'category-parameters',
@@ -221,17 +219,17 @@ export default function AdminCenter() {
         <Trans>Quick Actions</Trans>
       </Title>
       <SimpleGrid cols={3}>
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <Text>
             <Trans>Add a new user</Trans>
           </Text>
         </Paper>
 
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <PlaceholderPill />
         </Paper>
 
-        <Paper shadow="xs" p="sm" withBorder>
+        <Paper shadow='xs' p='sm' withBorder>
           <PlaceholderPill />
         </Paper>
       </SimpleGrid>
@@ -244,19 +242,20 @@ export default function AdminCenter() {
 
   return (
     <>
+      <PageTitle title={t`Admin Center`} />
       {user.isStaff() ? (
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <SettingsHeader
-            label="admin"
+            label='admin'
             title={t`Admin Center`}
             subtitle={t`Advanced Options`}
           />
           <QuickAction />
           <PanelGroup
-            pageKey="admin-center"
+            pageKey='admin-center'
             panels={adminCenterPanels}
             collapsible={true}
-            model="admincenter"
+            model='admincenter'
             id={null}
           />
         </Stack>

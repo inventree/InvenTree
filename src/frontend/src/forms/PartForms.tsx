@@ -2,7 +2,10 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useApi } from '../contexts/ApiContext';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
@@ -134,8 +137,8 @@ export function partCategoryFields({
 }: {
   create?: boolean;
 }): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = {
+  const fields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = {
       parent: {
         description: t`Parent part category`,
         required: false
@@ -176,6 +179,8 @@ export function usePartParameterFields({
 }: {
   editTemplate?: boolean;
 }): ApiFormFieldSet {
+  const api = useApi();
+
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 
@@ -198,13 +203,13 @@ export function usePartParameterFields({
             setChoices([]);
             setFieldType('boolean');
           } else if (record?.choices) {
-            let _choices: string[] = record.choices.split(',');
+            const _choices: string[] = record.choices.split(',');
 
             if (_choices.length > 0) {
               setChoices(
                 _choices.map((choice) => {
                   return {
-                    label: choice.trim(),
+                    display_name: choice.trim(),
                     value: choice.trim()
                   };
                 })
@@ -214,6 +219,22 @@ export function usePartParameterFields({
               setChoices([]);
               setFieldType('string');
             }
+          } else if (record?.selectionlist) {
+            api
+              .get(
+                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
+              )
+              .then((res) => {
+                setChoices(
+                  res.data.choices.map((item: any) => {
+                    return {
+                      value: item.value,
+                      display_name: item.label
+                    };
+                  })
+                );
+                setFieldType('choice');
+              });
           } else {
             setChoices([]);
             setFieldType('string');

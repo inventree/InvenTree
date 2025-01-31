@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -16,7 +16,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
@@ -24,9 +24,9 @@ import {
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /*
@@ -53,7 +53,7 @@ export function SupplierPartTable({
         accessor: 'supplier',
         sortable: true,
         render: (record: any) => {
-          let supplier = record?.supplier_detail ?? {};
+          const supplier = record?.supplier_detail ?? {};
 
           return supplier?.pk ? (
             <Thumbnail
@@ -76,7 +76,7 @@ export function SupplierPartTable({
 
         sortable: true,
         render: (record: any) => {
-          let manufacturer = record?.manufacturer_detail ?? {};
+          const manufacturer = record?.manufacturer_detail ?? {};
 
           return manufacturer?.pk ? (
             <Thumbnail
@@ -114,13 +114,13 @@ export function SupplierPartTable({
         sortable: true,
 
         render: (record: any) => {
-          let part = record?.part_detail ?? {};
+          const part = record?.part_detail ?? {};
 
-          let extra = [];
+          const extra = [];
 
           if (part.units) {
             extra.push(
-              <Text key="base">
+              <Text key='base'>
                 {t`Base units`} : {part.units}
               </Text>
             );
@@ -142,7 +142,7 @@ export function SupplierPartTable({
         sortable: true,
 
         render: (record: any) => {
-          let extra = [];
+          const extra = [];
 
           if (record.availablility_updated) {
             extra.push(
@@ -158,7 +158,9 @@ export function SupplierPartTable({
     ];
   }, [params]);
 
-  const supplierPartFields = useSupplierPartFields();
+  const supplierPartFields = useSupplierPartFields({
+    partId: params?.part
+  });
 
   const addSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
@@ -175,7 +177,7 @@ export function SupplierPartTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-supplier-part"
+        key='add-supplier-part'
         tooltip={t`Add supplier part`}
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
@@ -199,11 +201,16 @@ export function SupplierPartTable({
         name: 'supplier_active',
         label: t`Active Supplier`,
         description: t`Show active suppliers`
+      },
+      {
+        name: 'has_stock',
+        label: t`In Stock`,
+        description: t`Show supplier parts with stock`
       }
     ];
   }, []);
 
-  const editSupplierPartFields = useSupplierPartFields();
+  const editSupplierPartFields = useSupplierPartFields({});
 
   const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
 

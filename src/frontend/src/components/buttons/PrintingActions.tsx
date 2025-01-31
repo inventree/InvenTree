@@ -6,13 +6,16 @@ import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
+import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
+import { generateUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
-import { useUserSettingsState } from '../../states/SettingsState';
-import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
+import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -28,17 +31,24 @@ export function PrintingActions({
   enableReports?: boolean;
   modelType?: ModelType;
 }) {
-  const { host } = useLocalState.getState();
-
   const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
   const [pluginKey, setPluginKey] = useState<string>('');
 
+  const labelPrintingEnabled = useMemo(() => {
+    return enableLabels && globalSettings.isSet('LABEL_ENABLE');
+  }, [enableLabels, globalSettings]);
+
+  const reportPrintingEnabled = useMemo(() => {
+    return enableReports && globalSettings.isSet('REPORT_ENABLE');
+  }, [enableReports, globalSettings]);
+
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
-    enabled: enableLabels,
+    enabled: labelPrintingEnabled,
     queryKey: ['printingFields', modelType, pluginKey],
     gcTime: 500,
     queryFn: () =>
@@ -57,11 +67,11 @@ export function PrintingActions({
   });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = printingFields.data || {};
+    const fields: ApiFormFieldSet = printingFields.data || {};
 
     // Override field values
-    fields['template'] = {
-      ...fields['template'],
+    fields.template = {
+      ...fields.template,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -69,8 +79,8 @@ export function PrintingActions({
       }
     };
 
-    fields['items'] = {
-      ...fields['items'],
+    fields.items = {
+      ...fields.items,
       value: items,
       hidden: true
     };
@@ -116,8 +126,8 @@ export function PrintingActions({
 
       if (response.output) {
         // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
+        const url = generateUrl(response.output);
+        window.open(url.toString(), '_blank');
       }
     }
   });
@@ -154,8 +164,8 @@ export function PrintingActions({
 
       if (response.output) {
         // An output file was generated
-        const url = `${host}${response.output}`;
-        window.open(url, '_blank');
+        const url = generateUrl(response.output);
+        window.open(url.toString(), '_blank');
       }
     }
   });
@@ -164,7 +174,7 @@ export function PrintingActions({
     return null;
   }
 
-  if (!enableLabels && !enableReports) {
+  if (!labelPrintingEnabled && !reportPrintingEnabled) {
     return null;
   }
 
@@ -182,13 +192,13 @@ export function PrintingActions({
               name: t`Print Labels`,
               icon: <IconTags />,
               onClick: () => labelModal.open(),
-              hidden: !enableLabels
+              hidden: !labelPrintingEnabled
             },
             {
               name: t`Print Reports`,
               icon: <IconReport />,
               onClick: () => reportModal.open(),
-              hidden: !enableReports
+              hidden: !reportPrintingEnabled
             }
           ]}
         />

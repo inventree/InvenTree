@@ -1,4 +1,4 @@
-import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+import type { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 
 export type TableColumnProps<T = any> = {
   accessor?: string; // The key in the record to access
@@ -18,6 +18,7 @@ export type TableColumnProps<T = any> = {
   textAlign?: 'left' | 'center' | 'right'; // The text alignment of the column
   cellsStyle?: any; // The style of the cells in the column
   extra?: any; // Extra data to pass to the render function
+  noContext?: boolean; // Disable context menu for this column
 };
 
 /**

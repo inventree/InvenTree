@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { api } from '../App';
-import { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
+import type { DashboardWidgetProps } from '../components/dashboard/DashboardWidget';
 import DashboardWidgetLibrary from '../components/dashboard/DashboardWidgetLibrary';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import {
-  PluginUIFeature,
+  type PluginUIFeature,
   PluginUIFeatureType
 } from '../components/plugins/PluginUIFeature';
 import RemoteComponent from '../components/plugins/RemoteComponent';
@@ -82,7 +82,7 @@ export function useDashboardItems(): DashboardLibraryProps {
             return (
               <RemoteComponent
                 source={item.source}
-                defaultFunctionName="renderDashboardItem"
+                defaultFunctionName='renderDashboardItem'
                 context={pluginContext}
               />
             );
@@ -93,7 +93,9 @@ export function useDashboardItems(): DashboardLibraryProps {
   }, [pluginQuery, inventreeContext]);
 
   const items: DashboardWidgetProps[] = useMemo(() => {
-    return [...builtin, ...pluginDashboardItems];
+    const widgets = [...builtin, ...pluginDashboardItems];
+
+    return widgets.filter((item) => item.enabled ?? true);
   }, [builtin, pluginDashboardItems]);
 
   const loaded: boolean = useMemo(() => {

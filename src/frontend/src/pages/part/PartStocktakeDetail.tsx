@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ChartTooltipProps, LineChart } from '@mantine/charts';
+import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Center,
   Divider,
@@ -26,14 +26,14 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../../tables/Column';
+import type { TableColumn } from '../../tables/Column';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 
 /*
  * Render a tooltip for the chart, with correct date information
  */
-function ChartTooltip({ label, payload }: ChartTooltipProps) {
+function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   const formattedLabel: string = useMemo(() => {
     if (label && typeof label === 'number') {
       return formatDate(new Date(label).toISOString()) ?? label;
@@ -53,20 +53,22 @@ function ChartTooltip({ label, payload }: ChartTooltipProps) {
   const value_max = payload.find((item) => item.name == 'value_max');
 
   return (
-    <Paper px="md" py="sm" withBorder shadow="md" radius="md">
-      <Text key="title">{formattedLabel}</Text>
+    <Paper px='md' py='sm' withBorder shadow='md' radius='md'>
+      <Text key='title'>{formattedLabel}</Text>
       <Divider />
-      <Text key="quantity" fz="sm">
+      <Text key='quantity' fz='sm'>
         {t`Quantity`} : {quantity?.value}
       </Text>
-      <Text key="values" fz="sm">
+      <Text key='values' fz='sm'>
         {t`Value`} : {formatPriceRange(value_min?.value, value_max?.value)}
       </Text>
     </Paper>
   );
 }
 
-export default function PartStocktakeDetail({ partId }: { partId: number }) {
+export default function PartStocktakeDetail({
+  partId
+}: Readonly<{ partId: number }>) {
   const user = useUserState();
   const table = useTable('part-stocktake');
 
@@ -105,18 +107,19 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
     return [
       {
         accessor: 'quantity',
-        sortable: true,
+        sortable: false,
         switchable: false
       },
       {
         accessor: 'item_count',
         title: t`Stock Items`,
         switchable: true,
-        sortable: true
+        sortable: false
       },
       {
         accessor: 'cost',
         title: t`Stock Value`,
+        sortable: false,
         render: (record: any) => {
           return formatPriceRange(record.cost_min, record.cost_max, {
             currency: record.cost_min_currency
@@ -125,10 +128,11 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
       },
       {
         accessor: 'date',
-        sortable: true
+        sortable: false
       },
       {
-        accessor: 'note'
+        accessor: 'note',
+        sortable: false
       }
     ];
   }, []);
@@ -136,6 +140,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key='add'
         tooltip={t`New Stocktake Report`}
         onClick={() => generateReport.open()}
         hidden={!user.hasAddRole(UserRoles.stocktake)}
@@ -166,22 +171,20 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
   );
 
   const chartData = useMemo(() => {
-    let records =
+    const records =
       table.records?.map((record: any) => {
         return {
           date: new Date(record.date).valueOf(),
           quantity: record.quantity,
-          value_min: record.cost_min,
-          value_max: record.cost_max
+          value_min: Number.parseFloat(record.cost_min),
+          value_max: Number.parseFloat(record.cost_max)
         };
       }) ?? [];
 
     // Sort records to ensure correct date order
-    records.sort((a, b) => {
+    return records.sort((a, b) => {
       return a < b ? -1 : 1;
     });
-
-    return records;
   }, [table.records]);
 
   // Calculate the date limits of the chart
@@ -206,14 +209,15 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
       {generateReport.modal}
       {editStocktakeEntry.modal}
       {deleteStocktakeEntry.modal}
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
         <InvenTreeTable
           url={apiUrl(ApiEndpoints.part_stocktake_list)}
           tableState={table}
           columns={tableColumns}
           props={{
             params: {
-              part: partId
+              part: partId,
+              ordering: 'date'
             },
             rowActions: rowActions,
             tableActions: tableActions
@@ -227,7 +231,7 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
           <LineChart
             data={chartData}
             mah={'500px'}
-            dataKey="date"
+            dataKey='date'
             withLegend
             withYAxis
             withRightYAxis
@@ -237,6 +241,12 @@ export default function PartStocktakeDetail({ partId }: { partId: number }) {
               content: ({ label, payload }) => (
                 <ChartTooltip label={label} payload={payload} />
               )
+            }}
+            yAxisProps={{
+              allowDataOverflow: false
+            }}
+            rightYAxisProps={{
+              allowDataOverflow: false
             }}
             xAxisProps={{
               scale: 'time',

@@ -1,4 +1,4 @@
-"""Custom query filters for the Part models.
+"""Custom query filters for the Part app.
 
 The code here makes heavy use of subquery annotations!
 
@@ -73,7 +73,7 @@ def annotate_on_order_quantity(reference: str = ''):
 
     Note that in addition to the 'quantity' on order, we must also take into account 'pack_quantity'.
     """
-    # Filter only 'active' purhase orders
+    # Filter only 'active' purchase orders
     # Filter only line with outstanding quantity
     order_filter = Q(
         order__status__in=PurchaseOrderStatusGroups.OPEN, quantity__gt=F('received')

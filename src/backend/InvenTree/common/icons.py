@@ -1,7 +1,6 @@
 """Icon utilities for InvenTree."""
 
 import json
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TypedDict
@@ -9,7 +8,9 @@ from typing import TypedDict
 from django.core.exceptions import ValidationError
 from django.templatetags.static import static
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 _icon_packs = None
 
@@ -71,12 +72,14 @@ def get_icon_packs():
             )
         ]
 
+        from InvenTree.exceptions import log_error
         from plugin import registry
 
         for plugin in registry.with_mixin('icon_pack', active=True):
             try:
                 icon_packs.extend(plugin.icon_packs())
             except Exception as e:
+                log_error('get_icon_packs')
                 logger.warning('Error loading icon pack from plugin %s: %s', plugin, e)
 
         _icon_packs = {pack.prefix: pack for pack in icon_packs}

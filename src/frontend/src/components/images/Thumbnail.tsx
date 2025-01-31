@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Anchor, Group } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { ApiImage } from './ApiImage';
 
@@ -27,7 +27,7 @@ export function Thumbnail({
   const inner = useMemo(() => {
     if (link) {
       return (
-        <Anchor href={link} target="_blank">
+        <Anchor href={link} target='_blank'>
           {text}
         </Anchor>
       );
@@ -37,13 +37,13 @@ export function Thumbnail({
   }, [link, text]);
 
   return (
-    <Group align={align ?? 'left'} gap="xs" wrap="nowrap">
+    <Group align={align ?? 'left'} gap='xs' wrap='nowrap'>
       <ApiImage
         src={src || backup_image}
         aria-label={alt}
         w={size}
-        fit="contain"
-        radius="xs"
+        fit='contain'
+        radius='xs'
         style={{ maxHeight: size }}
       />
       {inner}

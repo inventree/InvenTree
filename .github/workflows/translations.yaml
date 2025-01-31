@@ -23,7 +23,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       INVENTREE_DB_NAME: "./test_db.sqlite"
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
@@ -32,11 +33,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        with:
+          persist-credentials: true
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           install: true
-          npm: true
           apt-dependency: gettext
       - name: Make Translations
         run: invoke dev.translate
@@ -51,7 +53,7 @@ jobs:
           git reset --hard
           git reset HEAD~
       - name: crowdin action
-        uses: crowdin/github-action@2d540f18b0a416b1fbf2ee5be35841bd380fc1da # pin@v2
+        uses: crowdin/github-action@b811e495831e49ff516e7c801f7c5546879b9ee7 # pin@v2
         with:
           upload_sources: true
           upload_translations: false

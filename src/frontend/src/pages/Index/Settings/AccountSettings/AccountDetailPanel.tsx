@@ -3,15 +3,17 @@ import { Group, Stack, Table, Title } from '@mantine/core';
 import { IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useNavigate } from 'react-router-dom';
 import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { notYetImplemented } from '../../../../functions/notifications';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
+  const navigate = useNavigate();
+
   const [user, fetchUserState] = useUserState((state) => [
     state.user,
     state.fetchUserState
@@ -35,8 +37,8 @@ export function AccountDetailPanel() {
   return (
     <>
       {editUser.modal}
-      <Stack gap="xs">
-        <Group justify="space-between">
+      <Stack gap='xs'>
+        <Group justify='space-between'>
           <Title order={3}>
             <Trans>User Details</Trans>
           </Title>
@@ -51,10 +53,12 @@ export function AccountDetailPanel() {
                 onClick: editUser.open
               },
               {
-                name: t`Set Password`,
+                name: t`Change Password`,
                 icon: <IconKey />,
-                tooltip: t`Set User Password`,
-                onClick: notYetImplemented
+                tooltip: t`Change User Password`,
+                onClick: () => {
+                  navigate('/change-password');
+                }
               }
             ]}
           />

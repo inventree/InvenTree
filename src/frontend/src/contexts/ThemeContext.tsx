@@ -2,10 +2,11 @@ import { t } from '@lingui/macro';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+import { ContextMenuProvider } from 'mantine-contextmenu';
 
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
-import { QrCodeModal } from '../components/modals/QrCodeModal';
+import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
@@ -40,20 +41,22 @@ export function ThemeContext({
 
   return (
     <MantineProvider theme={myTheme} colorSchemeManager={colorSchema}>
-      <LanguageContext>
-        <ModalsProvider
-          labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-          modals={{
-            qr: QrCodeModal,
-            info: ServerInfoModal,
-            about: AboutInvenTreeModal,
-            license: LicenseModal
-          }}
-        >
-          <Notifications />
-          {children}
-        </ModalsProvider>
-      </LanguageContext>
+      <ContextMenuProvider>
+        <LanguageContext>
+          <ModalsProvider
+            labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+            modals={{
+              info: ServerInfoModal,
+              about: AboutInvenTreeModal,
+              license: LicenseModal,
+              qr: QrModal
+            }}
+          >
+            <Notifications />
+            {children}
+          </ModalsProvider>
+        </LanguageContext>
+      </ContextMenuProvider>
     </MantineProvider>
   );
 }

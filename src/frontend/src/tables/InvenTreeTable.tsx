@@ -1,30 +1,33 @@
 import { t } from '@lingui/macro';
 import { Box, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { useContextMenu } from 'mantine-contextmenu';
 import {
   DataTable,
-  DataTableCellClickHandler,
-  DataTableRowExpansionProps,
-  DataTableSortStatus
+  type DataTableCellClickHandler,
+  type DataTableRowExpansionProps,
+  type DataTableSortStatus
 } from 'mantine-datatable';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../App';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { Boundary } from '../components/Boundary';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ModelType } from '../enums/ModelType';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useApi } from '../contexts/ApiContext';
+import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
-import { TableState } from '../hooks/UseTable';
+import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
-import { TableColumn } from './Column';
-import { TableFilter } from './Filter';
+import type { TableColumn } from './Column';
+import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
-import { RowAction, RowActions } from './RowActions';
+import { type RowAction, RowActions } from './RowActions';
 
 const defaultPageSize: number = 25;
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
@@ -78,7 +81,6 @@ export type InvenTreeTableProps<T = any> = {
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   rowExpansion?: DataTableRowExpansionProps<T>;
-  idAccessor?: string;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
@@ -86,6 +88,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
+  onCellContextMenu?: (record: T, event: any) => void;
   minHeight?: number;
   noHeader?: boolean;
 };
@@ -107,8 +110,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   defaultSortColumn: '',
   barcodeActions: [],
   tableFilters: [],
-  tableActions: [],
-  idAccessor: 'pk'
+  tableActions: []
 };
 
 /**
@@ -117,11 +119,13 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
 export function InvenTreeTable<T extends Record<string, any>>({
   url,
   tableState,
+  tableData,
   columns,
   props
 }: Readonly<{
-  url: string;
+  url?: string;
   tableState: TableState;
+  tableData?: any[];
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }>) {
@@ -135,7 +139,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
+  const api = useApi();
   const navigate = useNavigate();
+  const { showContextMenu } = useContextMenu();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -153,12 +159,16 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: true,
+    enabled: !!url && !tableData,
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     gcTime: 5000,
     queryFn: async () => {
+      if (!url) {
+        return null;
+      }
+
       if (props.enableColumnCaching == false) {
         return null;
       }
@@ -176,9 +186,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
           if (response.status == 200) {
             // Extract field information from the API
 
-            let names: Record<string, string> = {};
+            const names: Record<string, string> = {};
 
-            let fields: ApiFormFieldSet =
+            const fields: ApiFormFieldSet =
               extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
@@ -193,6 +203,17 @@ export function InvenTreeTable<T extends Record<string, any>>({
             setFieldNames(names);
             setTableColumnNames(cacheKey)(names);
           }
+
+          return null;
+        })
+        .catch(() => {
+          hideNotification('table-options-error');
+          showNotification({
+            id: 'table-options-error',
+            title: t`API Error`,
+            message: t`Failed to load table options`,
+            color: 'red'
+          });
 
           return null;
         });
@@ -258,7 +279,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols: TableColumn[] = columns
+    const cols: TableColumn[] = columns
       .filter((col) => col?.hidden != true)
       .map((col) => {
         let hidden: boolean = col.hidden ?? false;
@@ -304,9 +325,9 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {
-    let newColumns = [...dataColumns];
+    const newColumns = [...dataColumns];
 
-    let colIdx = newColumns.findIndex((col) => col.accessor == columnName);
+    const colIdx = newColumns.findIndex((col) => col.accessor == columnName);
 
     if (colIdx >= 0 && colIdx < newColumns.length) {
       newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
@@ -332,21 +353,21 @@ export function InvenTreeTable<T extends Record<string, any>>({
    * Construct query filters for the current table
    */
   const getTableFilters = useCallback(
-    (paginate: boolean = false) => {
-      let queryParams = {
+    (paginate = false) => {
+      const queryParams = {
         ...tableProps.params
       };
 
       // Add custom filters
       if (tableState.activeFilters) {
-        tableState.activeFilters.forEach(
-          (flt) => (queryParams[flt.name] = flt.value)
-        );
+        tableState.activeFilters.forEach((flt) => {
+          queryParams[flt.name] = flt.value;
+        });
       }
 
       // Allow override of filters based on URL query parameters
       if (tableState.queryFilters) {
-        for (let [key, value] of tableState.queryFilters) {
+        for (const [key, value] of tableState.queryFilters) {
           queryParams[key] = value;
         }
       }
@@ -358,14 +379,14 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
       // Pagination
       if (tableProps.enablePagination && paginate) {
-        let pageSize = tableState.pageSize ?? defaultPageSize;
+        const pageSize = tableState.pageSize ?? defaultPageSize;
         if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
         queryParams.limit = pageSize;
         queryParams.offset = (tableState.page - 1) * pageSize;
       }
 
       // Ordering
-      let ordering = getOrderingTerm();
+      const ordering = getOrderingTerm();
 
       if (ordering) {
         if (sortStatus.direction == 'asc') {
@@ -401,7 +422,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Return the ordering parameter
   function getOrderingTerm() {
-    let key = sortStatus.columnAccessor;
+    const key = sortStatus.columnAccessor;
 
     // Sorting column not specified
     if (key == '') {
@@ -410,7 +431,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
     // Find matching column:
     // If column provides custom ordering term, use that
-    let column = dataColumns.find((col: any) => col.accessor == key);
+    const column = dataColumns.find((col: any) => col.accessor == key);
     return column?.ordering || key;
   }
 
@@ -429,14 +450,18 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
-    let queryParams = getTableFilters(true);
+    const queryParams = getTableFilters(true);
+
+    if (!url) {
+      return [];
+    }
 
     return api
       .get(url, {
         params: queryParams,
         timeout: 5 * 1000
       })
-      .then(function (response) {
+      .then((response) => {
         switch (response.status) {
           case 200:
             setMissingRecordsText(
@@ -472,20 +497,25 @@ export function InvenTreeTable<T extends Record<string, any>>({
             break;
           default:
             setMissingRecordsText(
-              t`Unknown error` + ': ' + response.statusText
+              `${t`Unknown error`}: ${response.statusText}`
             );
             break;
         }
 
         return [];
       })
-      .catch(function (error) {
-        setMissingRecordsText(t`Error` + ': ' + error.message);
+      .catch((error) => {
+        setMissingRecordsText(`${t`Error`}: ${error.message}`);
         return [];
       });
   };
 
-  const { data, isFetching, isLoading, refetch } = useQuery({
+  const {
+    data: apiData,
+    isFetching,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: [
       'tabledata',
       url,
@@ -497,6 +527,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
       tableState.activeFilters,
       tableState.searchTerm
     ],
+    enabled: !!url && !tableData,
     queryFn: fetchTableData,
     refetchOnMount: true
   });
@@ -517,13 +548,15 @@ export function InvenTreeTable<T extends Record<string, any>>({
 
   // Update tableState.records when new data received
   useEffect(() => {
-    tableState.setRecords(data ?? []);
+    const data = tableData ?? apiData ?? [];
+
+    tableState.setRecords(data);
 
     // set pagesize to length if pagination is disabled
     if (!tableProps.enablePagination) {
       tableState.setPageSize(data?.length ?? defaultPageSize);
     }
-  }, [data]);
+  }, [tableData, apiData]);
 
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
@@ -556,13 +589,45 @@ export function InvenTreeTable<T extends Record<string, any>>({
         if (pk) {
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model
-          let url = getDetailUrl(tableProps.modelType, pk);
+          const url = getDetailUrl(tableProps.modelType, pk);
           navigateToLink(url, navigate, event);
         }
       }
     },
     [props.onRowClick, props.onCellClick]
   );
+
+  // Callback when a cell is right-clicked
+  const handleCellContextMenu = ({
+    record,
+    column,
+    event
+  }: {
+    record: any;
+    column: any;
+    event: any;
+  }) => {
+    if (column?.noContext === true) {
+      return;
+    }
+    if (props.onCellContextMenu) {
+      return props.onCellContextMenu(record, event);
+    } else if (props.rowActions) {
+      const empty = () => {};
+      const items = props.rowActions(record).map((action) => ({
+        key: action.title ?? '',
+        title: action.title ?? '',
+        color: action.color,
+        icon: action.icon,
+        onClick: action.onClick ?? empty,
+        hidden: action.hidden,
+        disabled: action.disabled
+      }));
+      return showContextMenu(items)(event);
+    } else {
+      return showContextMenu([])(event);
+    }
+  };
 
   // pagination refresth table if pageSize changes
   function updatePageSize(newData: number) {
@@ -599,17 +664,33 @@ export function InvenTreeTable<T extends Record<string, any>>({
     ]);
 
   const optionalParams = useMemo(() => {
-    let optionalParamsa: Record<string, any> = {};
+    let _params: Record<string, any> = {};
+
     if (tableProps.enablePagination) {
-      optionalParamsa['recordsPerPageOptions'] = PAGE_SIZES;
-      optionalParamsa['onRecordsPerPageChange'] = updatePageSize;
+      _params = {
+        ..._params,
+        totalRecords: tableState.recordCount,
+        recordsPerPage: tableState.pageSize,
+        page: tableState.page,
+        onPageChange: tableState.setPage,
+        recordsPerPageOptions: PAGE_SIZES,
+        onRecordsPerPageChange: updatePageSize
+      };
     }
-    return optionalParamsa;
-  }, [tableProps.enablePagination]);
+
+    return _params;
+  }, [
+    tableProps.enablePagination,
+    tableState.recordCount,
+    tableState.pageSize,
+    tableState.page,
+    tableState.setPage,
+    updatePageSize
+  ]);
 
   return (
     <>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {!tableProps.noHeader && (
           <Boundary label={`InvenTreeTableHeader-${tableState.tableKey}`}>
             <InvenTreeTableHeader
@@ -624,7 +705,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
           </Boundary>
         )}
         <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
-          <Box pos="relative">
+          <Box pos='relative'>
             <DataTable
               withTableBorder={!tableProps.noHeader}
               withColumnBorders
@@ -632,12 +713,8 @@ export function InvenTreeTable<T extends Record<string, any>>({
               highlightOnHover
               loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
-              idAccessor={tableProps.idAccessor}
+              idAccessor={tableState.idAccessor ?? 'pk'}
               minHeight={tableProps.minHeight ?? 300}
-              totalRecords={tableState.recordCount}
-              recordsPerPage={tableState.pageSize}
-              page={tableState.page}
-              onPageChange={tableState.setPage}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
               selectedRecords={
@@ -662,6 +739,7 @@ export function InvenTreeTable<T extends Record<string, any>>({
                   overflow: 'hidden'
                 })
               }}
+              onCellContextMenu={handleCellContextMenu}
               {...optionalParams}
             />
           </Box>

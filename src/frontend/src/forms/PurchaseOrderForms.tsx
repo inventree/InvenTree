@@ -25,17 +25,19 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
+import { IconCalendarExclamation } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 import {
   TableFieldExtraRow,
-  TableFieldRowProps
+  type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
@@ -49,7 +51,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
-
+import { useGlobalSettingsState } from '../states/SettingsState';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -139,18 +141,23 @@ export function usePurchaseOrderLineItemFields({
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
 export function usePurchaseOrderFields({
+  supplierId,
   duplicateOrderId
 }: {
+  supplierId?: number;
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {
         icon: <IconHash />
       },
       description: {},
       supplier: {
-        disabled: duplicateOrderId !== undefined,
+        value: supplierId,
+        disabled: !!duplicateOrderId || !!supplierId,
         filters: {
           is_supplier: true,
           active: true
@@ -162,6 +169,9 @@ export function usePurchaseOrderFields({
       },
       order_currency: {
         icon: <IconCoins />
+      },
+      start_date: {
+        icon: <IconCalendar />
       },
       target_date: {
         icon: <IconCalendar />
@@ -212,8 +222,12 @@ export function usePurchaseOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, supplierId, globalSettings]);
 }
 
 /**
@@ -242,6 +256,8 @@ function LineItemFormRow({
     () => record.part_detail?.trackable ?? false,
     [record]
   );
+
+  const settings = useGlobalSettingsState();
 
   useEffect(() => {
     if (!!record.destination) {
@@ -295,6 +311,23 @@ function LineItemFormRow({
     }
   });
 
+  const [expiryDateOpen, expiryDateHandlers] = useDisclosure(false, {
+    onOpen: () => {
+      // check the default part expiry. Assume expiry is relative to today
+      const defaultExpiry = record.part_detail?.default_expiry;
+      if (defaultExpiry !== undefined && defaultExpiry > 0) {
+        props.changeFn(
+          props.idx,
+          'expiry_date',
+          dayjs().add(defaultExpiry, 'day').format('YYYY-MM-DD')
+        );
+      }
+    },
+    onClose: () => {
+      props.changeFn(props.idx, 'expiry_date', undefined);
+    }
+  });
+
   // Status value
   const [statusOpen, statusHandlers] = useDisclosure(false, {
     onClose: () => props.changeFn(props.idx, 'status', undefined)
@@ -333,7 +366,7 @@ function LineItemFormRow({
 
   // Info string with details about certain selected locations
   const locationDescription = useMemo(() => {
-    let text = t`Choose Location`;
+    const text = t`Choose Location`;
 
     if (location === null) {
       return text;
@@ -377,11 +410,11 @@ function LineItemFormRow({
       <Modal
         opened={opened}
         onClose={close}
-        title={<StylishText children={t`Scan Barcode`} />}
+        title={<StylishText>{t`Scan Barcode`}</StylishText>}
       >
         <FocusTrap>
           <TextInput
-            label="Barcode data"
+            label='Barcode data'
             data-autofocus
             value={barcodeInput}
             onChange={(e) => setBarcodeInput(e.target.value)}
@@ -390,11 +423,11 @@ function LineItemFormRow({
       </Modal>
       <Table.Tr>
         <Table.Td>
-          <Flex gap="sm" align="center">
+          <Flex gap='sm' align='center'>
             <Thumbnail
               size={40}
               src={record.part_detail.thumbnail}
-              align="center"
+              align='center'
             />
             <div>{record.part_detail.name}</div>
           </Flex>
@@ -409,7 +442,7 @@ function LineItemFormRow({
         </Table.Td>
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
           <StandaloneField
-            fieldName="quantity"
+            fieldName='quantity'
             fieldDefinition={{
               field_type: 'number',
               value: props.item.quantity,
@@ -420,60 +453,70 @@ function LineItemFormRow({
           />
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-          <Flex gap="1px">
+          <Flex gap='1px'>
             <ActionButton
-              size="sm"
+              size='sm'
               onClick={() => locationHandlers.toggle()}
-              icon={<InvenTreeIcon icon="location" />}
+              icon={<InvenTreeIcon icon='location' />}
               tooltip={t`Set Location`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={locationOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
-              size="sm"
+              size='sm'
               onClick={() => batchHandlers.toggle()}
-              icon={<InvenTreeIcon icon="batch_code" />}
+              icon={<InvenTreeIcon icon='batch_code' />}
               tooltip={batchToolTip}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={batchOpen ? 'filled' : 'transparent'}
             />
+            {settings.isSet('STOCK_ENABLE_EXPIRY') && (
+              <ActionButton
+                size='sm'
+                onClick={() => expiryDateHandlers.toggle()}
+                icon={<IconCalendarExclamation />}
+                tooltip={t`Set Expiry Date`}
+                tooltipAlignment='top'
+                variant={expiryDateOpen ? 'filled' : 'transparent'}
+              />
+            )}
             <ActionButton
-              size="sm"
-              icon={<InvenTreeIcon icon="packaging" />}
+              size='sm'
+              icon={<InvenTreeIcon icon='packaging' />}
               tooltip={t`Adjust Packaging`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               onClick={() => packagingHandlers.toggle()}
               variant={packagingOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
-              icon={<InvenTreeIcon icon="status" />}
+              icon={<InvenTreeIcon icon='status' />}
               tooltip={t`Change Status`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={statusOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
-              icon={<InvenTreeIcon icon="note" />}
+              icon={<InvenTreeIcon icon='note' />}
               tooltip={t`Add Note`}
-              tooltipAlignment="top"
+              tooltipAlignment='top'
               variant={noteOpen ? 'filled' : 'transparent'}
               onClick={() => noteHandlers.toggle()}
             />
             {barcode ? (
               <ActionButton
-                icon={<InvenTreeIcon icon="unlink" />}
+                icon={<InvenTreeIcon icon='unlink' />}
                 tooltip={t`Unlink Barcode`}
-                tooltipAlignment="top"
-                variant="filled"
-                color="red"
+                tooltipAlignment='top'
+                variant='filled'
+                color='red'
                 onClick={() => setBarcode(undefined)}
               />
             ) : (
               <ActionButton
-                icon={<InvenTreeIcon icon="barcode" />}
+                icon={<InvenTreeIcon icon='barcode' />}
                 tooltip={t`Scan Barcode`}
-                tooltipAlignment="top"
-                variant="transparent"
+                tooltipAlignment='top'
+                variant='transparent'
                 onClick={() => open()}
               />
             )}
@@ -484,9 +527,9 @@ function LineItemFormRow({
       {locationOpen && (
         <Table.Tr>
           <Table.Td colSpan={10}>
-            <Group grow preventGrowOverflow={false} justify="flex-apart" p="xs">
-              <Container flex={0} p="xs">
-                <InvenTreeIcon icon="downright" />
+            <Group grow preventGrowOverflow={false} justify='flex-apart' p='xs'>
+              <Container flex={0} p='xs'>
+                <InvenTreeIcon icon='downright' />
               </Container>
               <StandaloneField
                 fieldDefinition={{
@@ -502,7 +545,7 @@ function LineItemFormRow({
                   description: locationDescription,
                   value: props.item.location,
                   label: t`Location`,
-                  icon: <InvenTreeIcon icon="location" />
+                  icon: <InvenTreeIcon icon='location' />
                 }}
                 defaultValue={
                   record.destination ??
@@ -515,7 +558,7 @@ function LineItemFormRow({
                 {(record.part_detail?.default_location ||
                   record.part_detail?.category_default_location) && (
                   <ActionButton
-                    icon={<InvenTreeIcon icon="default_location" />}
+                    icon={<InvenTreeIcon icon='default_location' />}
                     tooltip={t`Store at default location`}
                     onClick={() =>
                       props.changeFn(
@@ -525,24 +568,24 @@ function LineItemFormRow({
                           record.part_detail?.category_default_location
                       )
                     }
-                    tooltipAlignment="top"
+                    tooltipAlignment='top'
                   />
                 )}
                 {record.destination && (
                   <ActionButton
-                    icon={<InvenTreeIcon icon="destination" />}
+                    icon={<InvenTreeIcon icon='destination' />}
                     tooltip={t`Store at line item destination `}
                     onClick={() =>
                       props.changeFn(props.idx, 'location', record.destination)
                     }
-                    tooltipAlignment="top"
+                    tooltipAlignment='top'
                   />
                 )}
                 {!record.destination &&
                   record.destination_detail &&
                   record.received > 0 && (
                     <ActionButton
-                      icon={<InvenTreeIcon icon="repeat_destination" />}
+                      icon={<InvenTreeIcon icon='repeat_destination' />}
                       tooltip={t`Store with already received stock`}
                       onClick={() =>
                         props.changeFn(
@@ -551,7 +594,7 @@ function LineItemFormRow({
                           record.destination_detail.pk
                         )
                       }
-                      tooltipAlignment="top"
+                      tooltipAlignment='top'
                     />
                   )}
               </Flex>
@@ -583,6 +626,21 @@ function LineItemFormRow({
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />
+      {settings.isSet('STOCK_ENABLE_EXPIRY') && (
+        <TableFieldExtraRow
+          visible={expiryDateOpen}
+          onValueChange={(value) =>
+            props.changeFn(props.idx, 'expiry_date', value)
+          }
+          fieldDefinition={{
+            field_type: 'date',
+            label: t`Expiry Date`,
+            description: t`Enter an expiry date for received items`,
+            value: props.item.expiry_date
+          }}
+          error={props.rowErrors?.expiry_date?.message}
+        />
+      )}
       <TableFieldExtraRow
         visible={packagingOpen}
         onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
@@ -669,6 +727,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
           line_item: elem.pk,
           location: elem.destination ?? elem.destination_detail?.pk ?? null,
           quantity: elem.quantity - elem.received,
+          expiry_date: null,
           batch_code: '',
           serial_numbers: '',
           status: 10,

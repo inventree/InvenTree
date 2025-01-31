@@ -10,18 +10,18 @@ import React, {
 } from 'react';
 import { useStore } from 'zustand';
 
-import { api } from '../../App';
-import { ModelType } from '../../enums/ModelType';
+import { useApi } from '../../contexts/ApiContext';
+import type { ModelType } from '../../enums/ModelType';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import {
-  SettingsStateProps,
+  type SettingsStateProps,
   createMachineSettingsState,
   createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import { Setting } from '../../states/states';
+import type { Setting } from '../../states/states';
 import { SettingItem } from './SettingItem';
 
 /**
@@ -40,8 +40,10 @@ export function SettingList({
     settingsState.fetchSettings();
   }, []);
 
+  const api = useApi();
+
   const allKeys = useMemo(
-    () => settingsState?.settings?.map((s) => s.key),
+    () => settingsState?.settings?.map((s) => s.key) ?? [],
     [settingsState?.settings]
   );
 
@@ -68,6 +70,7 @@ export function SettingList({
     fields: {
       value: {
         field_type: fieldType,
+        required: setting?.required ?? false,
         label: setting?.name,
         description: setting?.description,
         api_url: setting?.api_url ?? '',
@@ -130,8 +133,8 @@ export function SettingList({
   return (
     <>
       {editSettingModal.modal}
-      <Stack gap="xs">
-        {(keys || allKeys).map((key, i) => {
+      <Stack gap='xs'>
+        {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );
@@ -150,14 +153,14 @@ export function SettingList({
                   onToggle={onValueToggle}
                 />
               ) : (
-                <Text size="sm" style={{ fontStyle: 'italic' }} c="red">
+                <Text size='sm' style={{ fontStyle: 'italic' }} c='red'>
                   Setting {key} not found
                 </Text>
               )}
             </React.Fragment>
           );
         })}
-        {(keys || allKeys).length === 0 && (
+        {(keys || allKeys)?.length === 0 && (
           <Text style={{ fontStyle: 'italic' }}>
             <Trans>No settings specified</Trans>
           </Text>

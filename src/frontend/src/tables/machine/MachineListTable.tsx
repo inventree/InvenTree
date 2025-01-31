@@ -20,7 +20,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
@@ -40,6 +39,7 @@ import {
   TableStatusRenderer
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
@@ -48,10 +48,10 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { MachineDriverI, MachineTypeI } from './MachineTypeTable';
+import { InvenTreeTable, type InvenTreeTableProps } from '../InvenTreeTable';
+import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {
   pk: string;
@@ -74,8 +74,8 @@ function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
   // machine is not active, show a gray dot
   if (!machine.active) {
     return (
-      <Indicator style={style} color="gray">
-        <Box></Box>
+      <Indicator style={style} color='gray'>
+        <Box />
       </Indicator>
     );
   }
@@ -94,7 +94,7 @@ function MachineStatusIndicator({ machine }: Readonly<{ machine: MachineI }>) {
 
   return (
     <Indicator processing={processing} style={style} color={color}>
-      <Box></Box>
+      <Box />
     </Indicator>
   );
 }
@@ -103,6 +103,8 @@ export function useMachineTypeDriver({
   includeTypes = true,
   includeDrivers = true
 }: { includeTypes?: boolean; includeDrivers?: boolean } = {}) {
+  const api = useApi();
+
   const {
     data: machineTypes,
     isFetching: isMachineTypesFetching,
@@ -146,6 +148,7 @@ function MachineDrawer({
   machinePk: string;
   refreshTable: () => void;
 }>) {
+  const api = useApi();
   const navigate = useNavigate();
   const {
     data: machine,
@@ -201,7 +204,7 @@ function MachineDrawer({
           notifications.show({
             message: t`Machine restarted`,
             color: 'green',
-            icon: <IconCheck size="1rem" />
+            icon: <IconCheck size='1rem' />
           });
         });
     },
@@ -238,11 +241,11 @@ function MachineDrawer({
 
   return (
     <>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         {machineEditModal.modal}
         {machineDeleteModal.modal}
 
-        <Group justify="space-between">
+        <Group justify='space-between'>
           <Group>
             {machine && <MachineStatusIndicator machine={machine} />}
             <Title order={4}>{machine?.name}</Title>
@@ -250,7 +253,7 @@ function MachineDrawer({
 
           <Group>
             {machine?.restart_required && (
-              <Badge color="red">
+              <Badge color='red'>
                 <Trans>Restart required</Trans>
               </Badge>
             )}
@@ -271,7 +274,7 @@ function MachineDrawer({
                   tooltip:
                     t`Restart machine` +
                     (machine?.restart_required
-                      ? ' (' + t`manual restart required` + ')'
+                      ? ` (${t`manual restart required`})`
                       : ''),
                   indicator: machine?.restart_required
                     ? { color: 'red' }
@@ -287,20 +290,20 @@ function MachineDrawer({
           multiple
           defaultValue={['machine-info', 'machine-settings', 'driver-settings']}
         >
-          <Accordion.Item value="machine-info">
+          <Accordion.Item value='machine-info'>
             <Accordion.Control>
-              <StylishText size="lg">{t`Machine Information`}</StylishText>
+              <StylishText size='lg'>{t`Machine Information`}</StylishText>
             </Accordion.Control>
             <Accordion.Panel>
               <Card withBorder>
-                <Stack gap="md">
-                  <Stack pos="relative" gap="xs">
+                <Stack gap='md'>
+                  <Stack pos='relative' gap='xs'>
                     <LoadingOverlay
                       visible={isFetching}
                       overlayProps={{ opacity: 0 }}
                     />
                     <InfoItem name={t`Machine Type`}>
-                      <Group gap="xs">
+                      <Group gap='xs'>
                         {machineType ? (
                           <DetailDrawerLink
                             to={`../type-${machine?.machine_type}`}
@@ -313,7 +316,7 @@ function MachineDrawer({
                       </Group>
                     </InfoItem>
                     <InfoItem name={t`Machine Driver`}>
-                      <Group gap="xs">
+                      <Group gap='xs'>
                         {machineDriver ? (
                           <DetailDrawerLink
                             to={`../driver-${machine?.driver}`}
@@ -334,32 +337,32 @@ function MachineDrawer({
                       <YesNoButton value={machine?.active || false} />
                     </InfoItem>
                     <InfoItem name={t`Status`}>
-                      <Flex direction="column">
+                      <Flex direction='column'>
                         {machine?.status === -1 ? (
-                          <Text fz="xs">No status</Text>
+                          <Text fz='xs'>No status</Text>
                         ) : (
                           StatusRenderer({
                             status: `${machine?.status || -1}`,
                             type: `MachineStatus__${machine?.status_model}` as any
                           })
                         )}
-                        <Text fz="sm">{machine?.status_text}</Text>
+                        <Text fz='sm'>{machine?.status_text}</Text>
                       </Flex>
                     </InfoItem>
-                    <Group justify="space-between" gap="xs">
-                      <Text fz="sm" fw={700}>
+                    <Group justify='space-between' gap='xs'>
+                      <Text fz='sm' fw={700}>
                         <Trans>Errors</Trans>:
                       </Text>
                       {machine && machine?.machine_errors.length > 0 ? (
-                        <Badge color="red" style={{ marginLeft: '10px' }}>
+                        <Badge color='red' style={{ marginLeft: '10px' }}>
                           {machine?.machine_errors.length}
                         </Badge>
                       ) : (
-                        <Text fz="xs">
+                        <Text fz='xs'>
                           <Trans>No errors reported</Trans>
                         </Text>
                       )}
-                      <List w="100%">
+                      <List w='100%'>
                         {machine?.machine_errors.map((error, i) => (
                           <List.Item key={i}>
                             <Code>{error}</Code>
@@ -373,15 +376,15 @@ function MachineDrawer({
             </Accordion.Panel>
           </Accordion.Item>
           {machine?.is_driver_available && (
-            <Accordion.Item value="machine-settings">
+            <Accordion.Item value='machine-settings'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Machine Settings`}</StylishText>
+                <StylishText size='lg'>{t`Machine Settings`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <Card withBorder>
                   <MachineSettingList
                     machinePk={machinePk}
-                    configType="M"
+                    configType='M'
                     onChange={refreshAll}
                   />
                 </Card>
@@ -389,15 +392,15 @@ function MachineDrawer({
             </Accordion.Item>
           )}
           {machine?.is_driver_available && (
-            <Accordion.Item value="driver-settings">
+            <Accordion.Item value='driver-settings'>
               <Accordion.Control>
-                <StylishText size="lg">{t`Driver Settings`}</StylishText>
+                <StylishText size='lg'>{t`Driver Settings`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <Card withBorder>
                   <MachineSettingList
                     machinePk={machinePk}
-                    configType="D"
+                    configType='D'
                     onChange={refreshAll}
                   />
                 </Card>
@@ -432,19 +435,17 @@ export function MachineListTable({
       {
         accessor: 'name',
         sortable: true,
-        render: function (record) {
-          return (
-            <Group justify="left" wrap="nowrap">
-              <MachineStatusIndicator machine={record} />
-              <Text>{record.name}</Text>
-              {record.restart_required && (
-                <Badge color="red">
-                  <Trans>Restart required</Trans>
-                </Badge>
-              )}
-            </Group>
-          );
-        }
+        render: (record) => (
+          <Group justify='left' wrap='nowrap'>
+            <MachineStatusIndicator machine={record} />
+            <Text>{record.name}</Text>
+            {record.restart_required && (
+              <Badge color='red'>
+                <Trans>Restart required</Trans>
+              </Badge>
+            )}
+          </Group>
+        )
       },
       {
         accessor: 'machine_type',
@@ -454,7 +455,7 @@ export function MachineListTable({
             (m) => m.slug === record.machine_type
           );
           return (
-            <Group gap="xs">
+            <Group gap='xs'>
               <Text>
                 {machineType ? machineType.name : record.machine_type}
               </Text>
@@ -469,7 +470,7 @@ export function MachineListTable({
         render: (record) => {
           const driver = machineDrivers?.find((d) => d.slug === record.driver);
           return (
-            <Group gap="xs">
+            <Group gap='xs'>
               <Text>{driver ? driver.name : record.driver}</Text>
               {!record.is_driver_available && <UnavailableIndicator />}
             </Group>
@@ -554,7 +555,7 @@ export function MachineListTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-machine"
+        key='add-machine'
         tooltip={t`Add machine`}
         onClick={() => {
           setCreateFormMachineType(null);

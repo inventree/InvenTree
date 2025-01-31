@@ -10,12 +10,12 @@ import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import type { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
+import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -29,12 +29,12 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowActions,
   RowDeleteAction,
   RowEditAction
@@ -47,6 +47,7 @@ export default function StockItemTestResultTable({
   partId: number;
   itemId: number;
 }>) {
+  const api = useApi();
   const user = useUserState();
   const table = useTable('stocktests');
 
@@ -84,7 +85,7 @@ export default function StockItemTestResultTable({
   const formatRecords = useCallback(
     (records: any[]): any[] => {
       // Construct a list of test templates
-      let results = testTemplates.map((template: any) => {
+      const results = testTemplates.map((template: any) => {
         return {
           ...template,
           templateId: template.pk,
@@ -112,7 +113,7 @@ export default function StockItemTestResultTable({
         })
         .forEach((record) => {
           // Find matching template
-          let idx = results.findIndex(
+          const idx = results.findIndex(
             (r: any) => r.templateId == record.template
           );
           if (idx >= 0) {
@@ -143,7 +144,7 @@ export default function StockItemTestResultTable({
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
-            <Group justify="space-between" wrap="nowrap">
+            <Group justify='space-between' wrap='nowrap'>
               <Text
                 style={{ fontStyle: installed ? 'italic' : undefined }}
                 c={enabled ? undefined : 'red'}
@@ -151,17 +152,17 @@ export default function StockItemTestResultTable({
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
               </Text>
-              <Group justify="right">
+              <Group justify='right'>
                 {record.results && record.results.length > 1 && (
                   <Tooltip label={t`Test Results`}>
-                    <Badge color="lightblue" variant="filled">
+                    <Badge color='lightblue' variant='filled'>
                       {record.results.length}
                     </Badge>
                   </Tooltip>
                 )}
                 {installed && (
                   <Tooltip label={t`Test result for installed stock item`}>
-                    <IconInfoCircle size={16} color="blue" />
+                    <IconInfoCircle size={16} color='blue' />
                   </Tooltip>
                 )}
               </Group>
@@ -177,7 +178,7 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           if (record.result === undefined) {
             return (
-              <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+              <Badge color='lightblue' variant='filled'>{t`No Result`}</Badge>
             );
           } else {
             return <PassFailButton value={record.result} />;
@@ -195,7 +196,10 @@ export default function StockItemTestResultTable({
         accessor: 'attachment',
         title: t`Attachment`,
         render: (record: any) =>
-          record.attachment && <AttachmentLink attachment={record.attachment} />
+          record.attachment && (
+            <AttachmentLink attachment={record.attachment} />
+          ),
+        noContext: true
       },
       NoteColumn({}),
       DateColumn({}),
@@ -219,7 +223,7 @@ export default function StockItemTestResultTable({
         hidden: !includeTestStation,
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify='space-between'>
               {formatDate(record.started_datetime, {
                 showTime: true,
                 showSeconds: true
@@ -235,7 +239,7 @@ export default function StockItemTestResultTable({
         hidden: !includeTestStation,
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify='space-between'>
               {formatDate(record.finished_datetime, {
                 showTime: true,
                 showSeconds: true
@@ -392,6 +396,11 @@ export default function StockItemTestResultTable({
         name: 'result',
         label: t`Passed`,
         description: t`Show only passed tests`
+      },
+      {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Show results for enabled tests`
       }
     ];
   }, []);
@@ -399,7 +408,7 @@ export default function StockItemTestResultTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-test-result"
+        key='add-test-result'
         tooltip={t`Add Test Result`}
         onClick={() => {
           setSelectedTemplate(undefined);
@@ -438,6 +447,7 @@ export default function StockItemTestResultTable({
         return (
           <DataTable
             key={record.pk}
+            idAccessor={'test'}
             noHeader
             columns={cols}
             records={results.slice(0, -1)}
@@ -467,8 +477,7 @@ export default function StockItemTestResultTable({
             stock_item: itemId,
             user_detail: true,
             attachment_detail: true,
-            template_detail: true,
-            enabled: true
+            template_detail: true
           }
         }}
       />

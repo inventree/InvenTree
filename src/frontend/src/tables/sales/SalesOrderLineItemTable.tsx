@@ -7,13 +7,14 @@ import {
   IconSquareArrowRight,
   IconTools
 } from '@tabler/icons-react';
-import { DataTableRowExpansionProps } from 'mantine-datatable';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -24,7 +25,6 @@ import {
   useSalesOrderAllocateSerialsFields,
   useSalesOrderLineItemFields
 } from '../../forms/SalesOrderForms';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -33,12 +33,12 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
-  RowAction,
+  type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction,
@@ -71,7 +71,7 @@ export default function SalesOrderLineItemTable({
         switchable: false,
         render: (record: any) => {
           return (
-            <Group wrap="nowrap">
+            <Group wrap='nowrap'>
               <RowExpansionIcon
                 enabled={record.allocated}
                 expanded={table.isRowExpanded(record.pk)}
@@ -126,19 +126,19 @@ export default function SalesOrderLineItemTable({
         accessor: 'stock',
         title: t`Available Stock`,
         render: (record: any) => {
-          let part_stock = record?.available_stock ?? 0;
-          let variant_stock = record?.available_variant_stock ?? 0;
-          let available = part_stock + variant_stock;
+          const part_stock = record?.available_stock ?? 0;
+          const variant_stock = record?.available_variant_stock ?? 0;
+          const available = part_stock + variant_stock;
 
-          let required = Math.max(
+          const required = Math.max(
             record.quantity - record.allocated - record.shipped,
             0
           );
 
           let color: string | undefined = undefined;
-          let text: string = `${available}`;
+          let text = `${available}`;
 
-          let extra: ReactNode[] = [];
+          const extra: ReactNode[] = [];
 
           if (available <= 0) {
             color = 'red';
@@ -148,12 +148,12 @@ export default function SalesOrderLineItemTable({
           }
 
           if (variant_stock > 0) {
-            extra.push(<Text size="sm">{t`Includes variant stock`}</Text>);
+            extra.push(<Text size='sm'>{t`Includes variant stock`}</Text>);
           }
 
           if (record.building > 0) {
             extra.push(
-              <Text size="sm">
+              <Text size='sm'>
                 {t`In production`}: {record.building}
               </Text>
             );
@@ -161,7 +161,7 @@ export default function SalesOrderLineItemTable({
 
           if (record.on_order > 0) {
             extra.push(
-              <Text size="sm">
+              <Text size='sm'>
                 {t`On order`}: {record.on_order}
               </Text>
             );
@@ -285,6 +285,12 @@ export default function SalesOrderLineItemTable({
     }
   });
 
+  const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
+
+  const orderPartsWizard = OrderPartsWizard({
+    parts: partsToOrder
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -303,7 +309,7 @@ export default function SalesOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
+        key='add-line-item'
         tooltip={t`Add Line Item`}
         onClick={() => {
           setInitialData({
@@ -314,11 +320,23 @@ export default function SalesOrderLineItemTable({
         hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
       />,
       <ActionButton
-        key="allocate-stock"
+        key='order-parts'
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        disabled={!table.hasSelectedRecords}
+        tooltip={t`Order Parts`}
+        icon={<IconShoppingCart />}
+        color='blue'
+        onClick={() => {
+          setPartsToOrder(table.selectedRecords.map((r) => r.part_detail));
+          orderPartsWizard.openWizard();
+        }}
+      />,
+      <ActionButton
+        key='allocate-stock'
         tooltip={t`Allocate Stock`}
         icon={<IconArrowRight />}
         disabled={!table.hasSelectedRecords}
-        color="green"
+        color='green'
         onClick={() => {
           setSelectedItems(
             table.selectedRecords.filter((r) => r.allocated < r.quantity)
@@ -396,7 +414,10 @@ export default function SalesOrderLineItemTable({
           title: t`Order stock`,
           icon: <IconShoppingCart />,
           color: 'blue',
-          onClick: notYetImplemented
+          onClick: () => {
+            setPartsToOrder([record.part_detail]);
+            orderPartsWizard.openWizard();
+          }
         },
         RowEditAction({
           hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),
@@ -455,6 +476,7 @@ export default function SalesOrderLineItemTable({
       {newBuildOrder.modal}
       {allocateBySerials.modal}
       {allocateStock.modal}
+      {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}

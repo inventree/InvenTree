@@ -1,6 +1,5 @@
 """Middleware for InvenTree."""
 
-import logging
 import sys
 
 from django.conf import settings
@@ -8,15 +7,18 @@ from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 
+import structlog
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
+from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_token_from_request(request):
@@ -39,19 +41,12 @@ def get_token_from_request(request):
 # List of target URL endpoints where *do not* want to redirect to
 urls = [
     reverse_lazy('account_login'),
-    reverse_lazy('account_logout'),
     reverse_lazy('admin:login'),
     reverse_lazy('admin:logout'),
 ]
 
 # Do not redirect requests to any of these paths
-paths_ignore = [
-    '/api/',
-    '/auth/',
-    '/js/',  # TODO - remove when CUI is removed
-    settings.MEDIA_URL,
-    settings.STATIC_URL,
-]
+paths_ignore = ['/api/', '/auth/', settings.MEDIA_URL, settings.STATIC_URL]
 
 
 class AuthRequiredMiddleware:
@@ -222,3 +217,23 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         )
 
         error.save()
+
+
+class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
+    """Middleware to perform caching against the request object.
+
+    This middleware is used to cache data against the request object,
+    which can be used to store data for the duration of the request.
+
+    In this fashion, we can avoid hitting the external cache multiple times,
+    much less the database!
+    """
+
+    def process_request(self, request):
+        """Create a request-specific cache object."""
+        create_session_cache(request)
+
+    def process_response(self, request, response):
+        """Clear the cache object."""
+        delete_session_cache()
+        return response

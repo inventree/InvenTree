@@ -34,7 +34,9 @@ A "bare metal" development setup can be installed as follows:
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
-pip install django invoke && invoke
+pip install --upgrade --ignore-installed invoke
+invoke install
+invoke update
 invoke dev.setup-dev --tests
 ```
 
@@ -146,10 +148,6 @@ pyupgrade `find . -name "*.py"`
 django-upgrade --target-version {{ config.extra.django_version }} `find . -name "*.py"`
 ```
 
-## Credits
-
-If you add any new dependencies / libraries, they should be added to [the credits page](../credits.md).
-
 ## Migration Files
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
@@ -187,6 +185,19 @@ To see all the available options:
 ```
 invoke dev.test --help
 ```
+
+#### Database Permission Issues
+
+For local testing django creates a test database and removes it after testing. If you encounter permission issues while running unit test, ensure that your database user has permission to create new databases.
+
+For example, in PostgreSQL, run:
+
+```
+alter user myuser createdb;
+```
+
+!!! info "Devcontainer"
+    The default database container which is provided in the devcontainer is already setup with the required permissions
 
 ## Code Style
 

@@ -2,7 +2,7 @@ import { ActionIcon, Container, Group, Indicator, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -61,7 +61,7 @@ export function Header() {
             limit: 1
           }
         };
-        let response = await api
+        const response = await api
           .get(apiUrl(ApiEndpoints.notifications_list), params)
           .catch(() => {
             return null;
@@ -99,8 +99,8 @@ export function Header() {
           closeNotificationDrawer();
         }}
       />
-      <Container className={classes.layoutHeaderSection} size="100%">
-        <Group justify="space-between">
+      <Container className={classes.layoutHeaderSection} size='100%'>
+        <Group justify='space-between'>
           <Group>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
@@ -108,25 +108,25 @@ export function Header() {
           <Group>
             <ActionIcon
               onClick={openSearchDrawer}
-              variant="transparent"
-              aria-label="open-search"
+              variant='transparent'
+              aria-label='open-search'
             >
               <IconSearch />
             </ActionIcon>
             <SpotlightButton />
             {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton />}
             <Indicator
-              radius="lg"
-              size="18"
+              radius='lg'
+              size='18'
               label={notificationCount}
-              color="red"
+              color='red'
               disabled={notificationCount <= 0}
               inline
             >
               <ActionIcon
                 onClick={openNotificationDrawer}
-                variant="transparent"
-                aria-label="open-notifications"
+                variant='transparent'
+                aria-label='open-notifications'
               >
                 <IconBell />
               </ActionIcon>
@@ -146,7 +146,7 @@ function NavTabs() {
   const tabValue = match?.params.tabName;
 
   const tabs: ReactNode[] = useMemo(() => {
-    let _tabs: ReactNode[] = [];
+    const _tabs: ReactNode[] = [];
 
     mainNavTabs.forEach((tab) => {
       if (tab.role && !user.hasViewRole(tab.role)) {
@@ -171,7 +171,7 @@ function NavTabs() {
 
   return (
     <Tabs
-      defaultValue="home"
+      defaultValue='home'
       classNames={{
         root: classes.tabs,
         list: classes.tabsList,

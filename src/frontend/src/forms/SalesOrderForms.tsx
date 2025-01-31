@@ -1,21 +1,27 @@
 import { t } from '@lingui/macro';
 import { Table } from '@mantine/core';
-import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
+import {
+  IconAddressBook,
+  IconCalendar,
+  IconUser,
+  IconUsers
+} from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
@@ -23,8 +29,10 @@ export function useSalesOrderFields({
 }: {
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
       customer: {
@@ -37,7 +45,12 @@ export function useSalesOrderFields({
       customer_reference: {},
       project_code: {},
       order_currency: {},
-      target_date: {},
+      start_date: {
+        icon: <IconCalendar />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
       link: {},
       contact: {
         icon: <IconUser />,
@@ -76,8 +89,12 @@ export function useSalesOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, globalSettings]);
 }
 
 export function useSalesOrderLineItemFields({
@@ -121,11 +138,11 @@ function SalesOrderAllocateLineRow({
   props,
   record,
   sourceLocation
-}: {
+}: Readonly<{
   props: TableFieldRowProps;
   record: any;
   sourceLocation?: number | null;
-}) {
+}>) {
   // Statically defined field for selecting the stock item
   const stockItemField: ApiFormFieldType = useMemo(() => {
     return {
@@ -147,8 +164,8 @@ function SalesOrderAllocateLineRow({
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
-          let available = instance.quantity - instance.allocated;
-          let required = record.quantity - record.allocated;
+          const available = instance.quantity - instance.allocated;
+          const required = record.quantity - record.allocated;
 
           let quantity = props.item?.quantity ?? 0;
 
@@ -190,14 +207,14 @@ function SalesOrderAllocateLineRow({
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="stock_item"
+          fieldName='stock_item'
           fieldDefinition={stockItemField}
           error={props.rowErrors?.stock_item?.message}
         />
       </Table.Td>
       <Table.Td>
         <StandaloneField
-          fieldName="quantity"
+          fieldName='quantity'
           fieldDefinition={quantityField}
           error={props.rowErrors?.quantity?.message}
         />
@@ -360,7 +377,7 @@ export function useSalesOrderAllocationFields({
   shipment
 }: {
   orderId?: number;
-  shipment: any | null;
+  shipment: any;
 }): ApiFormFieldSet {
   return useMemo(() => {
     return {

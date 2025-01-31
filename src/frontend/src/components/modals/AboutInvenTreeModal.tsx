@@ -8,16 +8,15 @@ import {
   Space,
   Stack,
   Table,
-  Text,
-  Title
+  Text
 } from '@mantine/core';
-import { ContextModalProps } from '@mantine/modals';
+import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { generateUrl } from '../../functions/urls';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
@@ -36,7 +35,6 @@ export function AboutInvenTreeModal({
   modalBody: string;
 }>) {
   const [user] = useUserState((state) => [state.user]);
-  const { host } = useLocalState.getState();
   const [server] = useServerApiState((state) => [state.server]);
 
   if (user?.is_staff != true)
@@ -51,22 +49,18 @@ export function AboutInvenTreeModal({
     queryFn: () => api.get(apiUrl(ApiEndpoints.version)).then((res) => res.data)
   });
 
-  function fillTable(
-    lookup: AboutLookupRef[],
-    data: any,
-    alwaysLink: boolean = false
-  ) {
+  function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
     return lookup.map((map: AboutLookupRef, idx) => (
       <Table.Tr key={idx}>
         <Table.Td>{map.title}</Table.Td>
         <Table.Td>
-          <Group justify="space-between" gap="xs">
+          <Group justify='space-between' gap='xs'>
             {alwaysLink ? (
-              <Anchor href={data[map.ref]} target="_blank">
+              <Anchor href={data[map.ref]} target='_blank'>
                 {data[map.ref]}
               </Anchor>
             ) : map.link ? (
-              <Anchor href={map.link} target="_blank">
+              <Anchor href={map.link} target='_blank'>
                 {data[map.ref]}
               </Anchor>
             ) : (
@@ -96,20 +90,20 @@ export function AboutInvenTreeModal({
   return (
     <Stack>
       <Divider />
-      <Group justify="space-between" wrap="nowrap">
-        <StylishText size="lg">
+      <Group justify='space-between' wrap='nowrap'>
+        <StylishText size='lg'>
           <Trans>Version Information</Trans>
         </StylishText>
         {data.dev ? (
-          <Badge color="blue">
+          <Badge color='blue'>
             <Trans>Development Version</Trans>
           </Badge>
         ) : data.up_to_date ? (
-          <Badge color="green">
+          <Badge color='green'>
             <Trans>Up to Date</Trans>
           </Badge>
         ) : (
-          <Badge color="teal">
+          <Badge color='teal'>
             <Trans>Update Available</Trans>
           </Badge>
         )}
@@ -142,7 +136,7 @@ export function AboutInvenTreeModal({
               {
                 ref: 'api',
                 title: <Trans>API Version</Trans>,
-                link: `${host}api-doc/`,
+                link: generateUrl('/api-doc/'),
                 copy: true
               },
               {
@@ -162,7 +156,7 @@ export function AboutInvenTreeModal({
         </Table.Tbody>
       </Table>
       <Divider />
-      <StylishText size="lg">
+      <StylishText size='lg'>
         <Trans>Links</Trans>
       </StylishText>
       <Table striped>
@@ -181,7 +175,7 @@ export function AboutInvenTreeModal({
         </Table.Tbody>
       </Table>
       <Divider />
-      <Group justify="space-between">
+      <Group justify='space-between'>
         <CopyButton value={copyval} label={t`Copy version information`} />
         <Space />
         <Button

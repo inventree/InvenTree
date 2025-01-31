@@ -46,7 +46,6 @@ from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
-from . import views
 from .models import (
     BomItem,
     BomItemSubstitute,
@@ -1159,10 +1158,10 @@ class PartFilter(rest_filters.FilterSet):
 
     # Created date filters
     created_before = InvenTreeDateFilter(
-        label='Updated before', field_name='creation_date', lookup_expr='lte'
+        label='Updated before', field_name='creation_date', lookup_expr='lt'
     )
     created_after = InvenTreeDateFilter(
-        label='Updated after', field_name='creation_date', lookup_expr='gte'
+        label='Updated after', field_name='creation_date', lookup_expr='gt'
     )
 
 
@@ -1427,37 +1426,50 @@ class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
         return response
 
 
-class PartRelatedList(ListCreateAPI):
-    """API endpoint for accessing a list of PartRelated objects."""
+class PartRelatedFilter(rest_filters.FilterSet):
+    """FilterSet for PartRelated objects."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = PartRelated
+        fields = ['part_1', 'part_2']
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter queryset to include only PartRelated objects which reference the specified part."""
+        return queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
+
+
+class PartRelatedMixin:
+    """Mixin class for PartRelated API endpoints."""
 
     queryset = PartRelated.objects.all()
     serializer_class = part_serializers.PartRelationSerializer
 
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        queryset = super().filter_queryset(queryset)
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartRelatedDetail endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
 
-        params = self.request.query_params
-
-        # Add a filter for "part" - we can filter either part_1 or part_2
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part)).distinct()
-
-            except (ValueError, Part.DoesNotExist):
-                pass
+        queryset = queryset.prefetch_related('part_1', 'part_2')
 
         return queryset
 
 
-class PartRelatedDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for accessing detail view of a PartRelated object."""
+class PartRelatedList(PartRelatedMixin, ListCreateAPI):
+    """API endpoint for accessing a list of PartRelated objects."""
 
-    queryset = PartRelated.objects.all()
-    serializer_class = part_serializers.PartRelationSerializer
+    filterset_class = PartRelatedFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['part_1__name', 'part_2__name']
+
+
+class PartRelatedDetail(PartRelatedMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for accessing detail view of a PartRelated object."""
 
 
 class PartParameterTemplateFilter(rest_filters.FilterSet):
@@ -2212,12 +2224,6 @@ part_api_urls = [
             ),
         ]),
     ),
-    # BOM template
-    path(
-        'bom_template/',
-        views.BomUploadTemplate.as_view(),
-        name='api-bom-upload-template',
-    ),
     path(
         '<int:pk>/',
         include([
@@ -2249,10 +2255,6 @@ part_api_urls = [
             ),
             # Part pricing
             path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
-            # BOM download
-            path('bom-download/', views.BomDownload.as_view(), name='api-bom-download'),
-            # Old pricing endpoint
-            path('pricing2/', views.PartPricing.as_view(), name='part-pricing'),
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),

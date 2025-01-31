@@ -1,26 +1,37 @@
 import { t } from '@lingui/macro';
 import { Flex, Table } from '@mantine/core';
-import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
+import {
+  IconAddressBook,
+  IconCalendar,
+  IconUser,
+  IconUsers
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import {
+import { StandaloneField } from '../components/forms/StandaloneField';
+import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import type { TableFieldRowProps } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
+import { StatusFilterOptions } from '../tables/Filter';
 
 export function useReturnOrderFields({
   duplicateOrderId
 }: {
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
       customer: {
@@ -33,7 +44,12 @@ export function useReturnOrderFields({
       customer_reference: {},
       project_code: {},
       order_currency: {},
-      target_date: {},
+      start_date: {
+        icon: <IconCalendar />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
       link: {},
       contact: {
         icon: <IconUser />,
@@ -79,8 +95,12 @@ export function useReturnOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, globalSettings]);
 }
 
 export function useReturnOrderLineItemFields({
@@ -103,10 +123,10 @@ export function useReturnOrderLineItemFields({
       item: {
         filters: {
           customer: customerId,
-          part_detail: true,
-          serialized: true
+          part_detail: true
         }
       },
+      quantity: {},
       reference: {},
       outcome: {
         hidden: create == true
@@ -133,20 +153,53 @@ function ReturnOrderLineItemFormRow({
   props: TableFieldRowProps;
   record: any;
 }>) {
+  const statusOptions = useMemo(() => {
+    return (
+      StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
+        return {
+          value: choice.value,
+          display_name: choice.label
+        };
+      }) ?? []
+    );
+  }, []);
+
+  const quantityDisplay = useMemo(() => {
+    if (record.item_detail?.serial && record.quantity == 1) {
+      return `# ${record.item_detail.serial}`;
+    } else {
+      return record.quantity;
+    }
+  }, [record.quantity, record.item_detail]);
+
   return (
     <>
       <Table.Tr>
         <Table.Td>
-          <Flex gap="sm" align="center">
+          <Flex gap='sm' align='center'>
             <Thumbnail
               size={40}
               src={record.part_detail.thumbnail}
-              align="center"
+              align='center'
             />
             <div>{record.part_detail.name}</div>
           </Flex>
         </Table.Td>
-        <Table.Td>{record.item_detail.serial}</Table.Td>
+        <Table.Td>{quantityDisplay}</Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldDefinition={{
+              field_type: 'choice',
+              label: t`Status`,
+              choices: statusOptions,
+              onValueChange: (value) => {
+                props.changeFn(props.idx, 'status', value);
+              }
+            }}
+            defaultValue={record.item_detail?.status}
+            error={props.rowErrors?.status?.message}
+          />
+        </Table.Td>
         <Table.Td>
           <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
         </Table.Td>
@@ -181,7 +234,7 @@ export function useReceiveReturnOrderLineItems(
           />
         );
       },
-      headers: [t`Part`, t`Serial Number`]
+      headers: [t`Part`, t`Quantity`, t`Status`]
     },
     location: {
       filters: {

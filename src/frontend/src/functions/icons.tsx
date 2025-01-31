@@ -1,5 +1,5 @@
 import {
-  Icon,
+  type Icon,
   Icon123,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
@@ -72,7 +72,7 @@ import {
   IconPoint,
   IconPrinter,
   IconProgressCheck,
-  IconProps,
+  type IconProps,
   IconQrcode,
   IconQuestionMark,
   IconRefresh,
@@ -105,7 +105,7 @@ import {
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
-import React from 'react';
+import type React from 'react';
 
 const icons = {
   name: IconPoint,
@@ -126,6 +126,7 @@ const icons = {
   units: IconRulerMeasure,
   keywords: IconTag,
   status: IconInfoCircle,
+  status_custom_key: IconInfoCircle,
   edit: IconEdit,
   info: IconInfoCircle,
   exclamation: IconExclamationCircle,
@@ -290,7 +291,4 @@ export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   }
 
   return <Icon {...props.iconProps} />;
-}
-function IconShapes(props: TablerIconProps): Element {
-  throw new Error('Function not implemented.');
 }

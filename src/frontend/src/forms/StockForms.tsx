@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Flex, Group, Skeleton, Table, Text } from '@mantine/core';
+import { Flex, Group, Skeleton, Stack, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import {
@@ -13,17 +13,19 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 
+import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-import {
+import type {
   ApiFormAdjustFilterType,
+  ApiFormFieldChoice,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 import {
   TableFieldExtraRow,
-  TableFieldRowProps
+  type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
@@ -32,7 +34,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import {
-  ApiFormModalProps,
+  type ApiFormModalProps,
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
@@ -40,10 +42,10 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { useInstance } from '../hooks/UseInstance';
 import { useSerialNumberPlaceholder } from '../hooks/UsePlaceholder';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
+import { StatusFilterOptions } from '../tables/Filter';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -67,9 +69,11 @@ export function useStockFields({
   const [nextBatchCode, setNextBatchCode] = useState<string>('');
   const [nextSerialNumber, setNextSerialNumber] = useState<string>('');
 
+  const [expiryDate, setExpiryDate] = useState<string | null>(null);
+
   const batchGenerator = useBatchCodeGenerator((value: any) => {
     if (value) {
-      setNextBatchCode(`Next batch code` + `: ${value}`);
+      setNextBatchCode(`${t`Next batch code`}: ${value}`);
     } else {
       setNextBatchCode('');
     }
@@ -77,7 +81,7 @@ export function useStockFields({
 
   const serialGenerator = useSerialNumberGenerator((value: any) => {
     if (value) {
-      setNextSerialNumber(t`Next serial number` + `: ${value}`);
+      setNextSerialNumber(`${t`Next serial number`}: ${value}`);
     } else {
       setNextSerialNumber('');
     }
@@ -105,6 +109,14 @@ export function useStockFields({
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
+
+          // Adjust the 'expiry date' for the stock item
+          const expiry_days = record?.default_expiry ?? 0;
+
+          if (expiry_days && expiry_days > 0) {
+            // Adjust the expiry date based on the part default expiry
+            setExpiryDate(dayjs().add(expiry_days, 'days').toISOString());
+          }
         }
       },
       supplier_part: {
@@ -160,7 +172,7 @@ export function useStockFields({
         hidden:
           create ||
           partInstance.trackable == false ||
-          (!stockItem?.quantity != undefined && stockItem?.quantity != 1)
+          (stockItem?.quantity != undefined && stockItem?.quantity != 1)
       },
       batch: {
         placeholder: nextBatchCode
@@ -170,7 +182,11 @@ export function useStockFields({
       },
       expiry_date: {
         icon: <IconCalendarExclamation />,
-        hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY')
+        hidden: !globalSettings.isSet('STOCK_ENABLE_EXPIRY'),
+        value: expiryDate,
+        onValueChange: (value) => {
+          setExpiryDate(value);
+        }
       },
       purchase_price: {
         icon: <IconCurrencyDollar />
@@ -193,9 +209,15 @@ export function useStockFields({
     // TODO: Handle custom field management based on provided options
     // TODO: refer to stock.py in original codebase
 
+    // Remove the expiry date field if it is not enabled
+    if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
+      delete fields.expiry_date;
+    }
+
     return fields;
   }, [
     stockItem,
+    expiryDate,
     partInstance,
     partId,
     globalSettings,
@@ -352,21 +374,21 @@ function StockItemDefaultMove({
   });
 
   return (
-    <Flex gap="sm" justify="space-evenly" align="center">
-      <Flex gap="sm" direction="column" align="center">
+    <Flex gap='sm' justify='space-evenly' align='center'>
+      <Flex gap='sm' direction='column' align='center'>
         <Text>
           {value} x {stockItem.part_detail.name}
         </Text>
         <Thumbnail
           src={stockItem.part_detail.thumbnail}
           size={80}
-          align="center"
+          align='center'
         />
       </Flex>
-      <Flex direction="column" gap="sm" align="center">
+      <Flex direction='column' gap='sm' align='center'>
         <Text>{stockItem.location_detail.pathstring}</Text>
-        <InvenTreeIcon icon="arrow_down" />
-        <Suspense fallback={<Skeleton width="150px" />}>
+        <InvenTreeIcon icon='arrow_down' />
+        <Suspense fallback={<Skeleton width='150px' />}>
           <Text>{data?.pathstring}</Text>
         </Suspense>
       </Flex>
@@ -380,7 +402,7 @@ function moveToDefault(
   refresh: () => void
 ) {
   modals.openConfirmModal({
-    title: <StylishText>Confirm Stock Transfer</StylishText>,
+    title: <StylishText>{t`Confirm Stock Transfer`}</StylishText>,
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
       if (
@@ -431,6 +453,7 @@ type StockRow = {
 function StockOperationsRow({
   props,
   transfer = false,
+  changeStatus = false,
   add = false,
   setMax = false,
   merge = false,
@@ -438,14 +461,28 @@ function StockOperationsRow({
 }: {
   props: TableFieldRowProps;
   transfer?: boolean;
+  changeStatus?: boolean;
   add?: boolean;
   setMax?: boolean;
   merge?: boolean;
   record?: any;
 }) {
+  const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
+    return (
+      StatusFilterOptions(ModelType.stockitem)()?.map((choice) => {
+        return {
+          value: choice.value,
+          display_name: choice.label
+        };
+      }) ?? []
+    );
+  }, []);
+
   const [quantity, setQuantity] = useState<StockItemQuantity>(
-    add ? 0 : props.item?.quantity ?? 0
+    add ? 0 : (props.item?.quantity ?? 0)
   );
+
+  const [status, setStatus] = useState<number | undefined>(undefined);
 
   const removeAndRefresh = () => {
     props.removeFn(props.idx);
@@ -461,6 +498,17 @@ function StockOperationsRow({
       if (transfer) {
         props.changeFn(props.idx, 'packaging', undefined);
       }
+    }
+  });
+
+  const [statusOpen, statusHandlers] = useDisclosure(false, {
+    onOpen: () => {
+      setStatus(record?.status_custom_key || record?.status || undefined);
+      props.changeFn(props.idx, 'status', record?.status || undefined);
+    },
+    onClose: () => {
+      setStatus(undefined);
+      props.changeFn(props.idx, 'status', undefined);
     }
   });
 
@@ -482,28 +530,38 @@ function StockOperationsRow({
     <>
       <Table.Tr>
         <Table.Td>
-          <Flex gap="sm" align="center">
-            <Thumbnail
-              size={40}
-              src={record.part_detail?.thumbnail}
-              align="center"
-            />
-            <div>{record.part_detail?.name}</div>
-          </Flex>
+          <Stack gap='xs'>
+            <Flex gap='sm' align='center'>
+              <Thumbnail
+                size={40}
+                src={record.part_detail?.thumbnail}
+                align='center'
+              />
+              <div>{record.part_detail?.name}</div>
+            </Flex>
+            {props.rowErrors?.pk?.message && (
+              <Text c='red' size='xs'>
+                {props.rowErrors.pk.message}
+              </Text>
+            )}
+          </Stack>
         </Table.Td>
         <Table.Td>
           {record.location ? record.location_detail?.pathstring : '-'}
         </Table.Td>
         <Table.Td>
-          <Group grow justify="space-between" wrap="nowrap">
+          <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
-            <StatusRenderer status={record.status} type={ModelType.stockitem} />
+            <StatusRenderer
+              status={record.status_custom_key}
+              type={ModelType.stockitem}
+            />
           </Group>
         </Table.Td>
         {!merge && (
           <Table.Td>
             <StandaloneField
-              fieldName="quantity"
+              fieldName='quantity'
               fieldDefinition={{
                 field_type: 'number',
                 value: quantity,
@@ -517,25 +575,34 @@ function StockOperationsRow({
           </Table.Td>
         )}
         <Table.Td>
-          <Flex gap="3px">
+          <Flex gap='3px'>
             {transfer && (
               <ActionButton
                 onClick={() =>
                   moveToDefault(record, props.item.quantity, removeAndRefresh)
                 }
-                icon={<InvenTreeIcon icon="default_location" />}
+                icon={<InvenTreeIcon icon='default_location' />}
                 tooltip={t`Move to default location`}
-                tooltipAlignment="top"
+                tooltipAlignment='top'
                 disabled={
                   !record.part_detail?.default_location &&
                   !record.part_detail?.category_default_location
                 }
               />
             )}
+            {changeStatus && (
+              <ActionButton
+                size='sm'
+                icon={<InvenTreeIcon icon='status' />}
+                tooltip={t`Change Status`}
+                onClick={() => statusHandlers.toggle()}
+                variant={statusOpen ? 'filled' : 'transparent'}
+              />
+            )}
             {transfer && (
               <ActionButton
-                size="sm"
-                icon={<InvenTreeIcon icon="packaging" />}
+                size='sm'
+                icon={<InvenTreeIcon icon='packaging' />}
                 tooltip={t`Adjust Packaging`}
                 onClick={() => packagingHandlers.toggle()}
                 variant={packagingOpen ? 'filled' : 'transparent'}
@@ -545,12 +612,30 @@ function StockOperationsRow({
           </Flex>
         </Table.Td>
       </Table.Tr>
+      {changeStatus && (
+        <TableFieldExtraRow
+          visible={statusOpen}
+          onValueChange={(value: any) => {
+            setStatus(value);
+            props.changeFn(props.idx, 'status', value || undefined);
+          }}
+          fieldName='status'
+          fieldDefinition={{
+            field_type: 'choice',
+            label: t`Status`,
+            choices: statusOptions,
+            value: status
+          }}
+          defaultValue={status}
+        />
+      )}
       {transfer && (
         <TableFieldExtraRow
           visible={transfer && packagingOpen}
           onValueChange={(value: any) => {
             props.changeFn(props.idx, 'packaging', value || undefined);
           }}
+          fieldName='packaging'
           fieldDefinition={{
             field_type: 'string',
             label: t`Packaging`
@@ -605,19 +690,19 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
           <StockOperationsRow
             props={row}
             transfer
+            changeStatus
             setMax
             key={record.pk}
             record={record}
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Move`, t`Actions`]
+      headers: [t`Part`, t`Location`, t`Stock`, t`Move`, t`Actions`]
     },
     location: {
       filters: {
         structural: false
       }
-      // TODO: icon
     },
     notes: {}
   };
@@ -642,6 +727,7 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
           <StockOperationsRow
             props={row}
             setMax
+            changeStatus
             add
             key={record.pk}
             record={record}
@@ -671,7 +757,13 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
         const record = records[row.item.pk];
 
         return (
-          <StockOperationsRow props={row} add key={record.pk} record={record} />
+          <StockOperationsRow
+            changeStatus
+            props={row}
+            add
+            key={record.pk}
+            record={record}
+          />
         );
       },
       headers: [t`Part`, t`Location`, t`In Stock`, t`Add`, t`Actions`]
@@ -697,6 +789,7 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
+            changeStatus
             key={row.item.pk}
             record={records[row.item.pk]}
           />
@@ -764,6 +857,7 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
             props={row}
             key={row.item.item}
             merge
+            changeStatus
             record={records[row.item.item]}
           />
         );
@@ -871,6 +965,7 @@ function stockOperationModal({
   endpoint,
   filters,
   title,
+  successMessage,
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
@@ -881,6 +976,7 @@ function stockOperationModal({
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
   title: string;
+  successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
   const baseParams: any = {
@@ -890,7 +986,7 @@ function stockOperationModal({
   };
 
   const params = useMemo(() => {
-    let query_params: any = {
+    const query_params: any = {
       ...baseParams,
       ...(filters ?? {})
     };
@@ -933,12 +1029,13 @@ function stockOperationModal({
     fields: fields,
     title: title,
     size: '80%',
+    successMessage: successMessage,
     onFormSuccess: () => refresh()
   });
 }
 
 export type StockOperationProps = {
-  items?: object;
+  items?: any[];
   pk?: number;
   filters?: any;
   model: ModelType.stockitem | 'location' | ModelType.part;
@@ -950,7 +1047,8 @@ export function useAddStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
-    title: t`Add Stock`
+    title: t`Add Stock`,
+    successMessage: t`Stock added`
   });
 }
 
@@ -959,7 +1057,8 @@ export function useRemoveStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
-    title: t`Remove Stock`
+    title: t`Remove Stock`,
+    successMessage: t`Stock removed`
   });
 }
 
@@ -968,7 +1067,8 @@ export function useTransferStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockTransferFields,
     endpoint: ApiEndpoints.stock_transfer,
-    title: t`Transfer Stock`
+    title: t`Transfer Stock`,
+    successMessage: t`Stock transferred`
   });
 }
 
@@ -977,7 +1077,8 @@ export function useCountStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
-    title: t`Count Stock`
+    title: t`Count Stock`,
+    successMessage: t`Stock counted`
   });
 }
 
@@ -986,7 +1087,8 @@ export function useChangeStockStatus(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
-    title: t`Change Stock Status`
+    title: t`Change Stock Status`,
+    successMessage: t`Stock status changed`
   });
 }
 
@@ -995,16 +1097,24 @@ export function useMergeStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
-    title: t`Merge Stock`
+    title: t`Merge Stock`,
+    successMessage: t`Stock merged`
   });
 }
 
 export function useAssignStockItem(props: StockOperationProps) {
+  // Filter items - only allow 'salable' items
+  const items = useMemo(() => {
+    return props.items?.filter((item) => item?.part_detail?.salable);
+  }, [props.items]);
+
   return stockOperationModal({
     ...props,
+    items: items,
     fieldGenerator: stockAssignFields,
     endpoint: ApiEndpoints.stock_assign,
-    title: `Assign Stock to Customer`
+    title: t`Assign Stock to Customer`,
+    successMessage: t`Stock assigned to customer`
   });
 }
 
@@ -1014,12 +1124,13 @@ export function useDeleteStockItem(props: StockOperationProps) {
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
     modalFunc: useDeleteApiFormModal,
-    title: t`Delete Stock Items`
+    title: t`Delete Stock Items`,
+    successMessage: t`Stock deleted`
   });
 }
 
 export function stockLocationFields(): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = {
+  const fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
       required: false
@@ -1065,7 +1176,7 @@ export function useTestResultFields({
   );
 
   return useMemo(() => {
-    let fields: ApiFormFieldSet = {
+    const fields: ApiFormFieldSet = {
       stock_item: {
         value: itemId,
         hidden: true
@@ -1079,7 +1190,7 @@ export function useTestResultFields({
         onValueChange: (value: any, record: any) => {
           // Adjust the type of the "value" field based on the selected template
           if (record?.choices) {
-            let _choices: string[] = record.choices.split(',');
+            const _choices: string[] = record.choices.split(',');
 
             if (_choices.length > 0) {
               setChoices(

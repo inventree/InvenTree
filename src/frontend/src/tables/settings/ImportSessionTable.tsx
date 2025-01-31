@@ -16,11 +16,11 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { TableColumn } from '../Column';
+import type { TableColumn } from '../Column';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import { StatusFilterOptions, type TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction } from '../RowActions';
+import { type RowAction, RowDeleteAction } from '../RowActions';
 
 export default function ImportSesssionTable() {
   const table = useTable('importsession');
@@ -61,7 +61,8 @@ export default function ImportSesssionTable() {
         render: (record: any) => (
           <AttachmentLink attachment={record.data_file} />
         ),
-        sortable: false
+        sortable: false,
+        noContext: true
       },
       DateColumn({
         accessor: 'timestamp',
@@ -127,7 +128,7 @@ export default function ImportSesssionTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="create-import-session"
+        key='create-import-session'
         tooltip={t`Create Import Session`}
         onClick={() => newImportSession.open()}
       />

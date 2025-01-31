@@ -1,12 +1,15 @@
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
-import { IconInfoCircle, IconPackages } from '@tabler/icons-react';
+import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import { DetailsField, DetailsTable } from '../../components/details/Details';
+import {
+  type DetailsField,
+  DetailsTable
+} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -20,7 +23,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import { PanelType } from '../../components/panels/Panel';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -76,7 +79,7 @@ export default function SalesOrderShipmentDetail() {
       return <Skeleton />;
     }
 
-    let data: any = {
+    const data: any = {
       ...shipment,
       customer: customer?.pk,
       customer_name: customer?.name,
@@ -84,7 +87,7 @@ export default function SalesOrderShipmentDetail() {
     };
 
     // Top Left: Order / customer information
-    let tl: DetailsField[] = [
+    const tl: DetailsField[] = [
       {
         type: 'link',
         model: ModelType.salesorder,
@@ -126,7 +129,7 @@ export default function SalesOrderShipmentDetail() {
     ];
 
     // Top right: Shipment information
-    let tr: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'text',
         name: 'tracking_number',
@@ -172,22 +175,20 @@ export default function SalesOrderShipmentDetail() {
     return (
       <>
         <ItemDetailsGrid>
-          <Grid>
-            <Grid.Col span={4}>
-              <DetailsImage
-                appRole={UserRoles.sales_order}
-                apiPath={ApiEndpoints.company_list}
-                src={customer?.image}
-                pk={customer?.pk}
-                imageActions={{
-                  selectExisting: false,
-                  downloadImage: false,
-                  uploadFile: false,
-                  deleteFile: false
-                }}
-              />
-            </Grid.Col>
-            <Grid.Col span={8}>
+          <Grid grow>
+            <DetailsImage
+              appRole={UserRoles.sales_order}
+              apiPath={ApiEndpoints.company_list}
+              src={customer?.image}
+              pk={customer?.pk}
+              imageActions={{
+                selectExisting: false,
+                downloadImage: false,
+                uploadFile: false,
+                deleteFile: false
+              }}
+            />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>
@@ -207,14 +208,14 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         name: 'items',
-        label: t`Assigned Items`,
-        icon: <IconPackages />,
+        label: t`Allocated Stock`,
+        icon: <IconBookmark />,
         content: (
           <SalesOrderAllocationTable
             shipmentId={shipment.pk}
             showPartInfo
             allowEdit={isPending}
-            modelField="item"
+            modelField='item'
             modelTarget={ModelType.stockitem}
           />
         )
@@ -273,15 +274,26 @@ export default function SalesOrderShipmentDetail() {
     }
 
     return [
-      <DetailsBadge label={t`Pending`} color="gray" visible={isPending} />,
-      <DetailsBadge label={t`Shipped`} color="green" visible={!isPending} />,
       <DetailsBadge
+        key='pending'
+        label={t`Pending`}
+        color='gray'
+        visible={isPending}
+      />,
+      <DetailsBadge
+        key='shipped'
+        label={t`Shipped`}
+        color='green'
+        visible={!isPending}
+      />,
+      <DetailsBadge
+        key='delivered'
         label={t`Delivered`}
-        color="blue"
+        color='blue'
         visible={!!shipment.delivery_date}
       />
     ];
-  }, [shipment, shipmentQuery]);
+  }, [isPending, shipment.deliveryDate, shipmentQuery.isFetching]);
 
   const shipmentActions = useMemo(() => {
     const canEdit: boolean = user.hasChangePermission(
@@ -290,25 +302,29 @@ export default function SalesOrderShipmentDetail() {
 
     return [
       <PrimaryActionButton
+        key='send-shipment'
         title={t`Send Shipment`}
-        icon="sales_orders"
+        icon='sales_orders'
         hidden={!isPending}
-        color="green"
+        color='green'
         onClick={() => {
           completeShipment.open();
         }}
       />,
       <BarcodeActionDropdown
+        key='barcode'
         model={ModelType.salesordershipment}
         pk={shipment.pk}
       />,
       <PrintingActions
+        key='print'
         modelType={ModelType.salesordershipment}
         items={[shipment.pk]}
         enableLabels
         enableReports
       />,
       <OptionsActionDropdown
+        key='actions'
         tooltip={t`Shipment Actions`}
         actions={[
           EditItemAction({
@@ -334,11 +350,12 @@ export default function SalesOrderShipmentDetail() {
       <InstanceDetail
         status={shipmentStatus}
         loading={shipmentQuery.isFetching || customerQuery.isFetching}
+        requiredRole={UserRoles.sales_order}
       >
-        <Stack gap="xs">
+        <Stack gap='xs'>
           <PageDetail
-            title={t`Sales Order Shipment` + `: ${shipment.reference}`}
-            subtitle={t`Sales Order` + `: ${shipment.order_detail?.reference}`}
+            title={`${t`Sales Order Shipment`}: ${shipment.reference}`}
+            subtitle={`${t`Sales Order`}: ${shipment.order_detail?.reference}`}
             breadcrumbs={[
               { name: t`Sales`, url: '/sales/' },
               {
@@ -353,7 +370,7 @@ export default function SalesOrderShipmentDetail() {
             actions={shipmentActions}
           />
           <PanelGroup
-            pageKey="salesordershipment"
+            pageKey='salesordershipment'
             panels={shipmentPanels}
             model={ModelType.salesordershipment}
             instance={shipment}

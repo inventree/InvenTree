@@ -82,7 +82,6 @@ nav:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
     - Security: security.md
@@ -153,15 +152,18 @@ nav:
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
     - Admin Interface: settings/admin.md
-    - User Permissions: settings/permissions.md
-    - Single Sign on: settings/SSO.md
-    - Multi Factor Authentication: settings/MFA.md
+    - Setup:
+      - User Permissions: settings/permissions.md
+      - Single Sign on: settings/SSO.md
+      - Multi Factor Authentication: settings/MFA.md
+      - Email: settings/email.md
+      - Currency Support: settings/currency.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
-    - Error Logs: settings/logs.md
-    - Email: settings/email.md
-    - Background Tasks: settings/tasks.md
-    - Currency Support: settings/currency.md
+    - Operations:
+      - Background Tasks: settings/tasks.md
+      - Error Logs: settings/logs.md
+      - Error Codes: settings/error_codes.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md
@@ -199,6 +201,7 @@ nav:
       - Developing a Plugin: extend/how_to_plugin.md
       - Model Metadata: extend/plugins/metadata.md
       - Tags: extend/plugins/tags.md
+      - Unit Test: extend/plugins/test.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md
@@ -210,7 +213,6 @@ nav:
       - Label Printing Mixin: extend/plugins/label.md
       - Locate Mixin: extend/plugins/locate.md
       - Navigation Mixin: extend/plugins/navigation.md
-      - Panel Mixin: extend/plugins/panel.md
       - Report Mixin: extend/plugins/report.md
       - Schedule Mixin: extend/plugins/schedule.md
       - Settings Mixin: extend/plugins/settings.md
@@ -220,7 +222,6 @@ nav:
     - Machines:
       - Overview: extend/machines/overview.md
       - Label Printer: extend/machines/label_printer.md
-    - Themes: extend/themes.md
     - Third-Party: extend/integrate.md
 
 # Plugins

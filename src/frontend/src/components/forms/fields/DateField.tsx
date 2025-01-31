@@ -2,9 +2,9 @@ import { DateInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useCallback, useId, useMemo } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 dayjs.extend(customParseFormat);
 
@@ -22,8 +22,12 @@ export default function DateField({
     fieldState: { error }
   } = controller;
 
-  const valueFormat =
-    definition.field_type == 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss';
+  const valueFormat = useMemo(() => {
+    // Determine the format based on the field type
+    return definition.field_type == 'date'
+      ? 'YYYY-MM-DD'
+      : 'YYYY-MM-DD HH:mm:ss';
+  }, [definition.field_type]);
 
   const onChange = useCallback(
     (value: any) => {
@@ -31,23 +35,24 @@ export default function DateField({
       if (value) {
         value = value.toString();
         value = dayjs(value).format(valueFormat);
+        value = value.toString().split('T')[0];
       }
 
       field.onChange(value);
       definition.onValueChange?.(value);
     },
-    [field.onChange, definition]
+    [field.onChange, definition, valueFormat]
   );
 
   const dateValue: Date | null = useMemo(() => {
     let dv: Date | null = null;
 
     if (field.value) {
-      dv = new Date(field.value) ?? null;
+      dv = new Date(field.value);
     }
 
     // Ensure that the date is valid
-    if (dv instanceof Date && !isNaN(dv.getTime())) {
+    if (dv instanceof Date && !Number.isNaN(dv.getTime())) {
       return dv;
     } else {
       return null;
@@ -58,11 +63,11 @@ export default function DateField({
     <DateInput
       id={fieldId}
       aria-label={`date-field-${field.name}`}
-      radius="sm"
+      radius='sm'
       ref={field.ref}
       type={undefined}
-      error={error?.message}
-      value={dateValue ?? null}
+      error={definition.error ?? error?.message}
+      value={dateValue}
       clearable={!definition.required}
       onChange={onChange}
       valueFormat={valueFormat}

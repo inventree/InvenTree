@@ -10,26 +10,24 @@ import {
 import {
   IconBarcode,
   IconFilter,
-  IconFilterCancel,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
-import { api } from '../App';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
+import { useApi } from '../contexts/ApiContext';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
-import { TableState } from '../hooks/UseTable';
+import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
-import { TableFilter } from './Filter';
+import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import { InvenTreeTableProps } from './InvenTreeTable';
+import type { InvenTreeTableProps } from './InvenTreeTable';
 import { TableSearchInput } from './Search';
 
 /**
@@ -43,22 +41,24 @@ export default function InvenTreeTableHeader({
   columns,
   filters,
   toggleColumn
-}: {
-  tableUrl: string;
+}: Readonly<{
+  tableUrl?: string;
   tableState: TableState;
   tableProps: InvenTreeTableProps<any>;
   hasSwitchableColumns: boolean;
   columns: any;
   filters: TableFilter[];
   toggleColumn: (column: string) => void;
-}) {
+}>) {
+  const api = useApi();
+
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   const downloadData = (fileFormat: string) => {
     // Download entire dataset (no pagination)
 
-    let queryParams = {
+    const queryParams = {
       ...tableProps.params
     };
 
@@ -71,7 +71,7 @@ export default function InvenTreeTableHeader({
 
     // Allow overriding of query parameters
     if (tableState.queryFilters) {
-      for (let [key, value] of tableState.queryFilters) {
+      for (const [key, value] of tableState.queryFilters) {
         queryParams[key] = value;
       }
     }
@@ -84,7 +84,7 @@ export default function InvenTreeTableHeader({
     // Specify file format
     queryParams.export = fileFormat;
 
-    let downloadUrl = api.getUri({
+    const downloadUrl = api.getUri({
       url: tableUrl,
       params: queryParams
     });
@@ -94,11 +94,11 @@ export default function InvenTreeTableHeader({
   };
 
   const deleteRecords = useDeleteApiFormModal({
-    url: tableUrl,
+    url: tableUrl ?? '',
     title: t`Delete Selected Items`,
     preFormContent: (
       <Alert
-        color="red"
+        color='red'
         title={t`Are you sure you want to delete the selected items?`}
       >
         {t`This action cannot be undone`}
@@ -137,15 +137,15 @@ export default function InvenTreeTableHeader({
       )}
       {tableState.queryFilters.size > 0 && (
         <Alert
-          color="yellow"
+          color='yellow'
           withCloseButton
           title={t`Custom table filters are active`}
           onClose={() => tableState.clearQueryFilters()}
-        ></Alert>
+        />
       )}
 
-      <Group justify="apart" grow wrap="nowrap">
-        <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
+      <Group justify='apart' grow wrap='nowrap'>
+        <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
           <PrintingActions
             items={tableState.selectedIds}
             modelType={tableProps.modelType}
@@ -154,7 +154,7 @@ export default function InvenTreeTableHeader({
           />
           {(tableProps.barcodeActions?.length ?? 0) > 0 && (
             <ButtonMenu
-              key="barcode-actions"
+              key='barcode-actions'
               icon={<IconBarcode />}
               label={t`Barcode Actions`}
               tooltip={t`Barcode Actions`}
@@ -165,7 +165,7 @@ export default function InvenTreeTableHeader({
             <ActionButton
               disabled={!tableState.hasSelectedRecords}
               icon={<IconTrash />}
-              color="red"
+              color='red'
               tooltip={t`Delete selected records`}
               onClick={() => {
                 deleteRecords.open();
@@ -177,14 +177,14 @@ export default function InvenTreeTableHeader({
           ))}
         </Group>
         <Space />
-        <Group justify="right" gap={5} wrap="nowrap">
+        <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
             <TableSearchInput
               searchCallback={(term: string) => tableState.setSearchTerm(term)}
             />
           )}
           {tableProps.enableRefresh && (
-            <ActionIcon variant="transparent" aria-label="table-refresh">
+            <ActionIcon variant='transparent' aria-label='table-refresh'>
               <Tooltip label={t`Refresh data`}>
                 <IconRefresh
                   onClick={() => {
@@ -203,13 +203,13 @@ export default function InvenTreeTableHeader({
           )}
           {tableProps.enableFilters && filters.length > 0 && (
             <Indicator
-              size="xs"
+              size='xs'
               label={tableState.activeFilters?.length ?? 0}
               disabled={tableState.activeFilters?.length == 0}
             >
               <ActionIcon
-                variant="transparent"
-                aria-label="table-select-filters"
+                variant='transparent'
+                aria-label='table-select-filters'
               >
                 <Tooltip label={t`Table Filters`}>
                   <IconFilter
@@ -221,7 +221,7 @@ export default function InvenTreeTableHeader({
           )}
           {tableProps.enableDownload && (
             <DownloadAction
-              key="download-action"
+              key='download-action'
               downloadCallback={downloadData}
             />
           )}

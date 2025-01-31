@@ -11,8 +11,42 @@ from pathlib import Path
 from platform import python_version
 from typing import Optional
 
+import invoke
 from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
+
+
+def is_docker_environment():
+    """Check if the InvenTree environment is running in a Docker container."""
+    return os.environ.get('INVENTREE_DOCKER', 'False')
+
+
+def is_rtd_environment():
+    """Check if the InvenTree environment is running on ReadTheDocs."""
+    return os.environ.get('READTHEDOCS', 'False') == 'True'
+
+
+def task_exception_handler(t, v, tb):
+    """Handle exceptions raised by tasks.
+
+    The intent here is to provide more 'useful' error messages when tasks fail.
+    """
+    sys.__excepthook__(t, v, tb)
+
+    if t is ModuleNotFoundError:
+        mod_name = str(v).split(' ')[-1].strip("'")
+
+        error(f'Error importing required module: {mod_name}')
+        warning('- Ensure the correct Python virtual environment is active')
+        warning(
+            '- Ensure that the invoke tool is installed in the active Python environment'
+        )
+        warning(
+            "- Ensure all required packages are installed by running 'invoke install'"
+        )
+
+
+sys.excepthook = task_exception_handler
 
 
 def success(*args):
@@ -39,6 +73,34 @@ def info(*args):
     print(f'\033[94m{msg}\033[0m')
 
 
+def checkInvokeVersion():
+    """Check that the installed invoke version meets minimum requirements."""
+    MIN_INVOKE_VERSION = '2.0.0'
+
+    min_version = tuple(map(int, MIN_INVOKE_VERSION.split('.')))
+    invoke_version = tuple(map(int, invoke.__version__.split('.')))  # noqa: RUF048
+
+    if invoke_version < min_version:
+        error(f'The installed invoke version ({invoke.__version__}) is not supported!')
+        error(f'InvenTree requires invoke version {MIN_INVOKE_VERSION} or above')
+        sys.exit(1)
+
+
+def chceckInvokePath():
+    """Check that the path of the used invoke is correct."""
+    if is_docker_environment() or is_rtd_environment():
+        return
+
+    invoke_path = Path(invoke.__file__)
+    loc_path = Path(__file__).parent.resolve()
+    if not invoke_path.is_relative_to(loc_path):
+        error('INVE-E2 - Wrong Invoke Path')
+        error(
+            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` !'
+        )
+        sys.exit(1)
+
+
 def checkPythonVersion():
     """Check that the installed python version meets minimum requirements.
 
@@ -57,12 +119,14 @@ def checkPythonVersion():
         valid = False
 
     if not valid:
-        print(f'The installed python version ({version}) is not supported!')
-        print(f'InvenTree requires Python {REQ_MAJOR}.{REQ_MINOR} or above')
+        error(f'The installed python version ({version}) is not supported!')
+        error(f'InvenTree requires Python {REQ_MAJOR}.{REQ_MINOR} or above')
         sys.exit(1)
 
 
 if __name__ in ['__main__', 'tasks']:
+    checkInvokeVersion()
+    chceckInvokePath()
     checkPythonVersion()
 
 
@@ -231,7 +295,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
 
     # Print a warning if node is available but yarn is not
     if node_version and not yarn_passes:
-        print(
+        warning(
             'Node is available but yarn is not. Install yarn if you wish to build the frontend.'
         )
 
@@ -239,7 +303,7 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
-def check_file_existance(filename: Path, overwrite: bool = False):
+def check_file_existence(filename: Path, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
     Args:
@@ -253,7 +317,7 @@ def check_file_existance(filename: Path, overwrite: bool = False):
         response = str(response).strip().lower()
 
         if response not in ['y', 'yes']:
-            print('Cancelled export operation')
+            error('Cancelled export operation')
             sys.exit(1)
 
 
@@ -286,7 +350,8 @@ def plugins(c, uv=False):
 )
 def install(c, uv=False, skip_plugins=False):
     """Installs required python packages."""
-    INSTALL_FILE = 'src/backend/requirements.txt'
+    # Ensure path is relative to *this* directory
+    INSTALL_FILE = localDir().joinpath('src/backend/requirements.txt')
 
     info(f"Installing required python packages from '{INSTALL_FILE}'")
 
@@ -372,6 +437,7 @@ def clean_settings(c):
     """Clean the setting tables of old settings."""
     info('Cleaning old settings from the database')
     manage(c, 'clean_settings')
+    success('Settings cleaned successfully')
 
 
 @task(help={'mail': "mail of the user who's MFA should be disabled"})
@@ -393,10 +459,8 @@ def remove_mfa(c, mail=''):
 )
 def static(c, frontend=False, clear=True, skip_plugins=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
-    manage(c, 'prerender')
-
     if frontend and node_available():
-        frontend_trans(c)
+        frontend_trans(c, extract=False)
         frontend_build(c)
 
     info('Collecting static files...')
@@ -416,23 +480,6 @@ def static(c, frontend=False, clear=True, skip_plugins=False):
 
 
 @task
-def translate_stats(c):
-    """Collect translation stats.
-
-    The file generated from this is needed for the UI.
-    """
-    # Recompile the translation files (.mo)
-    # We do not run 'invoke dev.translate' here, as that will touch the source (.po) files too!
-    try:
-        manage(c, 'compilemessages', pty=True)
-    except Exception:
-        warning('WARNING: Translation files could not be compiled:')
-
-    path = managePyDir().joinpath('script', 'translation_stats.py')
-    run(c, f'python3 {path}')
-
-
-@task(post=[translate_stats])
 def translate(c, ignore_static=False, no_frontend=False):
     """Rebuild translation source files. Advanced use only!
 
@@ -516,7 +563,7 @@ def restore(
         base_cmd += f' -I {path}'
 
     if ignore_database:
-        print('Skipping database archive...')
+        info('Skipping database archive...')
     else:
         info('Restoring InvenTree database')
         cmd = f'dbrestore {base_cmd}'
@@ -527,7 +574,7 @@ def restore(
         manage(c, cmd)
 
     if ignore_media:
-        print('Skipping media restore...')
+        info('Skipping media restore...')
     else:
         info('Restoring InvenTree media files')
         cmd = f'mediarestore {base_cmd}'
@@ -562,7 +609,7 @@ def showmigrations(c, app=''):
 
 
 @task(
-    post=[clean_settings, translate_stats],
+    post=[clean_settings],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
@@ -592,7 +639,6 @@ def update(
     - frontend_compile or frontend_download (optional)
     - static (optional)
     - clean_settings
-    - translate_stats
     """
     info('Updating InvenTree installation...')
 
@@ -609,8 +655,12 @@ def update(
     # If:
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
-    if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
-        print('Skipping frontend update!')
+    if (is_docker_environment() and not frontend) or no_frontend:
+        if no_frontend:
+            info('Skipping frontend update (no_frontend flag set)')
+        else:
+            info('Skipping frontend update (INVENTREE_DOCKER flag set)')
+
         frontend = False
         no_frontend = True
     else:
@@ -623,6 +673,8 @@ def update(
 
     if not skip_static:
         static(c, frontend=not no_frontend)
+
+    success('InvenTree update complete!')
 
 
 # Data tasks
@@ -671,7 +723,7 @@ def export_records(
 
     info(f"Exporting database records to file '{target}'")
 
-    check_file_existance(target, overwrite)
+    check_file_existence(target, overwrite)
 
     tmpfile = f'{target}.tmp'
 
@@ -716,7 +768,7 @@ def export_records(
         f_out.write(json.dumps(data_out, indent=2))
 
     if not retain_temp:
-        print('Removing temporary files')
+        info('Removing temporary files')
         os.remove(tmpfile)
 
     success('Data export completed')
@@ -900,13 +952,28 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
     run(c, cmd, pty=True)
 
 
-@task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
-def server(c, address='127.0.0.1:8000'):
+@task(
+    pre=[wait],
+    help={
+        'address': 'Server address:port (default=127.0.0.1:8000)',
+        'no_reload': 'Do not automatically reload the server in response to code changes',
+        'no_threading': 'Disable multi-threading for the development server',
+    },
+)
+def server(c, address='127.0.0.1:8000', no_reload=False, no_threading=False):
     """Launch a (development) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
-    manage(c, f'runserver {address}', pty=True)
+    cmd = f'runserver {address}'
+
+    if no_reload:
+        cmd += ' --noreload'
+
+    if no_threading:
+        cmd += ' --nothreading'
+
+    manage(c, cmd, pty=True)
 
 
 @task(pre=[wait])
@@ -915,14 +982,7 @@ def worker(c):
     manage(c, 'qcluster', pty=True)
 
 
-# Testing tasks
-@task
-def render_js_files(c):
-    """Render templated javascript files (used for static testing)."""
-    manage(c, 'test InvenTree.ci_render_js')
-
-
-@task(post=[translate_stats, static, server])
+@task(post=[static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
     import django
@@ -997,7 +1057,6 @@ def test_translations(c):
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
-        'cui': 'Do not run CUI tests',
     }
 )
 def test(
@@ -1007,9 +1066,17 @@ def test(
     migrations=False,
     report=False,
     coverage=False,
-    cui=False,
+    translations=False,
 ):
     """Run unit-tests for InvenTree codebase.
+
+    Arguments:
+        disable_pty (bool): Disable PTY (default = False)
+        runtest (str): Specify which tests to run, in format <module>.<file>.<class>.<method> (default = '')
+        migrations (bool): Run migration unit tests (default = False)
+        report (bool): Display a report of slow tests (default = False)
+        coverage (bool): Run code coverage analysis (requires coverage package) (default = False)
+        translations (bool): Compile translations before running tests (default = False)
 
     To run only certain test, use the argument --runtest.
     This can filter all the way down to:
@@ -1022,9 +1089,15 @@ def test(
     # Run sanity check on the django install
     manage(c, 'check')
 
+    if translations:
+        try:
+            manage(c, 'compilemessages', pty=True)
+        except Exception:
+            warning('Failed to compile translations')
+
     pty = not disable_pty
 
-    _apps = ' '.join(apps())
+    tested_apps = ' '.join(apps())
 
     cmd = 'test'
 
@@ -1033,7 +1106,7 @@ def test(
         cmd += f' {runtest}'
     else:
         # Run all tests
-        cmd += f' {_apps}'
+        cmd += f' {tested_apps}'
 
     if report:
         cmd += ' --slowreport'
@@ -1042,9 +1115,6 @@ def test(
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
-
-    if cui:
-        cmd += ' --exclude-tag=cui'
 
     if coverage:
         # Run tests within coverage environment, and generate report
@@ -1112,7 +1182,7 @@ def schema(
 ):
     """Export current API schema."""
     filename = Path(filename).resolve()
-    check_file_existance(filename, overwrite)
+    check_file_existence(filename, overwrite)
 
     info(f"Exporting schema file to '{filename}'")
 
@@ -1144,10 +1214,34 @@ def schema(
 def export_settings_definitions(c, filename='inventree_settings.json', overwrite=False):
     """Export settings definition to a JSON file."""
     filename = Path(filename).resolve()
-    check_file_existance(filename, overwrite)
+    check_file_existence(filename, overwrite)
 
     info(f"Exporting settings definition to '{filename}'...")
     manage(c, f'export_settings_definitions {filename}', pty=True)
+
+
+@task(help={'basedir': 'Export to a base directory (default = False)'})
+def export_definitions(c, basedir: str = ''):
+    """Export various definitions."""
+    if basedir != '' and basedir.endswith('/') is False:
+        basedir += '/'
+
+    filenames = [
+        Path(basedir + 'inventree_settings.json').resolve(),
+        Path(basedir + 'inventree_tags.yml').resolve(),
+        Path(basedir + 'inventree_filters.yml').resolve(),
+    ]
+
+    info('Exporting definitions...')
+    export_settings_definitions(c, overwrite=True, filename=filenames[0])
+
+    check_file_existence(filenames[1], overwrite=True)
+    manage(c, f'export_tags {filenames[1]}', pty=True)
+
+    check_file_existence(filenames[2], overwrite=True)
+    manage(c, f'export_filters {filenames[2]}', pty=True)
+
+    info('Exporting definitions complete')
 
 
 @task(default=True)
@@ -1214,7 +1308,7 @@ def frontend_compile(c):
     """
     info('Compiling frontend code...')
     frontend_install(c)
-    frontend_trans(c)
+    frontend_trans(c, extract=False)
     frontend_build(c)
     success('Frontend compilation complete')
 
@@ -1230,15 +1324,16 @@ def frontend_install(c):
     yarn(c, 'yarn install')
 
 
-@task
-def frontend_trans(c):
+@task(help={'extract': 'Extract translations (changes sourcecode), default: True'})
+def frontend_trans(c, extract: bool = True):
     """Compile frontend translations.
 
     Args:
         c: Context variable
     """
     info('Compiling frontend translations')
-    yarn(c, 'yarn run extract')
+    if extract:
+        yarn(c, 'yarn run extract')
     yarn(c, 'yarn run compile')
 
 
@@ -1337,9 +1432,12 @@ def frontend_download(
 
     def handle_download(url):
         # download frontend-build.zip to temporary file
-        with requests.get(
-            url, headers=default_headers, stream=True, allow_redirects=True
-        ) as response, NamedTemporaryFile(suffix='.zip') as dst:
+        with (
+            requests.get(
+                url, headers=default_headers, stream=True, allow_redirects=True
+            ) as response,
+            NamedTemporaryFile(suffix='.zip') as dst,
+        ):
             response.raise_for_status()
 
             # auto decode the gzipped raw data
@@ -1365,17 +1463,17 @@ def frontend_download(
 
         if not current.exists():
             warning(
-                f'Current frontend information for {ref} is not available - this is expected in some cases'
+                f'Current frontend information for {ref} is not available in {current!s} - this is expected in some cases'
             )
             return False
 
         current_content = current.read_text().strip()
         ref_value = tag or sha
         if current_content == ref_value:
-            print(f'Frontend {ref} is already `{ref_value}`')
+            info(f'Frontend {ref} is already `{ref_value}`')
             return True
         else:
-            print(
+            info(
                 f'Frontend {ref} is not expected `{ref_value}` but `{current_content}` - new version will be downloaded'
             )
             return False
@@ -1408,7 +1506,7 @@ def frontend_download(
                 and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
             ):
                 ref = content.get('INVENTREE_COMMIT_SHA')
-                print(
+                info(
                     f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
                 )
             else:
@@ -1447,10 +1545,11 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
         ).json()
 
         if not (qc_run := find_resource(workflow_runs['workflow_runs'], 'name', 'QC')):
-            error('ERROR: Cannot find any workflow runs for current SHA')
+            error(f'ERROR: Cannot find any workflow runs for current SHA {ref}')
             return
-        print(
-            f"Found workflow {qc_run['name']} (run {qc_run['run_number']}-{qc_run['run_attempt']})"
+
+        info(
+            f'Found workflow {qc_run["name"]} (run {qc_run["run_number"]}-{qc_run["run_attempt"]})'
         )
 
         # get frontend-build artifact from all artifacts available for this workflow run
@@ -1462,10 +1561,11 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
                 artifacts['artifacts'], 'name', 'frontend-build'
             )
         ):
-            print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
+            error('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
-        print(
-            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes'] / 1e6:.2f}MB)."
+
+        info(
+            f'Found artifact {frontend_artifact["name"]} with id {frontend_artifact["id"]} ({frontend_artifact["size_in_bytes"] / 1e6:.2f}MB).'
         )
 
         print(
@@ -1534,16 +1634,15 @@ internal = Collection(
     clean_settings,
     clear_generated,
     export_settings_definitions,
+    export_definitions,
     frontend_build,
     frontend_check,
     frontend_compile,
     frontend_install,
     frontend_trans,
-    render_js_files,
     rebuild_models,
     rebuild_thumbnails,
     showmigrations,
-    translate_stats,
 )
 
 ns = Collection(

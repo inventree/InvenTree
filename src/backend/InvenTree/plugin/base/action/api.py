@@ -6,6 +6,7 @@ from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+from InvenTree.exceptions import log_error
 from plugin import registry
 
 
@@ -33,9 +34,12 @@ class ActionPluginView(GenericAPIView):
 
         action_plugins = registry.with_mixin('action')
         for plugin in action_plugins:
-            if plugin.action_name() == action:
-                plugin.perform_action(request.user, data=data)
-                return Response(plugin.get_response(request.user, data=data))
+            try:
+                if plugin.action_name() == action:
+                    plugin.perform_action(request.user, data=data)
+                    return Response(plugin.get_response(request.user, data=data))
+            except Exception:
+                log_error('action_plugin')
 
         # If we got to here, no matching action was found
         return Response({'error': _('No matching action found'), 'action': action})

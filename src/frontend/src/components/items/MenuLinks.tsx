@@ -8,11 +8,10 @@ import {
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
-import { IconLink } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import { InvenTreeIcon, type InvenTreeIconType } from '../../functions/icons';
 import { navigateToLink } from '../../functions/navigation';
 import { StylishText } from './StylishText';
 
@@ -50,11 +49,16 @@ export function MenuLinks({
 
   return (
     <>
-      <Stack gap="xs">
+      <Stack gap='xs'>
         <Divider />
-        <StylishText size="md">{title}</StylishText>
+        <StylishText size='md'>{title}</StylishText>
         <Divider />
-        <SimpleGrid cols={2} spacing={0} p={3}>
+        <SimpleGrid
+          cols={{ base: 1, '400px': 2 }}
+          type='container'
+          spacing={0}
+          p={3}
+        >
           {visibleLinks.map((item) => (
             <Tooltip
               key={`menu-link-tooltip-${item.id}`}
@@ -63,7 +67,7 @@ export function MenuLinks({
             >
               {item.link && item.external ? (
                 <Anchor href={item.link}>
-                  <Group wrap="nowrap">
+                  <Group wrap='nowrap'>
                     {item.external && (
                       <InvenTreeIcon
                         icon={item.icon ?? 'link'}
@@ -87,7 +91,7 @@ export function MenuLinks({
                     }
                   }}
                 >
-                  <Group wrap="nowrap">
+                  <Group wrap='nowrap'>
                     {item.icon && (
                       <InvenTreeIcon
                         icon={item.icon}

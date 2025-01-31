@@ -7,7 +7,7 @@ import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import {
   SupplierPriceBreakColumns,
@@ -45,7 +45,7 @@ export default function SupplierPricingPanel({
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_pricing_list)}
         columns={columns}
@@ -61,7 +61,7 @@ export default function SupplierPricingPanel({
       {supplierPricingData.length > 0 ? (
         <BarChart
           data={supplierPricingData}
-          dataKey="name"
+          dataKey='name'
           series={[
             { name: 'unit_price', label: t`Unit Price`, color: 'blue.6' },
             {

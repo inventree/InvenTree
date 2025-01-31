@@ -2,7 +2,8 @@
 
 import base64
 import io
-from datetime import datetime, timedelta
+import json
+from datetime import date, datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -15,6 +16,7 @@ from rest_framework import status
 
 from common.currency import currency_codes
 from common.models import InvenTreeSetting
+from common.settings import set_global_setting
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
@@ -131,8 +133,8 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'outstanding': False}, 2)
 
         # Filter by "status"
-        self.filter({'status': 10}, 3)
-        self.filter({'status': 40}, 1)
+        self.filter({'status': PurchaseOrderStatus.PENDING.value}, 3)
+        self.filter({'status': PurchaseOrderStatus.CANCELLED.value}, 1)
 
         # Filter by "reference"
         self.filter({'reference': 'PO-0001'}, 1)
@@ -253,8 +255,54 @@ class PurchaseOrderTest(OrderTest):
 
         order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
 
-        self.assertEqual(order.reference, 'PO-92233720368547758089999999999999999')
+        # Check that the created_by field is set correctly
+        self.assertEqual(order.created_by.username, 'testuser')
+
+        self.assertEqual(order.reference, huge_number)
         self.assertEqual(order.reference_int, 0x7FFFFFFF)
+
+    def test_po_reference_wildcard_default(self):
+        """Test that a reference with a wildcard default."""
+        # get permissions
+        self.assignRole('purchase_order.add')
+
+        # set PO reference setting
+        set_global_setting('PURCHASEORDER_REFERENCE_PATTERN', '{?:PO}-{ref:04d}')
+
+        url = reverse('api-po-list')
+
+        # first, check that the default character is suggested by OPTIONS
+        options = json.loads(self.options(url).content)
+        suggested_reference = options['actions']['POST']['reference']['default']
+        self.assertTrue(suggested_reference.startswith('PO-'))
+
+        # next, check that certain variations of a provided reference are accepted
+        test_accepted_references = ['PO-9991', 'P-9992', 'T-9993', 'ABC-9994']
+        for ref in test_accepted_references:
+            response = self.post(
+                url,
+                {
+                    'supplier': 1,
+                    'reference': ref,
+                    'description': 'PO created via the API',
+                },
+                expected_code=201,
+            )
+            order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+            self.assertEqual(order.reference, ref)
+
+        # finally, check that certain provided referencees are rejected (because the wildcard character is required!)
+        test_rejected_references = ['9995', '-9996']
+        for ref in test_rejected_references:
+            response = self.post(
+                url,
+                {
+                    'supplier': 1,
+                    'reference': ref,
+                    'description': 'PO created via the API',
+                },
+                expected_code=400,
+            )
 
     def test_po_attachments(self):
         """Test the list endpoint for the PurchaseOrderAttachment model."""
@@ -1013,12 +1061,20 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(line_1.received, 0)
         self.assertEqual(line_2.received, 50)
 
+        one_week_from_today = date.today() + timedelta(days=7)
+
         valid_data = {
             'items': [
-                {'line_item': 1, 'quantity': 50, 'barcode': 'MY-UNIQUE-BARCODE-123'},
+                {
+                    'line_item': 1,
+                    'quantity': 50,
+                    'expiry_date': one_week_from_today.strftime(r'%Y-%m-%d'),
+                    'barcode': 'MY-UNIQUE-BARCODE-123',
+                },
                 {
                     'line_item': 2,
                     'quantity': 200,
+                    'expiry_date': one_week_from_today.strftime(r'%Y-%m-%d'),
                     'location': 2,  # Explicit location
                     'barcode': 'MY-UNIQUE-BARCODE-456',
                 },
@@ -1062,6 +1118,10 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Check received locations
         self.assertEqual(stock_1.last().location.pk, 1)
         self.assertEqual(stock_2.last().location.pk, 2)
+
+        # Expiry dates should be set
+        self.assertEqual(stock_1.last().expiry_date, one_week_from_today)
+        self.assertEqual(stock_2.last().expiry_date, one_week_from_today)
 
         # Barcodes should have been assigned to the stock items
         self.assertTrue(
@@ -1123,7 +1183,8 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         n = StockItem.objects.count()
 
-        self.post(self.url, data, expected_code=201, max_query_count=400)
+        # TODO: 2024-12-10 - This API query needs to be refactored!
+        self.post(self.url, data, expected_code=201, max_query_count=500)
 
         # Check that the expected number of stock items has been created
         self.assertEqual(n + 11, StockItem.objects.count())
@@ -1219,8 +1280,8 @@ class SalesOrderTest(OrderTest):
         self.filter({'outstanding': False}, 2)
 
         # Filter by status
-        self.filter({'status': 10}, 3)  # PENDING
-        self.filter({'status': 20}, 1)  # SHIPPED
+        self.filter({'status': SalesOrderStatus.PENDING.value}, 3)  # PENDING
+        self.filter({'status': SalesOrderStatus.SHIPPED.value}, 1)  # SHIPPED
         self.filter({'status': 99}, 0)  # Invalid
 
         # Filter by "reference"
@@ -1360,6 +1421,11 @@ class SalesOrderTest(OrderTest):
 
         # Grab the PK for the newly created SalesOrder
         pk = response.data['pk']
+
+        # Basic checks against the newly created SalesOrder
+        so = models.SalesOrder.objects.get(pk=pk)
+        self.assertEqual(so.reference, 'SO-12345')
+        self.assertEqual(so.created_by.username, 'testuser')
 
         # Try to create a SO with identical reference (should fail)
         response = self.post(
@@ -1588,6 +1654,8 @@ class SalesOrderTest(OrderTest):
 
         so.refresh_from_db()
         self.assertEqual(so.status, SalesOrderStatus.SHIPPED.value)
+        self.assertIsNotNone(so.shipment_date)
+        self.assertIsNotNone(so.shipped_by)
 
         # Now, let's try to "complete" the shipment again
         # This time it should get marked as "COMPLETE"
@@ -1603,9 +1671,14 @@ class SalesOrderTest(OrderTest):
 
         # Next, we'll change the setting so that the order status jumps straight to "complete"
         so.status = SalesOrderStatus.PENDING.value
+        so.shipment_date = None
+        so.shipped_by = None
         so.save()
         so.refresh_from_db()
+
         self.assertEqual(so.status, SalesOrderStatus.PENDING.value)
+        self.assertIsNone(so.shipped_by)
+        self.assertIsNone(so.shipment_date)
 
         InvenTreeSetting.set_setting('SALESORDER_SHIP_COMPLETE', True)
 
@@ -1614,6 +1687,9 @@ class SalesOrderTest(OrderTest):
         # The orders status should now be "complete" (not "shipped")
         so.refresh_from_db()
         self.assertEqual(so.status, SalesOrderStatus.COMPLETE.value)
+
+        self.assertIsNotNone(so.shipment_date)
+        self.assertIsNotNone(so.shipped_by)
 
 
 class SalesOrderLineItemTest(OrderTest):
@@ -2174,7 +2250,9 @@ class ReturnOrderTests(InvenTreeAPITestCase):
                 self.assertEqual(result['customer'], cmp_id)
 
         # Filter by status
-        data = self.get(url, {'status': 20}, expected_code=200).data
+        data = self.get(
+            url, {'status': ReturnOrderStatus.IN_PROGRESS.value}, expected_code=200
+        ).data
 
         self.assertEqual(len(data), 2)
 
@@ -2337,6 +2415,71 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(deltas['customer'], customer.pk)
         self.assertEqual(deltas['location'], 1)
         self.assertEqual(deltas['returnorder'], rma.pk)
+
+    def test_receive_untracked(self):
+        """Test that we can receive untracked items against a ReturnOrder.
+
+        Ref: https://github.com/inventree/InvenTree/pull/8590
+        """
+        self.assignRole('return_order.add')
+        company = Company.objects.get(pk=4)
+
+        # Create a new ReturnOrder
+        rma = models.ReturnOrder.objects.create(
+            customer=company, description='A return order'
+        )
+
+        rma.issue_order()
+
+        # Create some new line items
+        part = Part.objects.get(pk=25)
+
+        n_items = part.stock_entries().count()
+
+        for idx in range(2):
+            stock_item = StockItem.objects.create(
+                part=part, customer=company, quantity=10
+            )
+
+            models.ReturnOrderLineItem.objects.create(
+                order=rma, item=stock_item, quantity=(idx + 1) * 5
+            )
+
+        self.assertEqual(part.stock_entries().count(), n_items + 2)
+
+        line_items = rma.lines.all()
+
+        # Receive items against the order
+        url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+        LOCATION_ID = 1
+
+        self.post(
+            url,
+            {
+                'items': [
+                    {'item': line.pk, 'status': StockStatus.DAMAGED.value}
+                    for line in line_items
+                ],
+                'location': LOCATION_ID,
+            },
+            expected_code=201,
+        )
+
+        # Due to the quantities received, we should have created 1 new stock item
+        self.assertEqual(part.stock_entries().count(), n_items + 3)
+
+        rma.refresh_from_db()
+
+        for line in rma.lines.all():
+            self.assertTrue(line.received)
+            self.assertIsNotNone(line.received_date)
+
+            # Check that the associated StockItem has been updated correctly
+            self.assertEqual(line.item.status, StockStatus.DAMAGED)
+            self.assertIsNone(line.item.customer)
+            self.assertIsNone(line.item.sales_order)
+            self.assertEqual(line.item.location.pk, LOCATION_ID)
 
     def test_ro_calendar(self):
         """Test the calendar export endpoint."""

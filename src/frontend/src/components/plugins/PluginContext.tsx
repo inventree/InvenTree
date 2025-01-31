@@ -1,21 +1,22 @@
 import {
-  MantineColorScheme,
-  MantineTheme,
+  type MantineColorScheme,
+  type MantineTheme,
   useMantineColorScheme,
   useMantineTheme
 } from '@mantine/core';
-import { AxiosInstance } from 'axios';
+import type { AxiosInstance } from 'axios';
 import { useMemo } from 'react';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
+import type { QueryClient } from '@tanstack/react-query';
+import { api, queryClient } from '../../App';
 import { useLocalState } from '../../states/LocalState';
 import {
-  SettingsStateProps,
+  type SettingsStateProps,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
-import { UserStateProps, useUserState } from '../../states/UserState';
+import { type UserStateProps, useUserState } from '../../states/UserState';
 
 /**
  * A set of properties which are passed to a plugin,
@@ -28,14 +29,18 @@ import { UserStateProps, useUserState } from '../../states/UserState';
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
+ * @param host - The current host URL
+ * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param context - Any additional context data which may be passed to the plugin
  */
 export type InvenTreeContext = {
   api: AxiosInstance;
+  queryClient: QueryClient;
   user: UserStateProps;
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
   host: string;
+  locale: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
@@ -43,7 +48,7 @@ export type InvenTreeContext = {
 };
 
 export const useInvenTreeContext = () => {
-  const host = useLocalState((s) => s.host);
+  const [locale, host] = useLocalState((s) => [s.language, s.host]);
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
@@ -55,7 +60,9 @@ export const useInvenTreeContext = () => {
     return {
       user: user,
       host: host,
+      locale: locale,
       api: api,
+      queryClient: queryClient,
       navigate: navigate,
       globalSettings: globalSettings,
       userSettings: userSettings,
@@ -66,6 +73,8 @@ export const useInvenTreeContext = () => {
     user,
     host,
     api,
+    locale,
+    queryClient,
     navigate,
     globalSettings,
     userSettings,

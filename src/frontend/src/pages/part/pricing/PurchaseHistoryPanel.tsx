@@ -1,13 +1,13 @@
 import { t } from '@lingui/macro';
 import { BarChart } from '@mantine/charts';
 import { Group, SimpleGrid, Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { TableColumn } from '../../../tables/Column';
+import type { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
@@ -19,8 +19,9 @@ export default function PurchaseHistoryPanel({
   const table = useTable('pricingpurchasehistory');
 
   const calculateUnitPrice = useCallback((record: any) => {
-    let pack_quantity = record?.supplier_part_detail?.pack_quantity_native ?? 1;
-    let unit_price = record.purchase_price / pack_quantity;
+    const pack_quantity =
+      record?.supplier_part_detail?.pack_quantity_native ?? 1;
+    const unit_price = record.purchase_price / pack_quantity;
 
     return unit_price;
   }, []);
@@ -48,19 +49,19 @@ export default function PurchaseHistoryPanel({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let price = formatCurrency(record.purchase_price, {
+          const price = formatCurrency(record.purchase_price, {
             currency: record.purchase_price_currency
           });
 
-          let packQuatity = record.supplier_part_detail?.pack_quantity;
-          let hasPackQuantity =
+          const packQuatity = record.supplier_part_detail?.pack_quantity;
+          const hasPackQuantity =
             !!packQuatity &&
             record.supplier_part_detail?.pack_quantity_native != 1;
 
           return (
-            <Group justify="space-between" gap="xs">
+            <Group justify='space-between' gap='xs'>
               <Text>{price}</Text>
-              {hasPackQuantity && <Text size="xs">[{packQuatity}]</Text>}
+              {hasPackQuantity && <Text size='xs'>[{packQuatity}]</Text>}
             </Group>
           );
         }
@@ -72,17 +73,17 @@ export default function PurchaseHistoryPanel({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          let price = formatCurrency(calculateUnitPrice(record), {
+          const price = formatCurrency(calculateUnitPrice(record), {
             currency: record.purchase_price_currency
           });
 
-          let units = record.part_detail?.units;
-          let hasUnits = !!units && units !== 1;
+          const units = record.part_detail?.units;
+          const hasUnits = !!units && units !== 1;
 
           return (
-            <Group justify="space-between" gap="xs">
+            <Group justify='space-between' gap='xs'>
               <Text>{price}</Text>
-              {hasUnits && <Text size="xs">[{units}]</Text>}
+              {hasUnits && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
         }
@@ -102,7 +103,7 @@ export default function PurchaseHistoryPanel({
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.purchase_order_line_list)}
@@ -120,7 +121,7 @@ export default function PurchaseHistoryPanel({
       {purchaseHistoryData.length > 0 ? (
         <BarChart
           data={purchaseHistoryData}
-          dataKey="name"
+          dataKey='name'
           series={[
             { name: 'unit_price', label: t`Unit Price`, color: 'blue.5' }
           ]}

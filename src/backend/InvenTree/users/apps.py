@@ -1,13 +1,13 @@
 """App configuration class for the 'users' app."""
 
-import logging
-
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
+import structlog
+
 import InvenTree.ready
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class UsersConfig(AppConfig):

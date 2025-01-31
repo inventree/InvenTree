@@ -1,7 +1,6 @@
 """Base Class for InvenTree plugins."""
 
 import inspect
-import logging
 import warnings
 from datetime import datetime
 from distutils.sysconfig import get_python_lib
@@ -10,14 +9,15 @@ from pathlib import Path
 from typing import Optional
 
 from django.conf import settings
-from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import InvenTree.helpers
 from plugin.helpers import get_git_log
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MetaBase:
@@ -239,9 +239,10 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         """File that contains plugin definition."""
         return Path(inspect.getfile(cls))
 
-    def path(self) -> Path:
+    @classmethod
+    def path(cls) -> Path:
         """Path to plugins base folder."""
-        return self.file().parent
+        return cls.file().parent
 
     def _get_value(self, meta_name: str, package_name: str) -> str:
         """Extract values from class meta or package info.
@@ -374,15 +375,11 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         return self.check_package_install_name()
 
     @property
-    def settings_url(self):
+    def settings_url(self) -> str:
         """URL to the settings panel for this plugin."""
-        if settings.ENABLE_CLASSIC_FRONTEND:
-            return f'{reverse("settings")}#select-plugin-{self.slug}'
-        config = self.plugin_config()
-        if config:
+        if config := self.db:
             return InvenTree.helpers.pui_url(f'/settings/admin/plugin/{config.pk}/')
-        else:
-            return InvenTree.helpers.pui_url('/settings/admin/plugin/')
+        return InvenTree.helpers.pui_url('/settings/admin/plugin/')
 
     # region package info
     def _get_package_commit(self):

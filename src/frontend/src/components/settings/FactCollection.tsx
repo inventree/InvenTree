@@ -10,7 +10,15 @@ export function FactCollection({
   minItems?: number;
 }>) {
   return (
-    <SimpleGrid cols={minItems} spacing="xs">
+    <SimpleGrid
+      cols={{
+        base: 1,
+        sm: Math.min(2, minItems),
+        md: Math.min(3, minItems),
+        lg: minItems
+      }}
+      spacing='xs'
+    >
       {items.map((item, index) => (
         <FactItem
           key={`${index}-${item.value}`}

@@ -5,6 +5,7 @@ from typing import cast
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -21,7 +22,11 @@ import company.models
 from generic.states.api import StatusView
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
-from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
+from InvenTree.filters import (
+    SEARCH_ORDER_FILTER,
+    SEARCH_ORDER_FILTER_ALIAS,
+    InvenTreeDateFilter,
+)
 from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
@@ -71,6 +76,24 @@ class GeneralExtraLineList(DataExportViewMixin):
     filterset_fields = ['order']
 
 
+class OrderCreateMixin:
+    """Mixin class which handles order creation via API."""
+
+    def create(self, request, *args, **kwargs):
+        """Save user information on order creation."""
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+
 class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
@@ -78,8 +101,14 @@ class OrderFilter(rest_filters.FilterSet):
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
-        """Filter by integer status code."""
-        return queryset.filter(status=value)
+        """Filter by integer status code.
+
+        Note: Also account for the possibility of a custom status code.
+        """
+        q1 = Q(status=value, status_custom_key__isnull=True)
+        q2 = Q(status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
@@ -140,6 +169,50 @@ class OrderFilter(rest_filters.FilterSet):
         queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
     )
 
+    created_by = rest_filters.ModelChoiceFilter(
+        queryset=User.objects.all(), field_name='created_by', label=_('Created By')
+    )
+
+    created_before = InvenTreeDateFilter(
+        label=_('Created Before'), field_name='creation_date', lookup_expr='lt'
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created After'), field_name='creation_date', lookup_expr='gt'
+    )
+
+    has_start_date = rest_filters.BooleanFilter(
+        label=_('Has Start Date'), method='filter_has_start_date'
+    )
+
+    def filter_has_start_date(self, queryset, name, value):
+        """Filter by whether or not the order has a start date."""
+        return queryset.filter(start_date__isnull=not str2bool(value))
+
+    start_date_before = InvenTreeDateFilter(
+        label=_('Start Date Before'), field_name='start_date', lookup_expr='lt'
+    )
+
+    start_date_after = InvenTreeDateFilter(
+        label=_('Start Date After'), field_name='start_date', lookup_expr='gt'
+    )
+
+    has_target_date = rest_filters.BooleanFilter(
+        label=_('Has Target Date'), method='filter_has_target_date'
+    )
+
+    def filter_has_target_date(self, queryset, name, value):
+        """Filter by whether or not the order has a target date."""
+        return queryset.filter(target_date__isnull=not str2bool(value))
+
+    target_date_before = InvenTreeDateFilter(
+        label=_('Target Date Before'), field_name='target_date', lookup_expr='lt'
+    )
+
+    target_date_after = InvenTreeDateFilter(
+        label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
+    )
+
 
 class LineItemFilter(rest_filters.FilterSet):
     """Base class for custom API filters for order line item list(s)."""
@@ -170,6 +243,41 @@ class PurchaseOrderFilter(OrderFilter):
 
         model = models.PurchaseOrder
         fields = ['supplier']
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
+    )
+
+    def filter_part(self, queryset, name, part: Part):
+        """Filter by provided Part instance."""
+        orders = part.purchase_orders()
+
+        return queryset.filter(pk__in=[o.pk for o in orders])
+
+    supplier_part = rest_filters.ModelChoiceFilter(
+        queryset=company.models.SupplierPart.objects.all(),
+        label=_('Supplier Part'),
+        method='filter_supplier_part',
+    )
+
+    def filter_supplier_part(
+        self, queryset, name, supplier_part: company.models.SupplierPart
+    ):
+        """Filter by provided SupplierPart instance."""
+        orders = supplier_part.purchase_orders()
+
+        return queryset.filter(pk__in=[o.pk for o in orders])
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
 
 
 class PurchaseOrderMixin:
@@ -205,7 +313,9 @@ class PurchaseOrderMixin:
         return queryset
 
 
-class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
+class PurchaseOrderList(
+    PurchaseOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PurchaseOrder objects.
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -220,32 +330,6 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
-
-        # Attempt to filter by part
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(
-                    id__in=[p.id for p in part.purchase_orders()]
-                )
-            except (Part.DoesNotExist, ValueError):
-                pass
-
-        # Attempt to filter by supplier part
-        supplier_part = params.get('supplier_part', None)
-
-        if supplier_part is not None:
-            try:
-                supplier_part = company.models.SupplierPart.objects.get(
-                    pk=supplier_part
-                )
-                queryset = queryset.filter(
-                    id__in=[p.id for p in supplier_part.purchase_orders()]
-                )
-            except (ValueError, company.models.SupplierPart.DoesNotExist):
-                pass
 
         # Filter by 'date range'
         min_date = params.get('min_date', None)
@@ -273,9 +357,12 @@ class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'supplier__name',
+        'start_date',
         'target_date',
+        'complete_date',
         'line_items',
         'status',
         'responsible',
@@ -348,6 +435,7 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
         - supplier_part: pk value of the supplier part
         - quantity: quantity to receive
         - status: stock item status
+        - expiry_date: stock item expiry date (optional)
         - location: destination for stock item (optional)
         - batch_code: the batch code for this stock item
         - serial_numbers: serial numbers for this stock item
@@ -550,6 +638,7 @@ class PurchaseOrderLineItemList(
     ordering_field_aliases = {
         'MPN': 'part__manufacturer_part__MPN',
         'SKU': 'part__SKU',
+        'IPN': 'part__part__IPN',
         'part_name': 'part__part__name',
         'order': 'order__reference',
         'status': 'order__status',
@@ -564,6 +653,7 @@ class PurchaseOrderLineItemList(
         'received',
         'reference',
         'SKU',
+        'IPN',
         'total_price',
         'target_date',
         'order',
@@ -648,6 +738,14 @@ class SalesOrderFilter(OrderFilter):
         # Now we have a list of matching IDs, filter the queryset
         return queryset.filter(pk__in=sales_orders)
 
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='shipment_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='shipment_date', lookup_expr='gt'
+    )
+
 
 class SalesOrderMixin:
     """Mixin class for SalesOrder endpoints."""
@@ -682,7 +780,9 @@ class SalesOrderMixin:
         return queryset
 
 
-class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
+class SalesOrderList(
+    SalesOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of SalesOrder objects.
 
     - GET: Return list of SalesOrder objects (with filters)
@@ -690,20 +790,6 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
     """
 
     filterset_class = SalesOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        serializer = self.get_serializer(data=self.clean_data(request.data))
-        serializer.is_valid(raise_exception=True)
-
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     def filter_queryset(self, queryset):
         """Perform custom filtering operations on the SalesOrder queryset."""
@@ -731,10 +817,12 @@ class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'customer__name',
         'customer_reference',
         'status',
+        'start_date',
         'target_date',
         'line_items',
         'shipment_date',
@@ -1257,6 +1345,14 @@ class ReturnOrderFilter(OrderFilter):
         # Now we have a list of matching IDs, filter the queryset
         return queryset.filter(pk__in=return_orders)
 
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
+
 
 class ReturnOrderMixin:
     """Mixin class for ReturnOrder endpoints."""
@@ -1291,24 +1387,12 @@ class ReturnOrderMixin:
         return queryset
 
 
-class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
+class ReturnOrderList(
+    ReturnOrderMixin, OrderCreateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
-
-    def create(self, request, *args, **kwargs):
-        """Save user information on create."""
-        serializer = self.get_serializer(data=self.clean_data(request.data))
-        serializer.is_valid(raise_exception=True)
-
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
@@ -1319,12 +1403,15 @@ class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
 
     ordering_fields = [
         'creation_date',
+        'created_by',
         'reference',
         'customer__name',
         'customer_reference',
         'line_items',
         'status',
+        'start_date',
         'target_date',
+        'complete_date',
         'project_code',
     ]
 

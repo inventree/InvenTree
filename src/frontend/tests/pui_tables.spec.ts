@@ -1,24 +1,7 @@
 import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
+import { clearTableFilters, setTableChoiceFilter } from './helpers.js';
 import { doQuickLogin } from './login.js';
-
-// Helper function to set the value of a specific table filter
-const setFilter = async (page, name: string, value: string) => {
-  await page.getByLabel('table-select-filters').click();
-  await page.getByRole('button', { name: 'Add Filter' }).click();
-  await page.getByPlaceholder('Select filter').click();
-  await page.getByRole('option', { name: name, exact: true }).click();
-  await page.getByPlaceholder('Select filter value').click();
-  await page.getByRole('option', { name: value, exact: true }).click();
-  await page.getByLabel('filter-drawer-close').click();
-};
-
-// Helper function to clear table filters
-const clearFilters = async (page) => {
-  await page.getByLabel('table-select-filters').click();
-  await page.getByRole('button', { name: 'Clear Filters' }).click();
-  await page.getByLabel('filter-drawer-close').click();
-};
 
 test('Tables - Filters', async ({ page }) => {
   await doQuickLogin(page);
@@ -26,28 +9,33 @@ test('Tables - Filters', async ({ page }) => {
   // Head to the "build order list" page
   await page.goto(`${baseUrl}/manufacturing/index/`);
 
-  await setFilter(page, 'Status', 'Complete');
-  await setFilter(page, 'Responsible', 'allaccess');
-  await setFilter(page, 'Project Code', 'PRJ-NIM');
+  await clearTableFilters(page);
 
-  await clearFilters(page);
+  await setTableChoiceFilter(page, 'Status', 'Complete');
+  await setTableChoiceFilter(page, 'Responsible', 'allaccess');
+  await setTableChoiceFilter(page, 'Project Code', 'PRJ-NIM');
+
+  await clearTableFilters(page);
 
   // Head to the "part list" page
   await page.goto(`${baseUrl}/part/category/index/parts/`);
 
-  await setFilter(page, 'Assembly', 'Yes');
+  await setTableChoiceFilter(page, 'Assembly', 'Yes');
 
-  await clearFilters(page);
+  await clearTableFilters(page);
 
   // Head to the "purchase order list" page
   await page.goto(`${baseUrl}/purchasing/index/purchaseorders/`);
 
-  await setFilter(page, 'Status', 'Complete');
-  await setFilter(page, 'Responsible', 'readers');
-  await setFilter(page, 'Assigned to me', 'No');
-  await setFilter(page, 'Project Code', 'PRO-ZEN');
+  await clearTableFilters(page);
 
-  await clearFilters(page);
+  await setTableChoiceFilter(page, 'Status', 'Complete');
+  await setTableChoiceFilter(page, 'Responsible', 'readers');
+  await setTableChoiceFilter(page, 'Assigned to me', 'No');
+  await setTableChoiceFilter(page, 'Project Code', 'PRO-ZEN');
+  await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
+
+  await clearTableFilters(page);
 });
 
 test('Tables - Columns', async ({ page }) => {
@@ -62,4 +50,17 @@ test('Tables - Columns', async ({ page }) => {
   // De-select some items
   await page.getByRole('menuitem', { name: 'Description' }).click();
   await page.getByRole('menuitem', { name: 'Stocktake' }).click();
+  await page.keyboard.press('Escape');
+
+  await page.goto(`${baseUrl}/sales/index/salesorders`);
+
+  // Open column selector
+  await page.getByLabel('table-select-columns').click();
+
+  await page.getByRole('menuitem', { name: 'Start Date' }).click();
+  await page.getByRole('menuitem', { name: 'Target Date' }).click();
+  await page.getByRole('menuitem', { name: 'Reference', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Project Code' }).click();
+
+  await page.waitForTimeout(1000);
 });

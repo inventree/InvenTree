@@ -1,8 +1,13 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
+import {
+  clearTableFilters,
+  getRowFromCell,
+  setTableChoiceFilter
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Pages - Build Order', async ({ page }) => {
+test('Build Order - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/`);
@@ -82,13 +87,38 @@ test('Pages - Build Order', async ({ page }) => {
     .waitFor();
 });
 
-test('Pages - Build Order - Build Outputs', async ({ page }) => {
+test('Build Order - Edit', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/`);
+  await page.goto(`${baseUrl}/manufacturing/build-order/22/`);
 
-  // Navigate to the correct build order
-  await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  // Check for expected text items
+  await page.getByText('Building for sales order').first().waitFor();
+  await page.getByText('2024-08-08').waitFor(); // Created date
+  await page.getByText('2025-01-01').waitFor(); // Start date
+  await page.getByText('2025-01-22').waitFor(); // Target date
+
+  await page.keyboard.press('Control+E');
+
+  // Edit start date
+  await page.getByLabel('date-field-start_date').fill('2026-09-09');
+
+  // Submit the form
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Expect error
+  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByText('Target date must be after start date').waitFor();
+
+  // Cancel the form
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Build Order - Build Outputs', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/manufacturing/index/`);
+  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -108,7 +138,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   let sn = 1;
 
   if (!!placeholder && placeholder.includes('Next serial number')) {
-    sn = parseInt(placeholder.split(':')[1].trim());
+    sn = Number.parseInt(placeholder.split(':')[1].trim());
   }
 
   // Generate some new serial numbers
@@ -140,7 +170,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
 
   // Cancel one of the newly created outputs
   const cell = await page.getByRole('cell', { name: `# ${sn}` });
-  const row = await cell.locator('xpath=ancestor::tr').first();
+  const row = await getRowFromCell(cell);
   await row.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Cancel' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -148,7 +178,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
 
   // Complete the other output
   const cell2 = await page.getByRole('cell', { name: `# ${sn + 1}` });
-  const row2 = await cell2.locator('xpath=ancestor::tr').first();
+  const row2 = await getRowFromCell(cell2);
   await row2.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Complete' }).click();
   await page.getByLabel('related-field-location').click();
@@ -158,7 +188,7 @@ test('Pages - Build Order - Build Outputs', async ({ page }) => {
   await page.getByText('Build outputs have been completed').waitFor();
 });
 
-test('Pages - Build Order - Allocation', async ({ page }) => {
+test('Build Order - Allocation', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/manufacturing/build-order/1/line-items`);
@@ -170,7 +200,7 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
 
   // The capacitor stock should be fully allocated
   const cell = await page.getByRole('cell', { name: /C_1uF_0805/ });
-  const row = await cell.locator('xpath=ancestor::tr').first();
+  const row = await getRowFromCell(cell);
 
   await row.getByText(/150 \/ 150/).waitFor();
 
@@ -234,11 +264,11 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
 
   // Check for expected rows
   for (let idx = 0; idx < data.length; idx++) {
-    let item = data[idx];
+    const item = data[idx];
 
-    let cell = await page.getByRole('cell', { name: item.name });
-    let row = await cell.locator('xpath=ancestor::tr').first();
-    let progress = `${item.allocated} / ${item.required}`;
+    const cell = await page.getByRole('cell', { name: item.name });
+    const row = await getRowFromCell(cell);
+    const progress = `${item.allocated} / ${item.required}`;
 
     await row.getByRole('cell', { name: item.ipn }).first().waitFor();
     await row.getByRole('cell', { name: item.available }).first().waitFor();
@@ -246,8 +276,8 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
   }
 
   // Check for expected buttons on Red Widget
-  let redWidget = await page.getByRole('cell', { name: 'Red Widget' });
-  let redRow = await redWidget.locator('xpath=ancestor::tr').first();
+  const redWidget = await page.getByRole('cell', { name: 'Red Widget' });
+  const redRow = await redWidget.locator('xpath=ancestor::tr').first();
 
   await redRow.getByLabel(/row-action-menu-/i).click();
   await page
@@ -256,4 +286,31 @@ test('Pages - Build Order - Allocation', async ({ page }) => {
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
+});
+
+test('Build Order - Filters', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/manufacturing/index/buildorders`);
+
+  await clearTableFilters(page);
+  await page.getByText('1 - 24 / 24').waitFor();
+
+  // Toggle 'Outstanding' filter
+  await setTableChoiceFilter(page, 'Outstanding', 'Yes');
+  await page.getByText('1 - 18 / 18').waitFor();
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Outstanding', 'No');
+  await page.getByText('1 - 6 / 6').waitFor();
+  await clearTableFilters(page);
+
+  // Filter by custom status code
+  await setTableChoiceFilter(page, 'Status', 'Pending Approval');
+
+  // Single result - navigate through to the build order
+  await page.getByText('1 - 1 / 1').waitFor();
+  await page.getByRole('cell', { name: 'BO0023' }).click();
+
+  await page.getByText('On Hold').first().waitFor();
+  await page.getByText('Pending Approval').first().waitFor();
 });

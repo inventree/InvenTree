@@ -1,8 +1,60 @@
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
+import { clearTableFilters, setTableChoiceFilter } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Sales Orders', async ({ page }) => {
+test('Sales Orders - Tabs', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/sales/index/`);
+  await page.waitForURL('**/platform/sales/**');
+
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
+  await page.waitForURL('**/platform/sales/index/salesorders');
+  await page.getByRole('tab', { name: 'Return Orders' }).click();
+
+  // Customers
+  await page.getByRole('tab', { name: 'Customers' }).click();
+  await page.getByText('Customer A').click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Contacts' }).click();
+  await page.getByRole('tab', { name: 'Assigned Stock' }).click();
+  await page.getByRole('tab', { name: 'Return Orders' }).click();
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
+  await page.getByRole('tab', { name: 'Contacts' }).click();
+  await page.getByRole('cell', { name: 'Dorathy Gross' }).waitFor();
+  await page
+    .getByRole('row', { name: 'Dorathy Gross 	dorathy.gross@customer.com' })
+    .waitFor();
+
+  // Sales Order Details
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
+  await page.getByRole('cell', { name: 'SO0001' }).click();
+  await page
+    .getByLabel('Order Details')
+    .getByText('Selling some stuff')
+    .waitFor();
+  await page.getByRole('tab', { name: 'Line Items' }).click();
+  await page.getByRole('tab', { name: 'Shipments' }).click();
+  await page.getByRole('tab', { name: 'Build Orders' }).click();
+  await page.getByText('No records found').first().waitFor();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByText('No attachments found').first().waitFor();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).click();
+
+  // Return Order Details
+  await page.getByRole('link', { name: 'Customer A' }).click();
+  await page.getByRole('tab', { name: 'Return Orders' }).click();
+  await page.getByRole('cell', { name: 'RMA-' }).click();
+  await page.getByText('RMA-0001', { exact: true }).waitFor();
+  await page.getByRole('tab', { name: 'Line Items' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+});
+
+test('Sales Orders - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/home`);
@@ -11,14 +63,18 @@ test('Sales Orders', async ({ page }) => {
 
   // Check for expected text in the table
   await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
-  await page.getByText('In Progress').first().waitFor();
+
+  await clearTableFilters(page);
+
+  await setTableChoiceFilter(page, 'status', 'On Hold');
+
   await page.getByText('On Hold').first().waitFor();
 
   // Navigate to a particular sales order
   await page.getByRole('cell', { name: 'SO0003' }).click();
 
   // Order is "on hold". We will "issue" it and then place on hold again
-  await page.getByText('Sales Order: SO0003').waitFor();
+  await page.getByText('Selling stuff').first().waitFor();
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -99,7 +155,7 @@ test('Sales Orders - Shipments', async ({ page }) => {
   // Click through the various tabs
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Assigned Items' }).click();
+  await page.getByRole('tab', { name: 'Allocated Stock' }).click();
 
   // Ensure assigned items table loads correctly
   await page.getByRole('cell', { name: 'BATCH-001' }).first().waitFor();
@@ -123,56 +179,4 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByLabel('related-field-stock_item').click();
   await page.getByText('Quantity: 42').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
-});
-
-test('Purchase Orders', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/home`);
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-
-  // Check for expected values
-  await page.getByRole('cell', { name: 'PO0014' }).waitFor();
-  await page.getByText('Wire-E-Coyote').waitFor();
-  await page.getByText('Cancelled').first().waitFor();
-  await page.getByText('Pending').first().waitFor();
-  await page.getByText('On Hold').first().waitFor();
-
-  // Click through to a particular purchase order
-  await page.getByRole('cell', { name: 'PO0013' }).click();
-
-  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
-});
-
-test('Purchase Orders - Barcodes', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
-  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
-
-  // Display QR code
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-view').click();
-  await page.getByRole('img', { name: 'QR Code' }).waitFor();
-  await page.getByRole('banner').getByRole('button').click();
-
-  // Link to barcode
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
-  await page.getByRole('heading', { name: 'Link Barcode' }).waitFor();
-  await page
-    .getByPlaceholder('Scan barcode data here using')
-    .fill('1234567890');
-  await page.getByRole('button', { name: 'Link' }).click();
-  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
-
-  // Unlink barcode
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
-  await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
-  await page.getByText('This will remove the link to').waitFor();
-  await page.getByRole('button', { name: 'Unlink Barcode' }).click();
-  await page.waitForTimeout(500);
-  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });

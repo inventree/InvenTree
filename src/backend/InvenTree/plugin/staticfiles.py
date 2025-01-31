@@ -1,12 +1,12 @@
 """Static files management for InvenTree plugins."""
 
-import logging
-
 from django.contrib.staticfiles.storage import staticfiles_storage
+
+import structlog
 
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def clear_static_dir(path, recursive=True):
@@ -75,7 +75,7 @@ def copy_plugin_static_files(slug, check_reload=True):
     if not plugin:
         return
 
-    logger.info("Copying static files for plugin '%s'", slug)
+    logger.info("Collecting static files for plugin '%s'", slug)
 
     # Get the source path for the plugin
     source_path = plugin.path().joinpath('static')
@@ -114,7 +114,8 @@ def copy_plugin_static_files(slug, check_reload=True):
             logger.debug('- copied %s to %s', str(item), str(destination_path))
             copied += 1
 
-    logger.info("Copied %s static files for plugin '%s'.", copied, slug)
+    if copied > 0:
+        logger.info("Copied %s static files for plugin '%s'.", copied, slug)
 
 
 def clear_plugin_static_files(slug: str, recursive: bool = True):

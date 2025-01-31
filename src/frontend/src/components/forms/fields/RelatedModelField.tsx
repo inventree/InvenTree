@@ -9,16 +9,16 @@ import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  FieldValues,
-  UseControllerReturn,
+  type FieldValues,
+  type UseControllerReturn,
   useFormContext
 } from 'react-hook-form';
 import Select from 'react-select';
 
-import { api } from '../../../App';
+import { useApi } from '../../../contexts/ApiContext';
 import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
-import { ApiFormFieldType } from './ApiFormField';
+import type { ApiFormFieldType } from './ApiFormField';
 
 /**
  * Render a 'select' field for searching the database against a particular model type
@@ -34,6 +34,7 @@ export function RelatedModelField({
   fieldName: string;
   limit?: number;
 }>) {
+  const api = useApi();
   const fieldId = useId();
   const {
     field,
@@ -71,8 +72,8 @@ export function RelatedModelField({
       }
 
       api.get(url).then((response) => {
-        let pk_field = definition.pk_field ?? 'pk';
-        if (response.data && response.data[pk_field]) {
+        const pk_field = definition.pk_field ?? 'pk';
+        if (response.data?.[pk_field]) {
           const value = {
             value: response.data[pk_field],
             data: response.data
@@ -138,7 +139,7 @@ export function RelatedModelField({
         setFilters(_filters);
       }
 
-      let params = {
+      const params = {
         ..._filters,
         search: searchText,
         offset: offset,
@@ -158,8 +159,8 @@ export function RelatedModelField({
           const results = response.data?.results ?? response.data ?? [];
 
           results.forEach((item: any) => {
-            let pk_field = definition.pk_field ?? 'pk';
-            let pk = item[pk_field];
+            const pk_field = definition.pk_field ?? 'pk';
+            const pk = item[pk_field];
 
             if (pk && !alreadyPresentPks.includes(pk)) {
               values.push({
@@ -201,7 +202,7 @@ export function RelatedModelField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
-      let _pk = value?.value ?? null;
+      const _pk = value?.value ?? null;
       field.onChange(_pk);
 
       setPk(_pk);
@@ -230,7 +231,7 @@ export function RelatedModelField({
       return null;
     }
 
-    let _data = [...data, initialData];
+    const _data = [...data, initialData];
     return _data.find((item) => item.value === pk);
   }, [pk, data]);
 
@@ -284,7 +285,7 @@ export function RelatedModelField({
   return (
     <Input.Wrapper
       {...fieldDefinition}
-      error={error?.message}
+      error={definition.error ?? error?.message}
       styles={{ description: { paddingBottom: '5px' } }}
     >
       <Select
@@ -316,11 +317,11 @@ export function RelatedModelField({
         isClearable={!definition.required}
         isDisabled={definition.disabled}
         isSearchable={true}
-        placeholder={definition.placeholder || t`Search` + `...`}
-        loadingMessage={() => t`Loading` + `...`}
+        placeholder={definition.placeholder || `${t`Search`}...`}
+        loadingMessage={() => `${t`Loading`}...`}
         menuPortalTarget={document.body}
         noOptionsMessage={() => t`No results found`}
-        menuPosition="fixed"
+        menuPosition='fixed'
         styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
         formatOptionLabel={(option: any) => formatOption(option)}
         theme={(theme) => {

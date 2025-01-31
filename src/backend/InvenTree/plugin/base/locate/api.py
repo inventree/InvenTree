@@ -1,12 +1,13 @@
 """API for location plugins."""
 
 from rest_framework import permissions, serializers
-from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.exceptions import NotFound, ParseError, ValidationError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
-from plugin.registry import registry
+from plugin.registry import call_plugin_function, registry
 from stock.models import StockItem, StockLocation
 
 
@@ -59,7 +60,7 @@ class LocatePluginView(GenericAPIView):
                 StockItem.objects.get(pk=item_pk)
 
                 offload_task(
-                    registry.call_plugin_function,
+                    call_plugin_function,
                     plugin,
                     'locate_stock_item',
                     item_pk,
@@ -72,13 +73,16 @@ class LocatePluginView(GenericAPIView):
 
             except (ValueError, StockItem.DoesNotExist):
                 raise NotFound(f"StockItem matching PK '{item_pk}' not found")
+            except Exception:
+                log_error('locate_stock_item')
+                return ValidationError('Error locating stock item')
 
         elif location_pk:
             try:
                 StockLocation.objects.get(pk=location_pk)
 
                 offload_task(
-                    registry.call_plugin_function,
+                    call_plugin_function,
                     plugin,
                     'locate_stock_location',
                     location_pk,
@@ -91,6 +95,8 @@ class LocatePluginView(GenericAPIView):
 
             except (ValueError, StockLocation.DoesNotExist):
                 raise NotFound(f"StockLocation matching PK '{location_pk}' not found")
-
+            except Exception:
+                log_error('locate_stock_location')
+                return ValidationError('Error locating stock location')
         else:
             raise ParseError("Must supply either 'item' or 'location' parameter")

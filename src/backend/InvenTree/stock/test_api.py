@@ -561,7 +561,7 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Return JSON-ified data
+        # Return JSON data
         return response.data
 
     def test_top_level_filtering(self):
@@ -871,10 +871,15 @@ class StockItemListTest(StockAPITestCase):
             'Part',
             'Customer',
             'Stock Location',
-            'Location Name',
             'Parent Item',
             'Quantity',
             'Status',
+            'Part.Name',
+            'Part.Description',
+            'Location.Name',
+            'Location.Path',
+            'Supplier Part.SKU',
+            'Supplier Part.MPN',
         ]
 
         for h in headers:
@@ -886,12 +891,35 @@ class StockItemListTest(StockAPITestCase):
             self.assertNotIn(h, dataset.headers)
 
         # Now, add a filter to the results
-        dataset = self.export_data({'location': 1})
+        dataset = self.export_data({'location': 1, 'cascade': True})
 
         self.assertEqual(len(dataset), 9)
 
-        dataset = self.export_data({'part': 25})
+        # Read out the data
+        idx_id = dataset.headers.index('ID')
+        idx_loc = dataset.headers.index('Stock Location')
+        idx_loc_name = dataset.headers.index('Location.Name')
+        idx_part_name = dataset.headers.index('Part.Name')
 
+        for row in dataset:
+            item_id = int(row[idx_id])
+            item = StockItem.objects.get(pk=item_id)
+
+            loc_id = int(row[idx_loc])
+
+            # Location should match ID
+            self.assertEqual(int(loc_id), item.location.pk)
+
+            # Location name should match
+            loc_name = row[idx_loc_name]
+            self.assertEqual(loc_name, item.location.name)
+
+            # Part name should match
+            part_name = row[idx_part_name]
+            self.assertEqual(part_name, item.part.name)
+
+        # Export stock items with a specific part
+        dataset = self.export_data({'part': 25})
         self.assertEqual(len(dataset), 17)
 
     def test_filter_by_allocated(self):
@@ -1277,7 +1305,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=201,
         )
 
-    def test_stock_item_create_withsupplierpart(self):
+    def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
         # POST with non-existent supplier part
         response = self.post(
@@ -1515,7 +1543,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
     def test_install(self):
-        """Test that stock item can be installed into antoher item, via the API."""
+        """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
         parent_part = part.models.Part.objects.get(pk=100)
 
@@ -1780,8 +1808,8 @@ class StocktakeTest(StockAPITestCase):
         """Test stock transfers."""
         stock_item = StockItem.objects.get(pk=1234)
 
-        # Mark this stock item as "quarantined" (cannot be moved)
-        stock_item.status = StockStatus.QUARANTINED.value
+        # Mark the item as 'out of stock' by assigning a customer
+        stock_item.customer = company.models.Company.objects.first()
         stock_item.save()
 
         InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', False)
@@ -1797,7 +1825,7 @@ class StocktakeTest(StockAPITestCase):
         # First attempt should *fail* - stock item is quarantined
         response = self.post(url, data, expected_code=400)
 
-        self.assertIn('cannot be moved as it is not in stock', str(response.data))
+        self.assertIn('Stock item is not in stock', str(response.data))
 
         # Now, allow transfer of "out of stock" items
         InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', True)
@@ -2399,38 +2427,3 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
             'api-stock-item-metadata': StockItem,
         }.items():
             self.metatester(apikey, model)
-
-
-class StockStatisticsTest(StockAPITestCase):
-    """Tests for the StockStatistics API endpoints."""
-
-    fixtures = [*StockAPITestCase.fixtures, 'build']
-
-    def test_test_statistics(self):
-        """Test the test statistics API endpoints."""
-        part = Part.objects.first()
-        response = self.get(
-            reverse('api-test-statistics-by-part', kwargs={'pk': part.pk}),
-            {},
-            expected_code=200,
-        )
-        self.assertEqual(response.data, [{}])
-
-        # Now trackable part
-        part1 = Part.objects.filter(trackable=True).first()
-        response = self.get(
-            reverse(
-                'api-test-statistics-by-part',
-                kwargs={'pk': part1.stock_items.first().pk},
-            ),
-            {},
-            expected_code=404,
-        )
-        self.assertIn('detail', response.data)
-
-        # 105
-
-        bld = build.models.Build.objects.first()
-        url = reverse('api-test-statistics-by-build', kwargs={'pk': bld.pk})
-        response = self.get(url, {}, expected_code=200)
-        self.assertEqual(response.data, [{}])

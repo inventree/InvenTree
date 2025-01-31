@@ -4,16 +4,15 @@ This initializes the plugin mechanisms and handles reloading throughout the life
 The main code for plugin special sauce is in the plugin registry in `InvenTree/plugin/registry.py`.
 """
 
-import logging
-
 from django.apps import AppConfig
 
+import structlog
 from maintenance_mode.core import set_maintenance_mode
 
 from InvenTree.ready import canAppAccessDatabase, isInMainThread, isInWorkerThread
 from plugin import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PluginAppConfig(AppConfig):
@@ -23,8 +22,6 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         """The ready method is extended to initialize plugins."""
-        # skip loading if we run in a background thread
-
         if not isInMainThread() and not isInWorkerThread():
             return
 

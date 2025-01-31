@@ -1,7 +1,6 @@
 """Database model definitions for the 'users' app."""
 
 import datetime
-import logging
 
 from django.conf import settings
 from django.contrib import admin
@@ -9,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
@@ -19,14 +17,16 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework.authtoken.models import Token as AuthToken
 
+import InvenTree.cache
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 #  OVERRIDE START
@@ -336,7 +336,6 @@ class RuleSet(models.Model):
             'contenttypes_contenttype',
             # Models which currently do not require permissions
             'common_attachment',
-            'common_colortheme',
             'common_customunit',
             'common_inventreesetting',
             'common_inventreeusersetting',
@@ -347,6 +346,8 @@ class RuleSet(models.Model):
             'common_webhookendpoint',
             'common_webhookmessage',
             'common_inventreecustomuserstatemodel',
+            'common_selectionlistentry',
+            'common_selectionlist',
             'users_owner',
             # Third-party tables
             'error_report_error',
@@ -665,28 +666,20 @@ def update_group_roles(group, debug=False):
                         )
 
 
-def clear_user_role_cache(user: User):
-    """Remove user role permission information from the cache.
-
-    - This function is called whenever the user / group is updated
-
-    Args:
-        user: The User object to be expunged from the cache
-    """
-    for role in RuleSet.get_ruleset_models():
-        for perm in ['add', 'change', 'view', 'delete']:
-            key = f'role_{user.pk}_{role}_{perm}'
-            cache.delete(key)
-
-
-def check_user_permission(user: User, model, permission):
+def check_user_permission(user: User, model, permission) -> bool:
     """Check if the user has a particular permission against a given model type.
 
     Arguments:
         user: The user object to check
-        model: The model class to check (e.g. Part)
+        model: The model class to check (e.g. 'part')
         permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        bool: True if the user has the specified permission
     """
+    if not user:
+        return False
+
     if user.is_superuser:
         return True
 
@@ -694,21 +687,26 @@ def check_user_permission(user: User, model, permission):
     return user.has_perm(permission_name)
 
 
-def check_user_role(user: User, role, permission):
+def check_user_role(user: User, role, permission) -> bool:
     """Check if a user has a particular role:permission combination.
 
-    If the user is a superuser, this will return True
+    Arguments:
+        user: The user object to check
+        role: The role to check (e.g. 'part' / 'stock')
+        permission: The permission to check (e.g. 'view' / 'delete')
+
+    Returns:
+        bool: True if the user has the specified role:permission combination
     """
+    if not user:
+        return False
+
     if user.is_superuser:
         return True
 
-    # First, check the cache
-    key = f'role_{user.pk}_{role}_{permission}'
-
-    try:
-        result = cache.get(key)
-    except Exception:  # pragma: no cover
-        result = None
+    # First, check the session cache
+    cache_key = f'role_{user.pk}_{role}_{permission}'
+    result = InvenTree.cache.get_session_cache(cache_key)
 
     if result is not None:
         return result
@@ -735,11 +733,8 @@ def check_user_role(user: User, role, permission):
                     result = True
                     break
 
-    # Save result to cache
-    try:
-        cache.set(key, result, timeout=3600)
-    except Exception:  # pragma: no cover
-        pass
+    # Save result to session-cache
+    InvenTree.cache.set_session_cache(cache_key, result)
 
     return result
 
@@ -922,12 +917,6 @@ def delete_owner(sender, instance, **kwargs):
     owner.delete()
 
 
-@receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
-def clear_user_cache(sender, instance, **kwargs):
-    """Callback function when a user object is saved."""
-    clear_user_role_cache(instance)
-
-
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
 def create_missing_rule_sets(sender, instance, **kwargs):
     """Called *after* a Group object is saved.
@@ -935,6 +924,3 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
     """
     update_group_roles(instance)
-
-    for user in get_user_model().objects.filter(groups__name=instance.name):
-        clear_user_role_cache(user)

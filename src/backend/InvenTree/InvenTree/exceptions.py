@@ -2,7 +2,6 @@
 
 # -*- coding: utf-8 -*-
 
-import logging
 import sys
 import traceback
 
@@ -11,14 +10,12 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
 import rest_framework.views as drfviews
-from error_report.models import Error
+import structlog
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 
-import InvenTree.sentry
-
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def log_error(path, error_name=None, error_info=None, error_data=None):
@@ -34,6 +31,8 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         error_info: The error information (optional, overrides 'info')
         error_data: The error data (optional, overrides 'data')
     """
+    from error_report.models import Error
+
     kind, info, data = sys.exc_info()
 
     # Check if the error is on the ignore list
@@ -75,6 +74,8 @@ def exception_handler(exc, context):
 
     If sentry error reporting is enabled, we will also provide the original exception to sentry.io
     """
+    import InvenTree.sentry
+
     response = None
 
     # Pass exception to sentry.io handler

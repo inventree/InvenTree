@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { identifierString } from '../../functions/conversion';
 import { Boundary } from '../Boundary';
-import { InvenTreeContext } from './PluginContext';
+import type { InvenTreeContext } from './PluginContext';
 import { findExternalPluginFunction } from './PluginSource';
 
 /**
@@ -21,11 +21,11 @@ export default function RemoteComponent({
   source,
   defaultFunctionName,
   context
-}: {
+}: Readonly<{
   source: string;
   defaultFunctionName: string;
   context: InvenTreeContext;
-}) {
+}>) {
   const componentRef = useRef<HTMLDivElement>();
 
   const [renderingError, setRenderingError] = useState<string | undefined>(
@@ -53,21 +53,27 @@ export default function RemoteComponent({
     }
 
     if (sourceFile && functionName) {
-      findExternalPluginFunction(sourceFile, functionName).then((func) => {
-        if (func) {
-          try {
-            func(componentRef.current, context);
-            setRenderingError('');
-          } catch (error) {
-            setRenderingError(`${error}`);
+      findExternalPluginFunction(sourceFile, functionName)
+        .then((func) => {
+          if (func) {
+            try {
+              func(componentRef.current, context);
+              setRenderingError('');
+            } catch (error) {
+              setRenderingError(`${error}`);
+            }
+          } else {
+            setRenderingError(`${sourceFile}:${functionName}`);
           }
-        } else {
-          setRenderingError(`${sourceFile}:${functionName}`);
-        }
-      });
+        })
+        .catch((_error) => {
+          console.error(
+            `ERR: Failed to load remove plugin function: ${sourceFile}:${functionName}`
+          );
+        });
     } else {
       setRenderingError(
-        t`Invalid source or function name` + ` - ${sourceFile}:${functionName}`
+        `${t`Invalid source or function name`} - ${sourceFile}:${functionName}`
       );
     }
   };
@@ -78,28 +84,23 @@ export default function RemoteComponent({
   }, [sourceFile, functionName, context]);
 
   return (
-    <>
-      <Boundary
-        label={identifierString(
-          `RemoteComponent-${sourceFile}-${functionName}`
+    <Boundary
+      label={identifierString(`RemoteComponent-${sourceFile}-${functionName}`)}
+    >
+      <Stack gap='xs'>
+        {renderingError && (
+          <Alert
+            color='red'
+            title={t`Error Loading Content`}
+            icon={<IconExclamationCircle />}
+          >
+            <Text>
+              {t`Error occurred while loading plugin content`}: {renderingError}
+            </Text>
+          </Alert>
         )}
-      >
-        <Stack gap="xs">
-          {renderingError && (
-            <Alert
-              color="red"
-              title={t`Error Loading Content`}
-              icon={<IconExclamationCircle />}
-            >
-              <Text>
-                {t`Error occurred while loading plugin content`}:{' '}
-                {renderingError}
-              </Text>
-            </Alert>
-          )}
-          <div ref={componentRef as any}></div>
-        </Stack>
-      </Boundary>
-    </>
+        <div ref={componentRef as any} />
+      </Stack>
+    </Boundary>
   );
 }

@@ -57,7 +57,7 @@ class CleanMixin:
         Ref: https://github.com/mozilla/bleach/issues/192
 
         """
-        cleaned = strip_html_tags(data, field_name=field)
+        cleaned = data
 
         # By default, newline characters are removed
         remove_newline = True
@@ -66,13 +66,13 @@ class CleanMixin:
         try:
             if hasattr(self, 'serializer_class'):
                 model = self.serializer_class.Meta.model
-                field = model._meta.get_field(field)
+                field_base = model._meta.get_field(field)
 
                 # The following field types allow newline characters
                 allow_newline = [(InvenTreeNotesField, True)]
 
                 for field_type in allow_newline:
-                    if issubclass(type(field), field_type[0]):
+                    if issubclass(type(field_base), field_type[0]):
                         remove_newline = False
                         is_markdown = field_type[1]
                         break
@@ -85,6 +85,8 @@ class CleanMixin:
         cleaned = remove_non_printable_characters(
             cleaned, remove_newline=remove_newline
         )
+
+        cleaned = strip_html_tags(cleaned, field_name=field)
 
         if is_markdown:
             cleaned = clean_markdown(cleaned)

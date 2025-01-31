@@ -1,8 +1,8 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
 import io
-import logging
 from decimal import Decimal
+from typing import Optional
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -11,6 +11,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
@@ -23,7 +24,7 @@ from common.notifications import (
 from common.settings import get_global_setting
 from InvenTree.format import format_money
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_base_url(request=None):
@@ -179,12 +180,12 @@ def download_image_from_url(remote_url, timeout=2.5):
 
 
 def render_currency(
-    money,
-    decimal_places=None,
-    currency=None,
-    min_decimal_places=None,
-    max_decimal_places=None,
-    include_symbol=True,
+    money: Money,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    min_decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 

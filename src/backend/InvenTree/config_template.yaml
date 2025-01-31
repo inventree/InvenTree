@@ -25,8 +25,11 @@ database:
   # HOST: Database host address (if required)
   # PORT: Database host port (if required)
 
+# Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
+# site_url: 'http://localhost:8000'
+
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
-debug: True
+debug: False
 
 # Additional debug options
 debug_querycount: False
@@ -42,8 +45,18 @@ debug_shell: False
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
+# Configure if logs should be output in JSON format
+# Use environment variable INVENTREE_JSON_LOG
+json_log: False
+
 # Enable database-level logging, or use the environment variable INVENTREE_DB_LOGGING
 db_logging: False
+
+# Enable writing a log file, or use the environment variable INVENTREE_WRITE_LOG
+write_log: False
+
+# Enable writing logs to the console (stdout), or use the environment variable INVENTREE_CONSOLE_LOG
+console_log: True
 
 # Select default system language , or use the environment variable INVENTREE_LANGUAGE
 language: en-us
@@ -51,8 +64,6 @@ language: en-us
 # System time-zone (default is UTC). Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: UTC
 
-# Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
-site_url: 'http://localhost:8000'
 
 # Add new user on first startup by either adding values here or from a file
 #admin_user: admin
@@ -109,19 +120,16 @@ allowed_hosts:
 #   - 'http://localhost'
 #   - 'http://*.localhost'
 
-# Proxy forwarding settings
-# If InvenTree is running behind a proxy, you may need to configure these settings
-
-# Override with the environment variable INVENTREE_USE_X_FORWARDED_HOST
-use_x_forwarded_host: false
-
-# Override with the environment variable INVENTREE_USE_X_FORWARDED_PORT
-use_x_forwarded_port: false
+# Enable Proxy header passthrough
+# Override with the environment variable INVENTREE_USE_X_FORWARDED_<HEADER>
+# use_x_forwarded_host: true
+# use_x_forwarded_port: true
+# use_x_forwarded_proto: true
 
 # Cookie settings (nominally the default settings should be fine)
-#cookie:
-#  secure: false
-#  samesite: false
+cookie:
+  secure: false
+  samesite: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
@@ -154,7 +162,6 @@ cache:
   enabled: false
   host: 'inventree-cache'
   port: 6379
-
 
 # Login configuration
 login_confirm_days: 3
@@ -206,10 +213,3 @@ ldap:
 #   hide_password_reset: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
-#   hide_pui_banner: true
-
-# Set enabled frontends
-# Use the environment variable INVENTREE_CLASSIC_FRONTEND
-# classic_frontend: True
-# Use the environment variable INVENTREE_PLATFORM_FRONTEND
-# platform_frontend: True

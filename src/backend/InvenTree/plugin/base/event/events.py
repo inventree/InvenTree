@@ -1,11 +1,11 @@
 """Functions for triggering and responding to server side events."""
 
-import logging
-
 from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
+
+import structlog
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
@@ -13,18 +13,25 @@ from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
-def trigger_event(event, *args, **kwargs):
+def trigger_event(event: str, *args, **kwargs) -> None:
     """Trigger an event with optional arguments.
 
-    This event will be stored in the database,
-    and the worker will respond to it later on.
+    Arguments:
+        event: The event to trigger
+        *args: Additional arguments to pass to the event handler
+        **kwargs: Additional keyword arguments to pass to the event handler
+
+    This event will be stored in the database, and the worker will respond to it later on.
     """
     if not get_global_setting('ENABLE_PLUGINS_EVENTS', False):
         # Do nothing if plugin events are not enabled
         return
+
+    # Ensure event name is stringified
+    event = str(event).strip()
 
     # Make sure the database can be accessed and is not being tested rn
     if (
@@ -36,9 +43,13 @@ def trigger_event(event, *args, **kwargs):
 
     logger.debug("Event triggered: '%s'", event)
 
-    # By default, force the event to be processed asynchronously
-    if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
-        kwargs['force_async'] = True
+    force_async = kwargs.pop('force_async', True)
+
+    # If we are running in testing mode, we can enable or disable async processing
+    if settings.PLUGIN_TESTING_EVENTS:
+        force_async = settings.PLUGIN_TESTING_EVENTS_ASYNC
+
+    kwargs['force_async'] = force_async
 
     offload_task(register_event, event, *args, group='plugin', **kwargs)
 
@@ -149,7 +160,7 @@ def allow_table_event(table_name):
         'part_partstocktakereport',
     ]
 
-    return not table_name in ignore_tables
+    return table_name not in ignore_tables
 
 
 @receiver(post_save)
@@ -179,4 +190,9 @@ def after_delete(sender, instance, **kwargs):
     if not allow_table_event(table):
         return
 
-    trigger_event(f'{table}.deleted', model=sender.__name__)
+    instance_id = None
+
+    if instance:
+        instance_id = getattr(instance, 'id', None)
+
+    trigger_event(f'{table}.deleted', model=sender.__name__, id=instance_id)

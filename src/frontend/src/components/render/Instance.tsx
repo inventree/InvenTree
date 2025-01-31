@@ -1,11 +1,12 @@
 import { t } from '@lingui/macro';
 import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback } from 'react';
 
-import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
+import { shortenString } from '../../functions/tables';
 import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
@@ -20,7 +21,8 @@ import {
   RenderContentType,
   RenderError,
   RenderImportSession,
-  RenderProjectCode
+  RenderProjectCode,
+  RenderSelectionList
 } from './Generic';
 import { ModelInformationDict } from './ModelType';
 import {
@@ -94,6 +96,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin,
   [ModelType.contenttype]: RenderContentType,
+  [ModelType.selectionlist]: RenderSelectionList,
   [ModelType.error]: RenderError
 };
 
@@ -127,6 +130,8 @@ export function RenderRemoteInstance({
   model: ModelType;
   pk: number;
 }>): ReactNode {
+  const api = useApi();
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {
@@ -191,19 +196,29 @@ export function RenderInlineModel({
     [url, navigate]
   );
 
+  const primaryText = shortenString({
+    str: primary,
+    len: 50
+  });
+
+  const secondaryText = shortenString({
+    str: secondary,
+    len: 75
+  });
+
   return (
-    <Group gap="xs" justify="space-between" wrap="nowrap" title={tooltip}>
-      <Group gap="xs" justify="left" wrap="nowrap">
+    <Group gap='xs' justify='space-between' wrap='nowrap' title={tooltip}>
+      <Group gap='xs' justify='left' wrap='nowrap'>
         {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
-          <Anchor href={url} onClick={(event: any) => onClick(event)}>
-            <Text size="sm">{primary}</Text>
+          <Anchor href='' onClick={(event: any) => onClick(event)}>
+            <Text size='sm'>{primaryText}</Text>
           </Anchor>
         ) : (
-          <Text size="sm">{primary}</Text>
+          <Text size='sm'>{primaryText}</Text>
         )}
-        {showSecondary && secondary && <Text size="xs">{secondary}</Text>}
+        {showSecondary && secondary && <Text size='xs'>{secondaryText}</Text>}
       </Group>
       {suffix && (
         <>
@@ -220,9 +235,5 @@ export function UnknownRenderer({
 }: Readonly<{
   model: ModelType | undefined;
 }>): ReactNode {
-  return (
-    <Alert color="red" title={t`Unknown model: ${model}`}>
-      <></>
-    </Alert>
-  );
+  return <Alert color='red' title={t`Unknown model: ${model}`} />;
 }

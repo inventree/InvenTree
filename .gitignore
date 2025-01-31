@@ -88,6 +88,10 @@ env/
 src/backend/InvenTree/InvenTree/locale_stats.json
 src/backend/InvenTree/InvenTree/licenses.txt
 
+# Logs
+src/backend/InvenTree/logs.json
+src/backend/InvenTree/logs.log
+
 # node.js
 node_modules/
 
@@ -112,4 +116,3 @@ InvenTree/web/static
 docs/schema.yml
 docs/docs/api/*.yml
 docs/docs/api/schema/*.yml
-inventree_settings.json
