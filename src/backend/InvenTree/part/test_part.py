@@ -101,6 +101,7 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the 'render_date' template tag."""
         self.assertEqual(inventree_extras.render_date('2021-01-01'), '2021-01-01')
 
+        self.assertEqual(inventree_extras.render_date(None), None)
         self.assertEqual(inventree_extras.render_date('  '), None)
         self.assertEqual(inventree_extras.render_date('aaaa'), None)
         self.assertEqual(inventree_extras.render_date(1234), 1234)
