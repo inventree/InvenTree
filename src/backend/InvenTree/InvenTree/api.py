@@ -20,6 +20,7 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
+from InvenTree import helpers
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
@@ -198,6 +199,14 @@ class VersionTextView(ListAPI):
 class InfoApiSerializer(serializers.Serializer):
     """InvenTree server information - some information might be blanked if called without elevated credentials."""
 
+    class CustomizeSerializer(serializers.Serializer):
+        """Serializer for customize field."""
+
+        logo = serializers.CharField()
+        splash = serializers.CharField()
+        login_message = serializers.CharField()
+        navbar_message = serializers
+
     server = serializers.CharField(read_only=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
@@ -214,6 +223,7 @@ class InfoApiSerializer(serializers.Serializer):
     default_locale = serializers.ChoiceField(
         choices=settings.LOCALE_CODES, read_only=True
     )
+    customize = CustomizeSerializer(read_only=True)
     system_health = serializers.BooleanField(read_only=True)
     database = serializers.CharField(read_only=True)
     platform = serializers.CharField(read_only=True)
@@ -263,6 +273,12 @@ class InfoView(APIView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
+            'customize': {
+                'logo': helpers.getLogoImage(),
+                'splash': helpers.getSplashScreen(),
+                'login_message': helpers.getCustomOption('login_message'),
+                'navbar_message': helpers.getCustomOption('navbar_message'),
+            },
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,

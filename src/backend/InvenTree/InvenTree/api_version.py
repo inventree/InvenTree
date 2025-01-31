@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 306
+INVENTREE_API_VERSION = 307
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v307 - 2025-01-29 : https://github.com/inventree/InvenTree/pull/8969
+    - Extend Info Endpoint to include customizations
 
 v306 - 2025-01-28 : https://github.com/inventree/InvenTree/pull/8966
     - Adds "start_date" to PurchasesOrder API

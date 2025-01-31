@@ -193,6 +193,15 @@ def getSplashScreen(custom=True):
     return static_storage.url('img/inventree_splash.jpg')
 
 
+def getCustomOption(reference: str):
+    """Return the value of a custom option from settings.CUSTOMIZE.
+
+    Args:
+        reference: Reference key for the custom option
+    """
+    return settings.CUSTOMIZE.get(reference, None)
+
+
 def TestIfImageURL(url):
     """Test if an image URL (or filename) looks like a valid image format.
 
