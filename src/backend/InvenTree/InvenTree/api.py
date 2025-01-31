@@ -22,11 +22,11 @@ import InvenTree.version
 import users.models
 from InvenTree import helpers
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
+from .helpers import plugins_info
 from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
