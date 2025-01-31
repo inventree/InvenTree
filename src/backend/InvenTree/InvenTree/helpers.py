@@ -193,6 +193,15 @@ def getSplashScreen(custom=True):
     return static_storage.url('img/inventree_splash.jpg')
 
 
+def getCustomOption(reference: str):
+    """Return the value of a custom option from settings.CUSTOMIZE.
+
+    Args:
+        reference: Reference key for the custom option
+    """
+    return settings.CUSTOMIZE.get(reference, None)
+
+
 def TestIfImageURL(url):
     """Test if an image URL (or filename) looks like a valid image format.
 
@@ -1061,3 +1070,20 @@ def pui_url(subpath: str) -> str:
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'
+
+
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    from plugin.registry import registry
+
+    # Check if plugins are even enabled
+    if not settings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
+        for plg in plug_list
+    ]
