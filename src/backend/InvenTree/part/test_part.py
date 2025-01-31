@@ -121,6 +121,14 @@ class TemplateTagTest(InvenTreeTestCase):
             '',
         )
 
+        # Method
+        self.assertEqual(
+            inventree_extras.setting_object(
+                'PART_ALLOW_DUPLICATE_IPN', method='abc', user=self.user
+            ).value,
+            '',
+        )
+
     def test_settings_value(self):
         """Test the 'settings_value' template tag."""
         # Normal
