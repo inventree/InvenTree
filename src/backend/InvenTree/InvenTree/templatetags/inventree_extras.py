@@ -118,6 +118,12 @@ def inventree_commit_hash(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_installer(*args, **kwargs):
+    """Return InvenTree package installer string."""
+    return version.inventreeInstaller()
+
+
+@register.simple_tag()
 def inventree_commit_date(*args, **kwargs):
     """Return InvenTree git commit date string."""
     return version.inventreeCommitDate()
