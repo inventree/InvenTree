@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import { Accordion } from '@mantine/core';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
@@ -28,7 +29,7 @@ export default function LabelTemplatePanel() {
     <Accordion defaultValue={['templates']} multiple>
       <Accordion.Item value='templates'>
         <Accordion.Control>
-          <StylishText size='lg'>Label Templates</StylishText>
+          <StylishText size='lg'>{t`Label Templates`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <LabelTemplateTable />
@@ -36,7 +37,7 @@ export default function LabelTemplatePanel() {
       </Accordion.Item>
       <Accordion.Item value='outputs'>
         <Accordion.Control>
-          <StylishText size='lg'>Generated Labels</StylishText>
+          <StylishText size='lg'>{t`Generated Labels`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <TemplateOutputTable
