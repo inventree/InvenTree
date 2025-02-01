@@ -7,11 +7,13 @@ import sys
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.http import HttpRequest
 from django.template import Context, Template
+from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
 from django.test.client import RequestFactory
 from django.urls import reverse
@@ -365,6 +367,124 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return context
 
+    def print(self, items: list, request=None, **kwargs) -> 'ReportOutput':
+        """Print reports for a list of items against this template.
+
+        Arguments:
+            items: A list of items to print reports for (model instance)
+            request: The request object (optional)
+
+        Returns:
+            output: The ReportOutput object representing the generated report(s)
+
+        Raises:
+            ValidationError: If there is an error during report printing
+
+        Notes:
+            Currently, all items are rendered separately into PDF files,
+            and then combined into a single PDF file.
+
+            Further work is required to allow the following extended features:
+            - Render a single PDF file with the collated items (optional per template)
+            - Render a raw file (do not convert to PDF) - allows for other file types
+            - Render using background worker, provide progress updates to UI
+            - Run report generation in the background worker process
+        """
+        outputs = []
+
+        debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
+
+        # Start with a default report name
+        report_name = None
+
+        if request is None:
+            # Generate a dummy request object
+            request = dummy_print_request()
+
+        report_plugins = registry.with_mixin('report')
+
+        try:
+            for instance in items:
+                context = self.get_context(instance, request)
+
+                if report_name is None:
+                    report_name = self.generate_filename(context)
+
+                # Render the report output
+                try:
+                    if debug_mode:
+                        output = self.render_as_string(instance, request)
+                    else:
+                        output = self.render(instance, request)
+                except TemplateDoesNotExist as e:
+                    t_name = str(e) or self.template
+                    raise ValidationError(f'Template file {t_name} does not exist')
+
+                outputs.append(output)
+
+                # Attach the generated report to the model instance (if required)
+                if self.attach_to_model and not debug_mode:
+                    data = output.get_document().write_pdf()
+                    instance.create_attachment(
+                        attachment=ContentFile(data, report_name),
+                        comment=_(f'Report generated from template {self.name}'),
+                        upload_user=request.user
+                        if request.user.is_authenticated
+                        else None,
+                    )
+
+                # Provide generated report to any interested plugins
+                for plugin in report_plugins:
+                    try:
+                        plugin.report_callback(self, instance, output, request)
+                    except Exception:
+                        InvenTree.exceptions.log_error(
+                            f'plugins.{plugin.slug}.report_callback'
+                        )
+        except Exception as exc:
+            # Something went wrong during the report generation process
+            if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
+                InvenTree.exceptions.log_error('report.print')
+
+            raise ValidationError({
+                'error': _('Error generating report'),
+                'detail': str(exc),
+                'path': request.path,
+            })
+
+        if not report_name.endswith('.pdf'):
+            report_name += '.pdf'
+
+        # Combine all the generated reports into a single PDF file
+        if debug_mode:
+            data = '\n'.join(outputs)
+            report_name = report_name.replace('.pdf', '.html')
+        else:
+            pages = []
+
+            try:
+                for output in outputs:
+                    doc = output.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
+
+                data = outputs[0].get_document().copy(pages).write_pdf()
+            except TemplateDoesNotExist as exc:
+                t_name = str(exc) or self.template
+                raise ValidationError(f'Template file {t_name} does not exist')
+
+        # Save the generated report to the database
+        output = ReportOutput.objects.create(
+            template=self,
+            items=len(items),
+            user=request.user if request.user.is_authenticated else None,
+            progress=100,
+            complete=True,
+            output=ContentFile(data, report_name),
+        )
+
+        return output
+
 
 class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
     """Class representing the LabelTemplate database model."""
@@ -440,7 +560,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         return context
 
     def print(
-        self, items: list, plugin: InvenTreePlugin, options=None, request=None
+        self, items: list, plugin: InvenTreePlugin, options=None, request=None, **kwargs
     ) -> 'LabelOutput':
         """Print labels for a list of items against this template.
 
