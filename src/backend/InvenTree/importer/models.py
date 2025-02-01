@@ -660,12 +660,12 @@ class DataImportRow(models.Model):
                 try:
                     serializer.save()
                     self.complete = True
-                    self.save()
 
-                    self.session.check_complete()
-
-                except Exception as e:
+                except ValueError as e:  # Exception as e:
                     self.errors = {'non_field_errors': str(e)}
                     result = False
+
+                self.save()
+                self.session.check_complete()
 
         return result

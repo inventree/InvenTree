@@ -1062,8 +1062,8 @@ class PartSerializer(
         instance = super().create(validated_data)
 
         # Save user information
-        if self.context['request']:
-            instance.creation_user = self.context['request'].user
+        if request := self.context.get('request'):
+            instance.creation_user = request.user
             instance.save()
 
         # Copy data from original Part
@@ -1123,7 +1123,9 @@ class PartSerializer(
                     part=instance, quantity=quantity, location=location
                 )
 
-                stockitem.save(user=self.context['request'].user)
+                request = self.context.get('request', None)
+                user = request.user if request else None
+                stockitem.save(user=user)
 
         # Create initial supplier information
         if initial_supplier:
@@ -1222,9 +1224,8 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         data = self.validated_data
 
         # Add in user information automatically
-        request = self.context['request']
-        data['user'] = request.user
-
+        request = self.context.get('request')
+        data['user'] = request.user if request else None
         super().save()
 
 
