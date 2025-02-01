@@ -5,13 +5,15 @@ import os
 import sys
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
+from django.http import HttpRequest
 from django.template import Context, Template
 from django.template.loader import render_to_string
+from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -36,6 +38,17 @@ except OSError as err:  # pragma: no cover
 
 
 logger = logging.getLogger('inventree')
+
+
+def dummy_print_request() -> HttpRequest:
+    """Generate a dummy HTTP request object.
+
+    This is required for internal print calls, as WeasyPrint *requires* a request object.
+    """
+    factory = RequestFactory()
+    request = factory.get('/')
+    request.user = AnonymousUser()
+    return request
 
 
 class WeasyprintReport(WeasyTemplateResponseMixin):
@@ -68,7 +81,7 @@ def rename_template(instance, filename):
 
 
 class TemplateUploadMixin:
-    """Mixin class for providing template pathing functions.
+    """Mixin class for providing template path management functions.
 
     - Provides generic method for determining the upload path for a template
     - Provides generic method for checking for duplicate filenames
@@ -198,7 +211,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         wp = WeasyprintReport(
             request,
             self.template_name,
-            base_url=request.build_absolute_uri('/'),
+            base_url=get_base_url(request=request),
             presentational_hints=True,
             filename=self.generate_filename(context),
             **kwargs,
@@ -454,6 +467,11 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         if options is None:
             options = {}
+
+        if request is None:
+            # If the request object is not provided, we need to create a dummy one
+            # Otherwise, WeasyPrint throws an error
+            request = dummy_print_request()
 
         try:
             if hasattr(plugin, 'before_printing'):
