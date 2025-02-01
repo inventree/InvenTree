@@ -1,8 +1,8 @@
 import { test } from '../baseFixtures.js';
-import { baseUrl } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
+  navigate,
   openFilterDrawer,
   setTableChoiceFilter
 } from '../helpers.js';
@@ -11,7 +11,7 @@ import { doQuickLogin } from '../login.js';
 test('Stock - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock/location/index/`);
+  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/platform/stock/location/**');
 
   await page.getByRole('tab', { name: 'Location Details' }).click();
@@ -29,7 +29,7 @@ test('Stock - Basic Tests', async ({ page }) => {
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('tab', { name: 'Location Details' }).click();
 
-  await page.goto(`${baseUrl}/stock/item/1194/details`);
+  await navigate(page, 'stock/item/1194/details');
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
   await page.getByRole('tab', { name: 'Stock Tracking' }).click();
@@ -41,7 +41,7 @@ test('Stock - Basic Tests', async ({ page }) => {
 test('Stock - Location Tree', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock/location/index/`);
+  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/platform/stock/location/**');
   await page.getByRole('tab', { name: 'Location Details' }).click();
 
@@ -58,7 +58,7 @@ test('Stock - Location Tree', async ({ page }) => {
 test('Stock - Filters', async ({ page }) => {
   await doQuickLogin(page, 'steven', 'wizardstaff');
 
-  await page.goto(`${baseUrl}/stock/location/index/`);
+  await navigate(page, 'stock/location/index/');
   await page.getByRole('tab', { name: 'Stock Items' }).click();
 
   await openFilterDrawer(page);
@@ -169,7 +169,7 @@ test('Stock - Serial Numbers', async ({ page }) => {
 test('Stock - Stock Actions', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock/item/1225/details`);
+  await navigate(page, 'stock/item/1225/details');
 
   // Helper function to launch a stock action
   const launchStockAction = async (action: string) => {
@@ -223,7 +223,7 @@ test('Stock - Stock Actions', async ({ page }) => {
   await page.getByText('Incoming goods inspection').first().waitFor();
 
   // Find an item which has been sent to a customer
-  await page.goto(`${baseUrl}/stock/item/1014/details`);
+  await navigate(page, 'stock/item/1014/details');
   await page.getByText('Batch Code: 2022-11-12').waitFor();
   await page.getByText('Unavailable').waitFor();
   await page.getByLabel('action-menu-stock-operations').click();
@@ -234,7 +234,7 @@ test('Stock - Tracking', async ({ page }) => {
   await doQuickLogin(page);
 
   // Navigate to the "stock item" page
-  await page.goto(`${baseUrl}/stock/item/176/details/`);
+  await navigate(page, 'stock/item/176/details/');
   await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
 
   // Navigate to the "stock tracking" tab
