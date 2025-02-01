@@ -204,31 +204,12 @@ class LabelPrint(GenericAPIView):
         ):
             plugin_serializer.is_valid(raise_exception=True)
 
-        # Create a new LabelOutput instance to print against
-        output = report.models.LabelOutput.objects.create(
-            template=template,
-            items=len(items_to_print),
-            plugin=plugin.slug,
-            user=request.user,
-            progress=0,
-            complete=False,
+        output = template.print(
+            items_to_print,
+            plugin,
+            options=(plugin_serializer.data if plugin_serializer else {}),
+            request=request,
         )
-
-        try:
-            plugin.before_printing()
-            plugin.print_labels(
-                template,
-                output,
-                items_to_print,
-                request,
-                printing_options=(plugin_serializer.data if plugin_serializer else {}),
-            )
-            plugin.after_printing()
-        except ValidationError as e:
-            raise (e)
-        except Exception as e:
-            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
-            raise ValidationError([_('Error printing label'), str(e)])
 
         output.refresh_from_db()
 

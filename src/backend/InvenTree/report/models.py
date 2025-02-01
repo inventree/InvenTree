@@ -23,6 +23,7 @@ import report.validators
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
+from plugin import InvenTreePlugin
 from plugin.registry import registry
 
 try:
@@ -424,6 +425,59 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
                 )
 
         return context
+
+    def print(
+        self, items: list, plugin: InvenTreePlugin, options=None, request=None
+    ) -> 'LabelOutput':
+        """Print labels for a list of items against this template.
+
+        Arguments:
+            items: A list of items to print labels for (model instance)
+            plugin: The plugin to use for label rendering
+            options: Additional options for the label printing plugin (optional)
+            request: The request object (optional)
+
+        Returns:
+            output: The LabelOutput object representing the generated label(s)
+
+        Raises:
+            ValidationError: If there is an error during label printing
+        """
+        output = LabelOutput.objects.create(
+            template=self,
+            items=len(items),
+            plugin=plugin.slug,
+            user=request.user if request else None,
+            progress=0,
+            complete=False,
+        )
+
+        if options is None:
+            options = {}
+
+        try:
+            if hasattr(plugin, 'before_printing'):
+                plugin.before_printing()
+
+                plugin.print_labels(
+                    self, output, items, request, printing_options=options
+                )
+
+            if hasattr(plugin, 'after_printing'):
+                plugin.after_printing()
+        except ValidationError as e:
+            output.delete()
+            raise e
+        except Exception as e:
+            output.delete()
+            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
+            raise ValidationError([_('Error printing labels'), str(e)])
+
+        output.complete = True
+        output.save()
+
+        # Return the output object
+        return output
 
 
 class TemplateOutput(models.Model):
