@@ -63,12 +63,8 @@ test('Sales Orders - Tabs', async ({ page }) => {
 test('Sales Orders - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'home');
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
-
-  // Check for expected text in the table
-  await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
 
   await clearTableFilters(page);
 
