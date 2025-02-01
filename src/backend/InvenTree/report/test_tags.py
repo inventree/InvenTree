@@ -170,9 +170,14 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         obj = Part.objects.create(name='test', description='test')
         self.assertEqual(report_tags.internal_link(obj, 'test123'), 'test123')
         link = report_tags.internal_link(obj.get_absolute_url(), 'test')
-        self.assertEqual(
-            link, f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>'
-        )
+
+        # Test might return one of two results, depending on test env
+        options = [
+            f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>',
+            f'<a href="/platform/part/{obj.pk}">test</a>',
+        ]
+
+        self.assertIn(link, options)
 
         # Test with an invalid object
         link = report_tags.internal_link(None, None)
