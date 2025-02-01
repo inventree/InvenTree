@@ -972,7 +972,9 @@ class PartSerializer(
     category_default_location = serializers.IntegerField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
-    minimum_stock = serializers.FloatField()
+    minimum_stock = serializers.FloatField(
+        required=False, label=_('Minimum Stock'), default=0
+    )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
