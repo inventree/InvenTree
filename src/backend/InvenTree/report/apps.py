@@ -41,8 +41,11 @@ class ReportConfig(AppConfig):
 
         with maintenance_mode_on():
             try:
+                print('CREATE DEFAULT LABELS...')
                 self.create_default_labels()
+                print('CREATE DEFAULT REPORTS...')
                 self.create_default_reports()
+                print('ALL DONE...')
             except (
                 AppRegistryNotReady,
                 IntegrityError,
@@ -201,11 +204,18 @@ class ReportConfig(AppConfig):
             },
         ]
 
+        print('====== create_default_reports ======')
+
         for template in report_templates:
+            print('=== template:')
+            for k, v in template.items():
+                print(' - ', k, ':', v)
+
             # Ignore matching templates which are already in the database
             if report.models.ReportTemplate.objects.filter(
                 name=template['name']
             ).exists():
+                print('- exit path A')
                 continue
 
             filename = template.pop('file')
@@ -216,6 +226,7 @@ class ReportConfig(AppConfig):
 
             if not template_file.exists():
                 logger.warning("Missing template file: '%s'", template['name'])
+                print('- exit path B')
                 continue
 
             # Read the existing template file
@@ -227,5 +238,5 @@ class ReportConfig(AppConfig):
                     **template, template=ContentFile(data, os.path.basename(filename))
                 )
                 logger.info("Created new report template: '%s'", template['name'])
-            except Exception:
-                pass
+            except Exception as e:
+                print('exception:', e)
