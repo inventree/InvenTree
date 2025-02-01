@@ -26,7 +26,7 @@ database:
   # PORT: Database host port (if required)
 
 # Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
-# site_url: 'http://localhost:8000'
+site_url: 'http://localhost:8000'
 
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
 debug: False
