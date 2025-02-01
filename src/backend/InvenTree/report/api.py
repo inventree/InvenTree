@@ -19,7 +19,7 @@ import report.helpers
 import report.models
 import report.serializers
 from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
 from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 
@@ -309,14 +309,26 @@ class ReportAssetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class LabelOutputList(TemplatePermissionMixin, BulkDeleteMixin, ListAPI):
+class TemplateOutputMixin:
+    """Mixin class for template output API endpoints."""
+
+    filter_backends = [InvenTreeOrderingFilter]
+    ordering_fields = ['created', 'model_type', 'user']
+    ordering_field_aliases = {'model_type': 'template__model_type'}
+
+
+class LabelOutputList(
+    TemplatePermissionMixin, TemplateOutputMixin, BulkDeleteMixin, ListAPI
+):
     """List endpoint for LabelOutput objects."""
 
     queryset = report.models.LabelOutput.objects.all()
     serializer_class = report.serializers.LabelOutputSerializer
 
 
-class ReportOutputList(TemplatePermissionMixin, BulkDeleteMixin, ListAPI):
+class ReportOutputList(
+    TemplatePermissionMixin, TemplateOutputMixin, BulkDeleteMixin, ListAPI
+):
     """List endpoint for ReportOutput objects."""
 
     queryset = report.models.ReportOutput.objects.all()

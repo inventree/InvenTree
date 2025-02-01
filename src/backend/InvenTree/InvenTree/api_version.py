@@ -1,12 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 307
+INVENTREE_API_VERSION = 309
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v309 - 2025-02-02 : https://github.com/inventree/InvenTree/pull/9008
+    - Bug fixes for the "Part" serializer
+    - Fixes for data import API endpoints
+
+v308 - 2025-02-01 : https://github.com/inventree/InvenTree/pull/9003
+    - Adds extra detail to the ReportOutput and LabelOutput API endpoints
+    - Allows ordering of output list endpoints
 
 v307 - 2025-01-29 : https://github.com/inventree/InvenTree/pull/8969
     - Extend Info Endpoint to include customizations
