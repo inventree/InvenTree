@@ -277,6 +277,74 @@ class ReportTest(InvenTreeAPITestCase):
         template.refresh_from_db()
         self.assertEqual(template.description, 'An updated description')
 
+    def test_print(self):
+        """Test that we can print a report manually."""
+        # Find a suitable report template
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='stockitem'
+        ).first()
+
+        # Gather some items
+        items = StockItem.objects.all()[0:5]
+
+        output = template.print(items)
+
+        self.assertTrue(output.complete)
+        self.assertEqual(output.items, 5)
+        self.assertIsNotNone(output.output)
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+
+class LabelTest(InvenTreeAPITestCase):
+    """Unit tests for label templates."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'test_templates',
+        'supplier_part',
+        'stock',
+        'stock_tests',
+        'bom',
+        'build',
+        'order',
+        'return_order',
+        'sales_order',
+    ]
+
+    superuser = True
+
+    def setUp(self):
+        """Ensure cache is cleared as part of test setup."""
+        cache.clear()
+
+        apps.get_app_config('report').create_default_labels()
+
+        return super().setUp()
+
+    def test_print(self):
+        """Test manual printing of label templates."""
+        # Find a suitable label template
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        # Gather some items
+        parts = Part.objects.all()[0:10]
+
+        # Find the label plugin (render to pdf)
+        plugin = registry.get_plugin('inventreelabel')
+
+        self.assertIsNotNone(template)
+        self.assertIsNotNone(plugin)
+
+        output = template.print(items=parts, plugin=plugin)
+
+        self.assertTrue(output.complete)
+        self.assertEqual(output.items, 10)
+        self.assertIsNotNone(output.output)
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
