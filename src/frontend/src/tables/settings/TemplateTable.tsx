@@ -430,7 +430,7 @@ export function TemplateOutputTable({
       },
       {
         accessor: 'model_type',
-        sortable: false,
+        sortable: true,
         switchable: false,
         title: t`Model Type`
       },
@@ -438,7 +438,7 @@ export function TemplateOutputTable({
         accessor: 'created',
         title: t`Creation Date`,
         switchable: false,
-        sortable: false
+        sortable: true
       }),
       {
         accessor: 'plugin',
@@ -447,6 +447,8 @@ export function TemplateOutputTable({
       },
       {
         accessor: 'user_detail.username',
+        sortable: true,
+        ordering: 'user',
         title: t`Created By`
       }
     ];
