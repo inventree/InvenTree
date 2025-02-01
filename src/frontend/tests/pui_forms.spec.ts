@@ -1,12 +1,11 @@
 /** Unit tests for form validation, rendering, etc */
 import test from 'playwright/test';
-
-import { baseUrl } from './defaults';
+import { navigate } from './helpers';
 import { doQuickLogin } from './login';
 
 test('Forms - Stock Item Validation', async ({ page }) => {
   await doQuickLogin(page, 'steven', 'wizardstaff');
-  await page.goto(`${baseUrl}/stock/location/index/stock-items`);
+  await navigate(page, 'stock/location/index/stock-items');
   await page.waitForURL('**/platform/stock/location/**');
 
   // Create new stock item form
@@ -77,7 +76,7 @@ test('Forms - Stock Item Validation', async ({ page }) => {
 
 test('Forms - Supplier Validation', async ({ page, request }) => {
   await doQuickLogin(page, 'steven', 'wizardstaff');
-  await page.goto(`${baseUrl}/purchasing/index/suppliers`);
+  await navigate(page, 'purchasing/index/suppliers');
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByLabel('action-button-add-company').click();
@@ -113,7 +112,7 @@ test('Forms - Supplier Validation', async ({ page, request }) => {
     .waitFor();
 
   // Now, try to create another new supplier with the same name
-  await page.goto(`${baseUrl}/purchasing/index/suppliers`);
+  await navigate(page, 'purchasing/index/suppliers');
   await page.waitForURL('**/purchasing/index/**');
   await page.getByLabel('action-button-add-company').click();
   await page.getByLabel('text-field-name').fill(supplierName);
