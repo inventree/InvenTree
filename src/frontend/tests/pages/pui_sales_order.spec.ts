@@ -33,6 +33,9 @@ test('Sales Orders - Tabs', async ({ page }) => {
 
   // Sales Order Details
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
+
+  await clearTableFilters(page);
+
   await page.getByRole('cell', { name: 'SO0001' }).click();
   await page
     .getByLabel('Order Details')
@@ -107,8 +110,8 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
 
+  await clearTableFilters(page);
   // Click through to a particular sales order
-  await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
   await page.getByRole('cell', { name: 'SO0006' }).first().click();
   await page.getByRole('tab', { name: 'Shipments' }).click();
 
