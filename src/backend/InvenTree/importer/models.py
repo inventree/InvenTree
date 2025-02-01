@@ -617,16 +617,19 @@ class DataImportRow(models.Model):
 
         return data
 
-    def construct_serializer(self):
+    def construct_serializer(self, request=None):
         """Construct a serializer object for this row."""
         if serializer_class := self.session.serializer_class:
-            return serializer_class(data=self.serializer_data())
+            return serializer_class(
+                data=self.serializer_data(), context={'request': request}
+            )
 
-    def validate(self, commit=False) -> bool:
+    def validate(self, commit=False, request=None) -> bool:
         """Validate the data in this row against the linked serializer.
 
         Arguments:
             commit: If True, the data is saved to the database (if validation passes)
+            request: The request object (if available) for extracting user information
 
         Returns:
             True if the data is valid, False otherwise
@@ -638,7 +641,7 @@ class DataImportRow(models.Model):
             # Row has already been completed
             return True
 
-        serializer = self.construct_serializer()
+        serializer = self.construct_serializer(request=request)
 
         if not serializer:
             self.errors = {
