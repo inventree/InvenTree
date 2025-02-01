@@ -683,7 +683,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['duplicate']
+    import_exclude_fields = ['creation_date', 'creation_user', 'duplicate']
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -760,7 +760,7 @@ class PartSerializer(
             'tags',
         ]
 
-        read_only_fields = ['barcode_hash', 'creation_date']
+        read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
 
     tags = TagListSerializerField(required=False)
 
@@ -1982,7 +1982,7 @@ class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
 
 
 class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer):
-    """Serializer class for exatracting BOM data from an uploaded file.
+    """Serializer class for extracting BOM data from an uploaded file.
 
     The parent class DataFileExtractSerializer does most of the heavy lifting here.
 
