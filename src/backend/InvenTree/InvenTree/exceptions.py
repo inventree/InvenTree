@@ -33,6 +33,9 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
     """
     from error_report.models import Error
 
+    if not path:
+        path = ''
+
     kind, info, data = sys.exc_info()
 
     # Check if the error is on the ignore list
@@ -104,17 +107,19 @@ def exception_handler(exc, context):
         else:
             error_detail = _('Error details can be found in the admin panel')
 
+        request = context.get('request')
+        path = request.path if request else ''
+
         response_data = {
             'error': type(exc).__name__,
             'error_class': str(type(exc)),
             'detail': error_detail,
-            'path': context['request'].path,
+            'path': path,
             'status_code': 500,
         }
 
         response = Response(response_data, status=500)
-
-        log_error(context['request'].path)
+        log_error(path)
 
     if response is not None:
         # Convert errors returned under the label '__all__' to 'non_field_errors'
