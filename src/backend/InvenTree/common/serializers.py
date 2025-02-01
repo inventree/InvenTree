@@ -251,8 +251,8 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                 target['link'] = obj.target_object.get_absolute_url()
             else:
                 # check if user is staff - link to admin
-                request = self.context['request']
-                if request.user and request.user.is_staff:
+                request = self.context.get('request')
+                if request and request.user and request.user.is_staff:
                     meta = obj.target_object._meta
 
                     try:
