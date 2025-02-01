@@ -172,6 +172,7 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         link = report_tags.internal_link(obj.get_absolute_url(), 'test')
 
         # Test might return one of two results, depending on test env
+        # If INVENTREE_SITE_URL is not set in the CI environment, the link will be relative
         options = [
             f'<a href="http://localhost:8000/platform/part/{obj.pk}">test</a>',
             f'<a href="/platform/part/{obj.pk}">test</a>',
