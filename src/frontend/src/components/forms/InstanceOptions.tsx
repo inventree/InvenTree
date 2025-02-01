@@ -58,20 +58,18 @@ export function InstanceOptions({
       <Paper p='xl' withBorder>
         <StylishText size='xl'>{t`Select Server`}</StylishText>
         <Divider p='xs' />
-        <Group>
-          <Group>
-            <Select
-              value={hostKey}
-              onChange={ChangeHost}
-              data={hostListData}
-              disabled={HostListEdit}
-            />
-            <EditButton
-              setEditing={setHostListEdit}
-              editing={HostListEdit}
-              disabled={HostListEdit}
-            />
-          </Group>
+        <Group gap='xs' wrap='nowrap'>
+          <Select
+            value={hostKey}
+            onChange={ChangeHost}
+            data={hostListData}
+            disabled={HostListEdit}
+          />
+          <EditButton
+            setEditing={setHostListEdit}
+            editing={HostListEdit}
+            disabled={HostListEdit}
+          />
           <EditButton
             setEditing={setHostEdit}
             editing={true}
@@ -84,7 +82,7 @@ export function InstanceOptions({
           <>
             <Divider my={'sm'} />
             <Text>
-              <Trans>Edit possible host options</Trans>
+              <Trans>Edit host options</Trans>
             </Text>
             <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
           </>
@@ -150,10 +148,10 @@ function ServerInfo({
   ];
 
   return (
-    <Table>
+    <Table striped p='xs'>
       <Table.Tbody>
         {items.map((item) => (
-          <Table.Tr key={item.key}>
+          <Table.Tr key={item.key} p={2}>
             <Table.Td>
               <ActionIcon size='xs' variant='transparent' color={item.color}>
                 {item.icon}
