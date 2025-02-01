@@ -429,6 +429,12 @@ export function TemplateOutputTable({
         }
       },
       {
+        accessor: 'template_detail.name',
+        sortable: false,
+        switchable: false,
+        title: t`Template`
+      },
+      {
         accessor: 'model_type',
         sortable: true,
         switchable: false,
