@@ -72,6 +72,10 @@ export const getRowFromCell = async (cell) => {
  */
 export const navigate = async (page, url: string) => {
   if (!url.startsWith(baseUrl)) {
+    if (url.startsWith('/')) {
+      url = url.slice(1);
+    }
+
     url = `${baseUrl}/${url}`;
   }
 

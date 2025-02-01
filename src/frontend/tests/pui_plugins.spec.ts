@@ -108,7 +108,7 @@ test('Plugins - Locate Item', async ({ page, request }) => {
   await page.waitForTimeout(500);
 
   // Navigate to the "stock item" page
-  await navigate(page, '/stock/item/287/');
+  await navigate(page, 'stock/item/287/');
 
   // "Locate" this item
   await page.getByLabel('action-button-locate-item').click();
