@@ -1,6 +1,5 @@
 """DRF data serializers for Part app."""
 
-import imghdr
 import io
 import os
 from decimal import Decimal
@@ -295,13 +294,6 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = Part
         fields = ['image']
-
-    def validate_image(self, value):
-        """Check that file is an image."""
-        validate = imghdr.what(value)
-        if not validate:
-            raise serializers.ValidationError('File is not an image')
-        return value
 
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
 
