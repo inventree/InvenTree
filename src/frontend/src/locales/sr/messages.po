@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-01 11:48\n"
+"PO-Revision-Date: 2025-02-02 03:20\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -1145,16 +1145,16 @@ msgid "Plugins"
 msgstr "Ekstenzije"
 
 #: src/components/forms/InstanceOptions.tsx:137
-msgid "Disabled"
-msgstr ""
-
-#: src/components/forms/InstanceOptions.tsx:137
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/settings/TemplateTable.tsx:248
 #: src/tables/settings/TemplateTable.tsx:364
 #: src/tables/stock/StockItemTestResultTable.tsx:402
 msgid "Enabled"
 msgstr "Omogućeno"
+
+#: src/components/forms/InstanceOptions.tsx:137
+msgid "Disabled"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:143
 msgid "Worker"

@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-01 11:48\n"
+"PO-Revision-Date: 2025-02-02 03:20\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1145,15 +1145,15 @@ msgid "Plugins"
 msgstr "Utvidelser"
 
 #: src/components/forms/InstanceOptions.tsx:137
-msgid "Disabled"
-msgstr ""
-
-#: src/components/forms/InstanceOptions.tsx:137
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/settings/TemplateTable.tsx:248
 #: src/tables/settings/TemplateTable.tsx:364
 #: src/tables/stock/StockItemTestResultTable.tsx:402
 msgid "Enabled"
+msgstr ""
+
+#: src/components/forms/InstanceOptions.tsx:137
+msgid "Disabled"
 msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:143

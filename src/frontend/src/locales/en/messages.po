@@ -1140,16 +1140,16 @@ msgid "Plugins"
 msgstr "Plugins"
 
 #: src/components/forms/InstanceOptions.tsx:137
-msgid "Disabled"
-msgstr "Disabled"
-
-#: src/components/forms/InstanceOptions.tsx:137
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/settings/TemplateTable.tsx:248
 #: src/tables/settings/TemplateTable.tsx:364
 #: src/tables/stock/StockItemTestResultTable.tsx:402
 msgid "Enabled"
 msgstr "Enabled"
+
+#: src/components/forms/InstanceOptions.tsx:137
+msgid "Disabled"
+msgstr "Disabled"
 
 #: src/components/forms/InstanceOptions.tsx:143
 msgid "Worker"
