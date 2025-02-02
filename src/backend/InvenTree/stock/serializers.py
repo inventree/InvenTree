@@ -764,8 +764,8 @@ class SerializeStockItemSerializer(serializers.Serializer):
     def save(self):
         """Serialize stock item."""
         item = self.context['item']
-        request = self.context['request']
-        user = request.user
+        request = self.context.get('request')
+        user = request.user if request else None
 
         data = self.validated_data
 
