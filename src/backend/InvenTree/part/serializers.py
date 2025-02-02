@@ -299,7 +299,7 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
         """Check that file is an image."""
         validate = InvenTree.helpers.TestIfImage(value)
         if not validate:
-            raise serializers.ValidationError('File is not an image')
+            raise serializers.ValidationError(_('File is not an image'))
         return value
 
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
