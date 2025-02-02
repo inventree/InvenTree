@@ -16,7 +16,7 @@ def get_model_for_view(view):
         return view.serializer_class.Meta.model
 
     if hasattr(view, 'get_serializer_class'):
-        return view.get_serializr_class().Meta.model
+        return view.get_serializer_class().Meta.model
 
     raise AttributeError(f'Serializer class not specified for {view.__class__}')
 
