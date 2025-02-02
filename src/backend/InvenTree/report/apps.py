@@ -205,20 +205,6 @@ class ReportConfig(AppConfig):
         for template in report_templates:
             # Ignore matching templates which are already in the database
 
-            model_exists = report.models.ReportTemplate.objects.filter(
-                name=template['name']
-            ).exists()
-
-            file_exists = (
-                Path(__file__)
-                .parent.joinpath('templates', 'report', template['file'])
-                .exists()
-            )
-
-            print(f'create_default_reports: {template["name"]}')
-            print(' - model_exists:', model_exists)
-            print(' - file_exists:', file_exists)
-
             if report.models.ReportTemplate.objects.filter(
                 name=template['name']
             ).exists():
