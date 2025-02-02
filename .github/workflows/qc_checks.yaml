@@ -16,7 +16,7 @@ env:
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
-  INVENTREE_DB_NAME: inventree
+  INVENTREE_DB_NAME: /home/runner/work/InvenTree/inventree_db.sqlite3
   INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
   INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
   INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
