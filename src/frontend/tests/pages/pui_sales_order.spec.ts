@@ -1,12 +1,15 @@
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
-import { clearTableFilters, setTableChoiceFilter } from '../helpers.ts';
+import {
+  clearTableFilters,
+  navigate,
+  setTableChoiceFilter
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
 test('Sales Orders - Tabs', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/sales/index/`);
+  await navigate(page, 'sales/index/');
   await page.waitForURL('**/platform/sales/**');
 
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
@@ -30,6 +33,9 @@ test('Sales Orders - Tabs', async ({ page }) => {
 
   // Sales Order Details
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
+
+  await clearTableFilters(page);
+
   await page.getByRole('cell', { name: 'SO0001' }).click();
   await page
     .getByLabel('Order Details')
@@ -57,7 +63,7 @@ test('Sales Orders - Tabs', async ({ page }) => {
 test('Sales Orders - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
+  await navigate(page, 'home');
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
 
@@ -100,12 +106,12 @@ test('Sales Orders - Basic Tests', async ({ page }) => {
 test('Sales Orders - Shipments', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
+  await navigate(page, 'home');
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
 
+  await clearTableFilters(page);
   // Click through to a particular sales order
-  await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
   await page.getByRole('cell', { name: 'SO0006' }).first().click();
   await page.getByRole('tab', { name: 'Shipments' }).click();
 
@@ -155,7 +161,7 @@ test('Sales Orders - Shipments', async ({ page }) => {
   // Click through the various tabs
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Assigned Items' }).click();
+  await page.getByRole('tab', { name: 'Allocated Stock' }).click();
 
   // Ensure assigned items table loads correctly
   await page.getByRole('cell', { name: 'BATCH-001' }).first().waitFor();

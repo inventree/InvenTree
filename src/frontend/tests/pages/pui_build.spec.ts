@@ -1,8 +1,8 @@
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
 import {
   clearTableFilters,
   getRowFromCell,
+  navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
@@ -10,7 +10,7 @@ import { doQuickLogin } from '../login.ts';
 test('Build Order - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/`);
+  await navigate(page, 'part/');
 
   // Navigate to the correct build order
   await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
@@ -87,10 +87,37 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 });
 
+test('Build Order - Edit', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'manufacturing/build-order/22/');
+
+  // Check for expected text items
+  await page.getByText('Building for sales order').first().waitFor();
+  await page.getByText('2024-08-08').waitFor(); // Created date
+  await page.getByText('2025-01-01').waitFor(); // Start date
+  await page.getByText('2025-01-22').waitFor(); // Target date
+
+  await page.keyboard.press('Control+E');
+
+  // Edit start date
+  await page.getByLabel('date-field-start_date').fill('2026-09-09');
+
+  // Submit the form
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Expect error
+  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByText('Target date must be after start date').waitFor();
+
+  // Cancel the form
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
 test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/index/`);
+  await navigate(page, 'manufacturing/index/');
   await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
@@ -164,7 +191,7 @@ test('Build Order - Build Outputs', async ({ page }) => {
 test('Build Order - Allocation', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/build-order/1/line-items`);
+  await navigate(page, 'manufacturing/build-order/1/line-items');
 
   // Expand the R_10K_0805 line item
   await page.getByText('R_10K_0805_1%').first().click();
@@ -264,7 +291,7 @@ test('Build Order - Allocation', async ({ page }) => {
 test('Build Order - Filters', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/index/buildorders`);
+  await navigate(page, 'manufacturing/index/buildorders');
 
   await clearTableFilters(page);
   await page.getByText('1 - 24 / 24').waitFor();

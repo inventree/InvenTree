@@ -1,5 +1,5 @@
 import { test } from '../baseFixtures';
-import { baseUrl } from '../defaults';
+import { navigate } from '../helpers';
 import { doQuickLogin } from '../login';
 
 const scan = async (page, barcode) => {
@@ -42,7 +42,7 @@ test('Scanning - Basic', async ({ page }) => {
 
 test('Scanning - Part', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
 
   await scan(page, '{"part": 1}');
 
@@ -53,7 +53,7 @@ test('Scanning - Part', async ({ page }) => {
 
 test('Scanning - Stockitem', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
   await scan(page, '{"stockitem": 408}');
 
   await page.getByText('1551ABK').waitFor();
@@ -63,7 +63,7 @@ test('Scanning - Stockitem', async ({ page }) => {
 
 test('Scanning - StockLocation', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
   await scan(page, '{"stocklocation": 3}');
 
   // stocklocation: 3
@@ -76,7 +76,7 @@ test('Scanning - StockLocation', async ({ page }) => {
 
 test('Scanning - SupplierPart', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
   await scan(page, '{"supplierpart": 204}');
 
   // supplierpart: 204
@@ -87,7 +87,7 @@ test('Scanning - SupplierPart', async ({ page }) => {
 
 test('Scanning - PurchaseOrder', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
   await scan(page, '{"purchaseorder": 12}');
 
   // purchaseorder: 12
@@ -100,7 +100,7 @@ test('Scanning - PurchaseOrder', async ({ page }) => {
 
 test('Scanning - SalesOrder', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
   await scan(page, '{"salesorder": 6}');
 
   // salesorder: 6
@@ -111,7 +111,7 @@ test('Scanning - SalesOrder', async ({ page }) => {
 
 test('Scanning - Build', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/scan/`);
+  await navigate(page, 'scan/');
   await scan(page, '{"build": 8}');
 
   // build: 8

@@ -101,6 +101,9 @@ export function useBuildOrderFields({
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
+      start_date: {
+        icon: <IconCalendar />
+      },
       target_date: {
         icon: <IconCalendar />
       },
@@ -130,6 +133,10 @@ export function useBuildOrderFields({
 
     if (create) {
       fields.create_child_builds = {};
+    }
+
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
     }
 
     return fields;

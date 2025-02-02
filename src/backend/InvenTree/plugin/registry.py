@@ -7,7 +7,6 @@
 import importlib
 import importlib.machinery
 import importlib.util
-import logging
 import os
 import sys
 import time
@@ -25,6 +24,9 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+import structlog
+
+import InvenTree.cache
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -38,7 +40,7 @@ from .helpers import (
 )
 from .plugin import InvenTreePlugin
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class PluginsRegistry:
@@ -290,7 +292,7 @@ class PluginsRegistry:
                 collect,
             )
 
-            if collect:
+            if collect and not settings.PLUGINS_INSTALL_DISABLED:
                 logger.info('Collecting plugins')
                 self.install_plugin_file()
                 self.plugin_modules = self.collect_plugins()
@@ -452,6 +454,8 @@ class PluginsRegistry:
 
         Args:
             plugin: Plugin module
+            configs: Plugin configuration dictionary
+            force_reload (bool, optional): Force reload of plugin. Defaults to False.
         """
         from InvenTree import version
 
@@ -484,6 +488,7 @@ class PluginsRegistry:
 
         # Check if this is a 'builtin' plugin
         builtin = plugin.check_is_builtin()
+        sample = plugin.check_is_sample()
 
         package_name = None
 
@@ -509,11 +514,37 @@ class PluginsRegistry:
             # Initialize package - we can be sure that an admin has activated the plugin
             logger.debug('Loading plugin `%s`', plg_name)
 
+            # If this is a third-party plugin, reload the source module
+            # This is required to ensure that separate processes are using the same code
+            if not builtin and not sample:
+                plugin_name = plugin.__name__
+                module_name = plugin.__module__
+
+                if plugin_module := sys.modules.get(module_name):
+                    logger.debug('Reloading plugin `%s`', plg_name)
+                    # Reload the module
+                    try:
+                        importlib.reload(plugin_module)
+                        plugin = getattr(plugin_module, plugin_name)
+                    except ModuleNotFoundError:
+                        # No module found - try to import it directly
+                        try:
+                            raw_module = _load_source(
+                                module_name, plugin_module.__file__
+                            )
+                            plugin = getattr(raw_module, plugin_name)
+                        except Exception:
+                            pass
+                    except Exception:
+                        logger.exception('Failed to reload plugin `%s`', plg_name)
+
             try:
                 t_start = time.time()
                 plg_i: InvenTreePlugin = plugin()
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+            except ModuleNotFoundError as e:
+                raise e
             except Exception as error:
                 handle_error(
                     error, log_name='init'
@@ -579,9 +610,7 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(
-                            error, log_name='init', do_raise=settings.PLUGIN_TESTING
-                        )
+                        handle_error(error, log_name='init', do_raise=True)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
@@ -746,7 +775,7 @@ class PluginsRegistry:
 
         if old_hash != self.registry_hash:
             try:
-                logger.debug(
+                logger.info(
                     'Updating plugin registry hash: %s', str(self.registry_hash)
                 )
                 set_global_setting(
@@ -808,6 +837,12 @@ class PluginsRegistry:
             # Skip check if database cannot be accessed
             return
 
+        if InvenTree.cache.get_session_cache('plugin_registry_checked'):
+            # Return early if the registry has already been checked (for this request)
+            return
+
+        InvenTree.cache.set_session_cache('plugin_registry_checked', True)
+
         logger.debug('Checking plugin registry hash')
 
         # If not already cached, calculate the hash
@@ -840,11 +875,16 @@ def _load_source(modname, filename):
 
     See https://docs.python.org/3/whatsnew/3.12.html#imp
     """
-    loader = importlib.machinery.SourceFileLoader(modname, filename)
-    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    if modname in sys.modules:
+        del sys.modules[modname]
+
+    # loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
     module = importlib.util.module_from_spec(spec)
-    # The module is always executed and not cached in sys.modules.
-    # Uncomment the following line to cache the module.
-    # sys.modules[module.__name__] = module
-    loader.exec_module(module)
+
+    sys.modules[module.__name__] = module
+
+    if spec.loader:
+        spec.loader.exec_module(module)
+
     return module

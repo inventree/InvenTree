@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
-import { IconInfoCircle, IconPackages } from '@tabler/icons-react';
+import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -175,22 +175,20 @@ export default function SalesOrderShipmentDetail() {
     return (
       <>
         <ItemDetailsGrid>
-          <Grid>
-            <Grid.Col span={4}>
-              <DetailsImage
-                appRole={UserRoles.sales_order}
-                apiPath={ApiEndpoints.company_list}
-                src={customer?.image}
-                pk={customer?.pk}
-                imageActions={{
-                  selectExisting: false,
-                  downloadImage: false,
-                  uploadFile: false,
-                  deleteFile: false
-                }}
-              />
-            </Grid.Col>
-            <Grid.Col span={8}>
+          <Grid grow>
+            <DetailsImage
+              appRole={UserRoles.sales_order}
+              apiPath={ApiEndpoints.company_list}
+              src={customer?.image}
+              pk={customer?.pk}
+              imageActions={{
+                selectExisting: false,
+                downloadImage: false,
+                uploadFile: false,
+                deleteFile: false
+              }}
+            />
+            <Grid.Col span={{ base: 12, sm: 8 }}>
               <DetailsTable fields={tl} item={data} />
             </Grid.Col>
           </Grid>
@@ -210,8 +208,8 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         name: 'items',
-        label: t`Assigned Items`,
-        icon: <IconPackages />,
+        label: t`Allocated Stock`,
+        icon: <IconBookmark />,
         content: (
           <SalesOrderAllocationTable
             shipmentId={shipment.pk}

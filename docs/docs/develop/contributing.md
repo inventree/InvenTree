@@ -34,7 +34,9 @@ A "bare metal" development setup can be installed as follows:
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
 python3 -m venv env && source env/bin/activate
-pip install django invoke && invoke
+pip install --upgrade --ignore-installed invoke
+invoke install
+invoke update
 invoke dev.setup-dev --tests
 ```
 
@@ -145,10 +147,6 @@ To update the codebase run the following script.
 pyupgrade `find . -name "*.py"`
 django-upgrade --target-version {{ config.extra.django_version }} `find . -name "*.py"`
 ```
-
-## Credits
-
-If you add any new dependencies / libraries, they should be added to [the credits page](../credits.md).
 
 ## Migration Files
 
