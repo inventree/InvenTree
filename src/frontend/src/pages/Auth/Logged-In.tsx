@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Card, Container, Group, Loader, Stack, Text } from '@mantine/core';
+import { useDebouncedCallback } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -9,8 +10,10 @@ export default function Logged_In() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const checkLoginStateDebounced = useDebouncedCallback(checkLoginState, 300);
+
   useEffect(() => {
-    checkLoginState(navigate, location?.state);
+    checkLoginStateDebounced(navigate, location?.state);
   }, [navigate]);
 
   return (
