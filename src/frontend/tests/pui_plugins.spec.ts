@@ -1,6 +1,6 @@
 import test from 'playwright/test';
 
-import { baseUrl } from './defaults.js';
+import { navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
@@ -26,7 +26,7 @@ test('Plugins - Panels', async ({ page, request }) => {
   await page.waitForTimeout(500);
 
   // Navigate to the "part" page
-  await page.goto(`${baseUrl}/part/69/`);
+  await navigate(page, 'part/69/');
 
   // Ensure basic part tab is available
   await page.getByRole('tab', { name: 'Part Details' }).waitFor();
@@ -75,7 +75,7 @@ test('Plugins - Custom Admin', async ({ page, request }) => {
   });
 
   // Navigate to the "admin" page
-  await page.goto(`${baseUrl}/settings/admin/plugin/`);
+  await navigate(page, 'settings/admin/plugin/');
 
   // Open the plugin drawer, and ensure that the custom admin elements are visible
   await page.getByText('SampleUI').click();
@@ -108,7 +108,7 @@ test('Plugins - Locate Item', async ({ page, request }) => {
   await page.waitForTimeout(500);
 
   // Navigate to the "stock item" page
-  await page.goto(`${baseUrl}/stock/item/287/`);
+  await navigate(page, 'stock/item/287/');
 
   // "Locate" this item
   await page.getByLabel('action-button-locate-item').click();

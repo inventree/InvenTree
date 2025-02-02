@@ -1,5 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { apiUrl, baseUrl } from './defaults.js';
+import { apiUrl } from './defaults.js';
+import { navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
@@ -165,7 +166,7 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
   // Try to access "admin" page with a non-staff user
   await doQuickLogin(page, 'allaccess', 'nolimits');
 
-  await page.goto(`${baseUrl}/settings/admin/`);
+  await navigate(page, 'settings/admin/');
   await page.waitForURL('**/settings/admin/**');
 
   // Should get a permission denied message
@@ -175,14 +176,14 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
     .waitFor();
 
   // Try to access user settings page (should be accessible)
-  await page.goto(`${baseUrl}/settings/user/`);
+  await navigate(page, 'settings/user/');
   await page.waitForURL('**/settings/user/**');
 
   await page.getByRole('tab', { name: 'Display Options' }).click();
   await page.getByRole('tab', { name: 'Account' }).click();
 
   // Try to access global settings page
-  await page.goto(`${baseUrl}/settings/system/`);
+  await navigate(page, 'settings/system/');
   await page.waitForURL('**/settings/system/**');
 
   await page.getByText('Permission Denied').waitFor();
