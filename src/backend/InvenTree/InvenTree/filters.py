@@ -92,7 +92,7 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
 
     Then, specify a ordering_field_aliases attribute:
 
-    ordering_field_alises = {
+    ordering_field_aliases = {
         'name': 'part__part__name',
         'SKU': 'part__SKU',
     }
