@@ -253,11 +253,12 @@ class BuildOutputSerializer(serializers.Serializer):
             # The build output must have all tracked parts allocated
             if not build.is_output_fully_allocated(output):
                 # Check if the user has specified that incomplete allocations are ok
-                accept_incomplete = InvenTree.helpers.str2bool(
-                    self.context['request'].data.get(
-                        'accept_incomplete_allocation', False
+                if request := self.context.get('request'):
+                    accept_incomplete = InvenTree.helpers.str2bool(
+                        request.data.get('accept_incomplete_allocation', False)
                     )
-                )
+                else:
+                    accept_incomplete = False
 
                 if not accept_incomplete:
                     raise ValidationError(_('This build output is not fully allocated'))
@@ -439,6 +440,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """Generate the new build output(s)."""
         data = self.validated_data
 
+        request = self.context.get('request')
         build = self.get_build()
 
         build.create_build_output(
@@ -447,7 +449,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             batch=data.get('batch_code', ''),
             location=data.get('location', None),
             auto_allocate=data.get('auto_allocate', False),
-            user=self.context['request'].user,
+            user=request.user if request else None,
         )
 
 
@@ -531,7 +533,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to scrap the build outputs."""
         build = self.context['build']
-        request = self.context['request']
+        request = self.context.get('request')
         data = self.validated_data
         outputs = data.get('outputs', [])
 
@@ -544,7 +546,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
                     output,
                     quantity,
                     data.get('location', None),
-                    user=request.user,
+                    user=request.user if request else None,
                     notes=data.get('notes', ''),
                     discard_allocations=data.get('discard_allocations', False),
                 )
@@ -619,7 +621,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to complete the build outputs."""
         build = self.context['build']
-        request = self.context['request']
+        request = self.context.get('request')
 
         data = self.validated_data
 
@@ -642,7 +644,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
                 build.complete_build_output(
                     output,
-                    request.user,
+                    request.user if request else None,
                     location=location,
                     status=status,
                     notes=notes,
@@ -715,12 +717,12 @@ class BuildCancelSerializer(serializers.Serializer):
     def save(self):
         """Cancel the specified build."""
         build = self.context['build']
-        request = self.context['request']
+        request = self.context.get('request')
 
         data = self.validated_data
 
         build.cancel_build(
-            request.user,
+            request.user if request else None,
             remove_allocated_stock=data.get('remove_allocated_stock', False),
             remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
         )
@@ -837,13 +839,13 @@ class BuildCompleteSerializer(serializers.Serializer):
 
     def save(self):
         """Complete the specified build output."""
-        request = self.context['request']
+        request = self.context.get('request')
         build = self.context['build']
 
         data = self.validated_data
 
         build.complete_build(
-            request.user,
+            request.user if request else None,
             trim_allocated_stock=data.get(
                 'accept_overallocated', OverallocationChoice.REJECT
             )

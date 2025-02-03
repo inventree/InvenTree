@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import {
   BackgroundImage,
   Center,
@@ -18,6 +18,7 @@ import {
   RegistrationForm
 } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
+import { StylishText } from '../../components/items/StylishText';
 import { defaultHostKey } from '../../defaults/defaultHostList';
 import {
   checkLoginState,
@@ -128,14 +129,11 @@ export default function Login() {
               />
             ) : (
               <>
-                <Paper radius='md' p='xl' withBorder>
-                  <Text size='lg' fw={500}>
-                    {loginMode ? (
-                      <Trans>Welcome, log in below</Trans>
-                    ) : (
-                      <Trans>Register below</Trans>
-                    )}
-                  </Text>
+                <Paper p='xl' withBorder>
+                  <StylishText size='xl'>
+                    {loginMode ? t`Login` : t`Register`}
+                  </StylishText>
+                  <Divider p='xs' />
                   {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
                   <ModeSelector loginMode={loginMode} setMode={setMode} />
                   {LoginMessage}
