@@ -77,7 +77,7 @@ django==4.2.18
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[mfa, openid, saml, socialaccount] @ git+https://codeberg.org/allauth/django-allauth@b802a0ff6206a8b7b6c9ecf7148d414f6868d47a
+django-allauth[mfa, openid, saml, socialaccount] @ git+https://codeberg.org/allauth/django-allauth@b84141e2fa045bbfdb55e4161c6016f4094fb059
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0
     # via -r src/backend/requirements.in
