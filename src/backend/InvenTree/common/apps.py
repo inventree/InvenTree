@@ -41,6 +41,14 @@ class CommonConfig(AppConfig):
 
     def build_default_settings(self):
         """Clear the settings cache."""
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
+            return
+
         try:
             from django.contrib.auth.models import User
 
