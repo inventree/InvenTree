@@ -102,7 +102,6 @@ test('Sales Orders - Basic Tests', async ({ page }) => {
 test('Sales Orders - Shipments', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'home');
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
 

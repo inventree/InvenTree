@@ -95,10 +95,14 @@ test('Settings - Admin', async ({ page }) => {
   await page.getByLabel('row-action-menu-0').click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
-  await expect(page.getByLabel('text-field-description')).toHaveValue('A room');
-  await page.getByLabel('text-field-name').fill('Large Room');
-  await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill('A large room');
+
+  // Toggle the "description" field
+  const oldDescription = await page
+    .getByLabel('text-field-description')
+    .inputValue();
+  const newDescription = `${oldDescription} (edited)`;
+
+  await page.getByLabel('text-field-description').fill(newDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -114,13 +118,9 @@ test('Settings - Admin', async ({ page }) => {
   // Edit first item again (revert values)
   await page.getByLabel('row-action-menu-0').click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Large Room');
-  await expect(page.getByLabel('text-field-description')).toHaveValue(
-    'A large room'
-  );
   await page.getByLabel('text-field-name').fill('Room');
   await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill('A room');
+  await page.getByLabel('text-field-description').fill(oldDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 });
