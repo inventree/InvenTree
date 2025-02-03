@@ -113,8 +113,18 @@ def get_release_data():
     while 1:
         url = f'https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150'
 
-        response = requests.get(url, timeout=30)
-        assert response.status_code == 200
+        attempts = 5
+
+        while attempts > 0:
+            attempts -= 1
+
+            response = requests.get(url, timeout=30)
+            if response.status_code == 200:
+                break
+
+        assert response.status_code == 200, (
+            f'Failed to fetch release data: {response.status_code} - {url}'
+        )
 
         data = json.loads(response.text)
 

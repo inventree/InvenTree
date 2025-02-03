@@ -9,7 +9,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
-import rest_framework.views as drfviews
 import structlog
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
@@ -77,6 +76,8 @@ def exception_handler(exc, context):
 
     If sentry error reporting is enabled, we will also provide the original exception to sentry.io
     """
+    import rest_framework.views as drfviews
+
     import InvenTree.sentry
 
     response = None

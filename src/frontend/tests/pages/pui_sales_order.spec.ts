@@ -63,12 +63,8 @@ test('Sales Orders - Tabs', async ({ page }) => {
 test('Sales Orders - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'home');
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
-
-  // Check for expected text in the table
-  await page.getByRole('tab', { name: 'Sales Orders' }).waitFor();
 
   await clearTableFilters(page);
 
@@ -106,7 +102,6 @@ test('Sales Orders - Basic Tests', async ({ page }) => {
 test('Sales Orders - Shipments', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'home');
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.getByRole('tab', { name: 'Sales Orders' }).click();
 
@@ -185,4 +180,32 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByLabel('related-field-stock_item').click();
   await page.getByText('Quantity: 42').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Search for shipment by tracking number
+  await page.getByLabel('open-search').click();
+
+  await page.getByLabel('global-search-input').clear();
+
+  await page.waitForTimeout(250);
+  await page.getByLabel('global-search-input').fill('TRK-002');
+  await page.waitForTimeout(250);
+
+  await page
+    .getByText(/SO0009/)
+    .first()
+    .click();
+
+  // Search for shipment by invoice number
+  await page.getByLabel('open-search').click();
+
+  await page.getByLabel('global-search-input').clear();
+
+  await page.waitForTimeout(250);
+  await page.getByLabel('global-search-input').fill('INV-123');
+  await page.waitForTimeout(250);
+
+  await page
+    .getByText(/SO0025/)
+    .first()
+    .click();
 });

@@ -12,6 +12,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
+import InvenTree.exceptions
 import InvenTree.ready
 
 logger = logging.getLogger('inventree')
@@ -141,7 +142,7 @@ class ReportConfig(AppConfig):
                 )
                 logger.info("Creating new label template: '%s'", template['name'])
             except Exception:
-                pass
+                InvenTree.exceptions.log_error('create_default_labels')
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -232,4 +233,4 @@ class ReportConfig(AppConfig):
                 )
                 logger.info("Created new report template: '%s'", template['name'])
             except Exception:
-                pass
+                InvenTree.exceptions.log_error('create_default_reports')
