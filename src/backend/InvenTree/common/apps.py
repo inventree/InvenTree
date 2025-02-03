@@ -1,5 +1,7 @@
 """App config for common app."""
 
+import sys
+
 from django.apps import AppConfig
 
 import structlog
@@ -41,6 +43,8 @@ class CommonConfig(AppConfig):
 
     def build_default_settings(self):
         """Clear the settings cache."""
+        print('build_default_settings:', sys.argv)
+
         if (
             InvenTree.ready.isImportingData()
             or InvenTree.ready.isRunningMigrations()
