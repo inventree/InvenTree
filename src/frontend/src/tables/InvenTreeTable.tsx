@@ -24,7 +24,7 @@ import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 import type { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { useUserSettingsState } from '../states/SettingsState';
 import type { TableColumn } from './Column';
 import type { TableFilter } from './Filter';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
@@ -144,11 +144,11 @@ export function InvenTreeTable<T extends Record<string, any>>({
   const navigate = useNavigate();
   const { showContextMenu } = useContextMenu();
 
-  const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
 
   const stickyTableHeader = useMemo(() => {
-    return globalSettings.isSet('STICKY_TABLE_HEADER');
-  }, [globalSettings]);
+    return userSettings.isSet('STICKY_TABLE_HEADER');
+  }, [userSettings]);
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
