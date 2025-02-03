@@ -169,14 +169,16 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
+        cache = kwargs.pop('cache', True)
         cache_key = f'BUILD_DEFAULT_VALUES:{cls.__name__!s}'
 
-        try:
-            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-                # Already built default values
-                return
-        except Exception:
-            pass
+        if cache:
+            try:
+                if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
+                    # Already built default values
+                    return
+            except Exception:
+                pass
 
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
