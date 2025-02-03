@@ -177,6 +177,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'STICKY_TABLE_HEADER': {
+        'name': _('Fixed Table Headers'),
+        'description': _('Table headers are fixed to the top of the table'),
+        'default': False,
+        'validator': bool,
+    },
     'DATE_DISPLAY_FORMAT': {
         'name': _('Date Format'),
         'description': _('Preferred format for displaying dates'),
