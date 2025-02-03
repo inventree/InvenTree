@@ -1,5 +1,6 @@
 import { expect } from './baseFixtures.js';
 import { baseUrl, logoutUrl, user } from './defaults';
+import { navigate } from './helpers.js';
 
 /*
  * Perform form based login operation from the "login" URL
@@ -8,7 +9,7 @@ export const doLogin = async (page, username?: string, password?: string) => {
   username = username ?? user.username;
   password = password ?? user.password;
 
-  await page.goto(logoutUrl);
+  await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/platform/login');
   await page.getByLabel('username').fill(username);
@@ -31,14 +32,18 @@ export const doQuickLogin = async (
   password = password ?? user.password;
   url = url ?? baseUrl;
 
-  await page.goto(`${url}/login/?login=${username}&password=${password}`);
+  await navigate(page, `${url}/login/?login=${username}&password=${password}`);
   await page.waitForURL('**/platform/home');
 
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
   await page.getByText(/InvenTree Demo Server -/).waitFor();
+
+  // Wait for the dashboard to load
+  await page.getByText('No widgets selected').waitFor();
+  await page.waitForTimeout(250);
 };
 
 export const doLogout = async (page) => {
-  await page.goto(`${baseUrl}/logout/`);
+  await navigate(page, 'logout');
   await page.waitForURL('**/platform/login');
 };

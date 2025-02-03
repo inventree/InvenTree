@@ -53,6 +53,12 @@ export interface ServerAPIProps {
     registration_enabled: null | boolean;
     password_forgotten_enabled: null | boolean;
   } | null;
+  customize: null | {
+    logo: string;
+    splash: string;
+    login_message: string;
+    navbar_message: string;
+  };
 }
 
 export interface AuthContext {

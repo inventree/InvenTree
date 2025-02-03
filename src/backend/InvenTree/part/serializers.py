@@ -1,6 +1,5 @@
 """DRF data serializers for Part app."""
 
-import imghdr
 import io
 import os
 from decimal import Decimal
@@ -298,9 +297,9 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
 
     def validate_image(self, value):
         """Check that file is an image."""
-        validate = imghdr.what(value)
+        validate = InvenTree.helpers.TestIfImage(value)
         if not validate:
-            raise serializers.ValidationError('File is not an image')
+            raise serializers.ValidationError(_('File is not an image'))
         return value
 
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
@@ -683,7 +682,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['duplicate']
+    import_exclude_fields = ['creation_date', 'creation_user', 'duplicate']
 
     class Meta:
         """Metaclass defining serializer fields."""
@@ -760,7 +759,7 @@ class PartSerializer(
             'tags',
         ]
 
-        read_only_fields = ['barcode_hash', 'creation_date']
+        read_only_fields = ['barcode_hash', 'creation_date', 'creation_user']
 
     tags = TagListSerializerField(required=False)
 
@@ -972,7 +971,9 @@ class PartSerializer(
     category_default_location = serializers.IntegerField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
-    minimum_stock = serializers.FloatField()
+    minimum_stock = serializers.FloatField(
+        required=False, label=_('Minimum Stock'), default=0
+    )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(
         required=False, allow_null=True
@@ -1062,8 +1063,8 @@ class PartSerializer(
         instance = super().create(validated_data)
 
         # Save user information
-        if self.context['request']:
-            instance.creation_user = self.context['request'].user
+        if request := self.context.get('request'):
+            instance.creation_user = request.user
             instance.save()
 
         # Copy data from original Part
@@ -1123,7 +1124,9 @@ class PartSerializer(
                     part=instance, quantity=quantity, location=location
                 )
 
-                stockitem.save(user=self.context['request'].user)
+                request = self.context.get('request', None)
+                user = request.user if request else None
+                stockitem.save(user=user)
 
         # Create initial supplier information
         if initial_supplier:
@@ -1222,9 +1225,8 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         data = self.validated_data
 
         # Add in user information automatically
-        request = self.context['request']
-        data['user'] = request.user
-
+        request = self.context.get('request')
+        data['user'] = request.user if request else None
         super().save()
 
 
@@ -1979,7 +1981,7 @@ class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
 
 
 class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer):
-    """Serializer class for exatracting BOM data from an uploaded file.
+    """Serializer class for extracting BOM data from an uploaded file.
 
     The parent class DataFileExtractSerializer does most of the heavy lifting here.
 

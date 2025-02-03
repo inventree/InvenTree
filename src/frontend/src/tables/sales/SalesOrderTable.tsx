@@ -27,6 +27,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   ShipmentDateColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -45,6 +46,8 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -77,6 +80,20 @@ export function SalesOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       HasProjectCodeFilter(),
@@ -166,6 +183,7 @@ export function SalesOrderTable({
       ProjectCodeColumn({}),
       CreationDateColumn({}),
       CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),

@@ -39,6 +39,48 @@ from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 
 
+class PartImageTestMixin:
+    """Mixin for testing part images."""
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Custom setup routine for this class."""
+        super().setUpTestData()
+
+        # Create a custom APIClient for file uploads
+        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
+        cls.upload_client = APIClient()
+        cls.upload_client.force_authenticate(user=cls.user)
+
+    def create_test_image(self):
+        """Create a test image file."""
+        p = Part.objects.first()
+
+        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
+
+        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img.save(fn)
+
+        with open(fn, 'rb') as img_file:
+            response = self.upload_client.patch(
+                reverse('api-part-detail', kwargs={'pk': p.pk}),
+                {'image': img_file},
+                expected_code=200,
+            )
+            print(response.data)
+            image_name = response.data['image']
+            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
+        return image_name
+
+
 class PartCategoryAPITest(InvenTreeAPITestCase):
     """Unit tests for the PartCategory API."""
 
@@ -1463,7 +1505,7 @@ class PartCreationTests(PartAPITestBase):
         self.assertEqual(prt.parameters.count(), 3)
 
 
-class PartDetailTests(PartAPITestBase):
+class PartDetailTests(PartImageTestMixin, PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""
 
     @classmethod
@@ -1656,22 +1698,7 @@ class PartDetailTests(PartAPITestBase):
     def test_existing_image(self):
         """Test that we can allocate an existing uploaded image to a new Part."""
         # First, upload an image for an existing part
-        p = Part.objects.first()
-
-        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
-
-        img = PIL.Image.new('RGB', (128, 128), color='blue')
-        img.save(fn)
-
-        with open(fn, 'rb') as img_file:
-            response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}),
-                {'image': img_file},
-                expected_code=200,
-            )
-
-            image_name = response.data['image']
-            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
+        image_name = self.create_test_image()
 
         # Attempt to create, but with an invalid image name
         response = self.post(

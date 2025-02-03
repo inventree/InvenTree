@@ -1,3 +1,5 @@
+import { baseUrl } from './defaults';
+
 /**
  * Open the filter drawer for the currently visible table
  * @param page - The page object
@@ -61,4 +63,21 @@ export const setTableChoiceFilter = async (page, filter, value) => {
  */
 export const getRowFromCell = async (cell) => {
   return cell.locator('xpath=ancestor::tr').first();
+};
+
+/**
+ * Navigate to the provided page, and wait for loading to complete
+ * @param page
+ * @param url
+ */
+export const navigate = async (page, url: string) => {
+  if (!url.startsWith(baseUrl)) {
+    if (url.startsWith('/')) {
+      url = url.slice(1);
+    }
+
+    url = `${baseUrl}/${url}`;
+  }
+
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
 };

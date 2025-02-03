@@ -16,6 +16,16 @@ from invoke import Collection, task
 from invoke.exceptions import UnexpectedExit
 
 
+def is_docker_environment():
+    """Check if the InvenTree environment is running in a Docker container."""
+    return os.environ.get('INVENTREE_DOCKER', 'False')
+
+
+def is_rtd_environment():
+    """Check if the InvenTree environment is running on ReadTheDocs."""
+    return os.environ.get('READTHEDOCS', 'False') == 'True'
+
+
 def task_exception_handler(t, v, tb):
     """Handle exceptions raised by tasks.
 
@@ -76,6 +86,21 @@ def checkInvokeVersion():
         sys.exit(1)
 
 
+def chceckInvokePath():
+    """Check that the path of the used invoke is correct."""
+    if is_docker_environment() or is_rtd_environment():
+        return
+
+    invoke_path = Path(invoke.__file__)
+    loc_path = Path(__file__).parent.resolve()
+    if not invoke_path.is_relative_to(loc_path):
+        error('INVE-E2 - Wrong Invoke Path')
+        error(
+            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` !'
+        )
+        sys.exit(1)
+
+
 def checkPythonVersion():
     """Check that the installed python version meets minimum requirements.
 
@@ -101,6 +126,7 @@ def checkPythonVersion():
 
 if __name__ in ['__main__', 'tasks']:
     checkInvokeVersion()
+    chceckInvokePath()
     checkPythonVersion()
 
 
@@ -628,7 +654,7 @@ def update(
     # If:
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
-    if (os.environ.get('INVENTREE_DOCKER', 'False') and not frontend) or no_frontend:
+    if (is_docker_environment() and not frontend) or no_frontend:
         if no_frontend:
             info('Skipping frontend update (no_frontend flag set)')
         else:

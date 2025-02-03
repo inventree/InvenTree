@@ -1,5 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, logoutUrl, user } from './defaults.js';
+import { logoutUrl, user } from './defaults.js';
+import { navigate } from './helpers.js';
 import { doLogin, doQuickLogin } from './login.js';
 
 test('Login - Basic Test', async ({ page }) => {
@@ -25,13 +26,13 @@ test('Login - Quick Test', async ({ page }) => {
   await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
-  await page.goto(baseUrl);
+  await navigate(page, '');
   await page.waitForURL('**/platform');
 
   await page.getByText('InvenTree Demo Server - ').waitFor();
 
   // Logout (via URL)
-  await page.goto(`${baseUrl}/logout/`);
+  await navigate(page, 'logout');
   await page.waitForURL('**/platform/login');
   await page.getByLabel('username');
 });
@@ -48,7 +49,7 @@ test('Login - Failures', async ({ page }) => {
   };
 
   // Navigate to the 'login' page
-  await page.goto(logoutUrl);
+  await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/platform/login');
 
@@ -81,7 +82,7 @@ test('Login - Change Password', async ({ page }) => {
   await doQuickLogin(page, 'noaccess', 'youshallnotpass');
 
   // Navigate to the 'change password' page
-  await page.goto(`${baseUrl}/settings/user/account`);
+  await navigate(page, 'settings/user/account');
   await page.getByLabel('action-menu-user-actions').click();
   await page.getByLabel('action-menu-user-actions-change-password').click();
 

@@ -89,7 +89,7 @@ export function CurrencyTable({
   );
 }
 
-export default function CurrencyManagmentPanel() {
+export default function CurrencyManagementPanel() {
   const [info, setInfo] = useState<any>({});
 
   return (

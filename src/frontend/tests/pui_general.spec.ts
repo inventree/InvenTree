@@ -1,11 +1,11 @@
 import { test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
+import { navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 
 test('Company', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/company/1/details`);
+  await navigate(page, 'company/1/details');
   await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
   await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
   await page.getByRole('tab', { name: 'Supplied Parts' }).click();
@@ -44,7 +44,7 @@ test('Company', async ({ page }) => {
  */
 test('Admin Button', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
-  await page.goto(`${baseUrl}/company/1/details`);
+  await navigate(page, 'company/1/details');
 
   // Click on the admin button
   await page.getByLabel(/action-button-open-in-admin/).click();
