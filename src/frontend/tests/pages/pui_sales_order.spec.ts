@@ -180,4 +180,32 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByLabel('related-field-stock_item').click();
   await page.getByText('Quantity: 42').click();
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Search for shipment by tracking number
+  await page.getByLabel('open-search').click();
+
+  await page.getByLabel('global-search-input').clear();
+
+  await page.waitForTimeout(250);
+  await page.getByLabel('global-search-input').fill('TRK-002');
+  await page.waitForTimeout(250);
+
+  await page
+    .getByText(/SO0009/)
+    .first()
+    .click();
+
+  // Search for shipment by invoice number
+  await page.getByLabel('open-search').click();
+
+  await page.getByLabel('global-search-input').clear();
+
+  await page.waitForTimeout(250);
+  await page.getByLabel('global-search-input').fill('INV-123');
+  await page.waitForTimeout(250);
+
+  await page
+    .getByText(/SO0025/)
+    .first()
+    .click();
 });
