@@ -31,13 +31,15 @@ type AboutLookupRef = {
 export function AboutInvenTreeModal({
   context,
   id
-}: ContextModalProps<{
-  modalBody: string;
-}>) {
+}: Readonly<
+  ContextModalProps<{
+    modalBody: string;
+  }>
+>) {
   const [user] = useUserState((state) => [state.user]);
   const [server] = useServerApiState((state) => [state.server]);
 
-  if (user?.is_staff != true)
+  if (!user?.is_staff)
     return (
       <Text>
         <Trans>This information is only available for staff users</Trans>
@@ -137,6 +139,20 @@ export function AboutInvenTreeModal({
     );
   }
 
+  const badge = data.dev ? (
+    <Badge color='blue'>
+      <Trans>Development Version</Trans>
+    </Badge>
+  ) : data.up_to_date ? (
+    <Badge color='green'>
+      <Trans>Up to Date</Trans>
+    </Badge>
+  ) : (
+    <Badge color='teal'>
+      <Trans>Update Available</Trans>
+    </Badge>
+  );
+
   return (
     <Stack>
       <Divider />
@@ -144,19 +160,7 @@ export function AboutInvenTreeModal({
         <StylishText size='lg'>
           <Trans>Version Information</Trans>
         </StylishText>
-        {data.dev ? (
-          <Badge color='blue'>
-            <Trans>Development Version</Trans>
-          </Badge>
-        ) : data.up_to_date ? (
-          <Badge color='green'>
-            <Trans>Up to Date</Trans>
-          </Badge>
-        ) : (
-          <Badge color='teal'>
-            <Trans>Update Available</Trans>
-          </Badge>
-        )}
+        {badge}
       </Group>
       <Table striped>
         <Table.Tbody>{fillTable(tableData, data.version)}</Table.Tbody>
