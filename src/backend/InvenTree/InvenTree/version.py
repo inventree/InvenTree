@@ -26,19 +26,26 @@ logger = logging.getLogger('inventree')
 
 # Discover git
 try:
+    from dulwich.porcelain import active_branch
     from dulwich.repo import Repo
 
     main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
+    try:
+        main_branch = active_branch(main_repo)
+    except KeyError:
+        main_branch = None
 except ImportError:
     logger.warning(
         'Warning: Dulwich module not found, git information will not be available.'
     )
     main_repo = None
     main_commit = None
+    main_branch = None
 except Exception:
     main_repo = None
     main_commit = None
+    main_branch = None
 
 
 def checkMinPythonVersion():
@@ -270,14 +277,9 @@ def inventreeBranch():
     if branch:
         return branch
 
-    if main_commit is None:
+    if main_branch is None:
         return None
-
-    try:
-        branch = main_repo.refs.follow(b'HEAD')[0][1].decode()
-        return branch.removeprefix('refs/heads/')
-    except IndexError:
-        return None  # pragma: no cover
+    return main_branch.decode('utf-8')
 
 
 def inventreeTarget():
