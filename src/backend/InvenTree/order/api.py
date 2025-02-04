@@ -1270,6 +1270,13 @@ class SalesOrderShipmentList(SalesOrderShipmentMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     ordering_fields = ['reference', 'delivery_date', 'shipment_date', 'allocated_items']
 
+    search_fields = [
+        'order__reference',
+        'reference',
+        'tracking_number',
+        'invoice_number',
+    ]
+
 
 class SalesOrderShipmentDetail(SalesOrderShipmentMixin, RetrieveUpdateDestroyAPI):
     """API detail endpooint for SalesOrderShipment model."""

@@ -1697,35 +1697,6 @@ class BomItemSerializer(
     external_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
-    def setup_eager_loading(queryset):
-        """Prefetch against the provided queryset to speed up database access."""
-        queryset = queryset.prefetch_related('part')
-        queryset = queryset.prefetch_related('part__category')
-        queryset = queryset.prefetch_related('part__stock_items')
-
-        queryset = queryset.prefetch_related('sub_part')
-        queryset = queryset.prefetch_related('sub_part__category')
-        queryset = queryset.prefetch_related('sub_part__pricing_data')
-
-        queryset = queryset.prefetch_related(
-            'sub_part__stock_items',
-            'sub_part__stock_items__allocations',
-            'sub_part__stock_items__sales_order_allocations',
-        )
-
-        queryset = queryset.select_related(
-            'part__pricing_data', 'sub_part__pricing_data'
-        )
-
-        queryset = queryset.prefetch_related(
-            'substitutes', 'substitutes__part__stock_items'
-        )
-
-        queryset = queryset.prefetch_related('sub_part__builds')
-
-        return queryset
-
-    @staticmethod
     def annotate_queryset(queryset):
         """Annotate the BomItem queryset with extra information.
 
@@ -1736,6 +1707,22 @@ class BomItemSerializer(
         Construct an "available stock" quantity:
         available_stock = total_stock - build_order_allocations - sales_order_allocations
         """
+
+        # Prefetch related fields
+        queryset = queryset.prefetch_related(
+            'part',
+            'part__category',
+            'part__stock_items',
+            'sub_part',
+            'sub_part__builds',
+            'sub_part__category',
+            'sub_part__pricing_data',
+            'sub_part__stock_items',
+            'sub_part__stock_items__allocations',
+            'sub_part__stock_items__sales_order_allocations',
+            'substitutes',
+            'substitutes__part__stock_items',
+        ).select_related('part__pricing_data', 'sub_part__pricing_data')
 
         # Annotate with the 'total pricing' information based on unit pricing and quantity
         queryset = queryset.annotate(

@@ -101,11 +101,18 @@ Configuration of pricing data and currency support:
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("INVENTREE_DEFAULT_CURRENCY") }}
 {{ globalsetting("CURRENCY_CODES") }}
-{{ globalsetting("PART_INTERNAL_PRICE") }}
-{{ globalsetting("PART_BOM_USE_INTERNAL_PRICE") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES_MIN") }}
 {{ globalsetting("PRICING_DECIMAL_PLACES") }}
 {{ globalsetting("PRICING_UPDATE_DAYS") }}
+
+#### Part Pricing
+
+Configuration of part pricing:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("PART_INTERNAL_PRICE") }}
+{{ globalsetting("PART_BOM_USE_INTERNAL_PRICE") }}
 {{ globalsetting("PRICING_USE_SUPPLIER_PRICING") }}
 {{ globalsetting("PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER") }}
 {{ globalsetting("PRICING_USE_STOCK_PRICING") }}

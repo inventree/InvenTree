@@ -150,7 +150,7 @@ def do_typecast(value, type, var_name=None):
         var_name: Name that should be logged e.g. 'INVENTREE_STATIC_ROOT'. Set if logging is required.
 
     Returns:
-        Typecasted value or original value if typecasting failed.
+        Typecast value or original value if typecasting failed.
     """
     # Force 'list' of strings
     if type is list:

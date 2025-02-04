@@ -529,6 +529,7 @@ class APISearchView(GenericAPIView):
             'purchaseorder': order.api.PurchaseOrderList,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
+            'salesordershipment': order.api.SalesOrderShipmentList,
             'stockitem': stock.api.StockList,
             'stocklocation': stock.api.StockLocationList,
         }

@@ -1863,7 +1863,6 @@ class BomMixin:
         """Return the queryset object for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = self.get_serializer_class().setup_eager_loading(queryset)
         queryset = self.get_serializer_class().annotate_queryset(queryset)
 
         return queryset

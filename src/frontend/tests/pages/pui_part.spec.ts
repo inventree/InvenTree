@@ -122,6 +122,7 @@ test('Parts - Allocations', async ({ page }) => {
 
   // Navigate to the "Allocations" tab
   await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
 
   await page.getByRole('tab', { name: 'Allocations' }).click();
 

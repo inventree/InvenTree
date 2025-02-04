@@ -60,6 +60,8 @@ test('Report Printing', async ({ page }) => {
 
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
   await page.getByRole('cell', { name: 'PO0009' }).click();
 
   // Select "print report"
