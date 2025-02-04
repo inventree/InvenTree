@@ -6,7 +6,9 @@ from django.urls import reverse
 
 from rest_framework import status
 
+from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.version import inventreeApiText, parse_version_text
 from users.models import RuleSet, update_group_roles
 
 
@@ -421,3 +423,41 @@ class SearchTests(InvenTreeAPITestCase):
                 self.assertEqual(
                     result['error'], 'User does not have permission to view this model'
                 )
+
+
+class ApiVersionTests(InvenTreeAPITestCase):
+    """Tests for api_version functions and APIs."""
+
+    def test_api_version(self):
+        """Test that the API text is correct."""
+        url = reverse('api-version-text')
+        response = self.get(url, format='json')
+        data = response.json()
+
+        self.assertEqual(len(data), 10)
+
+        response = self.get(reverse('api-version')).json()
+        self.assertIn('version', response)
+        self.assertIn('dev', response)
+        self.assertIn('up_to_date', response)
+
+    def test_inventree_api_text_fnc(self):
+        """Test that the inventreeApiText function works expected."""
+        # Normal run
+        resp = inventreeApiText()
+        self.assertEqual(len(resp), 10)
+
+        # More responses
+        resp = inventreeApiText(20)
+        self.assertEqual(len(resp), 20)
+
+        # Specific version
+        resp = inventreeApiText(start_version=5)
+        self.assertEqual(list(resp)[0], 'v5')
+
+    def test_parse_version_text_fnc(self):
+        """Test that api version text is correctly parsed."""
+        resp = parse_version_text()
+
+        # Check that all texts are parsed
+        self.assertEqual(len(resp), INVENTREE_API_VERSION - 1)
