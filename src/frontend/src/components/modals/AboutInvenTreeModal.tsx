@@ -139,20 +139,6 @@ export function AboutInvenTreeModal({
     );
   }
 
-  const badge = data.dev ? (
-    <Badge color='blue'>
-      <Trans>Development Version</Trans>
-    </Badge>
-  ) : data.up_to_date ? (
-    <Badge color='green'>
-      <Trans>Up to Date</Trans>
-    </Badge>
-  ) : (
-    <Badge color='teal'>
-      <Trans>Update Available</Trans>
-    </Badge>
-  );
-
   return (
     <Stack>
       <Divider />
@@ -160,7 +146,7 @@ export function AboutInvenTreeModal({
         <StylishText size='lg'>
           <Trans>Version Information</Trans>
         </StylishText>
-        {badge}
+        {renderVersionBadge(data)}
       </Group>
       <Table striped>
         <Table.Tbody>{fillTable(tableData, data.version)}</Table.Tbody>
@@ -198,4 +184,18 @@ export function AboutInvenTreeModal({
       </Group>
     </Stack>
   );
+}
+
+function renderVersionBadge(data: any) {
+  const badgeType = () => {
+    if (data.dev) {
+      return { color: 'blue', label: <Trans>Development Version</Trans> };
+    } else if (data.up_to_date) {
+      return { color: 'green', label: <Trans>Up to Date</Trans> };
+    } else {
+      return { color: 'teal', label: <Trans>Update Available</Trans> };
+    }
+  };
+  const { color, label } = badgeType();
+  return <Badge color={color}>{label}</Badge>;
 }
