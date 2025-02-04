@@ -165,15 +165,6 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-        cache_key = f'BUILD_DEFAULT_VALUES:{cls.__name__!s}'
-
-        try:
-            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-                # Already built default values
-                return
-        except Exception:
-            pass
-
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
             settings_keys = cls.SETTINGS.keys()
@@ -193,11 +184,6 @@ class BaseInvenTreeSetting(models.Model):
             logger.exception(
                 'Failed to build default values for %s (%s)', str(cls), str(type(exc))
             )
-
-        try:
-            cache.set(cache_key, True, timeout=3600)
-        except Exception:
-            pass
 
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
