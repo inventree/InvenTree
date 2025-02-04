@@ -75,7 +75,8 @@ export function AboutInvenTreeModal({
   /* renderer */
   if (isLoading) return <Trans>Loading</Trans>;
 
-  const commit_set = data.version.commit_hash && data.version.commit_date;
+  const commit_set: boolean =
+    data.version.commit_hash && data.version.commit_date;
 
   const copyval = `InvenTree-Version: ${data.version.server}\nDjango Version: ${
     data.version.django
@@ -90,6 +91,52 @@ export function AboutInvenTreeModal({
   }\nPlatform: ${server.platform}\nInstaller: ${server.installer ? server.installer : ''}\n${
     server.target ? `Target: ${server.target}\n` : ''
   }Active plugins: ${JSON.stringify(server.active_plugins)}`;
+
+  const tableData = [
+    {
+      ref: 'server',
+      title: <Trans>InvenTree Version</Trans>,
+      link: 'https://github.com/inventree/InvenTree/releases',
+      copy: true
+    },
+    {
+      ref: 'api',
+      title: <Trans>API Version</Trans>,
+      link: generateUrl('/api-doc/'),
+      copy: true
+    },
+    {
+      ref: 'python',
+      title: <Trans>Python Version</Trans>,
+      copy: true
+    },
+    {
+      ref: 'django',
+      title: <Trans>Django Version</Trans>,
+      link: 'https://www.djangoproject.com/',
+      copy: true
+    }
+  ];
+  if (commit_set) {
+    tableData.push(
+      {
+        ref: 'commit_hash',
+        title: <Trans>Commit Hash</Trans>,
+        copy: true
+      },
+      {
+        ref: 'commit_date',
+        title: <Trans>Commit Date</Trans>,
+        copy: true
+      },
+      {
+        ref: 'commit_branch',
+        title: <Trans>Commit Branch</Trans>,
+        copy: true
+      }
+    );
+  }
+
   return (
     <Stack>
       <Divider />
@@ -112,51 +159,7 @@ export function AboutInvenTreeModal({
         )}
       </Group>
       <Table striped>
-        <Table.Tbody>
-          {fillTable(
-            [
-              {
-                ref: 'server',
-                title: <Trans>InvenTree Version</Trans>,
-                link: 'https://github.com/inventree/InvenTree/releases',
-                copy: true
-              },
-              {
-                ref: 'commit_hash',
-                title: <Trans>Commit Hash</Trans>,
-                copy: true
-              },
-              {
-                ref: 'commit_date',
-                title: <Trans>Commit Date</Trans>,
-                copy: true
-              },
-              {
-                ref: 'commit_branch',
-                title: <Trans>Commit Branch</Trans>,
-                copy: true
-              },
-              {
-                ref: 'api',
-                title: <Trans>API Version</Trans>,
-                link: generateUrl('/api-doc/'),
-                copy: true
-              },
-              {
-                ref: 'python',
-                title: <Trans>Python Version</Trans>,
-                copy: true
-              },
-              {
-                ref: 'django',
-                title: <Trans>Django Version</Trans>,
-                link: 'https://www.djangoproject.com/',
-                copy: true
-              }
-            ],
-            data.version
-          )}
-        </Table.Tbody>
+        <Table.Tbody>{fillTable(tableData, data.version)}</Table.Tbody>
       </Table>
       <Divider />
       <StylishText size='lg'>
