@@ -75,17 +75,20 @@ export function AboutInvenTreeModal({
   /* renderer */
   if (isLoading) return <Trans>Loading</Trans>;
 
+  const commit_set = data.version.commit_hash && data.version.commit_date;
+
   const copyval = `InvenTree-Version: ${data.version.server}\nDjango Version: ${
     data.version.django
   }\n${
-    data.version.commit_hash &&
-    `Commit Hash: ${data.version.commit_hash}\nCommit Date: ${data.version.commit_date}\nCommit Branch: ${data.version.commit_branch}\n`
+    commit_set
+      ? `Commit Hash: ${data.version.commit_hash}\nCommit Date: ${data.version.commit_date}\nCommit Branch: ${data.version.commit_branch}\n`
+      : ''
   }Database: ${server.database}\nDebug-Mode: ${
     server.debug_mode ? 'True' : 'False'
   }\nDeployed using Docker: ${
     server.docker_mode ? 'True' : 'False'
-  }\nPlatform: ${server.platform}\nInstaller: ${server.installer}\n${
-    server.target && `Target: ${server.target}\n`
+  }\nPlatform: ${server.platform}\nInstaller: ${server.installer ? server.installer : ''}\n${
+    server.target ? `Target: ${server.target}\n` : ''
   }Active plugins: ${JSON.stringify(server.active_plugins)}`;
   return (
     <Stack>
