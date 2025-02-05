@@ -16,33 +16,16 @@ updates:
 
   - package-ecosystem: pip
     directories:
+    - /contrib/container
     - /docs
     - /contrib/dev_reqs
-    schedule:
-      interval: weekly
-      day: friday
-    groups:
-      dependencies:
-        patterns:
-          - "*" # Include all dependencies
-    assignees:
-      - "matmair"
-    versioning-strategy: increase
-
-  - package-ecosystem: pip
-    directories:
-    - /contrib/container
     - /src/backend
     schedule:
       interval: weekly
-      day: friday
     groups:
       dependencies:
         patterns:
           - "*" # Include all dependencies
-    assignees:
-      - "matmair"
-    versioning-strategy: increase
 
   - package-ecosystem: npm
     directories:
