@@ -12,7 +12,9 @@ from djmoney.money import Money
 
 import common.models
 import order.tasks
+from common.settings import get_global_setting, set_global_setting
 from company.models import Company, SupplierPart
+from InvenTree.unit_test import ExchangeRateMixin
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
@@ -21,7 +23,7 @@ from users.models import Owner
 from .models import PurchaseOrder, PurchaseOrderExtraLine, PurchaseOrderLineItem
 
 
-class OrderTest(TestCase):
+class OrderTest(TestCase, ExchangeRateMixin):
     """Tests to ensure that the order models are functioning correctly."""
 
     fixtures = [
@@ -304,6 +306,44 @@ class OrderTest(TestCase):
         si = si.first()
         self.assertEqual(si.quantity, 0.5)
         self.assertEqual(si.purchase_price, Money(100, 'USD'))
+
+    def test_receive_convert_currency(self):
+        """Test receiving orders with different currencies."""
+        # Setup some dummy exchange rates
+        self.generate_exchange_rates()
+
+        set_global_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
+        self.assertEqual(get_global_setting('INVENTREE_DEFAULT_CURRENCY'), 'USD')
+
+        # Enable auto conversion
+        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', True)
+
+        order = PurchaseOrder.objects.get(pk=7)
+        sku = SupplierPart.objects.get(SKU='ZERGM312')
+        loc = StockLocation.objects.get(id=1)
+
+        # Add a line item (in CAD)
+        line = order.add_line_item(sku, 100, purchase_price=Money(1.25, 'CAD'))
+
+        order.place_order()
+
+        # Receive a line item, should be converted to GBP
+        order.receive_line_item(line, loc, 50, user=None)
+        item = order.stock_items.order_by('-pk').first()
+
+        self.assertEqual(item.quantity, 50)
+        self.assertEqual(item.purchase_price_currency, 'USD')
+        self.assertAlmostEqual(item.purchase_price.amount, Decimal(0.7353), 3)
+
+        # Disable auto conversion
+        set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', False)
+
+        order.receive_line_item(line, loc, 30, user=None)
+        item = order.stock_items.order_by('-pk').first()
+
+        self.assertEqual(item.quantity, 30)
+        self.assertEqual(item.purchase_price_currency, 'CAD')
+        self.assertAlmostEqual(item.purchase_price.amount, Decimal(1.25), 3)
 
     def test_overdue_notification(self):
         """Test overdue purchase order notification.

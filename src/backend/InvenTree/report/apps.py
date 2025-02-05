@@ -7,10 +7,12 @@ from pathlib import Path
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
+import InvenTree.exceptions
 import InvenTree.ready
 
 logger = logging.getLogger('inventree')
@@ -54,6 +56,18 @@ class ReportConfig(AppConfig):
                 )
 
         set_maintenance_mode(False)
+
+    def file_from_template(self, dir_name: str, file_name: str) -> ContentFile:
+        """Construct a new ContentFile from a template file."""
+        logger.info('Creating %s template file: %s', dir_name, file_name)
+
+        return ContentFile(
+            Path(__file__)
+            .parent.joinpath('templates', dir_name, file_name)
+            .open('r')
+            .read(),
+            os.path.basename(file_name),
+        )
 
     def create_default_labels(self):
         """Create default label templates."""
@@ -106,33 +120,29 @@ class ReportConfig(AppConfig):
         ]
 
         for template in label_templates:
-            # Ignore matching templates which are already in the database
-            if report.models.LabelTemplate.objects.filter(
-                name=template['name']
-            ).exists():
-                continue
-
             filename = template.pop('file')
 
-            template_file = Path(__file__).parent.joinpath(
-                'templates', 'label', filename
-            )
-
-            if not template_file.exists():
-                logger.warning("Missing template file: '%s'", template['name'])
+            # Template already exists in the database - check that the file exists too
+            if existing_template := report.models.LabelTemplate.objects.filter(
+                name=template['name'], model_type=template['model_type']
+            ).first():
+                if not default_storage.exists(existing_template.template.name):
+                    # The file does not exist in the storage system - add it in
+                    existing_template.template = self.file_from_template(
+                        'label', filename
+                    )
+                    existing_template.save()
                 continue
 
-            # Read the existing template file
-            data = template_file.open('r').read()
-
+            # Otherwise, create a new entry
             try:
                 # Create a new entry
                 report.models.LabelTemplate.objects.create(
-                    **template, template=ContentFile(data, os.path.basename(filename))
+                    **template, template=self.file_from_template('label', filename)
                 )
                 logger.info("Creating new label template: '%s'", template['name'])
             except Exception:
-                pass
+                InvenTree.exceptions.log_error('create_default_labels')
 
     def create_default_reports(self):
         """Create default report templates."""
@@ -202,30 +212,25 @@ class ReportConfig(AppConfig):
         ]
 
         for template in report_templates:
-            # Ignore matching templates which are already in the database
-            if report.models.ReportTemplate.objects.filter(
-                name=template['name']
-            ).exists():
-                continue
-
             filename = template.pop('file')
 
-            template_file = Path(__file__).parent.joinpath(
-                'templates', 'report', filename
-            )
-
-            if not template_file.exists():
-                logger.warning("Missing template file: '%s'", template['name'])
+            # Template already exists in the database - check that the file exists too
+            if existing_template := report.models.ReportTemplate.objects.filter(
+                name=template['name'], model_type=template['model_type']
+            ).first():
+                if not default_storage.exists(existing_template.template.name):
+                    # The file does not exist in the storage system - add it in
+                    existing_template.template = self.file_from_template(
+                        'report', filename
+                    )
+                    existing_template.save()
                 continue
 
-            # Read the existing template file
-            data = template_file.open('r').read()
-
-            # Create a new entry
+            # Otherwise, create a new entry
             try:
                 report.models.ReportTemplate.objects.create(
-                    **template, template=ContentFile(data, os.path.basename(filename))
+                    **template, template=self.file_from_template('report', filename)
                 )
                 logger.info("Created new report template: '%s'", template['name'])
             except Exception:
-                pass
+                InvenTree.exceptions.log_error('create_default_reports')

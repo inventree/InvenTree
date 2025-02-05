@@ -1,4 +1,11 @@
-import { ActionIcon, Container, Group, Indicator, Tabs } from '@mantine/core';
+import {
+  ActionIcon,
+  Container,
+  Group,
+  Indicator,
+  Tabs,
+  Text
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +18,7 @@ import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
-import { apiUrl } from '../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -27,6 +34,7 @@ export function Header() {
   const [setNavigationOpen, navigationOpen] = useLocalState(
     useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
   );
+  const [server] = useServerApiState((state) => [state.server]);
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -40,10 +48,12 @@ export function Header() {
   ] = useDisclosure(false);
 
   const { isLoggedIn } = useUserState();
-
   const [notificationCount, setNotificationCount] = useState<number>(0);
-
   const globalSettings = useGlobalSettingsState();
+
+  const navbar_message = useMemo(() => {
+    return server.customize?.navbar_message;
+  }, [server.customize]);
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
@@ -105,6 +115,12 @@ export function Header() {
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
+          {navbar_message && (
+            <Text>
+              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
+              <div dangerouslySetInnerHTML={{ __html: navbar_message }} />
+            </Text>
+          )}
           <Group>
             <ActionIcon
               onClick={openSearchDrawer}

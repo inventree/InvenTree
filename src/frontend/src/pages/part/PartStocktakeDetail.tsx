@@ -107,18 +107,19 @@ export default function PartStocktakeDetail({
     return [
       {
         accessor: 'quantity',
-        sortable: true,
+        sortable: false,
         switchable: false
       },
       {
         accessor: 'item_count',
         title: t`Stock Items`,
         switchable: true,
-        sortable: true
+        sortable: false
       },
       {
         accessor: 'cost',
         title: t`Stock Value`,
+        sortable: false,
         render: (record: any) => {
           return formatPriceRange(record.cost_min, record.cost_max, {
             currency: record.cost_min_currency
@@ -127,10 +128,11 @@ export default function PartStocktakeDetail({
       },
       {
         accessor: 'date',
-        sortable: true
+        sortable: false
       },
       {
-        accessor: 'note'
+        accessor: 'note',
+        sortable: false
       }
     ];
   }, []);
@@ -174,17 +176,15 @@ export default function PartStocktakeDetail({
         return {
           date: new Date(record.date).valueOf(),
           quantity: record.quantity,
-          value_min: record.cost_min,
-          value_max: record.cost_max
+          value_min: Number.parseFloat(record.cost_min),
+          value_max: Number.parseFloat(record.cost_max)
         };
       }) ?? [];
 
     // Sort records to ensure correct date order
-    records.sort((a, b) => {
+    return records.sort((a, b) => {
       return a < b ? -1 : 1;
     });
-
-    return records;
   }, [table.records]);
 
   // Calculate the date limits of the chart
@@ -216,7 +216,8 @@ export default function PartStocktakeDetail({
           columns={tableColumns}
           props={{
             params: {
-              part: partId
+              part: partId,
+              ordering: 'date'
             },
             rowActions: rowActions,
             tableActions: tableActions
@@ -240,6 +241,12 @@ export default function PartStocktakeDetail({
               content: ({ label, payload }) => (
                 <ChartTooltip label={label} payload={payload} />
               )
+            }}
+            yAxisProps={{
+              allowDataOverflow: false
+            }}
+            rightYAxisProps={{
+              allowDataOverflow: false
             }}
             xAxisProps={{
               scale: 'time',

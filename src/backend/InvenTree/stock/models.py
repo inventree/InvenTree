@@ -328,12 +328,12 @@ def default_delete_on_deplete():
     """Return a default value for the 'delete_on_deplete' field.
 
     Prior to 2022-12-24, this field was set to True by default.
-    Now, there is a user-configurable setting to govern default behaviour.
+    Now, there is a user-configurable setting to govern default behavior.
     """
     try:
         return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
-        # Revert to original default behaviour
+        # Revert to original default behavior
         return True
 
 

@@ -1,5 +1,5 @@
 import { test } from '../baseFixtures';
-import { baseUrl } from '../defaults';
+import { navigate } from '../helpers';
 import { doQuickLogin } from '../login';
 
 test('PUI - Admin - Parameter', async ({ page }) => {
@@ -75,7 +75,7 @@ test('PUI - Admin - Parameter', async ({ page }) => {
   await page.getByRole('cell', { name: 'my custom parameter' }).click();
 
   // Fill parameter
-  await page.goto(`${baseUrl}/part/104/parameters/`);
+  await navigate(page, 'part/104/parameters/');
   await page.getByLabel('Parameters').getByText('Parameters').waitFor();
   await page.waitForLoadState('networkidle');
   await page.getByLabel('action-button-add-parameter').waitFor();

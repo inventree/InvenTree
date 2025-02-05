@@ -1,6 +1,5 @@
 import { test } from '../baseFixtures';
-import { baseUrl } from '../defaults';
-import { getRowFromCell } from '../helpers';
+import { clearTableFilters, getRowFromCell, navigate } from '../helpers';
 import { doQuickLogin } from '../login';
 
 /**
@@ -11,12 +10,17 @@ test('Parts - Tabs', async ({ page }) => {
 
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Parts' }).click();
+  await page
+    .getByLabel('panel-tabs-partcategory')
+    .getByRole('tab', { name: 'Parts' })
+    .click();
 
-  await page.waitForURL('**/platform/part/category/index/details');
-  await page.goto(`${baseUrl}/part/category/index/parts`);
+  // Select a particular part from the table
+  await clearTableFilters(page);
+  await page.getByPlaceholder('Search').fill('1551');
   await page.getByText('1551ABK').click();
+
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
@@ -32,16 +36,17 @@ test('Parts - Tabs', async ({ page }) => {
   await page.getByText('1551ACLR').click();
   await page.getByRole('tab', { name: 'Part Details' }).click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
+
   await page
-    .getByRole('tab', { name: 'Part Details' })
-    .locator('xpath=..')
+    .getByLabel('panel-tabs-part')
     .getByRole('tab', { name: 'Stock', exact: true })
     .click();
+
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
 
-  await page.goto(`${baseUrl}/part/category/index/parts`);
+  await navigate(page, 'part/category/index/parts');
   await page.getByText('Blue Chair').click();
   await page.getByRole('tab', { name: 'Bill of Materials' }).click();
   await page.getByRole('tab', { name: 'Build Orders' }).click();
@@ -50,7 +55,7 @@ test('Parts - Tabs', async ({ page }) => {
 test('Parts - Manufacturer Parts', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/84/suppliers`);
+  await navigate(page, 'part/84/suppliers');
 
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByText('Hammond Manufacturing').click();
@@ -63,7 +68,7 @@ test('Parts - Manufacturer Parts', async ({ page }) => {
 test('Parts - Supplier Parts', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/15/suppliers`);
+  await navigate(page, 'part/15/suppliers');
 
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
@@ -77,14 +82,14 @@ test('Parts - Locking', async ({ page }) => {
   await doQuickLogin(page);
 
   // Navigate to a known assembly which is *not* locked
-  await page.goto(`${baseUrl}/part/104/bom`);
+  await navigate(page, 'part/104/bom');
   await page.getByRole('tab', { name: 'Bill of Materials' }).click();
   await page.getByLabel('action-button-add-bom-item').waitFor();
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByLabel('action-button-add-parameter').waitFor();
 
   // Navigate to a known assembly which *is* locked
-  await page.goto(`${baseUrl}/part/100/bom`);
+  await navigate(page, 'part/100/bom');
   await page.getByRole('tab', { name: 'Bill of Materials' }).click();
   await page.getByLabel('part-lock-icon').waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
@@ -103,7 +108,7 @@ test('Parts - Allocations', async ({ page }) => {
   await doQuickLogin(page);
 
   // Let's look at the allocations for a single stock item
-  await page.goto(`${baseUrl}/stock/item/324/`);
+  await navigate(page, 'stock/item/324/');
   await page.getByRole('tab', { name: 'Allocations' }).click();
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
@@ -111,7 +116,7 @@ test('Parts - Allocations', async ({ page }) => {
   await page.getByRole('cell', { name: 'Making tables for SO 0003' }).waitFor();
 
   // Let's look at the allocations for an entire part
-  await page.goto(`${baseUrl}/part/74/details`);
+  await navigate(page, 'part/74/details');
 
   // Check that the overall allocations are displayed correctly
   await page.getByText('11 / 825').waitFor();
@@ -119,6 +124,7 @@ test('Parts - Allocations', async ({ page }) => {
 
   // Navigate to the "Allocations" tab
   await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
 
   await page.getByRole('tab', { name: 'Allocations' }).click();
 
@@ -170,7 +176,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part with no history
-  await page.goto(`${baseUrl}/part/82/pricing`);
+  await navigate(page, 'part/82/pricing');
 
   await page.getByText('Small plastic enclosure, black').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
@@ -182,7 +188,7 @@ test('Parts - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
 
   // Part with history
-  await page.goto(`${baseUrl}/part/108/pricing`);
+  await navigate(page, 'part/108/pricing');
   await page.getByText('A chair - with blue paint').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -220,7 +226,7 @@ test('Parts - Pricing (Supplier)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
-  await page.goto(`${baseUrl}/part/55/pricing`);
+  await navigate(page, 'part/55/pricing');
   await page.getByText('Ceramic capacitor, 100nF in').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -246,7 +252,7 @@ test('Parts - Pricing (Variant)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
-  await page.goto(`${baseUrl}/part/106/pricing`);
+  await navigate(page, 'part/106/pricing');
   await page.getByText('A chair - available in multiple colors').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -272,7 +278,7 @@ test('Parts - Pricing (Internal)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
-  await page.goto(`${baseUrl}/part/65/pricing`);
+  await navigate(page, 'part/65/pricing');
   await page.getByText('Socket head cap screw, M2').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -297,7 +303,7 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part
-  await page.goto(`${baseUrl}/part/69/pricing`);
+  await navigate(page, 'part/69/pricing');
   await page.getByText('1.25mm Pitch, PicoBlade PCB').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -318,7 +324,7 @@ test('Parts - Pricing (Purchase)', async ({ page }) => {
 test('Parts - Attachments', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/69/attachments`);
+  await navigate(page, 'part/69/attachments');
 
   // Submit a new external link
   await page.getByLabel('action-button-add-external-').click();
@@ -340,7 +346,7 @@ test('Parts - Attachments', async ({ page }) => {
 test('Parts - Parameters', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/69/parameters`);
+  await navigate(page, 'part/69/parameters');
 
   // Create a new template
   await page.getByLabel('action-button-add-parameter').click();
@@ -367,7 +373,7 @@ test('Parts - Parameters', async ({ page }) => {
 test('Parts - Notes', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/69/notes`);
+  await navigate(page, 'part/69/notes');
 
   // Enable editing
   await page.getByLabel('Enable Editing').waitFor();
@@ -389,7 +395,7 @@ test('Parts - Notes', async ({ page }) => {
 test('Parts - 404', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/99999/`);
+  await navigate(page, 'part/99999/');
   await page.getByText('Page Not Found', { exact: true }).waitFor();
 
   // Clear out any console error messages
@@ -399,7 +405,7 @@ test('Parts - 404', async ({ page }) => {
 test('Parts - Revision', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/906/details`);
+  await navigate(page, 'part/906/details');
 
   await page.getByText('Revision of').waitFor();
   await page.getByText('Select Part Revision').waitFor();

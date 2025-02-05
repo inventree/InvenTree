@@ -1,7 +1,8 @@
-import { ActionIcon, Group } from '@mantine/core';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconLanguage } from '@tabler/icons-react';
 
+import { t } from '@lingui/macro';
 import { LanguageSelect } from './LanguageSelect';
 
 export function LanguageToggle() {
@@ -17,13 +18,15 @@ export function LanguageToggle() {
       }}
       aria-label='Open language options'
     >
-      <ActionIcon
-        onClick={() => toggle.toggle()}
-        size='lg'
-        variant='transparent'
-      >
-        <IconLanguage />
-      </ActionIcon>
+      <Tooltip label={t`Select language`}>
+        <ActionIcon
+          onClick={() => toggle.toggle()}
+          size='lg'
+          variant='transparent'
+        >
+          <IconLanguage />
+        </ActionIcon>
+      </Tooltip>
       {open && (
         <Group>
           <LanguageSelect />

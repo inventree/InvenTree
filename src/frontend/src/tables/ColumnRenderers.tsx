@@ -243,6 +243,14 @@ export function DateColumn(props: TableColumnProps): TableColumn {
   };
 }
 
+export function StartDateColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'start_date',
+    title: t`Start Date`,
+    ...props
+  });
+}
+
 export function TargetDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'target_date',

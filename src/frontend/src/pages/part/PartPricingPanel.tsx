@@ -106,9 +106,6 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
             label={panelOptions.internal}
             title={t`Internal Pricing`}
             visible={internalPricing}
-            disabled={
-              !pricing?.internal_cost_min || !pricing?.internal_cost_max
-            }
           />
           <PricingPanel
             content={<SupplierPricingPanel part={part} />}
@@ -143,7 +140,6 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
             label={panelOptions.sale_pricing}
             title={t`Sale Pricing`}
             visible={salesOrderPricing}
-            disabled={!pricing?.sale_price_min || !pricing?.sale_price_max}
           />
           <PricingPanel
             content={<SaleHistoryPanel part={part} />}

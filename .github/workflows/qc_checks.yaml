@@ -17,10 +17,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_MEDIA_ROOT: ../test_inventree_media
-  INVENTREE_STATIC_ROOT: ../test_inventree_static
-  INVENTREE_BACKUP_DIR: ../test_inventree_backup
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
   INVENTREE_SITE_URL: http://localhost:8000
+  INVENTREE_DEBUG: true
 
 permissions:
   contents: read
@@ -79,7 +80,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -102,7 +103,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -170,9 +171,9 @@ jobs:
         id: breaking_changes
         uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
         with:
-          base: 'api.yaml'
-          revision: 'src/backend/InvenTree/schema.yml'
-          format: 'html'
+          base: "api.yaml"
+          revision: "src/backend/InvenTree/schema.yml"
+          format: "html"
       - name: Echoing diff to step
         env:
           DIFF: ${{ steps.breaking_changes.outputs.diff }}
@@ -194,6 +195,23 @@ jobs:
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Extract settings / tags
+        run: invoke int.export-definitions --basedir src/backend/InvenTree
+      - name: Upload settings
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
+        with:
+          name: inventree_settings.json
+          path: src/backend/InvenTree/inventree_settings.json
+      - name: Upload tags
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
+        with:
+          name: inventree_tags.yml
+          path: src/backend/InvenTree/inventree_tags.yml
+      - name: Upload filters
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
+        with:
+          name: inventree_filters.yml
+          path: src/backend/InvenTree/inventree_filters.yml
 
   schema-push:
     name: Push new schema
@@ -210,15 +228,26 @@ jobs:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
           persist-credentials: true
+      - name: Create artifact directory
+        run: mkdir -p artifact
       - name: Download schema artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
-          name: schema.yml
-      - name: Move schema to correct location
+          path: artifact
+          merge-multiple: true
+      - name: Move files to correct location
         run: |
-          echo "Version: $version"
+          echo "Version: ${version}"
+          echo "before move"
+          ls -la artifact
           mkdir export/${version}
-          mv schema.yml export/${version}/api.yaml
+          mv artifact/schema.yml export/${version}/api.yaml
+          mv artifact/inventree_settings.json export/${version}/inventree_settings.json
+          mv artifact/inventree_tags.yml export/${version}/inventree_tags.yml
+          mv artifact/inventree_filters.yml export/${version}/inventree_filters.yml
+          echo "after move"
+          ls -la artifact
+          rm -rf artifact
       - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
         name: Commit schema changes
         with:
@@ -308,7 +337,7 @@ jobs:
       - name: Coverage Tests
         run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -451,7 +480,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -518,7 +547,6 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-
   platform_ui:
     name: Tests - Platform UI
     runs-on: ubuntu-20.04
@@ -543,7 +571,7 @@ jobs:
           install: true
           update: true
       - name: Set up test data
-        run: invoke dev.setup-test -i
+        run: invoke dev.setup-test -iv
       - name: Rebuild thumbnails
         run: invoke int.rebuild-thumbnails
       - name: Install dependencies
@@ -563,7 +591,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # pin@v5.1.2
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -609,7 +637,7 @@ jobs:
   zizmor:
     name: Security [Zizmor]
     runs-on: ubuntu-20.04
-    needs: ['pre-commit', 'paths-filter']
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
     permissions:
@@ -625,7 +653,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@b6a472f63d85b9c78a3ac5e89422239fc15e9b3c # pin@v3
+        uses: github/codeql-action/upload-sarif@dd746615b3b9d728a6a37ca2045b68ca76d4841a # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor
