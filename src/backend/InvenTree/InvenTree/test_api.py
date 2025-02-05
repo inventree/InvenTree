@@ -473,7 +473,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
             # File is not a json
             with self.assertLogs(logger='inventree', level='ERROR') as log:
-                respo = read_license_file(Path(sample_file.file.name))
+                respo = read_license_file(Path(str(sample_file.file.name)))
                 self.assertEqual(respo, [])
 
                 self.assertIn('Failed to parse license file', str(log.output))
