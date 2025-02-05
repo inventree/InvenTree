@@ -34,7 +34,7 @@ export function Header() {
   const [setNavigationOpen, navigationOpen] = useLocalState(
     useShallow((state) => [state.setNavigationOpen, state.navigationOpen])
   );
-  const [server] = useServerApiState((state) => [state.server]);
+  const [server] = useServerApiState(useShallow((state) => [state.server]));
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [

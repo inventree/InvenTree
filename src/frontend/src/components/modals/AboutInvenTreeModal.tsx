@@ -41,7 +41,6 @@ export function AboutInvenTreeModal({
   }>
 >) {
   const [user] = useUserState(useShallow((state) => [state.user]));
-  const [server] = useServerApiState((state) => [state.server]);
 
   if (!user?.is_staff)
     return (
