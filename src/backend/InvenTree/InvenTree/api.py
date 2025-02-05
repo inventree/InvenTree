@@ -593,7 +593,7 @@ class MetadataView(RetrieveUpdateAPI):
         if model is None:
             raise ValidationError(
                 f"MetadataView called without '{self.MODEL_REF}' parameter"
-            )
+            )  # pragma: no cover
 
         return model
 
@@ -609,5 +609,5 @@ class MetadataView(RetrieveUpdateAPI):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
         if 'spectacular' in sys.argv:
-            return MetadataSerializer(Part, *args, **kwargs)
+            return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)
