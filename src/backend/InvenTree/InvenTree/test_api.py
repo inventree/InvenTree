@@ -65,8 +65,8 @@ class HTMLAPITests(InvenTreeTestCase):
             self.assertEqual(response.status_code, 404)
 
 
-class APITests(InvenTreeAPITestCase):
-    """Tests for the InvenTree API."""
+class ApiAccessTests(InvenTreeAPITestCase):
+    """Tests for various access scenarios with the InvenTree API."""
 
     fixtures = ['location', 'category', 'part', 'stock']
     roles = ['part.view']
@@ -106,19 +106,6 @@ class APITests(InvenTreeAPITestCase):
         """Test token auth works."""
         self.tokenAuth()
         self.assertIsNotNone(self.token)
-
-    def test_info_view(self):
-        """Test that we can read the 'info-view' endpoint."""
-        url = reverse('api-inventree-info')
-
-        response = self.get(url)
-
-        data = response.json()
-        self.assertIn('server', data)
-        self.assertIn('version', data)
-        self.assertIn('instance', data)
-
-        self.assertEqual('InvenTree', data['server'])
 
     def test_role_view(self):
         """Test that we can access the 'roles' view for the logged in user.
@@ -431,7 +418,7 @@ class SearchTests(InvenTreeAPITestCase):
 
 
 class GeneralApiTests(InvenTreeAPITestCase):
-    """Tests for versions and license endpoints."""
+    """Tests for various api endpoints."""
 
     def test_api_version(self):
         """Test that the API text is correct."""
@@ -490,3 +477,28 @@ class GeneralApiTests(InvenTreeAPITestCase):
                 self.assertEqual(respo, [])
 
                 self.assertIn('Failed to parse license file', str(log.output))
+
+    def test_info_view(self):
+        """Test that we can read the 'info-view' endpoint."""
+        url = reverse('api-inventree-info')
+
+        response = self.get(url)
+
+        data = response.json()
+        self.assertIn('server', data)
+        self.assertIn('version', data)
+        self.assertIn('instance', data)
+
+        self.assertEqual('InvenTree', data['server'])
+
+        # Test with token
+        token = self.get(url=reverse('api-token')).data['token']
+        self.client.logout()
+
+        # Anon
+        response = self.get(url)
+        self.assertEqual(response.json()['database'], None)
+
+        # Staff
+        response = self.get(url, headers={'Authorization': f'Token {token}'})
+        self.assertGreater(len(response.json()['database']), 4)
