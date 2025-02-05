@@ -1,8 +1,8 @@
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
 import {
   clearTableFilters,
   getRowFromCell,
+  navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
@@ -10,10 +10,11 @@ import { doQuickLogin } from '../login.ts';
 test('Build Order - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/part/`);
-
   // Navigate to the correct build order
   await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+
+  await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -90,7 +91,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
 test('Build Order - Edit', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/build-order/22/`);
+  await navigate(page, 'manufacturing/build-order/22/');
 
   // Check for expected text items
   await page.getByText('Building for sales order').first().waitFor();
@@ -117,8 +118,10 @@ test('Build Order - Edit', async ({ page }) => {
 test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/index/`);
+  await navigate(page, 'manufacturing/index/');
   await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+
+  await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -191,7 +194,7 @@ test('Build Order - Build Outputs', async ({ page }) => {
 test('Build Order - Allocation', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/build-order/1/line-items`);
+  await navigate(page, 'manufacturing/build-order/1/line-items');
 
   // Expand the R_10K_0805 line item
   await page.getByText('R_10K_0805_1%').first().click();
@@ -291,7 +294,7 @@ test('Build Order - Allocation', async ({ page }) => {
 test('Build Order - Filters', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/manufacturing/index/buildorders`);
+  await navigate(page, 'manufacturing/index/buildorders');
 
   await clearTableFilters(page);
   await page.getByText('1 - 24 / 24').waitFor();

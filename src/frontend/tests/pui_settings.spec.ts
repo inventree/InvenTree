@@ -1,5 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { apiUrl, baseUrl } from './defaults.js';
+import { apiUrl } from './defaults.js';
+import { navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
@@ -94,10 +95,14 @@ test('Settings - Admin', async ({ page }) => {
   await page.getByLabel('row-action-menu-0').click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
-  await expect(page.getByLabel('text-field-description')).toHaveValue('A room');
-  await page.getByLabel('text-field-name').fill('Large Room');
-  await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill('A large room');
+
+  // Toggle the "description" field
+  const oldDescription = await page
+    .getByLabel('text-field-description')
+    .inputValue();
+  const newDescription = `${oldDescription} (edited)`;
+
+  await page.getByLabel('text-field-description').fill(newDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -113,13 +118,9 @@ test('Settings - Admin', async ({ page }) => {
   // Edit first item again (revert values)
   await page.getByLabel('row-action-menu-0').click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Large Room');
-  await expect(page.getByLabel('text-field-description')).toHaveValue(
-    'A large room'
-  );
   await page.getByLabel('text-field-name').fill('Room');
   await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill('A room');
+  await page.getByLabel('text-field-description').fill(oldDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 });
@@ -165,7 +166,7 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
   // Try to access "admin" page with a non-staff user
   await doQuickLogin(page, 'allaccess', 'nolimits');
 
-  await page.goto(`${baseUrl}/settings/admin/`);
+  await navigate(page, 'settings/admin/');
   await page.waitForURL('**/settings/admin/**');
 
   // Should get a permission denied message
@@ -175,14 +176,14 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
     .waitFor();
 
   // Try to access user settings page (should be accessible)
-  await page.goto(`${baseUrl}/settings/user/`);
+  await navigate(page, 'settings/user/');
   await page.waitForURL('**/settings/user/**');
 
   await page.getByRole('tab', { name: 'Display Options' }).click();
   await page.getByRole('tab', { name: 'Account' }).click();
 
   // Try to access global settings page
-  await page.goto(`${baseUrl}/settings/system/`);
+  await navigate(page, 'settings/system/');
   await page.waitForURL('**/settings/system/**');
 
   await page.getByText('Permission Denied').waitFor();

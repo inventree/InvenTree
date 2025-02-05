@@ -291,6 +291,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             json={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
+            timeout=5000,
         )
 
         self.assertTrue(result)

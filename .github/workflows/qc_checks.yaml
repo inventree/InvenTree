@@ -17,10 +17,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_MEDIA_ROOT: ../test_inventree_media
-  INVENTREE_STATIC_ROOT: ../test_inventree_static
-  INVENTREE_BACKUP_DIR: ../test_inventree_backup
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
   INVENTREE_SITE_URL: http://localhost:8000
+  INVENTREE_DEBUG: true
 
 permissions:
   contents: read
@@ -79,7 +80,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -102,7 +103,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # pin@v5.3.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # pin@v5.4.0
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -570,7 +571,7 @@ jobs:
           install: true
           update: true
       - name: Set up test data
-        run: invoke dev.setup-test -i
+        run: invoke dev.setup-test -iv
       - name: Rebuild thumbnails
         run: invoke int.rebuild-thumbnails
       - name: Install dependencies
@@ -652,7 +653,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@f6091c0113d1dcf9b98e269ee48e8a7e51b7bdd4 # pin@v3
+        uses: github/codeql-action/upload-sarif@dd746615b3b9d728a6a37ca2045b68ca76d4841a # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

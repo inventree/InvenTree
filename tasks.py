@@ -428,7 +428,9 @@ def rebuild_models(c):
 @task
 def rebuild_thumbnails(c):
     """Rebuild missing image thumbnails."""
-    info('Rebuilding image thumbnails')
+    from src.backend.InvenTree.InvenTree.config import get_media_dir
+
+    info(f'Rebuilding image thumbnails in {get_media_dir()}')
     manage(c, 'rebuild_thumbnails', pty=True)
 
 
@@ -1125,8 +1127,19 @@ def test(
         manage(c, cmd, pty=pty)
 
 
-@task(help={'dev': 'Set up development environment at the end'})
-def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset'):
+@task(
+    help={
+        'dev': 'Set up development environment at the end',
+        'validate_files': 'Validate media files are correctly copied',
+    }
+)
+def setup_test(
+    c,
+    ignore_update=False,
+    dev=False,
+    validate_files=False,
+    path='inventree-demo-dataset',
+):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import get_media_dir
 
@@ -1156,12 +1169,34 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
 
     # Copy media files
-    info('Copying media files ...')
     src = template_dir.joinpath('media')
     dst = get_media_dir()
-
     info(f'Copying media files - "{src}" to "{dst}"')
     shutil.copytree(src, dst, dirs_exist_ok=True)
+
+    if validate_files:
+        info(' - Validating media files')
+        missing = False
+        # Check that the media files are correctly copied across
+        for dirpath, _dirnames, filenames in os.walk(src):
+            rel_path = os.path.relpath(dirpath, src)
+            dst_path = os.path.join(dst, rel_path)
+
+            if not os.path.exists(dst_path):
+                error(f' - Missing directory: {dst_path}')
+                missing = True
+                continue
+
+            for filename in filenames:
+                dst_file = os.path.join(dst_path, filename)
+                if not os.path.exists(dst_file):
+                    missing = True
+                    error(f' - Missing file: {dst_file}')
+
+        if missing:
+            raise FileNotFoundError('Media files not correctly copied')
+        else:
+            success(' - All media files correctly copied')
 
     info('Done setting up test environment...')
 
@@ -1587,9 +1622,7 @@ via your signed in browser, or consider using a point release download via invok
 def docs_server(c, address='localhost:8080', compile_schema=False):
     """Start a local mkdocs server to view the documentation."""
     # Extract settings definitions
-    export_settings_definitions(
-        c, filename='docs/inventree_settings.json', overwrite=True
-    )
+    export_definitions(c, basedir='docs')
 
     if compile_schema:
         # Build the schema docs first
