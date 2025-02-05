@@ -50,11 +50,8 @@ def read_license_file(path: Path) -> list:
 
     try:
         data = json.loads(path.read_text())
-    except json.JSONDecodeError as e:
-        logger.exception("Failed to parse license file '%s': %s", path, e)
-        return []
     except Exception as e:
-        logger.exception("Exception while reading license file '%s': %s", path, e)
+        logger.exception("Failed to parse license file '%s': %s", path, e)
         return []
 
     output = []

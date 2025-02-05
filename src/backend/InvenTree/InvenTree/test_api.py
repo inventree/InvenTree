@@ -1,11 +1,14 @@
 """Low level tests for the InvenTree API."""
 
 from base64 import b64encode
+from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 from django.urls import reverse
 
 from rest_framework import status
 
+from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from InvenTree.version import inventreeApiText, parse_version_text
@@ -425,8 +428,8 @@ class SearchTests(InvenTreeAPITestCase):
                 )
 
 
-class ApiVersionTests(InvenTreeAPITestCase):
-    """Tests for api_version functions and APIs."""
+class GeneralApiTests(InvenTreeAPITestCase):
+    """Tests for versions and license endpoints."""
 
     def test_api_version(self):
         """Test that the API text is correct."""
@@ -461,3 +464,27 @@ class ApiVersionTests(InvenTreeAPITestCase):
 
         # Check that all texts are parsed
         self.assertEqual(len(resp), INVENTREE_API_VERSION - 1)
+
+    def test_api_license(self):
+        """Test that the license endpoint is working."""
+        response = self.get(reverse('api-license')).json()
+        self.assertIn('backend', response)
+        self.assertIn('frontend', response)
+
+        # Various problem cases
+        # File does not exist
+        with self.assertLogs(logger='inventree', level='ERROR') as log:
+            respo = read_license_file(Path('does not exsist'))
+            self.assertEqual(respo, [])
+
+            self.assertIn('License file not found at', str(log.output))
+
+        with NamedTemporaryFile('w', encoding='utf8') as sample_file:
+            sample_file.write('abc')
+
+            # File is not a json
+            with self.assertLogs(logger='inventree', level='ERROR') as log:
+                respo = read_license_file(Path(sample_file.file.name))
+                self.assertEqual(respo, [])
+
+                self.assertIn('Failed to parse license file', str(log.output))
