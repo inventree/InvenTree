@@ -2,7 +2,7 @@
 
 from base64 import b64encode
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 from django.urls import reverse
 
@@ -468,12 +468,13 @@ class GeneralApiTests(InvenTreeAPITestCase):
 
             self.assertIn('License file not found at', str(log.output))
 
-        with NamedTemporaryFile('w', encoding='utf8') as sample_file:
-            sample_file.write('abc')
+        with TemporaryDirectory() as tmp:
+            sample_file = Path(tmp, 'temp.txt')
+            sample_file.write_text('abc')
 
             # File is not a json
             with self.assertLogs(logger='inventree', level='ERROR') as log:
-                respo = read_license_file(Path(str(sample_file.file.name)))
+                respo = read_license_file(sample_file)
                 self.assertEqual(respo, [])
 
                 self.assertIn('Failed to parse license file', str(log.output))
