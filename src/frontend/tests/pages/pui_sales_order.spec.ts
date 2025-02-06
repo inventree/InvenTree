@@ -1,6 +1,7 @@
 import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
+  globalSearch,
   navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
@@ -182,13 +183,7 @@ test('Sales Orders - Shipments', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Search for shipment by tracking number
-  await page.getByLabel('open-search').click();
-
-  await page.getByLabel('global-search-input').clear();
-
-  await page.waitForTimeout(250);
-  await page.getByLabel('global-search-input').fill('TRK-002');
-  await page.waitForTimeout(250);
+  await globalSearch(page, 'TRK-002');
 
   await page
     .getByText(/SO0009/)
@@ -196,13 +191,7 @@ test('Sales Orders - Shipments', async ({ page }) => {
     .click();
 
   // Search for shipment by invoice number
-  await page.getByLabel('open-search').click();
-
-  await page.getByLabel('global-search-input').clear();
-
-  await page.waitForTimeout(250);
-  await page.getByLabel('global-search-input').fill('INV-123');
-  await page.waitForTimeout(250);
+  await globalSearch(page, 'INV-123');
 
   await page
     .getByText(/SO0025/)

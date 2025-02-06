@@ -8,17 +8,17 @@ asgiref==3.8.1
     #   django-structlog
 async-timeout==5.0.1
     # via redis
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   jsonschema
     #   referencing
-babel==2.16.0
+babel==2.17.0
     # via py-moneyed
 bleach[css]==6.2.0
     # via django-markdownify
 brotli==1.1.0
     # via fonttools
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   requests
     #   sentry-sdk
@@ -42,7 +42,7 @@ cssselect2==0.7.0
     # via weasyprint
 defusedxml==0.7.1
     # via python3-openid
-deprecated==1.2.15
+deprecated==1.2.18
     # via
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -77,7 +77,7 @@ django==4.2.18
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[mfa, openid, saml, socialaccount] @ git+https://codeberg.org/allauth/django-allauth@b84141e2fa045bbfdb55e4161c6016f4094fb059
+django-allauth[mfa, openid, saml, socialaccount] @ git+https://codeberg.org/allauth/django-allauth@3428a0e202e996d62d919a1e458f34131a77a640
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0
     # via -r src/backend/requirements.in
@@ -125,7 +125,7 @@ django-sslserver==0.22
     # via -r src/backend/requirements.in
 django-stdimage==6.0.2
     # via -r src/backend/requirements.in
-django-structlog==9.0.0
+django-structlog==9.0.1
     # via -r src/backend/requirements.in
 django-taggit==6.1.0
     # via -r src/backend/requirements.in
@@ -156,13 +156,13 @@ flexcache==0.3
     # via pint
 flexparser==0.4
     # via pint
-fonttools[woff]==4.55.3
+fonttools[woff]==4.55.8
     # via weasyprint
 googleapis-common-protos==1.66.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
-grpcio==1.69.0
+grpcio==1.70.0
     # via
     #   -r src/backend/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -170,7 +170,7 @@ gunicorn==23.0.0
     # via -r src/backend/requirements.in
 html5lib==1.1
     # via weasyprint
-icalendar==6.1.0
+icalendar==6.1.1
     # via django-ical
 idna==3.10
     # via requests
@@ -284,7 +284,7 @@ platformdirs==4.3.6
     # via pint
 ppf-datamatrix==0.2
     # via -r src/backend/requirements.in
-prettytable==3.12.0
+prettytable==3.14.0
     # via pip-licenses
 protobuf==5.29.3
     # via
@@ -302,7 +302,7 @@ pyjwt[crypto]==2.10.1
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
-pyphen==0.17.0
+pyphen==0.17.2
     # via weasyprint
 python-barcode[images]==0.15.1
     # via -r src/backend/requirements.in
@@ -320,7 +320,7 @@ python3-openid==3.2.0
     # via django-allauth
 python3-saml==1.16.0
     # via django-allauth
-pytz==2024.2
+pytz==2025.1
     # via
     #   django-dbbackup
     #   djangorestframework
@@ -333,11 +333,11 @@ qrcode[pil]==8.0
     # via
     #   -r src/backend/requirements.in
     #   django-allauth
-rapidfuzz==3.11.0
+rapidfuzz==3.12.1
     # via -r src/backend/requirements.in
 redis==5.2.1
     # via django-redis
-referencing==0.36.0
+referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -373,7 +373,7 @@ sqlparse==0.5.3
     #   django-sql-utils
 structlog==25.1.0
     # via django-structlog
-tablib[xls, xlsx, yaml]==3.7.0
+tablib[xls, xlsx, yaml]==3.8.0
     # via -r src/backend/requirements.in
 tinycss2==1.4.0
     # via
@@ -393,7 +393,7 @@ typing-extensions==4.12.2
     #   py-moneyed
     #   referencing
     #   structlog
-tzdata==2024.2
+tzdata==2025.1
     # via icalendar
 uritemplate==4.1.1
     # via
