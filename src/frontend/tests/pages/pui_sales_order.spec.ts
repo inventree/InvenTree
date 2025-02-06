@@ -153,7 +153,7 @@ test('Purchase Orders', async ({ page }) => {
 test('Purchase Orders - Barcodes', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'purchasing/purchase-order/13/detail');
+  await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
