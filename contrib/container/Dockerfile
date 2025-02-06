@@ -70,7 +70,7 @@ RUN apk add --no-cache \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
     # Postgres client
-    postgresql13-client \
+    postgresql15-client \
     # MySQL / MariaDB client
     mariadb-client mariadb-connector-c \
     && \
