@@ -153,7 +153,7 @@ test('Purchase Orders', async ({ page }) => {
 test('Purchase Orders - Barcodes', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
+  await navigate(page, 'purchasing/purchase-order/13/detail');
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
@@ -162,15 +162,43 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('img', { name: 'QR Code' }).waitFor();
   await page.getByRole('banner').getByRole('button').click();
 
-  // Link to barcode
+  // Un-link barcode if a link exists
   await page.getByLabel('action-menu-barcode-actions').click();
+  await page.waitForTimeout(100);
+
+  if (
+    await page
+      .getByLabel('action-menu-barcode-actions-unlink-barcode')
+      .isVisible()
+  ) {
+    await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+    await page.getByRole('button', { name: 'Unlink Barcode' }).click();
+    await page.waitForTimeout(100);
+  } else {
+    await page.keyboard.press('Escape');
+  }
+
+  // Link to barcode
+  await page.getByLabel('action-menu-barcode-actions', { exact: true }).click();
   await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
-  await page.getByRole('heading', { name: 'Link Barcode' }).waitFor();
-  await page
-    .getByPlaceholder('Scan barcode data here using')
-    .fill('1234567890');
-  await page.getByRole('button', { name: 'Link' }).click();
+
+  await page.getByLabel('barcode-input-scanner').click();
+
+  // Simulate barcode scan
+  await page.getByPlaceholder('Enter barcode data').fill('1234567890');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.waitForTimeout(250);
+
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Ensure we can scan back to this page, with the associated barcode
+  await page.getByRole('tab', { name: 'Sales' }).click();
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+  await page.getByPlaceholder('Enter barcode data').fill('1234567890');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+
+  await page.getByText('Purchase Order: PO0013', { exact: true }).waitFor();
 
   // Unlink barcode
   await page.getByLabel('action-menu-barcode-actions').click();
@@ -178,6 +206,6 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
   await page.getByText('This will remove the link to').waitFor();
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
