@@ -8,15 +8,14 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from pathlib import Path
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
-from django.core.files.storage import Storage, default_storage
+from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -884,16 +883,6 @@ def hash_barcode(barcode_data: str) -> str:
     barcode_hash = hashlib.md5(str(barcode_data).encode())
 
     return str(barcode_hash.hexdigest())
-
-
-def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
-    """Return the MD5 hash of a file."""
-    content = (
-        open(filename, 'rb').read()  # noqa: SIM115
-        if storage is None
-        else storage.open(str(filename), 'rb').read()
-    )
-    return hashlib.md5(content).hexdigest()
 
 
 def current_time(local=True):
