@@ -365,14 +365,14 @@ def install(c, uv=False, skip_plugins=False):
         )
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U -r {INSTALL_FILE}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
         )
     else:
         run(
             c,
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
         )
-        run(c, f'uv pip install -U -r {INSTALL_FILE}')
+        run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
     # Run plugins install
     if not skip_plugins:
