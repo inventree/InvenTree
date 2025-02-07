@@ -161,6 +161,8 @@ class CompanySerializer(
 
         return queryset
 
+    address = serializers.CharField(required=False, allow_null=True, read_only=True)
+
     primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
