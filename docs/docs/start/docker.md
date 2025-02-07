@@ -112,12 +112,18 @@ InvenTree stores any persistent data (e.g. uploaded media files, database data, 
 !!! info "Data Directory"
     Make sure you change the path to the local directory where you want persistent data to be stored.
 
-#### Database Connection
+### Database Connection
 
-The `inventree-db` container is configured to use the `postgres:13` docker image. The `inventree-server` and `inventree-worker` containers support connection to a postgres database up to (and including) version 15.
+The `inventree-db` container is configured to use the `postgres:{{ config.extra.docker_postgres_version }}` docker image.
+
+Connecting to a different database container is entirely possible, but requires modification of the `docker-compose.yml` file. This is outside the scope of this documentation.
+
+#### Postgres Version
+
+The `inventree-server` and `inventree-worker` containers support connection to a postgres database up to (and including) version {{ config.extra.docker_postgres_version }}.
 
 !!! warning "Newer Postgres Versions"
-    The InvenTree docker image supports connection to a postgres database up to version 15. Connecting to a database using a newer version of postgres is not possible.
+    The InvenTree docker image supports connection to a postgres database up to version {{ config.extra.docker_postgres_version }}. Connecting to a database using a newer version of postgres is not possible.
 
 ## Common Issues
 
