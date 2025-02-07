@@ -1220,7 +1220,7 @@ def schema(
 
     info(f"Exporting schema file to '{filename}'")
 
-    cmd = f'spectacular --file {filename} --validate --color'
+    cmd = f'schema --file {filename} --validate --color'
 
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
