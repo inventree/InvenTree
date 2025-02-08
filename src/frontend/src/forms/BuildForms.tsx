@@ -616,6 +616,7 @@ function BuildConsumeStockRow({
           <RenderStockLocation instance={record.location_detail} />
         )}
       </Table.Td>
+      <Table.Td>{record.quantity}</Table.Td>
       <Table.Td>
         <StandaloneField
           fieldName='quantity'
@@ -654,7 +655,13 @@ export function useConsumeBuildStockForm({
       items: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Stock Item`, t`Location`, t`Quantity`],
+        headers: [
+          t`Part`,
+          t`Stock Item`,
+          t`Location`,
+          t`Allocated`,
+          t`Quantity`
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record = allocatedItems.find(
             (item) => item.pk == row.item.build_item
@@ -675,6 +682,7 @@ export function useConsumeBuildStockForm({
     title: t`Consume Stock`,
     successMessage: t`Stock items consumed`,
     onFormSuccess: onFormSuccess,
+    size: '80%',
     fields: consumeFields,
     initialData: {
       items: allocatedItems.map((item) => {
