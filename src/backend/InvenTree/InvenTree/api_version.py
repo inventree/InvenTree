@@ -10,6 +10,7 @@ INVENTREE_API_TEXT = """
 
 v310 - 2025-02-08 : https://github.com/inventree/InvenTree/pull/8191
     - Adds "consumed" field to the BuildItem API
+    - Adds API endpoint to consume stock against a BuildOrder
 
 v309 - 2025-02-02 : https://github.com/inventree/InvenTree/pull/9008
     - Bug fixes for the "Part" serializer
