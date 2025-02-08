@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('build', '0052_build_status_custom_key_alter_build_status'),
+        ('build', '0054_build_start_date'),
     ]
 
     operations = [
