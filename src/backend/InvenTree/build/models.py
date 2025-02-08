@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -198,11 +198,16 @@ class Build(
         }
 
     @staticmethod
-    def filterByDate(queryset, min_date, max_date):
+    def filterByDate(queryset, min_date: str, max_date: str) -> QuerySet:
         """Filter by 'minimum and maximum date range'.
 
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
+        Arguments:
+            min_date: Minimum date value, format: 'YYYY-MM-DD'
+            max_date: Maximum date value, format: 'YYYY-MM-DD'
+
+        Notes:
+            - Specified as min_date, max_date
+            - Both must be specified for filter to be applied
         """
         date_fmt = '%Y-%m-%d'  # ISO format date string
 
@@ -220,6 +225,8 @@ class Build(
             & Q(completion_date__gte=min_date)
             & Q(completion_date__lte=max_date)
         )
+
+        # TODO: Account for the 'start date' of the build order
 
         # Order target date falls within specified range
         pending = (

@@ -20,8 +20,23 @@ import { navigateToLink } from '../../functions/navigation';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
+import {
+  useCategoryFilters,
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import {
+  AssignedToMeFilter,
+  HasProjectCodeFilter,
+  OrderStatusFilter,
+  OverdueFilter,
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  type TableFilter
+} from '../../tables/Filter';
 
 export default function BuildCalendar() {
   const navigate = useNavigate();
@@ -181,12 +196,47 @@ export default function BuildCalendar() {
     [buildQuery.data]
   );
 
+  const projectCodeFilters = useProjectCodeFilters();
+  const ownerFilters = useOwnerFilters();
+  const userFilters = useUserFilters();
+  const categoryFilters = useCategoryFilters();
+
+  // Filters available for the calendar
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return [
+      OrderStatusFilter({ model: ModelType.build }),
+      OverdueFilter(),
+      AssignedToMeFilter(),
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      HasProjectCodeFilter(),
+      {
+        name: 'issued_by',
+        label: t`Issued By`,
+        description: t`Filter by user who issued this order`,
+        choices: userFilters.choices
+      },
+      ResponsibleFilter({ choices: ownerFilters.choices }),
+      {
+        name: 'category',
+        label: t`Category`,
+        description: t`Filter by part category`,
+        choices: categoryFilters.choices
+      }
+    ];
+  }, [
+    categoryFilters.choices,
+    projectCodeFilters.choices,
+    ownerFilters.choices,
+    userFilters.choices
+  ]);
+
   return (
     <Calendar
       enableDownload
       enableFilters
       enableSearch
       events={events}
+      filters={calendarFilters}
       state={calendarState}
       editable={true}
       isLoading={buildQuery.isFetching}

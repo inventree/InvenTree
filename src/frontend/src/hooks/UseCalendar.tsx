@@ -56,7 +56,7 @@ export default function useCalendar(calendarName: string): CalendarState {
 
   // Array of active filters (saved to local storage)
   const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({
-    key: `inventree-table-filters-${calendarName}`,
+    key: `inventree-calendar-filters-${calendarName}`,
     defaultValue: [],
     getInitialValueInEffect: false
   });

@@ -478,6 +478,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
             & Q(target_date__lte=max_date)
         )
 
+        # TODO: Account for the 'start date' of the PurchaseOrder
+
         # TODO - Construct a queryset for "overdue" orders within the range
 
         queryset = queryset.filter(received | pending)
@@ -1037,6 +1039,8 @@ class SalesOrder(TotalPriceMixin, Order):
             & Q(shipment_date__gte=min_date)
             & Q(shipment_date__lte=max_date)
         )
+
+        # TODO: Account for the 'start date' of the SalesOrder
 
         # Construct a queryset for "pending" orders within the range
         pending = (

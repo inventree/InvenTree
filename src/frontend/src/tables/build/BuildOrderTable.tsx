@@ -8,9 +8,8 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { shortenString } from '../../functions/tables';
 import {
-  useFilters,
+  useCategoryFilters,
   useOwnerFilters,
   useProjectCodeFilters,
   useUserFilters
@@ -131,17 +130,7 @@ export function BuildOrderTable({
   const projectCodeFilters = useProjectCodeFilters();
   const ownerFilters = useOwnerFilters();
   const userFilters = useUserFilters();
-
-  const categoryFilters = useFilters({
-    url: apiUrl(ApiEndpoints.category_list),
-    transform: (item) => ({
-      value: item.pk,
-      label: shortenString({
-        str: item.pathstring,
-        len: 50
-      })
-    })
-  });
+  const categoryFilters = useCategoryFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
