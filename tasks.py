@@ -1284,6 +1284,7 @@ def version(c):
     """Show the current version of InvenTree."""
     import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
     from src.backend.InvenTree.InvenTree.config import (
+        get_backup_dir,
         get_config_file,
         get_media_dir,
         get_static_dir,
@@ -1304,8 +1305,9 @@ Environment {sys.prefix}
 Installation paths:
 Base        {localDir()}
 Config      {get_config_file()}
-Media       {get_media_dir()}
-Static      {get_static_dir()}
+Media       {get_media_dir(error=False) or 'NOT SPECIFIED'}
+Static      {get_static_dir(error=False) or 'NOT SPECIFIED'}
+Backup      {get_backup_dir(error=False) or 'NOT SPECIFIED'}
 
 Versions:
 Python      {python_version()}
