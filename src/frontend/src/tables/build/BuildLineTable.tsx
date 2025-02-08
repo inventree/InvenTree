@@ -403,11 +403,28 @@ export default function BuildLineTable({
         sortable: true,
         hidden: !isActive,
         render: (record: any) => {
+          if (record?.bom_item_detail?.consumable) {
+            return (
+              <Text
+                size='sm'
+                style={{ fontStyle: 'italic' }}
+              >{t`Consumable item`}</Text>
+            );
+          }
+
           const required = Math.max(0, record.quantity - record.consumed);
 
-          return record?.bom_item_detail?.consumable ? (
-            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
-          ) : (
+          if (required <= 0) {
+            return (
+              <Text size='sm' style={{ fontStyle: 'italic' }}>
+                {record.consumed >= record.quantity
+                  ? t`Fully consumed`
+                  : t`Fully allocated`}
+              </Text>
+            );
+          }
+
+          return (
             <ProgressBar
               progressLabel={true}
               value={record.allocatedQuantity}
