@@ -1681,7 +1681,9 @@ class BuildConsumeAllocationSerializer(serializers.Serializer):
         quantity = data['quantity']
 
         if quantity > build_item.quantity:
-            raise ValidationError(_('Consumed quantity exceeds allocated quantity'))
+            raise ValidationError({
+                'quantity': _('Consumed quantity exceeds allocated quantity')
+            })
 
         return data
 
@@ -1702,8 +1704,8 @@ class BuildConsumeSerializer(serializers.Serializer):
     notes = serializers.CharField(
         label=_('Notes'),
         help_text=_('Optional notes for the stock consumption'),
-        required=True,
-        allow_blank=False,
+        required=False,
+        allow_blank=True,
     )
 
     def validate_items(self, items):
