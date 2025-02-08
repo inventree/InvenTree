@@ -211,16 +211,16 @@ def render_currency(
         except Exception:
             pass
 
-    if min_decimal_places is None:
+    if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
-    if max_decimal_places is None:
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
         max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if decimal_places is not None:
+    if decimal_places is not None and isinstance(decimal_places, (int, float)):
         # Decimal place count is provided, use it
         pass
     elif '.' in value:

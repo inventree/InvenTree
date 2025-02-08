@@ -67,7 +67,7 @@ class Build(
     Attributes:
         part: The part to be built (from component BOM items)
         reference: Build order reference (required, must be unique)
-        title: Brief title describing the build (required)
+        title: Brief title describing the build (optional)
         quantity: Number of units to be built
         parent: Reference to a Build object for which this Build is required
         sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
@@ -177,6 +177,12 @@ class Build(
         # Prevent changing target part after creation
         if self.has_field_changed('part'):
             raise ValidationError({'part': _('Build order part cannot be changed')})
+
+        # Target date should be *after* the start date
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date')
+            })
 
     def report_context(self) -> dict:
         """Generate custom report context data."""
@@ -342,6 +348,13 @@ class Build(
 
     creation_date = models.DateField(
         auto_now_add=True, editable=False, verbose_name=_('Creation Date')
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Build start date'),
+        help_text=_('Scheduled start date for this build order'),
     )
 
     target_date = models.DateField(

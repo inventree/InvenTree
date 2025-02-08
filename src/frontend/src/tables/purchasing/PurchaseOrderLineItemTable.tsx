@@ -32,8 +32,7 @@ import {
   NoteColumn,
   PartColumn,
   ReferenceColumn,
-  TargetDateColumn,
-  TotalPriceColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -226,7 +225,11 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
-      TotalPriceColumn(),
+      CurrencyColumn({
+        accessor: 'total_price',
+        currency_accessor: 'purchase_price_currency',
+        title: t`Total Price`
+      }),
       TargetDateColumn({}),
       {
         accessor: 'destination',

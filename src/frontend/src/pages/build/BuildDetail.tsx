@@ -171,7 +171,8 @@ export default function BuildDetail() {
         name: 'issued_by',
         label: t`Issued By`,
         icon: 'user',
-        badge: 'user'
+        badge: 'user',
+        hidden: !build.issued_by
       },
       {
         type: 'text',
@@ -181,24 +182,35 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
         label: t`Created`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !build.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.target_date
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'completion_date',
         label: t`Completed`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.completion_date
       },
       {

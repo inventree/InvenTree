@@ -48,7 +48,7 @@ function AllUnitTable() {
   );
 }
 
-export default function UnitManagmentPanel() {
+export default function UnitManagementPanel() {
   return (
     <Stack gap='xs'>
       <Accordion defaultValue='custom'>

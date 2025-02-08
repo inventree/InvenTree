@@ -7,12 +7,14 @@ from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 
 import structlog
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
 from common.settings import get_global_setting
+from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
@@ -155,7 +157,7 @@ class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
     """This function ensures only frontend code triggers the MFA auth cycle."""
 
     def process_request(self, request):
-        """Check if requested url is forntend and enforce MFA check."""
+        """Check if requested url is frontend and enforce MFA check."""
         try:
             if not url_matcher.resolve(request.path[1:]):
                 super().process_request(request)
@@ -215,3 +217,23 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         )
 
         error.save()
+
+
+class InvenTreeRequestCacheMiddleware(MiddlewareMixin):
+    """Middleware to perform caching against the request object.
+
+    This middleware is used to cache data against the request object,
+    which can be used to store data for the duration of the request.
+
+    In this fashion, we can avoid hitting the external cache multiple times,
+    much less the database!
+    """
+
+    def process_request(self, request):
+        """Create a request-specific cache object."""
+        create_session_cache(request)
+
+    def process_response(self, request, response):
+        """Clear the cache object."""
+        delete_session_cache()
+        return response

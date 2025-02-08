@@ -834,6 +834,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PURCHASEORDER_CONVERT_CURRENCY': {
+        'name': _('Convert Currency'),
+        'description': _('Convert item value to base currency when receiving stock'),
+        'default': False,
+        'validator': bool,
+    },
     'PURCHASEORDER_AUTO_COMPLETE': {
         'name': _('Auto Complete Purchase Orders'),
         'description': _(
@@ -1002,6 +1008,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+    },
+    'PROJECT_CODES_ENABLED': {
+        'name': _('Enable project codes'),
+        'description': _('Enable project codes for tracking projects'),
+        'default': False,
+        'validator': bool,
     },
     'STOCKTAKE_ENABLE': {
         'name': _('Stocktake Functionality'),

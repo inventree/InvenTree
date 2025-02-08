@@ -1,32 +1,60 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 302
+INVENTREE_API_VERSION = 309
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v302 - 2025-01-18 - https://github.com/inventree/InvenTree/pull/8905
+v309 - 2025-02-02 : https://github.com/inventree/InvenTree/pull/9008
+    - Bug fixes for the "Part" serializer
+    - Fixes for data import API endpoints
+
+v308 - 2025-02-01 : https://github.com/inventree/InvenTree/pull/9003
+    - Adds extra detail to the ReportOutput and LabelOutput API endpoints
+    - Allows ordering of output list endpoints
+
+v307 - 2025-01-29 : https://github.com/inventree/InvenTree/pull/8969
+    - Extend Info Endpoint to include customizations
+
+v306 - 2025-01-28 : https://github.com/inventree/InvenTree/pull/8966
+    - Adds "start_date" to PurchasesOrder API
+    - Adds "start_date" to SalesOrder API
+    - Adds "start_date" to ReturnOrder API
+    - Updated API filters
+
+v305 - 2025-01-26 : https://github.com/inventree/InvenTree/pull/8950
+    - Bug fixes for the SupplierPart API
+    - Refactoring for data export via API
+
+v304 - 2025-01-22 : https://github.com/inventree/InvenTree/pull/8940
+    - Adds "category" filter to build list API
+
+v303 - 2025-01-20 : https://github.com/inventree/InvenTree/pull/8915
+    - Adds "start_date" field to Build model and API endpoints
+    - Adds additional API filtering and sorting options for Build list
+
+v302 - 2025-01-18 : https://github.com/inventree/InvenTree/pull/8905
     - Fix schema definition on the /label/print endpoint
 
-v301 - 2025-01-14 - https://github.com/inventree/InvenTree/pull/8894
+v301 - 2025-01-14 : https://github.com/inventree/InvenTree/pull/8894
     - Remove ui preferences from the API
 
-v300 - 2025-01-13 - https://github.com/inventree/InvenTree/pull/8886
+v300 - 2025-01-13 : https://github.com/inventree/InvenTree/pull/8886
     - Allow null value for 'expiry_date' field introduced in #8867
 
-v299 - 2025-01-10 - https://github.com/inventree/InvenTree/pull/8867
+v299 - 2025-01-10 : https://github.com/inventree/InvenTree/pull/8867
     - Adds 'expiry_date' field to the PurchaseOrderReceive API endpoint
     - Adds 'default_expiry` field to the PartBriefSerializer, affecting API endpoints which use it
 
-v298 - 2025-01-07 - https://github.com/inventree/InvenTree/pull/8848
+v298 - 2025-01-07 : https://github.com/inventree/InvenTree/pull/8848
     - Adds 'created_by' field to PurchaseOrder API endpoints
     - Adds 'created_by' field to SalesOrder API endpoints
     - Adds 'created_by' field to ReturnOrder API endpoints
 
-v297 - 2024-12-29 - https://github.com/inventree/InvenTree/pull/8438
+v297 - 2024-12-29 : https://github.com/inventree/InvenTree/pull/8438
     - Adjustments to the CustomUserState API endpoints and serializers
 
 v296 - 2024-12-25 : https://github.com/inventree/InvenTree/pull/8732
