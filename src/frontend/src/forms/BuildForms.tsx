@@ -23,6 +23,10 @@ import {
 } from '../components/forms/fields/TableField';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StatusRenderer } from '../components/render/StatusRenderer';
+import {
+  RenderStockItem,
+  RenderStockLocation
+} from '../components/render/Stock';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
@@ -589,5 +593,96 @@ export function useAllocateStockToBuildForm({
       })
     },
     size: '80%'
+  });
+}
+
+function BuildConsumeStockRow({
+  props,
+  record
+}: {
+  props: TableFieldRowProps;
+  record: any;
+}) {
+  return (
+    <Table.Tr key={`table-row-${record.pk}`}>
+      <Table.Td>
+        <PartColumn part={record.part_detail} />
+      </Table.Td>
+      <Table.Td>
+        <RenderStockItem instance={record.stock_item_detail} />
+      </Table.Td>
+      <Table.Td>
+        {record.location_detail && (
+          <RenderStockLocation instance={record.location_detail} />
+        )}
+      </Table.Td>
+      <Table.Td>
+        <StandaloneField
+          fieldName='quantity'
+          fieldDefinition={{
+            field_type: 'number',
+            required: true,
+            value: props.item.quantity,
+            onValueChange: (value: any) => {
+              props.changeFn(props.idx, 'quantity', value);
+            }
+          }}
+          error={props.rowErrors?.quantity?.message}
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
+/**
+ * Dynamic form for consuming stock against multiple build order line items
+ */
+export function useConsumeBuildStockForm({
+  buildId,
+  allocatedItems,
+  onFormSuccess
+}: {
+  buildId: number;
+  allocatedItems: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const consumeFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      items: {
+        field_type: 'table',
+        value: [],
+        headers: [t`Part`, t`Stock Item`, t`Location`, t`Quantity`],
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = allocatedItems.find(
+            (item) => item.pk == row.item.build_item
+          );
+
+          return (
+            <BuildConsumeStockRow key={row.idx} props={row} record={record} />
+          );
+        }
+      },
+      notes: {}
+    };
+  }, [allocatedItems]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_consume,
+    pk: buildId,
+    title: t`Consume Stock`,
+    successMessage: t`Stock items consumed`,
+    onFormSuccess: onFormSuccess,
+    fields: consumeFields,
+    initialData: {
+      items: allocatedItems.map((item) => {
+        return {
+          build_item: item.pk,
+          quantity: item.quantity
+        };
+      })
+    }
   });
 }
