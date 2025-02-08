@@ -81,3 +81,13 @@ export const navigate = async (page, url: string) => {
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
 };
+
+/**
+ * Perform a 'global search' on the provided page, for the provided query text
+ */
+export const globalSearch = async (page, query) => {
+  await page.getByLabel('open-search').click();
+  await page.getByLabel('global-search-input').clear();
+  await page.getByPlaceholder('Enter search text').fill(query);
+  await page.waitForTimeout(300);
+};
