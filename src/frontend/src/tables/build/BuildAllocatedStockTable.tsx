@@ -6,7 +6,7 @@ import { ActionButton } from '../../components/buttons/ActionButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useConsumeBuildStockForm } from '../../forms/BuildForms';
+import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -183,7 +183,7 @@ export default function BuildAllocatedStockTable({
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
-  const consumeStock = useConsumeBuildStockForm({
+  const consumeStock = useConsumeBuildItemsForm({
     buildId: buildId ?? 0,
     allocatedItems: selectedItems,
     onFormSuccess: () => {

@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconCircleCheck,
   IconCircleMinus,
   IconShoppingCart,
   IconTool,
@@ -19,7 +20,8 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
   useAllocateStockToBuildForm,
-  useBuildOrderFields
+  useBuildOrderFields,
+  useConsumeBuildLinesForm
 } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
@@ -564,6 +566,14 @@ export default function BuildLineTable({
     parts: partsToOrder
   });
 
+  const consumeLines = useConsumeBuildLinesForm({
+    buildId: build.pk,
+    buildLines: selectedRows,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const part = record.part_detail ?? {};
@@ -576,6 +586,13 @@ export default function BuildLineTable({
         0,
         record.quantity - record.consumed - record.allocated
       );
+
+      // Can consume
+      const canConsume =
+        in_production &&
+        !consumable &&
+        record.allocated > 0 &&
+        user.hasChangeRole(UserRoles.build);
 
       // Can allocate
       const canAllocate =
@@ -613,6 +630,16 @@ export default function BuildLineTable({
           onClick: () => {
             setSelectedRows([record]);
             allocateStock.open();
+          }
+        },
+        {
+          icon: <IconCircleCheck />,
+          title: t`Consume Stock`,
+          color: 'green',
+          hidden: !canConsume,
+          onClick: () => {
+            setSelectedRows([record]);
+            consumeLines.open();
           }
         },
         {
@@ -812,6 +839,7 @@ export default function BuildLineTable({
       {deallocateStock.modal}
       {editAllocation.modal}
       {deleteAllocation.modal}
+      {consumeLines.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}

@@ -596,7 +596,7 @@ export function useAllocateStockToBuildForm({
   });
 }
 
-function BuildConsumeStockRow({
+function BuildConsumeItemRow({
   props,
   record
 }: {
@@ -639,9 +639,9 @@ function BuildConsumeStockRow({
 }
 
 /**
- * Dynamic form for consuming stock against multiple build order line items
+ * Dynamic form for consuming stock against multiple BuildItem records
  */
-export function useConsumeBuildStockForm({
+export function useConsumeBuildItemsForm({
   buildId,
   allocatedItems,
   onFormSuccess
@@ -668,7 +668,7 @@ export function useConsumeBuildStockForm({
           );
 
           return (
-            <BuildConsumeStockRow key={row.idx} props={row} record={record} />
+            <BuildConsumeItemRow key={row.idx} props={row} record={record} />
           );
         }
       },
@@ -689,6 +689,82 @@ export function useConsumeBuildStockForm({
         return {
           build_item: item.pk,
           quantity: item.quantity
+        };
+      })
+    }
+  });
+}
+
+function BuildConsumeLineRow({
+  props,
+  record
+}: {
+  props: TableFieldRowProps;
+  record: any;
+}) {
+  return (
+    <Table.Tr key='table-row-${record.pk}'>
+      <Table.Td>
+        <PartColumn part={record.part_detail} />
+      </Table.Td>
+      <Table.Td>{record.quantity}</Table.Td>
+      <Table.Td>
+        <ProgressBar
+          value={record.consumed}
+          maximum={record.quantity}
+          progressLabel
+        />
+      </Table.Td>
+      <Table.Td>
+        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
+/**
+ * Dynamic form for consuming stock against multiple BuildLine records
+ */
+export function useConsumeBuildLinesForm({
+  buildId,
+  buildLines,
+  onFormSuccess
+}: {
+  buildId: number;
+  buildLines: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const consumeFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      lines: {
+        field_type: 'table',
+        value: [],
+        headers: [t`Part`, t`Allocated`, t`Consumed`],
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = buildLines.find(
+            (item) => item.pk == row.item.build_line
+          );
+
+          return (
+            <BuildConsumeLineRow key={row.idx} props={row} record={record} />
+          );
+        }
+      },
+      notes: {}
+    };
+  }, [buildLines]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_consume,
+    pk: buildId,
+    title: t`Consume Stock`,
+    successMessage: t`Stock items consumed`,
+    onFormSuccess: onFormSuccess,
+    fields: consumeFields,
+    initialData: {
+      lines: buildLines.map((item) => {
+        return {
+          build_line: item.pk
         };
       })
     }
