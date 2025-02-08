@@ -1695,9 +1695,16 @@ class BuildConsumeSerializer(serializers.Serializer):
     class Meta:
         """Serializer metaclass."""
 
-        fields = ['items']
+        fields = ['items', 'notes']
 
     items = BuildConsumeAllocationSerializer(many=True, required=True)
+
+    notes = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Optional notes for the stock consumption'),
+        required=True,
+        allow_blank=False,
+    )
 
     def validate_items(self, items):
         """Validate the items passed to the serializer."""
@@ -1728,10 +1735,16 @@ class BuildConsumeSerializer(serializers.Serializer):
     def save(self):
         """Perform the stock consumption step."""
         data = self.validated_data
+        request = self.context.get('request')
+        notes = data.get('notes', '')
 
         with transaction.atomic():
             for item in data['items']:
                 build_item = item['build_item']
                 quantity = item['quantity']
 
-                build_item.consume(quantity)
+                build_item.complete_allocation(
+                    quantity=quantity,
+                    notes=notes,
+                    user=request.user if request else None,
+                )
