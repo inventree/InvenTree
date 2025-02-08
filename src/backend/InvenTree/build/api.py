@@ -700,6 +700,13 @@ class BuildAllocate(BuildOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.BuildAllocationSerializer
 
 
+class BuildConsume(BuildOrderContextMixin, CreateAPI):
+    """API endpoint to consume stock against a build order."""
+
+    queryset = Build.objects.none()
+    serializer_class = build.serializers.BuildConsumeSerializer
+
+
 class BuildIssue(BuildOrderContextMixin, CreateAPI):
     """API endpoint for issuing a BuildOrder."""
 
@@ -908,6 +915,7 @@ build_api_urls = [
         '<int:pk>/',
         include([
             path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+            path('consume/', BuildConsume.as_view(), name='api-build-consume'),
             path(
                 'auto-allocate/',
                 BuildAutoAllocate.as_view(),
