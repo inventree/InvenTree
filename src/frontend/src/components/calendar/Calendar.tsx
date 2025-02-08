@@ -27,6 +27,7 @@ import { useCallback, useState } from 'react';
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { DownloadAction } from '../../tables/DownloadAction';
+import type { TableFilter } from '../../tables/Filter';
 import { TableSearchInput } from '../../tables/Search';
 import { ActionButton } from '../buttons/ActionButton';
 import { StylishText } from '../items/StylishText';
@@ -36,6 +37,7 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSearch?: boolean;
+  filters?: TableFilter[];
   isLoading?: boolean;
   state: CalendarState;
 }
@@ -46,6 +48,7 @@ export default function Calendar({
   enableFilters,
   enableSearch,
   isLoading,
+  filters,
   state,
   ...calendarProps
 }: InvenTreeCalendarProps) {
@@ -127,7 +130,7 @@ export default function Calendar({
             {enableSearch && (
               <TableSearchInput searchCallback={state.setSearchTerm} />
             )}
-            {enableFilters && ( // && filters.length > 0 && (
+            {enableFilters && filters && filters.length > 0 && (
               <Indicator
                 size='xs'
                 label={state.activeFilters?.length ?? 0}
