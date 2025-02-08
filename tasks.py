@@ -49,28 +49,33 @@ def task_exception_handler(t, v, tb):
 sys.excepthook = task_exception_handler
 
 
+def wrap_color(text: str, color: str) -> str:
+    """Wrap text in a color code."""
+    return f'\033[{color}m{text}\033[0m'
+
+
 def success(*args):
     """Print a success message to the console."""
     msg = ' '.join(map(str, args))
-    print(f'\033[92m{msg}\033[0m')
+    print(wrap_color(msg, '92'))
 
 
 def error(*args):
     """Print an error message to the console."""
     msg = ' '.join(map(str, args))
-    print(f'\033[91m{msg}\033[0m')
+    print(wrap_color(msg, '91'))
 
 
 def warning(*args):
     """Print a warning message to the console."""
     msg = ' '.join(map(str, args))
-    print(f'\033[93m{msg}\033[0m')
+    print(wrap_color(msg, '93'))
 
 
 def info(*args):
     """Print an informational message to the console."""
     msg = ' '.join(map(str, args))
-    print(f'\033[94m{msg}\033[0m')
+    print(wrap_color(msg, '94'))
 
 
 def checkInvokeVersion():
@@ -1293,6 +1298,10 @@ def version(c):
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
+    # Special output messages
+    NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
+    NA = wrap_color('N/A', '93')
+
     print(
         f"""
 InvenTree - inventree.org
@@ -1305,17 +1314,17 @@ Environment {sys.prefix}
 Installation paths:
 Base        {localDir()}
 Config      {get_config_file()}
-Media       {get_media_dir(error=False) or 'NOT SPECIFIED'}
-Static      {get_static_dir(error=False) or 'NOT SPECIFIED'}
-Backup      {get_backup_dir(error=False) or 'NOT SPECIFIED'}
+Media       {get_media_dir(error=False) or NOT_SPECIFIED}
+Static      {get_static_dir(error=False) or NOT_SPECIFIED}
+Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
 
 Versions:
 Python      {python_version()}
 Django      {InvenTreeVersion.inventreeDjangoVersion()}
 InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
-Node        {node if node else 'N/A'}
-Yarn        {yarn if yarn else 'N/A'}
+Node        {node if node else NA}
+Yarn        {yarn if yarn else NA}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
@@ -1323,7 +1332,7 @@ Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
         print(
             """
-You are probably running the package installer / single-line installer. Please mentioned that in any bug reports!
+You are probably running the package installer / single-line installer. Please mention this in any bug reports!
 
 Use '--list' for a list of available commands
 Use '--help' for help on a specific command"""
