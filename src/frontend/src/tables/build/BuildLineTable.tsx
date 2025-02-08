@@ -375,6 +375,12 @@ export default function BuildLineTable({
         }
       },
       {
+        accessor: 'available_stock',
+        sortable: true,
+        switchable: false,
+        render: renderAvailableColumn
+      },
+      {
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
@@ -392,12 +398,6 @@ export default function BuildLineTable({
         }
       },
       {
-        accessor: 'available_stock',
-        sortable: true,
-        switchable: false,
-        render: renderAvailableColumn
-      },
-      {
         accessor: 'allocated',
         switchable: false,
         sortable: true,
@@ -411,7 +411,7 @@ export default function BuildLineTable({
             <ProgressBar
               progressLabel={true}
               value={record.allocatedQuantity}
-              maximum={record.requiredQuantity}
+              maximum={required}
             />
           );
         }
