@@ -572,12 +572,17 @@ export default function BuildLineTable({
 
       const hasOutput = !!output?.pk;
 
+      const required = Math.max(
+        0,
+        record.quantity - record.consumed - record.allocated
+      );
+
       // Can allocate
       const canAllocate =
         in_production &&
         !consumable &&
         user.hasChangeRole(UserRoles.build) &&
-        record.allocated < record.quantity &&
+        required > 0 &&
         record.trackable == hasOutput;
 
       // Can de-allocate
