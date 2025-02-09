@@ -68,38 +68,36 @@ class Command(spectacular.Command):
 
         paths = {}
         # Reformat paths
-        for path_name, path_spec in spec['paths'].items():
+        for p_name, p_spec in spec['paths'].items():
             # strip path name
-            path_name = path_name.removeprefix(dja_path_prefix)
+            p_name = p_name.removeprefix(dja_path_prefix)
 
             # fix refs
-            for method_name, method_spec in path_spec.items():
-                if method_spec.get('operationId', None) is None:
-                    method_spec['operationId'] = (
-                        f'{dja_ref_prefix}_{path_name.replace("/", "_")}_{method_name}'
+            for m_name, m_spec in p_spec.items():
+                if m_spec.get('operationId', None) is None:
+                    m_spec['operationId'] = (
+                        f'{dja_ref_prefix}_{p_name.replace("/", "_")}_{m_name}'
                     )
                 # update all refs
-                for key, value in method_spec.items():
+                for key, value in m_spec.items():
                     if key in ['parameters', 'responses', 'requestBody']:
-                        method_spec[key] = self.proccess_refs(value)
+                        m_spec[key] = self.proccess_refs(value)
 
                 # patch out unwanted  parameters - we don't use it
-                if params := method_spec.get('parameters', None):
-                    method_spec['parameters'] = clean_params(params)
+                if params := m_spec.get('parameters', None):
+                    m_spec['parameters'] = clean_params(params)
 
             # prefix path name
-            paths[f'/api/auth/v1/{path_name}'] = path_spec
+            paths[f'/api/auth/v1/{p_name}'] = p_spec
         settings.SPECTACULAR_SETTINGS['APPEND_PATHS'] = paths
 
         components = {}
         # Reformat components
-        for component_name, component_spec in spec['components'].items():
+        for c_name, c_spec in spec['components'].items():
             new_component = {}
-            for subcomponent_name, subcomponent_spec in component_spec.items():
-                new_component[prep_name(subcomponent_name)] = self.proccess_refs(
-                    subcomponent_spec
-                )
-            components[component_name] = new_component
+            for sc_name, sc_spec in c_spec.items():
+                new_component[prep_name(sc_name)] = self.proccess_refs(sc_spec)
+            components[c_name] = new_component
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
         super().handle(*args, **kwargs)
