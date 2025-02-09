@@ -78,6 +78,7 @@ nav:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
       - Custom States: concepts/custom_states.md
+      - Pricing: concepts/pricing.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
@@ -152,15 +153,17 @@ nav:
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
     - Admin Interface: settings/admin.md
-    - User Permissions: settings/permissions.md
-    - Single Sign on: settings/SSO.md
-    - Multi Factor Authentication: settings/MFA.md
+    - Setup:
+      - User Permissions: settings/permissions.md
+      - Single Sign on: settings/SSO.md
+      - Multi Factor Authentication: settings/MFA.md
+      - Email: settings/email.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
-    - Error Logs: settings/logs.md
-    - Email: settings/email.md
-    - Background Tasks: settings/tasks.md
-    - Currency Support: settings/currency.md
+    - Operations:
+      - Background Tasks: settings/tasks.md
+      - Error Logs: settings/logs.md
+      - Error Codes: settings/error_codes.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md

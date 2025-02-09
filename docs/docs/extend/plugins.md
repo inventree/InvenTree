@@ -8,11 +8,28 @@ The InvenTree server code supports an extensible plugin architecture, allowing c
 
 Plugins can be added from multiple sources:
 
-- Plugins can be installed in InvenTrees venv via PIP (python package manager)
-- Custom plugins should be placed in the directory `./data/plugins`.
-- InvenTree built-in plugins are located in the directory `./src/backend/InvenTree/plugin/builtin`.
+- Plugins can be installed using the PIP Python package manager
+- Plugins can be placed in the external [plugins directory](../start/config.md#plugin-options)
+- InvenTree built-in plugins are located within the InvenTree source code
 
 For further information, read more about [installing plugins](./plugins/install.md).
+
+### Configuration Options
+
+Plugin behaviour can be controlled via the InvenTree configuration options. Refer to the [configuration guide](../start/config.md#plugin-options) for the available plugin configuration options.
+
+### Creating a Plugin
+
+To assist in creating a new plugin, we provide a [plugin creator command line tool](https://github.com/inventree/plugin-creator). This allows developers to quickly scaffold a new InvenTree plugin, and provides a basic structure to build upon.
+
+To install and run the plugin creator:
+
+```bash
+pip install inventree-plugin-creator
+create-inventree-plugin
+```
+
+## Plugin Code Structure
 
 ### Plugin Base Class
 
