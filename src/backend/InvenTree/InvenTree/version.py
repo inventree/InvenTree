@@ -33,7 +33,7 @@ try:
     main_commit = main_repo[main_repo.head()]
     try:
         main_branch = active_branch(main_repo)
-    except KeyError:
+    except (KeyError, IndexError):
         logger.warning('INVE-W1: Current branch could not be decteced.')
         main_branch = None
 except ImportError:
