@@ -60,7 +60,7 @@ class AllUserRequire2FAMiddleware(MiddlewareMixin):
 
     def process_view(
         self, request: HttpRequest, view_func, view_args, view_kwargs
-    ) -> HttpResponse | None:
+    ) -> HttpResponse:
         """If set up enforce 2fa registration."""
         if request.user.is_anonymous:
             return None
