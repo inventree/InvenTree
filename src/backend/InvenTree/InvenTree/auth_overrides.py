@@ -183,7 +183,7 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
         """Send the password reset mail."""
         if not get_global_setting('LOGIN_ENABLE_PWD_FORGOT'):
             raise PermissionDenied('Password reset is disabled')
-        return super().send_password_reset_mail(self, user, email, context)
+        return super().send_password_reset_mail(user, email, context)
 
 
 class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter):
