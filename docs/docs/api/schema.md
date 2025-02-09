@@ -22,6 +22,7 @@ API schema documentation is split into the following categories:
 
 | Category | Description |
 | --- | --- |
+| [Authorization and Authentication](./schema/auth.md) | Authorization and Authentication |
 | [Background Task Management](./schema/background-task.md) | Background Task Management |
 | [Barcode Scanning](./schema/barcode.md) | Barcode Scanning |
 | [Bill of Materials](./schema/bom.md) | Bill of Materials |
