@@ -99,12 +99,12 @@ export default function ResetPassword() {
               <PasswordInput
                 required
                 label={t`Password`}
-                description={t`We will send you a link to login - if you are registered`}
+                description={t`The desired new password`}
                 {...simpleForm.getInputProps('password')}
               />
             </Stack>
             <Button type='submit' onClick={handleSet}>
-              <Trans>Send Email</Trans>
+              <Trans>Send Password</Trans>
             </Button>
           </Stack>
         </Container>
