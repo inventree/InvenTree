@@ -13,11 +13,23 @@ logger = structlog.get_logger('inventree')
 
 dja_path_prefix = '/_allauth/{client}/v1/'
 dja_ref_prefix = 'allauth'
+dja_clean_params = [
+    '#/components/parameters/allauth.SessionToken',
+    '#/components/parameters/allauth.Client',
+]
 
 
 def prep_name(ref):
     """Prepend django-allauth to all ref names."""
     return f'{dja_ref_prefix}.{ref}'
+
+
+def clean_params(params):
+    """Clean refs of unwanted parameters.
+
+    We don't use them in our API, we only support allauths browser APIs endpoints.
+    """
+    return [p for p in params if p['$ref'] not in dja_clean_params]
 
 
 class Command(spectacular.Command):
@@ -74,6 +86,10 @@ class Command(spectacular.Command):
                 for key, value in method_spec.items():
                     if key in ['parameters', 'responses', 'requestBody']:
                         method_spec[key] = self.proccess_refs(value)
+
+                # patch out unwanted  parameters - we don't use it
+                if params := method_spec.get('parameters', None):
+                    method_spec['parameters'] = clean_params(params)
 
             # prefix path name
             paths[f'/api/auth/v1/{path_name}'] = path_spec
