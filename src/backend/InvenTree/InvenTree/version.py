@@ -34,15 +34,17 @@ try:
     try:
         main_branch = active_branch(main_repo)
     except KeyError:
+        logger.warning('INVE-W1: Current branch could not be decteced.')
         main_branch = None
 except ImportError:
     logger.warning(
-        'Warning: Dulwich module not found, git information will not be available.'
+        'INVE-W2: Dulwich module not found, git information will not be available.'
     )
     main_repo = None
     main_commit = None
     main_branch = None
-except Exception:
+except Exception as exc:
+    logger.warning('INVE-W3: Could not detect git information.', exc_info=exc)
     main_repo = None
     main_commit = None
     main_branch = None

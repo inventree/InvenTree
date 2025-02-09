@@ -25,6 +25,24 @@ You probably have a reference to invoke or a directory with invoke in your PATH 
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
+#### INVE-W1
+**Current branch could not be decteced - Backend**
+
+During startup of the backend InvenTree tries to detect branch, commit hash and commit date to surface on various pints in the UI, through tags and in the API.
+This information is not needed for operation but very helpful for debugging and support. These issues might be caused by running a deployment version that delivers without git information, not having git installed or not having dulwich installed.
+You can ignore this warning if you are not interested in the git information.
+
+#### INVE-W2
+**Dulwich module not found - Backend**
+
+See [INVE-W1](#inve-w1)
+
+#### INVE-W3
+**Could not detect git information - Backend**
+
+See [INVE-W1](#inve-w1)
+
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 
