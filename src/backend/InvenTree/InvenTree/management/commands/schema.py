@@ -11,13 +11,17 @@ from drf_spectacular.management.commands import spectacular
 logger = structlog.get_logger('inventree')
 
 
+dja_path_prefix = '/_allauth/{client}/v1/'
+dja_ref_prefix = 'allauth'
+
+
 def prep_name(ref):
-    """Prepend allauth to all ref names."""
-    return f'allauth.{ref}'
+    """Prepend django-allauth to all ref names."""
+    return f'{dja_ref_prefix}.{ref}'
 
 
 class Command(spectacular.Command):
-    """Overwritten command to include allauth schemas."""
+    """Overwritten command to include django-allauth schemas."""
 
     def proccess_refs(self, value):
         """Prepend ref names."""
@@ -39,34 +43,41 @@ class Command(spectacular.Command):
             }
 
     def handle(self, *args, **kwargs):
-        """Extended schema generation that patches in allauth schemas."""
+        """Extended schema generation that patches in django-allauth schemas."""
         from allauth.headless.spec.internal import schema
 
-        # paths
-        path = Path(schema.__file__).parent.parent / 'doc/openapi.yaml'
-        with open(path, 'rb') as f:
+        # gather paths
+        org_path = Path(schema.__file__).parent.parent / 'doc/openapi.yaml'
+        with open(org_path, 'rb') as f:
             spec = yaml.safe_load(f)
-        spec_paths = spec['paths']
-        # add 'operationId' to each path
-        for path, path_spec in spec_paths.items():
-            for method, method_spec in path_spec.items():
-                operation_id = method_spec.get('operationId', None)
-                if operation_id is None:
-                    method_spec['operationId'] = f'{method}{path}'
-                # update parameters, resresponses, etc.
+
+        paths = {}
+        # Reformat paths
+        for path_name, path_spec in spec['paths'].items():
+            # strip path name
+            path_name = path_name.removeprefix(dja_path_prefix)
+
+            # fix refs
+            for method_name, method_spec in path_spec.items():
+                if method_spec.get('operationId', None) is None:
+                    method_spec['operationId'] = (
+                        f'{path_name.replace("/", "_")}_{method_name}'
+                    )
+                # update all refs
                 for key, value in method_spec.items():
                     if key in ['parameters', 'responses', 'requestBody']:
                         method_spec[key] = self.proccess_refs(value)
 
-        settings.SPECTACULAR_SETTINGS['APPEND_PATHS'] = spec_paths
+            # prefix path name
+            paths[f'/api/auth/v1/{path_name}'] = path_spec
+        settings.SPECTACULAR_SETTINGS['APPEND_PATHS'] = paths
 
-        # components
-        components = spec['components']
-        # Prepend all component names with 'allauth.'
-        for component_name, component in components.items():
+        components = {}
+        # Reformat components
+        for component_name, component_spec in spec['components'].items():
             new_component = {}
-            for sub_component_name, sub_component in component.items():
-                new_component[prep_name(sub_component_name)] = sub_component
+            for subcomponent_name, subcomponent_spec in component_spec.items():
+                new_component[prep_name(subcomponent_name)] = subcomponent_spec
             components[component_name] = new_component
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
