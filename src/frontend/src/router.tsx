@@ -105,6 +105,7 @@ export const NotFound = Loadable(
 );
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
 export const MFALogin = Loadable(lazy(() => import('./pages/Auth/MFALogin')));
+export const MFASetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
 export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
@@ -176,6 +177,7 @@ export const routes = (
       <Route path='/login' element={<Login />} />,
       <Route path='/register' element={<Login />} />,
       <Route path='/mfa' element={<MFALogin />} />,
+      <Route path='/mfa-setup' element={<MFASetup />} />,
       <Route path='/logout' element={<Logout />} />,
       <Route path='/logged-in' element={<Logged_In />} />
       <Route path='/reset-password' element={<Reset />} />

@@ -114,7 +114,8 @@ export const doBasicLogin = async (
 
   if (loginDone) {
     await fetchUserState();
-    fetchGlobalStates();
+    // see if mfa registration is required
+    await fetchGlobalStates(navigate);
   } else if (!success) {
     clearUserState();
   }
@@ -239,7 +240,7 @@ export const checkLoginState = async (
       message: t`Successfully logged in`
     });
 
-    fetchGlobalStates();
+    fetchGlobalStates(navigate);
 
     followRedirect(navigate, redirect);
   };

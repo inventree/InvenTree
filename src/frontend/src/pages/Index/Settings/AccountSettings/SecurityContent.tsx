@@ -21,12 +21,12 @@ import { IconAlertCircle, IconAt, IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../../../App';
-import { QRCode } from '../../../../components/barcodes/QRCode';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
+import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
 export function SecurityContent() {
@@ -563,18 +563,11 @@ function MfaAddSection({
         title={t`Register TOTP token`}
       >
         <Stack>
-          <QRCode data={totpQr?.totp_url} />
-          <Text>
-            <Trans>Secret</Trans>
-            <br />
-            {totpQr?.secret}
-          </Text>
-          <TextInput
-            required
-            label={t`One-Time Password`}
-            description={t`Enter the TOTP code to ensure it registered correctly`}
+          <QrRegistrationForm
+            url={totpQr?.totp_url ?? ''}
+            secret={totpQr?.secret ?? ''}
             value={value}
-            onChange={(event) => setValue(event.currentTarget.value)}
+            setValue={setValue}
           />
           <Button
             fullWidth

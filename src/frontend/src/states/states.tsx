@@ -1,3 +1,4 @@
+import type { NavigateFunction } from 'react-router-dom';
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
 import { useIconState } from './IconState';
@@ -164,7 +165,9 @@ export type SettingsLookup = {
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
  */
-export function fetchGlobalStates() {
+export async function fetchGlobalStates(
+  navigate?: NavigateFunction | undefined
+) {
   const { isLoggedIn } = useUserState.getState();
 
   if (!isLoggedIn()) {
@@ -174,7 +177,12 @@ export function fetchGlobalStates() {
   setApiDefaults();
 
   useServerApiState.getState().fetchServerApiState();
-  useUserSettingsState.getState().fetchSettings();
+  const result = await useUserSettingsState.getState().fetchSettings();
+  if (!result && navigate) {
+    console.log('MFA is required - setting up');
+    // call mfa setup
+    navigate('/mfa-setup');
+  }
   useGlobalSettingsState.getState().fetchSettings();
   useGlobalStatusState.getState().fetchStatus();
   useIconState.getState().fetchIcons();

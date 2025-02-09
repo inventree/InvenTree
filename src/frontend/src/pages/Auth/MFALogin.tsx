@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../../contexts/LanguageContext';
 import { handleMfaLogin } from '../../functions/auth';
 
-export default function Reset() {
+export default function MFALogin() {
   const simpleForm = useForm({ initialValues: { code: '' } });
   const navigate = useNavigate();
   const location = useLocation();

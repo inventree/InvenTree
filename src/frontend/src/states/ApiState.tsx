@@ -37,7 +37,6 @@ export const useServerApiState = create<ServerApiStateProps>()(
           .get(apiUrl(ApiEndpoints.api_server_info))
           .then((response) => {
             set({ server: response.data });
-            // set sso_enabled
           })
           .catch(() => {
             console.error('ERR: Error fetching server info');
