@@ -100,6 +100,11 @@ class Command(spectacular.Command):
             for sc_name, sc_spec in c_spec.items():
                 new_component[prep_name(sc_name)] = self.proccess_refs(sc_spec)
             components[c_name] = new_component
+
+        # Remove unused parameters
+        for p in dja_clean_params:
+            components['parameters'].pop(p.replace('#/components/parameters/', ''))
+
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
         super().handle(*args, **kwargs)
