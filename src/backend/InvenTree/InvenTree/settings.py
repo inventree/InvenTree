@@ -171,7 +171,7 @@ SECRET_KEY = config.get_secret_key()
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
-# The filesystem location for uploaded meadia files
+# The filesystem location for uploaded media files
 MEDIA_ROOT = config.get_media_dir()
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -1275,7 +1275,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
 
 if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
     if SITE_URL and SITE_URL.startswith('https://'):
-        # auto-detect HTTPS prtoocol
+        # auto-detect HTTPS protocol
         ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
     else:
         # default to http
@@ -1361,7 +1361,7 @@ MARKDOWNIFY = {
     }
 }
 
-# Ignore these error typeps for in-database error logging
+# Ignore these error types for in-database error logging
 IGNORED_ERRORS = [Http404, HttpResponseGone, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
@@ -1416,7 +1416,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuratino for API schema generation
+# Configuration for API schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
