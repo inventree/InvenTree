@@ -238,12 +238,15 @@ def get_boolean_setting(env_var=None, config_key=None, default_value=False):
     return is_true(get_setting(env_var, config_key, default_value))
 
 
-def get_media_dir(create=True):
+def get_media_dir(create=True, error=True):
     """Return the absolute path for the 'media' directory (where uploaded files are stored)."""
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
-        raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_MEDIA_ROOT not specified')
+        else:
+            return None
 
     md = Path(md).resolve()
 
@@ -253,12 +256,15 @@ def get_media_dir(create=True):
     return md
 
 
-def get_static_dir(create=True):
+def get_static_dir(create=True, error=True):
     """Return the absolute path for the 'static' directory (where static files are stored)."""
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
-        raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_STATIC_ROOT not specified')
+        else:
+            return None
 
     sd = Path(sd).resolve()
 
@@ -268,12 +274,15 @@ def get_static_dir(create=True):
     return sd
 
 
-def get_backup_dir(create=True):
+def get_backup_dir(create=True, error=True):
     """Return the absolute path for the backup directory."""
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
-        raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        if error:
+            raise FileNotFoundError('INVENTREE_BACKUP_DIR not specified')
+        else:
+            return None
 
     bd = Path(bd).resolve()
 
