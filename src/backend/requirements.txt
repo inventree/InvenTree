@@ -412,8 +412,8 @@ django==4.2.18 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[mfa, openid, saml, socialaccount]==65.4.0 \
-    --hash=sha256:1b6eb5d4a781a9a18dcd5ccf2bcae7ae542a56baea8e7b8f33a54c743cb54b0a
+django-allauth[mfa, openid, saml, socialaccount]==65.4.1 \
+    --hash=sha256:60b32aef7dbbcc213319aa4fd8f570e985266ea1162ae6ef7a26a24efca85c8c
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
