@@ -27,13 +27,20 @@ class Command(spectacular.Command):
         """Prepend ref names."""
 
         def sub_component_name(name: str) -> str:
+            if not isinstance(name, str):
+                return name
             s = name.split('/')
             if len(s) == 4 and s[1] == 'components':
                 s[3] = prep_name(s[3])
             return '/'.join(s)
 
         if isinstance(value, list):
-            return [{k: sub_component_name(v) for k, v in val.items()} for val in value]
+            return [
+                {k: sub_component_name(v) for k, v in val.items()}
+                if isinstance(val, dict)
+                else val
+                for val in value
+            ]
         elif isinstance(value, dict):
             return {
                 k: sub_component_name(v)
@@ -61,7 +68,7 @@ class Command(spectacular.Command):
             for method_name, method_spec in path_spec.items():
                 if method_spec.get('operationId', None) is None:
                     method_spec['operationId'] = (
-                        f'{path_name.replace("/", "_")}_{method_name}'
+                        f'{dja_ref_prefix}_{path_name.replace("/", "_")}_{method_name}'
                     )
                 # update all refs
                 for key, value in method_spec.items():
@@ -77,7 +84,9 @@ class Command(spectacular.Command):
         for component_name, component_spec in spec['components'].items():
             new_component = {}
             for subcomponent_name, subcomponent_spec in component_spec.items():
-                new_component[prep_name(subcomponent_name)] = subcomponent_spec
+                new_component[prep_name(subcomponent_name)] = self.proccess_refs(
+                    subcomponent_spec
+                )
             components[component_name] = new_component
         settings.SPECTACULAR_SETTINGS['APPEND_COMPONENTS'] = components
 
