@@ -46,20 +46,13 @@ class Command(spectacular.Command):
                 s[3] = prep_name(s[3])
             return '/'.join(s)
 
-        if isinstance(value, list):
-            return [
-                {k: sub_component_name(v) for k, v in val.items()}
-                if isinstance(val, dict)
-                else val
-                for val in value
-            ]
+        if isinstance(value, str):
+            return sub_component_name(value)
+        elif isinstance(value, list):
+            return [self.proccess_refs(v) for v in value]
         elif isinstance(value, dict):
-            return {
-                k: sub_component_name(v)
-                if isinstance(v, str)
-                else self.proccess_refs(v)
-                for k, v in value.items()
-            }
+            return {k: self.proccess_refs(v) for k, v in value.items()}
+        return value
 
     def handle(self, *args, **kwargs):
         """Extended schema generation that patches in django-allauth schemas."""
