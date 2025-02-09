@@ -1,6 +1,7 @@
 """Check if there are any pending database migrations, and run them."""
 
 from pathlib import Path
+from typing import TypeVar
 
 from django.conf import settings
 
@@ -8,6 +9,7 @@ import structlog
 import yaml
 from drf_spectacular.management.commands import spectacular
 
+T = TypeVar('T')
 logger = structlog.get_logger('inventree')
 
 
@@ -24,6 +26,16 @@ def prep_name(ref):
     return f'{dja_ref_prefix}.{ref}'
 
 
+def sub_component_name(name: T) -> T:
+    """Clean up component references."""
+    if not isinstance(name, str):
+        return name
+    s = name.split('/')
+    if len(s) == 4 and s[1] == 'components':
+        s[3] = prep_name(s[3])
+    return '/'.join(s)
+
+
 def clean_params(params):
     """Clean refs of unwanted parameters.
 
@@ -37,15 +49,6 @@ class Command(spectacular.Command):
 
     def proccess_refs(self, value):
         """Prepend ref names."""
-
-        def sub_component_name(name: str) -> str:
-            if not isinstance(name, str):
-                return name
-            s = name.split('/')
-            if len(s) == 4 and s[1] == 'components':
-                s[3] = prep_name(s[3])
-            return '/'.join(s)
-
         if isinstance(value, str):
             return sub_component_name(value)
         elif isinstance(value, list):
