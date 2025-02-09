@@ -19,7 +19,7 @@ def prep_name(ref):
 class Command(spectacular.Command):
     """Overwritten command to include allauth schemas."""
 
-    def proccess_refs(self, value: list | dict) -> list | dict:
+    def proccess_refs(self, value):
         """Prepend ref names."""
 
         def sub_component_name(name: str) -> str:
