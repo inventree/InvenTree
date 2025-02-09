@@ -12,6 +12,8 @@ from django.utils.deprecation import MiddlewareMixin
 import structlog
 from error_report.middleware import ExceptionProcessor
 
+from common.settings import get_global_setting
+from InvenTree.AllUserRequire2FAMiddleware import AllUserRequire2FAMiddleware
 from InvenTree.cache import create_session_cache, delete_session_cache
 from users.models import ApiToken
 
@@ -132,6 +134,14 @@ class AuthRequiredMiddleware:
         response = self.get_response(request)
 
         return response
+
+
+class Check2FAMiddleware(AllUserRequire2FAMiddleware):
+    """Ensure that mfa is enforced if set so."""
+
+    def enforce_2fa(self, request):
+        """Use setting to check if MFA should be enforced."""
+        return get_global_setting('LOGIN_ENFORCE_MFA')
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):

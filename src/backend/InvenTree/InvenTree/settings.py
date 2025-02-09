@@ -328,6 +328,7 @@ MIDDLEWARE = CONFIG.get(
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
+        'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
