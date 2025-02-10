@@ -8,11 +8,11 @@ import {
   Group,
   Loader,
   Paper,
-  Stack,
-  Text
+  Stack
 } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { StylishText } from '../../components/items/StylishText';
 import { doLogout } from '../../functions/auth';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
@@ -78,7 +78,8 @@ export function Wrapper({
   return (
     <Paper p='xl' withBorder miw={425}>
       <Stack gap={smallPadding ? 0 : 'md'}>
-        <Text size='lg'>{titleText}</Text>
+        <StylishText size='xl'>{titleText}</StylishText>
+        <Divider p='xs' />
         {loader && (
           <Group justify='center'>
             <Loader />
@@ -87,7 +88,7 @@ export function Wrapper({
         {children}
         {logOff && (
           <>
-            <Divider />
+            <Divider p='xs' />
             <Button onClick={() => doLogout(navigate)} color='red'>
               <Trans>Log off</Trans>
             </Button>

@@ -30,7 +30,6 @@ export default function Set_Password() {
 
   return (
     <Wrapper titleText={t`Reset Password`}>
-      <Divider />
       {user.username() && (
         <Paper>
           <Group>
@@ -39,7 +38,7 @@ export default function Set_Password() {
           </Group>
         </Paper>
       )}
-      <Divider />
+      <Divider p='xs' />
       <Stack gap='xs'>
         <PasswordInput
           required

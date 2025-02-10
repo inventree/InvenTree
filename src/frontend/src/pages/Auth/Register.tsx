@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Anchor, Divider, Text } from '@mantine/core';
+import { Anchor, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { RegistrationForm } from '../../components/forms/AuthenticationForm';
 import {} from '../../functions/auth';
@@ -10,7 +10,6 @@ export default function Register() {
 
   return (
     <Wrapper titleText={t`Register`} smallPadding>
-      <Divider p='xs' />
       <RegistrationForm />
       <Text ta='center' size={'xs'} mt={'md'}>
         <Anchor
