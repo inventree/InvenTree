@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { StylishText } from '../../components/items/StylishText';
 import { handleChangePassword } from '../../functions/auth';
 import { useUserState } from '../../states/UserState';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function Set_Password() {
   const simpleForm = useForm({

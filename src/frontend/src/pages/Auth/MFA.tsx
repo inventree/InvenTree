@@ -3,7 +3,7 @@ import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { handleMfaLogin } from '../../functions/auth';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function Mfa() {
   const simpleForm = useForm({ initialValues: { code: '' } });

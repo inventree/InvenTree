@@ -8,7 +8,7 @@ export const LayoutComponent = Loadable(
   lazy(() => import('./components/nav/Layout'))
 );
 export const LoginLayoutComponent = Loadable(
-  lazy(() => import('./pages/Auth/LoginLayoutComponent'))
+  lazy(() => import('./pages/Auth/Layout'))
 );
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));

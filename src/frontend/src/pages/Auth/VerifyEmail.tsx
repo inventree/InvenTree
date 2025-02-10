@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { handleVerifyEmail } from '../../functions/auth';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function VerifyEmail() {
   const { key } = useParams();

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { checkLoginState } from '../../functions/auth';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function Logged_In() {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
 import { handleReset } from '../../functions/auth';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function Reset() {
   const simpleForm = useForm({ initialValues: { email: '' } });

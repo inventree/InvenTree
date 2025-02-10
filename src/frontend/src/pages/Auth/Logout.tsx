@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { doLogout } from '../../functions/auth';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 /* Expose a route for explicit logout via URL */
 export default function Logout() {

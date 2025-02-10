@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { handlePasswordReset } from '../../functions/auth';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function ResetPassword() {
   const simpleForm = useForm({ initialValues: { password: '' } });

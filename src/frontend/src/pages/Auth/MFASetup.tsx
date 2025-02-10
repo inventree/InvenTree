@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getTotpSecret, handleVerifyTotp } from '../../functions/auth';
 import { QrRegistrationForm } from '../Index/Settings/AccountSettings/QrRegistrationForm';
-import { Wrapper } from './LoginLayoutComponent';
+import { Wrapper } from './Layout';
 
 export default function MfaSetup() {
   const navigate = useNavigate();

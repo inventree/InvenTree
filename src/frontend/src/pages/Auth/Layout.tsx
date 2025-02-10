@@ -17,7 +17,7 @@ import { doLogout } from '../../functions/auth';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 
-export default function LayoutComponent() {
+export default function Layout() {
   const [server, fetchServerApiState] = useServerApiState((state) => [
     state.server,
     state.fetchServerApiState
