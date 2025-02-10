@@ -33,6 +33,11 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const [sso_registration, registration_enabled] = useServerApiState(
+    (state) => [state.sso_registration_enabled, state.registration_enabled]
+  );
+  const both_reg_enabled =
+    registration_enabled() || sso_registration() || false;
 
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
@@ -90,18 +95,20 @@ export default function Login() {
         <>
           <Wrapper titleText={t`Login`} smallPadding>
             <AuthenticationForm />
-            <Text ta='center' size={'xs'} mt={'md'}>
-              <Trans>Don&apos;t have an account?</Trans>{' '}
-              <Anchor
-                component='button'
-                type='button'
-                c='dimmed'
-                size='xs'
-                onClick={() => navigate('/register')}
-              >
-                <Trans>Register</Trans>
-              </Anchor>
-            </Text>
+            {both_reg_enabled === false && (
+              <Text ta='center' size={'xs'} mt={'md'}>
+                <Trans>Don&apos;t have an account?</Trans>{' '}
+                <Anchor
+                  component='button'
+                  type='button'
+                  c='dimmed'
+                  size='xs'
+                  onClick={() => navigate('/register')}
+                >
+                  <Trans>Register</Trans>
+                </Anchor>
+              </Text>
+            )}
             {LoginMessage}
           </Wrapper>
           <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
