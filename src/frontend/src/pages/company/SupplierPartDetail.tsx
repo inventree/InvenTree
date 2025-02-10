@@ -407,7 +407,7 @@ export default function SupplierPartDetail() {
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
-            last_crumb={[
+            lastCrumb={[
               {
                 name: supplierPart.SKU,
                 url: `/purchasing/supplier-part/${supplierPart.pk}/`

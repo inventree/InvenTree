@@ -17,7 +17,7 @@ interface PageDetailInterface {
   detail?: ReactNode;
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
-  last_crumb?: Breadcrumb[];
+  lastCrumb?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
   editAction?: () => void;
@@ -38,7 +38,7 @@ export function PageDetail({
   badges,
   imageUrl,
   breadcrumbs,
-  last_crumb,
+  lastCrumb: last_crumb,
   breadcrumbAction,
   actions,
   editAction,

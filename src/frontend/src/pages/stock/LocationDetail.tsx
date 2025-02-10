@@ -384,7 +384,7 @@ export default function Stock() {
             editAction={editLocation.open}
             editEnabled={user.hasChangePermission(ModelType.stocklocation)}
             breadcrumbs={breadcrumbs}
-            last_crumb={[
+            lastCrumb={[
               {
                 name: location.name,
                 url: `/stock/location/${location.pk}/`

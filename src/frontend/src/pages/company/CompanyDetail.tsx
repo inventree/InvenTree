@@ -329,7 +329,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             actions={companyActions}
             imageUrl={company.image}
             breadcrumbs={props.breadcrumbs}
-            last_crumb={[
+            lastCrumb={[
               {
                 name: company.name,
                 url: `${props.last_crumb_url}/${company.pk}/`

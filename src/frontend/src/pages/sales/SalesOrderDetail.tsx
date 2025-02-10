@@ -553,7 +553,7 @@ export default function SalesOrderDetail() {
             badges={orderBadges}
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
-            last_crumb={[
+            lastCrumb={[
               { name: order.reference, url: `/sales/sales-order/${order.pk}` }
             ]}
             editAction={editSalesOrder.open}

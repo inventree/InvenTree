@@ -1001,7 +1001,7 @@ export default function PartDetail() {
                 ? breadcrumbs
                 : undefined
             }
-            last_crumb={[
+            lastCrumb={[
               {
                 name: part.name,
                 url: `/part/${part.pk}/`

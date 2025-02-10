@@ -916,7 +916,7 @@ export default function StockDetail() {
           breadcrumbs={
             user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
           }
-          last_crumb={[
+          lastCrumb={[
             {
               name: stockitem.name,
               url: `/stock/item/${stockitem.pk}/`

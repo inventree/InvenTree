@@ -279,7 +279,7 @@ export default function ManufacturerPartDetail() {
             title={t`ManufacturerPart`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
-            last_crumb={[
+            lastCrumb={[
               {
                 name: manufacturerPart.MPN,
                 url: getDetailUrl(

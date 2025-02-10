@@ -502,7 +502,7 @@ export default function PurchaseOrderDetail() {
             subtitle={order.description}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
-            last_crumb={[
+            lastCrumb={[
               {
                 name: order.reference,
                 url: `/purchasing/purchase-order/${order.pk}`
