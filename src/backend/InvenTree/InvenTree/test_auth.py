@@ -141,13 +141,34 @@ class EmailSettingsContext:
 class TestAuth(InvenTreeAPITestCase):
     """Test authentication functionality."""
 
+    reg_url = '/api/auth/v1/auth/signup'
+    test_email = 'tester@example.com'
+
+    def test_buildin_token(self):
+        """Test the built-in token authentication."""
+        self.logout()
+        response = self.post(
+            '/api/auth/v1/auth/login',
+            {'username': self.username, 'password': self.password},
+            expected_code=200,
+        )
+        data = response.json()
+        self.assertIn('meta', data)
+        self.assertTrue(data['meta']['is_authenticated'])
+
+        # Test for conflicting login
+        self.post(
+            '/api/auth/v1/auth/login',
+            {'username': self.username, 'password': self.password},
+            expected_code=409,
+        )
+
     def email_args(self, user=None, email=None):
         """Generate registration arguments."""
         return {
-            'username': user or 'user1',
-            'email': email or 'test@example.com',
-            'password1': '#asdf1234',
-            'password2': '#asdf1234',
+            'username': user or 'user2',
+            'email': email or self.test_email,
+            'password': '#asdf1234',
         }
 
     def test_registration(self):
@@ -156,26 +177,17 @@ class TestAuth(InvenTreeAPITestCase):
 
         # Duplicate username
         resp = self.post(
-            '/api/auth/registration/',
-            self.email_args(user='testuser'),
-            expected_code=400,
+            self.reg_url, self.email_args(user='testuser'), expected_code=400
         )
-        self.assertIn(
-            'A user with that username already exists.', resp.data['username']
-        )
+        self.assertIn('A user with that username already exists.', str(resp.json()))
 
         # Registration is disabled
-        resp = self.post(
-            '/api/auth/registration/', self.email_args(), expected_code=400
-        )
-        self.assertIn('Registration is disabled.', resp.data['non_field_errors'])
+        self.post(self.reg_url, self.email_args(), expected_code=403)
 
         # Enable registration - now it should work
         with EmailSettingsContext():
-            resp = self.post(
-                '/api/auth/registration/', self.email_args(), expected_code=201
-            )
-            self.assertIn('key', resp.data)
+            resp = self.post(self.reg_url, self.email_args(), expected_code=200)
+            self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
 
     def test_registration_email(self):
         """Test that LOGIN_SIGNUP_MAIL_RESTRICTION works."""
@@ -197,15 +209,13 @@ class TestAuth(InvenTreeAPITestCase):
 
         # Wrong email format
         resp = self.post(
-            '/api/auth/registration/',
+            self.reg_url,
             self.email_args(email='admin@invenhost.com'),
             expected_code=400,
         )
-        self.assertIn('The provided email domain is not approved.', resp.data['email'])
+        self.assertIn('The provided email domain is not approved.', str(resp.json()))
 
         # Right format should work
         with EmailSettingsContext():
-            resp = self.post(
-                '/api/auth/registration/', self.email_args(), expected_code=201
-            )
-            self.assertIn('key', resp.data)
+            resp = self.post(self.reg_url, self.email_args(), expected_code=200)
+            self.assertEqual(resp.json()['data']['user']['email'], self.test_email)
