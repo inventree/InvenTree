@@ -34,7 +34,7 @@ try:
     try:
         main_branch = active_branch(main_repo)
     except (KeyError, IndexError):
-        logger.warning('INVE-W1: Current branch could not be decteced.')
+        logger.warning('INVE-W1: Current branch could not be detected.')
         main_branch = None
 except ImportError:
     logger.warning(

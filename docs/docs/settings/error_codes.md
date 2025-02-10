@@ -26,9 +26,9 @@ You probably have a reference to invoke or a directory with invoke in your PATH 
 Warnings - These are non-critical errors which should be addressed when possible.
 
 #### INVE-W1
-**Current branch could not be decteced - Backend**
+**Current branch could not be detected - Backend**
 
-During startup of the backend InvenTree tries to detect branch, commit hash and commit date to surface on various pints in the UI, through tags and in the API.
+During startup of the backend InvenTree tries to detect branch, commit hash and commit date to surface on various points in the UI, through tags and in the API.
 This information is not needed for operation but very helpful for debugging and support. These issues might be caused by running a deployment version that delivers without git information, not having git installed or not having dulwich installed.
 You can ignore this warning if you are not interested in the git information.
 
