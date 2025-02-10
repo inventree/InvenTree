@@ -21,7 +21,7 @@ import {
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
-export default function LoginComponent() {
+export default function Login() {
   const [hostKey, setHost, hostList] = useLocalState((state) => [
     state.hostKey,
     state.setHost,

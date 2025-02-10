@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { notifications } from '@mantine/notifications';
+import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
@@ -329,4 +329,173 @@ export function authApi(
 
   // use normal api
   return api(url, requestConfig);
+}
+
+export const getTotpSecret = async (setTotpQr: any) => {
+  await authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'get').catch(
+    (err) => {
+      if (err.status == 404 && err.response.data.meta.secret) {
+        setTotpQr(err.response.data.meta);
+      } else {
+        const msg = err.response.data.errors[0].message;
+        showNotification({
+          title: t`Failed to set up MFA`,
+          message: msg,
+          color: 'red'
+        });
+      }
+    }
+  );
+};
+
+export function handleVerifyTotp(
+  value: string,
+  navigate: NavigateFunction,
+  location: Location<any>
+) {
+  return () => {
+    authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
+      code: value
+    }).then(() => {
+      followRedirect(navigate, location?.state);
+    });
+  };
+}
+
+export function handlePasswordReset(
+  key: string | null,
+  password: string,
+  navigate: NavigateFunction
+) {
+  function success() {
+    notifications.show({
+      title: t`Password set`,
+      message: t`The password was set successfully. You can now login with your new password`,
+      color: 'green',
+      autoClose: false
+    });
+    navigate('/login');
+  }
+
+  function passwordError(values: any) {
+    notifications.show({
+      title: t`Reset failed`,
+      message: values?.errors.map((e: any) => e.message).join('\n'),
+      color: 'red'
+    });
+  }
+
+  // Set password with call to backend
+  api
+    .post(
+      apiUrl(ApiEndpoints.user_reset_set),
+      {
+        key: key,
+        password: password
+      },
+      { headers: { Authorization: '' } }
+    )
+    .then((val) => {
+      if (val.status === 200) {
+        success();
+      } else {
+        passwordError(val.data);
+      }
+    })
+    .catch((err) => {
+      if (err.response?.status === 400) {
+        passwordError(err.response.data);
+      } else if (err.response?.status === 401) {
+        success();
+      } else {
+        passwordError(err.response.data);
+      }
+    });
+}
+
+export function handleVerifyEmail(
+  key: string | undefined,
+  navigate: NavigateFunction
+) {
+  // Set password with call to backend
+  api
+    .post(apiUrl(ApiEndpoints.auth_email_verify), {
+      key: key
+    })
+    .then((val) => {
+      if (val.status === 200) {
+        navigate('/login');
+      }
+    });
+}
+
+export function handleChangePassword(
+  pwd1: string,
+  pwd2: string,
+  current: string,
+  navigate: NavigateFunction
+) {
+  const { clearUserState } = useUserState.getState();
+
+  function passwordError(values: any) {
+    let message: any =
+      values?.new_password ||
+      values?.new_password2 ||
+      values?.new_password1 ||
+      values?.current_password ||
+      values?.error ||
+      t`Password could not be changed`;
+
+    // If message is array
+    if (!Array.isArray(message)) {
+      message = [message];
+    }
+
+    message.forEach((msg: string) => {
+      notifications.show({
+        title: t`Error`,
+        message: msg,
+        color: 'red'
+      });
+    });
+  }
+
+  // check if passwords match
+  if (pwd1 !== pwd2) {
+    passwordError({ new_password2: t`The two password fields didn’t match` });
+    return;
+  }
+
+  // Set password with call to backend
+  api
+    .post(apiUrl(ApiEndpoints.auth_pwd_change), {
+      current_password: current,
+      new_password: pwd2
+    })
+    .then((val) => {
+      passwordError(val.data);
+    })
+    .catch((err) => {
+      if (err.status === 401) {
+        notifications.show({
+          title: t`Password Changed`,
+          message: t`The password was set successfully. You can now login with your new password`,
+          color: 'green',
+          autoClose: false
+        });
+        clearUserState();
+        clearCsrfCookie();
+        navigate('/login');
+      } else {
+        // compile errors
+        const errors: { [key: string]: string[] } = {};
+        for (const val of err.response.data.errors) {
+          if (!errors[val.param]) {
+            errors[val.param] = [];
+          }
+          errors[val.param].push(val.message);
+        }
+        passwordError(errors);
+      }
+    });
 }

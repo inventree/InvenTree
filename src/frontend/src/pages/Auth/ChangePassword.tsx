@@ -9,14 +9,10 @@ import {
   Text
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { StylishText } from '../../components/items/StylishText';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { clearCsrfCookie } from '../../functions/auth';
-import { apiUrl } from '../../states/ApiState';
+import { handleChangePassword } from '../../functions/auth';
 import { useUserState } from '../../states/UserState';
 import { Wrapper } from './LoginLayoutComponent';
 
@@ -31,72 +27,6 @@ export default function Set_Password() {
 
   const user = useUserState();
   const navigate = useNavigate();
-
-  function passwordError(values: any) {
-    let message: any =
-      values?.new_password ||
-      values?.new_password2 ||
-      values?.new_password1 ||
-      values?.current_password ||
-      values?.error ||
-      t`Password could not be changed`;
-
-    // If message is array
-    if (!Array.isArray(message)) {
-      message = [message];
-    }
-
-    message.forEach((msg: string) => {
-      notifications.show({
-        title: t`Error`,
-        message: msg,
-        color: 'red'
-      });
-    });
-  }
-
-  function handleSet() {
-    const { clearUserState } = useUserState.getState();
-
-    // check if passwords match
-    if (simpleForm.values.new_password1 !== simpleForm.values.new_password2) {
-      passwordError({ new_password2: t`The two password fields didn’t match` });
-      return;
-    }
-
-    // Set password with call to backend
-    api
-      .post(apiUrl(ApiEndpoints.auth_pwd_change), {
-        current_password: simpleForm.values.current_password,
-        new_password: simpleForm.values.new_password2
-      })
-      .then((val) => {
-        passwordError(val.data);
-      })
-      .catch((err) => {
-        if (err.status === 401) {
-          notifications.show({
-            title: t`Password Changed`,
-            message: t`The password was set successfully. You can now login with your new password`,
-            color: 'green',
-            autoClose: false
-          });
-          clearUserState();
-          clearCsrfCookie();
-          navigate('/login');
-        } else {
-          // compile errors
-          const errors: { [key: string]: string[] } = {};
-          for (const val of err.response.data.errors) {
-            if (!errors[val.param]) {
-              errors[val.param] = [];
-            }
-            errors[val.param].push(val.message);
-          }
-          passwordError(errors);
-        }
-      });
-  }
 
   return (
     <Wrapper titleText={t`Reset Password`}>
@@ -133,7 +63,17 @@ export default function Set_Password() {
           {...simpleForm.getInputProps('new_password2')}
         />
       </Stack>
-      <Button type='submit' onClick={handleSet}>
+      <Button
+        type='submit'
+        onClick={() =>
+          handleChangePassword(
+            simpleForm.values.new_password1,
+            simpleForm.values.new_password2,
+            simpleForm.values.current_password,
+            navigate
+          )
+        }
+      >
         <Trans>Confirm</Trans>
       </Button>
     </Wrapper>
