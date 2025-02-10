@@ -46,7 +46,7 @@ class ReportMixin:
             context: The context dictionary to add to
         """
 
-    def report_callback(self, template, instance, report, request):
+    def report_callback(self, template, instance, report, request, **kwargs):
         """Callback function called after a report is generated.
 
         Arguments:

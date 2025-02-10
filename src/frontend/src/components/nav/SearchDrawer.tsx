@@ -248,6 +248,13 @@ export function SearchDrawer({
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
       },
       {
+        model: ModelType.salesordershipment,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS')
+      },
+      {
         model: ModelType.returnorder,
         parameters: {
           customer_detail: true,

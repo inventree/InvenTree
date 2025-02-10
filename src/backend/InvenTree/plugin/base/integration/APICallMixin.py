@@ -1,15 +1,15 @@
 """Mixin class for making calls to an external API."""
 
 import json as json_pkg
-import logging
 from collections.abc import Iterable
 from typing import Optional
 
 import requests
+import structlog
 
 from plugin.helpers import MixinNotImplementedError
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class APICallMixin:
@@ -124,6 +124,7 @@ class APICallMixin:
         headers: Optional[dict] = None,
         simple_response: bool = True,
         endpoint_is_url: bool = False,
+        **kwargs,
     ):
         """Do an API call.
 
@@ -161,7 +162,7 @@ class APICallMixin:
             url = f'{self.api_url}/{endpoint}'
 
         # build kwargs for call
-        kwargs = {'url': url, 'headers': headers}
+        kwargs.update({'url': url, 'headers': headers})
 
         if data and json:
             raise ValueError('You can either pass `data` or `json` to this function.')

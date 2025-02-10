@@ -1,6 +1,5 @@
 """Unit tests for the 'build' models."""
 
-import logging
 import uuid
 from datetime import datetime, timedelta
 
@@ -10,6 +9,8 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import TestCase
 from django.test.utils import override_settings
+
+import structlog
 
 import build.tasks
 import common.models
@@ -22,7 +23,7 @@ from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class BuildTestBase(TestCase):

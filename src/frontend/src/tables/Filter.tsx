@@ -5,6 +5,7 @@ import type {
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
 import type { ModelType } from '../enums/ModelType';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { type StatusLookup, useGlobalStatusState } from '../states/StatusState';
 
 /**
@@ -28,9 +29,16 @@ export type TableFilterType = 'boolean' | 'choice' | 'date' | 'text';
 /**
  * Interface for the table filter type. Provides a number of options for selecting filter value:
  *
+ * name: The name of the filter (used for query string)
+ * label: The label to display in the UI (human readable)
+ * description: A description of the filter (human readable)
+ * type: The type of filter (see TableFilterType)
  * choices: A list of TableFilterChoice objects
  * choiceFunction: A function which returns a list of TableFilterChoice objects
- * statusType: A ModelType which is used to generate a list of status codes
+ * defaultValue: The default value for the filter
+ * value: The current value of the filter
+ * displayValue: The current display value of the filter
+ * active: Whether the filter is active (false = hidden, not used)
  */
 export type TableFilter = {
   name: string;
@@ -161,6 +169,24 @@ export function CreatedAfterFilter(): TableFilter {
   };
 }
 
+export function StartDateBeforeFilter(): TableFilter {
+  return {
+    name: 'start_date_before',
+    label: t`Start Date Before`,
+    description: t`Show items with a start date before this date`,
+    type: 'date'
+  };
+}
+
+export function StartDateAfterFilter(): TableFilter {
+  return {
+    name: 'start_date_after',
+    label: t`Start Date After`,
+    description: t`Show items with a start date after this date`,
+    type: 'date'
+  };
+}
+
 export function TargetDateBeforeFilter(): TableFilter {
   return {
     name: 'target_date_before',
@@ -198,10 +224,62 @@ export function CompletedAfterFilter(): TableFilter {
 }
 
 export function HasProjectCodeFilter(): TableFilter {
+  const globalSettings = useGlobalSettingsState.getState();
+  const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
+
   return {
     name: 'has_project_code',
     type: 'boolean',
     label: t`Has Project Code`,
-    description: t`Show orders with an assigned project code`
+    description: t`Show orders with an assigned project code`,
+    active: enabled
+  };
+}
+
+export function OrderStatusFilter({
+  model
+}: { model: ModelType }): TableFilter {
+  return {
+    name: 'status',
+    label: t`Status`,
+    description: t`Filter by order status`,
+    choiceFunction: StatusFilterOptions(model)
+  };
+}
+
+export function ProjectCodeFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  const globalSettings = useGlobalSettingsState.getState();
+  const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
+
+  return {
+    name: 'project_code',
+    label: t`Project Code`,
+    description: t`Filter by project code`,
+    active: enabled,
+    choices: choices
+  };
+}
+
+export function ResponsibleFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  return {
+    name: 'assigned_to',
+    label: t`Responsible`,
+    description: t`Filter by responsible owner`,
+    choices: choices
+  };
+}
+
+export function CreatedByFilter({
+  choices
+}: { choices: TableFilterChoice[] }): TableFilter {
+  return {
+    name: 'created_by',
+    label: t`Created By`,
+    description: t`Filter by user who created the order`,
+    choices: choices
   };
 }

@@ -9,12 +9,17 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import {
+  CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
@@ -22,6 +27,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   ShipmentDateColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -31,12 +37,17 @@ import {
   CompletedBeforeFilter,
   CreatedAfterFilter,
   CreatedBeforeFilter,
+  CreatedByFilter,
   HasProjectCodeFilter,
   MaxDateFilter,
   MinDateFilter,
+  OrderStatusFilter,
   OutstandingFilter,
   OverdueFilter,
-  StatusFilterOptions,
+  ProjectCodeFilter,
+  ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -55,15 +66,11 @@ export function SalesOrderTable({
 
   const projectCodeFilters = useProjectCodeFilters();
   const responsibleFilters = useOwnerFilters();
+  const createdByFilters = useUserFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
-      {
-        name: 'status',
-        label: t`Status`,
-        description: t`Filter by order status`,
-        choiceFunction: StatusFilterOptions(ModelType.salesorder)
-      },
+      OrderStatusFilter({ model: ModelType.salesorder }),
       OutstandingFilter(),
       OverdueFilter(),
       AssignedToMeFilter(),
@@ -73,21 +80,26 @@ export function SalesOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
-      {
-        name: 'project_code',
-        label: t`Project Code`,
-        description: t`Filter by project code`,
-        choices: projectCodeFilters.choices
-      },
       HasProjectCodeFilter(),
-      {
-        name: 'assigned_to',
-        label: t`Responsible`,
-        description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
-      }
+      ProjectCodeFilter({ choices: projectCodeFilters.choices }),
+      ResponsibleFilter({ choices: responsibleFilters.choices }),
+      CreatedByFilter({ choices: createdByFilters.choices })
     ];
 
     if (!!partId) {
@@ -100,7 +112,12 @@ export function SalesOrderTable({
     }
 
     return filters;
-  }, [partId, projectCodeFilters.choices, responsibleFilters.choices]);
+  }, [
+    partId,
+    projectCodeFilters.choices,
+    responsibleFilters.choices,
+    createdByFilters.choices
+  ]);
 
   const salesOrderFields = useSalesOrderFields({});
 
@@ -165,6 +182,8 @@ export function SalesOrderTable({
       StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn({}),
       CreationDateColumn({}),
+      CreatedByColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
       ResponsibleColumn({}),

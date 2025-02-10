@@ -5,10 +5,8 @@ import os
 from pathlib import Path
 from unittest import mock
 
-from django.urls import reverse
-
 from InvenTree.config import get_frontend_settings
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 from .templatetags import spa_helper
 
@@ -26,9 +24,8 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_spa_bundle(self):
         """Test the 'spa_bundle' template tag."""
         resp = spa_helper.spa_bundle()
-        if not resp:
+        if resp == 'NOT_FOUND':
             # No Vite, no test
-            # TODO: Add a test for the non-Vite case (docker)
             return  # pragma: no cover
 
         shipped_js = resp.split('<script type="module" src="')[1:]
@@ -41,7 +38,7 @@ class TemplateTagTest(InvenTreeTestCase):
             manifest_file.with_suffix('.json.bak')
         )  # Rename
         resp = spa_helper.spa_bundle()
-        self.assertIsNone(resp)
+        self.assertEqual(resp, 'NOT_FOUND')
 
         # Try with differing name
         resp = spa_helper.spa_bundle(new_name)
@@ -50,7 +47,7 @@ class TemplateTagTest(InvenTreeTestCase):
         # Broken manifest file
         manifest_file.write_text('broken')
         resp = spa_helper.spa_bundle(manifest_file)
-        self.assertIsNone(resp)
+        self.assertEqual(resp, '')
 
         new_name.rename(manifest_file.with_suffix('.json'))  # Name back
 
@@ -92,26 +89,3 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the redirect helper."""
         response = self.client.get('/assets/testpath')
         self.assertEqual(response.url, '/static/web/assets/testpath')
-
-
-class TestWebHelpers(InvenTreeAPITestCase):
-    """Tests for the web helpers."""
-
-    def test_ui_preference(self):
-        """Test the UI preference API."""
-        url = reverse('api-ui-preference')
-
-        # Test default
-        resp = self.get(url)
-        data = json.loads(resp.content)
-        self.assertTrue(data['cui'])
-        self.assertFalse(data['pui'])
-        self.assertEqual(data['preferred_method'], 'cui')
-
-        # Set to PUI
-        resp = self.put(url, {'preferred_method': 'pui'})
-        data = json.loads(resp.content)
-        self.assertEqual(resp.status_code, 200)
-        self.assertFalse(data['cui'])
-        self.assertTrue(data['pui'])
-        self.assertEqual(data['preferred_method'], 'pui')

@@ -11,16 +11,17 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/panels/PanelGroup';
+import { useApi } from '../contexts/ApiContext';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
 import { NotificationTable } from '../tables/notifications/NotificationTable';
 
 export default function NotificationsPage() {
+  const api = useApi();
   const unreadTable = useTable('unreadnotifications');
   const readTable = useTable('readnotifications');
 

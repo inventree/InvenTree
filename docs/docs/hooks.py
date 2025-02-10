@@ -113,8 +113,18 @@ def get_release_data():
     while 1:
         url = f'https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150'
 
-        response = requests.get(url, timeout=30)
-        assert response.status_code == 200
+        attempts = 5
+
+        while attempts > 0:
+            attempts -= 1
+
+            response = requests.get(url, timeout=30)
+            if response.status_code == 200:
+                break
+
+        assert response.status_code == 200, (
+            f'Failed to fetch release data: {response.status_code} - {url}'
+        )
 
         data = json.loads(response.text)
 
@@ -150,18 +160,19 @@ def on_config(config, *args, **kwargs):
 
     We can use these to determine (at run time) where we are hosting
     """
-    rtd = os.environ.get('READTHEDOCS', False)
+    rtd = os.environ.get('READTHEDOCS', 'False')
 
+    # Note: version selection is handled by RTD internally
     # Check for 'versions.json' file
     # If it does not exist, we need to fetch it from the RTD API
-    if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
-        print("Found 'versions.json' file")
-    else:
-        fetch_rtd_versions()
+    # if os.path.exists(os.path.join(os.path.dirname(__file__), 'versions.json')):
+    #    print("Found 'versions.json' file")
+    # else:
+    #    fetch_rtd_versions()
 
     if rtd:
-        rtd_version = os.environ['READTHEDOCS_VERSION']
-        rtd_language = os.environ['READTHEDOCS_LANGUAGE']
+        rtd_version = os.environ.get('READTHEDOCS_VERSION')
+        rtd_language = os.environ.get('READTHEDOCS_LANGUAGE')
 
         site_url = f'https://docs.inventree.org/{rtd_language}/{rtd_version}'
         assets_dir = f'/{rtd_language}/{rtd_version}/assets'

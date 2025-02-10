@@ -42,6 +42,7 @@ export function CurrencyTable({
       .then(() => {
         table.refreshTable();
         showNotification({
+          title: t`Success`,
           message: t`Exchange rates updated`,
           color: 'green'
         });
@@ -88,7 +89,7 @@ export function CurrencyTable({
   );
 }
 
-export default function CurrencyManagmentPanel() {
+export default function CurrencyManagementPanel() {
   const [info, setInfo] = useState<any>({});
 
   return (

@@ -29,6 +29,8 @@ import { type UserStateProps, useUserState } from '../../states/UserState';
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
+ * @param host - The current host URL
+ * @param locale - The current locale string (e.g. 'en' / 'de')
  * @param context - Any additional context data which may be passed to the plugin
  */
 export type InvenTreeContext = {
@@ -38,6 +40,7 @@ export type InvenTreeContext = {
   userSettings: SettingsStateProps;
   globalSettings: SettingsStateProps;
   host: string;
+  locale: string;
   navigate: NavigateFunction;
   theme: MantineTheme;
   colorScheme: MantineColorScheme;
@@ -45,7 +48,7 @@ export type InvenTreeContext = {
 };
 
 export const useInvenTreeContext = () => {
-  const host = useLocalState((s) => s.host);
+  const [locale, host] = useLocalState((s) => [s.language, s.host]);
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();
@@ -57,6 +60,7 @@ export const useInvenTreeContext = () => {
     return {
       user: user,
       host: host,
+      locale: locale,
       api: api,
       queryClient: queryClient,
       navigate: navigate,
@@ -69,6 +73,7 @@ export const useInvenTreeContext = () => {
     user,
     host,
     api,
+    locale,
     queryClient,
     navigate,
     globalSettings,

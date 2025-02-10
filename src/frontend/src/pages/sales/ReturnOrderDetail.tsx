@@ -187,6 +187,13 @@ export default function ReturnOrderDetail() {
         icon: 'reference',
         copy: true,
         hidden: !order.project_code
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
       }
     ];
 
@@ -209,6 +216,14 @@ export default function ReturnOrderDetail() {
       },
       {
         type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         copy: true,
@@ -221,28 +236,19 @@ export default function ReturnOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
       }
     ];
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={ApiEndpoints.company_list}
-              src={order.customer_detail?.image}
-              pk={order.customer}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={ApiEndpoints.company_list}
+            src={order.customer_detail?.image}
+            pk={order.customer}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={order} />
           </Grid.Col>
         </Grid>

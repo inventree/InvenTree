@@ -1,11 +1,11 @@
 """Functions for triggering and responding to server side events."""
 
-import logging
-
 from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
+
+import structlog
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
@@ -13,7 +13,7 @@ from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def trigger_event(event: str, *args, **kwargs) -> None:

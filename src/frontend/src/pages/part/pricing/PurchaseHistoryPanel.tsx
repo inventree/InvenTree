@@ -103,7 +103,7 @@ export default function PurchaseHistoryPanel({
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.purchase_order_line_list)}

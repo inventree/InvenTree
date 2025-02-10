@@ -1,7 +1,6 @@
 """Main JSON interface views."""
 
 import json
-import logging
 import sys
 from pathlib import Path
 
@@ -10,6 +9,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
@@ -20,18 +20,19 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
+from InvenTree import helpers
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
+from .helpers import plugins_info
 from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class LicenseViewSerializer(serializers.Serializer):
@@ -198,6 +199,14 @@ class VersionTextView(ListAPI):
 class InfoApiSerializer(serializers.Serializer):
     """InvenTree server information - some information might be blanked if called without elevated credentials."""
 
+    class CustomizeSerializer(serializers.Serializer):
+        """Serializer for customize field."""
+
+        logo = serializers.CharField()
+        splash = serializers.CharField()
+        login_message = serializers.CharField()
+        navbar_message = serializers
+
     server = serializers.CharField(read_only=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
@@ -214,6 +223,7 @@ class InfoApiSerializer(serializers.Serializer):
     default_locale = serializers.ChoiceField(
         choices=settings.LOCALE_CODES, read_only=True
     )
+    customize = CustomizeSerializer(read_only=True)
     system_health = serializers.BooleanField(read_only=True)
     database = serializers.CharField(read_only=True)
     platform = serializers.CharField(read_only=True)
@@ -263,6 +273,12 @@ class InfoView(APIView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
+            'customize': {
+                'logo': helpers.getLogoImage(),
+                'splash': helpers.getSplashScreen(),
+                'login_message': helpers.getCustomOption('login_message'),
+                'navbar_message': helpers.getCustomOption('navbar_message'),
+            },
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
@@ -495,6 +511,7 @@ class APISearchView(GenericAPIView):
             'purchaseorder': order.api.PurchaseOrderList,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
+            'salesordershipment': order.api.SalesOrderShipmentList,
             'stockitem': stock.api.StockList,
             'stocklocation': stock.api.StockLocationList,
         }

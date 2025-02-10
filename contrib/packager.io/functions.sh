@@ -120,6 +120,18 @@ function detect_local_env() {
     echo "# POI02| Printing local envs - after #++#"
     printenv
   fi
+
+  # Print branch and dir from VERSION file
+  if [ -f "${APP_HOME}/VERSION" ]; then
+    echo "# POI02| Loading environment variables from VERSION file"
+    content=$(cat "${APP_HOME}/VERSION")
+    # use grep to get the branch and target
+    INVENTREE_PKG_BRANCH=($(echo $content | grep -oP 'INVENTREE_PKG_BRANCH=\K[^ ]+'))
+    INVENTREE_PKG_TARGET=($(echo $content | grep -oP 'INVENTREE_PKG_TARGET=\K[^ ]+'))
+    echo "Running in a package environment build on branch $INVENTREE_PKG_BRANCH for target $INVENTREE_PKG_TARGET"
+  else
+    echo "# POI02| VERSION file not found"
+  fi
 }
 
 function detect_envs() {
@@ -292,14 +304,15 @@ function stop_inventree() {
 }
 
 function update_or_install() {
+  set -e
 
   # Set permissions so app user can write there
   chown ${APP_USER}:${APP_GROUP} ${APP_HOME} -R
 
   # Run update as app user
   echo "# POI12| Updating InvenTree"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install uv wheel"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update --uv | sed -e 's/^/# POI12| u | /;'"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update | sed -e 's/^/# POI12| u | /;'"
 
   # Make sure permissions are correct again
   echo "# POI12| Set permissions for data dir and media: ${DATA_DIR}"

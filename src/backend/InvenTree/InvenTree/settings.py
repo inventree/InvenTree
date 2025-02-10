@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
 import django.core.exceptions
@@ -21,7 +22,6 @@ from django.http import Http404
 
 import structlog
 from dotenv import load_dotenv
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -70,7 +70,7 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.joinpath('VERSION')
+version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
 if version_file.exists():
     print('load version from file')
     load_dotenv(version_file)
@@ -83,11 +83,13 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
+CONSOLE_LOG = get_boolean_setting('INVENTREE_CONSOLE_LOG', 'console_log', True)
 
 logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
 if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     LOG_LEVEL = 'WARNING'  # pragma: no cover
+DEFAULT_LOG_HANDLER = ['console'] if CONSOLE_LOG else []
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -114,10 +116,12 @@ LOGGING = {
     },
     'handlers': {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
-    },
+    }
+    if CONSOLE_LOG
+    else {},
     'loggers': {
-        'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
-        'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
+        'django_structlog': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
+        'inventree': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
     },
 }
 
@@ -129,14 +133,14 @@ if WRITE_LOG and JSON_LOG:  # pragma: no cover
         'filename': str(BASE_DIR.joinpath('logs.json')),
         'formatter': 'json_formatter',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 elif WRITE_LOG:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.log')),
         'formatter': 'key_value',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 
 structlog.configure(
     processors=[
@@ -167,7 +171,7 @@ SECRET_KEY = config.get_secret_key()
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
-# The filesystem location for uploaded meadia files
+# The filesystem location for uploaded media files
 MEDIA_ROOT = config.get_media_dir()
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -219,10 +223,8 @@ if DEBUG and 'collectstatic' not in sys.argv:
 
     # Append directory for sample plugin static content (if in debug mode)
     if PLUGINS_ENABLED:
-        print('Adding plugin sample static content')
+        logger.info('Adding plugin sample static content')
         STATICFILES_DIRS.append(BASE_DIR.joinpath('plugin', 'samples', 'static'))
-
-        print('-', STATICFILES_DIRS[-1])
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -253,6 +255,7 @@ INVENTREE_ADMIN_URL = get_setting(
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
+    'django.contrib.admindocs',
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -328,6 +331,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+        'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
@@ -353,29 +357,6 @@ QUERYCOUNT = {
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
-ADMIN_SHELL_ENABLE = False
-ADMIN_SHELL_IMPORT_DJANGO = False
-ADMIN_SHELL_IMPORT_MODELS = False
-
-# In DEBUG mode, add support for django-admin-shell
-# Ref: https://github.com/djk2/django-admin-shell
-if (
-    DEBUG
-    and INVENTREE_ADMIN_ENABLED
-    and not TESTING
-    and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):
-    try:
-        import django_admin_shell  # noqa: F401
-
-        INSTALLED_APPS.append('django_admin_shell')
-        ADMIN_SHELL_ENABLE = True
-
-        logger.warning('Admin shell is enabled')
-    except ModuleNotFoundError:
-        logger.warning(
-            'django-admin-shell is not installed - Admin shell is not enabled'
-        )
 
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
@@ -402,7 +383,7 @@ if LDAP_AUTH:
             LOGGING['loggers'] = {}
         LOGGING['loggers']['django_auth_ldap'] = {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': DEFAULT_LOG_HANDLER,
         }
 
     # get global options from dict and use ldap.OPT_* as keys and values
@@ -1060,8 +1041,16 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        logger.error(msg)
+        print(msg)
         sys.exit(-1)
+
+else:
+    logger.warning('No SITE_URL specified. Some features may not work correctly')
+    logger.warning(
+        'Specify a SITE_URL in the configuration file or via an environment variable'
+    )
 
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
@@ -1153,12 +1142,7 @@ COOKIE_MODE = (
 # Valid modes (as per the django settings documentation)
 valid_cookie_modes = ['lax', 'strict', 'none']
 
-if not DEBUG and not TESTING and COOKIE_MODE in valid_cookie_modes:
-    # Set the cookie mode (in production mode only)
-    COOKIE_MODE = COOKIE_MODE.capitalize()
-else:
-    # Default to False, as per the Django settings
-    COOKIE_MODE = False
+COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -1166,13 +1150,14 @@ CSRF_COOKIE_NAME = 'csrftoken'
 
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
+LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 
 """Set the SESSION_COOKIE_SECURE value based on the following rules:
 - False if the server is running in DEBUG mode
 - True if samesite cookie setting is set to 'None'
 - Otherwise, use the value specified in the configuration file (or env var)
 """
-SESSION_COOKIE_SECURE = (
+COOKIE_SECURE = (
     False
     if DEBUG
     else (
@@ -1182,6 +1167,22 @@ SESSION_COOKIE_SECURE = (
         )
     )
 )
+
+CSRF_COOKIE_SECURE = COOKIE_SECURE
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+LANGUAGE_COOKIE_SECURE = COOKIE_SECURE
+
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
+if ssl_header := get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PROTO', 'use_x_forwarded_proto', False
+):
+    # The default header name is 'HTTP_X_FORWARDED_PROTO', but can be adjusted
+    ssl_header_name = get_setting(
+        'INVENTREE_X_FORWARDED_PROTO_NAME',
+        'x_forwarded_proto_name',
+        'HTTP_X_FORWARDED_PROTO',
+    )
+    SECURE_PROXY_SSL_HEADER = (ssl_header_name, 'https')
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
@@ -1211,7 +1212,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
 )
 
 # Only allow CORS access to the following URL endpoints
-CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
+CORS_URLS_REGEX = r'^/(api|auth|media|plugin|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
@@ -1289,7 +1290,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
 
 if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
     if SITE_URL and SITE_URL.startswith('https://'):
-        # auto-detect HTTPS prtoocol
+        # auto-detect HTTPS protocol
         ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
     else:
         # default to http
@@ -1360,7 +1361,7 @@ MARKDOWNIFY = {
     }
 }
 
-# Ignore these error typeps for in-database error logging
+# Ignore these error types for in-database error logging
 IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
@@ -1419,7 +1420,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuratino for API schema generation
+# Configuration for API schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',

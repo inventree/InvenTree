@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
@@ -20,6 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -52,7 +52,7 @@ from stock.events import StockEvents
 from stock.generators import generate_batch_code
 from users.models import Owner
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
@@ -328,12 +328,12 @@ def default_delete_on_deplete():
     """Return a default value for the 'delete_on_deplete' field.
 
     Prior to 2022-12-24, this field was set to True by default.
-    Now, there is a user-configurable setting to govern default behaviour.
+    Now, there is a user-configurable setting to govern default behavior.
     """
     try:
         return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
-        # Revert to original default behaviour
+        # Revert to original default behavior
         return True
 
 
@@ -431,7 +431,7 @@ class StockItem(
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),
             'result_list': self.testResultList(include_installed=True),
-            'results': self.testResultMap(include_installed=True),
+            'results': self.testResultMap(include_installed=True, cascade=True),
             'serial': self.serial,
             'stock_item': self,
             'tests': self.testResultMap(),
@@ -472,7 +472,7 @@ class StockItem(
         Returns:
             QuerySet: The created StockItem objects
 
-        raises:
+        Raises:
             ValidationError: If any of the provided serial numbers are invalid
 
         This method uses bulk_create to create multiple StockItem objects in a single query,
@@ -1985,9 +1985,18 @@ class StockItem(
         Returns:
             The new StockItem object
 
+        Raises:
+            ValidationError: If the stock item cannot be split
+
         - The provided quantity will be subtracted from this item and given to the new one.
         - The new item will have a different StockItem ID, while this will remain the same.
         """
+        # Run initial checks to test if the stock item can actually be "split"
+
+        # Cannot split a stock item which is in production
+        if self.is_building:
+            raise ValidationError(_('Stock item is currently in production'))
+
         notes = kwargs.get('notes', '')
 
         # Do not split a serialized part
@@ -2439,6 +2448,7 @@ class StockItem(
         """
         # Do we wish to include test results from installed items?
         include_installed = kwargs.pop('include_installed', False)
+        cascade = kwargs.pop('cascade', False)
 
         # Filter results by "date", so that newer results
         # will override older ones.
@@ -2448,9 +2458,6 @@ class StockItem(
 
         for result in results:
             result_map[result.key] = result
-
-        # Do we wish to "cascade" and include test results from installed stock items?
-        cascade = kwargs.get('cascade', False)
 
         if include_installed:
             installed_items = self.get_installed_items(cascade=cascade)

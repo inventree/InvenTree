@@ -1,6 +1,5 @@
 """Generic models which provide extra functionality over base Django model types."""
 
-import logging
 from datetime import datetime
 from string import Formatter
 
@@ -8,12 +7,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from django_q.models import Task
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
@@ -25,7 +26,7 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DiffMixin:
@@ -762,8 +763,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         pathstring = self.construct_pathstring()
 
         if pathstring != self.pathstring:
-            if 'force_insert' in kwargs:
-                del kwargs['force_insert']
+            kwargs.pop('force_insert', None)
 
             kwargs['force_update'] = True
 
@@ -821,26 +821,20 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         """
         raise NotImplementedError(f'items() method not implemented for {type(self)}')
 
-    def getUniqueParents(self):
-        """Return a flat set of all parent items that exist above this node.
-
-        If any parents are repeated (which would be very bad!), the process is halted
-        """
+    def getUniqueParents(self) -> QuerySet:
+        """Return a flat set of all parent items that exist above this node."""
         return self.get_ancestors()
 
-    def getUniqueChildren(self, include_self=True):
-        """Return a flat set of all child items that exist under this node.
-
-        If any child items are repeated, the repetitions are omitted.
-        """
+    def getUniqueChildren(self, include_self=True) -> QuerySet:
+        """Return a flat set of all child items that exist under this node."""
         return self.get_descendants(include_self=include_self)
 
     @property
-    def has_children(self):
+    def has_children(self) -> bool:
         """True if there are any children under this item."""
         return self.getUniqueChildren(include_self=False).count() > 0
 
-    def getAcceptableParents(self):
+    def getAcceptableParents(self) -> list:
         """Returns a list of acceptable parent items within this model Acceptable parents are ones which are not underneath this item.
 
         Setting the parent of an item to its own child results in recursion.
@@ -861,7 +855,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return acceptable
 
     @property
-    def parentpath(self):
+    def parentpath(self) -> list:
         """Get the parent path of this category.
 
         Returns:
@@ -870,7 +864,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         return list(self.get_ancestors())
 
     @property
-    def path(self):
+    def path(self) -> list:
         """Get the complete part of this category.
 
         e.g. ["Top", "Second", "Third", "This"]
@@ -880,7 +874,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         """
         return [*self.parentpath, self]
 
-    def get_path(self):
+    def get_path(self) -> list:
         """Return a list of element in the item tree.
 
         Contains the full path to this item, with each entry containing the following data:
@@ -1124,15 +1118,16 @@ def after_failed_task(sender, instance: Task, created: bool, **kwargs):
         except (ValueError, NoReverseMatch):
             url = ''
 
+        # Function name
+        f = instance.func
+
         notify_staff_users_of_error(
             instance,
             'inventree.task_failure',
             {
                 'failure': instance,
                 'name': _('Task Failure'),
-                'message': _(
-                    f"Background worker task '{instance.func}' failed after {n} attempts"
-                ),
+                'message': _(f"Background worker task '{f}' failed after {n} attempts"),
                 'link': url,
             },
         )

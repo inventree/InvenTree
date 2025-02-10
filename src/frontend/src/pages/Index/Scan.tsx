@@ -18,7 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
@@ -55,8 +55,11 @@ export default function Scan() {
 
       // Prevent duplicates
       if (history.find((i) => i.model == item.model && i.pk == item.pk)) {
+        hideNotification('duplicate-barcode');
+
         showNotification({
-          label: t`Duplicate`,
+          id: 'duplicate-barcode',
+          title: t`Duplicate`,
           message: t`Item already scanned`,
           color: 'orange'
         });

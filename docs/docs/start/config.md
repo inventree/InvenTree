@@ -71,6 +71,8 @@ The following basic options are available:
 
 The *INVENTREE_SITE_URL* option defines the base URL for the InvenTree server. This is a critical setting, and it is required for correct operation of the server. If not specified, the server will attempt to determine the site URL automatically - but this may not always be correct!
 
+The site URL is the URL that users will use to access the InvenTree server. For example, if the server is accessible at `https://inventree.example.com`, the site URL should be set to `https://inventree.example.com`. Note that this is not necessarily the same as the internal URL that the server is running on - the internal URL will depend entirely on your server configuration and may be obscured by a reverse proxy or other such setup.
+
 ### Timezone
 
 By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page.
@@ -91,11 +93,11 @@ The following debugging / logging options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | False |
 | INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
-| INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
+| INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
 
 ### Debug Mode
 
@@ -104,10 +106,6 @@ Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% inclu
 ### Query Count Logging
 
 Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
-
-### Debug Shell
-
-Enabling the `INVENTREE_DEBUG_SHELL` setting will allow the use of the [administrator shell](https://github.com/djk2/django-admin-shell). Note that this setting is only available if `INVENTREE_DEBUG` is also enabled, and is only accessible to superuser accounts.
 
 ### Database Logging
 
@@ -139,6 +137,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
+| INVENTREE_USE_X_FORWARDED_PROTO | use_x_forwarded_proto | Use forwarded protocol header | `False` |
 | INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
 | INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. | False |
 
@@ -153,13 +152,41 @@ Note that in [debug mode](./intro.md#debug-mode), some of the above settings are
 | `INVENTREE_COOKIE_SAMESITE` | `False` | Disable all same-site cookie checks in debug mode |
 | `INVENTREE_SESSION_COOKIE_SECURE` | `False` | Disable secure session cookies in debug mode (allow non-https cookies) |
 
-### INVENTREE_COOKIE_SAMESITE vs INVENTREE_SESSION_COOKIE_SECURE
+### Cookie Settings
 
 Note that if you set the `INVENTREE_COOKIE_SAMESITE` to `None`, then `INVENTREE_SESSION_COOKIE_SECURE` is automatically set to `True` to ensure that the session cookie is secure! This means that the session cookie will only be sent over secure (https) connections.
 
-### Proxy Settings
+### Proxy Considerations
 
-If you are running InvenTree behind another proxy, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
+If you are running InvenTree behind a proxy, or forwarded HTTPS connections, you will need to ensure that the InvenTree server is configured to listen on the correct host and port. You will likely have to adjust the `INVENTREE_ALLOWED_HOSTS` setting to ensure that the server will accept requests from the proxy.
+
+Additionally, you may need to configure the following header to ensure that the InvenTree server is watching for information forwarded by the proxy:
+
+**X-Forwarded-Host**
+
+By default, InvenTree *will not* look at the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host) header.
+If you are running InvenTree behind a proxy which obscures the upstream host information, you will need to ensure that the `INVENTREE_USE_X_FORWARDED_HOST` setting is enabled. This will ensure that the InvenTree server uses the forwarded host header for processing requests.
+
+You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#secure-proxy-ssl-header) for more information on this header.
+
+**X-Forwarded-Port**
+
+InvenTree provides support for the `X-Forwarded-Port` header, which can be used to determine if the incoming request is using a forwarded port. If you are running InvenTree behind a proxy which forwards port information, you should ensure that the `INVENTREE_USE_X_FORWARDED_PORT` setting is enabled.
+
+Note: This header is overridden by the `X-Forwarded-Host` header.
+
+You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#use-x-forwarded-port) for more information on this header.
+
+**X-Forwarded-Proto**
+
+InvenTree provides support for the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto) header, which can be used to determine if the incoming request is using HTTPS, even if the server is running behind a proxy which forwards SSL connections. If you are running InvenTree behind a proxy which forwards SSL connections, you should ensure that the `INVENTREE_USE_X_FORWARDED_PROTO` setting is enabled.
+
+You can also refer to the [Django documentation]({% include "django.html" %}/ref/settings/#use-x-forwarded-host) for more information on this header.
+
+Proxy configuration can be complex, and any configuration beyond the basic setup is outside the scope of this documentation. You should refer to the documentation for the specific proxy server you are using.
+
+Refer to the [proxy server documentation](./processes.md#proxy-server) for more information.
+
 
 ## Admin Site
 
@@ -194,6 +221,9 @@ You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, o
 ## Secret Key
 
 InvenTree requires a secret key for providing cryptographic signing - this should be a secret (and unpredictable) value.
+
+!!! info "Auto-Generated Key"
+    If none of the following options are specified, InvenTree will automatically generate a secret key file (stored in `secret_key.txt`) on first run.
 
 The secret key can be provided in multiple ways, with the following (descending) priorities:
 
@@ -400,16 +430,15 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
-| INVENTREE_CUSTOMIZE | customize.hide_pui_banner | Disable PUI banner | False |
 
 The INVENTREE_CUSTOMIZE environment variable must contain a json object with the keys from the table above and
 the wanted values. Example:
 
 ```
-INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi","hide_pui_banner":"True"}
+INVENTREE_CUSTOMIZE={"login_message":"Hallo Michi"}
 ```
 
-This example removes the PUI banner and sets a login message. Take care of the double quotes.
+This example sets a login message. Take care of the double quotes.
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 

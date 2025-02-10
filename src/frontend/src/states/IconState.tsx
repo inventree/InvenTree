@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { t } from '@lingui/macro';
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { generateUrl } from '../functions/urls';
@@ -36,7 +36,22 @@ export const useIconState = create<IconState>()((set, get) => ({
   fetchIcons: async () => {
     if (get().hasLoaded) return;
 
-    const packs = await api.get(apiUrl(ApiEndpoints.icons));
+    const packs = await api.get(apiUrl(ApiEndpoints.icons)).catch((_error) => {
+      console.error('ERR: Could not fetch icon packages');
+
+      hideNotification('icon-fetch-error');
+
+      showNotification({
+        id: 'icon-fetch-error',
+        title: t`Error`,
+        message: t`Error loading icon package from server`,
+        color: 'red'
+      });
+    });
+
+    if (!packs) {
+      return;
+    }
 
     await Promise.all(
       packs.data.map(async (pack: any) => {
@@ -55,7 +70,9 @@ export const useIconState = create<IconState>()((set, get) => ({
           console.error(
             "ERR: Icon package is missing 'prefix' or 'fonts' field"
           );
+          hideNotification('icon-fetch-error');
           showNotification({
+            id: 'icon-fetch-error',
             title: t`Error`,
             message: t`Error loading icon package from server`,
             color: 'red'

@@ -63,7 +63,7 @@ export default function SaleHistoryPanel({
   }, [table.records]);
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ base: 1, md: 2 }}>
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.sales_order_line_list)}

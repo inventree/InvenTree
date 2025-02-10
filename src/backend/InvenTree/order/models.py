@@ -1,6 +1,5 @@
 """Order model definitions."""
 
-import logging
 from datetime import datetime
 from decimal import Decimal
 
@@ -15,6 +14,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -58,7 +58,7 @@ from part import models as PartModels
 from plugin.events import trigger_event
 from stock.status_codes import StockHistoryCode, StockStatus
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class TotalPriceMixin(models.Model):
@@ -203,6 +203,8 @@ class Order(
         creation_date: Automatic date of order creation
         created_by: User who created this order (automatically captured)
         issue_date: Date the order was issued
+        start_date: Date the order is scheduled to be started
+        target_date: Expected or desired completion date
         complete_date: Date the order was completed
         responsible: User (or group) responsible for managing the order
     """
@@ -243,6 +245,13 @@ class Order(
                 raise ValidationError({
                     'contact': _('Contact does not match selected company')
                 })
+
+        # Target date should be *after* the start date
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date'),
+                'start_date': _('Start date must be before target date'),
+            })
 
     def clean_line_item(self, line):
         """Clean a line item for this order.
@@ -308,6 +317,13 @@ class Order(
 
     link = InvenTreeURLField(
         blank=True, verbose_name=_('Link'), help_text=_('Link to external page')
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Start date'),
+        help_text=_('Scheduled start date for this order'),
     )
 
     target_date = models.DateField(
@@ -796,9 +812,31 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def receive_line_item(
         self, line, location, quantity, user, status=StockStatus.OK.value, **kwargs
     ):
-        """Receive a line item (or partial line item) against this PurchaseOrder."""
+        """Receive a line item (or partial line item) against this PurchaseOrder.
+
+        Arguments:
+            line: The PurchaseOrderLineItem to receive against
+            location: The StockLocation to receive the item into
+            quantity: The quantity to receive
+            user: The User performing the action
+            status: The StockStatus to assign to the item (default: StockStatus.OK)
+
+        Keyword Arguments:
+            barch_code: Optional batch code for the new StockItem
+            serials: Optional list of serial numbers to assign to the new StockItem(s)
+            notes: Optional notes field for the StockItem
+            packaging: Optional packaging field for the StockItem
+            barcode: Optional barcode field for the StockItem
+
+        Raises:
+            ValidationError: If the quantity is negative or otherwise invalid
+            ValidationError: If the order is not in the 'PLACED' state
+        """
         # Extract optional batch code for the new stock item
         batch_code = kwargs.get('batch_code', '')
+
+        # Extract optional expiry date for the new stock item
+        expiry_date = kwargs.get('expiry_date')
 
         # Extract optional list of serial numbers
         serials = kwargs.get('serials')
@@ -843,7 +881,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
             # Calculate unit purchase price (in base units)
             if line.purchase_price:
                 unit_purchase_price = line.purchase_price
+
+                # Convert purchase price to base units
                 unit_purchase_price /= line.part.base_quantity(1)
+
+                # Convert to base currency
+                if get_global_setting('PURCHASEORDER_CONVERT_CURRENCY'):
+                    try:
+                        unit_purchase_price = convert_money(
+                            unit_purchase_price, currency_code_default()
+                        )
+                    except Exception:
+                        log_error('PurchaseOrder.receive_line_item')
+
             else:
                 unit_purchase_price = None
 
@@ -863,6 +913,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
+                    expiry_date=expiry_date,
                     packaging=packaging,
                     serial=sn,
                     purchase_price=unit_purchase_price,

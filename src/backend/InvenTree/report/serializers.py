@@ -193,7 +193,11 @@ class LabelOutputSerializer(BaseOutputSerializer):
         """Metaclass options."""
 
         model = report.models.LabelOutput
-        fields = [*BaseOutputSerializer.base_fields(), 'plugin']
+        fields = [*BaseOutputSerializer.base_fields(), 'plugin', 'template_detail']
+
+    template_detail = LabelTemplateSerializer(
+        source='template', many=False, read_only=True
+    )
 
 
 class ReportOutputSerializer(BaseOutputSerializer):
@@ -203,7 +207,11 @@ class ReportOutputSerializer(BaseOutputSerializer):
         """Metaclass options."""
 
         model = report.models.ReportOutput
-        fields = BaseOutputSerializer.base_fields()
+        fields = [*BaseOutputSerializer.base_fields(), 'template_detail']
+
+    template_detail = ReportTemplateSerializer(
+        source='template', many=False, read_only=True
+    )
 
 
 class ReportSnippetSerializer(InvenTreeModelSerializer):

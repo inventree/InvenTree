@@ -1,14 +1,14 @@
 """Code for managing email functionality in InvenTree."""
 
-import logging
-
 from django.conf import settings
 from django.core import mail as django_mail
+
+import structlog
 
 import InvenTree.ready
 import InvenTree.tasks
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def is_email_configured():

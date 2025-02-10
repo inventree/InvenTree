@@ -1,7 +1,6 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
 import io
-import logging
 from decimal import Decimal
 from typing import Optional
 from urllib.parse import urljoin
@@ -12,6 +11,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import structlog
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
@@ -24,7 +24,7 @@ from common.notifications import (
 from common.settings import get_global_setting
 from InvenTree.format import format_money
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def get_base_url(request=None):
@@ -211,16 +211,16 @@ def render_currency(
         except Exception:
             pass
 
-    if min_decimal_places is None:
+    if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
         min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
-    if max_decimal_places is None:
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
         max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)
 
-    if decimal_places is not None:
+    if decimal_places is not None and isinstance(decimal_places, (int, float)):
         # Decimal place count is provided, use it
         pass
     elif '.' in value:

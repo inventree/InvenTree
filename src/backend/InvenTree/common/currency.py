@@ -1,32 +1,23 @@
 """Helper functions for currency support."""
 
 import decimal
-import logging
 import math
 from typing import Optional
 
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def currency_code_default():
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
-
-    try:
-        cached_value = cache.get('currency_code_default', '')
-    except Exception:
-        cached_value = None
-
-    if cached_value:
-        return cached_value
 
     try:
         code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
@@ -36,12 +27,6 @@ def currency_code_default():
 
     if code not in CURRENCIES:
         code = 'USD'  # pragma: no cover
-
-    # Cache the value for a short amount of time
-    try:
-        cache.set('currency_code_default', code, 30)
-    except Exception:
-        pass
 
     return code
 
