@@ -1,4 +1,3 @@
-import { Group, Loader } from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,11 +12,5 @@ export default function Logout() {
     doLogout(navigate);
   }, []);
 
-  return (
-    <Wrapper titleText='Logging out'>
-      <Group justify='center'>
-        <Loader />
-      </Group>
-    </Wrapper>
-  );
+  return <Wrapper titleText='Logging out' loader />;
 }

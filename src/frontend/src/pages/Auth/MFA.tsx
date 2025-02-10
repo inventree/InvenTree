@@ -11,7 +11,7 @@ export default function Mfa() {
   const location = useLocation();
 
   return (
-    <Wrapper titleText={t`MFA Login`}>
+    <Wrapper titleText={t`MFA Login`} logOff>
       <TextInput
         required
         label={t`TOTP Code`}

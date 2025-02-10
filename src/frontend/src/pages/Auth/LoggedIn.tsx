@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Group, Loader } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -10,7 +9,6 @@ import { Wrapper } from './LoginLayoutComponent';
 export default function Logged_In() {
   const navigate = useNavigate();
   const location = useLocation();
-
   const checkLoginStateDebounced = useDebouncedCallback(checkLoginState, 300);
 
   useEffect(() => {
@@ -18,10 +16,6 @@ export default function Logged_In() {
   }, [navigate]);
 
   return (
-    <Wrapper titleText={t`Checking if you are already logged in`}>
-      <Group justify='center'>
-        <Loader />
-      </Group>
-    </Wrapper>
+    <Wrapper titleText={t`Checking if you are already logged in`} loader />
   );
 }

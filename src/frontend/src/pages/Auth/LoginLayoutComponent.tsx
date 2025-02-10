@@ -1,13 +1,19 @@
+import { Trans } from '@lingui/macro';
 import {
   BackgroundImage,
+  Button,
   Center,
   Container,
+  Divider,
+  Group,
+  Loader,
   Paper,
   Stack,
   Text
 } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { doLogout } from '../../functions/auth';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 
@@ -56,14 +62,35 @@ export default function LayoutComponent() {
 
 export function Wrapper({
   children,
-  titleText
-}: Readonly<{ children: React.ReactNode; titleText: string }>) {
+  titleText,
+  logOff = false,
+  loader = false
+}: Readonly<{
+  children?: React.ReactNode;
+  titleText: string;
+  logOff?: boolean;
+  loader?: boolean;
+}>) {
+  const navigate = useNavigate();
+
   return (
     <Paper p='xl' withBorder miw={425}>
       <Stack>
         <Text size='lg'>{titleText}</Text>
-
+        {loader && (
+          <Group justify='center'>
+            <Loader />
+          </Group>
+        )}
         {children}
+        {logOff && (
+          <>
+            <Divider />
+            <Button onClick={() => doLogout(navigate)} color='red'>
+              <Trans>Log off</Trans>
+            </Button>
+          </>
+        )}
       </Stack>
     </Paper>
   );

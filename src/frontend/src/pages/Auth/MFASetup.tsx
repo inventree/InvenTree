@@ -1,10 +1,10 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Divider } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { authApi, doLogout, followRedirect } from '../../functions/auth';
+import { authApi, followRedirect } from '../../functions/auth';
 import { apiUrl } from '../../states/ApiState';
 import { QrRegistrationForm } from '../Index/Settings/AccountSettings/QrRegistrationForm';
 import { Wrapper } from './LoginLayoutComponent';
@@ -40,7 +40,7 @@ export default function MfaSetup() {
   }, [totpQr]);
 
   return (
-    <Wrapper titleText={t`MFA Setup Required`}>
+    <Wrapper titleText={t`MFA Setup Required`} logOff>
       <QrRegistrationForm
         url={totpQr?.totp_url ?? ''}
         secret={totpQr?.secret ?? ''}
@@ -58,10 +58,6 @@ export default function MfaSetup() {
         }}
       >
         <Trans>Add TOTP</Trans>
-      </Button>
-      <Divider />
-      <Button onClick={() => doLogout(navigate)} color='red'>
-        <Trans>Log off</Trans>
       </Button>
     </Wrapper>
   );
