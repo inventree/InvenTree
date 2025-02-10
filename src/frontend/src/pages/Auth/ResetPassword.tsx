@@ -1,21 +1,14 @@
 import { Trans, t } from '@lingui/macro';
-import {
-  Button,
-  Center,
-  Container,
-  PasswordInput,
-  Stack,
-  Title
-} from '@mantine/core';
+import { Button, PasswordInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import { LanguageContext } from '../../contexts/LanguageContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
+import { Wrapper } from './LoginLayoutComponent';
 
 export default function ResetPassword() {
   const simpleForm = useForm({ initialValues: { password: '' } });
@@ -88,27 +81,19 @@ export default function ResetPassword() {
   }
 
   return (
-    <LanguageContext>
-      <Center mih='100vh'>
-        <Container w='md' miw={425}>
-          <Stack>
-            <Title>
-              <Trans>Set new password</Trans>
-            </Title>
-            <Stack>
-              <PasswordInput
-                required
-                label={t`Password`}
-                description={t`The desired new password`}
-                {...simpleForm.getInputProps('password')}
-              />
-            </Stack>
-            <Button type='submit' onClick={handleSet}>
-              <Trans>Send Password</Trans>
-            </Button>
-          </Stack>
-        </Container>
-      </Center>
-    </LanguageContext>
+    <Wrapper>
+      <Title>
+        <Trans>Set new password</Trans>
+      </Title>
+      <PasswordInput
+        required
+        label={t`Password`}
+        description={t`The desired new password`}
+        {...simpleForm.getInputProps('password')}
+      />
+      <Button type='submit' onClick={handleSet}>
+        <Trans>Send Password</Trans>
+      </Button>
+    </Wrapper>
   );
 }

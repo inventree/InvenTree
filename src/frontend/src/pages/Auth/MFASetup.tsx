@@ -1,15 +1,15 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Center, Container, Stack, Title } from '@mantine/core';
+import { Button, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LanguageContext } from '../../contexts/LanguageContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { authApi, doLogout, followRedirect } from '../../functions/auth';
 import { apiUrl } from '../../states/ApiState';
 import { QrRegistrationForm } from '../Index/Settings/AccountSettings/QrRegistrationForm';
+import { Wrapper } from './LoginLayoutComponent';
 
-export default function MFASetup() {
+export default function MfaSetup() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,37 +40,31 @@ export default function MFASetup() {
   }, [totpQr]);
 
   return (
-    <LanguageContext>
-      <Center mih='100vh'>
-        <Container w='md' miw={425}>
-          <Stack>
-            <Title>
-              <Trans>MFA Setup Required</Trans>
-            </Title>
-            <QrRegistrationForm
-              url={totpQr?.totp_url ?? ''}
-              secret={totpQr?.secret ?? ''}
-              value={value}
-              setValue={setValue}
-            />
-            <Button
-              disabled={!value}
-              onClick={() => {
-                authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
-                  code: value
-                }).then(() => {
-                  followRedirect(navigate, location?.state);
-                });
-              }}
-            >
-              <Trans>Add TOTP</Trans>
-            </Button>
-            <Button onClick={() => doLogout(navigate)} color='red'>
-              <Trans>Log off</Trans>
-            </Button>
-          </Stack>
-        </Container>
-      </Center>
-    </LanguageContext>
+    <Wrapper>
+      <Title>
+        <Trans>MFA Setup Required</Trans>
+      </Title>
+      <QrRegistrationForm
+        url={totpQr?.totp_url ?? ''}
+        secret={totpQr?.secret ?? ''}
+        value={value}
+        setValue={setValue}
+      />
+      <Button
+        disabled={!value}
+        onClick={() => {
+          authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
+            code: value
+          }).then(() => {
+            followRedirect(navigate, location?.state);
+          });
+        }}
+      >
+        <Trans>Add TOTP</Trans>
+      </Button>
+      <Button onClick={() => doLogout(navigate)} color='red'>
+        <Trans>Log off</Trans>
+      </Button>
+    </Wrapper>
   );
 }

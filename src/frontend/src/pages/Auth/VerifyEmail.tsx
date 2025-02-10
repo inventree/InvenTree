@@ -1,13 +1,13 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Center, Container, Stack, Title } from '@mantine/core';
+import { Button, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import { LanguageContext } from '../../contexts/LanguageContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
+import { Wrapper } from './LoginLayoutComponent';
 
 export default function VerifyEmail() {
   const { key } = useParams();
@@ -43,19 +43,13 @@ export default function VerifyEmail() {
   }
 
   return (
-    <LanguageContext>
-      <Center mih='100vh'>
-        <Container w='md' miw={425}>
-          <Stack>
-            <Title>
-              <Trans>Verify Email</Trans>
-            </Title>
-            <Button type='submit' onClick={handleSet}>
-              <Trans>Verify</Trans>
-            </Button>
-          </Stack>
-        </Container>
-      </Center>
-    </LanguageContext>
+    <Wrapper>
+      <Title>
+        <Trans>Verify Email</Trans>
+      </Title>
+      <Button type='submit' onClick={handleSet}>
+        <Trans>Verify</Trans>
+      </Button>
+    </Wrapper>
   );
 }

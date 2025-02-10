@@ -1,4 +1,10 @@
-import { BackgroundImage, Center, Container } from '@mantine/core';
+import {
+  BackgroundImage,
+  Center,
+  Container,
+  Paper,
+  Stack
+} from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { generateUrl } from '../../functions/urls';
@@ -44,5 +50,13 @@ export default function LayoutComponent() {
         </div>
       </Center>
     </SplashComponent>
+  );
+}
+
+export function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <Paper p='xl' withBorder miw={425}>
+      <Stack>{children}</Stack>
+    </Paper>
   );
 }
