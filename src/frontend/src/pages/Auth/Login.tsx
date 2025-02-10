@@ -1,12 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  BackgroundImage,
-  Center,
-  Container,
-  Divider,
-  Paper,
-  Text
-} from '@mantine/core';
+import { Divider, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -25,11 +18,10 @@ import {
   doBasicLogin,
   followRedirect
 } from '../../functions/auth';
-import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
-export default function Login() {
+export default function LoginComponent() {
   const [hostKey, setHost, hostList] = useLocalState((state) => [
     state.hostKey,
     state.setHost,
@@ -57,30 +49,18 @@ export default function Login() {
 
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
-    if (val) {
-      return (
-        <>
-          <Divider my='md' />
-          <Text>
-            <span
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-              dangerouslySetInnerHTML={{ __html: val }}
-            />
-          </Text>
-        </>
-      );
-    }
-    return null;
-  }, [server.customize]);
-
-  const SplashComponent = useMemo(() => {
-    const temp = server.customize?.splash;
-    if (temp) {
-      return ({ children }: { children: React.ReactNode }) => (
-        <BackgroundImage src={generateUrl(temp)}>{children}</BackgroundImage>
-      );
-    }
-    return ({ children }: { children: React.ReactNode }) => <>{children}</>;
+    if (val == undefined) return null;
+    return (
+      <>
+        <Divider my='md' />
+        <Text>
+          <span
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+            dangerouslySetInnerHTML={{ __html: val }}
+          />
+        </Text>
+      </>
+    );
   }, [server.customize]);
 
   // Data manipulation functions
@@ -111,54 +91,31 @@ export default function Login() {
     }
   }, []);
 
-  // Fetch server data on mount if no server data is present
-  useEffect(() => {
-    if (server.server === null) {
-      fetchServerApiState();
-    }
-  }, [server]);
-
-  // Main rendering block
   return (
-    <SplashComponent>
-      <Center mih='100vh'>
-        <div
-          style={{
-            padding: '10px',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            boxShadow: '0 0 15px 10px rgba(0,0,0,0.5)'
-          }}
-        >
-          <Container w='md' miw={400}>
-            {hostEdit ? (
-              <InstanceOptions
-                hostKey={hostKey}
-                ChangeHost={ChangeHost}
-                setHostEdit={setHostEdit}
-              />
-            ) : (
-              <>
-                <Paper p='xl' withBorder>
-                  <StylishText size='xl'>
-                    {loginMode ? t`Login` : t`Register`}
-                  </StylishText>
-                  <Divider p='xs' />
-                  {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
-                  <ModeSelector
-                    loginMode={loginMode}
-                    changePage={(newPage) => navigate(`/${newPage}`)}
-                  />
-                  {LoginMessage}
-                </Paper>
-                <AuthFormOptions
-                  hostname={hostname}
-                  toggleHostEdit={setHostEdit}
-                />
-              </>
-            )}
-          </Container>
-        </div>
-      </Center>
-    </SplashComponent>
+    <>
+      {hostEdit ? (
+        <InstanceOptions
+          hostKey={hostKey}
+          ChangeHost={ChangeHost}
+          setHostEdit={setHostEdit}
+        />
+      ) : (
+        <>
+          <Paper p='xl' withBorder>
+            <StylishText size='xl'>
+              {loginMode ? t`Login` : t`Register`}
+            </StylishText>
+            <Divider p='xs' />
+            {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
+            <ModeSelector
+              loginMode={loginMode}
+              changePage={(newPage) => navigate(`/${newPage}`)}
+            />
+            {LoginMessage}
+          </Paper>
+          <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
+        </>
+      )}
+    </>
   );
 }
