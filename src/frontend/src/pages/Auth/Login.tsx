@@ -1,15 +1,11 @@
-import { t } from '@lingui/macro';
-import { Divider, Paper, Text } from '@mantine/core';
-import { useDisclosure, useToggle } from '@mantine/hooks';
+import { Trans, t } from '@lingui/macro';
+import { Anchor, Divider, Paper, Text } from '@mantine/core';
+import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
-import {
-  AuthenticationForm,
-  ModeSelector,
-  RegistrationForm
-} from '../../components/forms/AuthenticationForm';
+import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { StylishText } from '../../components/items/StylishText';
 import { defaultHostKey } from '../../defaults/defaultHostList';
@@ -34,18 +30,9 @@ export default function Login() {
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
-  const [loginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    if (location.pathname === '/register') {
-      setMode.close();
-    } else {
-      setMode.open();
-    }
-  }, [location]);
 
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
@@ -102,15 +89,21 @@ export default function Login() {
       ) : (
         <>
           <Paper p='xl' withBorder>
-            <StylishText size='xl'>
-              {loginMode ? t`Login` : t`Register`}
-            </StylishText>
+            <StylishText size='xl'>{t`Login`}</StylishText>
             <Divider p='xs' />
-            {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
-            <ModeSelector
-              loginMode={loginMode}
-              changePage={(newPage) => navigate(`/${newPage}`)}
-            />
+            <AuthenticationForm />
+            <Text ta='center' size={'xs'} mt={'md'}>
+              <Trans>Don&apos;t have an account?</Trans>{' '}
+              <Anchor
+                component='button'
+                type='button'
+                c='dimmed'
+                size='xs'
+                onClick={() => navigate('/register')}
+              >
+                <Trans>Register</Trans>
+              </Anchor>
+            </Text>
             {LoginMessage}
           </Paper>
           <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />

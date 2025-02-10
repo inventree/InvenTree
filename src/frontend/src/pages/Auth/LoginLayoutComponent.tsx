@@ -64,18 +64,20 @@ export function Wrapper({
   children,
   titleText,
   logOff = false,
-  loader = false
+  loader = false,
+  smallPadding = false
 }: Readonly<{
   children?: React.ReactNode;
   titleText: string;
   logOff?: boolean;
   loader?: boolean;
+  smallPadding?: boolean;
 }>) {
   const navigate = useNavigate();
 
   return (
     <Paper p='xl' withBorder miw={425}>
-      <Stack>
+      <Stack gap={smallPadding ? 0 : 'md'}>
         <Text size='lg'>{titleText}</Text>
         {loader && (
           <Group justify='center'>
