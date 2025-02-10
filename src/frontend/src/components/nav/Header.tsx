@@ -4,6 +4,7 @@ import {
   Group,
   Indicator,
   Tabs,
+  Text,
   UnstyledButton
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -19,7 +20,7 @@ import { navigateToLink } from '../../functions/navigation';
 import { generateUrl } from '../../functions/urls';
 import { base_url } from '../../main';
 import * as classes from '../../main.css';
-import { apiUrl } from '../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -36,6 +37,7 @@ export function Header() {
     state.setNavigationOpen,
     state.navigationOpen
   ]);
+  const [server] = useServerApiState((state) => [state.server]);
   const [navDrawerOpened, { open: openNavDrawer, close: closeNavDrawer }] =
     useDisclosure(navigationOpen);
   const [
@@ -49,10 +51,12 @@ export function Header() {
   ] = useDisclosure(false);
 
   const { isLoggedIn } = useUserState();
-
   const [notificationCount, setNotificationCount] = useState<number>(0);
-
   const globalSettings = useGlobalSettingsState();
+
+  const navbar_message = useMemo(() => {
+    return server.customize?.navbar_message;
+  }, [server.customize]);
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
@@ -114,6 +118,12 @@ export function Header() {
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
+          {navbar_message && (
+            <Text>
+              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
+              <div dangerouslySetInnerHTML={{ __html: navbar_message }} />
+            </Text>
+          )}
           <Group>
             <ActionIcon
               onClick={openSearchDrawer}

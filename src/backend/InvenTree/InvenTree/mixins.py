@@ -96,7 +96,7 @@ class CleanMixin:
     def clean_data(self, data: dict) -> dict:
         """Clean / sanitize data.
 
-        This uses mozillas bleach under the hood to disable certain html tags by
+        This uses Mozilla's bleach under the hood to disable certain html tags by
         encoding them - this leads to script tags etc. to not work.
         The results can be longer then the input; might make some character combinations
         `ugly`. Prevents XSS on the server-level.

@@ -1,11 +1,16 @@
 import { t } from '@lingui/macro';
 
+import { Accordion } from '@mantine/core';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
+import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ModelType } from '../../../../enums/ModelType';
-import { TemplateTable } from '../../../../tables/settings/TemplateTable';
+import {
+  TemplateOutputTable,
+  TemplateTable
+} from '../../../../tables/settings/TemplateTable';
 
-export default function ReportTemplateTable() {
+function ReportTemplateTable() {
   return (
     <TemplateTable
       templateProps={{
@@ -31,5 +36,28 @@ export default function ReportTemplateTable() {
         }
       }}
     />
+  );
+}
+
+export default function ReportTemplatePanel() {
+  return (
+    <Accordion defaultValue={['templates']} multiple>
+      <Accordion.Item value='templates'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Report Templates`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <ReportTemplateTable />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value='outputs'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`Generated Reports`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <TemplateOutputTable endpoint={ApiEndpoints.report_output} />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }
