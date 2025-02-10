@@ -10,9 +10,6 @@ import string
 import warnings
 from pathlib import Path
 
-from django.core.files.base import ContentFile
-from django.core.files.storage import Storage
-
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
@@ -77,6 +74,9 @@ def ensure_dir(path: Path, storage=None) -> None:
 
     If it does not exist, create it.
     """
+    from django.core.files.base import ContentFile
+    from django.core.files.storage import Storage
+
     if storage and isinstance(storage, Storage):
         if not storage.exists(str(path)):
             storage.save(str(path / '.empty'), ContentFile(''))
