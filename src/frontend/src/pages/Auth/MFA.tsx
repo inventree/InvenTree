@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, TextInput, Title } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { handleMfaLogin } from '../../functions/auth';
@@ -11,10 +11,7 @@ export default function Mfa() {
   const location = useLocation();
 
   return (
-    <Wrapper>
-      <Title>
-        <Trans>MFA Login</Trans>
-      </Title>
+    <Wrapper titleText={t`MFA Login`}>
       <TextInput
         required
         label={t`TOTP Code`}

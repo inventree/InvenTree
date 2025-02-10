@@ -1,5 +1,5 @@
-import { Trans } from '@lingui/macro';
-import { Group, Loader, Text } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Group, Loader } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -18,10 +18,7 @@ export default function Logged_In() {
   }, [navigate]);
 
   return (
-    <Wrapper>
-      <Text size='lg'>
-        <Trans>Checking if you are already logged in</Trans>
-      </Text>
+    <Wrapper titleText={t`Checking if you are already logged in`}>
       <Group justify='center'>
         <Loader />
       </Group>

@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Title } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -43,10 +43,7 @@ export default function VerifyEmail() {
   }
 
   return (
-    <Wrapper>
-      <Title>
-        <Trans>Verify Email</Trans>
-      </Title>
+    <Wrapper titleText={t`Verify Email`}>
       <Button type='submit' onClick={handleSet}>
         <Trans>Verify</Trans>
       </Button>

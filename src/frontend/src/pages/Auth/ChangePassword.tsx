@@ -99,8 +99,7 @@ export default function Set_Password() {
   }
 
   return (
-    <Wrapper>
-      <StylishText size='xl'>{t`Reset Password`}</StylishText>
+    <Wrapper titleText={t`Reset Password`}>
       <Divider />
       {user.username() && (
         <Paper>

@@ -1,9 +1,9 @@
-import { Trans } from '@lingui/macro';
-import { Card, Container, Group, Loader, Stack, Text } from '@mantine/core';
+import { Group, Loader } from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { doLogout } from '../../functions/auth';
+import { Wrapper } from './LoginLayoutComponent';
 
 /* Expose a route for explicit logout via URL */
 export default function Logout() {
@@ -14,19 +14,10 @@ export default function Logout() {
   }, []);
 
   return (
-    <Container>
-      <Stack align='center'>
-        <Card shadow='sm' padding='lg' radius='md'>
-          <Stack>
-            <Text size='lg'>
-              <Trans>Logging out</Trans>
-            </Text>
-            <Group justify='center'>
-              <Loader />
-            </Group>
-          </Stack>
-        </Card>
-      </Stack>
-    </Container>
+    <Wrapper titleText='Logging out'>
+      <Group justify='center'>
+        <Loader />
+      </Group>
+    </Wrapper>
   );
 }

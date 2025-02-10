@@ -3,7 +3,8 @@ import {
   Center,
   Container,
   Paper,
-  Stack
+  Stack,
+  Text
 } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -53,10 +54,17 @@ export default function LayoutComponent() {
   );
 }
 
-export function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+export function Wrapper({
+  children,
+  titleText
+}: Readonly<{ children: React.ReactNode; titleText: string }>) {
   return (
     <Paper p='xl' withBorder miw={425}>
-      <Stack>{children}</Stack>
+      <Stack>
+        <Text size='lg'>{titleText}</Text>
+
+        {children}
+      </Stack>
     </Paper>
   );
 }

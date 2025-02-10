@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, TextInput, Title } from '@mantine/core';
+import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
 import { handleReset } from '../../functions/auth';
@@ -10,10 +10,7 @@ export default function Reset() {
   const navigate = useNavigate();
 
   return (
-    <Wrapper>
-      <Title>
-        <Trans>Reset password</Trans>
-      </Title>
+    <Wrapper titleText={t`Reset password`}>
       <TextInput
         required
         label={t`Email`}

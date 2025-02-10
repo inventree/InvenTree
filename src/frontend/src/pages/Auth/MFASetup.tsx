@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Title } from '@mantine/core';
+import { Button, Divider } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -40,10 +40,7 @@ export default function MfaSetup() {
   }, [totpQr]);
 
   return (
-    <Wrapper>
-      <Title>
-        <Trans>MFA Setup Required</Trans>
-      </Title>
+    <Wrapper titleText={t`MFA Setup Required`}>
       <QrRegistrationForm
         url={totpQr?.totp_url ?? ''}
         secret={totpQr?.secret ?? ''}
@@ -62,6 +59,7 @@ export default function MfaSetup() {
       >
         <Trans>Add TOTP</Trans>
       </Button>
+      <Divider />
       <Button onClick={() => doLogout(navigate)} color='red'>
         <Trans>Log off</Trans>
       </Button>

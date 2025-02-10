@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, PasswordInput, Title } from '@mantine/core';
+import { Button, PasswordInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
@@ -81,10 +81,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <Wrapper>
-      <Title>
-        <Trans>Set new password</Trans>
-      </Title>
+    <Wrapper titleText={t`Set new password`}>
       <PasswordInput
         required
         label={t`Password`}
