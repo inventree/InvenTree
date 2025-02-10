@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Anchor, Divider, Paper, Text } from '@mantine/core';
+import { Anchor, Divider, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -7,7 +7,6 @@ import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
-import { StylishText } from '../../components/items/StylishText';
 import { defaultHostKey } from '../../defaults/defaultHostList';
 import {
   checkLoginState,
@@ -16,6 +15,7 @@ import {
 } from '../../functions/auth';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { Wrapper } from './Layout';
 
 export default function Login() {
   const [hostKey, setHost, hostList] = useLocalState((state) => [
@@ -88,9 +88,7 @@ export default function Login() {
         />
       ) : (
         <>
-          <Paper p='xl' withBorder>
-            <StylishText size='xl'>{t`Login`}</StylishText>
-            <Divider p='xs' />
+          <Wrapper titleText={t`Login`} smallPadding>
             <AuthenticationForm />
             <Text ta='center' size={'xs'} mt={'md'}>
               <Trans>Don&apos;t have an account?</Trans>{' '}
@@ -105,7 +103,7 @@ export default function Login() {
               </Anchor>
             </Text>
             {LoginMessage}
-          </Paper>
+          </Wrapper>
           <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
         </>
       )}
