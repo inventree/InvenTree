@@ -1,10 +1,13 @@
-# Python Django
-# Test a Django project on multiple versions of Python.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/python
-
 trigger:
-- master
+  batch: true
+  branches:
+    include:
+    - master
+    - stable
+    - refs/tags/*
+  paths:
+    include:
+    - src/backend
 
 pool:
   vmImage: ubuntu-latest
@@ -37,17 +40,19 @@ steps:
       print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
 
 - script: |
-    python -m pip install --upgrade pip setuptools wheel
-    pip install --require-hashes -r requirements.txt
-    pip install --require-hashes -r requirements-dev.txt
-    pip install unittest-xml-reporting coverage invoke
+    python -m pip install --upgrade pip setuptools wheel uv
+    uv pip install --require-hashes -r src/backend/requirements.txt
+    uv pip install --require-hashes -r src/backend/requirements-dev.txt
     sudo apt-get install poppler-utils
     sudo apt-get install libpoppler-dev
+    uv pip install unittest-xml-reporting coverage invoke
   displayName: 'Install prerequisites'
+  env:
+    UV_SYSTEM_PYTHON: 1
 
 - script: |
     pushd '$(projectRoot)'
-    invoke update
+    invoke update --uv
     coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
     coverage xml -i
   displayName: 'Run tests'
@@ -57,7 +62,11 @@ steps:
     INVENTREE_MEDIA_ROOT: ./media
     INVENTREE_STATIC_ROOT: ./static
     INVENTREE_BACKUP_DIR: ./backup
+    INVENTREE_SITE_URL: http://localhost:8000
     INVENTREE_PLUGINS_ENABLED: true
+    UV_SYSTEM_PYTHON: 1
+    INVENTREE_DEBUG: true
+    INVENTREE_LOG_LEVEL: INFO
 
 - task: PublishTestResults@2
   inputs:
@@ -65,7 +74,6 @@ steps:
     testRunTitle: 'Python $(PYTHON_VERSION)'
   condition: succeededOrFailed()
 
-- task: PublishCodeCoverageResults@1
+- task: PublishCodeCoverageResults@2
   inputs:
-    codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
