@@ -8,6 +8,10 @@ asgiref==3.8.1 \
     #   django-allauth
     #   django-cors-headers
     #   django-structlog
+async-timeout==5.0.1 \
+    --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
+    --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
+    # via redis
 attrs==25.1.0 \
     --hash=sha256:1c97078a80c814273a76b2a298a932eb681c87415c11dee0a6921de7f1b02c3e \
     --hash=sha256:c75a69e28a550a7e93789579c22aa26b0f5b83b75dc4e08fe092980051e1090a
@@ -323,7 +327,7 @@ charset-normalizer==3.4.1 \
 coreapi==2.3.3 \
     --hash=sha256:46145fcc1f7017c076a2ef684969b641d18a2991051fddec9458ad3f78ffc1cb \
     --hash=sha256:bf39d118d6d3e171f10df9ede5666f63ad80bba9a29a8ec17726a66cf52ee6f3
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 coreschema==0.0.4 \
     --hash=sha256:5e6ef7bf38c1525d5e55a895934ab4273548629f16aed5c0a6caa74ebf45551f \
     --hash=sha256:9503506007d482ab0867ba14724b93c18a33b22b6d19fb419ef2d239dd4a1607
@@ -361,7 +365,7 @@ cryptography==44.0.1 \
     --hash=sha256:f51f5705ab27898afda1aaa430f34ad90dc117421057782022edf0600bec5f14 \
     --hash=sha256:fd0ee90072861e276b0ff08bd627abec29e32a53b2be44e41dbcdf87cbee2b00
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   djangorestframework-simplejwt
 cssselect2==0.7.0 \
     --hash=sha256:1ccd984dab89fc68955043aca4e1b03e0cf29cad9880f6e28e3ba7a74b14aa5a \
@@ -381,12 +385,12 @@ deprecated==1.2.18 \
     #   opentelemetry-semantic-conventions
 dj-rest-auth==7.0.0 \
     --hash=sha256:08dbc03a35223872da9f59bc2d7a71bec2e721aa69f7cdc84c7a329aeae1f86e
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django==4.2.19 \
     --hash=sha256:6c833be4b0ca614f0a919472a1028a3bbdeb6f056fa04023aeb923346ba2c306 \
     --hash=sha256:a104e13f219fc55996a4e416ef7d18ab4eeb44e0aa95174c192f16cda9f94e75
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   dj-rest-auth
     #   django-allauth
     #   django-allauth-2fa
@@ -416,43 +420,43 @@ django==4.2.19 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[openid,saml]==65.4.1 \
+django-allauth[openid, saml]==65.4.1 \
     --hash=sha256:60b32aef7dbbcc213319aa4fd8f570e985266ea1162ae6ef7a26a24efca85c8c
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   django-allauth-2fa
 django-allauth-2fa==0.11.1 \
     --hash=sha256:02ffdf1025836f072c2f6ec0964494589cf1d52362f663f9ff6d9ca61a7b6962 \
     --hash=sha256:2f2d61dd488f66ad45e59780b061f5abe96caea9c3466e3ee4ea50ea1faebef6
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
     --hash=sha256:bb9fb560aaf62959c81e31fa40885c36bbd5854d5aa21b90df2c7e4ba633531e
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-cors-headers==4.7.0 \
     --hash=sha256:6fdf31bf9c6d6448ba09ef57157db2268d515d94fc5c89a0a1028e1fc03ee52b \
     --hash=sha256:f1c125dcd58479fe7a67fe2499c16ee38b81b397463cf025f0e2c42937421070
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-dbbackup==4.2.1 \
     --hash=sha256:157a2ec10d482345cd75092e510ac40d6e2ee6084604a1d17abe178c2f06bc69 \
     --hash=sha256:b23265600ead0780ca781b1b4b594949aaa8a20d74f08701f91ee9d7eb1f08cd
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-error-report-2==0.4.2 \
     --hash=sha256:1dd99c497af09b7ea99f5fbaf910501838150a9d5390796ea00e187bc62f6c1b \
     --hash=sha256:603e1e3b24d01bbfeab6379af948893b2b034031c80fa8b45cf1c4735341c04b
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-filter==24.3 \
     --hash=sha256:c4852822928ce17fb699bcfccd644b3574f1a2d80aeb2b4ff4f16b02dd49dc64 \
     --hash=sha256:d8ccaf6732afd21ca0542f6733b11591030fa98669f8d15599b358e24a2cd9c3
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-flags==5.0.13 \
     --hash=sha256:52df74b86d93f5cb402190ad26b68a5ba0f127e9e016189f1a6f2e8ba3c06a42 \
     --hash=sha256:ff6940cf37e07d6d0c4ac28c5420c8cfc478b62541473dba4aa02d600f7db9fc
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
     --hash=sha256:74a16bca05735f91a00120cad7250f3c3aa292a9f698a6cfdc544a922c11de70
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-ipware==7.0.1 \
     --hash=sha256:d9ec43d2bf7cdf216fed8d494a084deb5761a54860a53b2e74346a4f384cff47 \
     --hash=sha256:db16bbee920f661ae7f678e4270460c85850f03c6761a4eaeb489bdc91f64709
@@ -464,19 +468,19 @@ django-js-asset==2.2.0 \
 django-maintenance-mode==0.21.1 \
     --hash=sha256:b79afddb671c59972ae542e4fafbc99117d2d37991843eaaa837e328eed12b1b \
     --hash=sha256:c02fff0e386b7f8b2ab54479d3a0d336ae34014da22a7a2365ca96d5a2c1db94
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-markdownify==0.9.5 \
     --hash=sha256:2c4ae44e386c209453caf5e9ea1b74f64535985d338ad2d5ad5e7089cc94be86 \
     --hash=sha256:34c34eba4a797282a5c5bd97b13cec84d6a4c0673ad47ce1c1d000d74dd8d4ab
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-money==3.2.0 \
     --hash=sha256:2e4174b47993780bf4b61ad3fa0a66ebe140da42fdbe68b628c7ba9788287214 \
     --hash=sha256:3099f906407175af06b56ef3ff5c250e2fc525ff00f50d42f77b98597e625459
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-mptt==0.16.0 \
     --hash=sha256:56c9606bf0b329b5f5afd55dd8bfd073612ea1d5999b10903b09de62bee84c8e \
     --hash=sha256:8716849ba3318d94e2e100ed0923a05c1ffdf8195f8472b690dbaf737d2af3b5
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-otp==1.5.4 \
     --hash=sha256:0d9497ea4fb13fc04d50b49aa53dd1c740fe4bc5dde0ca27fb394f84e5da7bac \
     --hash=sha256:783dea669ac0eaf5cd336f73839443584ee665af427a84175cca5a9d620366db
@@ -487,11 +491,11 @@ django-picklefield==3.2 \
     # via django-q2
 django-q-sentry==0.1.6 \
     --hash=sha256:9b8b4d7fad253a7d9a47f2c2ab0d9dea83078b7ef45c8849dbb1e4176ef8d050
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-q2==1.7.6 \
     --hash=sha256:5210b121573cf65b97d495dbebefe6cfac394d8c0aec9ca2117e8e56e2fda17d \
     --hash=sha256:9060f4d68e1f3a8a748e0ebd0bd83c8c24bc13036105035873faab9d85b0e8f6
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-recurrence==1.11.1 \
     --hash=sha256:0c65f30872599b5813a9bab6952dada23c55894f28674490a753ada559f14bc5 \
     --hash=sha256:9c89444e651a78c587f352c5f63eda48ab2f53996347b9fcdff2d248f4fcff70
@@ -499,61 +503,61 @@ django-recurrence==1.11.1 \
 django-redis==5.4.0 \
     --hash=sha256:6a02abaa34b0fea8bf9b707d2c363ab6adc7409950b2db93602e6cb292818c42 \
     --hash=sha256:ebc88df7da810732e2af9987f7f426c96204bf89319df4c6da6ca9a2942edd5b
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-sesame==3.2.2 \
     --hash=sha256:523ebd4d04e28c897c262f25b78b6fd8f37e11cdca6e277fdc8bf496bd686cf5 \
     --hash=sha256:5d753a309166356b6a0d7fc047690943b9e80b4aa7952f1a6400fe6ce60d573c
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-sql-utils==0.7.0 \
     --hash=sha256:9371ff28eaf326836a7c52887259123cdd3fbffb7b738e42ae1a21258be0feb6 \
     --hash=sha256:fefc40c826896b60fcf33e35b6e30b523fc958955a16006438cd3ba6d795a532
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-sslserver==0.22 \
     --hash=sha256:c598a363d2ccdc2421c08ddb3d8b0973f80e8e47a3a5b74e4a2896f21c2947c5
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-stdimage==6.0.2 \
     --hash=sha256:880ab14828be56b53f711c3afae83c219ddd5d9af00850626736feb48382bf7f \
     --hash=sha256:9a73f7da48c48074580e2b032d5bdb7164935dbe4b9dc4fb88a7e112f3d521c8
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-structlog==9.0.1 \
     --hash=sha256:6f9ed724af2b122158384c3e7ab892cab776930afde2aa564c1a1cd7869f27fa \
     --hash=sha256:eb19bafa837345c62f294ded315c6a12523e16d29b4ba69d9e6ce57c7b0d2925
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
     --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-user-sessions==2.0.0 \
     --hash=sha256:0965554279f556b47062965609fa08b3ae45bbc581001dbe84b2ea599cc67748 \
     --hash=sha256:41b8b1ebeb4736065efbc96437c9cfbf491c39e10fd547a76b98f2312e11fa3e
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-weasyprint==2.3.1 \
     --hash=sha256:09cc1c40c92db34bed80154be7c959fea03d6001dc46fd599f3fd464d6a6dc72 \
     --hash=sha256:cd35b8bd24b28128a17a2416d0e6f3e64cb727f25c53467150b4be16ccd01c19
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 django-xforwardedfor-middleware==2.0 \
     --hash=sha256:16fd1cb27f33a5541b6f3e0b43afb1b7334a76f27a1255b69e14ec5c440f0b24
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 djangorestframework==3.14.0 \
     --hash=sha256:579a333e6256b09489cbe0a067e66abe55c6595d8926be6b99423786334350c8 \
     --hash=sha256:eb63f58c9f218e1a7d064d17a70751f528ed4e1d35547fdade9aaf4cd103fd08
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   dj-rest-auth
     #   djangorestframework-simplejwt
     #   drf-spectacular
 djangorestframework-simplejwt[crypto]==5.4.0 \
     --hash=sha256:7aec953db9ed4163430c16d086eecb0f028f814ce6bba62b06c25919261e9077 \
     --hash=sha256:cccecce1a0e1a4a240fae80da73e5fc23055bababb8b67de88fa47cd36822320
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 docutils==0.21.2 \
     --hash=sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f \
     --hash=sha256:dafca5b9e384f0e419294eb4d2ff9fa826435bf15f15b7bd45723e8ad76811b2
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 drf-spectacular==0.28.0 \
     --hash=sha256:2c778a47a40ab2f5078a7c42e82baba07397bb35b074ae4680721b2805943061 \
     --hash=sha256:856e7edf1056e49a4245e87a61e8da4baff46c83dbc25be1da2df77f354c7cb4
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 dulwich==0.22.7 \
     --hash=sha256:007d8160b511bb149d31c08548307982f6ce752a46e7088b020517de00c3bd46 \
     --hash=sha256:01544915c4056d0820de8cf126b971f7c180743ff64c4435c89168e44b30df4b \
@@ -597,7 +601,7 @@ dulwich==0.22.7 \
     --hash=sha256:f73668ecc29e0a20d20970489fffe2ba466e5486eae2f20104bc38bcbe611f64 \
     --hash=sha256:fdbd087e9e99bc809b15864ebc79dbefe869e3038b64c953d7736f6e6b382dc7 \
     --hash=sha256:fe324dc40b93e8be996c9fa9291a439bef835a92a2e4cb5c8cbdb1171c168fd6
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 et-xmlfile==2.0.0 \
     --hash=sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa \
     --hash=sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54
@@ -605,7 +609,7 @@ et-xmlfile==2.0.0 \
 feedparser==6.0.11 \
     --hash=sha256:0be7ee7b395572b19ebeb1d6aafb0028dee11169f1c934e0ed67d54992f4ad45 \
     --hash=sha256:c9d0407b64c6f2a065d0ebb292c2b35c01050cc0dc33757461aaabdc4c4184d5
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 flexcache==0.3 \
     --hash=sha256:18743bd5a0621bfe2cf8d519e4c3bfdf57a269c15d1ced3fb4b64e0ff4600656 \
     --hash=sha256:d43c9fea82336af6e0115e308d9d33a185390b8346a017564611f1466dcd2e32
@@ -729,12 +733,12 @@ grpcio==1.70.0 \
     --hash=sha256:fe9dbd916df3b60e865258a8c72ac98f3ac9e2a9542dcb72b7a34d236242a5ce \
     --hash=sha256:ff4a8112a79464919bb21c18e956c54add43ec9a4850e3949da54f61c241a4a6
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
 gunicorn==23.0.0 \
     --hash=sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d \
     --hash=sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 html5lib==1.1 \
     --hash=sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d \
     --hash=sha256:b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f
@@ -750,7 +754,10 @@ idna==3.10 \
 importlib-metadata==8.5.0 \
     --hash=sha256:45e54197d28b7a7f1559e60b95e7c567032b602131fbd588f1497f47880aa68b \
     --hash=sha256:71522656f0abace1d072b9e5481a48f07c138e00f079c38c8f883823f9c26bd7
-    # via opentelemetry-api
+    # via
+    #   django-q2
+    #   markdown
+    #   opentelemetry-api
 inflection==0.5.1 \
     --hash=sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417 \
     --hash=sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2
@@ -992,7 +999,7 @@ opentelemetry-api==1.30.0 \
     --hash=sha256:375893400c1435bf623f7dfb3bcd44825fe6b56c34d0667c542ea8257b1a1240 \
     --hash=sha256:d5f5284890d73fdf47f843dda3210edf37a38d66f44f2b5aedc1e89ed455dc09
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-instrumentation
@@ -1005,7 +1012,7 @@ opentelemetry-api==1.30.0 \
 opentelemetry-exporter-otlp==1.30.0 \
     --hash=sha256:44e11054ec571ccfed73a83c6429dee5d334d061d0e0572e3160d6de97156dbc \
     --hash=sha256:da7769f95cd5be5b09dd4188ac153a33709eda652217f2d10aed6518c8e60f0d
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 opentelemetry-exporter-otlp-proto-common==1.30.0 \
     --hash=sha256:5468007c81aa9c44dc961ab2cf368a29d3475977df83b4e30aeed42aa7bc3b38 \
     --hash=sha256:ddbfbf797e518411857d0ca062c957080279320d6235a279f7b64ced73c13897
@@ -1031,15 +1038,15 @@ opentelemetry-instrumentation==0.51b0 \
 opentelemetry-instrumentation-django==0.51b0 \
     --hash=sha256:574ff4a22be72c8371fdbaea19dca3d667e6ebd1b2756e5be1f17761dd668d9c \
     --hash=sha256:cc548785e6f5e0965497f7d611c9204a214d5f2fc3ceba26aea3b699f5f99d4c
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 opentelemetry-instrumentation-redis==0.51b0 \
     --hash=sha256:0e0bf2d641dca35d5d35b6d6c34a6133ccb0961b54527dd9ce21a6463d7bd173 \
     --hash=sha256:a390df3fb73a0efc9410b85d3099c2d8faf1f85e83724c4f8bd54c65001cfc5c
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 opentelemetry-instrumentation-requests==0.51b0 \
     --hash=sha256:0723aaafaeb2a825723f31c0bf644f9642377046063d1a52fc86571ced87feac \
     --hash=sha256:e7f4bd3ffcab6ebcce8a1c652af218e050354c8e7cac2c34814292d4de75167a
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 opentelemetry-instrumentation-wsgi==0.51b0 \
     --hash=sha256:a759b020a41c5ddddbb3c71149aa60f2dd06c423ec507c8dfecec89e0570d5bc \
     --hash=sha256:bd0403cf00b39b0e4b2acf9aa08ccd6799e2d3b45b950bfaabfb10aed301727f
@@ -1055,7 +1062,7 @@ opentelemetry-sdk==1.30.0 \
     --hash=sha256:14fe7afc090caad881addb6926cec967129bd9260c4d33ae6a217359f6b61091 \
     --hash=sha256:c9287a9e4a7614b9946e933a67168450b9ab35f08797eb9bc77d998fa480fa18
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
 opentelemetry-semantic-conventions==0.51b0 \
@@ -1084,7 +1091,7 @@ packaging==24.2 \
 pdf2image==1.17.0 \
     --hash=sha256:eaa959bc116b420dd7ec415fcae49b98100dda3dd18cd2fdfa86d09f112f6d57 \
     --hash=sha256:ecdd58d7afb810dffe21ef2b1bbc057ef434dabbac6c33778a38a3f7744a27e2
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 pillow==11.1.0 \
     --hash=sha256:015c6e863faa4779251436db398ae75051469f7c903b043a48f078e437656f83 \
     --hash=sha256:0a2f91f8a8b367e7a57c6e91cd25af510168091fb89ec5146003e424e1558a96 \
@@ -1158,7 +1165,7 @@ pillow==11.1.0 \
     --hash=sha256:f86d3a7a9af5d826744fabf4afd15b9dfef44fe69a98541f666f66fbb8d3fef9 \
     --hash=sha256:fbd43429d0d7ed6533b25fc993861b8fd512c42d04514a0dd6337fb3ccf22761
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   django-stdimage
     #   pdf2image
     #   python-barcode
@@ -1167,11 +1174,11 @@ pillow==11.1.0 \
 pint==0.24.4 \
     --hash=sha256:35275439b574837a6cd3020a5a4a73645eb125ce4152a73a2f126bf164b91b80 \
     --hash=sha256:aa54926c8772159fcf65f82cc0d34de6768c151b32ad1deb0331291c38fe7659
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 pip-licenses==5.0.0 \
     --hash=sha256:0633a1f9aab58e5a6216931b0e1d5cdded8bcc2709ff563674eb0e2ff9e77e8e \
     --hash=sha256:82c83666753efb86d1af1c405c8ab273413eb10d6689c218df2f09acf40e477d
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 platformdirs==4.3.6 \
     --hash=sha256:357fb2acbc885b0419afd3ce3ed34564c13c9b95c89360cd9563f73aa5e2b907 \
     --hash=sha256:73e575e1408ab8103900836b97580d5307456908a03e92031bab39e4554cc3fb
@@ -1179,7 +1186,7 @@ platformdirs==4.3.6 \
 ppf-datamatrix==0.2 \
     --hash=sha256:819be65eae444b760e178d5761853f78f8e5fca14fec2809b5e3369978fa9244 \
     --hash=sha256:8f034d9c90e408f60f8b10a273baab81014c9a81c983dc1ebdc31d4ca5ac5582
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 prettytable==3.14.0 \
     --hash=sha256:61d5c68f04a94acc73c7aac64f0f380f5bed4d2959d59edc6e4cbb7a0e7b55c4 \
     --hash=sha256:b804b8d51db23959b96b329094debdbbdf10c8c3aa75958c5988cfd7f78501dd
@@ -1211,7 +1218,7 @@ pydyf==0.10.0 \
     --hash=sha256:357194593efaf61d7b48ab97c3d59722114934967c3df3d7878ca6dd25b04c30 \
     --hash=sha256:ef76b6c0976a091a9e15827fb5800e5e37e7cd1a3ca4d4bd19d10a14ea8c0ae3
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   weasyprint
 pyjwt==2.10.1 \
     --hash=sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953 \
@@ -1224,7 +1231,7 @@ pyphen==0.17.2 \
 python-barcode[images]==0.15.1 \
     --hash=sha256:057636fba37369c22852410c8535b36adfbeb965ddfd4e5b6924455d692e0886 \
     --hash=sha256:3b1825fbdb11e597466dff4286b4ea9b1e86a57717b59e563ae679726fc854de
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
@@ -1234,7 +1241,7 @@ python-dateutil==2.9.0.post0 \
 python-dotenv==1.0.1 \
     --hash=sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca \
     --hash=sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 python-fsutil==0.15.0 \
     --hash=sha256:8ae31def522916e35caf67723b8526fe6e5fcc1e160ea2dc23c845567708ca6e \
     --hash=sha256:b51d8ab7ee218314480ea251fff7fef513be4fbccfe72a5af4ff2954f8a4a2c4
@@ -1313,14 +1320,14 @@ pyyaml==6.0.2 \
     --hash=sha256:f753120cb8181e736c57ef7636e83f31b9c0d1722c516f7e86cf15b7aa57ff12 \
     --hash=sha256:ff3824dc5261f50c9b0dfb3be22b4567a6f938ccce4587b38952d85fd9e9afe4
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   drf-spectacular
     #   tablib
 qrcode[pil]==8.0 \
     --hash=sha256:025ce2b150f7fe4296d116ee9bad455a6643ab4f6e7dce541613a4758cbce347 \
     --hash=sha256:9fc05f03305ad27a709eb742cf3097fa19e6f6f93bb9e2f039c0979190f6f1b1
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   django-allauth-2fa
 rapidfuzz==3.12.1 \
     --hash=sha256:00ceb8ff3c44ab0d6014106c71709c85dee9feedd6890eff77c814aa3798952b \
@@ -1411,7 +1418,7 @@ rapidfuzz==3.12.1 \
     --hash=sha256:f6235b57ae3faa3f85cb3f90c9fee49b21bd671b76e90fc99e8ca2bdf0b5e4a3 \
     --hash=sha256:fbe7580b5fb2db8ebd53819171ff671124237a55ada3f64d20fc9a149d133960 \
     --hash=sha256:fd37e53f0ed239d0cec27b250cec958982a8ba252ce64aa5e6052de3a82fa8db
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 redis==5.2.1 \
     --hash=sha256:16f2e22dff21d5125e8481515e386711a34cbec50f0e44413dd7d9c060a54e0f \
     --hash=sha256:ee7e1056b9aea0f04c6c2ed59452947f34c4940ee025f5dd83e6a6418b6989e4
@@ -1539,8 +1546,14 @@ sentry-sdk==2.20.0 \
     --hash=sha256:afa82713a92facf847df3c6f63cec71eb488d826a50965def3d7722aa6f0fdab \
     --hash=sha256:c359a1edf950eb5e80cffd7d9111f3dbeef57994cb4415df37d39fda2cf22364
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   django-q-sentry
+setuptools==75.8.0 \
+    --hash=sha256:c5afc8f407c626b8313a86e10311dd3f661c6cd9c09d4bf8c15c0e11f9f2b0e6 \
+    --hash=sha256:e3982f444617239225d675215d51f6ba05f845d4eec313da4418fdbb56fb27e3
+    # via
+    #   -r src/backend/requirements.in
+    #   django-money
 sgmllib3k==1.0.0 \
     --hash=sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9
     # via feedparser
@@ -1560,10 +1573,10 @@ structlog==25.1.0 \
     --hash=sha256:2ef2a572e0e27f09664965d31a576afe64e46ac6084ef5cec3c2b8cd6e4e3ad3 \
     --hash=sha256:843fe4f254540329f380812cbe612e1af5ec5b8172205ae634679cd35a6d6321
     # via django-structlog
-tablib[xls,xlsx,yaml]==3.8.0 \
+tablib[xls, xlsx, yaml]==3.8.0 \
     --hash=sha256:35bdb9d4ec7052232f8803908f9c7a9c3c65807188b70618fa7a7d8ccd560b4d \
     --hash=sha256:94d8bcdc65a715a0024a6d5b701a5f31e45bd159269e62c73731de79f048db2b
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 tinycss2==1.4.0 \
     --hash=sha256:10c0972f6fc0fbee87c3edb76549357415e94548c1ae10ebccdea16fb404a9b7 \
     --hash=sha256:3a49cf47b7675da0b15d0c6e1df8df4ebd96e9394bb905a5775adb0d884c5289
@@ -1609,11 +1622,15 @@ typing-extensions==4.12.2 \
     --hash=sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d \
     --hash=sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8
     # via
+    #   asgiref
+    #   drf-spectacular
     #   flexcache
     #   flexparser
     #   opentelemetry-sdk
     #   pint
     #   py-moneyed
+    #   referencing
+    #   structlog
 tzdata==2025.1 \
     --hash=sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694 \
     --hash=sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639
@@ -1639,7 +1656,7 @@ weasyprint==62.3 \
     --hash=sha256:8d8680d732f7fa0fcbc587692a5a5cb095c3525627066918d6e203cbf42b7fcd \
     --hash=sha256:d31048646ce15084e135b33e334a61f526aa68d2f679fcc109ed0e0f5edaed21
     # via
-    #   -r requirements.in
+    #   -r src/backend/requirements.in
     #   django-weasyprint
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78 \
@@ -1652,7 +1669,7 @@ webencodings==0.5.1 \
 whitenoise==6.9.0 \
     --hash=sha256:8c4a7c9d384694990c26f3047e118c691557481d624f069b7f7752a2f735d609 \
     --hash=sha256:c8a489049b7ee9889617bb4c274a153f3d979e8f51d2efd0f5b403caf41c57df
-    # via -r requirements.in
+    # via -r src/backend/requirements.in
 wrapt==1.17.2 \
     --hash=sha256:08e7ce672e35efa54c5024936e559469436f8b8096253404faeb54d2a878416f \
     --hash=sha256:0a6e821770cf99cc586d33833b2ff32faebdbe886bd6322395606cf55153246c \
