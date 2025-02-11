@@ -21,6 +21,7 @@ RUN chmod +x init.sh
 # Install required base packages
 RUN apt update && apt install -y \
    python3.11-dev python3.11-venv \
+   postgresql-client \
    libldap2-dev libsasl2-dev \
    libpango1.0-0 libcairo2 \
    weasyprint

@@ -29,5 +29,8 @@ rm -f /home/vscode/.gitconfig
 
 # Fix issue related to CFFI version mismatch
 pip uninstall cffi -y
-sudo apt remove --purge python3-cffi
+sudo apt remove --purge -y python3-cffi
 pip install --no-cache-dir --force-reinstall --ignore-installed cffi
+
+# Upgrade pip
+python3 -m pip install --upgrade pip
