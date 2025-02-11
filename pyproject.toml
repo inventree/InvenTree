@@ -89,7 +89,7 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.9"
+python-version = ">=3.9,<3.10"
 no-strip-extras=true
 generate-hashes=true
 
