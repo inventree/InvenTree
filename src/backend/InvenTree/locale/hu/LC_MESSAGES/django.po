@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-11 00:38+0000\n"
-"PO-Revision-Date: 2025-02-11 00:40\n"
+"POT-Creation-Date: 2025-02-11 20:25+0000\n"
+"PO-Revision-Date: 2025-02-11 20:27\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1478,7 +1478,7 @@ msgstr "Felfüggesztve"
 msgid "Cancelled"
 msgstr "Törölve"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:525
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:521
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:83 report/models.py:648
 msgid "Complete"
@@ -2007,7 +2007,7 @@ msgstr ""
 msgid "Barcode Scan"
 msgstr "Vonalkód beolvasás"
 
-#: common/models.py:2251 importer/models.py:519 part/models.py:3977
+#: common/models.py:2251 importer/models.py:515 part/models.py:3977
 msgid "Data"
 msgstr "Adat"
 
@@ -3958,59 +3958,59 @@ msgstr "Mező Felülbírálás"
 msgid "Field Filters"
 msgstr "Mező Szűrők"
 
-#: importer/models.py:246
+#: importer/models.py:242
 msgid "Some required fields have not been mapped"
 msgstr "Néhány kötelező mező nem került hozzárendelésre"
 
-#: importer/models.py:403
+#: importer/models.py:399
 msgid "Column is already mapped to a database field"
 msgstr "Oszlop már adatbázis mezőhöz lett rendelve"
 
-#: importer/models.py:408
+#: importer/models.py:404
 msgid "Field is already mapped to a data column"
 msgstr "Adatbázis mező már adatfájl oszlophoz lett rendelve"
 
-#: importer/models.py:417
+#: importer/models.py:413
 msgid "Column mapping must be linked to a valid import session"
 msgstr "Az oszlop összerendelésnek egy helyes importálási művelethez kell kapcsolódnia"
 
-#: importer/models.py:422
+#: importer/models.py:418
 msgid "Column does not exist in the data file"
 msgstr "Az Oszlop nem létezik ebben a fájlban"
 
-#: importer/models.py:429
+#: importer/models.py:425
 msgid "Field does not exist in the target model"
 msgstr "A mező nem létezik a cél adatszerkezetben"
 
-#: importer/models.py:433
+#: importer/models.py:429
 msgid "Selected field is read-only"
 msgstr "Kijelölt mező csak olvasható"
 
-#: importer/models.py:438 importer/models.py:509
+#: importer/models.py:434 importer/models.py:505
 msgid "Import Session"
 msgstr "Importálási művelet"
 
-#: importer/models.py:442
+#: importer/models.py:438
 msgid "Field"
 msgstr "Mező"
 
-#: importer/models.py:444
+#: importer/models.py:440
 msgid "Column"
 msgstr "Oszlop"
 
-#: importer/models.py:513
+#: importer/models.py:509
 msgid "Row Index"
 msgstr "Sor száma"
 
-#: importer/models.py:516
+#: importer/models.py:512
 msgid "Original row data"
 msgstr "Eredeti sor adat"
 
-#: importer/models.py:521 machine/models.py:110
+#: importer/models.py:517 machine/models.py:110
 msgid "Errors"
 msgstr "Hibák"
 
-#: importer/models.py:523 part/api.py:856
+#: importer/models.py:519 part/api.py:856
 msgid "Valid"
 msgstr "Érvényes"
 

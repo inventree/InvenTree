@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-11 00:38+0000\n"
+"POT-Creation-Date: 2025-02-11 20:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1478,7 +1478,7 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:525
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:521
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:83 report/models.py:648
 msgid "Complete"
@@ -2007,7 +2007,7 @@ msgstr ""
 msgid "Barcode Scan"
 msgstr ""
 
-#: common/models.py:2251 importer/models.py:519 part/models.py:3977
+#: common/models.py:2251 importer/models.py:515 part/models.py:3977
 msgid "Data"
 msgstr ""
 
@@ -3958,59 +3958,59 @@ msgstr ""
 msgid "Field Filters"
 msgstr ""
 
-#: importer/models.py:246
+#: importer/models.py:242
 msgid "Some required fields have not been mapped"
 msgstr ""
 
-#: importer/models.py:403
+#: importer/models.py:399
 msgid "Column is already mapped to a database field"
 msgstr ""
 
-#: importer/models.py:408
+#: importer/models.py:404
 msgid "Field is already mapped to a data column"
 msgstr ""
 
-#: importer/models.py:417
+#: importer/models.py:413
 msgid "Column mapping must be linked to a valid import session"
 msgstr ""
 
-#: importer/models.py:422
+#: importer/models.py:418
 msgid "Column does not exist in the data file"
 msgstr ""
 
-#: importer/models.py:429
+#: importer/models.py:425
 msgid "Field does not exist in the target model"
 msgstr ""
 
-#: importer/models.py:433
+#: importer/models.py:429
 msgid "Selected field is read-only"
 msgstr ""
 
-#: importer/models.py:438 importer/models.py:509
+#: importer/models.py:434 importer/models.py:505
 msgid "Import Session"
 msgstr ""
 
-#: importer/models.py:442
+#: importer/models.py:438
 msgid "Field"
 msgstr ""
 
-#: importer/models.py:444
+#: importer/models.py:440
 msgid "Column"
 msgstr ""
 
-#: importer/models.py:513
+#: importer/models.py:509
 msgid "Row Index"
 msgstr ""
 
-#: importer/models.py:516
+#: importer/models.py:512
 msgid "Original row data"
 msgstr ""
 
-#: importer/models.py:521 machine/models.py:110
+#: importer/models.py:517 machine/models.py:110
 msgid "Errors"
 msgstr ""
 
-#: importer/models.py:523 part/api.py:856
+#: importer/models.py:519 part/api.py:856
 msgid "Valid"
 msgstr ""
 
