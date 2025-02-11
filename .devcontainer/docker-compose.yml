@@ -20,11 +20,7 @@ services:
   inventree:
     build:
       context: ..
-      dockerfile: ../InvenTree/contrib/container/Dockerfile
-      target: dev
-      args:
-        base_image: "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18"
-        data_dir: "dev"
+      dockerfile: .devcontainer/Dockerfile
     volumes:
       - ../:/home/inventree:z
 

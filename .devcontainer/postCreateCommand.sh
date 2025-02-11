@@ -8,7 +8,10 @@ python3 -m venv /home/inventree/dev/venv --system-site-packages --upgrade-deps
 . /home/inventree/dev/venv/bin/activate
 
 # Ensure the correct invoke is available
-pip3 install invoke --ignore-installed -U
+pip3 install --ignore-installed --upgrade invoke Pillow
+
+# install base level packages
+pip3 install -Ur contrib/container/requirements.txt
 
 # Run initial InvenTree server setup
 invoke update -s
@@ -23,3 +26,8 @@ invoke int.frontend-install
 # so that it gets copied from host to the container to have your global
 # git config in container
 rm -f /home/vscode/.gitconfig
+
+# Fix issue related to CFFI version mismatch
+pip uninstall cffi -y
+sudo apt remove --purge python3-cffi
+pip install --no-cache-dir --force-reinstall --ignore-installed cffi
