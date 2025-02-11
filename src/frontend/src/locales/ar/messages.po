@@ -44,17 +44,17 @@ msgstr "ابدأ المسح عن طريق اختيار الكاميرا و ال�
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:180
 msgid "Stop scanning"
-msgstr ""
+msgstr "توقف عن المسح"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:190
 msgid "Start scanning"
-msgstr ""
+msgstr "إبدأ المسح"
 
 #: src/components/barcodes/BarcodeInput.tsx:33
 #: src/tables/general/BarcodeScanTable.tsx:55
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:64
 msgid "Barcode"
-msgstr ""
+msgstr "الباركود"
 
 #: src/components/barcodes/BarcodeInput.tsx:34
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:9
@@ -64,23 +64,23 @@ msgstr "مسح"
 
 #: src/components/barcodes/BarcodeInput.tsx:50
 msgid "Camera Input"
-msgstr ""
+msgstr "مدخل الكاميرا"
 
 #: src/components/barcodes/BarcodeInput.tsx:59
 msgid "Scanner Input"
-msgstr ""
+msgstr "مدخل الماسح"
 
 #: src/components/barcodes/BarcodeInput.tsx:101
 msgid "Barcode Data"
-msgstr ""
+msgstr "بيانات الباركود"
 
 #: src/components/barcodes/BarcodeInput.tsx:105
 msgid "No barcode data"
-msgstr ""
+msgstr "لا يوجد بيانات الباركود"
 
 #: src/components/barcodes/BarcodeInput.tsx:106
 msgid "Scan or enter barcode data"
-msgstr ""
+msgstr "إمسح او أدخل بيانات الباركود"
 
 #: src/components/barcodes/BarcodeInput.tsx:110
 #: src/components/buttons/PrintingActions.tsx:120
@@ -107,18 +107,18 @@ msgstr ""
 
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:39
 msgid "Enter barcode data"
-msgstr ""
+msgstr "أدخل بيانات الباركود"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:32
 #: src/components/nav/NavigationDrawer.tsx:117
 #: src/forms/PurchaseOrderForms.tsx:413
 #: src/forms/PurchaseOrderForms.tsx:517
 msgid "Scan Barcode"
-msgstr ""
+msgstr "مسح الباركود"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:83
 msgid "No matching item found"
-msgstr ""
+msgstr " لا يوجد عنصر مطابق"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:90
 #: src/pages/Index/Scan.tsx:127
@@ -127,11 +127,11 @@ msgstr ""
 
 #: src/components/barcodes/QRCode.tsx:93
 msgid "Low (7%)"
-msgstr ""
+msgstr "ضعيف %7"
 
 #: src/components/barcodes/QRCode.tsx:94
 msgid "Medium (15%)"
-msgstr ""
+msgstr "متوسط %15"
 
 #: src/components/barcodes/QRCode.tsx:95
 msgid "Quartile (25%)"
@@ -139,7 +139,7 @@ msgstr ""
 
 #: src/components/barcodes/QRCode.tsx:96
 msgid "High (30%)"
-msgstr ""
+msgstr "عالي %30"
 
 #: src/components/barcodes/QRCode.tsx:106
 msgid "Custom barcode"
