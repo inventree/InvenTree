@@ -141,7 +141,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         assert test_plg is not None
 
         url = reverse('api-plugin-detail', kwargs={'plugin': test_plg.key})
-        response = self.delete(url, {}, expected_code=400)
+        response = self.delete(url, {}, expected_code=403)
         self.assertEqual(
             response.data['detail'],
             'Plugin cannot be deleted as it is currently active',
@@ -323,4 +323,12 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
     def test_registry(self):
         """Test registry endpoint for plugin."""
         url = reverse('api-plugin-registry-status')
+        self.get(url, expected_code=403)
+
+        self.user.is_superuser = True
+        self.user.save()
+
         self.get(url, expected_code=200)
+
+        self.user.is_superuser = False
+        self.user.save()
