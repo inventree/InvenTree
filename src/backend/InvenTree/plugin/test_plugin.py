@@ -67,10 +67,6 @@ class PluginTagTests(TestCase):
         # wrong url
         self.assertEqual(plugin_tags.safe_url('indexas'), None)
 
-    def test_tag_plugin_errors(self):
-        """Test that all errors are listed."""
-        self.assertEqual(plugin_tags.plugin_errors(), registry.errors)
-
 
 class InvenTreePluginTests(TestCase):
     """Tests for InvenTreePlugin."""

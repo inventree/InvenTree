@@ -1,11 +1,9 @@
 """Tests for basic notification methods and functions in InvenTree."""
 
-import plugin.templatetags.plugin_extras as plugin_tags
 from common.notifications import (
     BulkNotificationMethod,
     NotificationMethod,
     SingleNotificationMethod,
-    storage,
 )
 from part.test_part import BaseNotificationIntegrationTest
 from plugin.models import NotificationUserSetting
@@ -151,7 +149,6 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
         # run through notification
         self._notification_run(SampleImplementation)
         # make sure the array fits
-        array = storage.get_usersettings(self.user)
         setting = NotificationUserSetting.objects.all().first()
 
         # assertions for settings
@@ -161,10 +158,3 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
             setting.description, 'Allow sending of test for event notifications'
         )
         self.assertEqual(setting.units, 'alpha')
-
-        # test tag and array
-        self.assertEqual(
-            plugin_tags.notification_settings_list({'user': self.user}), array
-        )
-        self.assertEqual(array[0]['key'], 'NOTIFICATION_METHOD_TEST')
-        self.assertEqual(array[0]['method'], 'test')
