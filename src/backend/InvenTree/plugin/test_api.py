@@ -317,7 +317,10 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_settings(self):
         """Test settings endpoint for plugin."""
-        url = reverse('api-plugin-settings')
+        from plugin.registry import registry
+
+        registry.set_plugin_state('sample', True)
+        url = reverse('api-plugin-settings', kwargs={'plugin': 'sample'})
         self.get(url, expected_code=200)
 
     def test_registry(self):
