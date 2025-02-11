@@ -135,6 +135,18 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
         assert_plugin_active(self, True)
 
+    def test_pluginCfg_delete(self):
+        """Test deleting a config."""
+        test_plg = self.plugin_confs.first()
+        assert test_plg is not None
+
+        url = reverse('api-plugin-detail', kwargs={'plugin': test_plg.key})
+        response = self.delete(url, {}, expected_code=400)
+        self.assertEqual(
+            response.data['detail'],
+            'Plugin cannot be deleted as it is currently active',
+        )
+
     def test_admin_action(self):
         """Test the PluginConfig action commands."""
         url = reverse('admin:plugin_pluginconfig_changelist')
