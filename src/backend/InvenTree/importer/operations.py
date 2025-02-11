@@ -81,23 +81,6 @@ def extract_column_names(data_file) -> list:
     return headers
 
 
-def extract_rows(data_file) -> list:
-    """Extract rows from the data file.
-
-    Each returned row is a dictionary of column_name: value pairs.
-    """
-    data = load_data_file(data_file)
-
-    headers = data.headers
-
-    rows = []
-
-    for row in data:
-        rows.append(dict(zip(headers, row)))
-
-    return rows
-
-
 def get_field_label(field) -> str:
     """Return the label for a field in a serializer class.
 
