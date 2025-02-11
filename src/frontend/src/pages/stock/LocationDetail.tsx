@@ -384,6 +384,12 @@ export default function Stock() {
             editAction={editLocation.open}
             editEnabled={user.hasChangePermission(ModelType.stocklocation)}
             breadcrumbs={breadcrumbs}
+            lastCrumb={[
+              {
+                name: location.name,
+                url: `/stock/location/${location.pk}/`
+              }
+            ]}
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}
