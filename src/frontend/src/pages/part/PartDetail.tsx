@@ -1001,6 +1001,12 @@ export default function PartDetail() {
                 ? breadcrumbs
                 : undefined
             }
+            lastCrumb={[
+              {
+                name: part.name,
+                url: `/part/${part.pk}/`
+              }
+            ]}
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}

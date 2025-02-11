@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-02 02:24+0000\n"
-"PO-Revision-Date: 2025-02-02 02:26\n"
+"POT-Creation-Date: 2025-02-11 00:38+0000\n"
+"PO-Revision-Date: 2025-02-11 00:40\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -33,13 +33,13 @@ msgstr "Ongeldige filters opgegeven"
 msgid "No items found to delete"
 msgstr "Geen items gevonden om te verwijderen"
 
-#: InvenTree/api.py:572
+#: InvenTree/api.py:573
 msgid "User does not have permission to view this model"
 msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
 
 #: InvenTree/auth_override_views.py:24
 msgid "Verification e-mail sent."
-msgstr ""
+msgstr "Verificatie e-mail is verzonden."
 
 #: InvenTree/auth_overrides.py:63
 msgid "Email (again)"
@@ -88,7 +88,7 @@ msgstr "{original} kon niet worden omgezet naar {unit}"
 msgid "Invalid quantity provided"
 msgstr "Ongeldige hoeveelheid ingevoerd"
 
-#: InvenTree/exceptions.py:108
+#: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
 msgstr "Error details kunnen worden gevonden in het admin scherm"
 
@@ -98,10 +98,10 @@ msgstr "Voer datum in"
 
 #: InvenTree/fields.py:159
 msgid "Invalid decimal value"
-msgstr ""
+msgstr "Ongeldige decimale waarde"
 
 #: InvenTree/fields.py:208 InvenTree/models.py:942 build/serializers.py:517
-#: build/serializers.py:592 company/models.py:829 order/models.py:1473
+#: build/serializers.py:592 company/models.py:829 order/models.py:1485
 #: part/models.py:3302
 #: report/templates/report/inventree_build_order_report.html:172
 #: stock/models.py:2636 stock/models.py:2760 stock/serializers.py:727
@@ -400,8 +400,8 @@ msgstr "Dubbele namen kunnen niet bestaan onder hetzelfde bovenliggende object"
 msgid "Invalid choice"
 msgstr "Ongeldige keuze"
 
-#: InvenTree/models.py:789 common/models.py:1311 common/models.py:1738
-#: common/models.py:1990 common/models.py:2115 common/serializers.py:481
+#: InvenTree/models.py:789 common/models.py:1297 common/models.py:1724
+#: common/models.py:1976 common/models.py:2101 common/serializers.py:481
 #: company/models.py:588 generic/states/serializers.py:20 machine/models.py:24
 #: part/models.py:998 part/models.py:3773 plugin/models.py:52
 #: report/models.py:165 stock/models.py:83
@@ -409,8 +409,8 @@ msgid "Name"
 msgstr "Naam"
 
 #: InvenTree/models.py:795 build/models.py:257 common/models.py:108
-#: common/models.py:2122 common/models.py:2235 company/models.py:516
-#: company/models.py:820 order/models.py:305 order/models.py:1506
+#: common/models.py:2108 common/models.py:2221 company/models.py:516
+#: company/models.py:820 order/models.py:305 order/models.py:1518
 #: part/models.py:1021 part/models.py:3788 report/models.py:171
 #: report/models.py:714 report/models.py:740
 #: report/templates/report/inventree_build_order_report.html:117
@@ -422,7 +422,7 @@ msgstr "Omschrijving"
 msgid "Description (optional)"
 msgstr "Omschrijving (optioneel)"
 
-#: InvenTree/models.py:811 common/models.py:2288
+#: InvenTree/models.py:811 common/models.py:2274
 msgid "Path"
 msgstr "Pad"
 
@@ -452,12 +452,12 @@ msgstr "Bestaande barcode gevonden"
 
 #: InvenTree/models.py:1129
 msgid "Task Failure"
-msgstr ""
+msgstr "Taak mislukt"
 
 #: InvenTree/models.py:1130
 #, python-brace-format
 msgid "Background worker task '{f}' failed after {n} attempts"
-msgstr ""
+msgstr "Achtergrondtaak '{f}' is mislukt na {n} pogingen"
 
 #: InvenTree/models.py:1157
 msgid "Server Error"
@@ -519,8 +519,8 @@ msgstr "Administrator "
 msgid "Is this user a superuser"
 msgstr "Is deze gebruiker een administrator "
 
-#: InvenTree/serializers.py:449 common/models.py:1316 common/models.py:2135
-#: common/models.py:2242 company/models.py:160 company/models.py:794
+#: InvenTree/serializers.py:449 common/models.py:1302 common/models.py:2121
+#: common/models.py:2228 company/models.py:160 company/models.py:794
 #: machine/models.py:39 part/models.py:1204 plugin/models.py:67
 #: stock/api.py:595 users/models.py:182
 msgid "Active"
@@ -634,27 +634,27 @@ msgstr "Ongeldige waarde voor overschot"
 
 #: build/api.py:37 order/api.py:101 order/api.py:222 order/serializers.py:126
 msgid "Order Status"
-msgstr ""
+msgstr "Status van bestelling"
 
 #: build/api.py:63 build/models.py:269
 msgid "Parent Build"
 msgstr "Bovenliggende Productie"
 
 #: build/api.py:67 build/api.py:733 order/api.py:484 order/api.py:701
-#: order/api.py:1089 order/api.py:1309 stock/api.py:526
+#: order/api.py:1089 order/api.py:1316 stock/api.py:526
 msgid "Include Variants"
-msgstr ""
+msgstr "Inclusief varianten"
 
 #: build/api.py:83 build/api.py:435 build/api.py:747 build/models.py:275
 #: build/serializers.py:1246 build/serializers.py:1356
 #: build/serializers.py:1407 company/models.py:1039 company/serializers.py:417
-#: order/api.py:250 order/api.py:863 order/api.py:1102 order/models.py:1595
-#: order/models.py:1754 order/models.py:1755 part/api.py:1439 part/api.py:1507
+#: order/api.py:250 order/api.py:863 order/api.py:1102 order/models.py:1607
+#: order/models.py:1766 order/models.py:1767 part/api.py:1439 part/api.py:1507
 #: part/api.py:1814 part/models.py:417 part/models.py:3131 part/models.py:3275
 #: part/models.py:3423 part/models.py:3444 part/models.py:3466
 #: part/models.py:3602 part/models.py:3963 part/models.py:4126
 #: part/models.py:4256 part/models.py:4622 part/serializers.py:1257
-#: part/serializers.py:1903
+#: part/serializers.py:1890
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -697,43 +697,43 @@ msgstr "Toegewezen aan"
 
 #: build/api.py:198
 msgid "Created before"
-msgstr ""
+msgstr "Gemaakt voor"
 
 #: build/api.py:202
 msgid "Created after"
-msgstr ""
+msgstr "Gemaakt na"
 
 #: build/api.py:206
 msgid "Has start date"
-msgstr ""
+msgstr "Heeft een startdatum"
 
 #: build/api.py:214
 msgid "Start date before"
-msgstr ""
+msgstr "Vervaldatum voor"
 
 #: build/api.py:218
 msgid "Start date after"
-msgstr ""
+msgstr "Vervaldatum na"
 
 #: build/api.py:222
 msgid "Has target date"
-msgstr ""
+msgstr "Heeft doel datum"
 
 #: build/api.py:230
 msgid "Target date before"
-msgstr ""
+msgstr "Doel datum voor"
 
 #: build/api.py:234
 msgid "Target date after"
-msgstr ""
+msgstr "Doel datum na"
 
 #: build/api.py:238
 msgid "Completed before"
-msgstr ""
+msgstr "Voltooid voor"
 
 #: build/api.py:242
 msgid "Completed after"
-msgstr ""
+msgstr "Voltooid na"
 
 #: build/api.py:374
 msgid "Build must be cancelled before it can be deleted"
@@ -762,7 +762,7 @@ msgstr "Testbaar"
 
 #: build/api.py:440 order/api.py:908
 msgid "Order Outstanding"
-msgstr ""
+msgstr "Openstaande order"
 
 #: build/api.py:450 order/api.py:867
 msgid "Allocated"
@@ -791,7 +791,7 @@ msgstr "Assemblage stuklijst is niet gevalideerd"
 
 #: build/models.py:146
 msgid "Build order cannot be created for an inactive part"
-msgstr ""
+msgstr "Bouw bestelling kan niet worden aangemaakt voor een inactief onderdeel"
 
 #: build/models.py:153
 msgid "Build order cannot be created for an unlocked part"
@@ -818,7 +818,7 @@ msgid "Build Order Reference"
 msgstr "Productieorderreferentie"
 
 #: build/models.py:251 build/serializers.py:1369 order/models.py:495
-#: order/models.py:1051 order/models.py:1466 order/models.py:2255
+#: order/models.py:1063 order/models.py:1478 order/models.py:2267
 #: part/models.py:4305
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
@@ -917,7 +917,7 @@ msgstr "Verwachte opleveringsdatum"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Doeldatum voor productie voltooiing. Productie zal achterstallig zijn na deze datum."
 
-#: build/models.py:370 order/models.py:555 order/models.py:2301
+#: build/models.py:370 order/models.py:555 order/models.py:2313
 msgid "Completion Date"
 msgstr "Opleveringsdatum"
 
@@ -947,7 +947,7 @@ msgstr "Gebruiker of groep verantwoordelijk voor deze bouwopdracht"
 msgid "External Link"
 msgstr "Externe Link"
 
-#: build/models.py:403 common/models.py:1879 part/models.py:1073
+#: build/models.py:403 common/models.py:1865 part/models.py:1073
 #: stock/models.py:937
 msgid "Link to external URL"
 msgstr "Link naar externe URL"
@@ -1000,7 +1000,7 @@ msgstr "Productuitvoer komt niet overeen met de Productieorder"
 
 #: build/models.py:1082 build/serializers.py:294 build/serializers.py:343
 #: build/serializers.py:967 order/models.py:605 order/serializers.py:591
-#: order/serializers.py:758 part/serializers.py:1639 part/serializers.py:2065
+#: order/serializers.py:758 part/serializers.py:1639 part/serializers.py:2052
 #: stock/models.py:784 stock/models.py:1655 stock/serializers.py:698
 msgid "Quantity must be greater than zero"
 msgstr "Hoeveelheid moet groter zijn dan nul"
@@ -1023,8 +1023,8 @@ msgid "Build object"
 msgstr "Bouw object"
 
 #: build/models.py:1548 build/models.py:1807 build/serializers.py:282
-#: build/serializers.py:328 build/serializers.py:1390 common/models.py:1241
-#: order/models.py:1449 order/models.py:2156 order/serializers.py:1634
+#: build/serializers.py:328 build/serializers.py:1390 common/models.py:1227
+#: order/models.py:1461 order/models.py:2168 order/serializers.py:1634
 #: order/serializers.py:2094 part/models.py:3289 part/models.py:4278
 #: part/serializers.py:264
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1054,11 +1054,11 @@ msgstr "Productieartikel moet een productieuitvoer specificeren, omdat het hoofd
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Toegewezen hoeveelheid ({q}) mag de beschikbare voorraad ({a}) niet overschrijden"
 
-#: build/models.py:1665 order/models.py:2105
+#: build/models.py:1665 order/models.py:2117
 msgid "Stock item is over-allocated"
 msgstr "Voorraad item is te veel toegewezen"
 
-#: build/models.py:1670 order/models.py:2108
+#: build/models.py:1670 order/models.py:2120
 msgid "Allocation quantity must be greater than zero"
 msgstr "Toewijzing hoeveelheid moet groter zijn dan nul"
 
@@ -1205,8 +1205,8 @@ msgstr "Reden voor annulering van bouworder(s)"
 msgid "Location for completed build outputs"
 msgstr "Locatie van voltooide productieuitvoeren"
 
-#: build/serializers.py:582 order/models.py:505 order/models.py:1076
-#: order/models.py:2280 order/serializers.py:789 order/serializers.py:1958
+#: build/serializers.py:582 order/models.py:505 order/models.py:1088
+#: order/models.py:2292 order/serializers.py:789 order/serializers.py:1958
 #: stock/serializers.py:592 stock/serializers.py:987 stock/serializers.py:1044
 #: stock/serializers.py:1601
 msgid "Status"
@@ -1512,19 +1512,19 @@ msgstr ""
 msgid "User does not have permission to delete this attachment"
 msgstr ""
 
-#: common/currency.py:135
+#: common/currency.py:120
 msgid "Invalid currency code"
 msgstr ""
 
-#: common/currency.py:137
+#: common/currency.py:122
 msgid "Duplicate currency code"
 msgstr ""
 
-#: common/currency.py:142
+#: common/currency.py:127
 msgid "No valid currency codes provided"
 msgstr ""
 
-#: common/currency.py:159
+#: common/currency.py:144
 msgid "No plugin"
 msgstr "Geen plug-in gevonden"
 
@@ -1548,41 +1548,41 @@ msgstr "Projectbeschrijving"
 msgid "User or group responsible for this project"
 msgstr ""
 
-#: common/models.py:720 common/models.py:1173 common/models.py:1211
+#: common/models.py:706 common/models.py:1159 common/models.py:1197
 msgid "Settings key"
 msgstr "Instellingen"
 
-#: common/models.py:724
+#: common/models.py:710
 msgid "Settings value"
 msgstr "Instellingswaarde"
 
-#: common/models.py:779
+#: common/models.py:765
 msgid "Chosen value is not a valid option"
 msgstr "Gekozen waarde is geen geldige optie"
 
-#: common/models.py:795
+#: common/models.py:781
 msgid "Value must be a boolean value"
 msgstr "Waarde moet een booleaanse waarde zijn"
 
-#: common/models.py:803
+#: common/models.py:789
 msgid "Value must be an integer value"
 msgstr "Waarde moet een geheel getal zijn"
 
-#: common/models.py:811
+#: common/models.py:797
 msgid "Value must be a valid number"
 msgstr ""
 
-#: common/models.py:836
+#: common/models.py:822
 msgid "Value does not pass validation checks"
 msgstr ""
 
-#: common/models.py:858
+#: common/models.py:844
 msgid "Key string must be unique"
 msgstr "Sleutelreeks moet uniek zijn"
 
-#: common/models.py:1219 common/models.py:1220 common/models.py:1324
-#: common/models.py:1325 common/models.py:1570 common/models.py:1571
-#: common/models.py:1894 common/models.py:1895 common/models.py:2276
+#: common/models.py:1205 common/models.py:1206 common/models.py:1310
+#: common/models.py:1311 common/models.py:1556 common/models.py:1557
+#: common/models.py:1880 common/models.py:1881 common/models.py:2262
 #: importer/models.py:89 part/models.py:3312 part/models.py:3399
 #: part/models.py:3473 part/models.py:3501 plugin/models.py:316
 #: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
@@ -1590,132 +1590,132 @@ msgstr "Sleutelreeks moet uniek zijn"
 msgid "User"
 msgstr "Gebruiker"
 
-#: common/models.py:1242
+#: common/models.py:1228
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1249 company/serializers.py:545 order/models.py:1523
-#: order/models.py:2582
+#: common/models.py:1235 company/serializers.py:545 order/models.py:1535
+#: order/models.py:2594
 msgid "Price"
 msgstr "Prijs"
 
-#: common/models.py:1250
+#: common/models.py:1236
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1301 common/models.py:1486
+#: common/models.py:1287 common/models.py:1472
 msgid "Endpoint"
 msgstr "Eindpunt"
 
-#: common/models.py:1302
+#: common/models.py:1288
 msgid "Endpoint at which this webhook is received"
 msgstr "Eindpunt waarop deze webhook wordt ontvangen"
 
-#: common/models.py:1312
+#: common/models.py:1298
 msgid "Name for this webhook"
 msgstr "Naam van deze webhook"
 
-#: common/models.py:1316
+#: common/models.py:1302
 msgid "Is this webhook active"
 msgstr "Is deze webhook actief"
 
-#: common/models.py:1332 users/models.py:159
+#: common/models.py:1318 users/models.py:159
 msgid "Token"
 msgstr ""
 
-#: common/models.py:1333
+#: common/models.py:1319
 msgid "Token for access"
 msgstr "Token voor toegang"
 
-#: common/models.py:1341
+#: common/models.py:1327
 msgid "Secret"
 msgstr "Geheim"
 
-#: common/models.py:1342
+#: common/models.py:1328
 msgid "Shared secret for HMAC"
 msgstr "Gedeeld geheim voor HMAC"
 
-#: common/models.py:1450
+#: common/models.py:1436
 msgid "Message ID"
 msgstr "Bericht ID"
 
-#: common/models.py:1451
+#: common/models.py:1437
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:1459
+#: common/models.py:1445
 msgid "Host"
 msgstr ""
 
-#: common/models.py:1460
+#: common/models.py:1446
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:1468
+#: common/models.py:1454
 msgid "Header"
 msgstr "Koptekst"
 
-#: common/models.py:1469
+#: common/models.py:1455
 msgid "Header of this message"
 msgstr "Koptekst van dit bericht"
 
-#: common/models.py:1476
+#: common/models.py:1462
 msgid "Body"
 msgstr "Berichtinhoud"
 
-#: common/models.py:1477
+#: common/models.py:1463
 msgid "Body of this message"
 msgstr "Inhoud van dit bericht"
 
-#: common/models.py:1487
+#: common/models.py:1473
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:1492
+#: common/models.py:1478
 msgid "Worked on"
 msgstr "Aan gewerkt"
 
-#: common/models.py:1493
+#: common/models.py:1479
 msgid "Was the work on this message finished?"
 msgstr ""
 
-#: common/models.py:1619
+#: common/models.py:1605
 msgid "Id"
 msgstr ""
 
-#: common/models.py:1621 part/serializers.py:270
+#: common/models.py:1607 part/serializers.py:270
 msgid "Title"
 msgstr "Titel"
 
-#: common/models.py:1623 common/models.py:1878 company/models.py:146
+#: common/models.py:1609 common/models.py:1864 company/models.py:146
 #: company/models.py:441 company/models.py:507 company/models.py:811
-#: order/models.py:319 order/models.py:1478 order/models.py:1926
+#: order/models.py:319 order/models.py:1490 order/models.py:1938
 #: part/models.py:1072
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "Koppeling"
 
-#: common/models.py:1625
+#: common/models.py:1611
 msgid "Published"
 msgstr "Gepubliceerd"
 
-#: common/models.py:1627
+#: common/models.py:1613
 msgid "Author"
 msgstr ""
 
-#: common/models.py:1629
+#: common/models.py:1615
 msgid "Summary"
 msgstr "Samenvatting"
 
-#: common/models.py:1632
+#: common/models.py:1618
 msgid "Read"
 msgstr "Gelezen"
 
-#: common/models.py:1632
+#: common/models.py:1618
 msgid "Was this news item read?"
 msgstr ""
 
-#: common/models.py:1649 company/models.py:156 part/models.py:1082
+#: common/models.py:1635 company/models.py:156 part/models.py:1082
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
@@ -1723,335 +1723,335 @@ msgstr ""
 msgid "Image"
 msgstr "Afbeelding"
 
-#: common/models.py:1649
+#: common/models.py:1635
 msgid "Image file"
 msgstr "Afbeelding"
 
-#: common/models.py:1661 common/models.py:1862
+#: common/models.py:1647 common/models.py:1848
 msgid "Target model type for this image"
 msgstr ""
 
-#: common/models.py:1665
+#: common/models.py:1651
 msgid "Target model ID for this image"
-msgstr ""
+msgstr "Doel modelnummer voor deze afbeelding"
 
-#: common/models.py:1687
+#: common/models.py:1673
 msgid "Custom Unit"
-msgstr ""
+msgstr "Aangepaste eenheid"
 
-#: common/models.py:1705
+#: common/models.py:1691
 msgid "Unit symbol must be unique"
-msgstr ""
+msgstr "Eenheid symbool moet uniek zijn"
 
-#: common/models.py:1720
+#: common/models.py:1706
 msgid "Unit name must be a valid identifier"
-msgstr ""
+msgstr "Naam van de unit moet een geldig id zijn"
 
-#: common/models.py:1739
+#: common/models.py:1725
 msgid "Unit name"
-msgstr ""
+msgstr "Naam van eenheid"
 
-#: common/models.py:1746
+#: common/models.py:1732
 msgid "Symbol"
 msgstr "Symbool"
 
-#: common/models.py:1747
+#: common/models.py:1733
 msgid "Optional unit symbol"
-msgstr ""
+msgstr "Optionele eenheid symbool"
 
-#: common/models.py:1753
+#: common/models.py:1739
 msgid "Definition"
 msgstr "Definitie"
 
-#: common/models.py:1754
+#: common/models.py:1740
 msgid "Unit definition"
-msgstr ""
+msgstr "Definitie van eenheid"
 
-#: common/models.py:1812 common/models.py:1869 stock/models.py:2755
+#: common/models.py:1798 common/models.py:1855 stock/models.py:2755
 #: stock/serializers.py:244
 msgid "Attachment"
 msgstr "Bijlage"
 
-#: common/models.py:1824
+#: common/models.py:1810
 msgid "Missing file"
 msgstr "Ontbrekend bestand"
 
-#: common/models.py:1825
+#: common/models.py:1811
 msgid "Missing external link"
 msgstr "Externe link ontbreekt"
 
-#: common/models.py:1870
+#: common/models.py:1856
 msgid "Select file to attach"
 msgstr "Bestand als bijlage selecteren"
 
-#: common/models.py:1885
+#: common/models.py:1871
 msgid "Comment"
 msgstr "Opmerking"
 
-#: common/models.py:1886
+#: common/models.py:1872
 msgid "Attachment comment"
-msgstr ""
+msgstr "Opmerking van bijlage"
 
-#: common/models.py:1902
+#: common/models.py:1888
 msgid "Upload date"
-msgstr ""
+msgstr "Uploaddatum"
 
-#: common/models.py:1903
+#: common/models.py:1889
 msgid "Date the file was uploaded"
-msgstr ""
+msgstr "Datum waarop het bestand is geüpload"
 
-#: common/models.py:1907
+#: common/models.py:1893
 msgid "File size"
-msgstr ""
+msgstr "Bestandsgrootte"
 
-#: common/models.py:1907
+#: common/models.py:1893
 msgid "File size in bytes"
-msgstr ""
+msgstr "Bestandsgrootte in bytes"
 
-#: common/models.py:1945 common/serializers.py:630
+#: common/models.py:1931 common/serializers.py:630
 msgid "Invalid model type specified for attachment"
-msgstr ""
+msgstr "Ongeldig modeltype opgegeven voor bijlage"
 
-#: common/models.py:1966
+#: common/models.py:1952
 msgid "Custom State"
-msgstr ""
+msgstr "Aangepaste staat"
 
-#: common/models.py:1967
+#: common/models.py:1953
 msgid "Custom States"
-msgstr ""
+msgstr "Aangepaste statussen"
 
-#: common/models.py:1972
+#: common/models.py:1958
 msgid "Reference Status Set"
-msgstr ""
+msgstr "Referentie status set"
 
-#: common/models.py:1973
+#: common/models.py:1959
 msgid "Status set that is extended with this custom state"
-msgstr ""
+msgstr "Status set die met deze aangepaste status wordt uitgebreid"
 
-#: common/models.py:1977 generic/states/serializers.py:18
+#: common/models.py:1963 generic/states/serializers.py:18
 msgid "Logical Key"
-msgstr ""
+msgstr "Logische sleutel"
 
-#: common/models.py:1979
+#: common/models.py:1965
 msgid "State logical key that is equal to this custom state in business logic"
-msgstr ""
+msgstr "Staat logische sleutel die gelijk is aan deze staat in zakelijke logica"
 
-#: common/models.py:1984 common/models.py:2223 company/models.py:595
+#: common/models.py:1970 common/models.py:2209 company/models.py:595
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:2747
 msgid "Value"
 msgstr "Waarde"
 
-#: common/models.py:1985
+#: common/models.py:1971
 msgid "Numerical value that will be saved in the models database"
-msgstr ""
+msgstr "De numerieke waarde die wordt opgeslagen in de modellendatabase"
 
-#: common/models.py:1991
+#: common/models.py:1977
 msgid "Name of the state"
-msgstr ""
+msgstr "Naam van de toestand"
 
-#: common/models.py:2000 common/models.py:2229 generic/states/serializers.py:22
+#: common/models.py:1986 common/models.py:2215 generic/states/serializers.py:22
 #: part/serializers.py:272
 msgid "Label"
 msgstr "Label"
 
-#: common/models.py:2001
+#: common/models.py:1987
 msgid "Label that will be displayed in the frontend"
-msgstr ""
+msgstr "Label dat in de frontend getoond wordt"
 
-#: common/models.py:2008 generic/states/serializers.py:24
+#: common/models.py:1994 generic/states/serializers.py:24
 msgid "Color"
-msgstr ""
+msgstr "Kleur"
 
-#: common/models.py:2009
+#: common/models.py:1995
 msgid "Color that will be displayed in the frontend"
-msgstr ""
+msgstr "Kleur die in de frontend getoond wordt"
 
-#: common/models.py:2017 part/serializers.py:274
+#: common/models.py:2003 part/serializers.py:274
 msgid "Model"
-msgstr ""
+msgstr "Model"
 
-#: common/models.py:2018
+#: common/models.py:2004
 msgid "Model this state is associated with"
-msgstr ""
+msgstr "Model met deze staat is gekoppeld aan"
 
-#: common/models.py:2033
+#: common/models.py:2019
 msgid "Model must be selected"
-msgstr ""
+msgstr "Het model moet worden gekozen"
+
+#: common/models.py:2022
+msgid "Key must be selected"
+msgstr "Sleutel moet worden geselecteerd"
+
+#: common/models.py:2025
+msgid "Logical key must be selected"
+msgstr "Logische sleutel moet worden geselecteerd"
+
+#: common/models.py:2029
+msgid "Key must be different from logical key"
+msgstr "Sleutel moet anders zijn dan logische sleutel"
 
 #: common/models.py:2036
-msgid "Key must be selected"
-msgstr ""
-
-#: common/models.py:2039
-msgid "Logical key must be selected"
-msgstr ""
-
-#: common/models.py:2043
-msgid "Key must be different from logical key"
-msgstr ""
-
-#: common/models.py:2050
 msgid "Valid reference status class must be provided"
-msgstr ""
+msgstr "Geldige referentie status klasse moet worden opgegeven"
+
+#: common/models.py:2042
+msgid "Key must be different from the logical keys of the reference status"
+msgstr "Sleutel moet verschillen van de logische sleutels van de referentie status"
+
+#: common/models.py:2049
+msgid "Logical key must be in the logical keys of the reference status"
+msgstr "Logische sleutel moet in de logische sleutels van de referentiestatus staan"
 
 #: common/models.py:2056
-msgid "Key must be different from the logical keys of the reference status"
-msgstr ""
-
-#: common/models.py:2063
-msgid "Logical key must be in the logical keys of the reference status"
-msgstr ""
-
-#: common/models.py:2070
 msgid "Name must be different from the names of the reference status"
-msgstr ""
+msgstr "Naam moet anders zijn dan de namen van de referentie status"
 
-#: common/models.py:2110 common/models.py:2217 part/models.py:3812
+#: common/models.py:2096 common/models.py:2203 part/models.py:3812
 msgid "Selection List"
-msgstr ""
+msgstr "Keuzelijst"
 
-#: common/models.py:2111
+#: common/models.py:2097
 msgid "Selection Lists"
-msgstr ""
+msgstr "Selectielijst"
+
+#: common/models.py:2102
+msgid "Name of the selection list"
+msgstr "Naam van de selectielijst"
+
+#: common/models.py:2109
+msgid "Description of the selection list"
+msgstr "Beschrijving van de selectielijst"
+
+#: common/models.py:2115 part/models.py:1209
+msgid "Locked"
+msgstr "Vergrendeld"
 
 #: common/models.py:2116
-msgid "Name of the selection list"
-msgstr ""
+msgid "Is this selection list locked?"
+msgstr "Is deze selectielijst vergrendeld?"
 
-#: common/models.py:2123
-msgid "Description of the selection list"
-msgstr ""
-
-#: common/models.py:2129 part/models.py:1209
-msgid "Locked"
-msgstr ""
+#: common/models.py:2122
+msgid "Can this selection list be used?"
+msgstr "Kan deze selectielijst worden gebruikt?"
 
 #: common/models.py:2130
-msgid "Is this selection list locked?"
-msgstr ""
+msgid "Source Plugin"
+msgstr "Bron plug-in"
+
+#: common/models.py:2131
+msgid "Plugin which provides the selection list"
+msgstr "Plug-in die de selectielijst biedt"
 
 #: common/models.py:2136
-msgid "Can this selection list be used?"
-msgstr ""
-
-#: common/models.py:2144
-msgid "Source Plugin"
-msgstr ""
-
-#: common/models.py:2145
-msgid "Plugin which provides the selection list"
-msgstr ""
-
-#: common/models.py:2150
 msgid "Source String"
-msgstr ""
+msgstr "Bron tekenreeks"
 
-#: common/models.py:2151
+#: common/models.py:2137
 msgid "Optional string identifying the source used for this list"
-msgstr ""
+msgstr "Optionele tekenreeks die de bron identificeert die voor deze lijst wordt gebruikt"
 
-#: common/models.py:2160
+#: common/models.py:2146
 msgid "Default Entry"
-msgstr ""
+msgstr "Standaard vermelding"
 
-#: common/models.py:2161
+#: common/models.py:2147
 msgid "Default entry for this selection list"
-msgstr ""
+msgstr "Standaard vermelding voor deze selectielijst"
 
-#: common/models.py:2166
+#: common/models.py:2152
 msgid "Created"
 msgstr "Gecreëerd"
 
-#: common/models.py:2167
+#: common/models.py:2153
 msgid "Date and time that the selection list was created"
-msgstr ""
+msgstr "Datum en tijd waarop de selectielijst is aangemaakt"
 
-#: common/models.py:2172
+#: common/models.py:2158
 msgid "Last Updated"
 msgstr "Laatst bijgewerkt"
 
-#: common/models.py:2173
+#: common/models.py:2159
 msgid "Date and time that the selection list was last updated"
-msgstr ""
+msgstr "Datum en tijd waarop de selectielijst voor het laatst is bijgewerkt"
 
-#: common/models.py:2207
+#: common/models.py:2193
 msgid "Selection List Entry"
-msgstr ""
+msgstr "Selectielijst item"
 
-#: common/models.py:2208
+#: common/models.py:2194
 msgid "Selection List Entries"
 msgstr ""
 
-#: common/models.py:2218
+#: common/models.py:2204
 msgid "Selection list to which this entry belongs"
 msgstr ""
 
-#: common/models.py:2224
+#: common/models.py:2210
 msgid "Value of the selection list entry"
 msgstr ""
 
-#: common/models.py:2230
+#: common/models.py:2216
 msgid "Label for the selection list entry"
 msgstr ""
 
-#: common/models.py:2236
+#: common/models.py:2222
 msgid "Description of the selection list entry"
 msgstr ""
 
-#: common/models.py:2243
+#: common/models.py:2229
 msgid "Is this selection list entry active?"
 msgstr ""
 
-#: common/models.py:2261
+#: common/models.py:2247
 msgid "Barcode Scan"
 msgstr "Barcode Scan"
 
-#: common/models.py:2265 importer/models.py:519 part/models.py:3977
+#: common/models.py:2251 importer/models.py:519 part/models.py:3977
 msgid "Data"
 msgstr ""
 
-#: common/models.py:2266
+#: common/models.py:2252
 msgid "Barcode data"
 msgstr "Barcode gegevens"
 
-#: common/models.py:2277
+#: common/models.py:2263
 msgid "User who scanned the barcode"
 msgstr "Gebruiker die de barcode gescand heeft"
 
-#: common/models.py:2282 importer/models.py:60
+#: common/models.py:2268 importer/models.py:60
 msgid "Timestamp"
 msgstr ""
 
-#: common/models.py:2283
+#: common/models.py:2269
 msgid "Date and time of the barcode scan"
 msgstr "Datum en tijd van de streepjescode scan"
 
-#: common/models.py:2289
+#: common/models.py:2275
 msgid "URL endpoint which processed the barcode"
 msgstr "Adres eindpunt dat de streepjescode verwerkt"
 
-#: common/models.py:2296 order/models.py:1513 plugin/serializers.py:89
+#: common/models.py:2282 order/models.py:1525 plugin/serializers.py:89
 msgid "Context"
 msgstr ""
 
-#: common/models.py:2297
+#: common/models.py:2283
 msgid "Context data for the barcode scan"
 msgstr "Contextgegevens voor de barcode scan"
 
-#: common/models.py:2304
+#: common/models.py:2290
 msgid "Response"
 msgstr "Reactie"
 
-#: common/models.py:2305
+#: common/models.py:2291
 msgid "Response data from the barcode scan"
 msgstr "Reactiegegevens van de barcode scan"
 
-#: common/models.py:2311 report/templates/report/inventree_test_report.html:103
+#: common/models.py:2297 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:2741
 msgid "Result"
 msgstr "Resultaat"
 
-#: common/models.py:2312
+#: common/models.py:2298
 msgid "Was the barcode scan successful?"
 msgstr "Was de barcode succesvol gescand?"
 
@@ -2257,7 +2257,7 @@ msgstr ""
 #: common/setting/system.py:274 common/setting/system.py:282
 #: common/setting/system.py:289 common/setting/system.py:298
 #: common/setting/system.py:547 common/setting/system.py:567
-#: common/setting/system.py:664 common/setting/system.py:1042
+#: common/setting/system.py:664 common/setting/system.py:1048
 msgid "days"
 msgstr "dagen"
 
@@ -2427,11 +2427,11 @@ msgstr ""
 
 #: common/setting/system.py:358
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "Verwijderen van onderdelen die in een groep worden gebruikt toestaan"
 
 #: common/setting/system.py:363
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN Regex"
 
 #: common/setting/system.py:364
 msgid "Regular expression pattern for matching Part IPN"
@@ -2502,7 +2502,7 @@ msgstr "Onderdelen kunnen standaard vanuit andere componenten worden samengestel
 #: common/setting/system.py:415 part/models.py:1175 part/serializers.py:1657
 #: part/serializers.py:1662
 msgid "Component"
-msgstr ""
+msgstr "Onderdeel"
 
 #: common/setting/system.py:416
 msgid "Parts can be used as sub-components by default"
@@ -2714,11 +2714,11 @@ msgstr "Rapporten genereren in debug modus (HTML uitvoer)"
 
 #: common/setting/system.py:612
 msgid "Log Report Errors"
-msgstr ""
+msgstr "Log fouten"
 
 #: common/setting/system.py:613
 msgid "Log errors which occur when generating reports"
-msgstr ""
+msgstr "Registreer fouten die optreden bij het genereren van rapporten"
 
 #: common/setting/system.py:618 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:325
@@ -2819,7 +2819,7 @@ msgstr "Geïnstalleerde voorraadartikelen in voorraadtabellen tonen"
 
 #: common/setting/system.py:692
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Controleer BOM bij het installeren van items"
 
 #: common/setting/system.py:694
 msgid "Installed stock items must exist in the BOM for the parent part"
@@ -2844,52 +2844,52 @@ msgstr "Vereist patroon voor het genereren van het Bouworderreferentieveld"
 #: common/setting/system.py:714 common/setting/system.py:768
 #: common/setting/system.py:788 common/setting/system.py:824
 msgid "Require Responsible Owner"
-msgstr ""
+msgstr "Vereis verantwoordelijke eigenaar"
 
 #: common/setting/system.py:715 common/setting/system.py:769
 #: common/setting/system.py:789 common/setting/system.py:825
 msgid "A responsible owner must be assigned to each order"
-msgstr ""
+msgstr "Een verantwoordelijke eigenaar moet worden toegewezen aan elke bestelling"
 
 #: common/setting/system.py:720
 msgid "Require Active Part"
-msgstr ""
+msgstr "Vereist een actief onderdeel"
 
 #: common/setting/system.py:721
 msgid "Prevent build order creation for inactive parts"
-msgstr ""
+msgstr "Voorkom het maken van orders voor inactieve onderdelen"
 
 #: common/setting/system.py:726
 msgid "Require Locked Part"
-msgstr ""
+msgstr "Vergrendeld onderdeel vereisen"
 
 #: common/setting/system.py:727
 msgid "Prevent build order creation for unlocked parts"
-msgstr ""
+msgstr "Voorkom het maken van orders voor ontgrendelde onderdelen"
 
 #: common/setting/system.py:732
 msgid "Require Valid BOM"
-msgstr ""
+msgstr "Vereist een geldige BOM"
 
 #: common/setting/system.py:733
 msgid "Prevent build order creation unless BOM has been validated"
-msgstr ""
+msgstr "Voorkom het creëren van bouworders tenzij BOM is gevalideerd"
 
 #: common/setting/system.py:738
 msgid "Require Closed Child Orders"
-msgstr ""
+msgstr "Onderliggende bestellingen vereist"
 
 #: common/setting/system.py:740
 msgid "Prevent build order completion until all child orders are closed"
-msgstr ""
+msgstr "Voorkom voltooiing van de bouw tot alle sub orders gesloten zijn"
 
 #: common/setting/system.py:746
 msgid "Block Until Tests Pass"
-msgstr ""
+msgstr "Blokkeren tot test geslaagd"
 
 #: common/setting/system.py:748
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr ""
+msgstr "Voorkom dat de bouw van de uitvoer wordt voltooid totdat alle vereiste testen zijn geslaagd"
 
 #: common/setting/system.py:754
 msgid "Enable Return Orders"
@@ -2905,7 +2905,7 @@ msgstr "Retourorder referentie patroon"
 
 #: common/setting/system.py:762
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Verplicht patroon voor het genereren van Retourorder referentie veld"
 
 #: common/setting/system.py:774
 msgid "Edit Completed Return Orders"
@@ -2941,11 +2941,11 @@ msgstr "Bewerken van verkooporders toestaan nadat deze zijn verzonden of voltooi
 
 #: common/setting/system.py:808
 msgid "Mark Shipped Orders as Complete"
-msgstr ""
+msgstr "Verstuurde bestellingen markeren als voltooid"
 
 #: common/setting/system.py:810
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
-msgstr ""
+msgstr "Verkooporders gemarkeerd als verzonden zullen automatisch worden voltooid, zonder de status \"verzonden\""
 
 #: common/setting/system.py:816
 msgid "Purchase Order Reference Pattern"
@@ -2964,258 +2964,266 @@ msgid "Allow editing of purchase orders after they have been shipped or complete
 msgstr "Bewerken van inkooporders toestaan nadat deze zijn verzonden of voltooid"
 
 #: common/setting/system.py:838
+msgid "Convert Currency"
+msgstr "Valuta converteren"
+
+#: common/setting/system.py:839
+msgid "Convert item value to base currency when receiving stock"
+msgstr "Verander artikelwaarde naar basisvaluta bij het ontvangen van voorraad"
+
+#: common/setting/system.py:844
 msgid "Auto Complete Purchase Orders"
-msgstr ""
+msgstr "Inkooporders automatisch voltooien"
 
-#: common/setting/system.py:840
+#: common/setting/system.py:846
 msgid "Automatically mark purchase orders as complete when all line items are received"
-msgstr ""
+msgstr "Markeer orders automatisch als voltooid wanneer alle regelitems worden ontvangen"
 
-#: common/setting/system.py:847
+#: common/setting/system.py:853
 msgid "Enable password forgot"
 msgstr "Wachtwoord vergeten functie inschakelen"
 
-#: common/setting/system.py:848
+#: common/setting/system.py:854
 msgid "Enable password forgot function on the login pages"
 msgstr "Wachtwoord vergeten functie inschakelen op de inlogpagina's"
 
-#: common/setting/system.py:853
+#: common/setting/system.py:859
 msgid "Enable registration"
 msgstr "Registratie inschakelen"
 
-#: common/setting/system.py:854
+#: common/setting/system.py:860
 msgid "Enable self-registration for users on the login pages"
 msgstr "Zelfregistratie voor gebruikers op de inlogpagina's inschakelen"
 
-#: common/setting/system.py:859
+#: common/setting/system.py:865
 msgid "Enable SSO"
 msgstr "SSO inschakelen"
 
-#: common/setting/system.py:860
+#: common/setting/system.py:866
 msgid "Enable SSO on the login pages"
 msgstr "SSO inschakelen op de inlogpagina's"
 
-#: common/setting/system.py:865
+#: common/setting/system.py:871
 msgid "Enable SSO registration"
 msgstr "Schakel gebruikersregistratie met SSO in"
 
-#: common/setting/system.py:867
+#: common/setting/system.py:873
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Zelfregistratie voor gebruikers middels SSO op de inlogpagina's inschakelen"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:879
 msgid "Enable SSO group sync"
-msgstr ""
-
-#: common/setting/system.py:875
-msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
-msgstr ""
+msgstr "SSO-groep synchroniseren inschakelen"
 
 #: common/setting/system.py:881
-msgid "SSO group key"
-msgstr ""
-
-#: common/setting/system.py:882
-msgid "The name of the groups claim attribute provided by the IdP"
-msgstr ""
+msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
+msgstr "Inschakelen van het synchroniseren van InvenTree groepen met groepen geboden door de IdP"
 
 #: common/setting/system.py:887
-msgid "SSO group map"
-msgstr ""
+msgid "SSO group key"
+msgstr "SSO groep sleutel"
 
-#: common/setting/system.py:889
-msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
-msgstr ""
+#: common/setting/system.py:888
+msgid "The name of the groups claim attribute provided by the IdP"
+msgstr "De naam van de groepen claim attribuut van de IdP"
+
+#: common/setting/system.py:893
+msgid "SSO group map"
+msgstr "SSO groep kaart"
 
 #: common/setting/system.py:895
-msgid "Remove groups outside of SSO"
-msgstr ""
+msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
+msgstr "Een mapping van SSO-groepen naar lokale InvenTree groepen. Als de lokale groep niet bestaat, zal deze worden aangemaakt."
 
-#: common/setting/system.py:897
-msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
-msgstr ""
+#: common/setting/system.py:901
+msgid "Remove groups outside of SSO"
+msgstr "Verwijder groepen buiten SSO"
 
 #: common/setting/system.py:903
+msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
+msgstr "Of groepen die zijn toegewezen aan de gebruiker moeten worden verwijderd als ze geen backend zijn door de IdP. Het uitschakelen van deze instelling kan beveiligingsproblemen veroorzaken"
+
+#: common/setting/system.py:909
 msgid "Email required"
 msgstr "E-mailadres verplicht"
 
-#: common/setting/system.py:904
+#: common/setting/system.py:910
 msgid "Require user to supply mail on signup"
 msgstr "Vereis gebruiker om e-mailadres te registreren bij aanmelding"
 
-#: common/setting/system.py:909
+#: common/setting/system.py:915
 msgid "Auto-fill SSO users"
 msgstr "SSO-gebruikers automatisch invullen"
 
-#: common/setting/system.py:910
+#: common/setting/system.py:916
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Gebruikersdetails van SSO-accountgegevens automatisch invullen"
 
-#: common/setting/system.py:915
+#: common/setting/system.py:921
 msgid "Mail twice"
 msgstr "E-mail twee keer"
 
-#: common/setting/system.py:916
+#: common/setting/system.py:922
 msgid "On signup ask users twice for their mail"
 msgstr "Bij inschrijving gebruikers twee keer om hun e-mail vragen"
 
-#: common/setting/system.py:921
+#: common/setting/system.py:927
 msgid "Password twice"
 msgstr "Wachtwoord tweemaal"
 
-#: common/setting/system.py:922
+#: common/setting/system.py:928
 msgid "On signup ask users twice for their password"
 msgstr "Laat gebruikers twee keer om hun wachtwoord vragen tijdens het aanmelden"
 
-#: common/setting/system.py:927
+#: common/setting/system.py:933
 msgid "Allowed domains"
 msgstr "Toegestane domeinen"
 
-#: common/setting/system.py:929
+#: common/setting/system.py:935
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Inschrijven beperken tot bepaalde domeinen (komma-gescheiden, beginnend met @)"
 
-#: common/setting/system.py:935
+#: common/setting/system.py:941
 msgid "Group on signup"
 msgstr "Groep bij aanmelding"
 
-#: common/setting/system.py:937
-msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
-msgstr ""
-
 #: common/setting/system.py:943
+msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
+msgstr "Groep waaraan nieuwe gebruikers zijn toegewezen op registratie. Als SSO-groepssynchronisatie is ingeschakeld, is deze groep alleen ingesteld als er geen groep vanuit de IdP kan worden toegewezen."
+
+#: common/setting/system.py:949
 msgid "Enforce MFA"
 msgstr "MFA afdwingen"
 
-#: common/setting/system.py:944
+#: common/setting/system.py:950
 msgid "Users must use multifactor security."
 msgstr "Gebruikers moeten multifactor-beveiliging gebruiken."
 
-#: common/setting/system.py:949
+#: common/setting/system.py:955
 msgid "Check plugins on startup"
 msgstr "Controleer plugins bij het opstarten"
 
-#: common/setting/system.py:951
+#: common/setting/system.py:957
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Controleer of alle plug-ins zijn geïnstalleerd bij het opstarten - inschakelen in container-omgevingen"
 
-#: common/setting/system.py:958
+#: common/setting/system.py:964
 msgid "Check for plugin updates"
-msgstr ""
-
-#: common/setting/system.py:959
-msgid "Enable periodic checks for updates to installed plugins"
-msgstr ""
+msgstr "Controleren op plug-in updates"
 
 #: common/setting/system.py:965
+msgid "Enable periodic checks for updates to installed plugins"
+msgstr "Schakel periodieke controles voor updates voor geïnstalleerde plug-ins in"
+
+#: common/setting/system.py:971
 msgid "Enable URL integration"
 msgstr "Activeer URL-integratie"
 
-#: common/setting/system.py:966
+#: common/setting/system.py:972
 msgid "Enable plugins to add URL routes"
 msgstr "Plugins toestaan om URL-routes toe te voegen"
 
-#: common/setting/system.py:972
+#: common/setting/system.py:978
 msgid "Enable navigation integration"
 msgstr "Activeer navigatie integratie"
 
-#: common/setting/system.py:973
+#: common/setting/system.py:979
 msgid "Enable plugins to integrate into navigation"
 msgstr "Plugins toestaan om te integreren in navigatie"
 
-#: common/setting/system.py:979
+#: common/setting/system.py:985
 msgid "Enable app integration"
 msgstr "Activeer app integratie"
 
-#: common/setting/system.py:980
+#: common/setting/system.py:986
 msgid "Enable plugins to add apps"
 msgstr "Activeer plug-ins om apps toe te voegen"
 
-#: common/setting/system.py:986
+#: common/setting/system.py:992
 msgid "Enable schedule integration"
 msgstr "Activeer planning integratie"
 
-#: common/setting/system.py:987
+#: common/setting/system.py:993
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Activeer plugin om periodiek taken uit te voeren"
 
-#: common/setting/system.py:993
+#: common/setting/system.py:999
 msgid "Enable event integration"
 msgstr "Activeer evenement integratie"
 
-#: common/setting/system.py:994
+#: common/setting/system.py:1000
 msgid "Enable plugins to respond to internal events"
 msgstr "Activeer plugin om op interne evenementen te reageren"
 
-#: common/setting/system.py:1000
+#: common/setting/system.py:1006
 msgid "Enable interface integration"
 msgstr "Interface integratie activeren"
 
-#: common/setting/system.py:1001
+#: common/setting/system.py:1007
 msgid "Enable plugins to integrate into the user interface"
 msgstr "Plug-ins inschakelen om te integreren in de gebruikersinterface"
 
-#: common/setting/system.py:1007
-msgid "Enable project codes"
-msgstr ""
-
-#: common/setting/system.py:1008
-msgid "Enable project codes for tracking projects"
-msgstr ""
-
 #: common/setting/system.py:1013
+msgid "Enable project codes"
+msgstr "Activeer project codes"
+
+#: common/setting/system.py:1014
+msgid "Enable project codes for tracking projects"
+msgstr "Schakel projectcodes in voor het bijhouden van projecten"
+
+#: common/setting/system.py:1019
 msgid "Stocktake Functionality"
 msgstr "Voorraadcontrole functionaliteit"
 
-#: common/setting/system.py:1015
+#: common/setting/system.py:1021
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Schakel voorraadfunctionaliteit in voor het opnemen van voorraadniveaus en het berekenen van voorraadwaarde"
 
-#: common/setting/system.py:1021
+#: common/setting/system.py:1027
 msgid "Exclude External Locations"
 msgstr "Externe locaties uitsluiten"
 
-#: common/setting/system.py:1023
+#: common/setting/system.py:1029
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Voorraadartikelen op externe locaties uitsluiten van voorraadberekeningen"
 
-#: common/setting/system.py:1029
+#: common/setting/system.py:1035
 msgid "Automatic Stocktake Period"
 msgstr "Automatische Voorraadcontrole Periode"
 
-#: common/setting/system.py:1031
+#: common/setting/system.py:1037
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Aantal dagen tussen automatische voorraadopname (ingesteld op nul om uit te schakelen)"
 
-#: common/setting/system.py:1037
+#: common/setting/system.py:1043
 msgid "Report Deletion Interval"
 msgstr "Rapport Verwijdering Interval"
 
-#: common/setting/system.py:1039
+#: common/setting/system.py:1045
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Voorraadrapportage zal worden verwijderd na het opgegeven aantal dagen"
 
-#: common/setting/system.py:1046
-msgid "Display Users full names"
-msgstr ""
-
-#: common/setting/system.py:1047
-msgid "Display Users full names instead of usernames"
-msgstr ""
-
 #: common/setting/system.py:1052
-msgid "Enable Test Station Data"
-msgstr ""
+msgid "Display Users full names"
+msgstr "Gebruikers volledige namen weergeven"
 
 #: common/setting/system.py:1053
-msgid "Enable test station data collection for test results"
-msgstr ""
+msgid "Display Users full names instead of usernames"
+msgstr "Laat gebruikers volledige namen zien in plaats van gebruikersnamen"
 
 #: common/setting/system.py:1058
+msgid "Enable Test Station Data"
+msgstr "Inschakelen van teststation data"
+
+#: common/setting/system.py:1059
+msgid "Enable test station data collection for test results"
+msgstr "Schakel teststation gegevensverzameling in voor testresultaten"
+
+#: common/setting/system.py:1064
 msgid "Create Template on Upload"
 msgstr "Maak template aan bij het uploaden"
 
-#: common/setting/system.py:1060
+#: common/setting/system.py:1066
 msgid "Create a new test template when uploading test data which does not match an existing template"
 msgstr "Maak een nieuw testsjabloon bij het uploaden van testgegevens die niet overeenkomen met een bestaande sjabloon"
 
@@ -3356,128 +3364,144 @@ msgid "Exclude inactive sales orders from search preview window"
 msgstr "Inactieve verkooporders weglaten in het zoekvenster"
 
 #: common/setting/user.py:131
+msgid "Search Sales Order Shipments"
+msgstr "Verzendingen verkooporder doorzoeken"
+
+#: common/setting/user.py:132
+msgid "Display sales order shipments in search preview window"
+msgstr "Toon verkooporders in het zoekvenster"
+
+#: common/setting/user.py:137
 msgid "Search Return Orders"
 msgstr "Zoek retourorders"
 
-#: common/setting/user.py:132
+#: common/setting/user.py:138
 msgid "Display return orders in search preview window"
 msgstr "Toon bouworders in zoekvenster"
 
-#: common/setting/user.py:137
+#: common/setting/user.py:143
 msgid "Exclude Inactive Return Orders"
 msgstr "Inactieve retourbestellingen weglaten"
 
-#: common/setting/user.py:138
+#: common/setting/user.py:144
 msgid "Exclude inactive return orders from search preview window"
 msgstr "Inactieve retourorders uitsluiten in zoekvenster"
 
-#: common/setting/user.py:143
+#: common/setting/user.py:149
 msgid "Search Preview Results"
 msgstr "Zoekvoorbeeld resultaten"
 
-#: common/setting/user.py:145
+#: common/setting/user.py:151
 msgid "Number of results to show in each section of the search preview window"
 msgstr "Aantal resultaten om weer te geven in elk gedeelte van het zoekvenster"
 
-#: common/setting/user.py:151
+#: common/setting/user.py:157
 msgid "Regex Search"
 msgstr "Regex zoeken"
 
-#: common/setting/user.py:152
+#: common/setting/user.py:158
 msgid "Enable regular expressions in search queries"
 msgstr "Schakel reguliere expressies in zoekopdrachten in"
 
-#: common/setting/user.py:157
+#: common/setting/user.py:163
 msgid "Whole Word Search"
 msgstr "Hele woorden zoeken"
 
-#: common/setting/user.py:158
+#: common/setting/user.py:164
 msgid "Search queries return results for whole word matches"
 msgstr "Zoekopdrachten geven resultaat voor hele woord overeenkomsten"
 
-#: common/setting/user.py:163
+#: common/setting/user.py:169
 msgid "Show Quantity in Forms"
 msgstr "Toon hoeveelheid in formulieren"
 
-#: common/setting/user.py:164
+#: common/setting/user.py:170
 msgid "Display available part quantity in some forms"
 msgstr "Hoeveelheid beschikbare onderdelen in sommige formulieren weergeven"
 
-#: common/setting/user.py:169
+#: common/setting/user.py:175
 msgid "Escape Key Closes Forms"
 msgstr "Escape-toets sluit formulieren"
 
-#: common/setting/user.py:170
+#: common/setting/user.py:176
 msgid "Use the escape key to close modal forms"
 msgstr "Gebruik de Escape-toets om standaard formulieren te sluiten"
 
-#: common/setting/user.py:175
+#: common/setting/user.py:181
 msgid "Fixed Navbar"
 msgstr "Vaste navigatiebalk"
 
-#: common/setting/user.py:176
+#: common/setting/user.py:182
 msgid "The navbar position is fixed to the top of the screen"
 msgstr "De navigatiebalk positie is gefixeerd aan de bovenkant van het scherm"
 
-#: common/setting/user.py:181
+#: common/setting/user.py:187
 msgid "Date Format"
 msgstr "Datum formaat"
 
-#: common/setting/user.py:182
+#: common/setting/user.py:188
 msgid "Preferred format for displaying dates"
 msgstr "Voorkeursindeling voor weergave van datums"
 
-#: common/setting/user.py:195
+#: common/setting/user.py:201
 msgid "Part Scheduling"
 msgstr "Onderdeel planning"
 
-#: common/setting/user.py:196
+#: common/setting/user.py:202
 msgid "Display part scheduling information"
 msgstr "Toon informatie voor het plannen van onderdelen"
 
-#: common/setting/user.py:201
+#: common/setting/user.py:207
 msgid "Part Stocktake"
 msgstr "Voorraadcontrole onderdeel"
 
-#: common/setting/user.py:203
+#: common/setting/user.py:209
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
 msgstr "Toon voorraadinformatie van onderdeel (als voorraadcontrole functionaliteit is ingeschakeld)"
 
-#: common/setting/user.py:209
+#: common/setting/user.py:215
 msgid "Table String Length"
 msgstr "Tabel tekenreekslengte"
 
-#: common/setting/user.py:210
-msgid "Maximum length limit for strings displayed in table views"
-msgstr ""
-
-#: common/setting/user.py:215
-msgid "Receive error reports"
-msgstr "Foutrapportages ontvangen"
-
 #: common/setting/user.py:216
-msgid "Receive notifications for system errors"
-msgstr "Meldingen ontvangen van systeemfouten"
+msgid "Maximum length limit for strings displayed in table views"
+msgstr "Maximale lengte voor tekenreeksen weergegeven in tabelweergaven"
 
 #: common/setting/user.py:221
-msgid "Last used printing machines"
+msgid "Show Last Breadcrumb"
 msgstr ""
 
 #: common/setting/user.py:222
-msgid "Save the last used printing machines for a user"
+msgid "Show the current page in breadcrumbs"
 msgstr ""
+
+#: common/setting/user.py:227
+msgid "Receive error reports"
+msgstr "Foutrapportages ontvangen"
+
+#: common/setting/user.py:228
+msgid "Receive notifications for system errors"
+msgstr "Meldingen ontvangen van systeemfouten"
+
+#: common/setting/user.py:233
+msgid "Last used printing machines"
+msgstr "Laatst gebruikte printer"
+
+#: common/setting/user.py:234
+msgid "Save the last used printing machines for a user"
+msgstr "Sla de laatst gebruikte printer op voor een gebruiker"
 
 #: common/validators.py:35
 msgid "No attachment model type provided"
-msgstr ""
+msgstr "Geen bijlage model type opgegeven"
 
 #: common/validators.py:41
 msgid "Invalid attachment model type"
-msgstr ""
+msgstr "Ongeldig bijlage type"
 
 #: common/validators.py:82
 msgid "Minimum places cannot be greater than maximum places"
-msgstr ""
+msgstr "Minimale plaatsen mogen niet groter zijn dan het maximum"
 
 #: common/validators.py:94
 msgid "Maximum places cannot be less than minimum places"
@@ -3494,11 +3518,11 @@ msgstr "Ongeldige domeinnaam: {domain}"
 
 #: common/validators.py:123
 msgid "Value must be uppercase"
-msgstr ""
+msgstr "De waarde moet hoofdletters zijn"
 
 #: common/validators.py:129
 msgid "Value must be a valid variable identifier"
-msgstr ""
+msgstr "Waarde moet een geldige variabele id zijn"
 
 #: company/api.py:141
 msgid "Part is Active"
@@ -3835,7 +3859,7 @@ msgstr ""
 
 #: company/models.py:853
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
-msgstr ""
+msgstr "Totale hoeveelheid geleverd in één pakket. Laat leeg voor enkele afzonderlijke items."
 
 #: company/models.py:872 part/models.py:2138
 msgid "multiple"
@@ -3847,27 +3871,27 @@ msgstr "Order meerdere"
 
 #: company/models.py:885
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Beschikbare hoeveelheid van leverancier"
 
 #: company/models.py:891
 msgid "Availability Updated"
-msgstr ""
+msgstr "Beschikbaarheid bijgewerkt"
 
 #: company/models.py:892
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Datum van de laatste update van de beschikbaarheid gegevens"
 
 #: company/models.py:1020
 msgid "Supplier Price Break"
-msgstr ""
+msgstr "Prijsverschil van leverancier"
 
 #: company/serializers.py:179
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Standaardvaluta die gebruikt wordt voor deze leverancier"
 
 #: company/serializers.py:215
 msgid "Company Name"
-msgstr ""
+msgstr "Bedrijfsnaam"
 
 #: company/serializers.py:408 part/serializers.py:959 stock/serializers.py:478
 msgid "In Stock"
@@ -3875,27 +3899,27 @@ msgstr "Op voorraad"
 
 #: generic/states/fields.py:143
 msgid "Custom status key"
-msgstr ""
+msgstr "Aangepaste status sleutel"
 
 #: generic/states/fields.py:144
 msgid "Additional status information for this item"
-msgstr ""
+msgstr "Additionele statusinformatie voor dit item"
 
 #: generic/states/serializers.py:16 plugin/models.py:44 users/models.py:100
 msgid "Key"
-msgstr ""
+msgstr "Sleutel"
 
 #: generic/states/serializers.py:26
 msgid "Custom"
-msgstr ""
+msgstr "Aangepast"
 
 #: generic/states/serializers.py:37
 msgid "Class"
-msgstr ""
+msgstr "Klasse"
 
 #: generic/states/serializers.py:40
 msgid "Values"
-msgstr ""
+msgstr "Waardes"
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -3903,151 +3927,151 @@ msgstr "Geplaatst"
 
 #: generic/states/validators.py:21
 msgid "Invalid status code"
-msgstr ""
+msgstr "Ongeldige statuscode"
 
 #: importer/mixins.py:326
 msgid "Invalid export format"
-msgstr ""
+msgstr "Ongeldige export indeling"
 
 #: importer/models.py:65
 msgid "Data file to import"
-msgstr ""
+msgstr "Te importeren databestand"
 
 #: importer/models.py:74
 msgid "Columns"
-msgstr ""
+msgstr "Kolommen"
 
 #: importer/models.py:85
 msgid "Import status"
-msgstr ""
+msgstr "Status van importeren"
 
 #: importer/models.py:95
 msgid "Field Defaults"
-msgstr ""
+msgstr "Veld standaard"
 
 #: importer/models.py:102
 msgid "Field Overrides"
-msgstr ""
+msgstr "Veld overschrijven"
 
 #: importer/models.py:109
 msgid "Field Filters"
-msgstr ""
+msgstr "Veld filters"
 
 #: importer/models.py:246
 msgid "Some required fields have not been mapped"
-msgstr ""
+msgstr "Sommige verplichte velden zijn niet toegewezen"
 
 #: importer/models.py:403
 msgid "Column is already mapped to a database field"
-msgstr ""
+msgstr "De kolom is al toegewezen aan een database veld"
 
 #: importer/models.py:408
 msgid "Field is already mapped to a data column"
-msgstr ""
+msgstr "Het veld is al toegewezen aan een data-kolom"
 
 #: importer/models.py:417
 msgid "Column mapping must be linked to a valid import session"
-msgstr ""
+msgstr "Kolom toewijzing moet worden gekoppeld aan een geldige importsessie"
 
 #: importer/models.py:422
 msgid "Column does not exist in the data file"
-msgstr ""
+msgstr "Kolom bestaat niet in het gegevensbestand"
 
 #: importer/models.py:429
 msgid "Field does not exist in the target model"
-msgstr ""
+msgstr "Veld bestaat niet in het doel model"
 
 #: importer/models.py:433
 msgid "Selected field is read-only"
-msgstr ""
+msgstr "Geselecteerde veld is alleen lezen"
 
 #: importer/models.py:438 importer/models.py:509
 msgid "Import Session"
-msgstr ""
+msgstr "Importeer sessie"
 
 #: importer/models.py:442
 msgid "Field"
-msgstr ""
+msgstr "Veld"
 
 #: importer/models.py:444
 msgid "Column"
-msgstr ""
+msgstr "Kolom"
 
 #: importer/models.py:513
 msgid "Row Index"
-msgstr ""
+msgstr "Rij index"
 
 #: importer/models.py:516
 msgid "Original row data"
-msgstr ""
+msgstr "Oorspronkelijke rij gegevens"
 
 #: importer/models.py:521 machine/models.py:110
 msgid "Errors"
-msgstr ""
+msgstr "Fouten"
 
 #: importer/models.py:523 part/api.py:856
 msgid "Valid"
-msgstr ""
+msgstr "Geldig"
 
 #: importer/operations.py:28 importer/operations.py:49
 msgid "Unsupported data file format"
-msgstr ""
+msgstr "Niet ondersteunde gegevens bestandsindeling"
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
-msgstr ""
+msgstr "Kan het databestand niet openen"
 
 #: importer/operations.py:51
 msgid "Invalid data file dimensions"
-msgstr ""
+msgstr "Ongeldige afmetingen van gegevensbestand"
 
 #: importer/serializers.py:91
 msgid "Invalid field defaults"
-msgstr ""
+msgstr "Ongeldig veld standaard"
 
 #: importer/serializers.py:104
 msgid "Invalid field overrides"
-msgstr ""
+msgstr "Ongeldige veld overschrijvingen"
 
 #: importer/serializers.py:117
 msgid "Invalid field filters"
-msgstr ""
+msgstr "Ongeldige veld filters"
 
 #: importer/serializers.py:178
 msgid "Rows"
-msgstr ""
+msgstr "Rijen"
 
 #: importer/serializers.py:179
 msgid "List of row IDs to accept"
-msgstr ""
+msgstr "Lijst van te accepteren rij IDs"
 
 #: importer/serializers.py:192
 msgid "No rows provided"
-msgstr ""
+msgstr "Geen rijen opgegeven"
 
 #: importer/serializers.py:196
 msgid "Row does not belong to this session"
-msgstr ""
+msgstr "Regel behoort niet tot deze sessie"
 
 #: importer/serializers.py:199
 msgid "Row contains invalid data"
-msgstr ""
+msgstr "Regel bevat ongeldige gegevens"
 
 #: importer/serializers.py:202
 msgid "Row has already been completed"
-msgstr ""
+msgstr "Regel is al voltooid"
 
 #: importer/status_codes.py:13
 msgid "Initializing"
-msgstr ""
+msgstr "Initialiseren"
 
 #: importer/status_codes.py:18
 msgid "Mapping Columns"
-msgstr ""
+msgstr "Toewijzing van kolommen"
 
 #: importer/status_codes.py:21
 msgid "Importing Data"
-msgstr ""
+msgstr "Gegevens importeren"
 
 #: importer/status_codes.py:24
 msgid "Processing Data"
@@ -4085,7 +4109,7 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:233 order/api.py:1653
+#: machine/machine_types/label_printer.py:233 order/api.py:1660
 msgid "Unknown"
 msgstr ""
 
@@ -4225,17 +4249,17 @@ msgstr ""
 msgid "Has Pricing"
 msgstr ""
 
-#: order/api.py:275 order/api.py:742 order/api.py:1349
+#: order/api.py:275 order/api.py:742 order/api.py:1356
 msgid "Completed Before"
 msgstr ""
 
-#: order/api.py:279 order/api.py:746 order/api.py:1353
+#: order/api.py:279 order/api.py:746 order/api.py:1360
 msgid "Completed After"
 msgstr ""
 
-#: order/api.py:463 order/api.py:859 order/api.py:1085 order/models.py:1576
-#: order/models.py:1694 order/models.py:1745 order/models.py:1873
-#: order/models.py:2036 order/models.py:2538 order/models.py:2604
+#: order/api.py:463 order/api.py:859 order/api.py:1085 order/models.py:1588
+#: order/models.py:1706 order/models.py:1757 order/models.py:1885
+#: order/models.py:2048 order/models.py:2550 order/models.py:2616
 msgid "Order"
 msgstr ""
 
@@ -4259,15 +4283,15 @@ msgstr "Voltooid"
 msgid "Has Shipment"
 msgstr ""
 
-#: order/api.py:1647 order/models.py:404 order/models.py:1577
-#: order/models.py:1695
+#: order/api.py:1654 order/models.py:404 order/models.py:1589
+#: order/models.py:1707
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:121 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Inkooporder"
 
-#: order/api.py:1649 order/models.py:962 order/models.py:1746
-#: order/models.py:1874 order/models.py:2037
+#: order/api.py:1656 order/models.py:974 order/models.py:1758
+#: order/models.py:1886 order/models.py:2049
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
 #: report/templates/report/inventree_sales_order_shipment_report.html:15
@@ -4275,8 +4299,8 @@ msgstr "Inkooporder"
 msgid "Sales Order"
 msgstr "Verkooporder"
 
-#: order/api.py:1651 order/models.py:2207 order/models.py:2539
-#: order/models.py:2605
+#: order/api.py:1658 order/models.py:2219 order/models.py:2551
+#: order/models.py:2617
 #: report/templates/report/inventree_return_order_report.html:13
 msgid "Return Order"
 msgstr "Retour bestelling"
@@ -4305,29 +4329,29 @@ msgstr ""
 
 #: order/models.py:253
 msgid "Start date must be before target date"
-msgstr ""
+msgstr "Startdatum moet voor einddatum liggen"
 
 #: order/models.py:306
 msgid "Order description (optional)"
-msgstr ""
+msgstr "Bestelling beschrijving (optioneel)"
 
 #: order/models.py:315
 msgid "Select project code for this order"
-msgstr ""
+msgstr "Selecteer projectcode voor deze bestelling"
 
-#: order/models.py:319 order/models.py:1478 order/models.py:1926
+#: order/models.py:319 order/models.py:1490 order/models.py:1938
 msgid "Link to external page"
 msgstr "Link naar externe pagina"
 
 #: order/models.py:325
 msgid "Start date"
-msgstr ""
+msgstr "Start datum"
 
 #: order/models.py:326
 msgid "Scheduled start date for this order"
-msgstr ""
+msgstr "Geplande startdatum voor deze bestelling"
 
-#: order/models.py:332 order/models.py:1484 order/serializers.py:261
+#: order/models.py:332 order/models.py:1496 order/serializers.py:261
 #: report/templates/report/inventree_build_order_report.html:125
 msgid "Target Date"
 msgstr "Streefdatum"
@@ -4342,13 +4366,13 @@ msgstr "Gebruiker of groep verantwoordelijk voor deze order"
 
 #: order/models.py:367
 msgid "Point of contact for this order"
-msgstr ""
+msgstr "Contactpunt voor deze volgorde"
 
 #: order/models.py:377
 msgid "Company address for this order"
-msgstr ""
+msgstr "Bedrijf adres voor deze bestelling"
 
-#: order/models.py:496 order/models.py:1052
+#: order/models.py:496 order/models.py:1064
 msgid "Order reference"
 msgstr "Orderreferentie"
 
@@ -4372,25 +4396,25 @@ msgstr "Order referentiecode van leverancier"
 msgid "received by"
 msgstr "ontvangen door"
 
-#: order/models.py:548 order/models.py:2294
+#: order/models.py:548 order/models.py:2306
 msgid "Issue Date"
 msgstr "Datum van uitgifte"
 
-#: order/models.py:549 order/models.py:2295
+#: order/models.py:549 order/models.py:2307
 msgid "Date order was issued"
 msgstr "Order uitgegeven op datum"
 
-#: order/models.py:556 order/models.py:2302
+#: order/models.py:556 order/models.py:2314
 msgid "Date order was completed"
 msgstr "Order voltooid op datum"
 
-#: order/models.py:565 order/models.py:1624
+#: order/models.py:565 order/models.py:1636
 msgid "Destination"
 msgstr "Bestemming"
 
-#: order/models.py:566 order/models.py:1628
+#: order/models.py:566 order/models.py:1640
 msgid "Destination for received items"
-msgstr ""
+msgstr "Bestemming voor ontvangen items"
 
 #: order/models.py:612
 msgid "Part supplier must match PO supplier"
@@ -4400,321 +4424,321 @@ msgstr "Onderdeelleverancier moet overeenkomen met de Inkooporderleverancier"
 msgid "Quantity must be a positive number"
 msgstr "Hoeveelheid moet een positief getal zijn"
 
-#: order/models.py:1063 order/models.py:2267 stock/models.py:922
+#: order/models.py:1075 order/models.py:2279 stock/models.py:922
 #: stock/models.py:923 stock/serializers.py:1348
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
 msgstr "Klant"
 
-#: order/models.py:1064
+#: order/models.py:1076
 msgid "Company to which the items are being sold"
 msgstr "Bedrijf waaraan de artikelen worden verkocht"
 
-#: order/models.py:1077
+#: order/models.py:1089
 msgid "Sales order status"
-msgstr ""
+msgstr "Verkooporder status"
 
-#: order/models.py:1088 order/models.py:2287
+#: order/models.py:1100 order/models.py:2299
 msgid "Customer Reference "
 msgstr "Klantreferentie "
 
-#: order/models.py:1089 order/models.py:2288
+#: order/models.py:1101 order/models.py:2300
 msgid "Customer order reference code"
 msgstr "Klant order referentiecode"
 
-#: order/models.py:1093 order/models.py:1880
+#: order/models.py:1105 order/models.py:1892
 msgid "Shipment Date"
 msgstr "Verzenddatum"
 
-#: order/models.py:1102
+#: order/models.py:1114
 msgid "shipped by"
 msgstr "verzonden door"
 
-#: order/models.py:1141
+#: order/models.py:1153
 msgid "Order is already complete"
-msgstr ""
+msgstr "Bestelling is al afgerond"
 
-#: order/models.py:1144
+#: order/models.py:1156
 msgid "Order is already cancelled"
-msgstr ""
+msgstr "Order is al geannuleerd"
 
-#: order/models.py:1148
+#: order/models.py:1160
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Alleen een open bestelling kan als voltooid worden gemarkeerd"
 
-#: order/models.py:1152
+#: order/models.py:1164
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "Bestelling kan niet worden voltooid omdat er onvolledige verzendingen aanwezig zijn"
 
-#: order/models.py:1157
+#: order/models.py:1169
 msgid "Order cannot be completed as there are incomplete allocations"
-msgstr ""
+msgstr "Order kan niet worden voltooid omdat er onvolledige artikelen aanwezig zijn"
 
-#: order/models.py:1162
+#: order/models.py:1174
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "Order kan niet worden voltooid omdat er onvolledige artikelen aanwezig zijn"
 
-#: order/models.py:1450
+#: order/models.py:1462
 msgid "Item quantity"
 msgstr "Hoeveelheid artikelen"
 
-#: order/models.py:1467
+#: order/models.py:1479
 msgid "Line item reference"
 msgstr "Artikelregel referentie"
 
-#: order/models.py:1474
+#: order/models.py:1486
 msgid "Line item notes"
 msgstr "Artikel notities"
 
-#: order/models.py:1486
+#: order/models.py:1498
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr ""
+msgstr "Doeldatum voor dit regelitem (laat leeg om de doeldatum van de bestelling te gebruiken)"
 
-#: order/models.py:1507
+#: order/models.py:1519
 msgid "Line item description (optional)"
-msgstr ""
+msgstr "Regelomschrijving (optioneel)"
 
-#: order/models.py:1514
+#: order/models.py:1526
 msgid "Additional context for this line"
 msgstr "Additionele context voor deze regel"
 
-#: order/models.py:1524
+#: order/models.py:1536
 msgid "Unit price"
 msgstr "Stukprijs"
 
-#: order/models.py:1538
+#: order/models.py:1550
 msgid "Purchase Order Line Item"
-msgstr ""
+msgstr "Inkooporder regel item"
 
-#: order/models.py:1562
+#: order/models.py:1574
 msgid "Supplier part must match supplier"
 msgstr "Leveranciersonderdeel moet overeenkomen met leverancier"
 
-#: order/models.py:1596
+#: order/models.py:1608
 msgid "Supplier part"
 msgstr "Leveranciersonderdeel"
 
-#: order/models.py:1603
+#: order/models.py:1615
 msgid "Received"
 msgstr "Ontvangen"
 
-#: order/models.py:1604
+#: order/models.py:1616
 msgid "Number of items received"
 msgstr "Aantal ontvangen artikelen"
 
-#: order/models.py:1612 stock/models.py:1042 stock/serializers.py:650
+#: order/models.py:1624 stock/models.py:1042 stock/serializers.py:650
 msgid "Purchase Price"
 msgstr "Inkoopprijs"
 
-#: order/models.py:1613
+#: order/models.py:1625
 msgid "Unit purchase price"
 msgstr "Aankoopprijs per stuk"
 
-#: order/models.py:1683
+#: order/models.py:1695
 msgid "Purchase Order Extra Line"
-msgstr ""
+msgstr "Extra regel inkooporder"
 
-#: order/models.py:1712
+#: order/models.py:1724
 msgid "Sales Order Line Item"
-msgstr ""
+msgstr "Verkooporder regel item"
 
-#: order/models.py:1733
+#: order/models.py:1745
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr "Virtueel onderdeel kan niet worden toegewezen aan een verkooporder"
 
-#: order/models.py:1738
+#: order/models.py:1750
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "Alleen verkoopbare onderdelen kunnen aan een verkooporder worden toegewezen"
 
-#: order/models.py:1764
+#: order/models.py:1776
 msgid "Sale Price"
 msgstr "Verkoopprijs"
 
-#: order/models.py:1765
+#: order/models.py:1777
 msgid "Unit sale price"
 msgstr "Prijs per stuk"
 
-#: order/models.py:1774 order/status_codes.py:50
+#: order/models.py:1786 order/status_codes.py:50
 msgid "Shipped"
 msgstr "Verzonden"
 
-#: order/models.py:1775
+#: order/models.py:1787
 msgid "Shipped quantity"
 msgstr "Verzonden hoeveelheid"
 
-#: order/models.py:1849
+#: order/models.py:1861
 msgid "Sales Order Shipment"
-msgstr ""
+msgstr "Verzending van verkooporder"
 
-#: order/models.py:1881
+#: order/models.py:1893
 msgid "Date of shipment"
 msgstr "Datum van verzending"
 
-#: order/models.py:1887
+#: order/models.py:1899
 msgid "Delivery Date"
-msgstr ""
+msgstr "Leveringsdatum"
 
-#: order/models.py:1888
+#: order/models.py:1900
 msgid "Date of delivery of shipment"
-msgstr ""
+msgstr "Datum van levering van zending"
 
-#: order/models.py:1896
+#: order/models.py:1908
 msgid "Checked By"
 msgstr "Gecontroleerd door"
 
-#: order/models.py:1897
+#: order/models.py:1909
 msgid "User who checked this shipment"
 msgstr "Gebruiker die deze zending gecontroleerd heeft"
 
-#: order/models.py:1904 order/models.py:2133 order/serializers.py:1649
+#: order/models.py:1916 order/models.py:2145 order/serializers.py:1649
 #: order/serializers.py:1773
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 msgid "Shipment"
 msgstr "Zending"
 
-#: order/models.py:1905
+#: order/models.py:1917
 msgid "Shipment number"
 msgstr "Zendingsnummer"
 
-#: order/models.py:1913
+#: order/models.py:1925
 msgid "Tracking Number"
 msgstr "Volgnummer"
 
-#: order/models.py:1914
+#: order/models.py:1926
 msgid "Shipment tracking information"
 msgstr "Zending volginformatie"
 
-#: order/models.py:1921
+#: order/models.py:1933
 msgid "Invoice Number"
 msgstr "Factuurnummer"
 
-#: order/models.py:1922
+#: order/models.py:1934
 msgid "Reference number for associated invoice"
 msgstr "Referentienummer voor bijbehorende factuur"
 
-#: order/models.py:1942
+#: order/models.py:1954
 msgid "Shipment has already been sent"
 msgstr "Verzending is al verzonden"
 
-#: order/models.py:1945
+#: order/models.py:1957
 msgid "Shipment has no allocated stock items"
 msgstr "Zending heeft geen toegewezen voorraadartikelen"
 
-#: order/models.py:2025
+#: order/models.py:2037
 msgid "Sales Order Extra Line"
-msgstr ""
+msgstr "Verkooporder extra regel"
 
-#: order/models.py:2054
+#: order/models.py:2066
 msgid "Sales Order Allocation"
-msgstr ""
+msgstr "Toewijzing verkooporder"
 
-#: order/models.py:2077 order/models.py:2079
+#: order/models.py:2089 order/models.py:2091
 msgid "Stock item has not been assigned"
 msgstr "Voorraadartikel is niet toegewezen"
 
-#: order/models.py:2086
+#: order/models.py:2098
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Kan het voorraadartikel niet toewijzen aan een regel met een ander onderdeel"
 
-#: order/models.py:2089
+#: order/models.py:2101
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Kan voorraad niet toewijzen aan een regel zonder onderdeel"
 
-#: order/models.py:2092
+#: order/models.py:2104
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Toewijzingshoeveelheid kan niet hoger zijn dan de voorraadhoeveelheid"
 
-#: order/models.py:2111 order/serializers.py:1519
+#: order/models.py:2123 order/serializers.py:1519
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Hoeveelheid moet 1 zijn voor geserialiseerd voorraadartikel"
 
-#: order/models.py:2114
+#: order/models.py:2126
 msgid "Sales order does not match shipment"
 msgstr "Verkooporder komt niet overeen met zending"
 
-#: order/models.py:2115 plugin/base/barcodes/api.py:651
+#: order/models.py:2127 plugin/base/barcodes/api.py:651
 msgid "Shipment does not match sales order"
 msgstr "Verzending komt niet overeen met verkooporder"
 
-#: order/models.py:2123
+#: order/models.py:2135
 msgid "Line"
 msgstr "Regel"
 
-#: order/models.py:2134
+#: order/models.py:2146
 msgid "Sales order shipment reference"
 msgstr "Verzendreferentie verkooporder"
 
-#: order/models.py:2147 order/models.py:2546
+#: order/models.py:2159 order/models.py:2558
 msgid "Item"
 msgstr "Artikel"
 
-#: order/models.py:2148
+#: order/models.py:2160
 msgid "Select stock item to allocate"
 msgstr "Selecteer voorraadartikel om toe te wijzen"
 
-#: order/models.py:2157
+#: order/models.py:2169
 msgid "Enter stock allocation quantity"
 msgstr "Voer voorraadtoewijzingshoeveelheid in"
 
-#: order/models.py:2256
-msgid "Return Order reference"
-msgstr ""
-
 #: order/models.py:2268
+msgid "Return Order reference"
+msgstr "Retour order referentie"
+
+#: order/models.py:2280
 msgid "Company from which items are being returned"
-msgstr ""
+msgstr "Bedrijf van waaruit items worden teruggestuurd"
 
-#: order/models.py:2281
+#: order/models.py:2293
 msgid "Return order status"
-msgstr ""
+msgstr "Retour bestelling status"
 
-#: order/models.py:2504
+#: order/models.py:2516
 msgid "Return Order Line Item"
-msgstr ""
+msgstr "Retourneer bestelregel item"
 
-#: order/models.py:2517
+#: order/models.py:2529
 msgid "Stock item must be specified"
-msgstr ""
+msgstr "Voorraad item moet worden opgegeven"
 
-#: order/models.py:2521
+#: order/models.py:2533
 msgid "Return quantity exceeds stock quantity"
-msgstr ""
+msgstr "Retour hoeveelheid overschrijdt voorraad hoeveelheid"
 
-#: order/models.py:2526
+#: order/models.py:2538
 msgid "Return quantity must be greater than zero"
-msgstr ""
+msgstr "Het retour aantal moet groter zijn dan nul"
 
-#: order/models.py:2531
+#: order/models.py:2543
 msgid "Invalid quantity for serialized stock item"
-msgstr ""
+msgstr "Ongeldige hoeveelheid voor geserialiseerde voorraad"
 
-#: order/models.py:2547
+#: order/models.py:2559
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Selecteer te retourneren product van de klant"
 
-#: order/models.py:2562
+#: order/models.py:2574
 msgid "Received Date"
-msgstr ""
-
-#: order/models.py:2563
-msgid "The date this this return item was received"
-msgstr ""
+msgstr "Ontvangst datum"
 
 #: order/models.py:2575
+msgid "The date this this return item was received"
+msgstr "De datum waarop dit retour item is ontvangen"
+
+#: order/models.py:2587
 msgid "Outcome"
-msgstr ""
+msgstr "Resultaat"
 
-#: order/models.py:2576
+#: order/models.py:2588
 msgid "Outcome for this line item"
-msgstr ""
+msgstr "Resultaat van deze regel item"
 
-#: order/models.py:2583
+#: order/models.py:2595
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Kosten geassocieerd met teruggave of reparatie voor deze regel item"
 
-#: order/models.py:2593
+#: order/models.py:2605
 msgid "Return Order Extra Line"
-msgstr ""
+msgstr "Retourneren extra regel"
 
 #: order/serializers.py:89
 msgid "Order ID"
@@ -4749,7 +4773,7 @@ msgstr "Artikelen"
 
 #: order/serializers.py:119
 msgid "Completed Lines"
-msgstr ""
+msgstr "Afgeronde regel items"
 
 #: order/serializers.py:165
 msgid "Duplicate Order"
@@ -4773,11 +4797,11 @@ msgstr "Order kan niet worden geannuleerd"
 
 #: order/serializers.py:438 order/serializers.py:1540
 msgid "Allow order to be closed with incomplete line items"
-msgstr ""
+msgstr "Toestaan order te sluiten met onvolledige regelitems"
 
 #: order/serializers.py:448 order/serializers.py:1550
 msgid "Order has incomplete line items"
-msgstr ""
+msgstr "Bestelling heeft onvolledige regelitems"
 
 #: order/serializers.py:598
 msgid "Order is not open"
@@ -4785,11 +4809,12 @@ msgstr "Order is niet open"
 
 #: order/serializers.py:619
 msgid "Auto Pricing"
-msgstr ""
+msgstr "Automatisch prijzen"
 
 #: order/serializers.py:621
 msgid "Automatically calculate purchase price based on supplier part data"
-msgstr ""
+msgstr "Koopprijs automatisch berekenen gebaseerd op leveranciers \n"
+" onderdelen gegevens"
 
 #: order/serializers.py:631
 msgid "Purchase price currency"
@@ -4797,15 +4822,15 @@ msgstr "Valuta Inkoopprijs"
 
 #: order/serializers.py:637
 msgid "Merge Items"
-msgstr ""
+msgstr "Items samenvoegen"
 
 #: order/serializers.py:639
 msgid "Merge items with the same part, destination and target date into one line item"
-msgstr ""
+msgstr "Items met hetzelfde onderdeel, bestemming en doeldatum samenvoegen in één regelitem"
 
 #: order/serializers.py:645 part/serializers.py:601
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: order/serializers.py:652 part/models.py:1048 part/serializers.py:396
 msgid "Internal Part Number"
@@ -4813,7 +4838,7 @@ msgstr "Intern Onderdeelnummer"
 
 #: order/serializers.py:660
 msgid "Internal Part Name"
-msgstr ""
+msgstr "Interne naam onderdeel"
 
 #: order/serializers.py:676
 msgid "Supplier part must be specified"
@@ -4853,7 +4878,7 @@ msgstr "Vervaldatum"
 
 #: order/serializers.py:772
 msgid "Enter expiry date for incoming stock items"
-msgstr ""
+msgstr "Voer vervaldatum in voor inkomende voorraad items"
 
 #: order/serializers.py:780
 msgid "Enter serial numbers for incoming stock items"
@@ -4869,11 +4894,11 @@ msgstr "Extra opmerking voor inkomende voorraad items"
 
 #: order/serializers.py:809
 msgid "Barcode"
-msgstr ""
+msgstr "Streepjescode"
 
 #: order/serializers.py:810
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Gescande streepjescode"
 
 #: order/serializers.py:826
 msgid "Barcode is already in use"
@@ -5268,15 +5293,15 @@ msgstr ""
 
 #: part/models.py:1022
 msgid "Part description (optional)"
-msgstr ""
+msgstr "Beschrijving (optioneel)"
 
 #: part/models.py:1029
 msgid "Keywords"
-msgstr ""
+msgstr "Sleutelwoorden"
 
 #: part/models.py:1030
 msgid "Part keywords to improve visibility in search results"
-msgstr ""
+msgstr "Deel sleutelwoorden om de zichtbaarheid van de zoekresultaten te verbeteren"
 
 #: part/models.py:1040
 msgid "Part category"
@@ -5289,27 +5314,27 @@ msgstr "IPN"
 
 #: part/models.py:1055
 msgid "Part revision or version number"
-msgstr ""
+msgstr "Onderdeel revisie of versienummer"
 
 #: part/models.py:1056 report/models.py:177
 msgid "Revision"
-msgstr ""
+msgstr "Revisie"
 
 #: part/models.py:1065
 msgid "Is this part a revision of another part?"
-msgstr ""
+msgstr "Is dit deel een herziening van een ander deel?"
 
 #: part/models.py:1066
 msgid "Revision Of"
-msgstr ""
+msgstr "Revisie van"
 
 #: part/models.py:1090
 msgid "Where is this item normally stored?"
-msgstr ""
+msgstr "Waar wordt dit item normaal opgeslagen?"
 
 #: part/models.py:1136
 msgid "Default Supplier"
-msgstr ""
+msgstr "Standaard leverancier"
 
 #: part/models.py:1137
 msgid "Default supplier part"
@@ -5317,7 +5342,7 @@ msgstr "Standaardleverancier"
 
 #: part/models.py:1144
 msgid "Default Expiry"
-msgstr ""
+msgstr "Standaard verval datum"
 
 #: part/models.py:1145
 msgid "Expiry time (in days) for stock items of this part"
@@ -5337,39 +5362,39 @@ msgstr "Eenheden voor dit onderdeel"
 
 #: part/models.py:1170
 msgid "Can this part be built from other parts?"
-msgstr ""
+msgstr "Kan dit onderdeel uit andere delen worden gebouwd?"
 
 #: part/models.py:1176
 msgid "Can this part be used to build other parts?"
-msgstr ""
+msgstr "Kan dit onderdeel gebruikt worden om andere onderdelen te bouwen?"
 
 #: part/models.py:1182
 msgid "Does this part have tracking for unique items?"
-msgstr ""
+msgstr "Heeft dit onderdeel een tracking voor unieke items?"
 
 #: part/models.py:1188
 msgid "Can this part have test results recorded against it?"
-msgstr ""
+msgstr "Kunnen de testresultaten van dit onderdeel tegen dit onderdeel worden geregistreerd?"
 
 #: part/models.py:1194
 msgid "Can this part be purchased from external suppliers?"
-msgstr ""
+msgstr "Kan dit onderdeel worden gekocht van externe leveranciers?"
 
 #: part/models.py:1200
 msgid "Can this part be sold to customers?"
-msgstr ""
+msgstr "Kan dit onderdeel aan klanten worden verkocht?"
 
 #: part/models.py:1204
 msgid "Is this part active?"
-msgstr ""
+msgstr "Is dit onderdeel actief?"
 
 #: part/models.py:1210
 msgid "Locked parts cannot be edited"
-msgstr ""
+msgstr "Vergrendelde onderdelen kunnen niet worden bewerkt"
 
 #: part/models.py:1216
 msgid "Is this a virtual part, such as a software product or license?"
-msgstr ""
+msgstr "Is dit een virtueel onderdeel, zoals een softwareproduct of licentie?"
 
 #: part/models.py:1222
 msgid "BOM checksum"
@@ -5389,11 +5414,11 @@ msgstr ""
 
 #: part/models.py:1252
 msgid "Creation User"
-msgstr ""
+msgstr "Aanmaken gebruiker"
 
 #: part/models.py:1262
 msgid "Owner responsible for this part"
-msgstr ""
+msgstr "Eigenaar verantwoordelijk voor dit deel"
 
 #: part/models.py:1267
 msgid "Last Stocktake"
@@ -5401,103 +5426,103 @@ msgstr "Laatste voorraadcontrole"
 
 #: part/models.py:2139
 msgid "Sell multiple"
-msgstr ""
+msgstr "Verkopen van meerdere"
 
 #: part/models.py:3121
 msgid "Currency used to cache pricing calculations"
-msgstr ""
+msgstr "Valuta die gebruikt wordt voor de cache berekeningen"
 
 #: part/models.py:3137
 msgid "Minimum BOM Cost"
-msgstr ""
+msgstr "Minimale BOM kosten"
 
 #: part/models.py:3138
 msgid "Minimum cost of component parts"
-msgstr ""
+msgstr "Minimale kosten van onderdelen"
 
 #: part/models.py:3144
 msgid "Maximum BOM Cost"
-msgstr ""
+msgstr "Maximale BOM kosten"
 
 #: part/models.py:3145
 msgid "Maximum cost of component parts"
-msgstr ""
+msgstr "Maximale kosten van onderdelen"
 
 #: part/models.py:3151
 msgid "Minimum Purchase Cost"
-msgstr ""
+msgstr "Minimale aankoop kosten"
 
 #: part/models.py:3152
 msgid "Minimum historical purchase cost"
-msgstr ""
+msgstr "Minimale historische aankoop kosten"
 
 #: part/models.py:3158
 msgid "Maximum Purchase Cost"
-msgstr ""
+msgstr "Maximale aanschaf kosten"
 
 #: part/models.py:3159
 msgid "Maximum historical purchase cost"
-msgstr ""
+msgstr "Maximum historische aankoop kosten"
 
 #: part/models.py:3165
 msgid "Minimum Internal Price"
-msgstr ""
+msgstr "Minimale interne prijs"
 
 #: part/models.py:3166
 msgid "Minimum cost based on internal price breaks"
-msgstr ""
+msgstr "Minimale kosten op basis van interne prijsschommelingen"
 
 #: part/models.py:3172
 msgid "Maximum Internal Price"
-msgstr ""
+msgstr "Maximale interne prijs"
 
 #: part/models.py:3173
 msgid "Maximum cost based on internal price breaks"
-msgstr ""
+msgstr "Maximale kosten gebaseerd op interne prijsvoordelen"
 
 #: part/models.py:3179
 msgid "Minimum Supplier Price"
-msgstr ""
+msgstr "Minimale leverancier prijs"
 
 #: part/models.py:3180
 msgid "Minimum price of part from external suppliers"
-msgstr ""
+msgstr "Minimale prijs van onderdeel van externe leveranciers"
 
 #: part/models.py:3186
 msgid "Maximum Supplier Price"
-msgstr ""
+msgstr "Maximale leverancier prijs"
 
 #: part/models.py:3187
 msgid "Maximum price of part from external suppliers"
-msgstr ""
+msgstr "Maximale prijs van onderdeel van externe leveranciers"
 
 #: part/models.py:3193
 msgid "Minimum Variant Cost"
-msgstr ""
+msgstr "Minimale variant kosten"
 
 #: part/models.py:3194
 msgid "Calculated minimum cost of variant parts"
-msgstr ""
+msgstr "Berekende minimale kosten van variant onderdelen"
 
 #: part/models.py:3200
 msgid "Maximum Variant Cost"
-msgstr ""
+msgstr "Maximale variant kosten"
 
 #: part/models.py:3201
 msgid "Calculated maximum cost of variant parts"
-msgstr ""
+msgstr "Berekende maximale kosten van variant onderdelen"
 
 #: part/models.py:3207 part/models.py:3221
 msgid "Minimum Cost"
-msgstr ""
+msgstr "Minimale kostprijs"
 
 #: part/models.py:3208
 msgid "Override minimum cost"
-msgstr ""
+msgstr "Overschrijf minimale kosten"
 
 #: part/models.py:3214 part/models.py:3228
 msgid "Maximum Cost"
-msgstr ""
+msgstr "Maximale kosten"
 
 #: part/models.py:3215
 msgid "Override maximum cost"
@@ -5758,11 +5783,11 @@ msgstr ""
 
 #: part/models.py:3964
 msgid "Parent Part"
-msgstr ""
+msgstr "Hoofd onderdeel"
 
 #: part/models.py:3972 part/models.py:4080 part/models.py:4081
 msgid "Parameter Template"
-msgstr ""
+msgstr "Parameter sjabloon"
 
 #: part/models.py:3978
 msgid "Parameter Value"
@@ -5770,11 +5795,11 @@ msgstr "Parameterwaarde"
 
 #: part/models.py:4028
 msgid "Part Category Parameter Template"
-msgstr ""
+msgstr "Sjabloon categorie parameters onderdeel"
 
 #: part/models.py:4087
 msgid "Default Value"
-msgstr ""
+msgstr "Standaard waarde"
 
 #: part/models.py:4088
 msgid "Default Parameter Value"
@@ -5782,7 +5807,7 @@ msgstr "Standaard Parameter Waarde"
 
 #: part/models.py:4126
 msgid "Part ID or part name"
-msgstr ""
+msgstr "Onderdeel ID of deel naam"
 
 #: part/models.py:4127 part/stocktake.py:218
 msgid "Part ID"
@@ -5790,95 +5815,95 @@ msgstr "Onderdeel-id"
 
 #: part/models.py:4127
 msgid "Unique part ID value"
-msgstr ""
+msgstr "Unieke onderdeel ID-waarde"
 
 #: part/models.py:4129
 msgid "Part IPN"
-msgstr ""
+msgstr "IPN onderdeel"
 
 #: part/models.py:4129
 msgid "Part IPN value"
-msgstr ""
+msgstr "Onderdeel IPN-waarde"
 
 #: part/models.py:4130
 msgid "Level"
-msgstr ""
+msgstr "Niveau"
 
 #: part/models.py:4130
 msgid "BOM level"
-msgstr ""
+msgstr "BOM niveau"
 
 #: part/models.py:4240
 msgid "BOM item cannot be modified - assembly is locked"
-msgstr ""
+msgstr "BOM item kan niet worden gewijzigd - assemblage is vergrendeld "
 
 #: part/models.py:4247
 msgid "BOM item cannot be modified - variant assembly is locked"
-msgstr ""
+msgstr "BOM item kan niet worden gewijzigd - assemblage is vergrendeld"
 
 #: part/models.py:4257
 msgid "Select parent part"
-msgstr ""
+msgstr "Selecteer boven liggend onderdeel"
 
 #: part/models.py:4267
 msgid "Sub part"
-msgstr ""
+msgstr "Sub onderdeel"
 
 #: part/models.py:4268
 msgid "Select part to be used in BOM"
-msgstr ""
+msgstr "Selecteer onderdeel dat moet worden gebruikt in BOM"
 
 #: part/models.py:4279
 msgid "BOM quantity for this BOM item"
-msgstr ""
+msgstr "BOM hoeveelheid voor dit BOM item"
 
 #: part/models.py:4285
 msgid "This BOM item is optional"
-msgstr ""
+msgstr "Dit BOM item is optioneel"
 
 #: part/models.py:4291
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr ""
+msgstr "Dit BOM item is verbruikbaar (het wordt niet bijgehouden in build orders)"
 
 #: part/models.py:4298
 msgid "Overage"
-msgstr ""
+msgstr "Over tijd"
 
 #: part/models.py:4299
 msgid "Estimated build wastage quantity (absolute or percentage)"
-msgstr ""
+msgstr "Geschatte hoeveelheid verspilling (absoluut of percentage)"
 
 #: part/models.py:4306
 msgid "BOM item reference"
-msgstr ""
+msgstr "Artikelregel referentie"
 
 #: part/models.py:4314
 msgid "BOM item notes"
-msgstr ""
+msgstr "BOM item notities"
 
 #: part/models.py:4320
 msgid "Checksum"
-msgstr ""
+msgstr "Controle som"
 
 #: part/models.py:4321
 msgid "BOM line checksum"
-msgstr ""
+msgstr "BOM lijn controle som"
 
 #: part/models.py:4326
 msgid "Validated"
-msgstr ""
+msgstr "Goedgekeurd"
 
 #: part/models.py:4327
 msgid "This BOM item has been validated"
-msgstr ""
+msgstr "Dit BOM item is goedgekeurd"
 
 #: part/models.py:4332
 msgid "Gets inherited"
-msgstr ""
+msgstr "Wordt overgenomen"
 
 #: part/models.py:4333
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr ""
+msgstr "Dit BOM item wordt overgenomen door BOMs voor variant onderdelen"
 
 #: part/models.py:4339
 msgid "Stock items for variant parts can be used for this BOM item"
@@ -5890,67 +5915,67 @@ msgstr "Hoeveelheid moet een geheel getal zijn voor trackable onderdelen"
 
 #: part/models.py:4434 part/models.py:4436
 msgid "Sub part must be specified"
-msgstr ""
+msgstr "Onderdeel moet gespecificeerd worden"
 
 #: part/models.py:4581
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "BOM Item vervangingen bewerken"
 
 #: part/models.py:4602
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "Vervanging onderdeel kan niet hetzelfde zijn als het hoofddeel"
 
 #: part/models.py:4615
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Bovenliggend BOM item"
 
 #: part/models.py:4623
 msgid "Substitute part"
-msgstr ""
+msgstr "Vervanging onderdeel"
 
 #: part/models.py:4639
 msgid "Part 1"
-msgstr ""
+msgstr "Eerste deel"
 
 #: part/models.py:4647
 msgid "Part 2"
-msgstr ""
+msgstr "Tweede deel"
 
 #: part/models.py:4648
 msgid "Select Related Part"
-msgstr ""
+msgstr "Selecteer gerelateerd onderdeel"
 
 #: part/models.py:4655
 msgid "Note for this relationship"
-msgstr ""
+msgstr "Opmerking voor deze relatie"
 
 #: part/models.py:4674
 msgid "Part relationship cannot be created between a part and itself"
-msgstr ""
+msgstr "Onderdeel relatie kan niet worden gecreëerd tussen een deel en zichzelf"
 
 #: part/models.py:4679
 msgid "Duplicate relationship already exists"
-msgstr ""
+msgstr "Dubbele relatie bestaat al"
 
 #: part/serializers.py:123
 msgid "Parent Category"
-msgstr ""
+msgstr "Bovenliggende categorie"
 
 #: part/serializers.py:124
 msgid "Parent part category"
-msgstr ""
+msgstr "Bovenliggende onderdeel categorie"
 
 #: part/serializers.py:131 part/serializers.py:157
 msgid "Subcategories"
-msgstr ""
+msgstr "Subcategorieën"
 
 #: part/serializers.py:196
 msgid "Results"
-msgstr ""
+msgstr "Resultaten"
 
 #: part/serializers.py:197
 msgid "Number of results recorded against this template"
-msgstr ""
+msgstr "Aantal resultaten opgenomen ten opzichte van deze template"
 
 #: part/serializers.py:224 part/serializers.py:242 stock/serializers.py:656
 msgid "Purchase currency of this stock item"
@@ -5966,11 +5991,11 @@ msgstr "Model Id"
 
 #: part/serializers.py:302
 msgid "File is not an image"
-msgstr ""
+msgstr "Bestand is geen afbeelding"
 
 #: part/serializers.py:332
 msgid "Number of parts using this template"
-msgstr ""
+msgstr "Aantal onderdelen die deze sjabloon gebruiken"
 
 #: part/serializers.py:474
 msgid "No parts selected"
@@ -5978,15 +6003,15 @@ msgstr "Geen onderdelen geselecteerd"
 
 #: part/serializers.py:484
 msgid "Select category"
-msgstr ""
+msgstr "Selecteer categorie"
 
 #: part/serializers.py:519
 msgid "Original Part"
-msgstr ""
+msgstr "Oorspronkelijk onderdeel"
 
 #: part/serializers.py:520
 msgid "Select original part to duplicate"
-msgstr ""
+msgstr "Selecteer origineel onderdeel om te dupliceren"
 
 #: part/serializers.py:525
 msgid "Copy Image"
@@ -5998,7 +6023,7 @@ msgstr "Afbeelding kopiëren van het oorspronkelijke onderdeel"
 
 #: part/serializers.py:532
 msgid "Copy BOM"
-msgstr ""
+msgstr "Copy BOM"
 
 #: part/serializers.py:533
 msgid "Copy bill of materials from original part"
@@ -6242,75 +6267,75 @@ msgstr ""
 msgid "Can Build"
 msgstr ""
 
-#: part/serializers.py:1904
+#: part/serializers.py:1891
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1912
+#: part/serializers.py:1899
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1913
+#: part/serializers.py:1900
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1918
+#: part/serializers.py:1905
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1919
+#: part/serializers.py:1906
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Inclusief stuklijst BOM items die worden overgenomen van getemplated onderdelen"
 
-#: part/serializers.py:1924
+#: part/serializers.py:1911
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:1925
+#: part/serializers.py:1912
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1930
+#: part/serializers.py:1917
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1931
+#: part/serializers.py:1918
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Kopieer vervangende onderdelen bij dubbele stuklijst BOM items"
 
-#: part/serializers.py:1968
+#: part/serializers.py:1955
 msgid "Clear Existing BOM"
 msgstr "Verwijder bestaande stuklijst BOM"
 
-#: part/serializers.py:1969
+#: part/serializers.py:1956
 msgid "Delete existing BOM items before uploading"
 msgstr "Verwijder bestaande stuklijst BOM items voor het uploaden"
 
-#: part/serializers.py:2001
+#: part/serializers.py:1988
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:2045
+#: part/serializers.py:2032
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:2048
+#: part/serializers.py:2035
 msgid "No matching part found"
 msgstr ""
 
-#: part/serializers.py:2050
+#: part/serializers.py:2037
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:2059
+#: part/serializers.py:2046
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:2067
+#: part/serializers.py:2054
 msgid "Invalid quantity"
 msgstr "Ongeldige hoeveelheid"
 
-#: part/serializers.py:2090
+#: part/serializers.py:2077
 msgid "At least one BOM item is required"
 msgstr "Minstens één stuklijst BOM artikel is vereist"
 
