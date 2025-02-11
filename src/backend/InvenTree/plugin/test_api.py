@@ -314,3 +314,13 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         url = reverse('api-plugin-metadata', kwargs={'plugin': cfg.key})
         self.get(url, expected_code=200)
+
+    def test_settings(self):
+        """Test settings endpoint for plugin."""
+        url = reverse('api-plugin-settings')
+        self.get(url, expected_code=200)
+
+    def test_registry(self):
+        """Test registry endpoint for plugin."""
+        url = reverse('api-plugin-registry-status')
+        self.get(url, expected_code=200)
