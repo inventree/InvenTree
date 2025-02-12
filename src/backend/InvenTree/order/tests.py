@@ -61,6 +61,47 @@ class OrderTest(TestCase, ExchangeRateMixin):
         order.save()
         self.assertEqual(order.reference_int, 12345)
 
+    def test_locking(self):
+        """Test the (auto)locking functionality of the (Purchase)Order model."""
+        order = PurchaseOrder.objects.get(pk=1)
+
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+        self.assertFalse(order.check_locked())
+
+        order.status = PurchaseOrderStatus.COMPLETE
+        order.save()
+        self.assertFalse(order.check_locked())
+
+        # Reset
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+
+        # Turn on auto-locking
+        set_global_setting(PurchaseOrder.LOCK_SETTING, True)
+        # still not locked
+        self.assertFalse(order.check_locked())
+
+        order.status = PurchaseOrderStatus.COMPLETE
+        # the instance is locked, the db instance is not
+        self.assertFalse(order.check_locked(True))
+        self.assertTrue(order.check_locked())
+        order.save()
+        # now everything is locked
+        self.assertTrue(order.check_locked(True))
+        self.assertTrue(order.check_locked())
+
+        # No editing allowed
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.save()
+
+        # Still can create a completed item
+        PurchaseOrder.objects.create(
+            supplier=Company.objects.get(pk=1),
+            reference='PO-99999',
+            status=PurchaseOrderStatus.COMPLETE,
+        )
+
     def test_overdue(self):
         """Test overdue status functionality."""
         today = datetime.now().date()
