@@ -248,8 +248,8 @@ class Order(
         """
         return (
             self.LOCK_SETTING
-            and self.check_complete(db)
             and get_global_setting(self.LOCK_SETTING)
+            and self.check_complete(db)
         )
 
     def check_complete(self, db: bool = False) -> bool:
