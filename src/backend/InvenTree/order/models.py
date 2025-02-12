@@ -1482,6 +1482,11 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
         Calls save method on the linked order
         """
+        if self.order and self.order.check_locked():
+            raise ValidationError({
+                'reference': _('The order is locked and cannot be modified')
+            })
+
         super().save(*args, **kwargs)
         self.order.save()
 
@@ -1490,6 +1495,11 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
         Calls save method on the linked order
         """
+        if self.order and self.order.check_locked():
+            raise ValidationError({
+                'reference': _('The order is locked and cannot be modified')
+            })
+
         super().delete(*args, **kwargs)
         self.order.save()
 

@@ -73,6 +73,10 @@ class OrderTest(TestCase, ExchangeRateMixin):
         order.save()
         self.assertFalse(order.check_locked())
 
+        order.add_line_item(SupplierPart.objects.get(pk=100), 100)
+        last_line = order.lines.last()
+        self.assertEqual(last_line.quantity, 100)
+
         # Reset
         order.status = PurchaseOrderStatus.PENDING
         order.save()
@@ -94,6 +98,12 @@ class OrderTest(TestCase, ExchangeRateMixin):
         # No editing allowed
         with self.assertRaises(django_exceptions.ValidationError):
             order.save()
+        # Also no adding of line items
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.add_line_item(SupplierPart.objects.get(pk=100), 100)
+        # or deleting
+        with self.assertRaises(django_exceptions.ValidationError):
+            last_line.delete()
 
         # Still can create a completed item
         PurchaseOrder.objects.create(
