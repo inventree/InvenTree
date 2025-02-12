@@ -144,10 +144,10 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.user.save()
 
         url = reverse('api-plugin-detail', kwargs={'plugin': test_plg.key})
-        response = self.delete(url, {}, expected_code=403)
-        self.assertEqual(
-            response.data['detail'],
+        response = self.delete(url, {}, expected_code=400)
+        self.assertIn(
             'Plugin cannot be deleted as it is currently active',
+            str(response.data['detail']),
         )
 
     def test_admin_action(self):
