@@ -229,9 +229,13 @@ class Order(
 
         # Locking
         if update and self.check_locked(True):
-            raise ValidationError({
-                'reference': _('This order is locked and cannot be modified')
-            })
+            # Ensure that order status can be changed still
+            if self.get_db_instance().status != self.status:
+                pass
+            else:
+                raise ValidationError({
+                    'reference': _('This order is locked and cannot be modified')
+                })
 
         # Reference calculations
         self.reference_int = self.rebuild_reference_field(self.reference)

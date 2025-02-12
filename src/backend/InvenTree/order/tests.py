@@ -97,7 +97,11 @@ class OrderTest(TestCase, ExchangeRateMixin):
 
         # No editing allowed
         with self.assertRaises(django_exceptions.ValidationError):
+            order.description = 'test1'
             order.save()
+        order.refresh_from_db()
+        self.assertEqual(order.description, 'Ordering some screws')
+
         # Also no adding of line items
         with self.assertRaises(django_exceptions.ValidationError):
             order.add_line_item(SupplierPart.objects.get(pk=100), 100)
@@ -111,6 +115,17 @@ class OrderTest(TestCase, ExchangeRateMixin):
             reference='PO-99999',
             status=PurchaseOrderStatus.COMPLETE,
         )
+
+        # No editing (except status ;-) ) allowed
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+
+        # Now it is a free for all again
+        order.description = 'test2'
+        order.save()
+
+        order.refresh_from_db()
+        self.assertEqual(order.description, 'test2')
 
     def test_overdue(self):
         """Test overdue status functionality."""
