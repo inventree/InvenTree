@@ -140,6 +140,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         test_plg = self.plugin_confs.first()
         assert test_plg is not None
 
+        self.user.is_superuser = True
+        self.user.save()
+
         url = reverse('api-plugin-detail', kwargs={'plugin': test_plg.key})
         response = self.delete(url, {}, expected_code=403)
         self.assertEqual(
