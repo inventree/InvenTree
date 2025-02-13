@@ -1,8 +1,9 @@
 import { Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
-import { Fragment, type ReactNode, useMemo } from 'react';
 
+import { Fragment, type ReactNode, useMemo } from 'react';
 import { shortenString } from '../../functions/tables';
+import { useUserSettingsState } from '../../states/SettingsState';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
@@ -16,6 +17,7 @@ interface PageDetailInterface {
   detail?: ReactNode;
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
+  lastCrumb?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
   editAction?: () => void;
@@ -36,11 +38,13 @@ export function PageDetail({
   badges,
   imageUrl,
   breadcrumbs,
+  lastCrumb: last_crumb,
   breadcrumbAction,
   actions,
   editAction,
   editEnabled
 }: Readonly<PageDetailInterface>) {
+  const userSettings = useUserSettingsState();
   useHotkeys([
     [
       'mod+E',
@@ -84,14 +88,23 @@ export function PageDetail({
     return cols;
   }, [detail, badges]);
 
+  // breadcrumb caching
+  const computedBreadcrumbs = useMemo(() => {
+    if (userSettings.isSet('ENABLE_LAST_BREADCRUMB', false)) {
+      return [...(breadcrumbs ?? []), ...(last_crumb ?? [])];
+    } else {
+      return breadcrumbs;
+    }
+  }, [breadcrumbs, last_crumb, userSettings]);
+
   return (
     <>
       <PageTitle title={pageTitleString} />
       <Stack gap='xs'>
-        {breadcrumbs && breadcrumbs.length > 0 && (
+        {computedBreadcrumbs && computedBreadcrumbs.length > 0 && (
           <BreadcrumbList
             navCallback={breadcrumbAction}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={computedBreadcrumbs}
           />
         )}
         <Paper p='xs' radius='xs' shadow='xs'>
