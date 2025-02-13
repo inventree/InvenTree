@@ -938,7 +938,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
                 trigger_event(
-                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
+                    PurchaseOrderEvents.ITEM_RECEIVED,
+                    order_id=self.pk,
+                    item_id=item.pk,
+                    line_id=line.pk,
                 )
 
         # Update the number of parts received against the particular line item
