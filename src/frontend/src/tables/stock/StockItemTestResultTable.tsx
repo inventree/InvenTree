@@ -437,6 +437,7 @@ export default function StockItemTestResultTable({
 
     return {
       allowMultiple: true,
+      expandable: (record: any) => record.results && record.results.length > 1,
       content: ({ record }: { record: any }) => {
         if (!record || !record.results || record.results.length < 2) {
           return null;
