@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Paper, Stack, Text } from '@mantine/core';
+import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconCircleMinus,
@@ -7,7 +7,7 @@ import {
   IconTool,
   IconWand
 } from '@tabler/icons-react';
-import { DataTable, type DataTableRowExpansionProps } from 'mantine-datatable';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,7 +36,6 @@ import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   type RowAction,
-  RowActions,
   RowDeleteAction,
   RowEditAction,
   RowViewAction
@@ -63,6 +62,7 @@ export function BuildLineSubTable({
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
+  const table = useTable('buildline-subtable');
 
   const tableColumns: any[] = useMemo(() => {
     return [
@@ -89,59 +89,52 @@ export function BuildLineSubTable({
       },
       LocationColumn({
         accessor: 'location_detail'
-      }),
-      {
-        accessor: '---actions---',
-        title: ' ',
-        width: 50,
-        render: (record: any) => {
-          return (
-            <RowActions
-              title={t`Actions`}
-              index={record.pk}
-              actions={[
-                RowViewAction({
-                  title: t`View Stock Item`,
-                  modelType: ModelType.stockitem,
-                  modelId: record.stock_item,
-                  navigate: navigate
-                }),
-                RowEditAction({
-                  hidden:
-                    !onEditAllocation || !user.hasChangeRole(UserRoles.build),
-                  onClick: () => {
-                    onEditAllocation?.(record.pk);
-                  }
-                }),
-                RowDeleteAction({
-                  hidden:
-                    !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
-                  onClick: () => {
-                    onDeleteAllocation?.(record.pk);
-                  }
-                })
-              ]}
-            />
-          );
-        }
-      }
+      })
     ];
-  }, [user, onEditAllocation, onDeleteAllocation]);
+  }, []);
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowViewAction({
+          title: t`View Stock Item`,
+          modelType: ModelType.stockitem,
+          modelId: record.stock_item,
+          navigate: navigate
+        }),
+        RowEditAction({
+          hidden: !onEditAllocation || !user.hasChangeRole(UserRoles.build),
+          onClick: () => {
+            onEditAllocation?.(record.pk);
+          }
+        }),
+        RowDeleteAction({
+          hidden: !onDeleteAllocation || !user.hasDeleteRole(UserRoles.build),
+          onClick: () => {
+            onDeleteAllocation?.(record.pk);
+          }
+        })
+      ];
+    },
+    [user, onEditAllocation, onDeleteAllocation]
+  );
 
   return (
-    <Paper p='md'>
-      <Stack gap='xs'>
-        <DataTable
-          minHeight={50}
-          withTableBorder
-          withColumnBorders
-          striped
-          pinLastColumn
-          idAccessor='pk'
-          columns={tableColumns}
-          records={lineItem.filteredAllocations ?? lineItem.allocations}
-        />
-      </Stack>
+    <Paper p='xs'>
+      <InvenTreeTable
+        tableState={table}
+        columns={tableColumns}
+        tableData={lineItem.filteredAllocations ?? lineItem.allocations}
+        props={{
+          minHeight: 50,
+          enableSearch: false,
+          enableRefresh: false,
+          enableColumnSwitching: false,
+          enableFilters: false,
+          rowActions: rowActions,
+          noRecordsText: ''
+        }}
+      />
     </Paper>
   );
 }
@@ -179,7 +172,12 @@ export default function BuildLineTable({
       {
         name: 'allocated',
         label: t`Allocated`,
-        description: t`Show allocated lines`
+        description: t`Show fully allocated lines`
+      },
+      {
+        name: 'consumed',
+        label: t`Consumed`,
+        description: t`Show fully consumed lines`
       },
       {
         name: 'available',
@@ -377,6 +375,12 @@ export default function BuildLineTable({
         }
       },
       {
+        accessor: 'available_stock',
+        sortable: true,
+        switchable: false,
+        render: renderAvailableColumn
+      },
+      {
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
@@ -394,23 +398,50 @@ export default function BuildLineTable({
         }
       },
       {
-        accessor: 'available_stock',
-        sortable: true,
-        switchable: false,
-        render: renderAvailableColumn
-      },
-      {
         accessor: 'allocated',
         switchable: false,
         sortable: true,
         hidden: !isActive,
         render: (record: any) => {
-          return record?.bom_item_detail?.consumable ? (
-            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
-          ) : (
+          if (record?.bom_item_detail?.consumable) {
+            return (
+              <Text
+                size='sm'
+                style={{ fontStyle: 'italic' }}
+              >{t`Consumable item`}</Text>
+            );
+          }
+
+          const required = Math.max(0, record.quantity - record.consumed);
+
+          if (required <= 0) {
+            return (
+              <Text size='sm' style={{ fontStyle: 'italic' }}>
+                {record.consumed >= record.quantity
+                  ? t`Fully consumed`
+                  : t`Fully allocated`}
+              </Text>
+            );
+          }
+
+          return (
             <ProgressBar
               progressLabel={true}
               value={record.allocatedQuantity}
+              maximum={required}
+            />
+          );
+        }
+      },
+      {
+        accessor: 'consumed',
+        render: (record: any) => {
+          return record?.bom_item_detail?.consumable ? (
+            <Text style={{ fontStyle: 'italic' }}>{t`Consumable Item`}</Text>
+          ) : (
+            <ProgressBar
+              progressLabel={true}
+              value={record.consumed}
               maximum={record.requiredQuantity}
             />
           );
