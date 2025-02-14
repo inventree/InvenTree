@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-11 00:38+0000\n"
-"PO-Revision-Date: 2025-02-11 00:40\n"
+"POT-Creation-Date: 2025-02-14 08:16+0000\n"
+"PO-Revision-Date: 2025-02-14 08:19\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -84,7 +84,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "Nije moguće konvertovati {original} u {unit}"
 
 #: InvenTree/conversion.py:208 InvenTree/conversion.py:222
-#: InvenTree/helpers.py:513 order/models.py:608 order/models.py:874
+#: InvenTree/helpers.py:513 order/models.py:647 order/models.py:913
 msgid "Invalid quantity provided"
 msgstr "Isporučena nevažeća količina"
 
@@ -101,7 +101,7 @@ msgid "Invalid decimal value"
 msgstr "Neispravna decimalna vrednost"
 
 #: InvenTree/fields.py:208 InvenTree/models.py:942 build/serializers.py:517
-#: build/serializers.py:592 company/models.py:829 order/models.py:1485
+#: build/serializers.py:592 company/models.py:829 order/models.py:1538
 #: part/models.py:3302
 #: report/templates/report/inventree_build_order_report.html:172
 #: stock/models.py:2636 stock/models.py:2760 stock/serializers.py:727
@@ -400,8 +400,8 @@ msgstr "Dvostruka imena ne mogu postojati pod istom nadredjenom grupom"
 msgid "Invalid choice"
 msgstr "Nevažeći izvor"
 
-#: InvenTree/models.py:789 common/models.py:1297 common/models.py:1724
-#: common/models.py:1976 common/models.py:2101 common/serializers.py:481
+#: InvenTree/models.py:789 common/models.py:1310 common/models.py:1737
+#: common/models.py:1989 common/models.py:2114 common/serializers.py:484
 #: company/models.py:588 generic/states/serializers.py:20 machine/models.py:24
 #: part/models.py:998 part/models.py:3773 plugin/models.py:52
 #: report/models.py:165 stock/models.py:83
@@ -409,8 +409,8 @@ msgid "Name"
 msgstr "Ime"
 
 #: InvenTree/models.py:795 build/models.py:257 common/models.py:108
-#: common/models.py:2108 common/models.py:2221 company/models.py:516
-#: company/models.py:820 order/models.py:305 order/models.py:1518
+#: common/models.py:2121 common/models.py:2234 company/models.py:516
+#: company/models.py:820 order/models.py:343 order/models.py:1571
 #: part/models.py:1021 part/models.py:3788 report/models.py:171
 #: report/models.py:714 report/models.py:740
 #: report/templates/report/inventree_build_order_report.html:117
@@ -422,7 +422,7 @@ msgstr "Opis"
 msgid "Description (optional)"
 msgstr "Opis (Opciono)"
 
-#: InvenTree/models.py:811 common/models.py:2274
+#: InvenTree/models.py:811 common/models.py:2287
 msgid "Path"
 msgstr "Putanja"
 
@@ -519,8 +519,8 @@ msgstr "Super korisnik"
 msgid "Is this user a superuser"
 msgstr "Da li je ovaj korisnik Super korisnik?"
 
-#: InvenTree/serializers.py:449 common/models.py:1302 common/models.py:2121
-#: common/models.py:2228 company/models.py:160 company/models.py:794
+#: InvenTree/serializers.py:449 common/models.py:1315 common/models.py:2134
+#: common/models.py:2241 company/models.py:160 company/models.py:794
 #: machine/models.py:39 part/models.py:1204 plugin/models.py:67
 #: stock/api.py:595 users/models.py:182
 msgid "Active"
@@ -648,9 +648,9 @@ msgstr "Uključi varijante"
 #: build/api.py:83 build/api.py:435 build/api.py:747 build/models.py:275
 #: build/serializers.py:1246 build/serializers.py:1356
 #: build/serializers.py:1407 company/models.py:1039 company/serializers.py:417
-#: order/api.py:250 order/api.py:863 order/api.py:1102 order/models.py:1607
-#: order/models.py:1766 order/models.py:1767 part/api.py:1439 part/api.py:1507
-#: part/api.py:1814 part/models.py:417 part/models.py:3131 part/models.py:3275
+#: order/api.py:250 order/api.py:863 order/api.py:1102 order/models.py:1660
+#: order/models.py:1819 order/models.py:1820 part/api.py:1447 part/api.py:1515
+#: part/api.py:1822 part/models.py:417 part/models.py:3131 part/models.py:3275
 #: part/models.py:3423 part/models.py:3444 part/models.py:3466
 #: part/models.py:3602 part/models.py:3963 part/models.py:4126
 #: part/models.py:4256 part/models.py:4622 part/serializers.py:1257
@@ -672,7 +672,7 @@ msgstr "Uključi varijante"
 msgid "Part"
 msgstr "Deo"
 
-#: build/api.py:103 part/api.py:1521 part/models.py:1039 part/models.py:3494
+#: build/api.py:103 part/api.py:1529 part/models.py:1039 part/models.py:3494
 #: part/models.py:4072 part/serializers.py:483 part/serializers.py:1267
 #: stock/api.py:822
 msgid "Category"
@@ -801,7 +801,7 @@ msgstr "Nalog za izradu se ne može kreirati za zaključan deo"
 msgid "Invalid choice for parent build"
 msgstr "Nevažeći izbor za nadređenu verziju"
 
-#: build/models.py:174 order/models.py:239
+#: build/models.py:174 order/models.py:277
 msgid "Responsible user or group must be specified"
 msgstr "Odgovorni korisnik ili grupa mora biti određena"
 
@@ -809,7 +809,7 @@ msgstr "Odgovorni korisnik ili grupa mora biti određena"
 msgid "Build order part cannot be changed"
 msgstr "Deo u nalogu za izradu ne može se izmeniti"
 
-#: build/models.py:184 order/models.py:252
+#: build/models.py:184 order/models.py:290
 msgid "Target date must be after start date"
 msgstr ""
 
@@ -817,8 +817,8 @@ msgstr ""
 msgid "Build Order Reference"
 msgstr "Reference naloga za pravljenje"
 
-#: build/models.py:251 build/serializers.py:1369 order/models.py:495
-#: order/models.py:1063 order/models.py:1478 order/models.py:2267
+#: build/models.py:251 build/serializers.py:1369 order/models.py:534
+#: order/models.py:1106 order/models.py:1531 order/models.py:2321
 #: part/models.py:4305
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
@@ -896,7 +896,7 @@ msgstr "Kod serije"
 msgid "Batch code for this build output"
 msgstr "Kod izgradnje za ovaj izlaz"
 
-#: build/models.py:350 order/models.py:339 order/serializers.py:159
+#: build/models.py:350 order/models.py:377 order/serializers.py:159
 #: part/models.py:1244
 msgid "Creation Date"
 msgstr "datum kreiranja"
@@ -917,7 +917,7 @@ msgstr "Datum ciljanog završetka"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Ciljani datum za završetak izgradnje. Izgradnja će biti u prekoračenju nakon ovog datuma"
 
-#: build/models.py:370 order/models.py:555 order/models.py:2313
+#: build/models.py:370 order/models.py:594 order/models.py:2367
 msgid "Completion Date"
 msgstr "Datum završetka"
 
@@ -934,7 +934,7 @@ msgid "User who issued this build order"
 msgstr "Korisnik koji je izdao nalog za izgradnju"
 
 #: build/models.py:397 common/models.py:117 order/api.py:169
-#: order/models.py:357 part/models.py:1261
+#: order/models.py:395 part/models.py:1261
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "Odgovoran"
@@ -947,7 +947,7 @@ msgstr "Korisnik ili grupa koja je odgovorna za ovaj nalog za izgradnju"
 msgid "External Link"
 msgstr "Spoljašnja konekcija"
 
-#: build/models.py:403 common/models.py:1865 part/models.py:1073
+#: build/models.py:403 common/models.py:1878 part/models.py:1073
 #: stock/models.py:937
 msgid "Link to external URL"
 msgstr "Link za eksterni URL"
@@ -961,7 +961,7 @@ msgid "Priority of this build order"
 msgstr "Prioritet ovog naloga za izgradnju"
 
 #: build/models.py:418 common/models.py:87 common/models.py:101
-#: order/api.py:155 order/models.py:314
+#: order/api.py:155 order/models.py:352
 msgid "Project Code"
 msgstr "Kod projekta"
 
@@ -999,7 +999,7 @@ msgid "Build output does not match Build Order"
 msgstr "Izlaz izgradnje se ne slaže sa Nalogom za izgradnju"
 
 #: build/models.py:1082 build/serializers.py:294 build/serializers.py:343
-#: build/serializers.py:967 order/models.py:605 order/serializers.py:591
+#: build/serializers.py:967 order/models.py:644 order/serializers.py:591
 #: order/serializers.py:758 part/serializers.py:1639 part/serializers.py:2052
 #: stock/models.py:784 stock/models.py:1655 stock/serializers.py:698
 msgid "Quantity must be greater than zero"
@@ -1023,8 +1023,8 @@ msgid "Build object"
 msgstr "Objekat izgradnje"
 
 #: build/models.py:1548 build/models.py:1807 build/serializers.py:282
-#: build/serializers.py:328 build/serializers.py:1390 common/models.py:1227
-#: order/models.py:1461 order/models.py:2168 order/serializers.py:1634
+#: build/serializers.py:328 build/serializers.py:1390 common/models.py:1240
+#: order/models.py:1514 order/models.py:2221 order/serializers.py:1634
 #: order/serializers.py:2094 part/models.py:3289 part/models.py:4278
 #: part/serializers.py:264
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1054,11 +1054,11 @@ msgstr "Stavka izgradnje mora imati izlaz izgradnje, jer je nadređeni deo marki
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Alocirana količina ({q}) ne sme da bude veća od količine dostupnih zaliha ({a})"
 
-#: build/models.py:1665 order/models.py:2117
+#: build/models.py:1665 order/models.py:2170
 msgid "Stock item is over-allocated"
 msgstr "Stavka zaliha je prealocirana"
 
-#: build/models.py:1670 order/models.py:2120
+#: build/models.py:1670 order/models.py:2173
 msgid "Allocation quantity must be greater than zero"
 msgstr "Količina alokacije mora da bude veća od nule"
 
@@ -1205,8 +1205,8 @@ msgstr "Razlog za otpisane izlaz(e) izgradnje"
 msgid "Location for completed build outputs"
 msgstr "Lokacija za završene izlaze izgradnje"
 
-#: build/serializers.py:582 order/models.py:505 order/models.py:1088
-#: order/models.py:2292 order/serializers.py:789 order/serializers.py:1958
+#: build/serializers.py:582 order/models.py:544 order/models.py:1131
+#: order/models.py:2346 order/serializers.py:789 order/serializers.py:1958
 #: stock/serializers.py:592 stock/serializers.py:987 stock/serializers.py:1044
 #: stock/serializers.py:1601
 msgid "Status"
@@ -1477,7 +1477,7 @@ msgstr "Na čekanju"
 msgid "Cancelled"
 msgstr "Otkazano"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:525
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:521
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:83 report/models.py:648
 msgid "Complete"
@@ -1548,7 +1548,7 @@ msgstr "Opis projekta"
 msgid "User or group responsible for this project"
 msgstr "Korisnik ili grupa odgovorni za ovaj projkat"
 
-#: common/models.py:706 common/models.py:1159 common/models.py:1197
+#: common/models.py:706 common/models.py:1172 common/models.py:1210
 msgid "Settings key"
 msgstr "Ključ za podešavanje"
 
@@ -1580,9 +1580,9 @@ msgstr "Vrednost ne prolazi test ispravnosti"
 msgid "Key string must be unique"
 msgstr "Tekstualni ključ mora da bude jedinstven"
 
-#: common/models.py:1205 common/models.py:1206 common/models.py:1310
-#: common/models.py:1311 common/models.py:1556 common/models.py:1557
-#: common/models.py:1880 common/models.py:1881 common/models.py:2262
+#: common/models.py:1218 common/models.py:1219 common/models.py:1323
+#: common/models.py:1324 common/models.py:1569 common/models.py:1570
+#: common/models.py:1893 common/models.py:1894 common/models.py:2275
 #: importer/models.py:89 part/models.py:3312 part/models.py:3399
 #: part/models.py:3473 part/models.py:3501 plugin/models.py:316
 #: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
@@ -1590,132 +1590,132 @@ msgstr "Tekstualni ključ mora da bude jedinstven"
 msgid "User"
 msgstr "Korisnik"
 
-#: common/models.py:1228
+#: common/models.py:1241
 msgid "Price break quantity"
 msgstr "Prelomna količina cene"
 
-#: common/models.py:1235 company/serializers.py:545 order/models.py:1535
-#: order/models.py:2594
+#: common/models.py:1248 company/serializers.py:545 order/models.py:1588
+#: order/models.py:2648
 msgid "Price"
 msgstr "Cena"
 
-#: common/models.py:1236
+#: common/models.py:1249
 msgid "Unit price at specified quantity"
 msgstr "Cena jedinice za određenu količinu"
 
-#: common/models.py:1287 common/models.py:1472
+#: common/models.py:1300 common/models.py:1485
 msgid "Endpoint"
 msgstr "Krajnja tačka"
 
-#: common/models.py:1288
+#: common/models.py:1301
 msgid "Endpoint at which this webhook is received"
 msgstr "Krajnja tačka na kojoj je primljen zahtev za izmenu web stranice"
 
-#: common/models.py:1298
+#: common/models.py:1311
 msgid "Name for this webhook"
 msgstr "Ime ovog zahteva za izmenu stranice"
 
-#: common/models.py:1302
+#: common/models.py:1315
 msgid "Is this webhook active"
 msgstr "Da li je ovaj zahtev za izmenu aktivan?"
 
-#: common/models.py:1318 users/models.py:159
+#: common/models.py:1331 users/models.py:159
 msgid "Token"
 msgstr "Token"
 
-#: common/models.py:1319
+#: common/models.py:1332
 msgid "Token for access"
 msgstr "Token za pristup"
 
-#: common/models.py:1327
+#: common/models.py:1340
 msgid "Secret"
 msgstr "Tajna"
 
-#: common/models.py:1328
+#: common/models.py:1341
 msgid "Shared secret for HMAC"
 msgstr "Deljena tajna za HMAC"
 
-#: common/models.py:1436
+#: common/models.py:1449
 msgid "Message ID"
 msgstr "ID poruke"
 
-#: common/models.py:1437
+#: common/models.py:1450
 msgid "Unique identifier for this message"
 msgstr "Jedinstveni identifikator za ovu poruku"
 
-#: common/models.py:1445
+#: common/models.py:1458
 msgid "Host"
 msgstr "Računar"
 
-#: common/models.py:1446
+#: common/models.py:1459
 msgid "Host from which this message was received"
 msgstr "Računar koji je primio ovu poruku"
 
-#: common/models.py:1454
+#: common/models.py:1467
 msgid "Header"
 msgstr "Zaglavlje"
 
-#: common/models.py:1455
+#: common/models.py:1468
 msgid "Header of this message"
 msgstr "Zaglavlje ove poruke"
 
-#: common/models.py:1462
+#: common/models.py:1475
 msgid "Body"
 msgstr "Telo"
 
-#: common/models.py:1463
+#: common/models.py:1476
 msgid "Body of this message"
 msgstr "Telo ove poruke"
 
-#: common/models.py:1473
+#: common/models.py:1486
 msgid "Endpoint on which this message was received"
 msgstr "Krajnja tačka na kojoj je ova poruka primljena"
 
-#: common/models.py:1478
+#: common/models.py:1491
 msgid "Worked on"
 msgstr "Radilo se na "
 
-#: common/models.py:1479
+#: common/models.py:1492
 msgid "Was the work on this message finished?"
 msgstr "Da li je rad sa ovom porukom završen?"
 
-#: common/models.py:1605
+#: common/models.py:1618
 msgid "Id"
 msgstr "Id"
 
-#: common/models.py:1607 part/serializers.py:270
+#: common/models.py:1620 part/serializers.py:270
 msgid "Title"
 msgstr "Naslov"
 
-#: common/models.py:1609 common/models.py:1864 company/models.py:146
+#: common/models.py:1622 common/models.py:1877 company/models.py:146
 #: company/models.py:441 company/models.py:507 company/models.py:811
-#: order/models.py:319 order/models.py:1490 order/models.py:1938
+#: order/models.py:357 order/models.py:1543 order/models.py:1991
 #: part/models.py:1072
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "Link"
 
-#: common/models.py:1611
+#: common/models.py:1624
 msgid "Published"
 msgstr "Objavljeno"
 
-#: common/models.py:1613
+#: common/models.py:1626
 msgid "Author"
 msgstr "Autor"
 
-#: common/models.py:1615
+#: common/models.py:1628
 msgid "Summary"
 msgstr "Rezime"
 
-#: common/models.py:1618
+#: common/models.py:1631
 msgid "Read"
 msgstr "Čitaj"
 
-#: common/models.py:1618
+#: common/models.py:1631
 msgid "Was this news item read?"
 msgstr "Da li je ova stavka vesti pročitana"
 
-#: common/models.py:1635 company/models.py:156 part/models.py:1082
+#: common/models.py:1648 company/models.py:156 part/models.py:1082
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
@@ -1723,335 +1723,335 @@ msgstr "Da li je ova stavka vesti pročitana"
 msgid "Image"
 msgstr "Slika"
 
-#: common/models.py:1635
+#: common/models.py:1648
 msgid "Image file"
 msgstr "Datoteka slike"
 
-#: common/models.py:1647 common/models.py:1848
+#: common/models.py:1660 common/models.py:1861
 msgid "Target model type for this image"
 msgstr "Ciljni tip modela za ovu sliku"
 
-#: common/models.py:1651
+#: common/models.py:1664
 msgid "Target model ID for this image"
 msgstr "Ciljni ID modela za ovu sliku"
 
-#: common/models.py:1673
+#: common/models.py:1686
 msgid "Custom Unit"
 msgstr "Posebna jedinica"
 
-#: common/models.py:1691
+#: common/models.py:1704
 msgid "Unit symbol must be unique"
 msgstr "Simbol jedinice mora biti jedinstven"
 
-#: common/models.py:1706
+#: common/models.py:1719
 msgid "Unit name must be a valid identifier"
 msgstr "Ime jedinice mora da bude ispravan identifikator"
 
-#: common/models.py:1725
+#: common/models.py:1738
 msgid "Unit name"
 msgstr "Ime jedinice"
 
-#: common/models.py:1732
+#: common/models.py:1745
 msgid "Symbol"
 msgstr "Simbol"
 
-#: common/models.py:1733
+#: common/models.py:1746
 msgid "Optional unit symbol"
 msgstr "Opcioni simbol  jedinice"
 
-#: common/models.py:1739
+#: common/models.py:1752
 msgid "Definition"
 msgstr "Definicija"
 
-#: common/models.py:1740
+#: common/models.py:1753
 msgid "Unit definition"
 msgstr "Definicija jedinice"
 
-#: common/models.py:1798 common/models.py:1855 stock/models.py:2755
+#: common/models.py:1811 common/models.py:1868 stock/models.py:2755
 #: stock/serializers.py:244
 msgid "Attachment"
 msgstr "Prilog"
 
-#: common/models.py:1810
+#: common/models.py:1823
 msgid "Missing file"
 msgstr "Nedostaje datoteka"
 
-#: common/models.py:1811
+#: common/models.py:1824
 msgid "Missing external link"
 msgstr "Nedostaje eksterni link"
 
-#: common/models.py:1856
+#: common/models.py:1869
 msgid "Select file to attach"
 msgstr "Izaberite datoteku za prilog"
 
-#: common/models.py:1871
+#: common/models.py:1884
 msgid "Comment"
 msgstr "Komentar"
 
-#: common/models.py:1872
+#: common/models.py:1885
 msgid "Attachment comment"
 msgstr "Komentar priloga"
 
-#: common/models.py:1888
+#: common/models.py:1901
 msgid "Upload date"
 msgstr "Datum učitavanja"
 
-#: common/models.py:1889
+#: common/models.py:1902
 msgid "Date the file was uploaded"
 msgstr "Datum kada je datoteka učitana"
 
-#: common/models.py:1893
+#: common/models.py:1906
 msgid "File size"
 msgstr "Veličina datoteke"
 
-#: common/models.py:1893
+#: common/models.py:1906
 msgid "File size in bytes"
 msgstr "Veličina datoteke u bajtovima"
 
-#: common/models.py:1931 common/serializers.py:630
+#: common/models.py:1944 common/serializers.py:633
 msgid "Invalid model type specified for attachment"
 msgstr "Određen je neispravan tip modela za prilog"
 
-#: common/models.py:1952
+#: common/models.py:1965
 msgid "Custom State"
 msgstr "Posebno stanje"
 
-#: common/models.py:1953
+#: common/models.py:1966
 msgid "Custom States"
 msgstr "Posebna stanja"
 
-#: common/models.py:1958
+#: common/models.py:1971
 msgid "Reference Status Set"
 msgstr "Referentni status podešen"
 
-#: common/models.py:1959
+#: common/models.py:1972
 msgid "Status set that is extended with this custom state"
 msgstr "Status je podešen i produžen je sa ovim posebnim stanjem"
 
-#: common/models.py:1963 generic/states/serializers.py:18
+#: common/models.py:1976 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "Logički ključ"
 
-#: common/models.py:1965
+#: common/models.py:1978
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Stanje logičkog ključa je jednako posebnom ključu u poslovnoj logici"
 
-#: common/models.py:1970 common/models.py:2209 company/models.py:595
+#: common/models.py:1983 common/models.py:2222 company/models.py:595
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:2747
 msgid "Value"
 msgstr "Vrednost"
 
-#: common/models.py:1971
+#: common/models.py:1984
 msgid "Numerical value that will be saved in the models database"
 msgstr "Numerička vrednost koja će biti sačuvana u bazi podataka modela"
 
-#: common/models.py:1977
+#: common/models.py:1990
 msgid "Name of the state"
 msgstr "Ime stanja"
 
-#: common/models.py:1986 common/models.py:2215 generic/states/serializers.py:22
+#: common/models.py:1999 common/models.py:2228 generic/states/serializers.py:22
 #: part/serializers.py:272
 msgid "Label"
 msgstr "Etiketa"
 
-#: common/models.py:1987
+#: common/models.py:2000
 msgid "Label that will be displayed in the frontend"
 msgstr "Etiketa koja će biti prikazana na korisničkoj strani"
 
-#: common/models.py:1994 generic/states/serializers.py:24
+#: common/models.py:2007 generic/states/serializers.py:24
 msgid "Color"
 msgstr "Boja"
 
-#: common/models.py:1995
+#: common/models.py:2008
 msgid "Color that will be displayed in the frontend"
 msgstr "Boja koja će biti prikazana na korisničkoj strani"
 
-#: common/models.py:2003 part/serializers.py:274
+#: common/models.py:2016 part/serializers.py:274
 msgid "Model"
 msgstr "Model"
 
-#: common/models.py:2004
+#: common/models.py:2017
 msgid "Model this state is associated with"
 msgstr "Model ovog stanja je povezan sa "
 
-#: common/models.py:2019
+#: common/models.py:2032
 msgid "Model must be selected"
 msgstr "Model mora biti izabran"
 
-#: common/models.py:2022
+#: common/models.py:2035
 msgid "Key must be selected"
 msgstr "Ključ mora biti izabran"
 
-#: common/models.py:2025
+#: common/models.py:2038
 msgid "Logical key must be selected"
 msgstr "Logički ključ  mora biti izabran"
 
-#: common/models.py:2029
+#: common/models.py:2042
 msgid "Key must be different from logical key"
 msgstr "Ključ mora da se razlikuje od logičkog ključa"
 
-#: common/models.py:2036
+#: common/models.py:2049
 msgid "Valid reference status class must be provided"
 msgstr "Validna referenca statusa klase mora biti dostavljena"
 
-#: common/models.py:2042
+#: common/models.py:2055
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "Ključ mora biti različit od logičkog ključa referentnog statusa"
 
-#: common/models.py:2049
+#: common/models.py:2062
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "Logički ključ mora biti među logičkim ključevima referentnog statusa"
 
-#: common/models.py:2056
+#: common/models.py:2069
 msgid "Name must be different from the names of the reference status"
 msgstr "Naziv mora biti različit od naziva u statusu reference"
 
-#: common/models.py:2096 common/models.py:2203 part/models.py:3812
+#: common/models.py:2109 common/models.py:2216 part/models.py:3812
 msgid "Selection List"
 msgstr "Lista odabira"
 
-#: common/models.py:2097
+#: common/models.py:2110
 msgid "Selection Lists"
 msgstr "Liste odabira"
 
-#: common/models.py:2102
+#: common/models.py:2115
 msgid "Name of the selection list"
 msgstr "Ime liste odabira"
 
-#: common/models.py:2109
+#: common/models.py:2122
 msgid "Description of the selection list"
 msgstr "Opis liste odabira"
 
-#: common/models.py:2115 part/models.py:1209
+#: common/models.py:2128 part/models.py:1209
 msgid "Locked"
 msgstr "Zaključano"
 
-#: common/models.py:2116
+#: common/models.py:2129
 msgid "Is this selection list locked?"
 msgstr "Da li je ova lista odabira zaključana?"
 
-#: common/models.py:2122
+#: common/models.py:2135
 msgid "Can this selection list be used?"
 msgstr "Da li se ova lista odabira može koristiti?"
 
-#: common/models.py:2130
+#: common/models.py:2143
 msgid "Source Plugin"
 msgstr "Ekstenzija/dodatak za izvor"
 
-#: common/models.py:2131
+#: common/models.py:2144
 msgid "Plugin which provides the selection list"
 msgstr "Ekstenzija koja pruža listu odabira"
 
-#: common/models.py:2136
+#: common/models.py:2149
 msgid "Source String"
 msgstr "String izvora"
 
-#: common/models.py:2137
+#: common/models.py:2150
 msgid "Optional string identifying the source used for this list"
 msgstr "Opcioni string koji identifikuje izvor koji se koristi za ovu listu"
 
-#: common/models.py:2146
+#: common/models.py:2159
 msgid "Default Entry"
 msgstr "Podrazumevani unos"
 
-#: common/models.py:2147
+#: common/models.py:2160
 msgid "Default entry for this selection list"
 msgstr "Podrazumevani unos za ovu listu odabira"
 
-#: common/models.py:2152
+#: common/models.py:2165
 msgid "Created"
 msgstr "Kreirano"
 
-#: common/models.py:2153
+#: common/models.py:2166
 msgid "Date and time that the selection list was created"
 msgstr "Datum i vreme kada je ova lista odabira kreirana"
 
-#: common/models.py:2158
+#: common/models.py:2171
 msgid "Last Updated"
 msgstr "Poslednje ažuriranje"
 
-#: common/models.py:2159
+#: common/models.py:2172
 msgid "Date and time that the selection list was last updated"
 msgstr "Datum i vreme kada je ova lista odabira ažurirana"
 
-#: common/models.py:2193
+#: common/models.py:2206
 msgid "Selection List Entry"
 msgstr "Unos liste odabira"
 
-#: common/models.py:2194
+#: common/models.py:2207
 msgid "Selection List Entries"
 msgstr "Unosi liste odabira"
 
-#: common/models.py:2204
+#: common/models.py:2217
 msgid "Selection list to which this entry belongs"
 msgstr "Lista odabira kojoj ovaj unos pripada"
 
-#: common/models.py:2210
+#: common/models.py:2223
 msgid "Value of the selection list entry"
 msgstr "Vrednost ovog unosa liste odabira"
 
-#: common/models.py:2216
+#: common/models.py:2229
 msgid "Label for the selection list entry"
 msgstr "Naziv ovog unosa liste odabira"
 
-#: common/models.py:2222
+#: common/models.py:2235
 msgid "Description of the selection list entry"
 msgstr "Opis ovog unosa liste odabira"
 
-#: common/models.py:2229
+#: common/models.py:2242
 msgid "Is this selection list entry active?"
 msgstr "Da li je unos ove liste odabira aktivan?"
 
-#: common/models.py:2247
+#: common/models.py:2260
 msgid "Barcode Scan"
 msgstr "Skeniranje bar koda"
 
-#: common/models.py:2251 importer/models.py:519 part/models.py:3977
+#: common/models.py:2264 importer/models.py:515 part/models.py:3977
 msgid "Data"
 msgstr "Podaci"
 
-#: common/models.py:2252
+#: common/models.py:2265
 msgid "Barcode data"
 msgstr "Podaci bar koda"
 
-#: common/models.py:2263
+#: common/models.py:2276
 msgid "User who scanned the barcode"
 msgstr "Korisnik koji je skenirao bar kod"
 
-#: common/models.py:2268 importer/models.py:60
+#: common/models.py:2281 importer/models.py:60
 msgid "Timestamp"
 msgstr "Vremenski trag"
 
-#: common/models.py:2269
+#: common/models.py:2282
 msgid "Date and time of the barcode scan"
 msgstr "Datum i vreme skeniranja bar koda"
 
-#: common/models.py:2275
+#: common/models.py:2288
 msgid "URL endpoint which processed the barcode"
 msgstr "URL krajnja tačka kojaj je obradila bar kod"
 
-#: common/models.py:2282 order/models.py:1525 plugin/serializers.py:89
+#: common/models.py:2295 order/models.py:1578 plugin/serializers.py:89
 msgid "Context"
 msgstr "Kontekst"
 
-#: common/models.py:2283
+#: common/models.py:2296
 msgid "Context data for the barcode scan"
 msgstr "Kontekst podataka za skeniranje bar koda"
 
-#: common/models.py:2290
+#: common/models.py:2303
 msgid "Response"
 msgstr "Odgovor"
 
-#: common/models.py:2291
+#: common/models.py:2304
 msgid "Response data from the barcode scan"
 msgstr "Podaci odgovora za skeniranje bar koda"
 
-#: common/models.py:2297 report/templates/report/inventree_test_report.html:103
+#: common/models.py:2310 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:2741
 msgid "Result"
 msgstr "Rezultat"
 
-#: common/models.py:2298
+#: common/models.py:2311
 msgid "Was the barcode scan successful?"
 msgstr "Da li je skeniranje bar koda bilo uspešno?"
 
@@ -2089,79 +2089,79 @@ msgstr "Stavke su primljene uprkos nalogu za povrat"
 msgid "Error raised by plugin"
 msgstr "Greška je aktivirala ekstenziju"
 
-#: common/serializers.py:444
+#: common/serializers.py:447
 msgid "Is Running"
 msgstr "Pokrenuto je"
 
-#: common/serializers.py:450
+#: common/serializers.py:453
 msgid "Pending Tasks"
 msgstr "Čekaju se zadaci"
 
-#: common/serializers.py:456
+#: common/serializers.py:459
 msgid "Scheduled Tasks"
 msgstr "Planirani zadaci"
 
-#: common/serializers.py:462
+#: common/serializers.py:465
 msgid "Failed Tasks"
 msgstr "Propali zadaci"
 
-#: common/serializers.py:477
+#: common/serializers.py:480
 msgid "Task ID"
 msgstr "ID zadatka"
 
-#: common/serializers.py:477
+#: common/serializers.py:480
 msgid "Unique task ID"
 msgstr "Jedinstveni ID zadatka"
 
-#: common/serializers.py:479
+#: common/serializers.py:482
 msgid "Lock"
 msgstr "Zaključaj"
 
-#: common/serializers.py:479
+#: common/serializers.py:482
 msgid "Lock time"
 msgstr "Vreme zaključavanja"
 
-#: common/serializers.py:481
+#: common/serializers.py:484
 msgid "Task name"
 msgstr "Naziv zadatka"
 
-#: common/serializers.py:483
+#: common/serializers.py:486
 msgid "Function"
 msgstr "Funkcija"
 
-#: common/serializers.py:483
+#: common/serializers.py:486
 msgid "Function name"
 msgstr "Ime funkcije"
 
-#: common/serializers.py:485
+#: common/serializers.py:488
 msgid "Arguments"
 msgstr "Argumenti"
 
-#: common/serializers.py:485
+#: common/serializers.py:488
 msgid "Task arguments"
 msgstr "Argumenti zadatka"
 
-#: common/serializers.py:488
+#: common/serializers.py:491
 msgid "Keyword Arguments"
 msgstr "Ključne reči argumenata"
 
-#: common/serializers.py:488
+#: common/serializers.py:491
 msgid "Task keyword arguments"
 msgstr "Ključne reči argumenata zadatka"
 
-#: common/serializers.py:598
+#: common/serializers.py:601
 msgid "Filename"
 msgstr "Ime datoteke"
 
-#: common/serializers.py:605 report/api.py:43 report/serializers.py:54
+#: common/serializers.py:608 report/api.py:43 report/serializers.py:54
 msgid "Model Type"
 msgstr "Tip modela"
 
-#: common/serializers.py:633
+#: common/serializers.py:636
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "Korisnik nema dozvolu da napravi ili izmeni priloge za ovaj model"
 
-#: common/serializers.py:677 common/serializers.py:780
+#: common/serializers.py:680 common/serializers.py:783
 msgid "Selection list is locked"
 msgstr "Lista odabira je zaključana"
 
@@ -3590,7 +3590,7 @@ msgstr "Broj telefona kontakta"
 msgid "Contact email address"
 msgstr "Email adresa kontakta"
 
-#: company/models.py:139 company/models.py:270 order/models.py:366
+#: company/models.py:139 company/models.py:270 order/models.py:404
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -3634,7 +3634,7 @@ msgstr "Da li ova kompanija proizvodi delove?"
 msgid "Default currency used for this company"
 msgstr "Podrazumevana valuta za ovu kompaniju"
 
-#: company/models.py:309 order/models.py:376
+#: company/models.py:309 order/models.py:414
 msgid "Address"
 msgstr "Adrese"
 
@@ -3794,7 +3794,7 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr "Povezani delovi dobavljača moraju referencirati isti osnovni deo"
 
 #: company/models.py:782 company/serializers.py:421 company/serializers.py:434
-#: order/models.py:520 part/serializers.py:591
+#: order/models.py:559 part/serializers.py:591
 #: plugin/builtin/suppliers/digikey.py:25 plugin/builtin/suppliers/lcsc.py:26
 #: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:26
 #: stock/api.py:520 templates/email/overdue_purchase_order.html:16
@@ -3957,59 +3957,59 @@ msgstr "Promene polja"
 msgid "Field Filters"
 msgstr "Filteri polja"
 
-#: importer/models.py:246
+#: importer/models.py:242
 msgid "Some required fields have not been mapped"
 msgstr "Neka neophodna polja nisu mapirana"
 
-#: importer/models.py:403
+#: importer/models.py:399
 msgid "Column is already mapped to a database field"
 msgstr "Kolona je već mapirana u polje u bazi podataka"
 
-#: importer/models.py:408
+#: importer/models.py:404
 msgid "Field is already mapped to a data column"
 msgstr "Polje je već mapirano u kolonu sa podacima"
 
-#: importer/models.py:417
+#: importer/models.py:413
 msgid "Column mapping must be linked to a valid import session"
 msgstr "Mapiranje kolona mora biti linkovano da bi se uvezla važeća sesija"
 
-#: importer/models.py:422
+#: importer/models.py:418
 msgid "Column does not exist in the data file"
 msgstr "Kolona ne postoji u fajlu sa podacima"
 
-#: importer/models.py:429
+#: importer/models.py:425
 msgid "Field does not exist in the target model"
 msgstr "Polje ne postoji u ciljnom modelu"
 
-#: importer/models.py:433
+#: importer/models.py:429
 msgid "Selected field is read-only"
 msgstr "Izabrano polje je samo za čitanje"
 
-#: importer/models.py:438 importer/models.py:509
+#: importer/models.py:434 importer/models.py:505
 msgid "Import Session"
 msgstr "Uvezi sesiju"
 
-#: importer/models.py:442
+#: importer/models.py:438
 msgid "Field"
 msgstr "Polje"
 
-#: importer/models.py:444
+#: importer/models.py:440
 msgid "Column"
 msgstr "Kolona"
 
-#: importer/models.py:513
+#: importer/models.py:509
 msgid "Row Index"
 msgstr "Indeks vrsta"
 
-#: importer/models.py:516
+#: importer/models.py:512
 msgid "Original row data"
 msgstr "Originalni podaci vrste"
 
-#: importer/models.py:521 machine/models.py:110
+#: importer/models.py:517 machine/models.py:110
 msgid "Errors"
 msgstr "Greške"
 
-#: importer/models.py:523 part/api.py:856
+#: importer/models.py:519 part/api.py:856
 msgid "Valid"
 msgstr "Važeće"
 
@@ -4209,7 +4209,7 @@ msgstr "Izvanredno"
 msgid "Has Project Code"
 msgstr "Ima šifru projekta"
 
-#: order/api.py:173 order/models.py:348
+#: order/api.py:173 order/models.py:386
 msgid "Created By"
 msgstr "Kreirano do strane"
 
@@ -4257,9 +4257,9 @@ msgstr "Završen pre"
 msgid "Completed After"
 msgstr "Završen nakon"
 
-#: order/api.py:463 order/api.py:859 order/api.py:1085 order/models.py:1588
-#: order/models.py:1706 order/models.py:1757 order/models.py:1885
-#: order/models.py:2048 order/models.py:2550 order/models.py:2616
+#: order/api.py:463 order/api.py:859 order/api.py:1085 order/models.py:1641
+#: order/models.py:1759 order/models.py:1810 order/models.py:1938
+#: order/models.py:2101 order/models.py:2604 order/models.py:2670
 msgid "Order"
 msgstr "Nalog"
 
@@ -4283,15 +4283,15 @@ msgstr "Završeno"
 msgid "Has Shipment"
 msgstr "Ima isporuku"
 
-#: order/api.py:1654 order/models.py:404 order/models.py:1589
-#: order/models.py:1707
+#: order/api.py:1654 order/models.py:443 order/models.py:1642
+#: order/models.py:1760
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:121 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Nalog za kupovinu"
 
-#: order/api.py:1656 order/models.py:974 order/models.py:1758
-#: order/models.py:1886 order/models.py:2049
+#: order/api.py:1656 order/models.py:1017 order/models.py:1811
+#: order/models.py:1939 order/models.py:2102
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
 #: report/templates/report/inventree_sales_order_shipment_report.html:15
@@ -4299,8 +4299,8 @@ msgstr "Nalog za kupovinu"
 msgid "Sales Order"
 msgstr "Nalog za prodaju"
 
-#: order/api.py:1658 order/models.py:2219 order/models.py:2551
-#: order/models.py:2617
+#: order/api.py:1658 order/models.py:2273 order/models.py:2605
+#: order/models.py:2671
 #: report/templates/report/inventree_return_order_report.html:13
 msgid "Return Order"
 msgstr "Nalog za vraćanje"
@@ -4323,420 +4323,428 @@ msgstr "Valuta naloga"
 msgid "Currency for this order (leave blank to use company default)"
 msgstr "Valuta za ovaj nalog (ostaviti prazno za podrazumevanu valutu kompanije)"
 
-#: order/models.py:246
+#: order/models.py:237
+msgid "This order is locked and cannot be modified"
+msgstr ""
+
+#: order/models.py:284
 msgid "Contact does not match selected company"
 msgstr "Kontakt se ne poklapa sa izabranom kompanijom"
 
-#: order/models.py:253
+#: order/models.py:291
 msgid "Start date must be before target date"
 msgstr ""
 
-#: order/models.py:306
+#: order/models.py:344
 msgid "Order description (optional)"
 msgstr "Opis naloga (opciono)"
 
-#: order/models.py:315
+#: order/models.py:353
 msgid "Select project code for this order"
 msgstr "Izaberi šifru projekta za ovaj nalog"
 
-#: order/models.py:319 order/models.py:1490 order/models.py:1938
+#: order/models.py:357 order/models.py:1543 order/models.py:1991
 msgid "Link to external page"
 msgstr "Link ka eksternoj stranici"
 
-#: order/models.py:325
+#: order/models.py:363
 msgid "Start date"
 msgstr ""
 
-#: order/models.py:326
+#: order/models.py:364
 msgid "Scheduled start date for this order"
 msgstr ""
 
-#: order/models.py:332 order/models.py:1496 order/serializers.py:261
+#: order/models.py:370 order/models.py:1549 order/serializers.py:261
 #: report/templates/report/inventree_build_order_report.html:125
 msgid "Target Date"
 msgstr "Ciljani datum"
 
-#: order/models.py:334
+#: order/models.py:372
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr "Očekivani datum za isporuku. Nalog će biti zastareo nakon ovog datuma."
 
-#: order/models.py:356
+#: order/models.py:394
 msgid "User or group responsible for this order"
 msgstr "Korisnik ili grupa odgovorni za ovaj nalog"
 
-#: order/models.py:367
+#: order/models.py:405
 msgid "Point of contact for this order"
 msgstr "Lice za kontakt za ovaj nalog"
 
-#: order/models.py:377
+#: order/models.py:415
 msgid "Company address for this order"
 msgstr "Adresa kompanije za ovaj nalog"
 
-#: order/models.py:496 order/models.py:1064
+#: order/models.py:535 order/models.py:1107
 msgid "Order reference"
 msgstr "Referenca naloga"
 
-#: order/models.py:506
+#: order/models.py:545
 msgid "Purchase order status"
 msgstr "Status naloga za kupovinu"
 
-#: order/models.py:521
+#: order/models.py:560
 msgid "Company from which the items are being ordered"
 msgstr "Kompanija od koje su stavke naručene"
 
-#: order/models.py:532
+#: order/models.py:571
 msgid "Supplier Reference"
 msgstr "Referenca dobavljača"
 
-#: order/models.py:533
+#: order/models.py:572
 msgid "Supplier order reference code"
 msgstr "Referentni kod dobavljača naloga"
 
-#: order/models.py:542
+#: order/models.py:581
 msgid "received by"
 msgstr "primljeno od strane"
 
-#: order/models.py:548 order/models.py:2306
+#: order/models.py:587 order/models.py:2360
 msgid "Issue Date"
 msgstr "Datum izdavanja"
 
-#: order/models.py:549 order/models.py:2307
+#: order/models.py:588 order/models.py:2361
 msgid "Date order was issued"
 msgstr "Datum kada je nalog izdat"
 
-#: order/models.py:556 order/models.py:2314
+#: order/models.py:595 order/models.py:2368
 msgid "Date order was completed"
 msgstr "Datum kada je nalog završen"
 
-#: order/models.py:565 order/models.py:1636
+#: order/models.py:604 order/models.py:1689
 msgid "Destination"
 msgstr "Odredište"
 
-#: order/models.py:566 order/models.py:1640
+#: order/models.py:605 order/models.py:1693
 msgid "Destination for received items"
 msgstr "Odredište za primljene stavke"
 
-#: order/models.py:612
+#: order/models.py:651
 msgid "Part supplier must match PO supplier"
 msgstr "Dobavljač dela se mora poklapati sa dobavljačem naloga za kupovinu"
 
-#: order/models.py:870
+#: order/models.py:909
 msgid "Quantity must be a positive number"
 msgstr "Količina mora biti pozitivan broj"
 
-#: order/models.py:1075 order/models.py:2279 stock/models.py:922
+#: order/models.py:1118 order/models.py:2333 stock/models.py:922
 #: stock/models.py:923 stock/serializers.py:1348
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
 msgstr "Mušterija"
 
-#: order/models.py:1076
+#: order/models.py:1119
 msgid "Company to which the items are being sold"
 msgstr "Kompanija kojoj se prodaju stavke"
 
-#: order/models.py:1089
+#: order/models.py:1132
 msgid "Sales order status"
 msgstr "Status naloga za prodaju"
 
-#: order/models.py:1100 order/models.py:2299
+#: order/models.py:1143 order/models.py:2353
 msgid "Customer Reference "
 msgstr "Referenca mušterije"
 
-#: order/models.py:1101 order/models.py:2300
+#: order/models.py:1144 order/models.py:2354
 msgid "Customer order reference code"
 msgstr "Referentni kod mušterijinog naloga"
 
-#: order/models.py:1105 order/models.py:1892
+#: order/models.py:1148 order/models.py:1945
 msgid "Shipment Date"
 msgstr "Datum isporuke"
 
-#: order/models.py:1114
+#: order/models.py:1157
 msgid "shipped by"
 msgstr "isporučeno od strane"
 
-#: order/models.py:1153
+#: order/models.py:1196
 msgid "Order is already complete"
 msgstr "Nalog je već završen"
 
-#: order/models.py:1156
+#: order/models.py:1199
 msgid "Order is already cancelled"
 msgstr "Nalog je već otkazan"
 
-#: order/models.py:1160
+#: order/models.py:1203
 msgid "Only an open order can be marked as complete"
 msgstr "Samo otvoren nalog može biti označen kao završen"
 
-#: order/models.py:1164
+#: order/models.py:1207
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "Nalog ne može biti završen jer ima nepotpunih isporuka"
 
-#: order/models.py:1169
+#: order/models.py:1212
 msgid "Order cannot be completed as there are incomplete allocations"
 msgstr "Nalog ne može biti završen jer ima nepotpunih alokacija"
 
-#: order/models.py:1174
+#: order/models.py:1217
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "Nalog ne može biti završen jer ima nezavršenih stavki porudbžine"
 
-#: order/models.py:1462
+#: order/models.py:1494 order/models.py:1507
+msgid "The order is locked and cannot be modified"
+msgstr ""
+
+#: order/models.py:1515
 msgid "Item quantity"
 msgstr "Količina stavki"
 
-#: order/models.py:1479
+#: order/models.py:1532
 msgid "Line item reference"
 msgstr "Referenca stavke porudbžine"
 
-#: order/models.py:1486
+#: order/models.py:1539
 msgid "Line item notes"
 msgstr "Beleške stavke porudbžine"
 
-#: order/models.py:1498
+#: order/models.py:1551
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr "Krajnji datum za ovu stavku porudbćine (ostaviti prazno za krajnji datum sa naloga)"
 
-#: order/models.py:1519
+#: order/models.py:1572
 msgid "Line item description (optional)"
 msgstr "Opis stavke porudžbine (opciono)"
 
-#: order/models.py:1526
+#: order/models.py:1579
 msgid "Additional context for this line"
 msgstr "Dodatni kontekst za ovu porudžbinu"
 
-#: order/models.py:1536
+#: order/models.py:1589
 msgid "Unit price"
 msgstr "Cena jedinice"
 
-#: order/models.py:1550
+#: order/models.py:1603
 msgid "Purchase Order Line Item"
 msgstr "Stavka porudžbine naloga za kupovinu"
 
-#: order/models.py:1574
+#: order/models.py:1627
 msgid "Supplier part must match supplier"
 msgstr "Deo dobavljača se mora poklapati sa dobavljačem"
 
-#: order/models.py:1608
+#: order/models.py:1661
 msgid "Supplier part"
 msgstr "Deo dobavljača"
 
-#: order/models.py:1615
+#: order/models.py:1668
 msgid "Received"
 msgstr "Primljeno"
 
-#: order/models.py:1616
+#: order/models.py:1669
 msgid "Number of items received"
 msgstr "Broj primljenih stavki"
 
-#: order/models.py:1624 stock/models.py:1042 stock/serializers.py:650
+#: order/models.py:1677 stock/models.py:1042 stock/serializers.py:650
 msgid "Purchase Price"
 msgstr "Kupovna cena"
 
-#: order/models.py:1625
+#: order/models.py:1678
 msgid "Unit purchase price"
 msgstr "Kupovna cena jedinice"
 
-#: order/models.py:1695
+#: order/models.py:1748
 msgid "Purchase Order Extra Line"
 msgstr "Dodatna porudbžina naloga za kupovinu"
 
-#: order/models.py:1724
+#: order/models.py:1777
 msgid "Sales Order Line Item"
 msgstr "Stavka porudžbine naloga za prodaju"
 
-#: order/models.py:1745
+#: order/models.py:1798
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr "Virtuelni deo ne može biti dodeljen nalogu za prodaju"
 
-#: order/models.py:1750
+#: order/models.py:1803
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "Samo delovi koji se mogu prodati mogu biti dodeljeni nalogu za prodaju"
 
-#: order/models.py:1776
+#: order/models.py:1829
 msgid "Sale Price"
 msgstr "Prodajna cena"
 
-#: order/models.py:1777
+#: order/models.py:1830
 msgid "Unit sale price"
 msgstr "Prodajna cena jedinice"
 
-#: order/models.py:1786 order/status_codes.py:50
+#: order/models.py:1839 order/status_codes.py:50
 msgid "Shipped"
 msgstr "Poslato"
 
-#: order/models.py:1787
+#: order/models.py:1840
 msgid "Shipped quantity"
 msgstr "Isporučena količina"
 
-#: order/models.py:1861
+#: order/models.py:1914
 msgid "Sales Order Shipment"
 msgstr "Isporuka naloga za prodaju"
 
-#: order/models.py:1893
+#: order/models.py:1946
 msgid "Date of shipment"
 msgstr "Datum isporuke"
 
-#: order/models.py:1899
+#: order/models.py:1952
 msgid "Delivery Date"
 msgstr "Datum dostavljanja"
 
-#: order/models.py:1900
+#: order/models.py:1953
 msgid "Date of delivery of shipment"
 msgstr "Datum dostavljanja isporuke"
 
-#: order/models.py:1908
+#: order/models.py:1961
 msgid "Checked By"
 msgstr "Provereno od strane"
 
-#: order/models.py:1909
+#: order/models.py:1962
 msgid "User who checked this shipment"
 msgstr "Korisnik koji je proverio ovu isporuku"
 
-#: order/models.py:1916 order/models.py:2145 order/serializers.py:1649
+#: order/models.py:1969 order/models.py:2198 order/serializers.py:1649
 #: order/serializers.py:1773
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
 msgid "Shipment"
 msgstr "Isporuka"
 
-#: order/models.py:1917
+#: order/models.py:1970
 msgid "Shipment number"
 msgstr "Broj isporuke"
 
-#: order/models.py:1925
+#: order/models.py:1978
 msgid "Tracking Number"
 msgstr "Broj praćenja"
 
-#: order/models.py:1926
+#: order/models.py:1979
 msgid "Shipment tracking information"
 msgstr "Informacije o praćenju isporuke"
 
-#: order/models.py:1933
+#: order/models.py:1986
 msgid "Invoice Number"
 msgstr "Broj računa"
 
-#: order/models.py:1934
+#: order/models.py:1987
 msgid "Reference number for associated invoice"
 msgstr "Referentni broj za dodeljeni račun"
 
-#: order/models.py:1954
+#: order/models.py:2007
 msgid "Shipment has already been sent"
 msgstr "Isporuka je već poslata"
 
-#: order/models.py:1957
+#: order/models.py:2010
 msgid "Shipment has no allocated stock items"
 msgstr "Isporuka nema alocirane stavke sa zaliha"
 
-#: order/models.py:2037
+#: order/models.py:2090
 msgid "Sales Order Extra Line"
 msgstr "Dodatne porudbžine naloga za prodaju"
 
-#: order/models.py:2066
+#: order/models.py:2119
 msgid "Sales Order Allocation"
 msgstr "Alokacije naloga za prodaju"
 
-#: order/models.py:2089 order/models.py:2091
+#: order/models.py:2142 order/models.py:2144
 msgid "Stock item has not been assigned"
 msgstr "Stavka sa zaliha nije dodeljena"
 
-#: order/models.py:2098
+#: order/models.py:2151
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Ne mogu se alocirati stavke sa zaliha porudbžini sa drugačijim delom"
 
-#: order/models.py:2101
+#: order/models.py:2154
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Ne mogu se alocirati zalihe porudbžini bez dela"
 
-#: order/models.py:2104
+#: order/models.py:2157
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Alocirana količina ne sme da pređe količinu zaliha"
 
-#: order/models.py:2123 order/serializers.py:1519
+#: order/models.py:2176 order/serializers.py:1519
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Količina mora biti 1 za serijalizovane stavke sa zaliha"
 
-#: order/models.py:2126
+#: order/models.py:2179
 msgid "Sales order does not match shipment"
 msgstr "Nalog za prodaju se ne poklapa sa isporukom"
 
-#: order/models.py:2127 plugin/base/barcodes/api.py:651
+#: order/models.py:2180 plugin/base/barcodes/api.py:651
 msgid "Shipment does not match sales order"
 msgstr "Isporuka se ne poklapa sa nalogom za prodaju"
 
-#: order/models.py:2135
+#: order/models.py:2188
 msgid "Line"
 msgstr "Porudbžina"
 
-#: order/models.py:2146
+#: order/models.py:2199
 msgid "Sales order shipment reference"
 msgstr "Referenca isporuke naloga za prodaju"
 
-#: order/models.py:2159 order/models.py:2558
+#: order/models.py:2212 order/models.py:2612
 msgid "Item"
 msgstr "Stavka"
 
-#: order/models.py:2160
+#: order/models.py:2213
 msgid "Select stock item to allocate"
 msgstr "Izaberi stavku sa zaliha za alokaciju"
 
-#: order/models.py:2169
+#: order/models.py:2222
 msgid "Enter stock allocation quantity"
 msgstr "Unesi količinu za alokaciju zaliha"
 
-#: order/models.py:2268
+#: order/models.py:2322
 msgid "Return Order reference"
 msgstr "Referenca naloga za vraćanje"
 
-#: order/models.py:2280
+#: order/models.py:2334
 msgid "Company from which items are being returned"
 msgstr "Kompanija čije stavke su vraćene"
 
-#: order/models.py:2293
+#: order/models.py:2347
 msgid "Return order status"
 msgstr "Status naloga za vraćanje"
 
-#: order/models.py:2516
+#: order/models.py:2570
 msgid "Return Order Line Item"
 msgstr "Vrati stavku porudbžine"
 
-#: order/models.py:2529
+#: order/models.py:2583
 msgid "Stock item must be specified"
 msgstr "Stavka sa zaliha mora biti određena"
 
-#: order/models.py:2533
+#: order/models.py:2587
 msgid "Return quantity exceeds stock quantity"
 msgstr "Količina vraćanja je premašila količinu zaliha"
 
-#: order/models.py:2538
+#: order/models.py:2592
 msgid "Return quantity must be greater than zero"
 msgstr "Količina vraćanja mora biti veća od nule"
 
-#: order/models.py:2543
+#: order/models.py:2597
 msgid "Invalid quantity for serialized stock item"
 msgstr "Nevažeća količina za serijalizovane stavke sa zaliha"
 
-#: order/models.py:2559
+#: order/models.py:2613
 msgid "Select item to return from customer"
 msgstr "Izaberi stavku za vraćanje od mušterije"
 
-#: order/models.py:2574
+#: order/models.py:2628
 msgid "Received Date"
 msgstr "Primljeno datuma"
 
-#: order/models.py:2575
+#: order/models.py:2629
 msgid "The date this this return item was received"
 msgstr "Datum kada je ova vraćena stavka primljena"
 
-#: order/models.py:2587
+#: order/models.py:2641
 msgid "Outcome"
 msgstr "Ishod"
 
-#: order/models.py:2588
+#: order/models.py:2642
 msgid "Outcome for this line item"
 msgstr "Ishod za ovu stavku porudžbine"
 
-#: order/models.py:2595
+#: order/models.py:2649
 msgid "Cost associated with return or repair for this line item"
 msgstr "Trošak asociran sa popravkom ili vraćanjem ove stavke porudžbine"
 
-#: order/models.py:2605
+#: order/models.py:2659
 msgid "Return Order Extra Line"
 msgstr "Doda"
 
@@ -5122,26 +5130,30 @@ msgid "This option must be selected"
 msgstr "Ova opcija mora biti selektovana"
 
 #: part/api.py:899
+msgid "Is Variant"
+msgstr ""
+
+#: part/api.py:907
 msgid "Is Revision"
 msgstr "Je revizija"
 
-#: part/api.py:909
+#: part/api.py:917
 msgid "Has Revisions"
 msgstr "Ima revizije"
 
-#: part/api.py:1100
+#: part/api.py:1108
 msgid "BOM Valid"
 msgstr "Spisak materijala validan"
 
-#: part/api.py:1762
+#: part/api.py:1770
 msgid "Assembly part is testable"
 msgstr "Deo sklopa se može testirati"
 
-#: part/api.py:1771
+#: part/api.py:1779
 msgid "Component part is testable"
 msgstr "Deo komponente se može testirati"
 
-#: part/api.py:1822
+#: part/api.py:1830
 msgid "Uses"
 msgstr "Koristi"
 
