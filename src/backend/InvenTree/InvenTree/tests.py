@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 import django.core.exceptions as django_exceptions
 from django.conf import settings
@@ -21,7 +22,6 @@ from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
-from zoneinfo import ZoneInfo
 
 import InvenTree.conversion
 import InvenTree.format

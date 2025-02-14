@@ -186,8 +186,9 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         """Construct a set of fields for this serializer."""
         return [
             'pk',
-            'creation_date',
             'created_by',
+            'creation_date',
+            'start_date',
             'target_date',
             'description',
             'line_items',
@@ -717,6 +718,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
             'quantity',
             'status',
             'batch_code',
+            'expiry_date',
             'serial_numbers',
             'packaging',
             'note',
@@ -763,6 +765,14 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         required=False,
         default='',
         allow_blank=True,
+    )
+
+    expiry_date = serializers.DateField(
+        label=_('Expiry Date'),
+        help_text=_('Enter expiry date for incoming stock items'),
+        required=False,
+        allow_null=True,
+        default=None,
     )
 
     serial_numbers = serializers.CharField(
@@ -940,7 +950,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         """Perform the actual database transaction to receive purchase order items."""
         data = self.validated_data
 
-        request = self.context['request']
+        request = self.context.get('request')
         order = self.context['order']
 
         items = data['items']
@@ -963,10 +973,11 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                         item['line_item'],
                         loc,
                         item['quantity'],
-                        request.user,
+                        request.user if request else None,
                         status=item['status'],
                         barcode=item.get('barcode', ''),
                         batch_code=item.get('batch_code', ''),
+                        expiry_date=item.get('expiry_date', None),
                         packaging=item.get('packaging', ''),
                         serials=item.get('serials', None),
                         notes=item.get('note', None),
@@ -1423,8 +1434,8 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         data = self.validated_data
 
-        request = self.context['request']
-        user = request.user
+        request = self.context.get('request')
+        user = request.user if request else None
 
         # Extract shipping date (defaults to today's date)
         now = current_date()
@@ -1561,10 +1572,10 @@ class SalesOrderCompleteSerializer(OrderAdjustSerializer):
 
     def save(self):
         """Save the serializer to complete the SalesOrder."""
-        request = self.context['request']
+        request = self.context.get('request')
         data = self.validated_data
 
-        user = getattr(request, 'user', None)
+        user = request.user if request else None
 
         self.order.ship_order(
             user, allow_incomplete_lines=str2bool(data.get('accept_incomplete', False))
@@ -2009,7 +2020,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     def save(self):
         """Saving this serializer marks the returned items as received."""
         order = self.context['order']
-        request = self.context['request']
+        request = self.context.get('request')
 
         data = self.validated_data
         items = data['items']
@@ -2022,7 +2033,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
                 order.receive_line_item(
                     line_item,
                     location,
-                    request.user,
+                    request.user if request else None,
                     note=data.get('note', ''),
                     status=item.get('status', None),
                 )

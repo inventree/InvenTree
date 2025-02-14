@@ -48,6 +48,12 @@ export interface ServerAPIProps {
   target: null | string;
   default_locale: null | string;
   django_admin: null | string;
+  customize: null | {
+    logo: string;
+    splash: string;
+    login_message: string;
+    navbar_message: string;
+  };
 }
 
 export interface AuthProps {
@@ -79,6 +85,7 @@ export interface Setting {
   units: string;
   choices: SettingChoice[];
   model_name: string | null;
+  model_filters: Record<string, any> | null;
   api_url: string | null;
   typ: SettingTyp;
   plugin?: string;

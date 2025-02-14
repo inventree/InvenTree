@@ -31,7 +31,6 @@ import stock.api
 import users.api
 from InvenTree.auth_override_views import CustomRegisterView
 from plugin.urls import get_plugin_urls
-from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import (
@@ -87,7 +86,6 @@ apipatterns = [
         ]),
     ),
     path('user/', include(users.api.user_urls)),
-    path('web/', include(web_api_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
     # Common endpoints endpoint
@@ -190,6 +188,7 @@ if settings.INVENTREE_ADMIN_ENABLED:
 
     urlpatterns += [
         path(f'{admin_url}/error_log/', include('error_report.urls')),
+        path(f'{admin_url}/doc/', include('django.contrib.admindocs.urls')),
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
     ]
 

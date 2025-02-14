@@ -345,9 +345,20 @@ class StockItemSerializer(
 
     export_exclude_fields = ['tags', 'tracking_items']
 
-    export_only_fields = ['part_pricing_min', 'part_pricing_max']
+    export_child_fields = [
+        'part_detail.name',
+        'part_detail.description',
+        'part_detail.IPN',
+        'part_detail.revision',
+        'part_detail.pricing_min',
+        'part_detail.pricing_max',
+        'location_detail.name',
+        'location_detail.pathstring',
+        'supplier_part_detail.SKU',
+        'supplier_part_detail.MPN',
+    ]
 
-    import_exclude_fields = ['use_pack_size', 'tags']
+    import_exclude_fields = ['use_pack_size', 'location_path']
 
     class Meta:
         """Metaclass options."""
@@ -360,8 +371,6 @@ class StockItemSerializer(
             'serial',
             'batch',
             'location',
-            'location_name',
-            'location_path',
             'belongs_to',
             'build',
             'consumed_by',
@@ -397,6 +406,7 @@ class StockItemSerializer(
             'expired',
             'installed_items',
             'child_items',
+            'location_path',
             'stale',
             'tracking_items',
             'tags',
@@ -404,9 +414,6 @@ class StockItemSerializer(
             'supplier_part_detail',
             'part_detail',
             'location_detail',
-            # Export only fields
-            'part_pricing_min',
-            'part_pricing_max',
         ]
 
         """
@@ -429,10 +436,11 @@ class StockItemSerializer(
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
         part_detail = kwargs.pop('part_detail', True)
-        location_detail = kwargs.pop('location_detail', False)
-        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
-        tests = kwargs.pop('tests', False)
+        location_detail = kwargs.pop('location_detail', True)
+        supplier_part_detail = kwargs.pop('supplier_part_detail', True)
         path_detail = kwargs.pop('path_detail', False)
+
+        tests = kwargs.pop('tests', False)
 
         super().__init__(*args, **kwargs)
 
@@ -464,10 +472,6 @@ class StockItemSerializer(
         read_only=True,
         label=_('Parent Item'),
         help_text=_('Parent stock item'),
-    )
-
-    location_name = serializers.CharField(
-        source='location.name', read_only=True, label=_('Location Name')
     )
 
     location_path = serializers.ListField(
@@ -507,7 +511,9 @@ class StockItemSerializer(
         """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
         queryset = queryset.prefetch_related(
             'location',
+            'allocations',
             'sales_order',
+            'sales_order_allocations',
             'purchase_order',
             Prefetch(
                 'part',
@@ -519,12 +525,17 @@ class StockItemSerializer(
             ),
             'parent',
             'part__category',
+            'part__supplier_parts',
+            'part__supplier_parts__purchase_order_line_items',
             'part__pricing_data',
+            'part__tags',
             'supplier_part',
             'supplier_part__part',
             'supplier_part__supplier',
             'supplier_part__manufacturer_part',
             'supplier_part__manufacturer_part__manufacturer',
+            'supplier_part__manufacturer_part__tags',
+            'supplier_part__purchase_order_line_items',
             'supplier_part__tags',
             'test_results',
             'customer',
@@ -596,7 +607,9 @@ class StockItemSerializer(
 
     # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = company_serializers.SupplierPartSerializer(
+        label=_('Supplier Part'),
         source='supplier_part',
+        brief=True,
         supplier_detail=False,
         manufacturer_detail=False,
         part_detail=False,
@@ -605,11 +618,11 @@ class StockItemSerializer(
     )
 
     part_detail = part_serializers.PartBriefSerializer(
-        source='part', many=False, read_only=True
+        label=_('Part'), source='part', many=False, read_only=True
     )
 
     location_detail = LocationBriefSerializer(
-        source='location', many=False, read_only=True
+        label=_('Location'), source='location', many=False, read_only=True
     )
 
     tests = StockItemTestResultSerializer(
@@ -649,23 +662,12 @@ class StockItemSerializer(
     purchase_order_reference = serializers.CharField(
         source='purchase_order.reference', read_only=True
     )
+
     sales_order_reference = serializers.CharField(
         source='sales_order.reference', read_only=True
     )
 
     tags = TagListSerializerField(required=False)
-
-    part_pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='part.pricing_data.overall_min',
-        read_only=True,
-        label=_('Minimum Pricing'),
-    )
-
-    part_pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='part.pricing_data.overall_max',
-        read_only=True,
-        label=_('Maximum Pricing'),
-    )
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -765,8 +767,8 @@ class SerializeStockItemSerializer(serializers.Serializer):
     def save(self):
         """Serialize stock item."""
         item = self.context['item']
-        request = self.context['request']
-        user = request.user
+        request = self.context.get('request')
+        user = request.user if request else None
 
         data = self.validated_data
 
@@ -1145,7 +1147,7 @@ class LocationSerializer(
 ):
     """Detailed information about a stock location."""
 
-    import_exclude_fields = ['tags']
+    import_exclude_fields = []
 
     class Meta:
         """Metaclass options."""
@@ -1188,6 +1190,9 @@ class LocationSerializer(
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
+
+        queryset = queryset.prefetch_related('tags')
+
         queryset = queryset.annotate(
             items=stock.filters.annotate_location_items(),
             sublocations=stock.filters.annotate_sub_locations(),
@@ -1568,18 +1573,18 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         help_text=_('StockItem primary key value'),
     )
 
-    def validate_pk(self, pk):
+    def validate_pk(self, stock_item: StockItem) -> StockItem:
         """Ensure the stock item is valid."""
         allow_out_of_stock_transfer = get_global_setting(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
-        if not allow_out_of_stock_transfer and not pk.is_in_stock(
+        if not allow_out_of_stock_transfer and not stock_item.is_in_stock(
             check_status=False, check_quantity=False
         ):
             raise ValidationError(_('Stock item is not in stock'))
 
-        return pk
+        return stock_item
 
     quantity = serializers.DecimalField(
         max_digits=15, decimal_places=5, min_value=Decimal(0), required=True

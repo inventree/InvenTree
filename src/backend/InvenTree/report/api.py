@@ -1,21 +1,17 @@
 """API functionality for the 'report' app."""
 
 from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
-from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.cache import never_cache
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions
 from rest_framework.generics import GenericAPIView
-from rest_framework.request import clone_request
 from rest_framework.response import Response
 
-import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.permissions
@@ -23,16 +19,9 @@ import report.helpers
 import report.models
 import report.serializers
 from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.exceptions import log_error
-from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import (
-    ListAPI,
-    ListCreateAPI,
-    RetrieveAPI,
-    RetrieveUpdateDestroyAPI,
-)
+from InvenTree.filters import InvenTreeOrderingFilter, InvenTreeSearchFilter
+from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
-from plugin.registry import registry
 
 
 class TemplatePermissionMixin:
@@ -43,52 +32,6 @@ class TemplatePermissionMixin:
         permissions.IsAuthenticated,
         InvenTree.permissions.IsStaffOrReadOnly,
     ]
-
-
-@method_decorator(cache_page(5), name='dispatch')
-class TemplatePrintBase(RetrieveAPI):
-    """Base class for printing against templates."""
-
-    @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates."""
-        return super().dispatch(*args, **kwargs)
-
-    def check_permissions(self, request):
-        """Override request method to GET so that also non superusers can print using a post request."""
-        if request.method == 'POST':
-            request = clone_request(request, 'GET')
-        return super().check_permissions(request)
-
-    def post(self, request, *args, **kwargs):
-        """Respond as if a POST request was provided."""
-        return self.get(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        """GET action for a template printing endpoint.
-
-        - Items are expected to be passed as a list of valid IDs
-        """
-        # Extract a list of items to print from the queryset
-        item_ids = []
-
-        for value in request.query_params.get('items', '').split(','):
-            try:
-                item_ids.append(int(value))
-            except Exception:
-                pass
-
-        template = self.get_object()
-
-        items = template.get_model().objects.filter(pk__in=item_ids)
-
-        if len(items) == 0:
-            # At least one item must be provided
-            return Response(
-                {'error': _('No valid objects provided to template')}, status=400
-            )
-
-        return self.print(request, items)
 
 
 class ReportFilterBase(rest_filters.FilterSet):
@@ -256,31 +199,12 @@ class LabelPrint(GenericAPIView):
         ):
             plugin_serializer.is_valid(raise_exception=True)
 
-        # Create a new LabelOutput instance to print against
-        output = report.models.LabelOutput.objects.create(
-            template=template,
-            items=len(items_to_print),
-            plugin=plugin.slug,
-            user=request.user,
-            progress=0,
-            complete=False,
+        output = template.print(
+            items_to_print,
+            plugin,
+            options=(plugin_serializer.data if plugin_serializer else {}),
+            request=request,
         )
-
-        try:
-            plugin.before_printing()
-            plugin.print_labels(
-                template,
-                output,
-                items_to_print,
-                request,
-                printing_options=(plugin_serializer.data if plugin_serializer else {}),
-            )
-            plugin.after_printing()
-        except ValidationError as e:
-            raise (e)
-        except Exception as e:
-            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
-            raise ValidationError([_('Error printing label'), str(e)])
 
         output.refresh_from_db()
 
@@ -332,124 +256,7 @@ class ReportPrint(GenericAPIView):
 
     def print(self, template, items_to_print, request):
         """Print this report template against a number of provided items."""
-        outputs = []
-
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting(
-            'REPORT_DEBUG_MODE', cache=False
-        )
-
-        # Start with a default report name
-        report_name = 'report.pdf'
-
-        try:
-            # Merge one or more PDF files into a single download
-            for instance in items_to_print:
-                context = template.get_context(instance, request)
-                report_name = template.generate_filename(context)
-
-                output = template.render(instance, request)
-
-                if template.attach_to_model:
-                    # Attach the generated report to the model instance
-                    data = output.get_document().write_pdf()
-                    instance.create_attachment(
-                        attachment=ContentFile(data, report_name),
-                        comment=_('Report saved at time of printing'),
-                        upload_user=request.user,
-                    )
-
-                # Provide generated report to any interested plugins
-                for plugin in registry.with_mixin('report'):
-                    try:
-                        plugin.report_callback(self, instance, output, request)
-                    except Exception:
-                        InvenTree.exceptions.log_error(
-                            f'plugins.{plugin.slug}.report_callback'
-                        )
-
-                try:
-                    if debug_mode:
-                        outputs.append(template.render_as_string(instance, request))
-                    else:
-                        outputs.append(template.render(instance, request))
-                except TemplateDoesNotExist as e:
-                    template = str(e)
-                    if not template:
-                        template = template.template
-
-                    return Response(
-                        {
-                            'error': _(
-                                f"Template file '{template}' is missing or does not exist"
-                            )
-                        },
-                        status=400,
-                    )
-
-            if not report_name.endswith('.pdf'):
-                report_name += '.pdf'
-
-            if debug_mode:
-                """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-                data = '\n'.join(outputs)
-                report_name = report_name.replace('.pdf', '.html')
-            else:
-                """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-                pages = []
-
-                try:
-                    for output in outputs:
-                        doc = output.get_document()
-                        for page in doc.pages:
-                            pages.append(page)
-
-                    data = outputs[0].get_document().copy(pages).write_pdf()
-
-                except TemplateDoesNotExist as e:
-                    template = str(e)
-
-                    if not template:
-                        template = template.template
-
-                    return Response(
-                        {
-                            'error': _(
-                                f"Template file '{template}' is missing or does not exist"
-                            )
-                        },
-                        status=400,
-                    )
-
-        except Exception as exc:
-            # Log the exception to the database
-            if InvenTree.helpers.str2bool(
-                common.models.InvenTreeSetting.get_setting(
-                    'REPORT_LOG_ERRORS', cache=False
-                )
-            ):
-                log_error(request.path)
-
-            # Re-throw the exception to the client as a DRF exception
-            raise ValidationError({
-                'error': 'Report printing failed',
-                'detail': str(exc),
-                'path': request.path,
-            })
-
-        # Generate a report output object
-        # TODO: This should be moved to a separate function
-        # TODO: Allow background printing of reports, with progress reporting
-        output = report.models.ReportOutput.objects.create(
-            template=template,
-            items=len(items_to_print),
-            user=request.user,
-            progress=100,
-            complete=True,
-            output=ContentFile(data, report_name),
-        )
+        output = template.print(items_to_print, request)
 
         return Response(
             report.serializers.ReportOutputSerializer(output).data, status=201
@@ -502,14 +309,26 @@ class ReportAssetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class LabelOutputList(TemplatePermissionMixin, BulkDeleteMixin, ListAPI):
+class TemplateOutputMixin:
+    """Mixin class for template output API endpoints."""
+
+    filter_backends = [InvenTreeOrderingFilter]
+    ordering_fields = ['created', 'model_type', 'user']
+    ordering_field_aliases = {'model_type': 'template__model_type'}
+
+
+class LabelOutputList(
+    TemplatePermissionMixin, TemplateOutputMixin, BulkDeleteMixin, ListAPI
+):
     """List endpoint for LabelOutput objects."""
 
     queryset = report.models.LabelOutput.objects.all()
     serializer_class = report.serializers.LabelOutputSerializer
 
 
-class ReportOutputList(TemplatePermissionMixin, BulkDeleteMixin, ListAPI):
+class ReportOutputList(
+    TemplatePermissionMixin, TemplateOutputMixin, BulkDeleteMixin, ListAPI
+):
     """List endpoint for ReportOutput objects."""
 
     queryset = report.models.ReportOutput.objects.all()

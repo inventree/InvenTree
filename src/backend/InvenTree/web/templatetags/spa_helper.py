@@ -38,13 +38,13 @@ def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
         # Final check - fail if manifest file not found
         if not manifest.exists():
             logger.error('Manifest file not found')
-            return
+            return 'NOT_FOUND'
 
     try:
         manifest_data = json.load(manifest.open())
     except (TypeError, json.decoder.JSONDecodeError):
         logger.exception('Failed to parse manifest file')
-        return
+        return ''
 
     return_string = ''
     # JS (based on index.html file as entrypoint)

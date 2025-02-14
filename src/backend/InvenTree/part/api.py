@@ -895,6 +895,14 @@ class PartFilter(rest_filters.FilterSet):
         model = Part
         fields = ['revision_of']
 
+    is_variant = rest_filters.BooleanFilter(
+        label=_('Is Variant'), method='filter_is_variant'
+    )
+
+    def filter_is_variant(self, queryset, name, value):
+        """Filter by whether the Part is a variant or not."""
+        return queryset.filter(variant_of__isnull=not str2bool(value))
+
     is_revision = rest_filters.BooleanFilter(
         label=_('Is Revision'), method='filter_is_revision'
     )
@@ -1863,7 +1871,6 @@ class BomMixin:
         """Return the queryset object for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = self.get_serializer_class().setup_eager_loading(queryset)
         queryset = self.get_serializer_class().annotate_queryset(queryset)
 
         return queryset

@@ -25,6 +25,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
+import { IconCalendarExclamation } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -49,7 +51,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
-
+import { useGlobalSettingsState } from '../states/SettingsState';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
@@ -145,6 +147,8 @@ export function usePurchaseOrderFields({
   supplierId?: number;
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {
@@ -165,6 +169,9 @@ export function usePurchaseOrderFields({
       },
       order_currency: {
         icon: <IconCoins />
+      },
+      start_date: {
+        icon: <IconCalendar />
       },
       target_date: {
         icon: <IconCalendar />
@@ -215,8 +222,12 @@ export function usePurchaseOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId, supplierId]);
+  }, [duplicateOrderId, supplierId, globalSettings]);
 }
 
 /**
@@ -245,6 +256,8 @@ function LineItemFormRow({
     () => record.part_detail?.trackable ?? false,
     [record]
   );
+
+  const settings = useGlobalSettingsState();
 
   useEffect(() => {
     if (!!record.destination) {
@@ -295,6 +308,23 @@ function LineItemFormRow({
         part: record?.supplier_part_detail?.part,
         quantity: props.item.quantity
       });
+    }
+  });
+
+  const [expiryDateOpen, expiryDateHandlers] = useDisclosure(false, {
+    onOpen: () => {
+      // check the default part expiry. Assume expiry is relative to today
+      const defaultExpiry = record.part_detail?.default_expiry;
+      if (defaultExpiry !== undefined && defaultExpiry > 0) {
+        props.changeFn(
+          props.idx,
+          'expiry_date',
+          dayjs().add(defaultExpiry, 'day').format('YYYY-MM-DD')
+        );
+      }
+    },
+    onClose: () => {
+      props.changeFn(props.idx, 'expiry_date', undefined);
     }
   });
 
@@ -440,6 +470,16 @@ function LineItemFormRow({
               tooltipAlignment='top'
               variant={batchOpen ? 'filled' : 'transparent'}
             />
+            {settings.isSet('STOCK_ENABLE_EXPIRY') && (
+              <ActionButton
+                size='sm'
+                onClick={() => expiryDateHandlers.toggle()}
+                icon={<IconCalendarExclamation />}
+                tooltip={t`Set Expiry Date`}
+                tooltipAlignment='top'
+                variant={expiryDateOpen ? 'filled' : 'transparent'}
+              />
+            )}
             <ActionButton
               size='sm'
               icon={<InvenTreeIcon icon='packaging' />}
@@ -586,6 +626,21 @@ function LineItemFormRow({
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />
+      {settings.isSet('STOCK_ENABLE_EXPIRY') && (
+        <TableFieldExtraRow
+          visible={expiryDateOpen}
+          onValueChange={(value) =>
+            props.changeFn(props.idx, 'expiry_date', value)
+          }
+          fieldDefinition={{
+            field_type: 'date',
+            label: t`Expiry Date`,
+            description: t`Enter an expiry date for received items`,
+            value: props.item.expiry_date
+          }}
+          error={props.rowErrors?.expiry_date?.message}
+        />
+      )}
       <TableFieldExtraRow
         visible={packagingOpen}
         onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
@@ -672,6 +727,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
           line_item: elem.pk,
           location: elem.destination ?? elem.destination_detail?.pk ?? null,
           quantity: elem.quantity - elem.received,
+          expiry_date: null,
           batch_code: '',
           serial_numbers: '',
           status: 10,

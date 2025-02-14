@@ -72,6 +72,8 @@ def extract_column_names(data_file) -> list:
     headers = []
 
     for idx, header in enumerate(data.headers):
+        header = header.strip()
+
         if header:
             headers.append(header)
         else:
@@ -81,18 +83,24 @@ def extract_column_names(data_file) -> list:
     return headers
 
 
-def extract_rows(data_file) -> list:
-    """Extract rows from the data file.
+def get_field_label(field) -> str:
+    """Return the label for a field in a serializer class.
 
-    Each returned row is a dictionary of column_name: value pairs.
+    Check for labels in the following order of descending priority:
+
+    - The serializer class has a 'label' specified for the field
+    - The underlying model has a 'verbose_name' specified
+    - The field name is used as the label
+
+    Arguments:
+        field: Field instance from a serializer class
+
+    Returns:
+        str: Field label
     """
-    data = load_data_file(data_file)
+    if field and (label := getattr(field, 'label', None)):
+        return label
 
-    headers = data.headers
+    # TODO: Check if the field is a model field
 
-    rows = []
-
-    for row in data:
-        rows.append(dict(zip(headers, row)))
-
-    return rows
+    return None

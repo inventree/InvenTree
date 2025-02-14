@@ -22,8 +22,12 @@ export default function DateField({
     fieldState: { error }
   } = controller;
 
-  const valueFormat =
-    definition.field_type == 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss';
+  const valueFormat = useMemo(() => {
+    // Determine the format based on the field type
+    return definition.field_type == 'date'
+      ? 'YYYY-MM-DD'
+      : 'YYYY-MM-DD HH:mm:ss';
+  }, [definition.field_type]);
 
   const onChange = useCallback(
     (value: any) => {
@@ -31,12 +35,13 @@ export default function DateField({
       if (value) {
         value = value.toString();
         value = dayjs(value).format(valueFormat);
+        value = value.toString().split('T')[0];
       }
 
       field.onChange(value);
       definition.onValueChange?.(value);
     },
-    [field.onChange, definition]
+    [field.onChange, definition, valueFormat]
   );
 
   const dateValue: Date | null = useMemo(() => {
@@ -62,7 +67,7 @@ export default function DateField({
       ref={field.ref}
       type={undefined}
       error={definition.error ?? error?.message}
-      value={dateValue ?? null}
+      value={dateValue}
       clearable={!definition.required}
       onChange={onChange}
       valueFormat={valueFormat}

@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import django.conf.locale
 import django.core.exceptions
@@ -21,7 +22,6 @@ from django.http import Http404
 
 import structlog
 from dotenv import load_dotenv
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -70,7 +70,7 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.joinpath('VERSION')
+version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
 if version_file.exists():
     print('load version from file')
     load_dotenv(version_file)
@@ -83,11 +83,13 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 JSON_LOG = get_boolean_setting('INVENTREE_JSON_LOG', 'json_log', False)
 WRITE_LOG = get_boolean_setting('INVENTREE_WRITE_LOG', 'write_log', False)
+CONSOLE_LOG = get_boolean_setting('INVENTREE_CONSOLE_LOG', 'console_log', True)
 
 logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(message)s')
 
 if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     LOG_LEVEL = 'WARNING'  # pragma: no cover
+DEFAULT_LOG_HANDLER = ['console'] if CONSOLE_LOG else []
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -114,10 +116,12 @@ LOGGING = {
     },
     'handlers': {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'plain_console'}
-    },
+    }
+    if CONSOLE_LOG
+    else {},
     'loggers': {
-        'django_structlog': {'handlers': ['console'], 'level': LOG_LEVEL},
-        'inventree': {'handlers': ['console'], 'level': LOG_LEVEL},
+        'django_structlog': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
+        'inventree': {'handlers': DEFAULT_LOG_HANDLER, 'level': LOG_LEVEL},
     },
 }
 
@@ -129,14 +133,14 @@ if WRITE_LOG and JSON_LOG:  # pragma: no cover
         'filename': str(BASE_DIR.joinpath('logs.json')),
         'formatter': 'json_formatter',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 elif WRITE_LOG:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
         'filename': str(BASE_DIR.joinpath('logs.log')),
         'formatter': 'key_value',
     }
-    LOGGING['loggers']['django_structlog']['handlers'] += ['log_file']
+    DEFAULT_LOG_HANDLER.append('log_file')
 
 structlog.configure(
     processors=[
@@ -167,7 +171,7 @@ SECRET_KEY = config.get_secret_key()
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
-# The filesystem location for uploaded meadia files
+# The filesystem location for uploaded media files
 MEDIA_ROOT = config.get_media_dir()
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -251,6 +255,7 @@ INVENTREE_ADMIN_URL = get_setting(
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
+    'django.contrib.admindocs',
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -326,6 +331,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+        'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
     ],
 )
@@ -377,7 +383,7 @@ if LDAP_AUTH:
             LOGGING['loggers'] = {}
         LOGGING['loggers']['django_auth_ldap'] = {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': DEFAULT_LOG_HANDLER,
         }
 
     # get global options from dict and use ldap.OPT_* as keys and values
@@ -1206,7 +1212,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
 )
 
 # Only allow CORS access to the following URL endpoints
-CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
+CORS_URLS_REGEX = r'^/(api|auth|media|plugin|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
@@ -1284,7 +1290,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
 
 if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
     if SITE_URL and SITE_URL.startswith('https://'):
-        # auto-detect HTTPS prtoocol
+        # auto-detect HTTPS protocol
         ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
     else:
         # default to http
@@ -1355,7 +1361,7 @@ MARKDOWNIFY = {
     }
 }
 
-# Ignore these error typeps for in-database error logging
+# Ignore these error types for in-database error logging
 IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
@@ -1414,7 +1420,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuratino for API schema generation
+# Configuration for API schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',

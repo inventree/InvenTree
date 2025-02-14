@@ -169,6 +169,20 @@ export default function PricingOverviewPanel({
   const overviewData: PricingOverviewEntry[] = useMemo(() => {
     return [
       {
+        name: panelOptions.override,
+        title: t`Override Pricing`,
+        icon: <IconExclamationCircle />,
+        min_value: pricing?.override_min,
+        max_value: pricing?.override_max
+      },
+      {
+        name: panelOptions.overall,
+        title: t`Overall Pricing`,
+        icon: <IconReportAnalytics />,
+        min_value: pricing?.overall_min,
+        max_value: pricing?.overall_max
+      },
+      {
         name: panelOptions.internal,
         title: t`Internal Pricing`,
         icon: <IconList />,
@@ -216,20 +230,6 @@ export default function PricingOverviewPanel({
         icon: <IconTriangleSquareCircle />,
         min_value: pricing?.sale_history_min,
         max_value: pricing?.sale_history_max
-      },
-      {
-        name: panelOptions.override,
-        title: t`Override Pricing`,
-        icon: <IconExclamationCircle />,
-        min_value: pricing?.override_min,
-        max_value: pricing?.override_max
-      },
-      {
-        name: panelOptions.overall,
-        title: t`Overall Pricing`,
-        icon: <IconReportAnalytics />,
-        min_value: pricing?.overall_min,
-        max_value: pricing?.overall_max
       }
     ].filter((entry) => {
       return !(entry.min_value == null || entry.max_value == null);
@@ -240,7 +240,7 @@ export default function PricingOverviewPanel({
     <>
       {editPricing.modal}
       <Stack gap='xs'>
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Stack gap='xs'>
             <Paper p='xs'>
               <Group justify='space-between' wrap='nowrap'>

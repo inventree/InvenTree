@@ -7,6 +7,9 @@ git config --global --add safe.directory /home/inventree
 python3 -m venv /home/inventree/dev/venv --system-site-packages --upgrade-deps
 . /home/inventree/dev/venv/bin/activate
 
+# Ensure the correct invoke is available
+pip3 install invoke --ignore-installed -U
+
 # Run initial InvenTree server setup
 invoke update -s
 

@@ -1,7 +1,7 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django<5.0                              # Django package
 coreapi                                 # API documentation for djangorestframework
-cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
+cryptography>=44.0.0                    # Core cryptographic functionality
 django-allauth[openid,saml]               # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
@@ -33,6 +33,7 @@ djangorestframework-simplejwt[crypto]   # JWT authentication
 django-xforwardedfor-middleware         # IP forwarding metadata
 dj-rest-auth==7.0.0                     # Authentication API endpoints # FIXED 2024-12-22 due to https://github.com/inventree/InvenTree/issues/8707
 dulwich                                 # pure Python git integration
+docutils                                # Documentation utilities for auto admin docs
 drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server

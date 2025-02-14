@@ -71,6 +71,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     model_name = serializers.CharField(read_only=True)
 
+    model_filters = serializers.DictField(read_only=True)
+
     api_url = serializers.CharField(read_only=True)
 
     value = SettingsValueField(allow_null=True)
@@ -185,6 +187,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'type',
                 'choices',
                 'model_name',
+                'model_filters',
                 'api_url',
                 'typ',
                 'required',
@@ -251,8 +254,8 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                 target['link'] = obj.target_object.get_absolute_url()
             else:
                 # check if user is staff - link to admin
-                request = self.context['request']
-                if request.user and request.user.is_staff:
+                request = self.context.get('request')
+                if request and request.user and request.user.is_staff:
                     meta = obj.target_object._meta
 
                     try:

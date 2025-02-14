@@ -58,6 +58,7 @@ import { StockItemTable } from '../../tables/stock/StockItemTable';
 export type CompanyDetailProps = {
   title: string;
   breadcrumbs: Breadcrumb[];
+  last_crumb_url: string;
 };
 
 /**
@@ -145,22 +146,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-              src={company.image}
-              pk={company.pk}
-              refresh={refreshInstance}
-              imageActions={{
-                uploadFile: true,
-                downloadImage: true,
-                deleteFile: true
-              }}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.purchase_order}
+            apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
+            src={company.image}
+            pk={company.pk}
+            refresh={refreshInstance}
+            imageActions={{
+              uploadFile: true,
+              downloadImage: true,
+              deleteFile: true
+            }}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable item={company} fields={tl} />
           </Grid.Col>
         </Grid>
@@ -330,6 +329,12 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             actions={companyActions}
             imageUrl={company.image}
             breadcrumbs={props.breadcrumbs}
+            lastCrumb={[
+              {
+                name: company.name,
+                url: `${props.last_crumb_url}/${company.pk}/`
+              }
+            ]}
             badges={badges}
             editAction={editCompany.open}
             editEnabled={user.hasChangePermission(ModelType.company)}
