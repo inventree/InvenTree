@@ -893,7 +893,7 @@ class BaseInvenTreeSetting(models.Model):
         """Check if this setting references a model instance in the database."""
         return self.model_name() is not None
 
-    def model_name(self) -> str | None:
+    def model_name(self) -> str:
         """Return the model name associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()
@@ -901,7 +901,7 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
-    def model_filters(self) -> dict | None:
+    def model_filters(self) -> dict:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
             self.key, **self.get_filters_for_instance()
