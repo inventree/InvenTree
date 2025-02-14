@@ -270,6 +270,12 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'is_variant',
+      label: t`Is Variant`,
+      description: t`Filter by parts which are variants`,
+      type: 'boolean'
+    },
+    {
       name: 'is_revision',
       label: t`Is Revision`,
       description: t`Filter by parts which are revisions`

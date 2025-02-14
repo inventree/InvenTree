@@ -2560,24 +2560,27 @@ msgstr "Quantity"
 #~ msgid "{0} updated successfully"
 #~ msgstr "{0} updated successfully"
 
-#: src/components/settings/SettingList.tsx:69
+#: src/components/settings/SettingList.tsx:71
 msgid "Edit Setting"
 msgstr "Edit Setting"
 
-#: src/components/settings/SettingList.tsx:81
-#: src/components/settings/SettingList.tsx:111
-msgid "Setting {0} updated successfully"
-msgstr "Setting {0} updated successfully"
+#: src/components/settings/SettingList.tsx:84
+msgid "Setting {key} updated successfully"
+msgstr "Setting {key} updated successfully"
 
-#: src/components/settings/SettingList.tsx:110
+#: src/components/settings/SettingList.tsx:113
 msgid "Setting updated"
 msgstr "Setting updated"
 
-#: src/components/settings/SettingList.tsx:120
+#: src/components/settings/SettingList.tsx:114
+msgid "Setting {0} updated successfully"
+msgstr "Setting {0} updated successfully"
+
+#: src/components/settings/SettingList.tsx:123
 msgid "Error editing setting"
 msgstr "Error editing setting"
 
-#: src/components/settings/SettingList.tsx:165
+#: src/components/settings/SettingList.tsx:168
 msgid "No settings specified"
 msgstr "No settings specified"
 
@@ -3037,7 +3040,7 @@ msgstr "Please correct the errors in the selected parts"
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
 #: src/tables/build/BuildLineTable.tsx:649
-#: src/tables/part/PartTable.tsx:350
+#: src/tables/part/PartTable.tsx:356
 #: src/tables/sales/SalesOrderLineItemTable.tsx:326
 msgid "Order Parts"
 msgstr "Order Parts"
@@ -3615,7 +3618,7 @@ msgstr "Stock items allocated"
 #: src/pages/part/CategoryDetail.tsx:122
 #: src/pages/part/PartDetail.tsx:384
 #: src/tables/part/PartCategoryTable.tsx:90
-#: src/tables/part/PartTable.tsx:296
+#: src/tables/part/PartTable.tsx:302
 msgid "Subscribed"
 msgstr "Subscribed"
 
@@ -5874,7 +5877,7 @@ msgstr "Keywords"
 #: src/pages/part/PartDetail.tsx:257
 #: src/tables/bom/BomTable.tsx:325
 #: src/tables/build/BuildLineTable.tsx:293
-#: src/tables/part/PartTable.tsx:290
+#: src/tables/part/PartTable.tsx:296
 #: src/tables/sales/SalesOrderLineItemTable.tsx:127
 msgid "Available Stock"
 msgstr "Available Stock"
@@ -6062,8 +6065,8 @@ msgid "Edit Part"
 msgstr "Edit Part"
 
 #: src/pages/part/PartDetail.tsx:832
-#: src/tables/part/PartTable.tsx:333
-#: src/tables/part/PartTable.tsx:362
+#: src/tables/part/PartTable.tsx:339
+#: src/tables/part/PartTable.tsx:368
 msgid "Add Part"
 msgstr "Add Part"
 
@@ -6102,7 +6105,7 @@ msgid "Order Stock"
 msgstr "Order Stock"
 
 #: src/pages/part/PartDetail.tsx:938
-#: src/tables/part/PartTable.tsx:345
+#: src/tables/part/PartTable.tsx:351
 msgid "Part Actions"
 msgstr "Part Actions"
 
@@ -7410,7 +7413,7 @@ msgid "Show consumable items"
 msgstr "Show consumable items"
 
 #: src/tables/bom/BomTable.tsx:360
-#: src/tables/part/PartTable.tsx:284
+#: src/tables/part/PartTable.tsx:290
 msgid "Has Pricing"
 msgstr "Has Pricing"
 
@@ -8467,42 +8470,50 @@ msgid "Filter by parts which are templates"
 msgstr "Filter by parts which are templates"
 
 #: src/tables/part/PartTable.tsx:274
+msgid "Is Variant"
+msgstr "Is Variant"
+
+#: src/tables/part/PartTable.tsx:275
+msgid "Filter by parts which are variants"
+msgstr "Filter by parts which are variants"
+
+#: src/tables/part/PartTable.tsx:280
 msgid "Is Revision"
 msgstr "Is Revision"
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:281
 msgid "Filter by parts which are revisions"
 msgstr "Filter by parts which are revisions"
 
-#: src/tables/part/PartTable.tsx:279
+#: src/tables/part/PartTable.tsx:285
 msgid "Has Revisions"
 msgstr "Has Revisions"
 
-#: src/tables/part/PartTable.tsx:280
+#: src/tables/part/PartTable.tsx:286
 msgid "Filter by parts which have revisions"
 msgstr "Filter by parts which have revisions"
 
-#: src/tables/part/PartTable.tsx:285
+#: src/tables/part/PartTable.tsx:291
 msgid "Filter by parts which have pricing information"
 msgstr "Filter by parts which have pricing information"
 
-#: src/tables/part/PartTable.tsx:291
+#: src/tables/part/PartTable.tsx:297
 msgid "Filter by parts which have available stock"
 msgstr "Filter by parts which have available stock"
 
-#: src/tables/part/PartTable.tsx:297
+#: src/tables/part/PartTable.tsx:303
 msgid "Filter by parts to which the user is subscribed"
 msgstr "Filter by parts to which the user is subscribed"
 
-#: src/tables/part/PartTable.tsx:302
+#: src/tables/part/PartTable.tsx:308
 msgid "Has Stocktake"
 msgstr "Has Stocktake"
 
-#: src/tables/part/PartTable.tsx:303
+#: src/tables/part/PartTable.tsx:309
 msgid "Filter by parts which have stocktake information"
 msgstr "Filter by parts which have stocktake information"
 
-#: src/tables/part/PartTable.tsx:352
+#: src/tables/part/PartTable.tsx:358
 msgid "Order selected parts"
 msgstr "Order selected parts"
 
