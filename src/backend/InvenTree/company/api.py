@@ -7,8 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 
 import part.models
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.exporter import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI

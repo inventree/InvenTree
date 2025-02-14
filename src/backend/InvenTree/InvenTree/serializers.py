@@ -25,6 +25,8 @@ from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
 from common.currency import currency_code_default, currency_code_mappings
+from importer.mixins import DataImportSerializerMixin
+from InvenTree.exporter import DataExportSerializerMixin
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
@@ -917,3 +919,9 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             raise ValidationError(_('Failed to download image from remote URL'))
 
         return url
+
+
+class DataImportExportSerializerMixin(
+    DataImportSerializerMixin, DataExportSerializerMixin
+):
+    """Mixin class for adding data import/export functionality to a DRF serializer."""

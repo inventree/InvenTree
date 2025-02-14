@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 import common.models
 import common.serializers
-from importer.mixins import DataExportViewMixin
+from InvenTree.exporter import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly

@@ -90,8 +90,14 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug, active=None):
-        """Lookup plugin by slug (unique key)."""
+    def get_plugin(self, slug, active=None, with_mixin=None):
+        """Lookup plugin by slug (unique key).
+
+        Arguments:
+            slug {str}: The slug (unique key) of the plugin
+            active {bool, None}: Filter by 'active' status of plugin. Defaults to None.
+            with_mixin {str, None}: Filter by mixin. Defaults to None.
+        """
         # Check if the registry needs to be reloaded
         self.check_reload()
 
@@ -102,6 +108,9 @@ class PluginsRegistry:
         plg = self.plugins[slug]
 
         if active is not None and active != plg.is_active():
+            return None
+
+        if with_mixin is not None and not plg.mixin_enabled(with_mixin):
             return None
 
         return plg

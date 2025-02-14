@@ -15,11 +15,11 @@ from taggit.serializers import TagListSerializerField
 import common.models as common_models
 import common.validators
 import generic.states.custom
-from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (
+    DataImportExportSerializerMixin,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
