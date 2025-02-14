@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 311
+INVENTREE_API_VERSION = 312
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v312 - 2025-02-15 : https://github.com/inventree/InvenTree/pull/9079
+    - Remove old API endpoints associated with legacy BOM import functionality
 
 v311 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9076
     - Adds "model_filters" attribute to settings API
