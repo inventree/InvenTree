@@ -11,6 +11,9 @@ INVENTREE_API_TEXT = """
 v311 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9076
     - Adds "model_filters" attribute to settings API
 
+v310 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9077
+    - Adds 'is_variant' filter to the Part list API
+
 v309 - 2025-02-02 : https://github.com/inventree/InvenTree/pull/9008
     - Bug fixes for the "Part" serializer
     - Fixes for data import API endpoints
