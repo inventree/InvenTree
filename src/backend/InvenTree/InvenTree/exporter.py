@@ -1,14 +1,20 @@
 """Code mixins for exporting data via the API."""
 
+from collections import OrderedDict
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 import tablib
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
 
+import InvenTree.exceptions
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
 from plugin.registry import registry
+
+logger = structlog.get_logger('inventree')
 
 
 class DataExportSerializerMixin:
@@ -120,7 +126,10 @@ class DataExportSerializerMixin:
 
     @classmethod
     def arrange_export_headers(cls, headers: list) -> list:
-        """Optional method to arrange the export headers."""
+        """Optional method to arrange the export headers.
+
+        By default, the headers are returned in the order they are provided.
+        """
         return headers
 
     def get_nested_value(self, row: dict, key: str) -> any:
@@ -154,26 +163,26 @@ class DataExportSerializerMixin:
         """Optional method to process a row before exporting it."""
         return row
 
-    def export_to_file(self, data, file_format):
-        """Export the queryset to a file in the specified format.
+    def generate_headers(self) -> OrderedDict:
+        """Generate a list of default headers for the exported data.
 
-        Arguments:
-            queryset: The queryset to export
-            data: The serialized dataset to export
-            file_format: The file format to export to
+        Returns an ordered dict of field names and their corresponding human-readable labels.
 
-        Returns:
-            File object containing the exported data
+        e.g.
+
+        {
+            'id': 'ID',
+            'name': 'Name',
+            ...
+        }
+
         """
-        # Extract all exportable fields from this serializer
         fields = self.get_exportable_fields()
-
         field_names = self.arrange_export_headers(list(fields.keys()))
 
-        # Extract human-readable field names
-        headers = []
+        headers = OrderedDict()
 
-        for field_name, field in fields.items():
+        for field_name in field_names:
             field = fields[field_name]
 
             label = getattr(field, 'label', field_name)
@@ -181,9 +190,27 @@ class DataExportSerializerMixin:
             if parent := getattr(field, 'parent_field', None):
                 label = f'{parent.label}.{label}'
 
-            headers.append(label)
+            headers[field_name] = label
 
-        dataset = tablib.Dataset(headers=headers)
+        return headers
+
+    def export_to_file(self, data, headers: OrderedDict, file_format):
+        """Export the queryset to a file in the specified format.
+
+        Arguments:
+            queryset: The queryset to export
+            data: The serialized dataset to export
+            headers: The headers to use for the exported data {field: label}
+            file_format: The file format to export to
+
+        Returns:
+            File object containing the exported data
+        """
+        field_names = list(headers.keys())
+        field_headers = list(headers.values())
+
+        # Create a new dataset with the provided header labels
+        dataset = tablib.Dataset(headers=field_headers)
 
         for row in data:
             row = self.process_row(row)
@@ -221,16 +248,55 @@ class DataExportViewMixin:
 
         queryset = self.filter_queryset(self.get_queryset())
 
+        data = None
         serializer = serializer_class(exporting=True)
         serializer.initial_data = queryset
 
-        # Export dataset with a second copy of the serializer
-        # This is because when we pass many=True, the returned class is a ListSerializer
-        data = serializer_class(queryset, many=True, exporting=True).data
-
+        # Construct 'defualt' headers (note: may be overridden by plugin)
+        headers = serializer.generate_headers()
         filename = serializer.get_exported_filename(export_format)
-        datafile = serializer.export_to_file(data, export_format)
 
+        if plugin:
+            # If a plugin is provided, it is responsible for exporting the data
+            # The returned data *must* be a list of dict objects
+            try:
+                data = plugin.export_data(
+                    queryset, serializer_class=serializer_class, headers=headers
+                )
+
+                if not isinstance(data, list):
+                    raise ValidationError(
+                        _('Data export plugin returned incorrect data format')
+                    )
+
+            except Exception:
+                InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.export_data')
+                raise ValidationError(_('Error occurred during data export'))
+
+            # Augment / update the headers (if required)
+            if hasattr(plugin, 'update_headers'):
+                try:
+                    headers = plugin.update_headers(headers)
+                except Exception:
+                    InvenTree.exceptions.log_error(
+                        f'plugins.{plugin.slug}.update_headers'
+                    )
+
+        else:
+            # By default, use the serializer to export the data
+
+            # Export dataset with a second copy of the serializer
+            # This is because when we pass many=True, the returned class is a ListSerializer
+            data = serializer_class(queryset, many=True, exporting=True).data
+
+        # Now, export the data to file
+        try:
+            datafile = serializer.export_to_file(data, headers, export_format)
+        except Exception:
+            InvenTree.exceptions.log_error('export_to_file')
+            raise ValidationError(_('Error occurred during data export'))
+
+        # Finally, return a file download object
         return DownloadFile(datafile, filename=filename)
 
     def get(self, request, *args, **kwargs):
@@ -241,9 +307,15 @@ class DataExportViewMixin:
             # Check if a data export plugin is specified
             plugin_slug = request.query_params.get('plugin', None)
 
-            plugin = registry.get_plugin(
-                plugin_slug, active=True, with_mixin='exporter'
-            )
+            if plugin_slug:
+                plugin = registry.get_plugin(
+                    plugin_slug, active=True, with_mixin='exporter'
+                )
+
+                if not plugin:
+                    logger.warning('Could not find matching plugin for %s', plugin_slug)
+            else:
+                plugin = None
 
             if export_format in GetExportFormats():
                 return self.export_data(export_format, plugin=plugin)
