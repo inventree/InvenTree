@@ -208,6 +208,7 @@ nav:
       - App Mixin: extend/plugins/app.md
       - Barcode Mixin: extend/plugins/barcode.md
       - Currency Mixin: extend/plugins/currency.md
+      - Data Export Mixin: extend/plugins/export.md
       - Event Mixin: extend/plugins/event.md
       - Icon Pack Mixin: extend/plugins/icon.md
       - Label Printing Mixin: extend/plugins/label.md
