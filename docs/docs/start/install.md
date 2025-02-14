@@ -107,7 +107,8 @@ source ./env/bin/activate
 The Python packages required by the InvenTree server must be installed into the virtual environment.
 
 ```
-pip install --require-hashes -U -r src/backend/requirements.txt
+pip install --upgrade --ignore-installed invoke
+invoke install
 ```
 
 This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).

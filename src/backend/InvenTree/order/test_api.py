@@ -255,7 +255,10 @@ class PurchaseOrderTest(OrderTest):
 
         order = models.PurchaseOrder.objects.get(pk=response.data['pk'])
 
-        self.assertEqual(order.reference, 'PO-92233720368547758089999999999999999')
+        # Check that the created_by field is set correctly
+        self.assertEqual(order.created_by.username, 'testuser')
+
+        self.assertEqual(order.reference, huge_number)
         self.assertEqual(order.reference_int, 0x7FFFFFFF)
 
     def test_po_reference_wildcard_default(self):
@@ -1406,6 +1409,11 @@ class SalesOrderTest(OrderTest):
 
         # Grab the PK for the newly created SalesOrder
         pk = response.data['pk']
+
+        # Basic checks against the newly created SalesOrder
+        so = models.SalesOrder.objects.get(pk=pk)
+        self.assertEqual(so.reference, 'SO-12345')
+        self.assertEqual(so.created_by.username, 'testuser')
 
         # Try to create a SO with identical reference (should fail)
         response = self.post(

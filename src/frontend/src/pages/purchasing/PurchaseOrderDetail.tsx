@@ -217,6 +217,13 @@ export default function PurchaseOrderDetail() {
         icon: 'reference',
         copy: true,
         hidden: !order.project_code
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
       }
     ];
 
@@ -225,6 +232,7 @@ export default function PurchaseOrderDetail() {
         type: 'date',
         name: 'creation_date',
         label: t`Creation Date`,
+        copy: true,
         icon: 'calendar'
       },
       {
@@ -240,6 +248,7 @@ export default function PurchaseOrderDetail() {
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !order.target_date
       },
       {
@@ -249,13 +258,6 @@ export default function PurchaseOrderDetail() {
         label: t`Completion Date`,
         copy: true,
         hidden: !order.complete_date
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !order.responsible
       }
     ];
 
@@ -483,7 +485,11 @@ export default function PurchaseOrderDetail() {
       {completeOrder.modal}
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
-      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <InstanceDetail
+        status={requestStatus}
+        loading={instanceQuery.isFetching}
+        requiredRole={UserRoles.purchase_order}
+      >
         <Stack gap='xs'>
           <PageDetail
             title={`${t`Purchase Order`}: ${order.reference}`}

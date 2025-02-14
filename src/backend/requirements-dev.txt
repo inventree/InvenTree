@@ -302,12 +302,7 @@ django==4.2.17 \
     --hash=sha256:6b56d834cc94c8b21a8f4e775064896be3b4a4ca387f2612d4406a5927cd2fdc
     # via
     #   -c src/backend/requirements.txt
-    #   django-admin-shell
     #   django-slowtests
-django-admin-shell==2.0.1 \
-    --hash=sha256:334a651e53ae4f59d0d279d7ede7dc5ed7a7733d4d093765b447dca5274c7b30 \
-    --hash=sha256:b129e282ebd581c2099c0504edf081259728b3a504b40c5784d0457b8cb41470
-    # via -r src/backend/requirements-dev.in
 django-querycount==0.8.3 \
     --hash=sha256:0782484e8a1bd29498fa0195a67106e47cdcc98fafe80cebb1991964077cb694
     # via -r src/backend/requirements-dev.in

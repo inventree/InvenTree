@@ -2,7 +2,6 @@
 
 import imghdr
 import io
-import logging
 import os
 from decimal import Decimal
 
@@ -15,6 +14,7 @@ from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework import serializers
@@ -56,7 +56,7 @@ from .models import (
     PartTestTemplate,
 )
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 @register_importer()
@@ -682,7 +682,7 @@ class PartSerializer(
     Used when displaying all details of a single component.
     """
 
-    import_exclude_fields = ['duplicate']
+    import_exclude_fields = ['duplicate', 'tags']
 
     class Meta:
         """Metaclass defining serializer fields."""
