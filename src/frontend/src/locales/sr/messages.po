@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 00:40\n"
+"PO-Revision-Date: 2025-02-14 08:19\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -2565,24 +2565,27 @@ msgstr "Količina"
 #~ msgid "{0} updated successfully"
 #~ msgstr "{0} updated successfully"
 
-#: src/components/settings/SettingList.tsx:69
+#: src/components/settings/SettingList.tsx:71
 msgid "Edit Setting"
 msgstr "Izmeni podešavanja"
 
-#: src/components/settings/SettingList.tsx:81
-#: src/components/settings/SettingList.tsx:111
-msgid "Setting {0} updated successfully"
-msgstr "Podešavanje {0} uspešno ažurirano"
+#: src/components/settings/SettingList.tsx:84
+msgid "Setting {key} updated successfully"
+msgstr ""
 
-#: src/components/settings/SettingList.tsx:110
+#: src/components/settings/SettingList.tsx:113
 msgid "Setting updated"
 msgstr "Podešavanje ažurirano"
 
-#: src/components/settings/SettingList.tsx:120
+#: src/components/settings/SettingList.tsx:114
+msgid "Setting {0} updated successfully"
+msgstr "Podešavanje {0} uspešno ažurirano"
+
+#: src/components/settings/SettingList.tsx:123
 msgid "Error editing setting"
 msgstr "Greška prilikom izmene podešavanja"
 
-#: src/components/settings/SettingList.tsx:165
+#: src/components/settings/SettingList.tsx:168
 msgid "No settings specified"
 msgstr "Podešavanje nije izabrano"
 
@@ -3042,7 +3045,7 @@ msgstr "Molimo ispravite greške u izabranim delovima"
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
 #: src/tables/build/BuildLineTable.tsx:649
-#: src/tables/part/PartTable.tsx:350
+#: src/tables/part/PartTable.tsx:356
 #: src/tables/sales/SalesOrderLineItemTable.tsx:326
 msgid "Order Parts"
 msgstr "Naruči delove"
@@ -3620,7 +3623,7 @@ msgstr "Stavke zaliha alocirane"
 #: src/pages/part/CategoryDetail.tsx:122
 #: src/pages/part/PartDetail.tsx:384
 #: src/tables/part/PartCategoryTable.tsx:90
-#: src/tables/part/PartTable.tsx:296
+#: src/tables/part/PartTable.tsx:302
 msgid "Subscribed"
 msgstr "Pretplaćeni"
 
@@ -5879,7 +5882,7 @@ msgstr "Ključne reči"
 #: src/pages/part/PartDetail.tsx:257
 #: src/tables/bom/BomTable.tsx:325
 #: src/tables/build/BuildLineTable.tsx:293
-#: src/tables/part/PartTable.tsx:290
+#: src/tables/part/PartTable.tsx:296
 #: src/tables/sales/SalesOrderLineItemTable.tsx:127
 msgid "Available Stock"
 msgstr "Dostupne zalihe"
@@ -6067,8 +6070,8 @@ msgid "Edit Part"
 msgstr "Izmeni deo"
 
 #: src/pages/part/PartDetail.tsx:832
-#: src/tables/part/PartTable.tsx:333
-#: src/tables/part/PartTable.tsx:362
+#: src/tables/part/PartTable.tsx:339
+#: src/tables/part/PartTable.tsx:368
 msgid "Add Part"
 msgstr "Dodaj deo"
 
@@ -6107,7 +6110,7 @@ msgid "Order Stock"
 msgstr "Naruči zalihe"
 
 #: src/pages/part/PartDetail.tsx:938
-#: src/tables/part/PartTable.tsx:345
+#: src/tables/part/PartTable.tsx:351
 msgid "Part Actions"
 msgstr "Akcije dela"
 
@@ -7415,7 +7418,7 @@ msgid "Show consumable items"
 msgstr "Prikaži potrošne stavke"
 
 #: src/tables/bom/BomTable.tsx:360
-#: src/tables/part/PartTable.tsx:284
+#: src/tables/part/PartTable.tsx:290
 msgid "Has Pricing"
 msgstr "Ima cenu"
 
@@ -8472,42 +8475,50 @@ msgid "Filter by parts which are templates"
 msgstr "Filtriraj delove koji su šabloni"
 
 #: src/tables/part/PartTable.tsx:274
+msgid "Is Variant"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:275
+msgid "Filter by parts which are variants"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:280
 msgid "Is Revision"
 msgstr "Je revizija"
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:281
 msgid "Filter by parts which are revisions"
 msgstr "Filtriraj delove koji su revizije"
 
-#: src/tables/part/PartTable.tsx:279
+#: src/tables/part/PartTable.tsx:285
 msgid "Has Revisions"
 msgstr "Ima revizije"
 
-#: src/tables/part/PartTable.tsx:280
+#: src/tables/part/PartTable.tsx:286
 msgid "Filter by parts which have revisions"
 msgstr "Filtriraj delove koji imaju revizije"
 
-#: src/tables/part/PartTable.tsx:285
+#: src/tables/part/PartTable.tsx:291
 msgid "Filter by parts which have pricing information"
 msgstr "Filtriraj delove koji imaju informaciju o ceni"
 
-#: src/tables/part/PartTable.tsx:291
+#: src/tables/part/PartTable.tsx:297
 msgid "Filter by parts which have available stock"
 msgstr "Filtriraj delove koji imaju dostupne zalihe"
 
-#: src/tables/part/PartTable.tsx:297
+#: src/tables/part/PartTable.tsx:303
 msgid "Filter by parts to which the user is subscribed"
 msgstr "Filtriraj delove na koje je korisnik pretplaćen"
 
-#: src/tables/part/PartTable.tsx:302
+#: src/tables/part/PartTable.tsx:308
 msgid "Has Stocktake"
 msgstr "Ima inventar"
 
-#: src/tables/part/PartTable.tsx:303
+#: src/tables/part/PartTable.tsx:309
 msgid "Filter by parts which have stocktake information"
 msgstr "Filtriraj delove koji imaju informacije o inventaru"
 
-#: src/tables/part/PartTable.tsx:352
+#: src/tables/part/PartTable.tsx:358
 msgid "Order selected parts"
 msgstr "Naruči izabrane delove"
 
