@@ -445,6 +445,7 @@ export function ApiForm({
     return api({
       method: method,
       url: url,
+      params: method.toLowerCase() == 'get' ? jsonData : undefined,
       data: hasFiles ? formData : jsonData,
       timeout: timeout,
       headers: {
