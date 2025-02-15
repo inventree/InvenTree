@@ -48,6 +48,9 @@ class DataExportSerializerMixin:
 
         super().__init__(*args, **kwargs)
 
+        # Cache the request object
+        self.request = self.context.get('request')
+
         if exporting:
             # Exclude fields which are not required for data export
             for field in self.get_export_exclude_fields(**kwargs):
@@ -229,6 +232,13 @@ class DataExportViewMixin:
 
     EXPORT_QUERY_PARAMETER = 'export'
 
+    def get_plugin(self, plugin_slug: str):
+        """Return the plugin instance for the specified slug."""
+        if plugin_slug:
+            return registry.get_plugin(plugin_slug, active=True, with_mixin='exporter')
+        else:
+            return None
+
     def export_data(self, export_format, plugin=None):
         """Export the data in the specified format.
 
@@ -247,9 +257,10 @@ class DataExportViewMixin:
             )
 
         queryset = self.filter_queryset(self.get_queryset())
+        context = self.get_serializer_context()
 
         data = None
-        serializer = serializer_class(exporting=True)
+        serializer = serializer_class(context=context, exporting=True)
         serializer.initial_data = queryset
 
         # Construct 'defualt' headers (note: may be overridden by plugin)
@@ -306,16 +317,10 @@ class DataExportViewMixin:
 
             # Check if a data export plugin is specified
             plugin_slug = request.query_params.get('plugin', None)
+            plugin = self.get_plugin(plugin_slug)
 
-            if plugin_slug:
-                plugin = registry.get_plugin(
-                    plugin_slug, active=True, with_mixin='exporter'
-                )
-
-                if not plugin:
-                    logger.warning('Could not find matching plugin for %s', plugin_slug)
-            else:
-                plugin = None
+            if plugin_slug and not plugin:
+                logger.warning('Could not find matching plugin for %s', plugin_slug)
 
             if export_format in GetExportFormats():
                 return self.export_data(export_format, plugin=plugin)
@@ -326,3 +331,22 @@ class DataExportViewMixin:
 
         # If the export query parameter is not present, return the default response
         return super().get(request, *args, **kwargs)
+
+    def get_serializer_context(self):
+        """Ensure the request object is passed to the serializer context."""
+        ctx = super().get_serializer_context()
+
+        if request := getattr(self, 'request', None):
+            ctx['request'] = request
+
+            # Add in the 'plugin' slug (if provided)
+            plugin_slug = request.data.get('plugin') or request.query_params.get(
+                'plugin'
+            )
+            ctx['plugin'] = self.get_plugin(plugin_slug)
+
+        # Add in the 'exporting' flag
+        if self.EXPORT_QUERY_PARAMETER in self.request.query_params:
+            ctx['exporting'] = True
+
+        return ctx
