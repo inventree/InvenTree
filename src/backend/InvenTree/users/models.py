@@ -139,7 +139,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     )
 
     @staticmethod
-    def sanitize_name(name: str):
+    def sanitize_name(name: str) -> str:
         """Sanitize the provide name value."""
         name = str(name).strip()
 
@@ -157,7 +157,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(description=_('Token'))
-    def token(self):
+    def token(self) -> str:
         """Provide a redacted version of the token.
 
         The *raw* key value should never be displayed anywhere!
@@ -172,7 +172,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
-    def expired(self):
+    def expired(self) -> bool:
         """Test if this token has expired."""
         return (
             self.expiry is not None and self.expiry < InvenTree.helpers.current_date()
@@ -180,7 +180,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Active'))
-    def active(self):
+    def active(self) -> bool:
         """Test if this token is active."""
         return not self.revoked and not self.expired
 
