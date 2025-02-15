@@ -238,12 +238,24 @@ class DataExportViewMixin:
 
     EXPORT_QUERY_PARAMETER = 'export'
 
-    def get_plugin(self, plugin_slug: str):
-        """Return the plugin instance for the specified slug."""
-        if plugin_slug:
-            return registry.get_plugin(plugin_slug, active=True, with_mixin='exporter')
-        else:
-            return None
+    def is_exporting(self) -> bool:
+        """Determine if the view is currently exporting data."""
+        if request := getattr(self, 'request', None):
+            return self.EXPORT_QUERY_PARAMETER in request.query_params
+
+    def get_plugin(self):
+        """Return the plugin instance associated with the export request."""
+        if request := getattr(self, 'request', None):
+            plugin_slug = request.data.get('plugin') or request.query_params.get(
+                'plugin'
+            )
+
+            if plugin_slug:
+                return registry.get_plugin(
+                    plugin_slug, active=True, with_mixin='exporter'
+                )
+
+        return None
 
     def get_plugin_serializer(self, plugin):
         """Return the serializer for the given plugin."""
@@ -333,11 +345,7 @@ class DataExportViewMixin:
             export_format = str(export_format).strip().lower()
 
             # Check if a data export plugin is specified
-            plugin_slug = request.query_params.get('plugin', None)
-            plugin = self.get_plugin(plugin_slug)
-
-            if plugin_slug and not plugin:
-                logger.warning('Could not find matching plugin for %s', plugin_slug)
+            plugin = self.get_plugin()
 
             if export_format in GetExportFormats():
                 return self.export_data(export_format, plugin=plugin)
@@ -353,25 +361,21 @@ class DataExportViewMixin:
         """Ensure the request object is passed to the serializer context."""
         ctx = super().get_serializer_context()
 
-        if request := getattr(self, 'request', None):
-            ctx['request'] = request
+        if self.is_exporting():
+            if request := getattr(self, 'request', None):
+                ctx['request'] = request
+                ctx['plugin'] = self.get_plugin()
 
-            # Add in the 'plugin' slug (if provided)
-            plugin_slug = request.data.get('plugin') or request.query_params.get(
-                'plugin'
-            )
-            ctx['plugin'] = self.get_plugin(plugin_slug)
-
-        # Add in the 'exporting' flag
-        if self.EXPORT_QUERY_PARAMETER in self.request.query_params:
             ctx['exporting'] = True
 
         return ctx
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer for the view."""
-        plugin = self.get_plugin()
-        plugin_serializer = self.get_plugin_serializer(plugin)
+        if self.is_exporting():
+            plugin = self.get_plugin()
+            plugin_serializer = self.get_plugin_serializer(plugin)
+            kwargs['plugin_serializer'] = plugin_serializer
+            kwargs['exporting'] = True
 
-        kwargs['plugin_serializer'] = plugin_serializer
         return super().get_serializer(*args, **kwargs)

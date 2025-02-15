@@ -1,6 +1,10 @@
 """Plugin class for custom data exporting."""
 
 from collections import OrderedDict
+from typing import Union
+
+from rest_framework import serializers
+from rest_framework.request import Request
 
 
 class DataExportMixin:
@@ -9,6 +13,8 @@ class DataExportMixin:
     When exporting data from the API, this mixin can be used to provide
     custom data export functionality.
     """
+
+    ExportOptionsSerializer = None
 
     class MixinMeta:
         """Meta options for this mixin."""
@@ -48,3 +54,22 @@ class DataExportMixin:
         Returns: The exported data
         """
         raise NotImplementedError('export_data method must be implemented by plugin!')
+
+    def get_export_options_serializer(
+        self, request: Request, *args, **kwargs
+    ) -> Union[serializers.Serializer, None]:
+        """Return a serializer class with dynamic export options for this plugin.
+
+        Arguments:
+            request: The request made to export data or interfering the available serializer fields via an OPTIONS request
+            *args, **kwargs: need to be passed to the serializer instance
+
+        Returns:
+            A class instance of a DRF serializer class, by default this an instance of
+            self.ExportOptionsSerializer using the *args, **kwargs if existing for this plugin
+        """
+        # By default, look for a class level attribute
+        serializer = getattr(self, 'ExportOptionsSerializer', None)
+
+        if serializer:
+            return serializer(*args, **kwargs)
