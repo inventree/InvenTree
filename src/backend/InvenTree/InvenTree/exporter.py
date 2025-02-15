@@ -238,10 +238,18 @@ class DataExportViewMixin:
 
     EXPORT_QUERY_PARAMETER = 'export'
 
+    def get_export_format(self) -> str:
+        """Return the export format specified in the request."""
+        if request := getattr(self, 'request', None):
+            return request.data.get(
+                self.EXPORT_QUERY_PARAMETER
+            ) or request.query_params.get(self.EXPORT_QUERY_PARAMETER)
+
+        return None
+
     def is_exporting(self) -> bool:
         """Determine if the view is currently exporting data."""
-        if request := getattr(self, 'request', None):
-            return self.EXPORT_QUERY_PARAMETER in request.query_params
+        return self.get_export_format() is not None
 
     def get_plugin(self):
         """Return the plugin instance associated with the export request."""
@@ -340,8 +348,8 @@ class DataExportViewMixin:
         return DownloadFile(datafile, filename=filename)
 
     def get(self, request, *args, **kwargs):
-        """Override the 'get' method to check for the export query parameter."""
-        if export_format := request.query_params.get(self.EXPORT_QUERY_PARAMETER, None):
+        """Override the 'post' method to check for the export query parameter."""
+        if export_format := self.get_export_format():
             export_format = str(export_format).strip().lower()
 
             # Check if a data export plugin is specified
