@@ -46,6 +46,12 @@ class DataExportSerializerMixin:
         """
         exporting = kwargs.pop('exporting', False)
 
+        # Plugin may supply extra serializer fields
+        if plugin_serializer := kwargs.pop('plugin_serializer', None):
+            for key, field in plugin_serializer.fields.items():
+                self.Meta.fields.append(key)
+                setattr(self, key, field)
+
         super().__init__(*args, **kwargs)
 
         # Cache the request object
@@ -239,6 +245,17 @@ class DataExportViewMixin:
         else:
             return None
 
+    def get_plugin_serializer(self, plugin):
+        """Return the serializer for the given plugin."""
+        if plugin and hasattr(plugin, 'get_export_options_serializer'):
+            return plugin.get_export_options_serializer(
+                self.request,
+                data=self.request.data,
+                context=self.get_serializer_context(),
+            )
+
+        return None
+
     def export_data(self, export_format, plugin=None):
         """Export the data in the specified format.
 
@@ -350,3 +367,11 @@ class DataExportViewMixin:
             ctx['exporting'] = True
 
         return ctx
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer for the view."""
+        plugin = self.get_plugin()
+        plugin_serializer = self.get_plugin_serializer(plugin)
+
+        kwargs['plugin_serializer'] = plugin_serializer
+        return super().get_serializer(*args, **kwargs)
