@@ -58,6 +58,11 @@ class PluginTagTests(TestCase):
         # mixin not existing
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
 
+    def test_mixin_available(self):
+        """Check that mixin_available works."""
+        self.assertEqual(plugin_tags.mixin_available('barcode'), True)
+        self.assertEqual(plugin_tags.mixin_available('wrong'), False)
+
     def test_tag_safe_url(self):
         """Test that the safe url tag works expected."""
         # right url
