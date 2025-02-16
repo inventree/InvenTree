@@ -401,9 +401,14 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def GetExportFormats():
+def GetExportOptions() -> list:
+    """Return a set of allowable import / export file formats."""
+    return [['csv', 'CSV'], ['xlsx', 'Excel'], ['tsv', 'TSV']]
+
+
+def GetExportFormats() -> list:
     """Return a list of allowable file formats for importing or exporting tabular data."""
-    return ['csv', 'xlsx', 'tsv', 'json']
+    return [opt[0] for opt in GetExportOptions()]
 
 
 def DownloadFile(

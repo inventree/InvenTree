@@ -1,6 +1,7 @@
 """Plugin mixin class for events."""
 
 from plugin.helpers import MixinNotImplementedError
+from plugin.plugin import PluginMixinEnum
 
 
 class EventMixin:
@@ -33,4 +34,4 @@ class EventMixin:
     def __init__(self):
         """Register the mixin."""
         super().__init__()
-        self.add_mixin('events', True, __class__)
+        self.add_mixin(PluginMixinEnum.EVENTS, True, __class__)

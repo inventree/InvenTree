@@ -6,6 +6,8 @@ from typing import Union
 from rest_framework import serializers
 from rest_framework.request import Request
 
+from plugin.plugin import PluginMixinEnum
+
 
 class DataExportMixin:
     """Mixin which provides ability to customize data exports.
@@ -24,7 +26,7 @@ class DataExportMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('exporter', True, __class__)
+        self.add_mixin(PluginMixinEnum.EXPORTER, True, __class__)
 
     def update_headers(self, headers: OrderedDict, **kwargs) -> OrderedDict:
         """Update the headers for the data export.

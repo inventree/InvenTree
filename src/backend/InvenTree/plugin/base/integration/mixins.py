@@ -3,6 +3,7 @@
 import structlog
 
 from plugin.helpers import MixinNotImplementedError
+from plugin.plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 
@@ -21,7 +22,7 @@ class NavigationMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('navigation', 'has_navigation', __class__)
+        self.add_mixin(PluginMixinEnum.NAVIATION, 'has_navigation', __class__)
         self.navigation = self.setup_navigation()
 
     def setup_navigation(self):
@@ -67,7 +68,7 @@ class SettingsContentMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('settingscontent', True, __class__)
+        self.add_mixin(PluginMixinEnum.SETTINGS_CONTENT, True, __class__)
 
     def get_settings_content(self, view, request):
         """This method *must* be implemented by the plugin class."""
