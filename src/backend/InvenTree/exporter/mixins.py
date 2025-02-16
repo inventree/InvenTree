@@ -11,7 +11,8 @@ from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
 
 import InvenTree.exceptions
-from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
+from exporter.serializers import DataExportOptionsSerializer
+from InvenTree.helpers import DownloadFile, GetExportFormats, current_date, str2bool
 from plugin.registry import registry
 
 logger = structlog.get_logger('inventree')
@@ -19,6 +20,8 @@ logger = structlog.get_logger('inventree')
 
 class DataExportSerializerMixin:
     """Mixin class for adding data export functionality to a DRF serializer.
+
+    Provides generic functionality to take the output of a serializer and export it to a file.
 
     Attributes:
         export_only_fields: List of field names which are only used during data export
@@ -46,16 +49,6 @@ class DataExportSerializerMixin:
         """
         exporting = kwargs.pop('exporting', False)
 
-        # Reset fields list to an initial state
-        # self.Meta.fields = ['export_format', 'export_plugin']
-
-        # Plugin may supply extra serializer fields
-        if plugin_serializer := kwargs.pop('plugin_serializer', None):
-            print('plugin serializer')
-            for key, field in plugin_serializer.fields.items():
-                self.Meta.fields.append(key)
-                setattr(self, key, field)
-
         super().__init__(*args, **kwargs)
 
         # Cache the request object
@@ -69,18 +62,6 @@ class DataExportSerializerMixin:
             # Exclude fields which are only used for data export
             for field in self.get_export_only_fields(**kwargs):
                 self.fields.pop(field, None)
-
-    # export_format = serializers.ChoiceField(
-    #     choices=[(opt, opt) for opt in GetExportFormats()],
-    #     required=False,
-    #     help_text=_('Export format for the data'),
-    # )
-
-    # export_plugin = serializers.ChoiceField(
-    #     choices=[],
-    #     required=False,
-    #     help_text=_('Export plugin to use for data export'),
-    # )
 
     def get_exportable_fields(self) -> dict:
         """Return a dict of fields which can be exported against this serializer instance.
@@ -247,25 +228,39 @@ class DataExportSerializerMixin:
 class DataExportViewMixin:
     """An API view mixin for directly exporting selected data.
 
-    Adding this mixin to an API view allows the user to export the dataset to file in a variety of formats.
+    To perform a data export against an API endpoint which inherits from this mixin,
+    perform a POST request with 'export=True'.
 
-    We achieve this by overriding the 'get' method, and checking for the presence of the required query parameter.
+    This will run validation against the DataExportOptionsSerializer.
+
+    Once the export options have been validated, a new DataExportOutput object will be created,
+    and this will be returned to the client (including a download link to the exported file).
     """
-
-    EXPORT_QUERY_PARAMETER = 'export'
-
-    def get_export_format(self) -> str:
-        """Return the export format specified in the request."""
-        if request := getattr(self, 'request', None):
-            return request.data.get(
-                self.EXPORT_QUERY_PARAMETER
-            ) or request.query_params.get(self.EXPORT_QUERY_PARAMETER)
-
-        return None
 
     def is_exporting(self) -> bool:
         """Determine if the view is currently exporting data."""
-        return self.get_export_format() is not None
+        if request := getattr(self, 'request', None):
+            return str2bool(
+                request.data.get('export') or request.query_params.get('export')
+            )
+
+        return False
+
+    def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for the view.
+
+        - Only applies for OPTIONS or POST requests
+        - OPTIONS requests to determine plugin serializer options
+        - POST request to perform the data export
+        - If the view is exporting data, return the DataExportOptionsSerializer.
+        - Otherwise, return the default serializer.
+        """
+        print('get_serializer ->', self.is_exporting(), ':', self.request.method)
+
+        if self.request.method.lower() in ['options', 'post'] and self.is_exporting():
+            return DataExportOptionsSerializer(*args, **kwargs)
+        else:
+            return super().get_serializer(*args, **kwargs)
 
     def get_plugin(self):
         """Return the plugin instance associated with the export request."""
@@ -292,7 +287,10 @@ class DataExportViewMixin:
 
         return None
 
-    def export_data(self, export_format, plugin=None):
+    def export_data(self, request, *args, **kwargs):
+        """Export the data to a DataExportOutput object."""
+
+    def xxx_export_data(self, export_format, plugin=None):
         """Export the data in the specified format.
 
         Arguments:
@@ -363,7 +361,7 @@ class DataExportViewMixin:
         # Finally, return a file download object
         return DownloadFile(datafile, filename=filename)
 
-    def get(self, request, *args, **kwargs):
+    def xxx_get(self, request, *args, **kwargs):
         """Override the 'post' method to check for the export query parameter."""
         if export_format := self.get_export_format():
             export_format = str(export_format).strip().lower()
@@ -383,6 +381,13 @@ class DataExportViewMixin:
 
     def post(self, request, *args, **kwargs):
         """Override the POST method to determine export options."""
+        # If we are not exporting data, return the default response
+        if self.is_exporting():
+            return self.export_data(request, *args, **kwargs)
+        else:
+            return super().post(request, *args, **kwargs)
+
+        # Check if the export options are valid
         if export_format := request.data.get(self.EXPORT_QUERY_PARAMETER):
             export_format = str(export_format).strip().lower()
 
@@ -398,26 +403,3 @@ class DataExportViewMixin:
 
         # If the export query parameter is not present, return the default response
         return super().post(request, *args, **kwargs)
-
-    def get_serializer_context(self):
-        """Ensure the request object is passed to the serializer context."""
-        ctx = super().get_serializer_context()
-
-        if self.is_exporting():
-            if request := getattr(self, 'request', None):
-                ctx['request'] = request
-                ctx['plugin'] = self.get_plugin()
-
-            ctx['exporting'] = True
-
-        return ctx
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer for the view."""
-        if self.is_exporting():
-            plugin = self.get_plugin()
-            plugin_serializer = self.get_plugin_serializer(plugin)
-            kwargs['plugin_serializer'] = plugin_serializer
-            kwargs['exporting'] = True
-
-        return super().get_serializer(*args, **kwargs)

@@ -28,6 +28,18 @@ class DataExportMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.EXPORTER, True, __class__)
 
+    def supports_model(self, model_class: type) -> bool:
+        """Return True if this plugin supports exporting data for the given model.
+
+        Args:
+            model_class: The model class to check
+
+        Returns:
+            True if the plugin supports exporting data for the given model
+        """
+        # By default, plugins support all models
+        return True
+
     def update_headers(self, headers: OrderedDict, **kwargs) -> OrderedDict:
         """Update the headers for the data export.
 

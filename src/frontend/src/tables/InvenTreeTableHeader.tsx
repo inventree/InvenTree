@@ -219,10 +219,11 @@ export default function InvenTreeTableHeader({
               </ActionIcon>
             </Indicator>
           )}
-          {tableProps.enableDownload && (
+          {tableUrl && tableProps.enableDownload && (
             <DownloadAction
               key='download-action'
               downloadCallback={downloadData}
+              url={tableUrl ?? ''}
             />
           )}
         </Group>

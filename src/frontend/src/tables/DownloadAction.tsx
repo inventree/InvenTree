@@ -1,41 +1,83 @@
 import { t } from '@lingui/macro';
-import {
-  IconDownload,
-  IconFileSpreadsheet,
-  IconFileText,
-  IconFileTypeCsv
-} from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { IconDownload } from '@tabler/icons-react';
+import { useMemo, useState } from 'react';
 
-import {
-  ActionDropdown,
-  type ActionDropdownItem
-} from '../components/items/ActionDropdown';
+import { Button, Tooltip } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../App';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useCreateApiFormModal } from '../hooks/UseForm';
 
 export function DownloadAction({
+  url,
   downloadCallback
 }: Readonly<{
+  url: string;
   downloadCallback: (fileFormat: string) => void;
 }>) {
-  const formatOptions = [
-    { value: 'csv', label: t`CSV`, icon: <IconFileTypeCsv /> },
-    { value: 'tsv', label: t`TSV`, icon: <IconFileText /> },
-    { value: 'xlsx', label: t`Excel (.xlsx)`, icon: <IconFileSpreadsheet /> }
-  ];
+  // Selected plugin to use for data export
+  const [pluginKey, setPluginKey] = useState<string>('');
 
-  const actions: ActionDropdownItem[] = useMemo(() => {
-    return formatOptions.map((format) => ({
-      name: format.label,
-      icon: format.icon,
-      onClick: () => downloadCallback(format.value)
-    }));
-  }, [formatOptions, downloadCallback]);
+  // Fetch available export fields via OPTIONS request
+  const extraExportFields = useQuery({
+    enabled: true,
+    queryKey: ['exportFields', pluginKey, url],
+    gcTime: 500,
+    queryFn: () =>
+      api
+        .options(url, {
+          params: {
+            export: true,
+            export_plugin: pluginKey || undefined
+          }
+        })
+        .then((response: any) => {
+          console.log('OPTIONS:', response);
+          return {};
+        })
+        .catch(() => {
+          return {};
+        })
+  });
+
+  const exportFields: ApiFormFieldSet = useMemo(() => {
+    const extraFields: ApiFormFieldSet = extraExportFields.data || {};
+
+    return {
+      export_format: {},
+      export_plugin: {
+        onValueChange: (value: string) => {
+          setPluginKey(value);
+        }
+      },
+      ...extraFields
+    };
+  }, [extraExportFields.data]);
+
+  const exportModal = useCreateApiFormModal({
+    url: url,
+    queryParams: new URLSearchParams({ export: 'true' }),
+    title: t`Export Data`,
+    fields: exportFields,
+    submitText: t`Export`,
+    successMessage: t`Data exported successfully`,
+    onFormSuccess: (data: any) => {
+      setPluginKey('');
+    }
+  });
 
   return (
-    <ActionDropdown
-      tooltip={t`Download Data`}
-      icon={<IconDownload />}
-      actions={actions}
-    />
+    <>
+      {exportModal.modal}
+      <Tooltip label={t`Download data`} position='bottom'>
+        <Button
+          variant='transparent'
+          aria-label='export-data'
+          onClick={exportModal.open}
+        >
+          <IconDownload />
+        </Button>
+      </Tooltip>
+    </>
   );
 }
