@@ -459,14 +459,14 @@ def increment_serial_number(serial, part=None):
         incremented value, or None if incrementing could not be performed.
     """
     from InvenTree.exceptions import log_error
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     # Ensure we start with a string value
     if serial is not None:
         serial = str(serial).strip()
 
     # First, let any plugins attempt to increment the serial number
-    for plugin in registry.with_mixin('validation'):
+    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
         try:
             if not hasattr(plugin, 'increment_serial_number'):
                 continue

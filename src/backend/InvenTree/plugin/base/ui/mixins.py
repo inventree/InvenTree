@@ -8,7 +8,7 @@ from typing import Literal, TypedDict
 import structlog
 from rest_framework.request import Request
 
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 

@@ -6,7 +6,7 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import structlog
 
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 

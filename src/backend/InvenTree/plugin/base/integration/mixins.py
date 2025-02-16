@@ -2,8 +2,8 @@
 
 import structlog
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
-from plugin.plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 

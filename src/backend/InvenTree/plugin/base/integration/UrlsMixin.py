@@ -6,7 +6,7 @@ from django.urls import include, re_path
 import structlog
 
 from common.settings import get_global_setting
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 from plugin.urls import PLUGIN_BASE
 
 logger = structlog.get_logger('inventree')

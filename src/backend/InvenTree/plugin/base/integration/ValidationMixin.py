@@ -7,7 +7,7 @@ from django.db.models import Model
 
 import part.models
 import stock.models
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 
 class ValidationMixin:

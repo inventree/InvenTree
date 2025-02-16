@@ -11,7 +11,7 @@ from django.contrib import admin
 import structlog
 
 from InvenTree.config import get_plugin_dir
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 

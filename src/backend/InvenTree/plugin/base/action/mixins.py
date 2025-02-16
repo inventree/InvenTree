@@ -1,6 +1,6 @@
 """Plugin mixin classes for action plugin."""
 
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 
 class ActionMixin:

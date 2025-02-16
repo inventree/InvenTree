@@ -1,7 +1,7 @@
 """Plugin mixin class for events."""
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
-from plugin.plugin import PluginMixinEnum
 
 
 class EventMixin:

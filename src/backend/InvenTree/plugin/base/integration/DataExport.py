@@ -6,7 +6,7 @@ from typing import Union
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 
 class DataExportMixin:

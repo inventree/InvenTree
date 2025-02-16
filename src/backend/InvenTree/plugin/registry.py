@@ -191,7 +191,9 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=True, builtin=None):
+    def with_mixin(
+        self, mixin: str, active: bool = True, builtin: Optional[bool] = None
+    ) -> list:
         """Returns reference to all plugins that have a specified mixin enabled.
 
         Args:
@@ -201,6 +203,8 @@ class PluginsRegistry:
         """
         # Check if the registry needs to be loaded
         self.check_reload()
+
+        mixin = str(mixin).lower().strip()
 
         result = []
 

@@ -3,8 +3,8 @@
 import structlog
 
 from common.icons import IconPack, reload_icon_packs
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
-from plugin.plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 

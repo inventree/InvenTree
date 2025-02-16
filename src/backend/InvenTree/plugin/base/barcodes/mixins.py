@@ -13,8 +13,8 @@ from InvenTree.exceptions import log_error
 from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder
 from part.models import Part
+from plugin import PluginMixinEnum
 from plugin.base.integration.SettingsMixin import SettingsMixin
-from plugin.plugin import PluginMixinEnum
 
 logger = structlog.get_logger('inventree')
 

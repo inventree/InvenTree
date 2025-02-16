@@ -1,6 +1,6 @@
 """Plugin mixin class for ReportContextMixin."""
 
-from plugin.plugin import PluginMixinEnum
+from plugin import PluginMixinEnum
 
 
 class ReportMixin:
