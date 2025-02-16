@@ -837,7 +837,7 @@ class PluginsRegistry:
             return False
 
         if not canAppAccessDatabase(
-            allow_shell=True, allow_test=bool(settings.PLUGIN_TESTING_RELOAD)
+            allow_shell=True, allow_test=settings.PLUGIN_TESTING_RELOAD
         ):
             # Skip check if database cannot be accessed
             return False

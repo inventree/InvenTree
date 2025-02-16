@@ -418,3 +418,6 @@ class RegistryTests(TestCase):
         # Check that changed hashes run through
         registry.registry_hash = 'abc'
         self.assertTrue(registry.check_reload())
+
+        settings.TESTING = True
+        settings.PLUGIN_TESTING_RELOAD = False
