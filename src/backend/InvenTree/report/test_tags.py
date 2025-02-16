@@ -3,6 +3,7 @@
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
@@ -430,6 +431,16 @@ class BarcodeTagTest(TestCase):
         # Test empty tag
         with self.assertRaises(ValueError):
             barcode_tags.qrcode('')
+
+    def test_clean_barcode(self):
+        """Test clean_barcode tag."""
+        self.assertEqual(barcode_tags.clean_barcode('hello world'), 'hello world')
+        self.assertEqual(barcode_tags.clean_barcode('`hello world`'), 'hello world')
+
+        with self.assertRaises(ValidationError):
+            self.assertEqual(
+                barcode_tags.clean_barcode('<b>hello world</b>'), 'hello world'
+            )
 
     def test_datamatrix(self):
         """Test the datamatrix generation tag."""
