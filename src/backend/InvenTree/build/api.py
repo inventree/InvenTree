@@ -16,9 +16,9 @@ import common.models
 import part.models as part_models
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus, BuildStatusGroups
+from exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
-from InvenTree.exporter import DataExportViewMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter
 from InvenTree.helpers import isNull, str2bool
 from InvenTree.mixins import CreateAPI, ListCreateAPI, RetrieveUpdateDestroyAPI

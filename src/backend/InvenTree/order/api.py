@@ -19,9 +19,9 @@ from rest_framework.response import Response
 import common.models
 import common.settings
 import company.models
+from exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
-from InvenTree.exporter import DataExportViewMixin
 from InvenTree.filters import (
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
