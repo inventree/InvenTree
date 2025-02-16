@@ -300,3 +300,12 @@ def inventreeDatabase():
     """Return the InvenTree database backend e.g. 'postgresql'."""
     db = settings.DATABASES['default']
     return db.get('ENGINE', None).replace('django.db.backends.', '')
+
+
+def inventree_identifier(override_announce: bool = False):
+    """Return the InvenTree instance ID."""
+    from common.settings import get_global_setting
+
+    if override_announce or get_global_setting('ANNOUNCE_ID', default=False):
+        return get_global_setting('INVENTREE_INSTANCE_ID', default='')
+    return None

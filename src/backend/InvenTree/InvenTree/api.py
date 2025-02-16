@@ -260,6 +260,7 @@ class InfoView(APIView):
 
         data = {
             'server': 'InvenTree',
+            'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),

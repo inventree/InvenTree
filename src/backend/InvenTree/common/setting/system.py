@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import uuid
 
 from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
@@ -169,6 +170,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    'INVENTREE_INSTANCE_ID': {
+        'name': _('Instance ID'),
+        'description': _('Unique identifier for this InvenTree instance'),
+        'default': uuid.uuid4,
+        'hidden': True,
+    },
+    'INVENTREE_ANNOUNCE_ID': {
+        'name': _('Announce ID'),
+        'description': _(
+            'Announce the instance ID of the server in the server status info (unauthenticated)'
+        ),
+        'default': False,
+        'validator': bool,
     },
     'INVENTREE_INSTANCE': {
         'name': _('Server Instance Name'),
