@@ -467,6 +467,7 @@ class BarcodeTagTest(TestCase):
         datamatrix = barcode_tags.datamatrix(
             'hello world', border='abc', fill_color='aaaaaaa', back_color='aaaaaaa'
         )
+        print('ERRR:Should:', datamatrix)
         self.assertEqual(
             datamatrix,
             'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAIAAABL1vtsAAAAqElEQVR4nN1UQQ6AMAgrxv9/GQ9mpJYSY/QkBxM3KLUUA0i8i+1l/dcQiXj09CwSEU2aQJ7nE8ou2faVUXoPZSEkq+dZKVxWg4UqxUHnVdkp6IdwMXMulGvzNBDMk4WwPSrUF3LNnQNZBJmOsZaVXa44QSEKnvWb5mIgKon1E1H6aPyOcIa15uhONP9aR4hSCiGmYAoYpj4uO+vK4+ybMhr8Nkjmn/z4Dvoldi8uJu4iAAAAAElFTkSuQmCC',
