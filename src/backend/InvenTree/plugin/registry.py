@@ -828,18 +828,23 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded."""
+        """Determine if the registry needs to be reloaded.
+
+        Returns True if the registry has changed and was reloaded.
+        """
         if settings.TESTING:
             # Skip if running during unit testing
-            return
+            return False
 
-        if not canAppAccessDatabase(allow_shell=True):
+        if not canAppAccessDatabase(
+            allow_shell=True, allow_test=bool(settings.PLUGIN_TESTING_RELOAD)
+        ):
             # Skip check if database cannot be accessed
-            return
+            return False
 
         if InvenTree.cache.get_session_cache('plugin_registry_checked'):
             # Return early if the registry has already been checked (for this request)
-            return
+            return False
 
         InvenTree.cache.set_session_cache('plugin_registry_checked', True)
 
@@ -853,11 +858,13 @@ class PluginsRegistry:
             reg_hash = get_global_setting('_PLUGIN_REGISTRY_HASH', '', create=False)
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
-            return
+            return False
 
         if reg_hash and reg_hash != self.registry_hash:
             logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+            return True
+        return False
 
     # endregion
 
