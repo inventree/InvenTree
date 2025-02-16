@@ -1403,7 +1403,7 @@ def frontend_server(c):
     """
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
-    yarn(c, 'yarn run dev')
+    yarn(c, 'yarn run dev --host')
 
 
 @task(
