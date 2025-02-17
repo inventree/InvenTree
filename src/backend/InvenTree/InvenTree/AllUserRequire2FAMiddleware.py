@@ -12,7 +12,7 @@ from allauth.mfa.webauthn.internal.flows import did_use_passwordless_login
 def is_multifactor_logged_in(request: HttpRequest) -> bool:
     """Check if the user is logged in with multifactor authentication."""
     authns = get_authentication_records(request)
-    print(authns)
+
     return is_mfa_enabled(request.user) and (
         did_use_passwordless_login(request)
         or any(record.get('method') == 'mfa' for record in authns)
