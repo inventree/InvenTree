@@ -1255,7 +1255,7 @@ class TestSettings(InvenTreeTestCase):
         self.assertIsNone(version.inventree_identifier())
 
         # with env set
-        with in_env_context({'INVENTREE_ANNOUNCE_ID': True}):
+        with in_env_context({'INVENTREE_ANNOUNCE_ID': 'True'}):
             self.assertEqual(val, version.inventree_identifier())
 
 
