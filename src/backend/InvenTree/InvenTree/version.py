@@ -307,7 +307,7 @@ def inventree_identifier(override_announce: bool = False):
     from common.settings import get_global_setting
 
     if override_announce or get_global_setting(
-        'INVENTREE_ANNOUNCE_ID', enviroment_key='INVENTREE_ANNOUNCE_ID', default=False
+        'INVENTREE_ANNOUNCE_ID', enviroment_key='INVENTREE_ANNOUNCE_ID'
     ):
         return get_global_setting('INVENTREE_INSTANCE_ID', default='')
     return None
