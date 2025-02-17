@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e
+
+echo "Running postCreateCommand.sh ..."
 
 # Avoiding Dubious Ownership in Dev Containers for setup commands that use git
 git config --global --add safe.directory /home/inventree
