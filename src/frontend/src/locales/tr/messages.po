@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 00:40\n"
+"PO-Revision-Date: 2025-02-14 08:19\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2565,24 +2565,27 @@ msgstr "Miktar"
 #~ msgid "{0} updated successfully"
 #~ msgstr "{0} updated successfully"
 
-#: src/components/settings/SettingList.tsx:69
+#: src/components/settings/SettingList.tsx:71
 msgid "Edit Setting"
 msgstr "Ayarı Düzenle"
 
-#: src/components/settings/SettingList.tsx:81
-#: src/components/settings/SettingList.tsx:111
-msgid "Setting {0} updated successfully"
-msgstr "{0} ayarı başarıyla güncellendi"
+#: src/components/settings/SettingList.tsx:84
+msgid "Setting {key} updated successfully"
+msgstr ""
 
-#: src/components/settings/SettingList.tsx:110
+#: src/components/settings/SettingList.tsx:113
 msgid "Setting updated"
 msgstr "Ayar güncellendi"
 
-#: src/components/settings/SettingList.tsx:120
+#: src/components/settings/SettingList.tsx:114
+msgid "Setting {0} updated successfully"
+msgstr "{0} ayarı başarıyla güncellendi"
+
+#: src/components/settings/SettingList.tsx:123
 msgid "Error editing setting"
 msgstr "Ayarı düzenlemede hata"
 
-#: src/components/settings/SettingList.tsx:165
+#: src/components/settings/SettingList.tsx:168
 msgid "No settings specified"
 msgstr "Ayar belirtilmemiş"
 
@@ -3042,7 +3045,7 @@ msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
 #: src/tables/build/BuildLineTable.tsx:649
-#: src/tables/part/PartTable.tsx:350
+#: src/tables/part/PartTable.tsx:356
 #: src/tables/sales/SalesOrderLineItemTable.tsx:326
 msgid "Order Parts"
 msgstr ""
@@ -3620,7 +3623,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:122
 #: src/pages/part/PartDetail.tsx:384
 #: src/tables/part/PartCategoryTable.tsx:90
-#: src/tables/part/PartTable.tsx:296
+#: src/tables/part/PartTable.tsx:302
 msgid "Subscribed"
 msgstr "Abone olundu"
 
@@ -5879,7 +5882,7 @@ msgstr "Anahtar Sözcükler"
 #: src/pages/part/PartDetail.tsx:257
 #: src/tables/bom/BomTable.tsx:325
 #: src/tables/build/BuildLineTable.tsx:293
-#: src/tables/part/PartTable.tsx:290
+#: src/tables/part/PartTable.tsx:296
 #: src/tables/sales/SalesOrderLineItemTable.tsx:127
 msgid "Available Stock"
 msgstr "Mevcut Stok"
@@ -6067,8 +6070,8 @@ msgid "Edit Part"
 msgstr "Parçayı Düzenle"
 
 #: src/pages/part/PartDetail.tsx:832
-#: src/tables/part/PartTable.tsx:333
-#: src/tables/part/PartTable.tsx:362
+#: src/tables/part/PartTable.tsx:339
+#: src/tables/part/PartTable.tsx:368
 msgid "Add Part"
 msgstr "Parça Ekle"
 
@@ -6107,7 +6110,7 @@ msgid "Order Stock"
 msgstr "Stok Sipariş Et"
 
 #: src/pages/part/PartDetail.tsx:938
-#: src/tables/part/PartTable.tsx:345
+#: src/tables/part/PartTable.tsx:351
 msgid "Part Actions"
 msgstr "Parça Eylemleri"
 
@@ -7415,7 +7418,7 @@ msgid "Show consumable items"
 msgstr "Tüketilebilir ögeleri göster"
 
 #: src/tables/bom/BomTable.tsx:360
-#: src/tables/part/PartTable.tsx:284
+#: src/tables/part/PartTable.tsx:290
 msgid "Has Pricing"
 msgstr "Fiyatlandırılmış"
 
@@ -8472,42 +8475,50 @@ msgid "Filter by parts which are templates"
 msgstr "Şablon olan parçalara göre süz"
 
 #: src/tables/part/PartTable.tsx:274
+msgid "Is Variant"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:275
+msgid "Filter by parts which are variants"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:280
 msgid "Is Revision"
 msgstr "Revizyon Olanlar"
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:281
 msgid "Filter by parts which are revisions"
 msgstr "Revizyon olan parçalara göre süz"
 
-#: src/tables/part/PartTable.tsx:279
+#: src/tables/part/PartTable.tsx:285
 msgid "Has Revisions"
 msgstr "Revizyonu Olanlar"
 
-#: src/tables/part/PartTable.tsx:280
+#: src/tables/part/PartTable.tsx:286
 msgid "Filter by parts which have revisions"
 msgstr "Revizyonu olan parçalara göre süz"
 
-#: src/tables/part/PartTable.tsx:285
+#: src/tables/part/PartTable.tsx:291
 msgid "Filter by parts which have pricing information"
 msgstr "Fiyatlandırma bilgisi olan parçalara göre süz"
 
-#: src/tables/part/PartTable.tsx:291
+#: src/tables/part/PartTable.tsx:297
 msgid "Filter by parts which have available stock"
 msgstr "Stokta olan parçalara göre süz"
 
-#: src/tables/part/PartTable.tsx:297
+#: src/tables/part/PartTable.tsx:303
 msgid "Filter by parts to which the user is subscribed"
 msgstr "Kullanıcının abone olduğu parçalara göre süz"
 
-#: src/tables/part/PartTable.tsx:302
+#: src/tables/part/PartTable.tsx:308
 msgid "Has Stocktake"
 msgstr "Stok Sayımı Olanlar"
 
-#: src/tables/part/PartTable.tsx:303
+#: src/tables/part/PartTable.tsx:309
 msgid "Filter by parts which have stocktake information"
 msgstr "Stok sayımı bilgisi olan parçalara göre süz"
 
-#: src/tables/part/PartTable.tsx:352
+#: src/tables/part/PartTable.tsx:358
 msgid "Order selected parts"
 msgstr ""
 

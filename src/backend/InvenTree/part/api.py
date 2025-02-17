@@ -11,7 +11,7 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import permissions, serializers, status
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -894,6 +894,14 @@ class PartFilter(rest_filters.FilterSet):
 
         model = Part
         fields = ['revision_of']
+
+    is_variant = rest_filters.BooleanFilter(
+        label=_('Is Variant'), method='filter_is_variant'
+    )
+
+    def filter_is_variant(self, queryset, name, value):
+        """Filter by whether the Part is a variant or not."""
+        return queryset.filter(variant_of__isnull=not str2bool(value))
 
     is_revision = rest_filters.BooleanFilter(
         label=_('Is Revision'), method='filter_is_revision'
@@ -1924,44 +1932,6 @@ class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
 
 
-class BomImportUpload(CreateAPI):
-    """API endpoint for uploading a complete Bill of Materials.
-
-    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
-    """
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.BomImportUploadSerializer
-
-    def create(self, request, *args, **kwargs):
-        """Custom create function to return the extracted data."""
-        # Clean up input data
-        data = self.clean_data(request.data)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-
-        data = serializer.extract_data()
-
-        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class BomImportExtract(CreateAPI):
-    """API endpoint for extracting BOM data from a BOM file."""
-
-    queryset = Part.objects.none()
-    serializer_class = part_serializers.BomImportExtractSerializer
-
-
-class BomImportSubmit(CreateAPI):
-    """API endpoint for submitting BOM data from a BOM file."""
-
-    queryset = BomItem.objects.none()
-    serializer_class = part_serializers.BomImportSubmitSerializer
-
-
 class BomItemValidate(UpdateAPI):
     """API endpoint for validating a BomItem."""
 
@@ -2305,10 +2275,6 @@ bom_api_urls = [
             path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),
-    # API endpoint URLs for importing BOM data
-    path('import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
-    path('import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
-    path('import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
     # Catch-all
     path('', BomList.as_view(), name='api-bom-list'),
 ]
