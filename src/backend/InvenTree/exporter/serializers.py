@@ -28,10 +28,16 @@ class DataExportOptionsSerializer(serializers.Serializer):
         self.Meta.fields = self.Meta.BASE_FIELDS
 
         # Is a plugin serializer provided?
-        if plugin_serializer := kwargs.pop('plugin_serializer', None):
-            for key, field in plugin_serializer.fields.items():
-                self.Meta.fields.append(key)
-                setattr(self, key, field)
+        if plugin := kwargs.pop('plugin', None):
+            if hasattr(plugin, 'get_export_options_serializer'):
+                plugin_serializer = plugin.get_export_options_serializer(
+                    *args, **kwargs
+                )
+
+                if plugin_serializer:
+                    for key, field in plugin_serializer.fields.items():
+                        self.Meta.fields.append(key)
+                        setattr(self, key, field)
 
         # Generate a list of plugins to choose from
         # If a model type is provided, use this to filter the list of plugins
