@@ -111,7 +111,7 @@ Make sure you have `gnupg` and `pinentry-mac` installed and set up correctly. Re
 
 #### Where are the database, media files, ... stored?
 
-Backups, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+Database data, backups, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
 
 ### Performance Improvements
 
@@ -123,6 +123,4 @@ You can also refer to the [Improve disk performance guide](https://code.visualst
 
 ### Redis Caching
 
-The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is disabled, but it can be easily enabled for testing or developing with the [redis cache](../start/config.md#caching) enabled.
-
-To enable the cache, locate the InvenTree configuration file (`./dev/config.yaml`) and set the `cache.enabled` setting to `True`.
+The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is enabled, but it can be easily disabled by adjusting the environment variabiles in the [docker compose file]({{ sourcefile('.devcontainer/docker-compose.yml') }}).
