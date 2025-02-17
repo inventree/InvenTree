@@ -29,8 +29,8 @@ import plugin.api
 import report.api
 import stock.api
 import users.api
+from InvenTree.auth_override_views import CustomRegisterView
 from plugin.urls import get_plugin_urls
-from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import (
@@ -86,7 +86,6 @@ apipatterns = [
         ]),
     ),
     path('user/', include(users.api.user_urls)),
-    path('web/', include(web_api_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
     # Common endpoints endpoint
@@ -113,6 +112,7 @@ apipatterns = [
                 ConfirmEmailView.as_view(),
                 name='account_confirm_email',
             ),
+            path('registration/', CustomRegisterView.as_view(), name='rest_register'),
             path('registration/', include('dj_rest_auth.registration.urls')),
             path(
                 'providers/', SocialProviderListView.as_view(), name='social_providers'
@@ -186,11 +186,9 @@ urlpatterns = []
 if settings.INVENTREE_ADMIN_ENABLED:
     admin_url = settings.INVENTREE_ADMIN_URL
 
-    if settings.ADMIN_SHELL_ENABLE:
-        urlpatterns += [path(f'{admin_url}/shell/', include('django_admin_shell.urls'))]
-
     urlpatterns += [
         path(f'{admin_url}/error_log/', include('error_report.urls')),
+        path(f'{admin_url}/doc/', include('django.contrib.admindocs.urls')),
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
     ]
 

@@ -2,14 +2,8 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% plugins_enabled as plugins_enabled %}
-{% settings_value 'BARCODE_ENABLE' as barcodes %}
-{% settings_value 'RETURNORDER_ENABLED' as return_order_enabled %}
-{% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
 {% settings_value "_PENDING_MIGRATIONS" as pending_migrations %}
-{% settings_value "LABEL_ENABLE" as labels_enabled %}
-{% inventree_show_about user as show_about %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,38 +91,6 @@
         </main>
     </div>
 </div>
-
-<script defer type='text/javascript'>
-
-$(document).ready(function () {
-
-{% block js_ready %}
-{% endblock js_ready %}
-
-    inventreeDocReady();
-
-    {% if barcodes %}
-    $('#barcode-scan').click(function() {
-        barcodeScanDialog();
-    });
-    {% endif %}
-
-    moment.locale('{{ request.LANGUAGE_CODE }}');
-
-    // Account notifications
-    {% if messages %}
-    {% for message in messages %}
-    showMessage(
-        '{{ message }}',
-        {
-            style: 'info',
-        }
-    );
-    {% endfor %}
-    {% endif %}
-});
-
-</script>
 
 </body>
 </html>

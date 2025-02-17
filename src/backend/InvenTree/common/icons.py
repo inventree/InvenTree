@@ -1,7 +1,6 @@
 """Icon utilities for InvenTree."""
 
 import json
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TypedDict
@@ -9,7 +8,9 @@ from typing import TypedDict
 from django.core.exceptions import ValidationError
 from django.templatetags.static import static
 
-logger = logging.getLogger('inventree')
+import structlog
+
+logger = structlog.get_logger('inventree')
 
 _icon_packs = None
 

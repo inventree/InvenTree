@@ -1,7 +1,6 @@
 """Model definitions for the 'importer' app."""
 
 import json
-import logging
 from typing import Optional
 
 from django.contrib.auth.models import User
@@ -11,6 +10,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
@@ -20,7 +20,7 @@ import importer.validators
 import InvenTree.helpers
 from importer.status_codes import DataImportStatusCode
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class DataImportSession(models.Model):
@@ -145,6 +145,7 @@ class DataImportSession(models.Model):
 
         - Extract column names from the data file
         - Create a default mapping for each field in the serializer
+        - Find a default "backup" value for each field (if one exists)
         """
         # Extract list of column names from the file
         self.columns = importer.operations.extract_column_names(self.data_file)
@@ -158,6 +159,7 @@ class DataImportSession(models.Model):
 
         matched_columns = set()
 
+        self.field_defaults = self.field_defaults or {}
         field_overrides = self.field_overrides or {}
 
         # Create a default mapping for each available field in the database
@@ -166,6 +168,11 @@ class DataImportSession(models.Model):
             # skip creating a mapping for this field
             if field in field_overrides:
                 continue
+
+            # Extract a "default" value for the field, if one exists
+            # Skip if one has already been provided by the user
+            if field not in self.field_defaults and 'default' in field_def:
+                self.field_defaults[field] = field_def['default']
 
             # Generate a list of possible column names for this field
             field_options = [
@@ -558,7 +565,7 @@ class DataImportRow(models.Model):
         if not available_fields:
             available_fields = self.session.available_fields()
 
-        overrride_values = self.override_values
+        override_values = self.override_values
         default_values = self.default_values
 
         data = {}
@@ -566,8 +573,8 @@ class DataImportRow(models.Model):
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
             # Data override (force value and skip any further checks)
-            if field in overrride_values:
-                data[field] = overrride_values[field]
+            if field in override_values:
+                data[field] = override_values[field]
                 continue
 
             # Default value (if provided)
@@ -617,16 +624,19 @@ class DataImportRow(models.Model):
 
         return data
 
-    def construct_serializer(self):
+    def construct_serializer(self, request=None):
         """Construct a serializer object for this row."""
         if serializer_class := self.session.serializer_class:
-            return serializer_class(data=self.serializer_data())
+            return serializer_class(
+                data=self.serializer_data(), context={'request': request}
+            )
 
-    def validate(self, commit=False) -> bool:
+    def validate(self, commit=False, request=None) -> bool:
         """Validate the data in this row against the linked serializer.
 
         Arguments:
             commit: If True, the data is saved to the database (if validation passes)
+            request: The request object (if available) for extracting user information
 
         Returns:
             True if the data is valid, False otherwise
@@ -638,7 +648,7 @@ class DataImportRow(models.Model):
             # Row has already been completed
             return True
 
-        serializer = self.construct_serializer()
+        serializer = self.construct_serializer(request=request)
 
         if not serializer:
             self.errors = {
@@ -660,12 +670,12 @@ class DataImportRow(models.Model):
                 try:
                     serializer.save()
                     self.complete = True
-                    self.save()
 
-                    self.session.check_complete()
-
-                except Exception as e:
+                except ValueError as e:  # Exception as e:
                     self.errors = {'non_field_errors': str(e)}
                     result = False
+
+                self.save()
+                self.session.check_complete()
 
         return result

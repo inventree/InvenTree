@@ -9,11 +9,12 @@ import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
-import { RenderOwner } from '../components/render/User';
+import { RenderOwner, RenderUser } from '../components/render/User';
 import { formatCurrency, formatDate } from '../defaults/formatters';
 import type { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import type { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
@@ -161,11 +162,15 @@ export function LineItemsProgressColumn(): TableColumn {
 }
 
 export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
+  const globalSettings = useGlobalSettingsState.getState();
+  const enabled = globalSettings.isSet('PROJECT_CODES_ENABLED', true);
+
   return {
     accessor: 'project_code',
     ordering: 'project_code',
     sortable: true,
     title: t`Project Code`,
+    hidden: !enabled,
     render: (record: any) => {
       const project_code = resolveItem(
         record,
@@ -202,6 +207,18 @@ export function StatusColumn({
   };
 }
 
+export function CreatedByColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'created_by',
+    title: t`Created By`,
+    sortable: true,
+    switchable: true,
+    render: (record: any) =>
+      record.created_by && RenderUser({ instance: record.created_by }),
+    ...props
+  };
+}
+
 export function ResponsibleColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'responsible',
@@ -224,6 +241,14 @@ export function DateColumn(props: TableColumnProps): TableColumn {
       formatDate(resolveItem(record, props.accessor ?? 'date')),
     ...props
   };
+}
+
+export function StartDateColumn(props: TableColumnProps): TableColumn {
+  return DateColumn({
+    accessor: 'start_date',
+    title: t`Start Date`,
+    ...props
+  });
 }
 
 export function TargetDateColumn(props: TableColumnProps): TableColumn {

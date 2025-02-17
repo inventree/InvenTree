@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 import django.core.exceptions as django_exceptions
 from django.conf import settings
@@ -16,7 +17,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
-import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -32,7 +32,7 @@ from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase, in_env_context
 from part.models import Part, PartCategory
 from stock.models import StockItem, StockLocation
 
@@ -736,14 +736,14 @@ class TestTimeFormat(TestCase):
             month=1,
             day=1,
             hour=0,
-            minute=0,
+            minute=1,
             second=0,
-            tzinfo=pytz.timezone('Europe/London'),
+            tzinfo=ZoneInfo('Europe/London'),
         )
 
         tests = [
             ('UTC', '2000-01-01 00:01:00+00:00'),
-            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('Europe/London', '2000-01-01 00:01:00+00:00'),
             ('America/New_York', '1999-12-31 19:01:00-05:00'),
             # All following tests should result in the same value
             ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),
@@ -1121,10 +1121,6 @@ class TestSettings(InvenTreeTestCase):
 
     superuser = True
 
-    def in_env_context(self, envs):
-        """Patch the env to include the given dict."""
-        return mock.patch.dict(os.environ, envs)
-
     def run_reload(self, envs=None):
         """Helper function to reload InvenTree."""
         # Set default - see B006
@@ -1133,7 +1129,7 @@ class TestSettings(InvenTreeTestCase):
 
         from plugin import registry
 
-        with self.in_env_context(envs):
+        with in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -1198,7 +1194,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({
+        with in_env_context({
             'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
         }):
             self.assertIn(
@@ -1217,7 +1213,7 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({
+        with in_env_context({
             'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
         }):
             self.assertIn(
@@ -1231,7 +1227,7 @@ class TestSettings(InvenTreeTestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.in_env_context({TEST_ENV_NAME: '321'}):
+        with in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
         # test typecasting to dict - None should be mapped to empty dict
@@ -1240,13 +1236,13 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # test typecasting to dict - valid JSON string should be mapped to corresponding dict
-        with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
+        with in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
             self.assertEqual(
                 config.get_setting(TEST_ENV_NAME, None, typecast=dict), {'a': 1}
             )
 
         # test typecasting to dict - invalid JSON string should be mapped to empty dict
-        with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
+        with in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
 
 
@@ -1361,14 +1357,17 @@ class TestOffloadTask(InvenTreeTestCase):
             # First call should run without issue
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertTrue(result)
-            self.assertIn("Logging task attempt for 'dummy_task'", str(cm.output))
+            self.assertIn(
+                'Logging task attempt for dummy_task', str(cm.output).replace("\\'", '')
+            )
 
         with self.assertLogs(logger='inventree', level='INFO') as cm:
             # An attempt has been logged, but it is too recent
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Mark last attempt a few days ago - should now return True
@@ -1389,7 +1388,8 @@ class TestOffloadTask(InvenTreeTestCase):
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
             self.assertIn(
-                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+                'Last attempt for dummy_task was too recent',
+                str(cm.output).replace("\\'", ''),
             )
 
         # Configure so a task was successful too recently

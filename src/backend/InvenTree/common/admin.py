@@ -2,8 +2,6 @@
 
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
-
 import common.models
 import common.validators
 
@@ -45,7 +43,7 @@ class BarcodeScanResultAdmin(admin.ModelAdmin):
 
 
 @admin.register(common.models.ProjectCode)
-class ProjectCodeAdmin(ImportExportModelAdmin):
+class ProjectCodeAdmin(admin.ModelAdmin):
     """Admin settings for ProjectCode."""
 
     list_display = ('code', 'description')
@@ -54,7 +52,7 @@ class ProjectCodeAdmin(ImportExportModelAdmin):
 
 
 @admin.register(common.models.InvenTreeSetting)
-class SettingsAdmin(ImportExportModelAdmin):
+class SettingsAdmin(admin.ModelAdmin):
     """Admin settings for InvenTreeSetting."""
 
     list_display = ('key', 'value')
@@ -67,7 +65,7 @@ class SettingsAdmin(ImportExportModelAdmin):
 
 
 @admin.register(common.models.InvenTreeUserSetting)
-class UserSettingsAdmin(ImportExportModelAdmin):
+class UserSettingsAdmin(admin.ModelAdmin):
     """Admin settings for InvenTreeUserSetting."""
 
     list_display = ('key', 'value', 'user')
@@ -80,7 +78,7 @@ class UserSettingsAdmin(ImportExportModelAdmin):
 
 
 @admin.register(common.models.WebhookEndpoint)
-class WebhookAdmin(ImportExportModelAdmin):
+class WebhookAdmin(admin.ModelAdmin):
     """Admin settings for Webhook."""
 
     list_display = ('endpoint_id', 'name', 'active', 'user')
@@ -119,6 +117,6 @@ class NewsFeedEntryAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'published', 'summary')
 
 
-admin.site.register(common.models.WebhookMessage, ImportExportModelAdmin)
-admin.site.register(common.models.Reference, ImportExportModelAdmin)
-admin.site.register(common.models.ReferenceSource, ImportExportModelAdmin)
+admin.site.register(common.models.WebhookMessage, admin.ModelAdmin)
+admin.site.register(common.models.Reference, admin.ModelAdmin)
+admin.site.register(common.models.ReferenceSource, admin.ModelAdmin)

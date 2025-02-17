@@ -1,13 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import {
-  Divider,
-  Paper,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
+import { Paper, SimpleGrid, Skeleton, Stack, Text, Title } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconCoins,
@@ -52,11 +44,13 @@ const TaskManagementPanel = Loadable(
   lazy(() => import('./TaskManagementPanel'))
 );
 
-const CurrencyManagmentPanel = Loadable(
-  lazy(() => import('./CurrencyManagmentPanel'))
+const CurrencyManagementPanel = Loadable(
+  lazy(() => import('./CurrencyManagementPanel'))
 );
 
-const UnitManagmentPanel = Loadable(lazy(() => import('./UnitManagmentPanel')));
+const UnitManagementPanel = Loadable(
+  lazy(() => import('./UnitManagementPanel'))
+);
 
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
@@ -113,7 +107,7 @@ export default function AdminCenter() {
     return [
       {
         name: 'user',
-        label: t`Users`,
+        label: t`User Management`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
       },
@@ -145,31 +139,30 @@ export default function AdminCenter() {
         name: 'currencies',
         label: t`Currencies`,
         icon: <IconCoins />,
-        content: <CurrencyManagmentPanel />
+        content: <CurrencyManagementPanel />
       },
       {
-        name: 'projectcodes',
+        name: 'project-codes',
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
           <Stack gap='xs'>
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
-            <Divider />
             <ProjectCodeTable />
           </Stack>
         )
       },
       {
-        name: 'customstates',
+        name: 'custom-states',
         label: t`Custom States`,
         icon: <IconListDetails />,
         content: <CustomStateTable />
       },
       {
-        name: 'customunits',
+        name: 'custom-units',
         label: t`Custom Units`,
         icon: <IconScale />,
-        content: <UnitManagmentPanel />
+        content: <UnitManagementPanel />
       },
       {
         name: 'part-parameters',

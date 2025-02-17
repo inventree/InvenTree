@@ -29,8 +29,8 @@ def validate_part_name_format(value):
     # Make sure that the field_name exists in Part model
     from part.models import Part
 
-    jinja_template_regex = re.compile('{{.*?}}')
-    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
+    jinja_template_regex = re.compile(r'{{.*?}}')
+    field_name_regex = re.compile(r'(?<=part\.)[A-z]+')
 
     for jinja_template in jinja_template_regex.findall(str(value)):
         # make sure at least one and only one field is present inside the parser
@@ -252,20 +252,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Require schema specification when validating URLs'),
         'validator': bool,
         'default': True,
-    },
-    'INVENTREE_REQUIRE_CONFIRM': {
-        'name': _('Require confirm'),
-        'description': _('Require explicit user confirmation for certain action.'),
-        'validator': bool,
-        'default': True,
-    },
-    'INVENTREE_TREE_DEPTH': {
-        'name': _('Tree Depth'),
-        'description': _(
-            'Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed.'
-        ),
-        'default': 1,
-        'validator': [int, MinValueValidator(0)],
     },
     'INVENTREE_UPDATE_CHECK_INTERVAL': {
         'name': _('Update Check Interval'),

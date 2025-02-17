@@ -20,7 +20,7 @@ import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 export function CurrencyTable({
   setInfo
 }: Readonly<{ setInfo: (info: any) => void }>) {
-  const table = useTable('currency');
+  const table = useTable('currency', 'currency');
   const columns = useMemo(() => {
     return [
       {
@@ -42,6 +42,7 @@ export function CurrencyTable({
       .then(() => {
         table.refreshTable();
         showNotification({
+          title: t`Success`,
           message: t`Exchange rates updated`,
           color: 'green'
         });
@@ -71,7 +72,6 @@ export function CurrencyTable({
       tableState={table}
       columns={columns}
       props={{
-        idAccessor: 'currency',
         tableActions: tableActions,
         dataFormatter: (data: any) => {
           setInfo(data);
@@ -89,7 +89,7 @@ export function CurrencyTable({
   );
 }
 
-export default function CurrencyManagmentPanel() {
+export default function CurrencyManagementPanel() {
   const [info, setInfo] = useState<any>({});
 
   return (

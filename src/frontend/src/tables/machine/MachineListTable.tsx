@@ -20,7 +20,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
@@ -40,6 +39,7 @@ import {
   TableStatusRenderer
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   useCreateApiFormModal,
@@ -103,6 +103,8 @@ export function useMachineTypeDriver({
   includeTypes = true,
   includeDrivers = true
 }: { includeTypes?: boolean; includeDrivers?: boolean } = {}) {
+  const api = useApi();
+
   const {
     data: machineTypes,
     isFetching: isMachineTypesFetching,
@@ -146,6 +148,7 @@ function MachineDrawer({
   machinePk: string;
   refreshTable: () => void;
 }>) {
+  const api = useApi();
   const navigate = useNavigate();
   const {
     data: machine,

@@ -4,7 +4,6 @@ import datetime
 import hashlib
 import inspect
 import io
-import logging
 import os
 import os.path
 import re
@@ -12,6 +11,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
@@ -22,15 +22,16 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import bleach
-import pytz
+import structlog
 from bleach import clean
 from djmoney.money import Money
+from PIL import Image
 
 from common.currency import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
@@ -138,8 +139,6 @@ def getStaticUrl(filename):
 
 def TestIfImage(img):
     """Test if an image file is indeed an image."""
-    from PIL import Image
-
     try:
         Image.open(img).verify()
         return True
@@ -192,6 +191,15 @@ def getSplashScreen(custom=True):
 
     # No custom splash screen
     return static_storage.url('img/inventree_splash.jpg')
+
+
+def getCustomOption(reference: str):
+    """Return the value of a custom option from settings.CUSTOMIZE.
+
+    Args:
+        reference: Reference key for the custom option
+    """
+    return settings.CUSTOMIZE.get(reference, None)
 
 
 def TestIfImageURL(url):
@@ -962,15 +970,15 @@ def to_local_time(time, target_tz: Optional[str] = None):
 
     if not source_tz:
         # Default to UTC if not provided
-        source_tz = pytz.utc
+        source_tz = ZoneInfo('UTC')
 
     if not target_tz:
         target_tz = server_timezone()
 
     try:
-        target_tz = pytz.timezone(str(target_tz))
-    except pytz.UnknownTimeZoneError:
-        target_tz = pytz.utc
+        target_tz = ZoneInfo(str(target_tz))
+    except ZoneInfoNotFoundError:
+        target_tz = ZoneInfo('UTC')
 
     target_time = time.replace(tzinfo=source_tz).astimezone(target_tz)
 
@@ -1062,3 +1070,20 @@ def pui_url(subpath: str) -> str:
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'
+
+
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    from plugin.registry import registry
+
+    # Check if plugins are even enabled
+    if not settings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
+        for plg in plug_list
+    ]

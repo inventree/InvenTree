@@ -14,7 +14,6 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
@@ -43,6 +42,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { useApi } from '../../contexts/ApiContext';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -78,6 +78,7 @@ import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 export default function StockDetail() {
   const { id } = useParams();
 
+  const api = useApi();
   const user = useUserState();
 
   const globalSettings = useGlobalSettingsState();
@@ -134,10 +135,20 @@ export default function StockDetail() {
         hidden: !part.IPN
       },
       {
+        name: 'status',
+        type: 'status',
+        label: t`Status`,
+        model: ModelType.stockitem
+      },
+      {
         name: 'status_custom_key',
         type: 'status',
-        label: t`Stock Status`,
-        model: ModelType.stockitem
+        label: t`Custom Status`,
+        model: ModelType.stockitem,
+        icon: 'status',
+        hidden:
+          !stockitem.status_custom_key ||
+          stockitem.status_custom_key == stockitem.status
       },
       {
         type: 'text',
@@ -335,19 +346,16 @@ export default function StockDetail() {
 
     return (
       <ItemDetailsGrid>
-        <Grid>
-          <Grid.Col span={4}>
-            <DetailsImage
-              appRole={UserRoles.part}
-              apiPath={ApiEndpoints.part_list}
-              src={
-                stockitem.part_detail?.image ??
-                stockitem?.part_detail?.thumbnail
-              }
-              pk={stockitem.part}
-            />
-          </Grid.Col>
-          <Grid.Col span={8}>
+        <Grid grow>
+          <DetailsImage
+            appRole={UserRoles.part}
+            apiPath={ApiEndpoints.part_list}
+            src={
+              stockitem.part_detail?.image ?? stockitem?.part_detail?.thumbnail
+            }
+            pk={stockitem.part}
+          />
+          <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={data} />
           </Grid.Col>
         </Grid>
@@ -367,7 +375,7 @@ export default function StockDetail() {
     ); // Must not be installed into another item
   }, [stockitem]);
 
-  const showSalesAlloctions: boolean = useMemo(() => {
+  const showSalesAllocations: boolean = useMemo(() => {
     return stockitem?.part_detail?.salable;
   }, [stockitem]);
 
@@ -442,14 +450,14 @@ export default function StockDetail() {
         icon: <IconBookmark />,
         hidden:
           !stockitem.in_stock ||
-          (!showSalesAlloctions && !showBuildAllocations),
+          (!showSalesAllocations && !showBuildAllocations),
         content: (
           <Accordion
             multiple={true}
-            defaultValue={['buildallocations', 'salesallocations']}
+            defaultValue={['buildAllocations', 'salesAllocations']}
           >
             {showBuildAllocations && (
-              <Accordion.Item value='buildallocations' key='buildallocations'>
+              <Accordion.Item value='buildAllocations' key='buildAllocations'>
                 <Accordion.Control>
                   <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
@@ -463,8 +471,8 @@ export default function StockDetail() {
                 </Accordion.Panel>
               </Accordion.Item>
             )}
-            {showSalesAlloctions && (
-              <Accordion.Item value='salesallocations' key='salesallocations'>
+            {showSalesAllocations && (
+              <Accordion.Item value='salesAllocations' key='salesAllocations'>
                 <Accordion.Control>
                   <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
@@ -526,7 +534,7 @@ export default function StockDetail() {
       })
     ];
   }, [
-    showSalesAlloctions,
+    showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,
     stockitem,
@@ -659,14 +667,15 @@ export default function StockDetail() {
   });
 
   const stockActions = useMemo(() => {
-    const inStock =
+    // Can this stock item be transferred to a different location?
+    const canTransfer =
       user.hasChangeRole(UserRoles.stock) &&
-      stockitem.quantity > 0 &&
       !stockitem.sales_order &&
       !stockitem.belongs_to &&
       !stockitem.customer &&
-      !stockitem.consumed_by &&
-      !stockitem.is_building;
+      !stockitem.consumed_by;
+
+    const isBuilding = stockitem.is_building;
 
     const serial = stockitem.serial;
     const serialized =
@@ -697,7 +706,7 @@ export default function StockDetail() {
           {
             name: t`Count`,
             tooltip: t`Count stock`,
-            hidden: serialized || !inStock,
+            hidden: serialized || !canTransfer || isBuilding,
             icon: (
               <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
@@ -708,7 +717,7 @@ export default function StockDetail() {
           {
             name: t`Add`,
             tooltip: t`Add Stock`,
-            hidden: serialized || !inStock,
+            hidden: serialized || !canTransfer || isBuilding,
             icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
@@ -717,7 +726,11 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove Stock`,
-            hidden: serialized || !inStock,
+            hidden:
+              serialized ||
+              !canTransfer ||
+              isBuilding ||
+              stockitem.quantity <= 0,
             icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
@@ -726,7 +739,7 @@ export default function StockDetail() {
           {
             name: t`Transfer`,
             tooltip: t`Transfer Stock`,
-            hidden: !inStock,
+            hidden: !canTransfer,
             icon: (
               <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
@@ -738,8 +751,10 @@ export default function StockDetail() {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
             hidden:
-              !inStock ||
+              !canTransfer ||
+              isBuilding ||
               serialized ||
+              stockitem?.quantity != 1 ||
               stockitem?.part_detail?.trackable != true,
             icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
             onClick: () => {
@@ -846,11 +861,10 @@ export default function StockDetail() {
             key='batch'
           />,
           <StatusRenderer
-            status={stockitem.status_custom_key}
+            status={stockitem.status_custom_key || stockitem.status}
             type={ModelType.stockitem}
             options={{
-              size: 'lg',
-              hidden: !!stockitem.status_custom_key
+              size: 'lg'
             }}
             key='status'
           />,
@@ -876,16 +890,22 @@ export default function StockDetail() {
   }, [stockitem, instanceQuery, enableExpiry]);
 
   return (
-    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+    <InstanceDetail
+      requiredRole={UserRoles.stock}
+      status={requestStatus}
+      loading={instanceQuery.isFetching}
+    >
       <Stack>
-        <NavigationTree
-          title={t`Stock Locations`}
-          modelType={ModelType.stocklocation}
-          endpoint={ApiEndpoints.stock_location_tree}
-          opened={treeOpen}
-          onClose={() => setTreeOpen(false)}
-          selectedId={stockitem?.location}
-        />
+        {user.hasViewRole(UserRoles.stock_location) && (
+          <NavigationTree
+            title={t`Stock Locations`}
+            modelType={ModelType.stocklocation}
+            endpoint={ApiEndpoints.stock_location_tree}
+            opened={treeOpen}
+            onClose={() => setTreeOpen(false)}
+            selectedId={stockitem?.location}
+          />
+        )}
         <PageDetail
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
@@ -893,7 +913,9 @@ export default function StockDetail() {
           editAction={editStockItem.open}
           editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
-          breadcrumbs={breadcrumbs}
+          breadcrumbs={
+            user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
+          }
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}

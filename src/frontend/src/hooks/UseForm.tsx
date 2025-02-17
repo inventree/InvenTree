@@ -48,9 +48,8 @@ export function useApiFormModal(props: ApiFormModalProps) {
         modalClose.current();
         props.onFormSuccess?.(data);
       },
-      onFormError: () => {
-        modalClose.current();
-        props.onFormError?.();
+      onFormError: (error: any) => {
+        props.onFormError?.(error);
       }
     }),
     [props]

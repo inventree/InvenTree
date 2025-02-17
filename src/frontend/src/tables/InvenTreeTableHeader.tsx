@@ -16,11 +16,11 @@ import {
 import { useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
-import { api } from '../App';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
+import { useApi } from '../contexts/ApiContext';
 import { useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
@@ -42,7 +42,7 @@ export default function InvenTreeTableHeader({
   filters,
   toggleColumn
 }: Readonly<{
-  tableUrl: string;
+  tableUrl?: string;
   tableState: TableState;
   tableProps: InvenTreeTableProps<any>;
   hasSwitchableColumns: boolean;
@@ -50,6 +50,8 @@ export default function InvenTreeTableHeader({
   filters: TableFilter[];
   toggleColumn: (column: string) => void;
 }>) {
+  const api = useApi();
+
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
@@ -92,7 +94,7 @@ export default function InvenTreeTableHeader({
   };
 
   const deleteRecords = useDeleteApiFormModal({
-    url: tableUrl,
+    url: tableUrl ?? '',
     title: t`Delete Selected Items`,
     preFormContent: (
       <Alert

@@ -8,9 +8,31 @@ import textwrap
 import requests
 import yaml
 
+# Debugging output - useful for diagnosing CI build issues
+print('loading ./docs/main.py...')
+
+# Print out some useful debugging information
+# Ref: https://docs.readthedocs.io/en/stable/reference/environment-variables.html
+for key in [
+    'GITHUB_ACTIONS',
+    'GITHUB_REF',
+    'READTHEDOCS',
+    'READTHEDOCS_GIT_IDENTIFIER',
+    'READTHEDOCS_GIT_CLONE_URL',
+    'READTHEDOCS_GIT_COMMIT_HASH',
+    'READTHEDOCS_PROJECT',
+    'READTHEDOCS_VERSION',
+    'READTHEDOCS_VERSION_NAME',
+    'READTHEDOCS_VERSION_TYPE',
+]:
+    val = os.environ.get(key, None) or '-- MISSING --'
+    print(f' - {key}: {val}')
+
 # Cached settings dict values
 global GLOBAL_SETTINGS
 global USER_SETTINGS
+global TAGS
+global FILTERS
 
 # Read in the InvenTree settings file
 here = os.path.dirname(__file__)
@@ -21,6 +43,13 @@ with open(settings_file, encoding='utf-8') as sf:
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
+
+# Tags
+with open(os.path.join(here, 'inventree_tags.yml'), encoding='utf-8') as f:
+    TAGS = yaml.load(f, yaml.BaseLoader)
+# Filters
+with open(os.path.join(here, 'inventree_filters.yml'), encoding='utf-8') as f:
+    FILTERS = yaml.load(f, yaml.BaseLoader)
 
 
 def get_repo_url(raw=False):
@@ -77,12 +106,15 @@ def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
-        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+        for var in ['READTHEDOCS_GIT_COMMIT_HASH', 'READTHEDOCS_GIT_IDENTIFIER']:
+            if val := os.environ.get(var):
+                return val
     # We are in GitHub Actions
     elif os.environ.get('GITHUB_ACTIONS') == 'true':
         return os.environ.get('GITHUB_REF')
-    else:
-        return 'master'
+
+    # Default to 'master' branch
+    return 'master'
 
 
 def define_env(env):
@@ -243,14 +275,19 @@ def define_env(env):
         return includefile(fn, f'Template: {base}', fmt='html')
 
     @env.macro
-    def rendersetting(setting: dict):
+    def rendersetting(key: str, setting: dict):
         """Render a provided setting object into a table row."""
         name = setting['name']
         description = setting['description']
         default = setting.get('default')
         units = setting.get('units')
 
-        return f'| {name} | {description} | {default if default is not None else ""} | {units if units is not None else ""} |'
+        default = f'`{default}`' if default else ''
+        units = f'`{units}`' if units else ''
+
+        return (
+            f'| <div title="{key}">{name}</div> | {description} | {default} | {units} |'
+        )
 
     @env.macro
     def globalsetting(key: str):
@@ -262,7 +299,7 @@ def define_env(env):
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
 
-        return rendersetting(setting)
+        return rendersetting(key, setting)
 
     @env.macro
     def usersetting(key: str):
@@ -274,4 +311,26 @@ def define_env(env):
         global USER_SETTINGS
         setting = USER_SETTINGS[key]
 
-        return rendersetting(setting)
+        return rendersetting(key, setting)
+
+    @env.macro
+    def tags_and_filters():
+        """Return a list of all tags and filters."""
+        global TAGS
+        global FILTERS
+
+        ret_data = ''
+        for ref in [['Tags', TAGS], ['Filters', FILTERS]]:
+            ret_data += f'### {ref[0]}\n\n| Namespace | Name | Description |\n| --- | --- | --- |\n'
+            for value in ref[1]:
+                title = (
+                    value['title']
+                    .replace('\n', ' ')
+                    .replace('<', '&lt;')
+                    .replace('>', '&gt;')
+                )
+                ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
+            ret_data += '\n'
+        ret_data += '\n'
+
+        return ret_data

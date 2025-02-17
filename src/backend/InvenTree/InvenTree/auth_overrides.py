@@ -1,6 +1,5 @@
 """Overrides for allauth and adjacent packages to enforce InvenTree specific auth settings and restirctions."""
 
-import logging
 from urllib.parse import urlencode
 
 from django import forms
@@ -10,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.core.exceptions import ImmediateHttpResponse
@@ -17,7 +17,9 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.forms import TOTPDeviceForm
 from allauth_2fa.utils import user_has_valid_totp_device
-from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.registration.serializers import (
+    RegisterSerializer as DjRestRegisterSerializer,
+)
 from rest_framework import serializers
 
 import InvenTree.helpers_model
@@ -25,7 +27,7 @@ import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 # override allauth
@@ -115,7 +117,7 @@ def registration_enabled():
     return False
 
 
-class RegistratonMixin:
+class RegistrationMixin:
     """Mixin to check if registration should be enabled."""
 
     def is_open_for_signup(self, request, *args, **kwargs):
@@ -186,7 +188,7 @@ class CustomUrlMixin:
 
 
 class CustomAccountAdapter(
-    CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter
+    CustomUrlMixin, RegistrationMixin, OTPAdapter, DefaultAccountAdapter
 ):
     """Override of adapter to use dynamic settings."""
 
@@ -213,7 +215,7 @@ class CustomAccountAdapter(
 
 
 class CustomSocialAccountAdapter(
-    CustomUrlMixin, RegistratonMixin, DefaultSocialAccountAdapter
+    CustomUrlMixin, RegistrationMixin, DefaultSocialAccountAdapter
 ):
     """Override of adapter to use dynamic settings."""
 
@@ -264,15 +266,10 @@ class CustomSocialAccountAdapter(
 
 
 # override dj-rest-auth
-class CustomRegisterSerializer(RegisterSerializer):
-    """Override of serializer to use dynamic settings."""
+class RegisterSerializer(DjRestRegisterSerializer):
+    """Registration requires email, password (twice) and username."""
 
     email = serializers.EmailField()
-
-    def __init__(self, instance=None, data=..., **kwargs):
-        """Check settings to influence which fields are needed."""
-        kwargs['email_required'] = get_global_setting('LOGIN_MAIL_REQUIRED')
-        super().__init__(instance, data, **kwargs)
 
     def save(self, request):
         """Override to check if registration is open."""

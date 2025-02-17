@@ -18,11 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { StylishText } from '../../components/items/StylishText';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -121,6 +121,7 @@ export default function BuildOutputTable({
   build,
   refreshBuild
 }: Readonly<{ build: any; refreshBuild: () => void }>) {
+  const api = useApi();
   const user = useUserState();
   const navigate = useNavigate();
   const table = useTable('build-outputs');
@@ -574,6 +575,7 @@ export default function BuildOutputTable({
         props={{
           params: {
             part_detail: true,
+            location_detail: true,
             tests: true,
             is_building: true,
             build: buildId

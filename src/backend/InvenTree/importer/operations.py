@@ -36,7 +36,7 @@ def load_data_file(data_file, file_format=None):
 
     try:
         data = file_object.read()
-    except (OSError, FileNotFoundError):
+    except OSError:
         raise ValidationError(_('Failed to open data file'))
 
     # Excel formats expect binary data
@@ -72,6 +72,8 @@ def extract_column_names(data_file) -> list:
     headers = []
 
     for idx, header in enumerate(data.headers):
+        header = header.strip()
+
         if header:
             headers.append(header)
         else:

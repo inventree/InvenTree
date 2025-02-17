@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../../App';
+import { useApi } from '../../../contexts/ApiContext';
 import type { ModelType } from '../../../enums/ModelType';
 import {
   InvenTreeIcon,
@@ -31,6 +31,7 @@ function QueryCountWidget({
   icon?: InvenTreeIconType;
   params: any;
 }>): ReactNode {
+  const api = useApi();
   const user = useUserState();
   const navigate = useNavigate();
 
@@ -48,7 +49,8 @@ function QueryCountWidget({
             limit: 1
           }
         })
-        .then((res) => res.data);
+        .then((res) => res.data)
+        .catch(() => {});
     }
   });
 

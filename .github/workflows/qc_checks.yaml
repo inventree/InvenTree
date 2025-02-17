@@ -148,7 +148,7 @@ jobs:
       - name: Export API Documentation
         run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -170,9 +170,9 @@ jobs:
         id: breaking_changes
         uses: oasdiff/oasdiff-action/diff@1c611ffb1253a72924624aa4fb662e302b3565d3 # pin@main
         with:
-          base: 'api.yaml'
-          revision: 'src/backend/InvenTree/schema.yml'
-          format: 'html'
+          base: "api.yaml"
+          revision: "src/backend/InvenTree/schema.yml"
+          format: "html"
       - name: Echoing diff to step
         env:
           DIFF: ${{ steps.breaking_changes.outputs.diff }}
@@ -194,6 +194,23 @@ jobs:
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Extract settings / tags
+        run: invoke int.export-definitions --basedir src/backend/InvenTree
+      - name: Upload settings
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
+        with:
+          name: inventree_settings.json
+          path: src/backend/InvenTree/inventree_settings.json
+      - name: Upload tags
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
+        with:
+          name: inventree_tags.yml
+          path: src/backend/InvenTree/inventree_tags.yml
+      - name: Upload filters
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
+        with:
+          name: inventree_filters.yml
+          path: src/backend/InvenTree/inventree_filters.yml
 
   schema-push:
     name: Push new schema
@@ -209,17 +226,28 @@ jobs:
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
-          persist-credentials: false
+          persist-credentials: true
+      - name: Create artifact directory
+        run: mkdir -p artifact
       - name: Download schema artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # pin@v4.1.8
         with:
-          name: schema.yml
-      - name: Move schema to correct location
+          path: artifact
+          merge-multiple: true
+      - name: Move files to correct location
         run: |
-          echo "Version: $version"
+          echo "Version: ${version}"
+          echo "before move"
+          ls -la artifact
           mkdir export/${version}
-          mv schema.yml export/${version}/api.yaml
-      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # pin@v5.0.1
+          mv artifact/schema.yml export/${version}/api.yaml
+          mv artifact/inventree_settings.json export/${version}/inventree_settings.json
+          mv artifact/inventree_tags.yml export/${version}/inventree_tags.yml
+          mv artifact/inventree_filters.yml export/${version}/inventree_filters.yml
+          echo "after move"
+          ls -la artifact
+          rm -rf artifact
+      - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # pin@v5.1.0
         name: Commit schema changes
         with:
           commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
@@ -242,6 +270,8 @@ jobs:
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
       INVENTREE_SITE_URL: http://127.0.0.1:12345
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
@@ -283,6 +313,7 @@ jobs:
       INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_PLUGINS_ENABLED: true
+      INVENTREE_CONSOLE_LOG: false
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: ${{ matrix.python_version }}
 
@@ -303,9 +334,9 @@ jobs:
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke dev.test --coverage
+        run: invoke dev.test --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -324,7 +355,9 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
+      INVENTREE_CONSOLE_LOG: false
       INVENTREE_CACHE_HOST: localhost
       INVENTREE_PLUGINS_ENABLED: true
 
@@ -354,7 +387,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -372,7 +405,9 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 3306
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
+      INVENTREE_CONSOLE_LOG: false
       INVENTREE_PLUGINS_ENABLED: true
 
     services:
@@ -400,7 +435,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test
+        run: invoke dev.test --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -417,7 +452,8 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_PLUGINS_ENABLED: false
 
     services:
@@ -441,9 +477,9 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage --translations
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -459,7 +495,8 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: info
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: INFO
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
@@ -473,12 +510,6 @@ jobs:
           install: true
       - name: Fetch Database
         run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
-
-      - name: Latest Database
-        run: |
-          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
 
       - name: 0.10.0 Database
         run: |
@@ -494,14 +525,21 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.12.0 Database
+      - name: 0.13.5 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
-      - name: 0.13.5 Database
+      - name: 0.16.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.17.0 Database
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
@@ -517,7 +555,7 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: True
+      INVENTREE_DEBUG: true
       INVENTREE_PLUGINS_ENABLED: false
       VITE_COVERAGE: true
 
@@ -542,7 +580,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -552,7 +590,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # pin@v5.1.1
+        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -589,7 +627,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # pin@v4.6.0
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
@@ -598,7 +636,7 @@ jobs:
   zizmor:
     name: Security [Zizmor]
     runs-on: ubuntu-20.04
-    needs: ['pre-commit', 'paths-filter']
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
     permissions:
@@ -614,7 +652,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@df409f7d9260372bd5f19e5b04e83cb3c43714ae # pin@v3
+        uses: github/codeql-action/upload-sarif@f6091c0113d1dcf9b98e269ee48e8a7e51b7bdd4 # pin@v3
         with:
           sarif_file: results.sarif
           category: zizmor

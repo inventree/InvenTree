@@ -1,5 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, logoutUrl, user } from './defaults.js';
+import { logoutUrl, user } from './defaults.js';
+import { navigate } from './helpers.js';
 import { doLogin, doQuickLogin } from './login.js';
 
 test('Login - Basic Test', async ({ page }) => {
@@ -7,23 +8,6 @@ test('Login - Basic Test', async ({ page }) => {
 
   // Check that the username is provided
   await page.getByText(user.username);
-
-  await expect(page).toHaveTitle(/^InvenTree/);
-
-  // Go to the dashboard
-  await page.goto(baseUrl);
-  await page.waitForURL('**/platform');
-
-  await page.getByText('InvenTree Demo Server -').waitFor();
-
-  // Check that the username is provided
-  await page.getByText(user.username);
-
-  await expect(page).toHaveTitle(/^InvenTree/);
-
-  // Go to the dashboard
-  await page.goto(baseUrl);
-  await page.waitForURL('**/platform');
 
   // Logout (via menu)
   await page.getByRole('button', { name: 'Ally Access' }).click();
@@ -42,13 +26,13 @@ test('Login - Quick Test', async ({ page }) => {
   await expect(page).toHaveTitle(/^InvenTree/);
 
   // Go to the dashboard
-  await page.goto(baseUrl);
+  await navigate(page, '');
   await page.waitForURL('**/platform');
 
   await page.getByText('InvenTree Demo Server - ').waitFor();
 
   // Logout (via URL)
-  await page.goto(`${baseUrl}/logout/`);
+  await navigate(page, 'logout');
   await page.waitForURL('**/platform/login');
   await page.getByLabel('username');
 });
@@ -65,7 +49,7 @@ test('Login - Failures', async ({ page }) => {
   };
 
   // Navigate to the 'login' page
-  await page.goto(logoutUrl);
+  await navigate(page, logoutUrl);
   await expect(page).toHaveTitle(/^InvenTree.*$/);
   await page.waitForURL('**/platform/login');
 
@@ -92,6 +76,38 @@ test('Login - Failures', async ({ page }) => {
   await page.getByLabel('login-password').fill('');
 
   await loginWithError();
+});
 
-  await page.waitForTimeout(2500);
+test('Login - Change Password', async ({ page }) => {
+  await doQuickLogin(page, 'noaccess', 'youshallnotpass');
+
+  // Navigate to the 'change password' page
+  await navigate(page, 'settings/user/account');
+  await page.getByLabel('action-menu-user-actions').click();
+  await page.getByLabel('action-menu-user-actions-change-password').click();
+
+  // First attempt with some errors
+  await page.getByLabel('input-password-1').fill('12345');
+  await page.getByLabel('input-password-2').fill('54321');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+  await page.getByText('The two password fields didn’t match').waitFor();
+
+  await page.getByLabel('input-password-2').fill('12345');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+
+  await page.getByText('This password is too short').waitFor();
+  await page.getByText('This password is entirely numeric').waitFor();
+
+  await page.getByLabel('input-password-1').fill('youshallnotpass');
+  await page.getByLabel('input-password-2').fill('youshallnotpass');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+
+  await page.getByText('Password Changed').waitFor();
+  await page.getByText('The password was set successfully').waitFor();
+
+  // Should have redirected to the index page
+  await page.waitForURL('**/platform/home**');
+  await page.getByText('InvenTree Demo Server - Norman Nothington');
+
+  await page.waitForTimeout(1000);
 });

@@ -7,7 +7,6 @@ import base64
 import hashlib
 import hmac
 import json
-import logging
 import os
 import re
 import uuid
@@ -35,6 +34,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
@@ -52,10 +52,11 @@ import InvenTree.validators
 import users.models
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from generic.states import ColorEnum
-from generic.states.custom import get_custom_classes, state_color_mappings
+from generic.states.custom import state_color_mappings
+from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.sanitizer import sanitize_svg
 
-logger = logging.getLogger('inventree')
+logger = structlog.get_logger('inventree')
 
 
 class MetaMixin(models.Model):
@@ -156,6 +157,9 @@ class BaseInvenTreeSetting(models.Model):
         # Update this setting in the cache after it was saved so a pk exists
         if do_cache:
             self.save_to_cache()
+
+        # Remove the setting from the request cache
+        set_session_cache(self.cache_key, None)
 
         # Execute after_save action
         self._call_settings_function('after_save', args, kwargs)
@@ -486,22 +490,20 @@ class BaseInvenTreeSetting(models.Model):
         - Key is case-insensitive
         - Returns None if no match is made
 
-        First checks the cache to see if this object has recently been accessed,
-        and returns the cached version if so.
+        As settings are accessed frequently, this function will attempt to access the cache first:
+
+        1. Check the ephemeral request cache
+        2. Check the global cache
+        3. Query the database
         """
         key = str(key).strip().upper()
 
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
-        # Specify if cache lookup should be performed
-        do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
-
-        filters = {
-            'key__iexact': key,
-            # Optionally filter by other keys
-            **cls.get_filters(**kwargs),
-        }
+        # Specify if global cache lookup should be performed
+        # If not specified, determine based on whether global cache is enabled
+        access_global_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
         # Prevent saving to the database during certain operations
         if (
@@ -511,21 +513,36 @@ class BaseInvenTreeSetting(models.Model):
             or InvenTree.ready.isRunningBackup()
         ):
             create = False
-            do_cache = False
+            access_global_cache = False
 
         cache_key = cls.create_cache_key(key, **kwargs)
 
-        if do_cache:
+        # Fist, attempt to pull the setting from the request cache
+        if setting := get_session_cache(cache_key):
+            return setting
+
+        if access_global_cache:
             try:
                 # First attempt to find the setting object in the cache
                 cached_setting = cache.get(cache_key)
 
                 if cached_setting is not None:
+                    # Store the cached setting into the session cache
+
+                    set_session_cache(cache_key, cached_setting)
                     return cached_setting
 
             except Exception:
                 # Cache is not ready yet
-                do_cache = False
+                access_global_cache = False
+
+        # At this point, we need to query the database
+
+        filters = {
+            'key__iexact': key,
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
+        }
 
         try:
             settings = cls.objects.all()
@@ -552,9 +569,13 @@ class BaseInvenTreeSetting(models.Model):
                 # The setting failed validation - might be due to duplicate keys
                 pass
 
-        if setting and do_cache:
-            # Cache this setting object
-            setting.save_to_cache()
+        if setting:
+            # Cache this setting object to the request cache
+            set_session_cache(cache_key, setting)
+
+            if access_global_cache:
+                # Cache this setting object to the global cache
+                setting.save_to_cache()
 
         return setting
 
@@ -1938,20 +1959,59 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
 
 class InvenTreeCustomUserStateModel(models.Model):
-    """Custom model to extends any registered state with extra custom, user defined states."""
+    """Custom model to extends any registered state with extra custom, user defined states.
+
+    Fields:
+        reference_status: Status set that is extended with this custom state
+        logical_key: State logical key that is equal to this custom state in business logic
+        key: Numerical value that will be saved in the models database
+        name: Name of the state (must be uppercase and a valid variable identifier)
+        label: Label that will be displayed in the frontend (human readable)
+        color: Color that will be displayed in the frontend
+
+    """
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        verbose_name = _('Custom State')
+        verbose_name_plural = _('Custom States')
+        unique_together = [('reference_status', 'key'), ('reference_status', 'name')]
+
+    reference_status = models.CharField(
+        max_length=250,
+        verbose_name=_('Reference Status Set'),
+        help_text=_('Status set that is extended with this custom state'),
+    )
+
+    logical_key = models.IntegerField(
+        verbose_name=_('Logical Key'),
+        help_text=_(
+            'State logical key that is equal to this custom state in business logic'
+        ),
+    )
 
     key = models.IntegerField(
-        verbose_name=_('Key'),
-        help_text=_('Value that will be saved in the models database'),
+        verbose_name=_('Value'),
+        help_text=_('Numerical value that will be saved in the models database'),
     )
+
     name = models.CharField(
-        max_length=250, verbose_name=_('Name'), help_text=_('Name of the state')
+        max_length=250,
+        verbose_name=_('Name'),
+        help_text=_('Name of the state'),
+        validators=[
+            common.validators.validate_uppercase,
+            common.validators.validate_variable_string,
+        ],
     )
+
     label = models.CharField(
         max_length=250,
         verbose_name=_('Label'),
         help_text=_('Label that will be displayed in the frontend'),
     )
+
     color = models.CharField(
         max_length=10,
         choices=state_color_mappings(),
@@ -1959,12 +2019,7 @@ class InvenTreeCustomUserStateModel(models.Model):
         verbose_name=_('Color'),
         help_text=_('Color that will be displayed in the frontend'),
     )
-    logical_key = models.IntegerField(
-        verbose_name=_('Logical Key'),
-        help_text=_(
-            'State logical key that is equal to this custom state in business logic'
-        ),
-    )
+
     model = models.ForeignKey(
         ContentType,
         on_delete=models.SET_NULL,
@@ -1973,18 +2028,6 @@ class InvenTreeCustomUserStateModel(models.Model):
         verbose_name=_('Model'),
         help_text=_('Model this state is associated with'),
     )
-    reference_status = models.CharField(
-        max_length=250,
-        verbose_name=_('Reference Status Set'),
-        help_text=_('Status set that is extended with this custom state'),
-    )
-
-    class Meta:
-        """Metaclass options for this mixin."""
-
-        verbose_name = _('Custom State')
-        verbose_name_plural = _('Custom States')
-        unique_together = [['model', 'reference_status', 'key', 'logical_key']]
 
     def __str__(self) -> str:
         """Return string representation of the custom state."""
@@ -2010,37 +2053,49 @@ class InvenTreeCustomUserStateModel(models.Model):
         if self.key == self.logical_key:
             raise ValidationError({'key': _('Key must be different from logical key')})
 
-        if self.reference_status is None or self.reference_status == '':
+        # Check against the reference status class
+        status_class = self.get_status_class()
+
+        if not status_class:
             raise ValidationError({
-                'reference_status': _('Reference status must be selected')
+                'reference_status': _('Valid reference status class must be provided')
             })
 
-        # Ensure that the key is not in the range of the logical keys of the reference status
-        ref_set = list(
-            filter(
-                lambda x: x.__name__ == self.reference_status,
-                get_custom_classes(include_custom=False),
-            )
-        )
-        if len(ref_set) == 0:
-            raise ValidationError({
-                'reference_status': _('Reference status set not found')
-            })
-        ref_set = ref_set[0]
-        if self.key in ref_set.keys():  # noqa: SIM118
+        if self.key in status_class.values():
             raise ValidationError({
                 'key': _(
                     'Key must be different from the logical keys of the reference status'
                 )
             })
-        if self.logical_key not in ref_set.keys():  # noqa: SIM118
+
+        if self.logical_key not in status_class.values():
             raise ValidationError({
                 'logical_key': _(
                     'Logical key must be in the logical keys of the reference status'
                 )
             })
 
+        if self.name in status_class.names():
+            raise ValidationError({
+                'name': _(
+                    'Name must be different from the names of the reference status'
+                )
+            })
+
         return super().clean()
+
+    def get_status_class(self):
+        """Return the appropriate status class for this custom state."""
+        from generic.states import StatusCode
+        from InvenTree.helpers import inheritors
+
+        if not self.reference_status:
+            return None
+
+        # Return the first class that matches the reference status
+        for cls in inheritors(StatusCode):
+            if cls.__name__ == self.reference_status:
+                return cls
 
 
 # region Linked data

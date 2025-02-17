@@ -1,7 +1,100 @@
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
-import { clickButtonIfVisible, openFilterDrawer } from '../helpers.ts';
+import {
+  clearTableFilters,
+  clickButtonIfVisible,
+  navigate,
+  openFilterDrawer,
+  setTableChoiceFilter
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
+
+test('Purchase Orders - List', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
+  await clearTableFilters(page);
+
+  // Check for expected values
+  await page.getByRole('cell', { name: 'PO0014' }).waitFor();
+  await page.getByText('Wire-E-Coyote').waitFor();
+  await page.getByText('Cancelled').first().waitFor();
+  await page.getByText('Pending').first().waitFor();
+  await page.getByText('On Hold').first().waitFor();
+
+  // Filter by 'has start date'
+  await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
+  await page.getByRole('cell', { name: 'Scheduled purchase order' }).waitFor();
+
+  // Click through to a particular purchase order
+  await page.getByRole('cell', { name: 'PO0015' }).click();
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Expected values
+  await page.getByText('2025-06-12').waitFor(); // Start Date
+  await page.getByText('2025-07-17').waitFor(); // Target Date
+});
+
+test('Purchase Orders - Barcodes', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'purchasing/purchase-order/13/detail');
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Display QR code
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-view').click();
+  await page.getByRole('img', { name: 'QR Code' }).waitFor();
+  await page.getByRole('banner').getByRole('button').click();
+
+  // Un-link barcode if a link exists
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.waitForTimeout(100);
+
+  if (
+    await page
+      .getByLabel('action-menu-barcode-actions-unlink-barcode')
+      .isVisible()
+  ) {
+    await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+    await page.getByRole('button', { name: 'Unlink Barcode' }).click();
+    await page.waitForTimeout(100);
+  } else {
+    await page.keyboard.press('Escape');
+  }
+
+  // Link to barcode
+  await page.getByLabel('action-menu-barcode-actions', { exact: true }).click();
+  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
+
+  await page.getByLabel('barcode-input-scanner').click();
+
+  // Simulate barcode scan
+  await page.getByPlaceholder('Enter barcode data').fill('1234567890');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await page.waitForTimeout(250);
+
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Ensure we can scan back to this page, with the associated barcode
+  await page.getByRole('tab', { name: 'Sales' }).click();
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+  await page.getByPlaceholder('Enter barcode data').fill('1234567890');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+
+  await page.getByText('Purchase Order: PO0013', { exact: true }).waitFor();
+
+  // Unlink barcode
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+  await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
+  await page.getByText('This will remove the link to').waitFor();
+  await page.getByRole('button', { name: 'Unlink Barcode' }).click();
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+});
 
 test('Purchase Orders - General', async ({ page }) => {
   await doQuickLogin(page);
@@ -118,7 +211,7 @@ test('Purchase Orders - Order Parts', async ({ page }) => {
   await page.getByRole('banner').getByRole('button').click();
 
   // Order from the part detail page
-  await page.goto(`${baseUrl}/part/69/`);
+  await navigate(page, 'part/69/');
   await page.waitForURL('**/part/69/**');
 
   await page.getByLabel('action-menu-stock-actions').click();

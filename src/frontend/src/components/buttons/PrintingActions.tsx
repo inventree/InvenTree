@@ -11,7 +11,10 @@ import { extractAvailableFields } from '../../functions/forms';
 import { generateUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
-import { useUserSettingsState } from '../../states/SettingsState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsState';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
@@ -29,14 +32,23 @@ export function PrintingActions({
   modelType?: ModelType;
 }) {
   const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
   const [pluginKey, setPluginKey] = useState<string>('');
 
+  const labelPrintingEnabled = useMemo(() => {
+    return enableLabels && globalSettings.isSet('LABEL_ENABLE');
+  }, [enableLabels, globalSettings]);
+
+  const reportPrintingEnabled = useMemo(() => {
+    return enableReports && globalSettings.isSet('REPORT_ENABLE');
+  }, [enableReports, globalSettings]);
+
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
-    enabled: enableLabels,
+    enabled: labelPrintingEnabled,
     queryKey: ['printingFields', modelType, pluginKey],
     gcTime: 500,
     queryFn: () =>
@@ -162,7 +174,7 @@ export function PrintingActions({
     return null;
   }
 
-  if (!enableLabels && !enableReports) {
+  if (!labelPrintingEnabled && !reportPrintingEnabled) {
     return null;
   }
 
@@ -180,13 +192,13 @@ export function PrintingActions({
               name: t`Print Labels`,
               icon: <IconTags />,
               onClick: () => labelModal.open(),
-              hidden: !enableLabels
+              hidden: !labelPrintingEnabled
             },
             {
               name: t`Print Reports`,
               icon: <IconReport />,
               onClick: () => reportModal.open(),
-              hidden: !enableReports
+              hidden: !reportPrintingEnabled
             }
           ]}
         />
