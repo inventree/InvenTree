@@ -1,12 +1,16 @@
 import { Trans } from '@lingui/macro';
 import {
+  Button,
+  Group,
+  HoverCard,
+  List,
   Menu,
   Skeleton,
+  Table,
+  Text,
   UnstyledButton,
   useMantineColorScheme
 } from '@mantine/core';
-import { Group, HoverCard, Text } from '@mantine/core';
-import { List, Table } from '@mantine/core';
 import {
   IconChevronDown,
   IconLogout,
@@ -18,10 +22,11 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { doLogout } from '../../functions/auth';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { authApi, doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { parseDate } from '../../pages/Index/Settings/AccountSettings/SecurityContent';
-import { useServerApiState } from '../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import type { AuthContext, ServerAPIProps } from '../../states/states';
 import { vars } from '../../theme';
@@ -127,7 +132,13 @@ function AuthContextInformation({
   server: ServerAPIProps;
   auth_context: AuthContext | undefined;
 }>) {
-  console.log('server', server, 'auth_context', auth_context);
+  const [setAuthContext] = useServerApiState((state) => [state.setAuthContext]);
+
+  function fetchAuthContext() {
+    authApi(apiUrl(ApiEndpoints.auth_session)).then((resp) => {
+      setAuthContext(resp.data.data);
+    });
+  }
 
   const rows = [
     { name: 'Server version', value: server.version },
@@ -171,6 +182,16 @@ function AuthContextInformation({
           </List>
         </>
       )}
+      <Button
+        variant='light'
+        size='compact-md'
+        onClick={(e) => {
+          e.preventDefault();
+          fetchAuthContext();
+        }}
+      >
+        <Trans>Reload</Trans>
+      </Button>
     </>
   );
 }
