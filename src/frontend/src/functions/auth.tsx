@@ -110,6 +110,11 @@ export const doBasicLogin = async (
           navigate('/mfa');
         }
       }
+      showNotification({
+        title: t`Login Failed`,
+        message: t`Check the supplied username and password`,
+        color: 'red'
+      });
     });
 
   if (loginDone) {
