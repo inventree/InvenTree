@@ -78,6 +78,7 @@ nav:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
       - Custom States: concepts/custom_states.md
+      - Pricing: concepts/pricing.md
     - Development:
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
@@ -157,7 +158,6 @@ nav:
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
       - Email: settings/email.md
-      - Currency Support: settings/currency.md
     - Export Data: settings/export.md
     - Import Data: settings/import.md
     - Operations:
@@ -285,6 +285,7 @@ extra:
   min_python_version: 3.9
   min_invoke_version: 2.0.0
   django_version: 4.2
+  docker_postgres_version: 17
 
   version:
     default: stable

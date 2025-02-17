@@ -70,7 +70,7 @@ BASE_DIR = config.get_base_dir()
 CONFIG = config.load_config_data(set_cache=True)
 
 # Load VERSION data if it exists
-version_file = BASE_DIR.parent.joinpath('VERSION')
+version_file = BASE_DIR.parent.parent.parent.joinpath('VERSION')
 if version_file.exists():
     print('load version from file')
     load_dotenv(version_file)
@@ -171,7 +171,7 @@ SECRET_KEY = config.get_secret_key()
 # The filesystem location for served static files
 STATIC_ROOT = config.get_static_dir()
 
-# The filesystem location for uploaded meadia files
+# The filesystem location for uploaded media files
 MEDIA_ROOT = config.get_media_dir()
 
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
@@ -205,6 +205,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
+PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
@@ -1290,7 +1291,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
 
 if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
     if SITE_URL and SITE_URL.startswith('https://'):
-        # auto-detect HTTPS prtoocol
+        # auto-detect HTTPS protocol
         ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
     else:
         # default to http
@@ -1361,7 +1362,7 @@ MARKDOWNIFY = {
     }
 }
 
-# Ignore these error typeps for in-database error logging
+# Ignore these error types for in-database error logging
 IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
@@ -1420,7 +1421,7 @@ if CUSTOM_FLAGS:
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
-# Configuratino for API schema generation
+# Configuration for API schema generation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',

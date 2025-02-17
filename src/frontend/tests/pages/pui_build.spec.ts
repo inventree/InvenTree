@@ -10,10 +10,11 @@ import { doQuickLogin } from '../login.ts';
 test('Build Order - Basic Tests', async ({ page }) => {
   await doQuickLogin(page);
 
-  await navigate(page, 'part/');
-
   // Navigate to the correct build order
   await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
+  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+
+  await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();
@@ -119,6 +120,8 @@ test('Build Order - Build Outputs', async ({ page }) => {
 
   await navigate(page, 'manufacturing/index/');
   await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+
+  await clearTableFilters(page);
 
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByText('On Hold').first().waitFor();

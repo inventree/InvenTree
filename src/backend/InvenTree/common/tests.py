@@ -784,6 +784,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
         # Request with filter
         self.get(url, expected_code=200, data={'mixin': 'settings'})
+        self.get(url, expected_code=200, data={'builtin': True})
+        self.get(url, expected_code=200, data={'sample': True})
+        self.get(url, expected_code=200, data={'installed': True})
 
     def test_api_list(self):
         """Test list URL."""

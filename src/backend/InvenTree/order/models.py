@@ -210,6 +210,7 @@ class Order(
     """
 
     REQUIRE_RESPONSIBLE_SETTING = None
+    LOCK_SETTING = None
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -219,13 +220,50 @@ class Order(
     def save(self, *args, **kwargs):
         """Custom save method for the order models.
 
-        Ensures that the reference field is rebuilt whenever the instance is saved.
+        Enforces various business logics:
+        - Ensures the object is not locked
+        - Ensures that the reference field is rebuilt whenever the instance is saved.
         """
+        # check if we are updating the model, not adding it
+        update = self.pk is not None
+
+        # Locking
+        if update and self.check_locked(True):
+            # Ensure that order status can be changed still
+            if self.get_db_instance().status != self.status:
+                pass
+            else:
+                raise ValidationError({
+                    'reference': _('This order is locked and cannot be modified')
+                })
+
+        # Reference calculations
         self.reference_int = self.rebuild_reference_field(self.reference)
         if not self.creation_date:
             self.creation_date = InvenTree.helpers.current_date()
 
         super().save(*args, **kwargs)
+
+    def check_locked(self, db: bool = False) -> bool:
+        """Check if this order is 'locked'.
+
+        Args:
+            db: If True, check with the database. If False, check the instance (default False).
+        """
+        return (
+            self.LOCK_SETTING
+            and get_global_setting(self.LOCK_SETTING)
+            and self.check_complete(db)
+        )
+
+    def check_complete(self, db: bool = False) -> bool:
+        """Check if this order is 'complete'.
+
+        Args:
+            db: If True, check with the database. If False, check the instance (default False).
+        """
+        status = self.get_db_instance().status if db else self.status
+        return status in self.get_status_class().COMPLETE
 
     def clean(self):
         """Custom clean method for the generic order class."""
@@ -397,6 +435,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = PurchaseOrderStatus
+    LOCK_SETTING = 'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -881,7 +920,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
             # Calculate unit purchase price (in base units)
             if line.purchase_price:
                 unit_purchase_price = line.purchase_price
+
+                # Convert purchase price to base units
                 unit_purchase_price /= line.part.base_quantity(1)
+
+                # Convert to base currency
+                if get_global_setting('PURCHASEORDER_CONVERT_CURRENCY'):
+                    try:
+                        unit_purchase_price = convert_money(
+                            unit_purchase_price, currency_code_default()
+                        )
+                    except Exception:
+                        log_error('PurchaseOrder.receive_line_item')
+
             else:
                 unit_purchase_price = None
 
@@ -926,7 +977,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 )
 
                 trigger_event(
-                    PurchaseOrderEvents.ITEM_RECEIVED, order_id=self.pk, item_id=self.pk
+                    PurchaseOrderEvents.ITEM_RECEIVED,
+                    order_id=self.pk,
+                    item_id=item.pk,
+                    line_id=line.pk,
                 )
 
         # Update the number of parts received against the particular line item
@@ -955,6 +1009,7 @@ class SalesOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = SalesOrderStatus
+    LOCK_SETTING = 'SALESORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""
@@ -1434,6 +1489,11 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
         Calls save method on the linked order
         """
+        if self.order and self.order.check_locked():
+            raise ValidationError({
+                'reference': _('The order is locked and cannot be modified')
+            })
+
         super().save(*args, **kwargs)
         self.order.save()
 
@@ -1442,6 +1502,11 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
 
         Calls save method on the linked order
         """
+        if self.order and self.order.check_locked():
+            raise ValidationError({
+                'reference': _('The order is locked and cannot be modified')
+            })
+
         super().delete(*args, **kwargs)
         self.order.save()
 
@@ -2200,6 +2265,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
     STATUS_CLASS = ReturnOrderStatus
+    LOCK_SETTING = 'RETURNORDER_EDIT_COMPLETED_ORDERS'
 
     class Meta:
         """Model meta options."""

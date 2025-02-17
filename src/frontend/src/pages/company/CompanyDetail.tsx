@@ -58,6 +58,7 @@ import { StockItemTable } from '../../tables/stock/StockItemTable';
 export type CompanyDetailProps = {
   title: string;
   breadcrumbs: Breadcrumb[];
+  last_crumb_url: string;
 };
 
 /**
@@ -328,6 +329,12 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             actions={companyActions}
             imageUrl={company.image}
             breadcrumbs={props.breadcrumbs}
+            lastCrumb={[
+              {
+                name: company.name,
+                url: `${props.last_crumb_url}/${company.pk}/`
+              }
+            ]}
             badges={badges}
             editAction={editCompany.open}
             editEnabled={user.hasChangePermission(ModelType.company)}

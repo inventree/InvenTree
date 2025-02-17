@@ -1,15 +1,24 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 310
+INVENTREE_API_VERSION = 313
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v310 - 2024-12-04 : https://github.com/inventree/InvenTree/pull/8596
+v313 - 2025-02-20 : https://github.com/inventree/InvenTree/pull/8596
     - Adds ReferenceSource and Reference endpoints to the API
+
+v312 - 2025-02-15 : https://github.com/inventree/InvenTree/pull/9079
+    - Remove old API endpoints associated with legacy BOM import functionality
+
+v311 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9076
+    - Adds "model_filters" attribute to settings API
+
+v310 - 2025-02-14 : https://github.com/inventree/InvenTree/pull/9077
+    - Adds 'is_variant' filter to the Part list API
 
 v309 - 2025-02-02 : https://github.com/inventree/InvenTree/pull/9008
     - Bug fixes for the "Part" serializer

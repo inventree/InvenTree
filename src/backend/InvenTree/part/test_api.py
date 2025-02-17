@@ -1004,6 +1004,19 @@ class PartAPITest(PartAPITestBase):
 
                 self.assertIn(v.pk, id_values)
 
+    def test_filter_is_variant(self):
+        """Test the is_variant filter."""
+        url = reverse('api-part-list')
+
+        all_count = Part.objects.all().count()
+        no_var_count = Part.objects.filter(variant_of__isnull=True).count()
+
+        response = self.get(url, {'is_variant': False}, expected_code=200)
+        self.assertEqual(no_var_count, len(response.data))
+
+        response = self.get(url, {'is_variant': True}, expected_code=200)
+        self.assertEqual(all_count - no_var_count, len(response.data))
+
     def test_include_children(self):
         """Test the special 'include_child_categories' flag.
 

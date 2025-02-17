@@ -157,7 +157,7 @@ class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
     """This function ensures only frontend code triggers the MFA auth cycle."""
 
     def process_request(self, request):
-        """Check if requested url is forntend and enforce MFA check."""
+        """Check if requested url is frontend and enforce MFA check."""
         try:
             if not url_matcher.resolve(request.path[1:]):
                 super().process_request(request)
