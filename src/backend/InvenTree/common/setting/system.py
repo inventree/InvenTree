@@ -121,6 +121,11 @@ def barcode_plugins() -> list:
     ]
 
 
+def default_uuid4() -> str:
+    """Return a default UUID4 value."""
+    return str(uuid.uuid4())
+
+
 class BaseURLValidator(URLValidator):
     """Validator for the InvenTree base URL.
 
@@ -174,7 +179,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'INVENTREE_INSTANCE_ID': {
         'name': _('Instance ID'),
         'description': _('Unique identifier for this InvenTree instance'),
-        'default': uuid.uuid4,
+        'default': default_uuid4,
         'hidden': True,
     },
     'INVENTREE_ANNOUNCE_ID': {
