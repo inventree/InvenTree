@@ -3369,7 +3369,7 @@ class PartStocktakeReport(models.Model):
         return os.path.basename(self.report.name)
 
     def get_absolute_url(self):
-        """Return the URL for the associaed report file for download."""
+        """Return the URL for the associated report file for download."""
         if self.report:
             return self.report.url
         return None
