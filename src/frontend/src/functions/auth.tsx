@@ -109,6 +109,13 @@ export const doBasicLogin = async (
           success = true;
           navigate('/mfa');
         }
+      } else if (err?.response?.status == 409) {
+        notifications.show({
+          title: t`Already logged in`,
+          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          color: 'red',
+          autoClose: false
+        });
       }
     });
 
@@ -214,15 +221,23 @@ export function handleMfaLogin(
       setToken(response.data.meta.access_token);
       followRedirect(navigate, location?.state);
     })
-    .catch((error) => {
-      const errors = error.response?.data?.errors;
-      let msg = t`An error occurred`;
+    .catch((err) => {
+      if (err?.response?.status == 409) {
+        notifications.show({
+          title: t`Already logged in`,
+          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          color: 'red',
+          autoClose: false
+        });
+      } else {
+        const errors = err.response?.data?.errors;
+        let msg = t`An error occurred`;
 
-      if (errors) {
-        msg = errors.map((e: any) => e.message).join(', ');
+        if (errors) {
+          msg = errors.map((e: any) => e.message).join(', ');
+        }
+        setError(msg);
       }
-
-      setError(msg);
     });
 }
 
