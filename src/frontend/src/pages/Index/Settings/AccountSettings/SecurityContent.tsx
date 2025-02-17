@@ -29,6 +29,10 @@ import type { AuthConfig, Provider } from '../../../../states/states';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
+export function parseDate(date: number) {
+  return date == null ? 'Never' : new Date(date * 1000).toLocaleString();
+}
+
 export function SecurityContent() {
   const [auth_config, sso_enabled] = useServerApiState((state) => [
     state.auth_config,
@@ -352,9 +356,6 @@ function MfaSection() {
       getReauthText
     );
   };
-
-  const parseDate = (date: number) =>
-    date == null ? 'Never' : new Date(date * 1000).toLocaleString();
 
   const rows = useMemo(() => {
     if (isLoading || !data) return null;
