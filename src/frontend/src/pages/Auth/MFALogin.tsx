@@ -10,6 +10,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useState } from 'react';
 import { LanguageContext } from '../../contexts/LanguageContext';
 import { handleMfaLogin } from '../../functions/auth';
 
@@ -17,6 +18,7 @@ export default function MFALogin() {
   const simpleForm = useForm({ initialValues: { code: '' } });
   const navigate = useNavigate();
   const location = useLocation();
+  const [loginError, setLoginError] = useState<string | undefined>(undefined);
 
   return (
     <LanguageContext>
@@ -33,12 +35,18 @@ export default function MFALogin() {
                 name='TOTP'
                 description={t`Enter your TOTP or recovery code`}
                 {...simpleForm.getInputProps('code')}
+                error={loginError}
               />
             </Stack>
             <Button
               type='submit'
               onClick={() =>
-                handleMfaLogin(navigate, location, simpleForm.values)
+                handleMfaLogin(
+                  navigate,
+                  location,
+                  simpleForm.values,
+                  setLoginError
+                )
               }
             >
               <Trans>Log in</Trans>
