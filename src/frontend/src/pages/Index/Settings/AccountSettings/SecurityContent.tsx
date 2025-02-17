@@ -16,12 +16,18 @@ import {
   Title
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { showNotification } from '@mantine/notifications';
-import { IconAlertCircle, IconAt, IconX } from '@tabler/icons-react';
+import { hideNotification, showNotification } from '@mantine/notifications';
+import {
+  IconAlertCircle,
+  IconAt,
+  IconExclamationCircle,
+  IconX
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { api } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
+import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
@@ -539,9 +545,11 @@ function MfaAddSection({
         used: usedFactors?.includes('recovery_codes')
       }
     ].filter((factor) => {
-      auth_config?.mfa.supported_types.includes(factor.type);
+      return auth_config?.mfa?.supported_types.includes(factor.type);
     });
   }, [usedFactors, auth_config]);
+
+  const [totpError, setTotpError] = useState<string>('');
 
   return (
     <Stack>
@@ -560,13 +568,14 @@ function MfaAddSection({
       <Modal
         opened={totpQrOpen}
         onClose={closeTotpQr}
-        title={t`Register TOTP token`}
+        title={<StylishText size='lg'>{t`Register TOTP Token`}</StylishText>}
       >
         <Stack>
           <QrRegistrationForm
             url={totpQr?.totp_url ?? ''}
             secret={totpQr?.secret ?? ''}
             value={value}
+            error={totpError}
             setValue={setValue}
           />
           <Button
@@ -576,11 +585,30 @@ function MfaAddSection({
                 () =>
                   authApi(apiUrl(ApiEndpoints.auth_totp), undefined, 'post', {
                     code: value
-                  }).then(() => {
-                    closeTotpQr();
-                    refetch();
-                    return ResultType.success;
-                  }),
+                  })
+                    .then(() => {
+                      setTotpError('');
+                      closeTotpQr();
+                      refetch();
+                      return ResultType.success;
+                    })
+                    .catch((error) => {
+                      const errorMsg = t`Error registering TOTP token`;
+
+                      setTotpError(
+                        error.response?.data?.errors[0]?.message ?? errorMsg
+                      );
+
+                      hideNotification('totp-error');
+                      showNotification({
+                        id: 'totp-error',
+                        title: t`Error`,
+                        message: errorMsg,
+                        color: 'red',
+                        icon: <IconExclamationCircle />
+                      });
+                      return ResultType.error;
+                    }),
                 getReauthText
               )
             }
