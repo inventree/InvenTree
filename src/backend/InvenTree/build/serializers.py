@@ -126,7 +126,7 @@ class BuildSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    overdue = serializers.BooleanField(required=False, read_only=True)
+    overdue = serializers.BooleanField(required=False, read_only=True, allow_null=True)
 
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
@@ -135,11 +135,14 @@ class BuildSerializer(
     barcode_hash = serializers.CharField(read_only=True)
 
     project_code_label = serializers.CharField(
-        source='project_code.code', read_only=True, label=_('Project Code Label')
+        source='project_code.code',
+        read_only=True,
+        label=_('Project Code Label'),
+        allow_null=True,
     )
 
     project_code_detail = ProjectCodeSerializer(
-        source='project_code', many=False, read_only=True
+        source='project_code', many=False, read_only=True, allow_null=True
     )
 
     create_child_builds = serializers.BooleanField(
