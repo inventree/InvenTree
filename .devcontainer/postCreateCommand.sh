@@ -34,6 +34,3 @@ invoke dev.setup-dev
 
 # Install required frontend packages
 invoke int.frontend-install
-
-# Install playwright dependencies
-cd src/frontend && sudo npx playwright install-deps
