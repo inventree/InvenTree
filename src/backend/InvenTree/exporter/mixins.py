@@ -252,9 +252,9 @@ class DataExportViewMixin:
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for the view.
 
-        - Only applies for OPTIONS or POST requests
+        - Only applies for OPTIONS or GET requests
         - OPTIONS requests to determine plugin serializer options
-        - POST request to perform the data export
+        - GET request to perform the data export
         - If the view is exporting data, return the DataExportOptionsSerializer.
         - Otherwise, return the default serializer.
         """
@@ -262,7 +262,7 @@ class DataExportViewMixin:
 
         if exporting is None:
             exporting = (
-                self.request.method.lower() in ['options', 'post']
+                self.request.method.lower() in ['options', 'get']
                 and self.is_exporting()
             )
 
@@ -392,8 +392,8 @@ class DataExportViewMixin:
             exporter.serializers.DataExportOutputSerializer(output).data, status=200
         )
 
-    def post(self, request, *args, **kwargs):
-        """Override the POST method to determine export options."""
+    def get(self, request, *args, **kwargs):
+        """Override the GET method to determine export options."""
         # If we are not exporting data, return the default response
         if self.is_exporting():
             # Determine if the export options are valid
@@ -426,4 +426,4 @@ class DataExportViewMixin:
                 export_context=export_context,
             )
 
-        return super().post(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
