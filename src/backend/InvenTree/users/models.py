@@ -946,7 +946,9 @@ class UserProfile(InvenTree.models.InvenTreeMetadataModel):
     location = models.CharField(max_length=2000, blank=True, null=True)
     active = models.BooleanField(default=True)
     contact = models.CharField(max_length=255, blank=True, null=True)
-    type = models.CharField(max_length=10, choices=UserType, default=UserType.INTERNAL)
+    type = models.CharField(
+        max_length=10, choices=UserType.choices, default=UserType.INTERNAL
+    )
     organisation = models.CharField(max_length=255, blank=True, null=True)
     primary_group = models.ForeignKey(
         Group,
