@@ -6,6 +6,7 @@ import { Button, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../App';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { generateUrl } from '../functions/urls';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 
 export function DownloadAction({
@@ -61,8 +62,14 @@ export function DownloadAction({
     fields: exportFields,
     submitText: t`Export`,
     successMessage: t`Data exported successfully`,
-    onFormSuccess: (data: any) => {
+    onFormSuccess: (response: any) => {
       setPluginKey('');
+
+      if (response.complete && response.output) {
+        // Download the generated file
+        const url = generateUrl(response.output);
+        window.open(url.toString(), '_blank');
+      }
     }
   });
 
