@@ -64,23 +64,33 @@ export default function InvenTreeTableHeader({
 
   // Construct the URL for the export request
   const exportParams = useMemo(() => {
-    const queryParams = {
-      ...tableProps.params,
+    const queryParams: Record<string, any> = {
       export: true,
       export_plugin: pluginKey || undefined
     };
 
+    // Add in any additional parameters which have a defined value
+    for (const [key, value] of Object.entries(tableProps.params ?? {})) {
+      if (value != undefined) {
+        queryParams[key] = value;
+      }
+    }
+
     // Add in active filters
     if (tableState.activeFilters) {
       tableState.activeFilters.forEach((filter) => {
-        queryParams[filter.name] = filter.value;
+        if (filter.value != undefined) {
+          queryParams[filter.name] = filter.value;
+        }
       });
     }
 
     // Allow overriding of query parameters
     if (tableState.queryFilters) {
       for (const [key, value] of tableState.queryFilters) {
-        queryParams[key] = value;
+        if (value != undefined) {
+          queryParams[key] = value;
+        }
       }
     }
 
@@ -110,7 +120,7 @@ export default function InvenTreeTableHeader({
           params: exportParams
         })
         .then((response: any) => {
-          return extractAvailableFields(response, 'POST') || {};
+          return extractAvailableFields(response, 'GET') || {};
         })
         .catch(() => {
           return {};
@@ -140,6 +150,7 @@ export default function InvenTreeTableHeader({
     url: tableUrl ?? '',
     queryParams: new URLSearchParams(exportParams),
     title: t`Export Data`,
+    method: 'GET',
     fields: exportFields,
     submitText: t`Export`,
     successMessage: t`Data exported successfully`,
