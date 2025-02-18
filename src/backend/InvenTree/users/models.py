@@ -926,6 +926,26 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     update_group_roles(instance)
 
 
+@receiver(post_save, sender=Group)
+def validate_primary_group_on_save(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is created or updated."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group and profile.primary_group not in user.groups.all():
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(post_delete, sender=Group)
+def validate_primary_group_on_delete(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is deleted."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group == instance:
+            profile.primary_group = None
+            profile.save()
+
+
 class UserProfile(InvenTree.models.InvenTreeMetadataModel):
     """Model to store additional user profile information."""
 

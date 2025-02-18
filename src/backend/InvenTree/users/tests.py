@@ -2,6 +2,7 @@
 
 from django.apps import apps
 from django.contrib.auth.models import Group
+from django.db.models.signals import post_delete, post_save
 from django.test import TestCase
 from django.urls import reverse
 
@@ -403,4 +404,42 @@ class UserProfileTest(InvenTreeAPITestCase):
         profile = self.user.profile
         profile.primary_group = new_group
         profile.save()
+        self.assertIsNone(profile.primary_group)
+
+    def test_validate_primary_group_on_save(self):
+        """Test validate_primary_group_on_save signal handler."""
+        group = Group.objects.create(name='Test Group')
+        self.user.groups.add(group)
+        profile = self.user.profile
+        profile.primary_group = group
+        profile.save()
+
+        # Ensure primary_group is set correctly
+        self.assertEqual(profile.primary_group, group)
+
+        # Remove user from group and save group
+        self.user.groups.remove(group)
+        post_save.send(sender=Group, instance=group)
+
+        # Ensure primary_group is set to None
+        profile.refresh_from_db()
+        self.assertIsNone(profile.primary_group)
+
+    def test_validate_primary_group_on_delete(self):
+        """Test validate_primary_group_on_delete signal handler."""
+        group = Group.objects.create(name='Test Group')
+        self.user.groups.add(group)
+        profile = self.user.profile
+        profile.primary_group = group
+        profile.save()
+
+        # Ensure primary_group is set correctly
+        self.assertEqual(profile.primary_group, group)
+
+        # Delete group
+        group.delete()
+        post_delete.send(sender=Group, instance=group)
+
+        # Ensure primary_group is set to None
+        profile.refresh_from_db()
         self.assertIsNone(profile.primary_group)
