@@ -7,6 +7,7 @@ INVENTREE_API_VERSION = 313
 
 
 INVENTREE_API_TEXT = """
+
 v313 - 2025-02-17 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
     - Introduces allauth-provided auth endpoints
