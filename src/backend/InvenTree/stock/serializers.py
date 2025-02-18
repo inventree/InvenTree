@@ -29,11 +29,8 @@ import stock.status_codes
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
-from InvenTree.serializers import (
-    DataImportExportSerializerMixin,
-    InvenTreeCurrencySerializer,
-    InvenTreeDecimalField,
-)
+from InvenTree.mixins import DataImportExportSerializerMixin
+from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 
 from .models import (
     StockItem,

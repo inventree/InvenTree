@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 import exporter.models
 import InvenTree.helpers
+import InvenTree.serializers
 from plugin import PluginMixinEnum, registry
 
 
@@ -70,7 +71,7 @@ class DataExportOptionsSerializer(serializers.Serializer):
     )
 
 
-class DataExportOutputSerializer(serializers.Serializer):
+class DataExportOutputSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer class for a data export output object."""
 
     class Meta:
@@ -78,3 +79,5 @@ class DataExportOutputSerializer(serializers.Serializer):
 
         model = exporter.models.ExportOutput
         fields = ['pk', 'created', 'user', 'plugin', 'complete', 'progress', 'output']
+
+    output = InvenTree.serializers.InvenTreeAttachmentSerializerField()

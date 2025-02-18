@@ -3,16 +3,19 @@
 from collections import OrderedDict
 
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 import structlog
 import tablib
 from rest_framework import serializers
+from rest_framework.response import Response
 from taggit.serializers import TagListSerializerField
 
+import exporter.serializers
 import InvenTree.exceptions
-from exporter.serializers import DataExportOptionsSerializer
-from InvenTree.helpers import DownloadFile, str2bool
+from exporter.models import ExportOutput
+from InvenTree.helpers import str2bool
 from plugin import PluginMixinEnum, registry
 
 logger = structlog.get_logger('inventree')
@@ -262,17 +265,24 @@ class DataExportViewMixin:
             )
 
         if exporting:
-            kwargs['plugin'] = self.get_plugin()
-            kwargs['request'] = self.request
+            # Override kwargs when initializing the DataExportOptionsSerializer
+            export_kwargs = {
+                'plugin': self.get_plugin(),
+                'request': self.request,
+                'data': kwargs.get('data'),
+                'context': kwargs.get('context'),
+            }
 
             # Get the base model associated with this view
             try:
                 serializer_class = self.get_serializer_class()
-                kwargs['model_class'] = serializer_class.Meta.model
+                export_kwargs['model_class'] = serializer_class.Meta.model
             except AttributeError:
-                kwargs['model_class'] = None
+                export_kwargs['model_class'] = None
 
-            return DataExportOptionsSerializer(*args, **kwargs)
+            return exporter.serializers.DataExportOptionsSerializer(
+                *args, **export_kwargs
+            )
         else:
             return super().get_serializer(*args, **kwargs)
 
@@ -362,8 +372,23 @@ class DataExportViewMixin:
             InvenTree.exceptions.log_error('export_to_file')
             raise ValidationError(_('Error occurred during data export'))
 
-        # Finally, return a file download object
-        return DownloadFile(datafile, filename=filename)
+        # Create a new ExportOutput object
+        output = ExportOutput.objects.create(
+            user=self.request.user,
+            progress=100,
+            complete=True,
+            plugin=export_plugin.slug,
+            output=ContentFile(datafile, filename),
+        )
+
+        data = exporter.serializers.DataExportOutputSerializer(output).data
+
+        output.refresh_from_db()
+
+        # Return a serialized response
+        return Response(
+            exporter.serializers.DataExportOutputSerializer(output).data, status=200
+        )
 
     def post(self, request, *args, **kwargs):
         """Override the POST method to determine export options."""

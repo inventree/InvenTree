@@ -18,8 +18,8 @@ import generic.states.custom
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    DataImportExportSerializerMixin,
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,

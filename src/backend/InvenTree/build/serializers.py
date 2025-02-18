@@ -31,8 +31,8 @@ import part.serializers as part_serializers
 from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    DataImportExportSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,

@@ -13,8 +13,8 @@ import company.filters
 import part.filters
 import part.serializers as part_serializers
 from importer.registry import register_importer
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    DataImportExportSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,

@@ -43,8 +43,8 @@ from InvenTree.helpers import (
     normalize,
     str2bool,
 )
+from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    DataImportExportSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
