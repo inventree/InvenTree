@@ -5,7 +5,7 @@ services:
     expose:
       - 5432/tcp
     volumes:
-      - ../dev/psql/:/var/lib/postgresql/data:z
+      - ../dev-db/:/var/lib/postgresql/data:z
     environment:
       POSTGRES_DB: inventree
       POSTGRES_USER: inventree_user
@@ -25,12 +25,12 @@ services:
       - ../:/home/inventree:z
 
     environment:
-      INVENTREE_DEBUG: True
       INVENTREE_DB_ENGINE: postgresql
       INVENTREE_DB_NAME: inventree
       INVENTREE_DB_HOST: db
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
+      INVENTREE_DEBUG: True
       INVENTREE_CACHE_HOST: redis
       INVENTREE_CACHE_PORT: 6379
       INVENTREE_PLUGINS_ENABLED: True
