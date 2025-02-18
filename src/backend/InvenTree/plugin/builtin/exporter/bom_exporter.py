@@ -6,7 +6,7 @@ import rest_framework.serializers as serializers
 
 from part.models import BomItem
 from plugin import InvenTreePlugin
-from plugin.mixins import DataExportMixin, SettingsMixin
+from plugin.mixins import DataExportMixin
 
 
 class BomExporterOptionsSerializer(serializers.Serializer):
@@ -50,7 +50,7 @@ class BomExporterOptionsSerializer(serializers.Serializer):
     )
 
 
-class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
+class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
     """Builtin plugin for performing multi-level BOM exports."""
 
     NAME = 'BOM Exporter'
@@ -59,8 +59,6 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
     DESCRIPTION = _('Provides support for exporting multi-level BOMs')
     VERSION = '1.0.0'
     AUTHOR = _('InvenTree contributors')
-
-    SETTINGS = {}
 
     ExportOptionsSerializer = BomExporterOptionsSerializer
 

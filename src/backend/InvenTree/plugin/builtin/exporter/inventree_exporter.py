@@ -3,10 +3,10 @@
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
-from plugin.mixins import DataExportMixin, SettingsMixin
+from plugin.mixins import DataExportMixin
 
 
-class InvenTreeExporter(DataExportMixin, SettingsMixin, InvenTreePlugin):
+class InvenTreeExporter(DataExportMixin, InvenTreePlugin):
     """Generic exporter plugin for InvenTree."""
 
     NAME = 'InvenTree Exporter'
@@ -15,8 +15,6 @@ class InvenTreeExporter(DataExportMixin, SettingsMixin, InvenTreePlugin):
     DESCRIPTION = _('Provides support for exporting data from InvenTree')
     VERSION = '1.0.0'
     AUTHOR = _('InvenTree contributors')
-
-    SETTINGS = {}
 
     def supports_export(self, model_class: type, user, *args, **kwargs) -> bool:
         """This exporter supports all model classes."""
