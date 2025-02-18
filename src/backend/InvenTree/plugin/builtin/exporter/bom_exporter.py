@@ -97,11 +97,29 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         # Append a "BOM Level" field
         headers['level'] = _('BOM Level')
 
+        # Append supplier part columns
+        if self.export_supplier_data and self.n_supplier_cols > 0:
+            for idx in range(self.n_supplier_cols):
+                n = idx + 1
+                headers[f'supplier_name_{idx}'] = _(f'Supplier {n}')
+                headers[f'supplier_sku_{idx}'] = _(f'Supplier {n} SKU')
+                headers[f'supplier_mpn_{idx}'] = _(f'Supplier {n} MPN')
+
+        if self.export_manufacturer_data and self.n_manufacturer_cols > 0:
+            for idx in range(self.n_manufacturer_cols):
+                n = idx + 1
+                headers[f'manufacturer_name_{idx}'] = _(f'Manufacturer {n}')
+                headers[f'manufacturer_mpn_{idx}'] = _(f'Manufacturer {n} MPN')
+
         return headers
 
     def export_data(self, queryset, serializer_class, headers, context, **kwargs):
         """Export BOM data from the queryset."""
         self.serializer_class = serializer_class
+
+        # Track how many extra columns we need
+        self.n_supplier_cols = 0
+        self.n_manufacturer_cols = 0
 
         # Extract the export options from the context (and cache for later)
         self.export_levels = context.get('export_levels', 1)
@@ -114,6 +132,9 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         # Pre-fetch related data to reduce database queries
         if self.export_supplier_data:
             queryset = queryset.prefetch_related('sub_part__supplier_parts')
+            queryset = queryset.prefetch_related(
+                'sub_part__supplier_parts__manufacturer_part'
+            )
 
         if self.export_manufacturer_data:
             queryset = queryset.prefetch_related('sub_part__manufacturer_parts')
@@ -137,11 +158,70 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         # Add this row to the output dataset
         row = self.serializer_class(bom_item, exporting=True).data
         row['level'] = level
+
+        # Extend with additional data
+        if self.export_supplier_data:
+            row.update(self.get_supplier_data(bom_item))
+
+        if self.export_manufacturer_data:
+            row.update(self.get_manufacturer_data(bom_item))
+
         self.bom_data.append(row)
 
         # If we have reached the maximum export level, return just this bom item
         if bom_item.sub_part.assembly and (
             self.export_levels <= 0 or level < self.export_levels
         ):
-            for item in bom_item.sub_part.get_bom_items():
+            sub_items = bom_item.sub_part.get_bom_items()
+
+            if self.export_supplier_data:
+                sub_items = sub_items.prefetch_related('sub_part__supplier_parts')
+                sub_items = sub_items.prefetch_related(
+                    'sub_part__supplier_parts__manufacturer_part'
+                )
+
+            if self.export_manufacturer_data:
+                sub_items = sub_items.prefetch_related('sub_part__manufacturer_parts')
+
+            for item in sub_items.all():
                 self.process_bom_row(item, level + 1, **kwargs)
+
+    def get_supplier_data(self, bom_item: BomItem) -> dict:
+        """Return supplier and manufacturer data for a BomItem."""
+        supplier_part_data = {}
+
+        idx = 0
+
+        for supplier_part in bom_item.sub_part.supplier_parts.all():
+            manufacturer_part = supplier_part.manufacturer_part
+            supplier_part_data.update({
+                f'supplier_name_{idx}': supplier_part.supplier.name,
+                f'supplier_sku_{idx}': supplier_part.SKU,
+                f'supplier_mpn_{idx}': manufacturer_part.MPN
+                if manufacturer_part
+                else '',
+            })
+
+            idx += 1
+
+        self.n_supplier_cols = max(self.n_supplier_cols, idx)
+
+        return supplier_part_data
+
+    def get_manufacturer_data(self, bom_item: BomItem) -> dict:
+        """Return manufacturer data for a BomItem."""
+        manufacturer_part_data = {}
+
+        idx = 0
+
+        for manufacturer_part in bom_item.sub_part.manufacturer_parts.all():
+            manufacturer_part_data.update({
+                f'manufacturer_name_{idx}': manufacturer_part.manufacturer.name,
+                f'manufacturer_mpn_{idx}': manufacturer_part.MPN,
+            })
+
+            idx += 1
+
+        self.n_manufacturer_cols = max(self.n_manufacturer_cols, idx)
+
+        return manufacturer_part_data
