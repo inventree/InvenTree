@@ -10,7 +10,7 @@ from plugin import PluginMixinEnum, registry
 def label_printer_options():
     """Build a list of available label printer options."""
     printers = []
-    label_printer_plugins = registry.with_mixin(PluginMixinEnum)
+    label_printer_plugins = registry.with_mixin(PluginMixinEnum.LABELS)
     if label_printer_plugins:
         printers.extend([
             (p.slug, p.name + ' - ' + p.human_name) for p in label_printer_plugins
