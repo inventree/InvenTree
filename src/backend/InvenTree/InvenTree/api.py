@@ -206,6 +206,7 @@ class InfoApiSerializer(serializers.Serializer):
         navbar_message = serializers
 
     server = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -258,6 +259,7 @@ class InfoView(APIView):
 
         data = {
             'server': 'InvenTree',
+            'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),

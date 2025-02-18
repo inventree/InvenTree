@@ -42,6 +42,8 @@ export default function SystemSettings() {
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
+              'INVENTREE_INSTANCE_ID',
+              'INVENTREE_ANNOUNCE_ID',
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
