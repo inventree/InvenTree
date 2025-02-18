@@ -348,6 +348,8 @@ class RuleSet(models.Model):
             'common_inventreecustomuserstatemodel',
             'common_selectionlistentry',
             'common_selectionlist',
+            'common_referencesource',
+            'common_reference',
             'users_owner',
             # Third-party tables
             'error_report_error',
