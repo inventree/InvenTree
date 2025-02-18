@@ -59,20 +59,54 @@ export default function InvenTreeTableHeader({
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   // Selected plugin to use for data export
-  const [pluginKey, setPluginKey] = useState<string>('');
+  const [pluginKey, setPluginKey] = useState<string>('inventree-exporter');
+
+  // Construct the URL for the export request
+  const exportParams = useMemo(() => {
+    const queryParams = {
+      ...tableProps.params,
+      export: true,
+      export_plugin: pluginKey || undefined
+    };
+
+    // Add in active filters
+    if (tableState.activeFilters) {
+      tableState.activeFilters.forEach((filter) => {
+        queryParams[filter.name] = filter.value;
+      });
+    }
+
+    // Allow overriding of query parameters
+    if (tableState.queryFilters) {
+      for (const [key, value] of tableState.queryFilters) {
+        queryParams[key] = value;
+      }
+    }
+
+    // Add custom search term
+    if (tableState.searchTerm) {
+      queryParams.search = tableState.searchTerm;
+    }
+
+    return queryParams;
+  }, [
+    pluginKey,
+    tableUrl,
+    tableProps.params,
+    tableState.activeFilters,
+    tableState.queryFilters,
+    tableState.searchTerm
+  ]);
 
   // Fetch available export fields via OPTIONS request
   const extraExportFields = useQuery({
     enabled: !!tableUrl && tableProps.enableDownload,
-    queryKey: ['exportFields', pluginKey, tableUrl],
+    queryKey: ['exportFields', pluginKey, tableUrl, exportParams],
     gcTime: 500,
     queryFn: () =>
       api
         .options(tableUrl ?? '', {
-          params: {
-            export: true,
-            export_plugin: pluginKey || undefined
-          }
+          params: exportParams
         })
         .then((response: any) => {
           console.log('OPTIONS:', response);
@@ -99,7 +133,7 @@ export default function InvenTreeTableHeader({
 
   const exportModal = useCreateApiFormModal({
     url: tableUrl ?? '',
-    queryParams: new URLSearchParams({ export: 'true' }),
+    queryParams: new URLSearchParams(exportParams),
     title: t`Export Data`,
     fields: exportFields,
     submitText: t`Export`,
