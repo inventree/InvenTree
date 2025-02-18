@@ -20,33 +20,33 @@ class BomExporterOptionsSerializer(serializers.Serializer):
     )
 
     export_stock_data = serializers.BooleanField(
-        default=True,
-        label=_('Stock Data'),
-        help_text=_('Include current stock data in the export'),
+        default=True, label=_('Stock Data'), help_text=_('Include part stock data')
     )
 
     export_pricing_data = serializers.BooleanField(
-        default=True,
-        label=_('Pricing Data'),
-        help_text=_('Include pricing data in the export'),
+        default=True, label=_('Pricing Data'), help_text=_('Include part pricing data')
     )
 
     export_supplier_data = serializers.BooleanField(
-        default=True,
-        label=_('Supplier Data'),
-        help_text=_('Include supplier data in the export'),
+        default=True, label=_('Supplier Data'), help_text=_('Include supplier data')
     )
 
     export_manufacturer_data = serializers.BooleanField(
         default=True,
         label=_('Manufacturer Data'),
-        help_text=_('Include manufacturer data in the export'),
+        help_text=_('Include manufacturer data'),
     )
 
     export_substitute_data = serializers.BooleanField(
         default=True,
         label=_('Substitute Data'),
-        help_text=_('Include substitute part data in the export'),
+        help_text=_('Include substitute part data'),
+    )
+
+    export_parameter_data = serializers.BooleanField(
+        default=True,
+        label=_('Parameter Data'),
+        help_text=_('Include part parameter data'),
     )
 
 
@@ -118,6 +118,11 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
                 headers[f'manufacturer_name_{idx}'] = _(f'Manufacturer {n}')
                 headers[f'manufacturer_mpn_{idx}'] = _(f'Manufacturer {n} MPN')
 
+        # Append part parameter columns
+        if self.export_parameter_data and len(self.parameters) > 0:
+            for key, value in self.parameters.items():
+                headers[f'parameter_{key}'] = value
+
         return headers
 
     def prefetch_queryset(self, queryset):
@@ -136,6 +141,10 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         if self.export_manufacturer_data:
             queryset = queryset.prefetch_related('sub_part__manufacturer_parts')
 
+        if self.export_parameter_data:
+            queryset = queryset.prefetch_related('sub_part__parameters')
+            queryset = queryset.prefetch_related('sub_part__parameters__template')
+
         return queryset
 
     def export_data(self, queryset, serializer_class, headers, context, **kwargs):
@@ -147,6 +156,9 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         self.n_supplier_cols = 0
         self.n_manufacturer_cols = 0
 
+        # A dict of "Parameter ID" -> "Parameter Name"
+        self.parameters = {}
+
         # Extract the export options from the context (and cache for later)
         self.export_levels = context.get('export_levels', 1)
         self.export_stock_data = context.get('export_stock_data', True)
@@ -154,6 +166,7 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         self.export_supplier_data = context.get('export_supplier_data', True)
         self.export_manufacturer_data = context.get('export_manufacturer_data', True)
         self.export_substitute_data = context.get('export_substitute_data', True)
+        self.export_parameter_data = context.get('export_parameter_data', True)
 
         # Pre-fetch related data to reduce database queries
         queryset = self.prefetch_queryset(queryset)
@@ -188,6 +201,9 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
 
         if self.export_manufacturer_data:
             row.update(self.get_manufacturer_data(bom_item))
+
+        if self.export_parameter_data:
+            row.update(self.get_parameter_data(bom_item))
 
         self.bom_data.append(row)
 
@@ -255,3 +271,16 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         self.n_manufacturer_cols = max(self.n_manufacturer_cols, idx)
 
         return manufacturer_part_data
+
+    def get_parameter_data(self, bom_item: BomItem) -> dict:
+        """Return parameter data for a BomItem."""
+        parameter_data = {}
+
+        for parameter in bom_item.sub_part.parameters.all():
+            template = parameter.template
+            if template.pk not in self.parameters:
+                self.parameters[template.pk] = template.name
+
+            parameter_data.update({f'parameter_{template.pk}': parameter.data})
+
+        return parameter_data
