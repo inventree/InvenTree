@@ -200,7 +200,7 @@ class GroupMixin:
         )
         kwargs['context'] = self.get_serializer_context()
 
-        super().get_serializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
