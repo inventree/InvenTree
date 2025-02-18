@@ -55,7 +55,7 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
 
     NAME = 'BOM Exporter'
     SLUG = 'bom-exporter'
-    TITLE = _('InvenTree BOM exporter')
+    TITLE = _('Multi-Level BOM Exporter')
     DESCRIPTION = _('Provides support for exporting multi-level BOMs')
     VERSION = '1.0.0'
     AUTHOR = _('InvenTree contributors')
@@ -122,6 +122,10 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         if self.export_parameter_data and len(self.parameters) > 0:
             for key, value in self.parameters.items():
                 headers[f'parameter_{key}'] = value
+
+        print('Custom Headers:')
+        for k, v in headers.items():
+            print(f'  {k}: {v}')
 
         return headers
 

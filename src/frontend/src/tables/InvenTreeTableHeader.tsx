@@ -120,7 +120,7 @@ export default function InvenTreeTableHeader({
           params: exportParams
         })
         .then((response: any) => {
-          return extractAvailableFields(response, 'GET') || {};
+          return extractAvailableFields(response, 'POST') || {};
         })
         .catch(() => {
           return {};
@@ -150,7 +150,7 @@ export default function InvenTreeTableHeader({
     url: tableUrl ?? '',
     queryParams: new URLSearchParams(exportParams),
     title: t`Export Data`,
-    method: 'GET',
+    method: 'POST',
     fields: exportFields,
     submitText: t`Export`,
     successMessage: t`Data exported successfully`,

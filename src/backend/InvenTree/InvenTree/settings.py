@@ -254,21 +254,21 @@ INVENTREE_ADMIN_URL = get_setting(
 )
 
 INSTALLED_APPS = [
-    # Admin site integration
     'django.contrib.admin',
     'django.contrib.admindocs',
+    # Admin site integration
     # InvenTree apps
-    'exporter.apps.ExporterConfig',
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
-    'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'exporter.apps.ExporterConfig',
     'importer.apps.ImporterConfig',
     'web',
     'generic',
