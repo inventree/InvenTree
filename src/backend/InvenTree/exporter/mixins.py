@@ -360,7 +360,7 @@ class DataExportViewMixin:
         # Augment / update the headers (if required)
         if hasattr(export_plugin, 'update_headers'):
             try:
-                headers = export_plugin.update_headers(headers)
+                headers = export_plugin.update_headers(headers, export_context)
             except Exception:
                 InvenTree.exceptions.log_error(
                     f'plugins.{export_plugin.slug}.update_headers'

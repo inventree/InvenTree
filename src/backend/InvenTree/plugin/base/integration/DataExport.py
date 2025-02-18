@@ -51,13 +51,16 @@ class DataExportMixin:
 
         return f'InvenTree_{model}_{date}.{export_format}'
 
-    def update_headers(self, headers: OrderedDict, **kwargs) -> OrderedDict:
+    def update_headers(
+        self, headers: OrderedDict, context: dict, **kwargs
+    ) -> OrderedDict:
         """Update the headers for the data export.
 
         Allows for optional modification of the headers for the data export.
 
-        Args:
+        Arguments:
             headers: The current headers for the export
+            context: The context for the export (provided by the plugin serializer)
             kwargs: Additional keyword arguments
 
         Returns: The updated headers
