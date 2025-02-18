@@ -57,7 +57,7 @@ class GeneralExtraLineList(DataExportViewMixin):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -298,7 +298,7 @@ class PurchaseOrderMixin:
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return the annotated queryset for this endpoint."""
@@ -573,7 +573,7 @@ class PurchaseOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def perform_update(self, serializer):
         """Override the perform_update method to auto-update pricing if required."""
@@ -765,7 +765,7 @@ class SalesOrderMixin:
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -936,7 +936,7 @@ class SalesOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1215,7 +1215,7 @@ class SalesOrderAllocationList(SalesOrderAllocationMixin, ListAPI):
         except AttributeError:
             pass
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
@@ -1379,7 +1379,7 @@ class ReturnOrderMixin:
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""
@@ -1530,7 +1530,7 @@ class ReturnOrderLineItemMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint."""

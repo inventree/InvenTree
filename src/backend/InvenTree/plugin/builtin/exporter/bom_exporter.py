@@ -34,6 +34,6 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
 
     ExportOptionsSerializer = BomExporterOptionsSerializer
 
-    def supports_model(self, model_class: type) -> bool:
+    def supports_export(self, model_class: type, user, *args, **kwargs) -> bool:
         """This exported only supports the BomItem model."""
         return model_class == BomItem

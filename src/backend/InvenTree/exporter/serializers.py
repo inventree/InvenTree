@@ -42,11 +42,12 @@ class DataExportOptionsSerializer(serializers.Serializer):
         # Generate a list of plugins to choose from
         # If a model type is provided, use this to filter the list of plugins
         model_class = kwargs.pop('model_class', None)
+        request = kwargs.pop('request', None)
 
         plugin_options = []
 
         for plugin in registry.with_mixin(PluginMixinEnum.EXPORTER):
-            if not model_class or plugin.supports_model(model_class):
+            if plugin.supports_export(model_class, request.user):
                 plugin_options.append((plugin.slug, plugin.name))
 
         self.fields['export_plugin'].choices = plugin_options
@@ -62,7 +63,10 @@ class DataExportOptionsSerializer(serializers.Serializer):
 
     # Select plugin for export - the options will be dynamically generated later on
     export_plugin = serializers.ChoiceField(
-        choices=[], label=_('Export Plugin'), help_text=_('Select export plugin')
+        choices=[],
+        default='inventree-exporter',
+        label=_('Export Plugin'),
+        help_text=_('Select export plugin'),
     )
 
 

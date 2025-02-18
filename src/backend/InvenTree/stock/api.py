@@ -363,7 +363,7 @@ class StockLocationMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -957,7 +957,7 @@ class StockApiMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class StockList(DataExportViewMixin, StockApiMixin, ListCreateDestroyAPIView):
@@ -1258,7 +1258,7 @@ class StockItemTestResultMixin:
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
 
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
@@ -1399,7 +1399,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
         kwargs['context'] = self.get_serializer_context()
 
-        return self.serializer_class(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     def get_delta_model_map(self) -> dict:
         """Return a mapping of delta models to their respective models and serializers.

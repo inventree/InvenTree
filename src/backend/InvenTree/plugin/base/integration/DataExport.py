@@ -3,9 +3,13 @@
 from collections import OrderedDict
 from typing import Union
 
+from django.contrib.auth.models import User
+from django.db.models import QuerySet
+
 from rest_framework import serializers
 from rest_framework.request import Request
 
+from InvenTree.helpers import current_date
 from plugin import PluginMixinEnum
 
 
@@ -28,17 +32,25 @@ class DataExportMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.EXPORTER, True, __class__)
 
-    def supports_model(self, model_class: type) -> bool:
+    def supports_export(self, model_class: type, user: User, *args, **kwargs) -> bool:
         """Return True if this plugin supports exporting data for the given model.
 
         Args:
             model_class: The model class to check
+            user: The user requesting the export
 
         Returns:
             True if the plugin supports exporting data for the given model
         """
         # By default, plugins support all models
         return True
+
+    def generate_filename(self, model_class, export_format: str) -> str:
+        """Generate a filename for the exported data."""
+        model = model_class.__name__
+        date = current_date().isoformat()
+
+        return f'InvenTree_{model}_{date}.{export_format}'
 
     def update_headers(self, headers: OrderedDict, **kwargs) -> OrderedDict:
         """Update the headers for the data export.
@@ -54,6 +66,11 @@ class DataExportMixin:
         # The default implementation does nothing
         return headers
 
+    def filter_queryset(self, queryset: QuerySet) -> QuerySet:
+        """Filter the queryset before exporting data."""
+        # The default implementation returns the queryset unchanged
+        return queryset
+
     def export_data(self, queryset, serializer_class, headers: OrderedDict, **kwargs):
         """Export data from the queryset.
 
@@ -67,7 +84,8 @@ class DataExportMixin:
 
         Returns: The exported data
         """
-        raise NotImplementedError('export_data method must be implemented by plugin!')
+        # The default implementation simply serializes the queryset
+        return serializer_class(queryset, many=True, exporting=True).data
 
     def get_export_options_serializer(
         self, request: Request, *args, **kwargs

@@ -18,6 +18,6 @@ class InvenTreeExporter(DataExportMixin, SettingsMixin, InvenTreePlugin):
 
     SETTINGS = {}
 
-    def supports_model(self, model_class: type) -> bool:
+    def supports_export(self, model_class: type, user, *args, **kwargs) -> bool:
         """This exporter supports all model classes."""
         return True

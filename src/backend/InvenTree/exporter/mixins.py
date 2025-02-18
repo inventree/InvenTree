@@ -12,7 +12,7 @@ from taggit.serializers import TagListSerializerField
 
 import InvenTree.exceptions
 from exporter.serializers import DataExportOptionsSerializer
-from InvenTree.helpers import DownloadFile, current_date, str2bool
+from InvenTree.helpers import DownloadFile, str2bool
 from plugin import PluginMixinEnum, registry
 
 logger = structlog.get_logger('inventree')
@@ -114,22 +114,6 @@ class DataExportSerializerMixin:
 
         return child_fields
 
-    def get_exported_filename(self, export_format) -> str:
-        """Return the filename for the exported data file.
-
-        An implementing class can override this implementation if required.
-
-        Arguments:
-            export_format: The file format to be exported
-
-        Returns:
-            str: The filename for the exported file
-        """
-        model = self.Meta.model
-        date = current_date().isoformat()
-
-        return f'InvenTree_{model.__name__}_{date}.{export_format}'
-
     @classmethod
     def arrange_export_headers(cls, headers: list) -> list:
         """Optional method to arrange the export headers.
@@ -164,10 +148,6 @@ class DataExportSerializerMixin:
             value = value.get(key, None)
 
         return value
-
-    def process_row(self, row):
-        """Optional method to process a row before exporting it."""
-        return row
 
     def generate_headers(self) -> OrderedDict:
         """Generate a list of default headers for the exported data.
@@ -219,7 +199,6 @@ class DataExportSerializerMixin:
         dataset = tablib.Dataset(headers=field_headers)
 
         for row in data:
-            row = self.process_row(row)
             dataset.append([self.get_nested_value(row, f) for f in field_names])
 
         return dataset.export(file_format)
@@ -246,17 +225,22 @@ class DataExportViewMixin:
 
         return False
 
-    def get_plugin(self):
-        """Return the plugin instance associated with the export request."""
-        if request := getattr(self, 'request', None):
-            plugin_slug = request.data.get('plugin') or request.query_params.get(
-                'plugin'
-            )
+    def get_plugin(self, plugin_slug=None):
+        """Return the plugin instance associated with the export request.
 
-            if plugin_slug:
-                return registry.get_plugin(
-                    plugin_slug, active=True, with_mixin=PluginMixinEnum.EXPORTER
+        Arguments:
+            plugin_slug: The slug of the plugin to use for exporting the data (optional)
+        """
+        if not plugin_slug:
+            if request := getattr(self, 'request', None):
+                plugin_slug = request.data.get('plugin') or request.query_params.get(
+                    'plugin'
                 )
+
+        if plugin_slug:
+            return registry.get_plugin(
+                plugin_slug, active=True, with_mixin=PluginMixinEnum.EXPORTER
+            )
 
         return None
 
@@ -279,32 +263,53 @@ class DataExportViewMixin:
 
         if exporting:
             kwargs['plugin'] = self.get_plugin()
+            kwargs['request'] = self.request
+
+            # Get the base model associated with this view
+            try:
+                serializer_class = self.get_serializer_class()
+                kwargs['model_class'] = serializer_class.Meta.model
+            except AttributeError:
+                kwargs['model_class'] = None
+
             return DataExportOptionsSerializer(*args, **kwargs)
         else:
             return super().get_serializer(*args, **kwargs)
 
-    def export_data(self, request, *args, **kwargs):
-        """Export the data to a DataExportOutput object."""
-
-    def xxx_export_data(self, export_format, plugin=None):
+    def export_data(self, export_plugin, export_format, export_context):
         """Export the data in the specified format.
 
         Arguments:
+            export_plugin: The plugin instance to use for exporting the data
             export_format: The file format to export the data in
-            plugin: The name of the plugin to use for exporting the data
+            export_context: Additional context data to pass to the plugin
 
         - By default, uses the provided serializer to generate the data, and return it as a file download.
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
         """
+        # Get the base serializer class for the view
         serializer_class = self.get_serializer_class()
 
         if not issubclass(serializer_class, DataExportSerializerMixin):
-            raise TypeError(
+            raise ValidationError(
                 'Serializer class must inherit from DataExportSerialierMixin'
             )
 
-        queryset = self.filter_queryset(self.get_queryset())
+        export_error = _('Error occurred during data export')
+
         context = self.get_serializer_context()
+
+        # Perform initial filtering of the queryset, based on the query parameters
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Perform additional filtering, as per the provided plugin
+        try:
+            queryset = export_plugin.filter_queryset(queryset)
+        except Exception:
+            InvenTree.exceptions.log_error(
+                f'plugins.{export_plugin.slug}.filter_queryset'
+            )
+            raise ValidationError(export_error)
 
         data = None
         serializer = serializer_class(context=context, exporting=True)
@@ -312,40 +317,43 @@ class DataExportViewMixin:
 
         # Construct 'defualt' headers (note: may be overridden by plugin)
         headers = serializer.generate_headers()
-        filename = serializer.get_exported_filename(export_format)
 
-        if plugin:
-            # If a plugin is provided, it is responsible for exporting the data
-            # The returned data *must* be a list of dict objects
+        # Generate a filename for the exported data (implemented by the plugin)
+        try:
+            filename = export_plugin.generate_filename(
+                serializer_class.Meta.model, export_format
+            )
+        except Exception:
+            InvenTree.exceptions.log_error(
+                f'plugins.{export_plugin.slug}.generate_filename'
+            )
+            raise ValidationError(export_error)
+
+        # The provided plugin is responsible for exporting the data
+        # The returned data *must* be a list of dict objects
+        try:
+            data = export_plugin.export_data(
+                queryset, serializer_class=serializer_class, headers=headers
+            )
+
+        except Exception:
+            InvenTree.exceptions.log_error(f'plugins.{export_plugin.slug}.export_data')
+            raise ValidationError(export_error)
+
+        if not isinstance(data, list):
+            raise ValidationError(
+                _('Data export plugin returned incorrect data format')
+            )
+
+        # Augment / update the headers (if required)
+        if hasattr(export_plugin, 'update_headers'):
             try:
-                data = plugin.export_data(
-                    queryset, serializer_class=serializer_class, headers=headers
-                )
-
-                if not isinstance(data, list):
-                    raise ValidationError(
-                        _('Data export plugin returned incorrect data format')
-                    )
-
+                headers = export_plugin.update_headers(headers)
             except Exception:
-                InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.export_data')
-                raise ValidationError(_('Error occurred during data export'))
-
-            # Augment / update the headers (if required)
-            if hasattr(plugin, 'update_headers'):
-                try:
-                    headers = plugin.update_headers(headers)
-                except Exception:
-                    InvenTree.exceptions.log_error(
-                        f'plugins.{plugin.slug}.update_headers'
-                    )
-
-        else:
-            # By default, use the serializer to export the data
-
-            # Export dataset with a second copy of the serializer
-            # This is because when we pass many=True, the returned class is a ListSerializer
-            data = serializer_class(queryset, many=True, exporting=True).data
+                InvenTree.exceptions.log_error(
+                    f'plugins.{export_plugin.slug}.update_headers'
+                )
+                raise ValidationError(export_error)
 
         # Now, export the data to file
         try:
@@ -367,6 +375,20 @@ class DataExportViewMixin:
 
             # Serializer is valid - export the data
 
-            return self.export_data(request, *args, **kwargs)
+            export_context = serializer.validated_data
+
+            plugin_slug = export_context.pop('export_plugin', None)
+            export_plugin = self.get_plugin(plugin_slug)
+            export_format = export_context.pop('export_format', 'csv')
+
+            # Add in extra context data for the plugin
+            export_context['request'] = request
+            export_context['user'] = request.user
+
+            return self.export_data(
+                export_plugin=export_plugin,
+                export_format=export_format,
+                export_context=export_context,
+            )
 
         return super().post(request, *args, **kwargs)

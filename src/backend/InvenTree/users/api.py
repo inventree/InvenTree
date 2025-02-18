@@ -199,7 +199,8 @@ class GroupMixin:
             params.get('permission_detail', None)
         )
         kwargs['context'] = self.get_serializer_context()
-        return self.serializer_class(*args, **kwargs)
+
+        super().get_serializer(*args, **kwargs)
 
 
 class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
