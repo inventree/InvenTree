@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-14 08:19\n"
+"PO-Revision-Date: 2025-02-18 02:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1179,7 +1179,7 @@ msgstr "Nicht kategorisiert"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:77
-#: src/tables/part/PartThumbTable.tsx:193
+#: src/tables/part/PartThumbTable.tsx:200
 msgid "Search..."
 msgstr "Suchen..."
 
@@ -8603,7 +8603,7 @@ msgstr ""
 msgid "Part templates cannot be edited, as the part is locked"
 msgstr ""
 
-#: src/tables/part/PartThumbTable.tsx:202
+#: src/tables/part/PartThumbTable.tsx:223
 msgid "Select"
 msgstr "Wähle"
 

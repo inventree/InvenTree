@@ -1174,7 +1174,7 @@ msgstr "Uncategorized"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:77
-#: src/tables/part/PartThumbTable.tsx:193
+#: src/tables/part/PartThumbTable.tsx:200
 msgid "Search..."
 msgstr "Search..."
 
@@ -8598,7 +8598,7 @@ msgstr "View Parent Part"
 msgid "Part templates cannot be edited, as the part is locked"
 msgstr "Part templates cannot be edited, as the part is locked"
 
-#: src/tables/part/PartThumbTable.tsx:202
+#: src/tables/part/PartThumbTable.tsx:223
 msgid "Select"
 msgstr "Select"
 

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-14 08:16+0000\n"
-"PO-Revision-Date: 2025-02-14 08:19\n"
+"POT-Creation-Date: 2025-02-18 02:49+0000\n"
+"PO-Revision-Date: 2025-02-18 02:52\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:322
+#: InvenTree/api.py:320
 msgid "API endpoint not found"
 msgstr "API endpoint não encontrado"
 
-#: InvenTree/api.py:444
+#: InvenTree/api.py:442
 msgid "Invalid items list provided"
 msgstr ""
 
-#: InvenTree/api.py:453
+#: InvenTree/api.py:451
 msgid "Invalid filters provided"
 msgstr ""
 
-#: InvenTree/api.py:458
+#: InvenTree/api.py:456
 msgid "No items found to delete"
 msgstr ""
 
-#: InvenTree/api.py:573
+#: InvenTree/api.py:571
 msgid "User does not have permission to view this model"
 msgstr "Usuário não tem permissão para ver este modelo"
 
@@ -84,7 +84,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "Não foi possível converter {original} para {unit}"
 
 #: InvenTree/conversion.py:208 InvenTree/conversion.py:222
-#: InvenTree/helpers.py:513 order/models.py:647 order/models.py:913
+#: InvenTree/helpers.py:496 order/models.py:647 order/models.py:913
 msgid "Invalid quantity provided"
 msgstr "Quantidade fornecida inválida"
 
@@ -100,7 +100,7 @@ msgstr "Insira uma Data"
 msgid "Invalid decimal value"
 msgstr ""
 
-#: InvenTree/fields.py:208 InvenTree/models.py:942 build/serializers.py:517
+#: InvenTree/fields.py:208 InvenTree/models.py:887 build/serializers.py:517
 #: build/serializers.py:592 company/models.py:829 order/models.py:1538
 #: part/models.py:3302
 #: report/templates/report/inventree_build_order_report.html:172
@@ -120,42 +120,42 @@ msgstr "Valor '{name}' não está no formato correto"
 msgid "Provided value does not match required pattern: "
 msgstr "O valor fornecido não corresponde ao padrão exigido: "
 
-#: InvenTree/helpers.py:517
+#: InvenTree/helpers.py:500
 msgid "Cannot serialize more than 1000 items at once"
 msgstr ""
 
-#: InvenTree/helpers.py:523
+#: InvenTree/helpers.py:506
 msgid "Empty serial number string"
 msgstr "Número serial em branco"
 
-#: InvenTree/helpers.py:552
+#: InvenTree/helpers.py:535
 msgid "Duplicate serial"
 msgstr "Número de série duplicado"
 
-#: InvenTree/helpers.py:584 InvenTree/helpers.py:627 InvenTree/helpers.py:645
-#: InvenTree/helpers.py:652 InvenTree/helpers.py:671
+#: InvenTree/helpers.py:567 InvenTree/helpers.py:610 InvenTree/helpers.py:628
+#: InvenTree/helpers.py:635 InvenTree/helpers.py:654
 #, python-brace-format
 msgid "Invalid group: {group}"
 msgstr ""
 
-#: InvenTree/helpers.py:615
+#: InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Intervalo do grupo {group} excede a quantidade permitida ({expected_quantity})"
 
-#: InvenTree/helpers.py:681
+#: InvenTree/helpers.py:664
 msgid "No serial numbers found"
 msgstr "Nenhum número de série foi encontrado"
 
-#: InvenTree/helpers.py:686
+#: InvenTree/helpers.py:669
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "Números de série únicos ({len(serials)}) deve corresponder a quantidade ({expected_quantity})"
 
-#: InvenTree/helpers.py:805
+#: InvenTree/helpers.py:788
 msgid "Remove HTML tags from this value"
 msgstr "Remova as \"tags\" HTML deste valor"
 
-#: InvenTree/helpers.py:884
+#: InvenTree/helpers.py:867
 msgid "Data contains prohibited markdown content"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgstr "Chinês (Tradicional)"
 msgid "Log in to the app"
 msgstr ""
 
-#: InvenTree/magic_login.py:38 InvenTree/serializers.py:416
+#: InvenTree/magic_login.py:38 InvenTree/serializers.py:415
 #: company/models.py:133
 msgid "Email"
 msgstr "Email"
@@ -368,39 +368,39 @@ msgstr "Metadados da Extensão"
 msgid "JSON metadata field, for use by external plugins"
 msgstr "Campo de metadados JSON, para uso por extensões externas"
 
-#: InvenTree/models.py:429
+#: InvenTree/models.py:374
 msgid "Improperly formatted pattern"
 msgstr "Padrão formatado incorretamente"
 
-#: InvenTree/models.py:436
+#: InvenTree/models.py:381
 msgid "Unknown format key specified"
 msgstr "Chave de formato desconhecida especificada"
 
-#: InvenTree/models.py:442
+#: InvenTree/models.py:387
 msgid "Missing required format key"
 msgstr "Chave de formato obrigatória ausente"
 
-#: InvenTree/models.py:453
+#: InvenTree/models.py:398
 msgid "Reference field cannot be empty"
 msgstr "O campo de referência não pode ficar vazio"
 
-#: InvenTree/models.py:461
+#: InvenTree/models.py:406
 msgid "Reference must match required pattern"
 msgstr "A referência deve corresponder ao padrão exigido"
 
-#: InvenTree/models.py:492
+#: InvenTree/models.py:437
 msgid "Reference number is too large"
 msgstr "O número de referência é muito grande"
 
-#: InvenTree/models.py:743
+#: InvenTree/models.py:688
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "Nomes duplicados não podem existir sob o mesmo parental"
 
-#: InvenTree/models.py:760
+#: InvenTree/models.py:705
 msgid "Invalid choice"
 msgstr "Escolha inválida"
 
-#: InvenTree/models.py:789 common/models.py:1310 common/models.py:1737
+#: InvenTree/models.py:734 common/models.py:1310 common/models.py:1737
 #: common/models.py:1989 common/models.py:2114 common/serializers.py:484
 #: company/models.py:588 generic/states/serializers.py:20 machine/models.py:24
 #: part/models.py:998 part/models.py:3773 plugin/models.py:52
@@ -408,7 +408,7 @@ msgstr "Escolha inválida"
 msgid "Name"
 msgstr "Nome"
 
-#: InvenTree/models.py:795 build/models.py:257 common/models.py:108
+#: InvenTree/models.py:740 build/models.py:257 common/models.py:108
 #: common/models.py:2121 common/models.py:2234 company/models.py:516
 #: company/models.py:820 order/models.py:343 order/models.py:1571
 #: part/models.py:1021 part/models.py:3788 report/models.py:171
@@ -418,197 +418,155 @@ msgstr "Nome"
 msgid "Description"
 msgstr "Descrição"
 
-#: InvenTree/models.py:796 stock/models.py:90
+#: InvenTree/models.py:741 stock/models.py:90
 msgid "Description (optional)"
 msgstr "Descrição (opcional)"
 
-#: InvenTree/models.py:811 common/models.py:2287
+#: InvenTree/models.py:756 common/models.py:2287
 msgid "Path"
 msgstr "Caminho"
 
-#: InvenTree/models.py:942
+#: InvenTree/models.py:887
 msgid "Markdown notes (optional)"
 msgstr "Notas Markdown (opcional)"
 
-#: InvenTree/models.py:973
+#: InvenTree/models.py:918
 msgid "Barcode Data"
 msgstr "Dados de código de barras"
 
-#: InvenTree/models.py:974
+#: InvenTree/models.py:919
 msgid "Third party barcode data"
 msgstr "Dados de código de barras de terceiros"
 
-#: InvenTree/models.py:980
+#: InvenTree/models.py:925
 msgid "Barcode Hash"
 msgstr "Hash de código de barras"
 
-#: InvenTree/models.py:981
+#: InvenTree/models.py:926
 msgid "Unique hash of barcode data"
 msgstr "Hash exclusivo de dados de código de barras"
 
-#: InvenTree/models.py:1048
+#: InvenTree/models.py:993
 msgid "Existing barcode found"
 msgstr "Código de barras existente encontrado"
 
-#: InvenTree/models.py:1129
+#: InvenTree/models.py:1074
 msgid "Task Failure"
 msgstr ""
 
-#: InvenTree/models.py:1130
+#: InvenTree/models.py:1075
 #, python-brace-format
 msgid "Background worker task '{f}' failed after {n} attempts"
 msgstr ""
 
-#: InvenTree/models.py:1157
+#: InvenTree/models.py:1102
 msgid "Server Error"
 msgstr "Erro de servidor"
 
-#: InvenTree/models.py:1158
+#: InvenTree/models.py:1103
 msgid "An error has been logged by the server."
 msgstr "Log de erro salvo pelo servidor."
 
-#: InvenTree/serializers.py:63 part/models.py:4412
+#: InvenTree/serializers.py:62 part/models.py:4391
 msgid "Must be a valid number"
 msgstr "Preicsa ser um numero valido"
 
-#: InvenTree/serializers.py:100 company/models.py:183 part/models.py:3120
+#: InvenTree/serializers.py:99 company/models.py:183 part/models.py:3120
 msgid "Currency"
 msgstr "Moeda"
 
-#: InvenTree/serializers.py:103
+#: InvenTree/serializers.py:102
 msgid "Select currency from available options"
 msgstr "Selecione a Moeda nas opções disponíveis"
 
-#: InvenTree/serializers.py:405
+#: InvenTree/serializers.py:404
 msgid "Username"
 msgstr "Nome de usuário"
 
-#: InvenTree/serializers.py:408
+#: InvenTree/serializers.py:407
 msgid "First Name"
 msgstr "Primeiro Nome"
 
-#: InvenTree/serializers.py:408
+#: InvenTree/serializers.py:407
 msgid "First name of the user"
 msgstr ""
 
-#: InvenTree/serializers.py:412
+#: InvenTree/serializers.py:411
 msgid "Last Name"
 msgstr "Sobrenome"
 
-#: InvenTree/serializers.py:412
+#: InvenTree/serializers.py:411
 msgid "Last name of the user"
 msgstr ""
 
-#: InvenTree/serializers.py:416
+#: InvenTree/serializers.py:415
 msgid "Email address of the user"
 msgstr ""
 
-#: InvenTree/serializers.py:441
+#: InvenTree/serializers.py:440
 msgid "Staff"
 msgstr ""
 
-#: InvenTree/serializers.py:441
+#: InvenTree/serializers.py:440
 msgid "Does this user have staff permissions"
 msgstr ""
 
-#: InvenTree/serializers.py:445
+#: InvenTree/serializers.py:444
 msgid "Superuser"
 msgstr ""
 
-#: InvenTree/serializers.py:445
+#: InvenTree/serializers.py:444
 msgid "Is this user a superuser"
 msgstr ""
 
-#: InvenTree/serializers.py:449 common/models.py:1315 common/models.py:2134
+#: InvenTree/serializers.py:448 common/models.py:1315 common/models.py:2134
 #: common/models.py:2241 company/models.py:160 company/models.py:794
 #: machine/models.py:39 part/models.py:1204 plugin/models.py:67
-#: stock/api.py:595 users/models.py:182
+#: stock/api.py:588 users/models.py:182
 msgid "Active"
 msgstr "Ativo"
 
-#: InvenTree/serializers.py:449
+#: InvenTree/serializers.py:448
 msgid "Is this user account active"
 msgstr ""
 
-#: InvenTree/serializers.py:467
+#: InvenTree/serializers.py:466
 msgid "You do not have permission to change this user role."
 msgstr "Não tem permissões para alterar este papel do usuário."
 
-#: InvenTree/serializers.py:503
+#: InvenTree/serializers.py:502
 msgid "Only superusers can create new users"
 msgstr "Apenas superusuários podem criar novos usuários"
 
-#: InvenTree/serializers.py:523
+#: InvenTree/serializers.py:522
 msgid "Your account has been created."
 msgstr "Sua conta foi criada."
 
-#: InvenTree/serializers.py:525
+#: InvenTree/serializers.py:524
 msgid "Please use the password reset function to login"
 msgstr "Por favor, use a função de redefinir senha para acessar"
 
-#: InvenTree/serializers.py:531
+#: InvenTree/serializers.py:530
 msgid "Welcome to InvenTree"
 msgstr "Bem-vindo(a) ao InvenTree"
 
-#: InvenTree/serializers.py:594
+#: InvenTree/serializers.py:593
 msgid "Invalid value"
 msgstr "Valor inválido"
 
-#: InvenTree/serializers.py:614 importer/models.py:64
-msgid "Data File"
-msgstr "Arquivo de dados"
-
-#: InvenTree/serializers.py:615
-msgid "Select data file for upload"
-msgstr "Selecione um arquivo de dados para enviar"
-
-#: InvenTree/serializers.py:632
-msgid "Unsupported file format"
-msgstr ""
-
-#: InvenTree/serializers.py:638
-msgid "File is too large"
-msgstr "O arquivo é muito grande"
-
-#: InvenTree/serializers.py:659
-msgid "No columns found in file"
-msgstr "Nenhuma coluna encontrada no arquivo"
-
-#: InvenTree/serializers.py:662
-msgid "No data rows found in file"
-msgstr "Nenhuma linha de dados encontrada no arquivo"
-
-#: InvenTree/serializers.py:774
-msgid "No data rows provided"
-msgstr "Nenhuma linha de dados fornecida"
-
-#: InvenTree/serializers.py:777
-msgid "No data columns supplied"
-msgstr "Nenhuma coluna de dados fornecida"
-
-#: InvenTree/serializers.py:843
-#, python-brace-format
-msgid "Missing required column: '{name}'"
-msgstr "Falta a coluna obrigatória: '{name}'"
-
-#: InvenTree/serializers.py:852
-#, python-brace-format
-msgid "Duplicate column: '{col}'"
-msgstr "Coluna duplicada: \"{col}\""
-
-#: InvenTree/serializers.py:891
+#: InvenTree/serializers.py:627
 msgid "Remote Image"
 msgstr "Imagens Remota"
 
-#: InvenTree/serializers.py:892
+#: InvenTree/serializers.py:628
 msgid "URL of remote image file"
 msgstr "URL do arquivo de imagem remoto"
 
-#: InvenTree/serializers.py:910
+#: InvenTree/serializers.py:646
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Baixar imagens de URL remota não está habilitado"
 
-#: InvenTree/serializers.py:917
+#: InvenTree/serializers.py:653
 msgid "Failed to download image from remote URL"
 msgstr ""
 
@@ -641,7 +599,7 @@ msgid "Parent Build"
 msgstr "Produção Progenitor"
 
 #: build/api.py:67 build/api.py:733 order/api.py:484 order/api.py:701
-#: order/api.py:1089 order/api.py:1316 stock/api.py:526
+#: order/api.py:1089 order/api.py:1316 stock/api.py:519
 msgid "Include Variants"
 msgstr ""
 
@@ -649,12 +607,11 @@ msgstr ""
 #: build/serializers.py:1246 build/serializers.py:1356
 #: build/serializers.py:1407 company/models.py:1039 company/serializers.py:417
 #: order/api.py:250 order/api.py:863 order/api.py:1102 order/models.py:1660
-#: order/models.py:1819 order/models.py:1820 part/api.py:1447 part/api.py:1515
-#: part/api.py:1822 part/models.py:417 part/models.py:3131 part/models.py:3275
+#: order/models.py:1819 order/models.py:1820 part/api.py:1450 part/api.py:1518
+#: part/api.py:1825 part/models.py:417 part/models.py:3131 part/models.py:3275
 #: part/models.py:3423 part/models.py:3444 part/models.py:3466
-#: part/models.py:3602 part/models.py:3963 part/models.py:4126
-#: part/models.py:4256 part/models.py:4622 part/serializers.py:1257
-#: part/serializers.py:1890
+#: part/models.py:3602 part/models.py:3963 part/models.py:4235
+#: part/models.py:4601 part/serializers.py:1257 part/serializers.py:1890
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -663,7 +620,7 @@ msgstr ""
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:539 stock/serializers.py:112 stock/serializers.py:160
+#: stock/api.py:532 stock/serializers.py:112 stock/serializers.py:160
 #: stock/serializers.py:464 stock/serializers.py:618 stock/serializers.py:919
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -672,9 +629,9 @@ msgstr ""
 msgid "Part"
 msgstr "Peça"
 
-#: build/api.py:103 part/api.py:1529 part/models.py:1039 part/models.py:3494
+#: build/api.py:103 part/api.py:1532 part/models.py:1039 part/models.py:3494
 #: part/models.py:4072 part/serializers.py:483 part/serializers.py:1267
-#: stock/api.py:822
+#: stock/api.py:815
 msgid "Category"
 msgstr "Categoria"
 
@@ -739,16 +696,16 @@ msgstr ""
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Produção deve ser cancelada antes de ser deletada"
 
-#: build/api.py:418 build/serializers.py:1372 part/models.py:4290
+#: build/api.py:418 build/serializers.py:1372 part/models.py:4269
 msgid "Consumable"
 msgstr "Consumível"
 
-#: build/api.py:421 build/serializers.py:1375 part/models.py:4284
+#: build/api.py:421 build/serializers.py:1375 part/models.py:4263
 msgid "Optional"
 msgstr "Opcional"
 
 #: build/api.py:424 common/setting/system.py:409 part/models.py:1169
-#: part/serializers.py:1645 part/serializers.py:1652 stock/api.py:592
+#: part/serializers.py:1645 part/serializers.py:1652 stock/api.py:585
 msgid "Assembly"
 msgstr "Montagem"
 
@@ -819,7 +776,7 @@ msgstr "Referência do pedido de produção"
 
 #: build/models.py:251 build/serializers.py:1369 order/models.py:534
 #: order/models.py:1106 order/models.py:1531 order/models.py:2321
-#: part/models.py:4305
+#: part/models.py:4284
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
 #: report/templates/report/inventree_return_order_report.html:26
@@ -1000,8 +957,8 @@ msgstr "Saída da produção não corresponde ao Pedido de Produção"
 
 #: build/models.py:1082 build/serializers.py:294 build/serializers.py:343
 #: build/serializers.py:967 order/models.py:644 order/serializers.py:591
-#: order/serializers.py:758 part/serializers.py:1639 part/serializers.py:2052
-#: stock/models.py:784 stock/models.py:1655 stock/serializers.py:698
+#: order/serializers.py:758 part/serializers.py:1639 stock/models.py:784
+#: stock/models.py:1655 stock/serializers.py:698
 msgid "Quantity must be greater than zero"
 msgstr "Quantidade deve ser maior que zero"
 
@@ -1025,7 +982,7 @@ msgstr "Objeto de produção"
 #: build/models.py:1548 build/models.py:1807 build/serializers.py:282
 #: build/serializers.py:328 build/serializers.py:1390 common/models.py:1240
 #: order/models.py:1514 order/models.py:2221 order/serializers.py:1634
-#: order/serializers.py:2094 part/models.py:3289 part/models.py:4278
+#: order/serializers.py:2094 part/models.py:3289 part/models.py:4257
 #: part/serializers.py:264
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
@@ -1098,7 +1055,7 @@ msgstr "Destino do Item do Estoque"
 msgid "Build Level"
 msgstr ""
 
-#: build/serializers.py:124 part/models.py:4128 part/stocktake.py:219
+#: build/serializers.py:124 part/stocktake.py:219
 msgid "Part Name"
 msgstr "Nome da Peça"
 
@@ -1176,7 +1133,7 @@ msgstr "Alocar Números de Série Automaticamente"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Alocar automaticamente os itens necessários com os números de série correspondentes"
 
-#: build/serializers.py:431 order/serializers.py:876 stock/api.py:1081
+#: build/serializers.py:431 order/serializers.py:876 stock/api.py:1074
 #: stock/models.py:1678
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Os seguintes números de série já existem ou são inválidos"
@@ -1419,12 +1376,12 @@ msgstr "Rastreável"
 msgid "Inherited"
 msgstr ""
 
-#: build/serializers.py:1387 part/models.py:4338
+#: build/serializers.py:1387 part/models.py:4317
 msgid "Allow Variants"
 msgstr "Permitir variações"
 
-#: build/serializers.py:1392 build/serializers.py:1396 part/models.py:4136
-#: part/models.py:4614 stock/api.py:835
+#: build/serializers.py:1392 build/serializers.py:1396 part/models.py:4115
+#: part/models.py:4593 stock/api.py:828
 msgid "BOM Item"
 msgstr "Item LDM"
 
@@ -2516,7 +2473,7 @@ msgstr "Comprável"
 msgid "Parts are purchaseable by default"
 msgstr "Peças são compráveis por padrão"
 
-#: common/setting/system.py:427 part/models.py:1199 stock/api.py:596
+#: common/setting/system.py:427 part/models.py:1199 stock/api.py:589
 msgid "Salable"
 msgstr "Vendível"
 
@@ -3550,7 +3507,7 @@ msgid "Manufacturer"
 msgstr "Fabricante"
 
 #: company/api.py:306 company/models.py:97 company/models.py:366
-#: stock/api.py:853
+#: stock/api.py:846
 msgid "Company"
 msgstr "Empresa"
 
@@ -3797,7 +3754,7 @@ msgstr "Parte do fabricante vinculado deve fazer referência à mesma peça base
 #: order/models.py:559 part/serializers.py:591
 #: plugin/builtin/suppliers/digikey.py:25 plugin/builtin/suppliers/lcsc.py:26
 #: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:26
-#: stock/api.py:520 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:513 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Fornecedor"
 
@@ -3826,7 +3783,7 @@ msgid "Supplier part description"
 msgstr "Descrição da peça fornecedor"
 
 #: company/models.py:828 order/serializers.py:801 order/serializers.py:1995
-#: part/models.py:4313 part/models.py:4654
+#: part/models.py:4292 part/models.py:4633
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
 #: report/templates/report/inventree_return_order_report.html:27
@@ -3933,6 +3890,10 @@ msgstr ""
 msgid "Invalid export format"
 msgstr ""
 
+#: importer/models.py:64
+msgid "Data File"
+msgstr "Arquivo de dados"
+
 #: importer/models.py:65
 msgid "Data file to import"
 msgstr ""
@@ -4009,7 +3970,7 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: importer/models.py:519 part/api.py:856
+#: importer/models.py:519 part/api.py:859
 msgid "Valid"
 msgstr "Válido"
 
@@ -5061,7 +5022,7 @@ msgstr ""
 msgid "Filter by starred categories"
 msgstr ""
 
-#: part/api.py:122 stock/api.py:261
+#: part/api.py:122 stock/api.py:254
 msgid "Depth"
 msgstr ""
 
@@ -5069,7 +5030,7 @@ msgstr ""
 msgid "Filter by category depth"
 msgstr ""
 
-#: part/api.py:140 stock/api.py:279
+#: part/api.py:140 stock/api.py:272
 msgid "Top Level"
 msgstr ""
 
@@ -5077,7 +5038,7 @@ msgstr ""
 msgid "Filter by top-level categories"
 msgstr ""
 
-#: part/api.py:155 stock/api.py:294
+#: part/api.py:155 stock/api.py:287
 msgid "Cascade"
 msgstr ""
 
@@ -5105,55 +5066,55 @@ msgstr ""
 msgid "Has Results"
 msgstr ""
 
-#: part/api.py:603
+#: part/api.py:606
 msgid "Incoming Purchase Order"
 msgstr "Pedido de compra recebido"
 
-#: part/api.py:617
+#: part/api.py:620
 msgid "Outgoing Sales Order"
 msgstr "Pedidos de Venda Feitos"
 
-#: part/api.py:629
+#: part/api.py:632
 msgid "Stock produced by Build Order"
 msgstr "Estoque produzido pelo Pedido de Produção"
 
-#: part/api.py:711
+#: part/api.py:714
 msgid "Stock required for Build Order"
 msgstr "Estoque obrigatório para Pedido de Produção"
 
-#: part/api.py:857
+#: part/api.py:860
 msgid "Validate entire Bill of Materials"
 msgstr "Validar a Lista de Materiais completa"
 
-#: part/api.py:863
+#: part/api.py:866
 msgid "This option must be selected"
 msgstr "Esta opção deve ser selecionada"
 
-#: part/api.py:899
+#: part/api.py:902
 msgid "Is Variant"
 msgstr ""
 
-#: part/api.py:907
+#: part/api.py:910
 msgid "Is Revision"
 msgstr ""
 
-#: part/api.py:917
+#: part/api.py:920
 msgid "Has Revisions"
 msgstr ""
 
-#: part/api.py:1108
+#: part/api.py:1111
 msgid "BOM Valid"
 msgstr ""
 
-#: part/api.py:1770
+#: part/api.py:1773
 msgid "Assembly part is testable"
 msgstr ""
 
-#: part/api.py:1779
+#: part/api.py:1782
 msgid "Component part is testable"
 msgstr ""
 
-#: part/api.py:1830
+#: part/api.py:1833
 msgid "Uses"
 msgstr ""
 
@@ -5282,7 +5243,7 @@ msgstr "Uma parte com este Nome, IPN e Revisão já existe."
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "Peças não podem ser atribuídas a categorias estruturais!"
 
-#: part/models.py:998 part/models.py:4128
+#: part/models.py:998
 msgid "Part name"
 msgstr "Nome da peça"
 
@@ -5816,155 +5777,127 @@ msgstr "Valor Padrão"
 msgid "Default Parameter Value"
 msgstr "Valor Padrão do Parâmetro"
 
-#: part/models.py:4126
-msgid "Part ID or part name"
-msgstr "ID da peça ou nome da peça"
-
-#: part/models.py:4127 part/stocktake.py:218
-msgid "Part ID"
-msgstr "ID da Peça"
-
-#: part/models.py:4127
-msgid "Unique part ID value"
-msgstr "Valor exclusivo do ID de peça"
-
-#: part/models.py:4129
-msgid "Part IPN"
-msgstr "IPN da Peça"
-
-#: part/models.py:4129
-msgid "Part IPN value"
-msgstr "Valor da parte IPN"
-
-#: part/models.py:4130
-msgid "Level"
-msgstr "Nível"
-
-#: part/models.py:4130
-msgid "BOM level"
-msgstr "Nível da LDM"
-
-#: part/models.py:4240
+#: part/models.py:4219
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr ""
 
-#: part/models.py:4247
+#: part/models.py:4226
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr ""
 
-#: part/models.py:4257
+#: part/models.py:4236
 msgid "Select parent part"
 msgstr "Selecione a Peça Parental"
 
-#: part/models.py:4267
+#: part/models.py:4246
 msgid "Sub part"
 msgstr "Sub peça"
 
-#: part/models.py:4268
+#: part/models.py:4247
 msgid "Select part to be used in BOM"
 msgstr "Selecionar peça a ser usada na LDM"
 
-#: part/models.py:4279
+#: part/models.py:4258
 msgid "BOM quantity for this BOM item"
 msgstr "Quantidade de LDM para este item LDM"
 
-#: part/models.py:4285
+#: part/models.py:4264
 msgid "This BOM item is optional"
 msgstr "Este item LDM é opcional"
 
-#: part/models.py:4291
+#: part/models.py:4270
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Este item LDM é consumível (não é rastreado nos pedidos de construção)"
 
-#: part/models.py:4298
+#: part/models.py:4277
 msgid "Overage"
 msgstr "Excedente"
 
-#: part/models.py:4299
+#: part/models.py:4278
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Quantidade estimada de desperdício (absoluto ou porcentagem)"
 
-#: part/models.py:4306
+#: part/models.py:4285
 msgid "BOM item reference"
 msgstr "Referência do Item LDM"
 
-#: part/models.py:4314
+#: part/models.py:4293
 msgid "BOM item notes"
 msgstr "Notas do Item LDM"
 
-#: part/models.py:4320
+#: part/models.py:4299
 msgid "Checksum"
 msgstr "Soma de verificação"
 
-#: part/models.py:4321
+#: part/models.py:4300
 msgid "BOM line checksum"
 msgstr "Soma de Verificação da LDM da linha"
 
-#: part/models.py:4326
+#: part/models.py:4305
 msgid "Validated"
 msgstr "Validado"
 
-#: part/models.py:4327
+#: part/models.py:4306
 msgid "This BOM item has been validated"
 msgstr "O item da LDM foi validado"
 
-#: part/models.py:4332
+#: part/models.py:4311
 msgid "Gets inherited"
 msgstr "Obtém herdados"
 
-#: part/models.py:4333
+#: part/models.py:4312
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Este item da LDM é herdado por LDMs para peças variáveis"
 
-#: part/models.py:4339
+#: part/models.py:4318
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Itens de estoque para as peças das variantes podem ser usados para este item LDM"
 
-#: part/models.py:4424 stock/models.py:769
+#: part/models.py:4403 stock/models.py:769
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Quantidade deve ser valor inteiro para peças rastreáveis"
 
-#: part/models.py:4434 part/models.py:4436
+#: part/models.py:4413 part/models.py:4415
 msgid "Sub part must be specified"
 msgstr "Sub peça deve ser especificada"
 
-#: part/models.py:4581
+#: part/models.py:4560
 msgid "BOM Item Substitute"
 msgstr "Substituir Item da LDM"
 
-#: part/models.py:4602
+#: part/models.py:4581
 msgid "Substitute part cannot be the same as the master part"
 msgstr "A peça de substituição não pode ser a mesma que a peça mestre"
 
-#: part/models.py:4615
+#: part/models.py:4594
 msgid "Parent BOM item"
 msgstr "Item LDM Parental"
 
-#: part/models.py:4623
+#: part/models.py:4602
 msgid "Substitute part"
 msgstr "Substituir peça"
 
-#: part/models.py:4639
+#: part/models.py:4618
 msgid "Part 1"
 msgstr "Parte 1"
 
-#: part/models.py:4647
+#: part/models.py:4626
 msgid "Part 2"
 msgstr "Parte 2"
 
-#: part/models.py:4648
+#: part/models.py:4627
 msgid "Select Related Part"
 msgstr "Selecionar Peça Relacionada"
 
-#: part/models.py:4655
+#: part/models.py:4634
 msgid "Note for this relationship"
 msgstr ""
 
-#: part/models.py:4674
+#: part/models.py:4653
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Relacionamento da peça não pode ser criada com ela mesma"
 
-#: part/models.py:4679
+#: part/models.py:4658
 msgid "Duplicate relationship already exists"
 msgstr "Relação duplicada já existe"
 
@@ -6314,41 +6247,9 @@ msgstr "Copiar Peças Substitutas"
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Copiar peças de substitutas quando duplicar itens de LDM"
 
-#: part/serializers.py:1955
-msgid "Clear Existing BOM"
-msgstr "Limpar LDM Existente"
-
-#: part/serializers.py:1956
-msgid "Delete existing BOM items before uploading"
-msgstr "Apagar itens LDM existentes antes de carregar"
-
-#: part/serializers.py:1988
-msgid "No part column specified"
-msgstr "Nenhuma coluna de peça especificada"
-
-#: part/serializers.py:2032
-msgid "Multiple matching parts found"
-msgstr "Múltiplas peças correspondentes encontradas"
-
-#: part/serializers.py:2035
-msgid "No matching part found"
-msgstr "Nenhuma peça correspondente encontrada"
-
-#: part/serializers.py:2037
-msgid "Part is not designated as a component"
-msgstr "Peça não está designada como componente"
-
-#: part/serializers.py:2046
-msgid "Quantity not provided"
-msgstr "Quantidade não foi fornecida"
-
-#: part/serializers.py:2054
-msgid "Invalid quantity"
-msgstr "Quantidade Inválida"
-
-#: part/serializers.py:2077
-msgid "At least one BOM item is required"
-msgstr "Pelo menos um item LDM é necessário"
+#: part/stocktake.py:218
+msgid "Part ID"
+msgstr "ID da Peça"
 
 #: part/stocktake.py:220
 msgid "Part Description"
@@ -7493,123 +7394,123 @@ msgstr "Tag part_image necessita de uma instância de Peça"
 msgid "company_image tag requires a Company instance"
 msgstr "Tag company_image necessita de uma instância de Empresa"
 
-#: stock/api.py:261
+#: stock/api.py:254
 msgid "Filter by location depth"
 msgstr ""
 
-#: stock/api.py:281
+#: stock/api.py:274
 msgid "Filter by top-level locations"
 msgstr ""
 
-#: stock/api.py:296
+#: stock/api.py:289
 msgid "Include sub-locations in filtered results"
 msgstr ""
 
-#: stock/api.py:317 stock/serializers.py:1205
+#: stock/api.py:310 stock/serializers.py:1205
 msgid "Parent Location"
 msgstr ""
 
-#: stock/api.py:318
+#: stock/api.py:311
 msgid "Filter by parent location"
 msgstr ""
 
-#: stock/api.py:558
+#: stock/api.py:551
 msgid "Part name (case insensitive)"
 msgstr ""
 
-#: stock/api.py:564
+#: stock/api.py:557
 msgid "Part name contains (case insensitive)"
 msgstr ""
 
-#: stock/api.py:570
+#: stock/api.py:563
 msgid "Part name (regex)"
 msgstr ""
 
-#: stock/api.py:575
+#: stock/api.py:568
 msgid "Part IPN (case insensitive)"
 msgstr ""
 
-#: stock/api.py:581
+#: stock/api.py:574
 msgid "Part IPN contains (case insensitive)"
 msgstr ""
 
-#: stock/api.py:587
+#: stock/api.py:580
 msgid "Part IPN (regex)"
 msgstr ""
 
-#: stock/api.py:599
+#: stock/api.py:592
 msgid "Minimum stock"
 msgstr ""
 
-#: stock/api.py:603
+#: stock/api.py:596
 msgid "Maximum stock"
 msgstr ""
 
-#: stock/api.py:606
+#: stock/api.py:599
 msgid "Status Code"
 msgstr "Código da situação"
 
-#: stock/api.py:646
+#: stock/api.py:639
 msgid "External Location"
 msgstr "Localização externa"
 
-#: stock/api.py:745
+#: stock/api.py:738
 msgid "Consumed by Build Order"
 msgstr ""
 
-#: stock/api.py:755
+#: stock/api.py:748
 msgid "Installed in other stock item"
 msgstr ""
 
-#: stock/api.py:844
+#: stock/api.py:837
 msgid "Part Tree"
 msgstr "Árvore de Peças"
 
-#: stock/api.py:866
+#: stock/api.py:859
 msgid "Updated before"
 msgstr ""
 
-#: stock/api.py:870
+#: stock/api.py:863
 msgid "Updated after"
 msgstr ""
 
-#: stock/api.py:874
+#: stock/api.py:867
 msgid "Stocktake Before"
 msgstr ""
 
-#: stock/api.py:878
+#: stock/api.py:871
 msgid "Stocktake After"
 msgstr ""
 
-#: stock/api.py:883
+#: stock/api.py:876
 msgid "Expiry date before"
 msgstr "Data de validade antes"
 
-#: stock/api.py:887
+#: stock/api.py:880
 msgid "Expiry date after"
 msgstr "Data de validade depois"
 
-#: stock/api.py:890 stock/serializers.py:644
+#: stock/api.py:883 stock/serializers.py:644
 msgid "Stale"
 msgstr "Inativo"
 
-#: stock/api.py:991
+#: stock/api.py:984
 msgid "Quantity is required"
 msgstr "Quantidade obrigatória"
 
-#: stock/api.py:996
+#: stock/api.py:989
 msgid "Valid part must be supplied"
 msgstr "Uma peça válida deve ser fornecida"
 
-#: stock/api.py:1023
+#: stock/api.py:1016
 msgid "The given supplier part does not exist"
 msgstr "A peça do fornecedor informado não existe"
 
-#: stock/api.py:1033
+#: stock/api.py:1026
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "A peça do fornecedor tem um tamanho de pacote definido, mas o item use_pack_size não foi definida"
 
-#: stock/api.py:1060
+#: stock/api.py:1053
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Números de série não podem ser fornecidos para uma parte não rastreável"
 
