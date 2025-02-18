@@ -111,7 +111,9 @@ Make sure you have `gnupg` and `pinentry-mac` installed and set up correctly. Re
 
 #### Where are the database, media files, ... stored?
 
-Database data, backups, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+Backups, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+
+Database data are stored in the `dev-db` directory. This is managed by the `postgres` docker container.
 
 ### Performance Improvements
 
