@@ -234,10 +234,12 @@ class DataExportViewMixin:
         Arguments:
             plugin_slug: The slug of the plugin to use for exporting the data (optional)
         """
+        PLUGIN_KEY = 'export_plugin'
+
         if not plugin_slug:
             if request := getattr(self, 'request', None):
-                plugin_slug = request.data.get('plugin') or request.query_params.get(
-                    'plugin'
+                plugin_slug = request.data.get(PLUGIN_KEY) or request.query_params.get(
+                    PLUGIN_KEY
                 )
 
         if plugin_slug:
@@ -343,7 +345,7 @@ class DataExportViewMixin:
         # The returned data *must* be a list of dict objects
         try:
             data = export_plugin.export_data(
-                queryset, serializer_class=serializer_class, headers=headers
+                queryset, serializer_class, headers, export_context
             )
 
         except Exception:
@@ -397,14 +399,22 @@ class DataExportViewMixin:
             # Determine if the export options are valid
             serializer = self.get_serializer(exporting=True, data=request.data)
             serializer.is_valid(raise_exception=True)
+            serializer_data = serializer.validated_data
 
-            # Serializer is valid - export the data
-
-            export_context = serializer.validated_data
-
-            plugin_slug = export_context.pop('export_plugin', None)
+            export_format = serializer_data.pop('export_format', 'csv')
+            plugin_slug = serializer_data.pop('export_plugin', None)
             export_plugin = self.get_plugin(plugin_slug)
-            export_format = export_context.pop('export_format', 'csv')
+
+            export_context = {}
+
+            # Also run the data against the plugin serializer
+            if export_plugin:
+                if hasattr(export_plugin, 'get_export_options_serializer'):
+                    if plugin_serializer := export_plugin.get_export_options_serializer(
+                        data=request.data
+                    ):
+                        plugin_serializer.is_valid(raise_exception=True)
+                        export_context = plugin_serializer.validated_data
 
             # Add in extra context data for the plugin
             export_context['request'] = request

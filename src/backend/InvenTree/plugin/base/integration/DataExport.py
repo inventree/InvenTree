@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.db.models import QuerySet
 
 from rest_framework import serializers
-from rest_framework.request import Request
 
 from InvenTree.helpers import current_date
 from plugin import PluginMixinEnum
@@ -71,7 +70,9 @@ class DataExportMixin:
         # The default implementation returns the queryset unchanged
         return queryset
 
-    def export_data(self, queryset, serializer_class, headers: OrderedDict, **kwargs):
+    def export_data(
+        self, queryset, serializer_class, headers: OrderedDict, context, **kwargs
+    ):
         """Export data from the queryset.
 
         This method should be implemented by the plugin to provide
@@ -79,7 +80,9 @@ class DataExportMixin:
 
         Args:
             queryset: The queryset to export
+            serializer_class: The serializer class to use for exporting the data
             headers: The headers for the export
+            context: The context for the export (provided by the plugin serializer)
             kwargs: Additional keyword arguments
 
         Returns: The exported data
@@ -88,7 +91,7 @@ class DataExportMixin:
         return serializer_class(queryset, many=True, exporting=True).data
 
     def get_export_options_serializer(
-        self, request: Request, *args, **kwargs
+        self, **kwargs
     ) -> Union[serializers.Serializer, None]:
         """Return a serializer class with dynamic export options for this plugin.
 
@@ -104,4 +107,4 @@ class DataExportMixin:
         serializer = getattr(self, 'ExportOptionsSerializer', None)
 
         if serializer:
-            return serializer(*args, **kwargs)
+            return serializer(**kwargs)

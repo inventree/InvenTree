@@ -24,6 +24,7 @@ import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
+import { extractAvailableFields } from '../functions/forms';
 import { generateUrl } from '../functions/urls';
 import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
@@ -109,8 +110,7 @@ export default function InvenTreeTableHeader({
           params: exportParams
         })
         .then((response: any) => {
-          console.log('OPTIONS:', response);
-          return {};
+          return extractAvailableFields(response, 'POST') || {};
         })
         .catch(() => {
           return {};
@@ -120,16 +120,21 @@ export default function InvenTreeTableHeader({
   const exportFields: ApiFormFieldSet = useMemo(() => {
     const extraFields: ApiFormFieldSet = extraExportFields.data || {};
 
-    return {
+    const fields: ApiFormFieldSet = {
       export_format: {},
-      export_plugin: {
-        onValueChange: (value: string) => {
-          setPluginKey(value);
-        }
-      },
+      export_plugin: {},
       ...extraFields
     };
-  }, [extraExportFields.data]);
+
+    fields.export_plugin = {
+      ...fields.export_plugin,
+      onValueChange: (value: string) => {
+        setPluginKey(value);
+      }
+    };
+
+    return fields;
+  }, [extraExportFields.data, setPluginKey]);
 
   const exportModal = useCreateApiFormModal({
     url: tableUrl ?? '',

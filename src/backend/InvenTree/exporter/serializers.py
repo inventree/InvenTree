@@ -16,8 +16,7 @@ class DataExportOptionsSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options for this serializer."""
 
-        BASE_FIELDS = ['export_format', 'export_plugin']
-        fields = BASE_FIELDS
+        fields = ['export_format', 'export_plugin']
 
     def __init__(self, *args, **kwargs):
         """Construct the DataExportOptionsSerializer.
@@ -26,24 +25,24 @@ class DataExportOptionsSerializer(serializers.Serializer):
         - The selected plugin may 'extend' the fields available in the serializer.
         """
         # Reset fields to a known state
-        self.Meta.fields = self.Meta.BASE_FIELDS
-
-        # Is a plugin serializer provided?
-        if plugin := kwargs.pop('plugin', None):
-            if hasattr(plugin, 'get_export_options_serializer'):
-                plugin_serializer = plugin.get_export_options_serializer(
-                    *args, **kwargs
-                )
-
-                if plugin_serializer:
-                    for key, field in plugin_serializer.fields.items():
-                        self.Meta.fields.append(key)
-                        setattr(self, key, field)
+        self.Meta.fields = ['export_format', 'export_plugin']
 
         # Generate a list of plugins to choose from
         # If a model type is provided, use this to filter the list of plugins
         model_class = kwargs.pop('model_class', None)
         request = kwargs.pop('request', None)
+
+        # Is a plugin serializer provided?
+        if plugin := kwargs.pop('plugin', None):
+            if hasattr(plugin, 'get_export_options_serializer'):
+                plugin_serializer = plugin.get_export_options_serializer()
+
+                if plugin_serializer:
+                    for key, field in plugin_serializer.fields.items():
+                        # Note: Custom fields *must* start with 'export_' prefix
+                        if key.startswith('export_') and key not in self.Meta.fields:
+                            self.Meta.fields.append(key)
+                            setattr(self, key, field)
 
         plugin_options = []
 

@@ -12,7 +12,7 @@ from plugin.mixins import DataExportMixin, SettingsMixin
 class BomExporterOptionsSerializer(serializers.Serializer):
     """Custom export options for the BOM exporter plugin."""
 
-    levels = serializers.IntegerField(
+    export_levels = serializers.IntegerField(
         default=1,
         label=_('Levels'),
         help_text=_('Number of levels to export'),
@@ -37,3 +37,11 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
     def supports_export(self, model_class: type, user, *args, **kwargs) -> bool:
         """This exported only supports the BomItem model."""
         return model_class == BomItem
+
+    def export_data(self, queryset, serializer_class, headers, context, **kwargs):
+        """Export BOM data from the queryset."""
+        # TODO: Custom BOM export!
+
+        return super().export_data(
+            queryset, serializer_class, headers, context, **kwargs
+        )
