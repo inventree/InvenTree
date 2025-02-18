@@ -1558,6 +1558,8 @@ class BomItemSerializer(
 
     import_exclude_fields = ['validated', 'substitutes']
 
+    export_exclude_fields = ['substitutes']
+
     export_child_fields = [
         'sub_part_detail.name',
         'sub_part_detail.IPN',

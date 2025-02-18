@@ -97,6 +97,12 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         # Append a "BOM Level" field
         headers['level'] = _('BOM Level')
 
+        # Append variant part columns
+        if self.export_substitute_data and self.n_substitute_cols > 0:
+            for idx in range(self.n_substitute_cols):
+                n = idx + 1
+                headers[f'substitute_{idx}'] = _(f'Substitute {n}')
+
         # Append supplier part columns
         if self.export_supplier_data and self.n_supplier_cols > 0:
             for idx in range(self.n_supplier_cols):
@@ -105,6 +111,7 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
                 headers[f'supplier_sku_{idx}'] = _(f'Supplier {n} SKU')
                 headers[f'supplier_mpn_{idx}'] = _(f'Supplier {n} MPN')
 
+        # Append manufacturer part columns
         if self.export_manufacturer_data and self.n_manufacturer_cols > 0:
             for idx in range(self.n_manufacturer_cols):
                 n = idx + 1
@@ -113,11 +120,30 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
 
         return headers
 
+    def prefetch_queryset(self, queryset):
+        """Perform pre-fetch on the provided queryset."""
+        queryset = queryset.prefetch_related('sub_part')
+
+        if self.export_substitute_data:
+            queryset = queryset.prefetch_related('substitutes')
+
+        if self.export_supplier_data:
+            queryset = queryset.prefetch_related('sub_part__supplier_parts')
+            queryset = queryset.prefetch_related(
+                'sub_part__supplier_parts__manufacturer_part'
+            )
+
+        if self.export_manufacturer_data:
+            queryset = queryset.prefetch_related('sub_part__manufacturer_parts')
+
+        return queryset
+
     def export_data(self, queryset, serializer_class, headers, context, **kwargs):
         """Export BOM data from the queryset."""
         self.serializer_class = serializer_class
 
         # Track how many extra columns we need
+        self.n_substitute_cols = 0
         self.n_supplier_cols = 0
         self.n_manufacturer_cols = 0
 
@@ -130,14 +156,7 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         self.export_substitute_data = context.get('export_substitute_data', True)
 
         # Pre-fetch related data to reduce database queries
-        if self.export_supplier_data:
-            queryset = queryset.prefetch_related('sub_part__supplier_parts')
-            queryset = queryset.prefetch_related(
-                'sub_part__supplier_parts__manufacturer_part'
-            )
-
-        if self.export_manufacturer_data:
-            queryset = queryset.prefetch_related('sub_part__manufacturer_parts')
+        queryset = self.prefetch_queryset(queryset)
 
         self.bom_data = []
 
@@ -160,6 +179,10 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
         row['level'] = level
 
         # Extend with additional data
+
+        if self.export_substitute_data:
+            row.update(self.get_substitute_data(bom_item))
+
         if self.export_supplier_data:
             row.update(self.get_supplier_data(bom_item))
 
@@ -173,18 +196,25 @@ class BomExporterPlugin(DataExportMixin, SettingsMixin, InvenTreePlugin):
             self.export_levels <= 0 or level < self.export_levels
         ):
             sub_items = bom_item.sub_part.get_bom_items()
-
-            if self.export_supplier_data:
-                sub_items = sub_items.prefetch_related('sub_part__supplier_parts')
-                sub_items = sub_items.prefetch_related(
-                    'sub_part__supplier_parts__manufacturer_part'
-                )
-
-            if self.export_manufacturer_data:
-                sub_items = sub_items.prefetch_related('sub_part__manufacturer_parts')
+            sub_items = self.prefetch_queryset(sub_items)
 
             for item in sub_items.all():
                 self.process_bom_row(item, level + 1, **kwargs)
+
+    def get_substitute_data(self, bom_item: BomItem) -> dict:
+        """Return substitute part data for a BomItem."""
+        substitute_part_data = {}
+
+        idx = 0
+
+        for substitute in bom_item.substitutes.all():
+            substitute_part_data.update({f'substitute_{idx}': substitute.part.name})
+
+            idx += 1
+
+        self.n_substitute_cols = max(self.n_substitute_cols, idx)
+
+        return substitute_part_data
 
     def get_supplier_data(self, bom_item: BomItem) -> dict:
         """Return supplier and manufacturer data for a BomItem."""
