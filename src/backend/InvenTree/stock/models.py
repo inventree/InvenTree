@@ -442,7 +442,7 @@ class StockItem(
 
     tags = TaggableManager(blank=True)
 
-    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
     # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
