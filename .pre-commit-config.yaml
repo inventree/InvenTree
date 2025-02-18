@@ -79,6 +79,7 @@ repos:
     rev: v8.23.3
     hooks:
     -   id: gitleaks
+        language_version: 1.23.6
 #-   repo: https://github.com/jumanjihouse/pre-commit-hooks
 #    rev: 3.0.0
 #    hooks:
