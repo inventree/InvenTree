@@ -2,7 +2,6 @@
 
 from django.apps import apps
 from django.contrib.auth.models import Group
-from django.db.models.signals import post_delete, post_save
 from django.test import TestCase
 from django.urls import reverse
 
@@ -384,7 +383,7 @@ class UserProfileTest(InvenTreeAPITestCase):
             'organisation': 'Test Organisation',
             'primary_group': self.group.pk,
         }
-        response = self.client.patch(reverse('api-user-profile'), data)
+        response = self.patch(reverse('api-user-profile'), data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['language'], data['language'])
         self.assertEqual(response.data['theme'], data['theme'])
@@ -419,7 +418,6 @@ class UserProfileTest(InvenTreeAPITestCase):
 
         # Remove user from group and save group
         self.user.groups.remove(group)
-        post_save.send(sender=Group, instance=group)
 
         # Ensure primary_group is set to None
         profile.refresh_from_db()
@@ -438,7 +436,6 @@ class UserProfileTest(InvenTreeAPITestCase):
 
         # Delete group
         group.delete()
-        post_delete.send(sender=Group, instance=group)
 
         # Ensure primary_group is set to None
         profile.refresh_from_db()
