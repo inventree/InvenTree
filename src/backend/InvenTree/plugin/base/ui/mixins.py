@@ -76,12 +76,12 @@ class UserInterfaceMixin:
     class MixinMeta:
         """Metaclass for this plugin mixin."""
 
-        MIXIN_NAME = 'User Interface'
+        MIXIN_NAME = 'ui'
 
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.USER_INTEFACE, True, __class__)  # type: ignore
+        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)  # type: ignore
 
     def get_ui_features(
         self, feature_type: FeatureType, context: dict, request: Request, **kwargs

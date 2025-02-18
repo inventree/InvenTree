@@ -22,7 +22,7 @@ class NavigationMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.NAVIATION, 'has_navigation', __class__)
+        self.add_mixin(PluginMixinEnum.NAVIGATION, 'has_navigation', __class__)
         self.navigation = self.setup_navigation()
 
     def setup_navigation(self):

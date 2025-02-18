@@ -40,14 +40,14 @@ class PluginMixinEnum(str, enum.Enum):
     ICON_PACK = 'icon_pack'
     LABELS = 'labels'
     LOCATE = 'locate'
-    NAVIATION = 'navigation'
+    NAVIGATION = 'navigation'
     REPORT = 'report'
     SCHEDULE = 'schedule'
     SETTINGS = 'settings'
     SETTINGS_CONTENT = 'settingscontent'
     SUPPLIER_BARCODE = 'supplier-barcode'
     URLS = 'urls'
-    USER_INTEFACE = 'ui'
+    USER_INTERFACE = 'ui'
     VALIDATION = 'validation'
 
 

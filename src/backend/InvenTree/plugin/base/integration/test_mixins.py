@@ -154,7 +154,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
 
     MIXIN_HUMAN_NAME = 'Navigation Links'
     MIXIN_NAME = 'navigation'
-    MIXIN_ENABLE_CHECK = 'has_naviation'
+    MIXIN_ENABLE_CHECK = 'has_navigation'
 
     def setUp(self):
         """Setup for all tests."""

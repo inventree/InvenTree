@@ -29,7 +29,7 @@ class PluginUIFeatureList(APIView):
         if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
             # Extract all plugins from the registry which provide custom ui features
             for _plugin in registry.with_mixin(
-                PluginMixinEnum.USER_INTEFACE, active=True
+                PluginMixinEnum.USER_INTERFACE, active=True
             ):
                 # Allow plugins to fill this data out
 
