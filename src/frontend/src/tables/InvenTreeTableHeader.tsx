@@ -9,22 +9,25 @@ import {
 } from '@mantine/core';
 import {
   IconBarcode,
+  IconDownload,
   IconFilter,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
+import { useQuery } from '@tanstack/react-query';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { PrintingActions } from '../components/buttons/PrintingActions';
+import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
-import { useDeleteApiFormModal } from '../hooks/UseForm';
+import { generateUrl } from '../functions/urls';
+import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
-import { DownloadAction } from './DownloadAction';
 import type { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import type { InvenTreeTableProps } from './InvenTreeTable';
@@ -55,43 +58,62 @@ export default function InvenTreeTableHeader({
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  const downloadData = (fileFormat: string) => {
-    // Download entire dataset (no pagination)
+  // Selected plugin to use for data export
+  const [pluginKey, setPluginKey] = useState<string>('');
 
-    const queryParams = {
-      ...tableProps.params
+  // Fetch available export fields via OPTIONS request
+  const extraExportFields = useQuery({
+    enabled: !!tableUrl && tableProps.enableDownload,
+    queryKey: ['exportFields', pluginKey, tableUrl],
+    gcTime: 500,
+    queryFn: () =>
+      api
+        .options(tableUrl ?? '', {
+          params: {
+            export: true,
+            export_plugin: pluginKey || undefined
+          }
+        })
+        .then((response: any) => {
+          console.log('OPTIONS:', response);
+          return {};
+        })
+        .catch(() => {
+          return {};
+        })
+  });
+
+  const exportFields: ApiFormFieldSet = useMemo(() => {
+    const extraFields: ApiFormFieldSet = extraExportFields.data || {};
+
+    return {
+      export_format: {},
+      export_plugin: {
+        onValueChange: (value: string) => {
+          setPluginKey(value);
+        }
+      },
+      ...extraFields
     };
+  }, [extraExportFields.data]);
 
-    // Add in active filters
-    if (tableState.activeFilters) {
-      tableState.activeFilters.forEach((filter) => {
-        queryParams[filter.name] = filter.value;
-      });
-    }
+  const exportModal = useCreateApiFormModal({
+    url: tableUrl ?? '',
+    queryParams: new URLSearchParams({ export: 'true' }),
+    title: t`Export Data`,
+    fields: exportFields,
+    submitText: t`Export`,
+    successMessage: t`Data exported successfully`,
+    onFormSuccess: (response: any) => {
+      setPluginKey('');
 
-    // Allow overriding of query parameters
-    if (tableState.queryFilters) {
-      for (const [key, value] of tableState.queryFilters) {
-        queryParams[key] = value;
+      if (response.complete && response.output) {
+        // Download the generated file
+        const url = generateUrl(response.output);
+        window.open(url.toString(), '_blank');
       }
     }
-
-    // Add custom search term
-    if (tableState.searchTerm) {
-      queryParams.search = tableState.searchTerm;
-    }
-
-    // Specify file format
-    queryParams.export = fileFormat;
-
-    const downloadUrl = api.getUri({
-      url: tableUrl,
-      params: queryParams
-    });
-
-    // Download file in a new window (to force download)
-    window.open(downloadUrl, '_blank');
-  };
+  });
 
   const deleteRecords = useDeleteApiFormModal({
     url: tableUrl ?? '',
@@ -124,6 +146,7 @@ export default function InvenTreeTableHeader({
 
   return (
     <>
+      {exportModal.modal}
       {deleteRecords.modal}
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
         <Boundary label={`InvenTreeTableFilterDrawer-${tableState.tableKey}`}>
@@ -220,11 +243,11 @@ export default function InvenTreeTableHeader({
             </Indicator>
           )}
           {tableUrl && tableProps.enableDownload && (
-            <DownloadAction
-              key='download-action'
-              downloadCallback={downloadData}
-              url={tableUrl ?? ''}
-            />
+            <ActionIcon variant='transparent' aria-label='export-data'>
+              <Tooltip label={t`Download data`} position='bottom'>
+                <IconDownload onClick={exportModal.open} />
+              </Tooltip>
+            </ActionIcon>
           )}
         </Group>
       </Group>
