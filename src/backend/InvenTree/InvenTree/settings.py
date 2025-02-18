@@ -258,10 +258,10 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.admindocs',
     # InvenTree apps
+    'exporter.apps.ExporterConfig',
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
-    'exporter.apps.ExporterConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
