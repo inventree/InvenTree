@@ -53,6 +53,12 @@ export default defineConfig({
     outDir: '../../src/backend/InvenTree/web/static/web',
     sourcemap: is_coverage
   },
+  resolve: {
+    alias: {
+      // /esm/icons/index.mjs only exports the icons statically, so no separate chunks are created
+      '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs'
+    }
+  },
   server: {
     proxy: {
       '/media': {

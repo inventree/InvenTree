@@ -2,6 +2,8 @@ import { Text } from '@mantine/core';
 
 import * as classes from '../../main.css';
 
+import type { JSX } from 'react';
+
 export function StylishText({
   children,
   size = 'md'
