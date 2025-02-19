@@ -161,8 +161,7 @@ class LabelPrint(GenericAPIView):
             if plugin_serializer:
                 kwargs['plugin_serializer'] = plugin_serializer
 
-        serializer = super().get_serializer(*args, **kwargs)
-        return serializer
+        return super().get_serializer(*args, **kwargs)
 
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):

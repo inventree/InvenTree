@@ -603,9 +603,9 @@ class Part(
 
         This function is exposed to any Validation plugins, and thus can be customized.
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             # Run the name through each custom validator
             # If the plugin returns 'True' we will skip any subsequent validation
 
@@ -625,9 +625,9 @@ class Part(
         - Validation is handled by custom plugins
         - By default, no validation checks are performed
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 result = plugin.validate_part_ipn(self.IPN, self)
 
@@ -724,10 +724,10 @@ class Part(
         serial = str(serial).strip()
 
         # First, throw the serial number against each of the loaded validation plugins
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         try:
-            for plugin in registry.with_mixin('validation'):
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
 
@@ -844,12 +844,12 @@ class Part(
         Returns:
             The latest serial number specified for this part, or None
         """
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         if allow_plugins:
             # Check with plugin system
             # If any plugin returns a non-null result, that takes priority
-            for plugin in registry.with_mixin('validation'):
+            for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
                 try:
                     result = plugin.get_latest_serial_number(self)
                     if result is not None:
@@ -3915,9 +3915,9 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         self.calculate_numeric_value()
 
         # Run custom validation checks (via plugins)
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             # Note: The validate_part_parameter function may raise a ValidationError
             try:
                 result = plugin.validate_part_parameter(self, self.data)

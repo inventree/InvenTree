@@ -43,6 +43,11 @@ export function ChoiceField({
   // Update form values when the selected value changes
   const onChange = useCallback(
     (value: any) => {
+      // Prevent blank values if the field is required
+      if (definition.required && !value) {
+        return;
+      }
+
       field.onChange(value);
 
       // Run custom callback for this field (if provided)
