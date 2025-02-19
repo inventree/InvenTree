@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import type { QueryClient } from '@tanstack/react-query';
+import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../App';
 import { useLocalState } from '../../states/LocalState';
 import {
@@ -48,7 +49,7 @@ export type InvenTreeContext = {
 };
 
 export const useInvenTreeContext = () => {
-  const [locale, host] = useLocalState((s) => [s.language, s.host]);
+  const [locale, host] = useLocalState(useShallow((s) => [s.language, s.host]));
   const navigate = useNavigate();
   const user = useUserState();
   const { colorScheme } = useMantineColorScheme();

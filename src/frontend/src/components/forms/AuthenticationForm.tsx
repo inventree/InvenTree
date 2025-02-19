@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { showNotification } from '@mantine/notifications';
+import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
@@ -34,7 +35,9 @@ export function AuthenticationForm() {
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_settings] = useServerApiState(
+    useShallow((state) => [state.auth_settings])
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const { isLoggedIn } = useUserState();
@@ -188,7 +191,9 @@ export function RegistrationForm() {
     initialValues: { username: '', email: '', password1: '', password2: '' }
   });
   const navigate = useNavigate();
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_settings] = useServerApiState(
+    useShallow((state) => [state.auth_settings])
+  );
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   function handleRegistration() {
@@ -297,7 +302,9 @@ export function ModeSelector({
   loginMode: boolean;
   setMode: any;
 }>) {
-  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const [auth_settings] = useServerApiState(
+    useShallow((state) => [state.auth_settings])
+  );
   const registration_enabled =
     auth_settings?.registration_enabled ||
     auth_settings?.sso_registration ||
