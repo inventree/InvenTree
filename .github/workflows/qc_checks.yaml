@@ -571,7 +571,7 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: postgresql
       INVENTREE_DB_NAME: inventree
-      INVENTREE_DB_HOST: localhost
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
@@ -583,14 +583,14 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
         with:
           persist-credentials: false
-      - name: Install PostgreSQL client
-        run: sudo apt-get install -y postgresql-client
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           npm: true
           install: true
           update: true
+          apt-dependency: postgresql-client libpq-dev
+          pip-dependency: psycopg2
       - name: Set up test data
         run: invoke dev.setup-test -iv
       - name: Rebuild thumbnails
