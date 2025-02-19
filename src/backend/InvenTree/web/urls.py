@@ -18,7 +18,7 @@ class RedirectAssetView(TemplateView):
 
 
 spa_view = ensure_csrf_cookie(TemplateView.as_view(template_name='web/index.html'))
-assets_path = path('assets/<path:path>', RedirectAssetView.as_view())
+assets_path = path('assets/<path:path>', RedirectAssetView.as_view(), name='web-assets')
 
 
 urlpatterns = [
@@ -31,7 +31,7 @@ urlpatterns = [
                 spa_view,
                 name='password_reset_confirm',
             ),
-            re_path('.*', spa_view),
+            re_path('.*', spa_view, name='platform-wildcard'),
         ]),
     ),
     assets_path,

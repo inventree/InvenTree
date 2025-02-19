@@ -104,6 +104,8 @@ export const NotFound = Loadable(
   lazy(() => import('./components/errors/NotFound'))
 );
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const MFALogin = Loadable(lazy(() => import('./pages/Auth/MFALogin')));
+export const MFASetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
 export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
@@ -114,6 +116,9 @@ export const ChangePassword = Loadable(
 
 export const ResetPassword = Loadable(
   lazy(() => import('./pages/Auth/ResetPassword'))
+);
+export const VerifyEmail = Loadable(
+  lazy(() => import('./pages/Auth/VerifyEmail'))
 );
 
 // Routes
@@ -170,11 +175,15 @@ export const routes = (
     </Route>
     <Route path='/' errorElement={<ErrorPage />}>
       <Route path='/login' element={<Login />} />,
+      <Route path='/register' element={<Login />} />,
+      <Route path='/mfa' element={<MFALogin />} />,
+      <Route path='/mfa-setup' element={<MFASetup />} />,
       <Route path='/logout' element={<Logout />} />,
       <Route path='/logged-in' element={<Logged_In />} />
       <Route path='/reset-password' element={<Reset />} />
       <Route path='/set-password' element={<ResetPassword />} />
       <Route path='/change-password' element={<ChangePassword />} />
+      <Route path='/verify-email/:key' element={<VerifyEmail />} />
     </Route>
   </Routes>
 );

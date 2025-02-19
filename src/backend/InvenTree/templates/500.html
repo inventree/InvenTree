@@ -7,14 +7,7 @@
 {% endblock page_title %}
 
 {% block content %}
-
-<div class='container-fluid'>
-    <h3>{% trans "Internal Server Error" %}</h3>
-
-    <div class='alert alert-danger alert-block'>
-        {% blocktrans %}The {{ inventree_title }} server raised an internal error{% endblocktrans %}<br>
-        {% trans "Refer to the error log in the admin interface for further details" %}
-    </div>
-</div>
-
+<h3>{% trans "Internal Server Error" %}</h3>
+{% blocktrans %}The {{ inventree_title }} server raised an internal error{% endblocktrans %}<br>
+{% trans "Refer to the error log in the admin interface for further details" %}
 {% endblock content %}

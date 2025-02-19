@@ -115,7 +115,6 @@ class AllStatusViews(StatusView):
             for item in cls.custom_values():
                 label = str(item.name)
                 if label not in cls_data['values']:
-                    print('custom value:', item)
                     cls_data['values'][label] = {
                         'color': item.color,
                         'logical_key': item.logical_key,

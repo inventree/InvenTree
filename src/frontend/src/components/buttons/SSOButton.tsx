@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 
 import { t } from '@lingui/macro';
+import { ProviderLogin } from '../../functions/auth';
 import type { Provider } from '../../states/states';
 
 const brandIcons: { [key: string]: JSX.Element } = {
@@ -32,26 +33,17 @@ const brandIcons: { [key: string]: JSX.Element } = {
 };
 
 export function SsoButton({ provider }: Readonly<{ provider: Provider }>) {
-  function login() {
-    window.location.href = provider.login;
-  }
-
   return (
     <Tooltip
-      label={
-        provider.login
-          ? t`You will be redirected to the provider for further actions.`
-          : t`This provider is not full set up.`
-      }
+      label={t`You will be redirected to the provider for further actions.`}
     >
       <Button
         leftSection={getBrandIcon(provider)}
         radius='xl'
         component='a'
-        onClick={login}
-        disabled={!provider.login}
+        onClick={() => ProviderLogin(provider)}
       >
-        {provider.display_name}
+        {provider.name}
       </Button>
     </Tooltip>
   );

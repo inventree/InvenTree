@@ -47,6 +47,14 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
+  useEffect(() => {
+    if (location.pathname === '/register') {
+      setMode.close();
+    } else {
+      setMode.open();
+    }
+  }, [location]);
+
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
     if (val) {
@@ -95,7 +103,8 @@ export default function Login() {
     if (searchParams.has('login') && searchParams.has('password')) {
       doBasicLogin(
         searchParams.get('login') ?? '',
-        searchParams.get('password') ?? ''
+        searchParams.get('password') ?? '',
+        navigate
       ).then(() => {
         followRedirect(navigate, location?.state);
       });
@@ -135,7 +144,10 @@ export default function Login() {
                   </StylishText>
                   <Divider p='xs' />
                   {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
-                  <ModeSelector loginMode={loginMode} setMode={setMode} />
+                  <ModeSelector
+                    loginMode={loginMode}
+                    changePage={(newPage) => navigate(`/${newPage}`)}
+                  />
                   {LoginMessage}
                 </Paper>
                 <AuthFormOptions

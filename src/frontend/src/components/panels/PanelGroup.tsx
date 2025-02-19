@@ -116,20 +116,20 @@ function BasePanelGroup({
 
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
-    (panel: string, event?: any) => {
+    (targetPanel: string, event?: any) => {
       if (event && (event?.ctrlKey || event?.shiftKey)) {
-        const url = `${location.pathname}/../${panel}`;
+        const url = `${location.pathname}/../${targetPanel}`;
         cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${panel}`);
+        navigate(`../${targetPanel}`);
       }
 
-      localState.setLastUsedPanel(pageKey)(panel);
+      localState.setLastUsedPanel(pageKey)(targetPanel);
 
       // Optionally call external callback hook
-      if (panel && onPanelChange) {
-        onPanelChange(panel);
+      if (targetPanel && onPanelChange) {
+        onPanelChange(targetPanel);
       }
     },
     [activePanels, navigate, location, onPanelChange]
