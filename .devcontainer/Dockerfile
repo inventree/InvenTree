@@ -14,6 +14,10 @@ ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 
+# Required for running playwright within devcontainer
+ENV DISPLAY=:0
+ENV LIBGL_ALWAYS_INDIRECT=1
+
 COPY contrib/container/init.sh ./
 RUN chmod +x init.sh
 
@@ -30,7 +34,5 @@ RUN apt install -y \
    yarn nodejs npm
 
 RUN yarn config set network-timeout 600000 -g
-
-# Install python database connectors
 
 ENTRYPOINT ["/bin/bash", "./init.sh"]
