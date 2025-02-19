@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-14 08:19\n"
+"PO-Revision-Date: 2025-02-18 08:02\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1179,7 +1179,7 @@ msgstr "未分類"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:77
-#: src/tables/part/PartThumbTable.tsx:193
+#: src/tables/part/PartThumbTable.tsx:200
 msgid "Search..."
 msgstr "検索…"
 
@@ -1745,8 +1745,8 @@ msgstr "アカウント設定"
 #: src/components/nav/MainMenu.tsx:67
 #: src/components/nav/NavigationDrawer.tsx:141
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/pages/Index/Settings/SystemSettings.tsx:306
-#: src/pages/Index/Settings/SystemSettings.tsx:311
+#: src/pages/Index/Settings/SystemSettings.tsx:308
+#: src/pages/Index/Settings/SystemSettings.tsx:313
 msgid "System Settings"
 msgstr "システム設定"
 
@@ -1791,7 +1791,7 @@ msgstr "ログアウト"
 #: src/components/nav/NavigationDrawer.tsx:77
 #: src/components/render/ModelType.tsx:30
 #: src/defaults/links.tsx:12
-#: src/pages/Index/Settings/SystemSettings.tsx:171
+#: src/pages/Index/Settings/SystemSettings.tsx:173
 #: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/CategoryDetail.tsx:265
 #: src/pages/part/CategoryDetail.tsx:304
@@ -1803,7 +1803,7 @@ msgstr "パーツ"
 #: src/components/render/Part.tsx:30
 #: src/defaults/links.tsx:13
 #: src/forms/StockForms.tsx:700
-#: src/pages/Index/Settings/SystemSettings.tsx:204
+#: src/pages/Index/Settings/SystemSettings.tsx:206
 #: src/pages/part/PartDetail.tsx:497
 #: src/pages/stock/LocationDetail.tsx:351
 #: src/pages/stock/StockDetail.tsx:547
@@ -1841,7 +1841,7 @@ msgstr "販売"
 
 #: src/components/nav/NavigationDrawer.tsx:129
 #: src/components/nav/NotificationDrawer.tsx:179
-#: src/pages/Index/Settings/SystemSettings.tsx:109
+#: src/pages/Index/Settings/SystemSettings.tsx:111
 #: src/pages/Index/Settings/UserSettings.tsx:97
 #: src/pages/Notifications.tsx:66
 #: src/pages/Notifications.tsx:158
@@ -2308,7 +2308,7 @@ msgid "Purchase Order"
 msgstr "注文"
 
 #: src/components/render/ModelType.tsx:152
-#: src/pages/Index/Settings/SystemSettings.tsx:248
+#: src/pages/Index/Settings/SystemSettings.tsx:250
 #: src/pages/company/CompanyDetail.tsx:199
 #: src/pages/company/SupplierPartDetail.tsx:266
 #: src/pages/part/PartDetail.tsx:573
@@ -2338,7 +2338,7 @@ msgid "Sales Order"
 msgstr "セールスオーダー"
 
 #: src/components/render/ModelType.tsx:167
-#: src/pages/Index/Settings/SystemSettings.tsx:264
+#: src/pages/Index/Settings/SystemSettings.tsx:266
 #: src/pages/company/CompanyDetail.tsx:219
 #: src/pages/part/PartDetail.tsx:585
 #: src/pages/sales/SalesIndex.tsx:26
@@ -2361,7 +2361,7 @@ msgid "Return Order"
 msgstr "リターンオーダー"
 
 #: src/components/render/ModelType.tsx:184
-#: src/pages/Index/Settings/SystemSettings.tsx:280
+#: src/pages/Index/Settings/SystemSettings.tsx:282
 #: src/pages/company/CompanyDetail.tsx:226
 #: src/pages/part/PartDetail.tsx:592
 #: src/pages/sales/SalesIndex.tsx:33
@@ -4220,7 +4220,7 @@ msgstr "選択なし"
 #~ msgstr "Register below"
 
 #: src/pages/Auth/Login.tsx:134
-#: src/pages/Index/Settings/SystemSettings.tsx:65
+#: src/pages/Index/Settings/SystemSettings.tsx:67
 msgid "Login"
 msgstr "ログイン"
 
@@ -5112,11 +5112,11 @@ msgstr "全てのユニット"
 #~ msgid "System settings"
 #~ msgstr "System settings"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:91
+#: src/pages/Index/Settings/SystemSettings.tsx:93
 msgid "Barcodes"
 msgstr "バーコード"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:115
+#: src/pages/Index/Settings/SystemSettings.tsx:117
 msgid "Pricing"
 msgstr "価格"
 
@@ -5128,16 +5128,16 @@ msgstr "価格"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:150
+#: src/pages/Index/Settings/SystemSettings.tsx:152
 msgid "Labels"
 msgstr "ラベル"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:156
+#: src/pages/Index/Settings/SystemSettings.tsx:158
 #: src/pages/Index/Settings/UserSettings.tsx:103
 msgid "Reporting"
 msgstr "レポート"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:230
+#: src/pages/Index/Settings/SystemSettings.tsx:232
 #: src/pages/build/BuildIndex.tsx:27
 #: src/pages/part/PartDetail.tsx:540
 #: src/pages/sales/SalesOrderDetail.tsx:373
@@ -8603,7 +8603,7 @@ msgstr "親部分を見る"
 msgid "Part templates cannot be edited, as the part is locked"
 msgstr "パートがロックされているため、パートテンプレートは編集できません。"
 
-#: src/tables/part/PartThumbTable.tsx:202
+#: src/tables/part/PartThumbTable.tsx:223
 msgid "Select"
 msgstr "選択"
 
