@@ -60,6 +60,9 @@ export enum ApiEndpoints {
   barcode_unlink = 'barcode/unlink/',
   barcode_generate = 'barcode/generate/',
 
+  // Data export endpoints
+  export_session_list = 'exporter/session/',
+
   // Data import endpoints
   import_session_list = 'importer/session/',
   import_session_accept_fields = 'importer/session/:id/accept_fields/',

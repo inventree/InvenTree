@@ -6,6 +6,7 @@ import {
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileDownload,
   IconFileUpload,
   IconList,
   IconListDetails,
@@ -70,6 +71,10 @@ const BarcodeScanHistoryTable = Loadable(
   lazy(() => import('../../../../tables/settings/BarcodeScanHistoryTable'))
 );
 
+const ExportSessionTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ExportSessionTable'))
+);
+
 const ImportSesssionTable = Loadable(
   lazy(() => import('../../../../tables/settings/ImportSessionTable'))
 );
@@ -116,6 +121,12 @@ export default function AdminCenter() {
         label: t`Data Import`,
         icon: <IconFileUpload />,
         content: <ImportSesssionTable />
+      },
+      {
+        name: 'export',
+        label: t`Data Export`,
+        icon: <IconFileDownload />,
+        content: <ExportSessionTable />
       },
       {
         name: 'barcode-history',
