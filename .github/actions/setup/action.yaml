@@ -30,6 +30,10 @@ inputs:
     pip-dependency:
         required: false
         description: 'Extra python package for install.'
+    py-dep-paths:
+        required: false
+        description: 'Path to the python dependencies.'
+        default: 'src/backend/requirements.txt'
 
 runs:
     using: 'composite'
@@ -49,6 +53,7 @@ runs:
           cache-dependency-path: |
             src/backend/requirements.txt
             src/backend/requirements-dev.txt
+            src/backend/requirements-3-12.txt
             contrib/container/requirements.txt
             contrib/dev_reqs/requirements.txt
       - name: Install Base Python Dependencies
@@ -57,7 +62,7 @@ runs:
         run: |
           python3 -m pip install -U pip
           pip3 install -U invoke wheel
-          pip3 install 'uv<0.3.0'
+          pip3 install 'uv'
       - name: Allow uv to use the system Python by default
         run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
@@ -89,8 +94,8 @@ runs:
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install --uv
+        run: invoke install --path ${{ inputs.py-dep-paths }}
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --uv --skip-backup --skip-static
+        run: invoke update --skip-backup --skip-static --path ${{ inputs.py-dep-paths }}
