@@ -136,10 +136,18 @@ export default function InvenTreeTableHeader({
       ...extraFields
     };
 
+    fields.export_format = {
+      ...fields.export_format,
+      required: true
+    };
+
     fields.export_plugin = {
       ...fields.export_plugin,
+      required: true,
       onValueChange: (value: string) => {
-        setPluginKey(value);
+        if (!!value) {
+          setPluginKey(value);
+        }
       }
     };
 
@@ -293,7 +301,7 @@ export default function InvenTreeTableHeader({
             </Indicator>
           )}
           {tableUrl && tableProps.enableDownload && (
-            <ActionIcon variant='transparent' aria-label='export-data'>
+            <ActionIcon variant='transparent' aria-label='table-export-data'>
               <Tooltip label={t`Download data`} position='bottom'>
                 <IconDownload onClick={exportModal.open} />
               </Tooltip>
