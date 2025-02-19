@@ -47,7 +47,7 @@ Read the [InvenTree setup documentation](../start/intro.md) for a complete insta
 
 ### Setup Devtools
 
-Run the following command to set up all toolsets for development.
+Run the following command to set up the tools required for development.
 
 ```bash
 invoke dev.setup-dev
