@@ -512,7 +512,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
         )
 
-        fn = result.groups()[0]
+        fn = result.groups()[1]
 
         if expected_fn is not None:
             self.assertRegex(fn, expected_fn)
@@ -553,10 +553,14 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         Returns:
             A file object containing the exported dataset
         """
+        download = kwargs.pop('download', True)
+        expected_code = kwargs.pop('expected_code', 200)
+
         if not params:
             params = {}
 
-        data = {
+        params = {
+            **params,
             'export': True,
             'export_format': export_format,
             'export_plugin': export_plugin,
@@ -565,23 +569,30 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Add in any other export specific kwargs
         for key, value in kwargs.items():
             if key.startswith('export_'):
-                data[key] = value
+                params[key] = value
 
         # Append URL params
         url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
 
-        response = self.client.post(url, data, format='json')
-        self.check_response(url, response, expected_code=200)
+        response = self.client.get(url, data=None, format='json')
+        self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
         data = response.data
 
-        self.assertTrue(data['complete'])
+        if expected_code != 200:
+            # Response failed
+            return response.data
 
+        self.assertTrue(data['complete'])
         filename = data.get('output')
         self.assertIsNotNone(filename)
 
-        return self.download_file(filename, expected_code=200)
+        if download:
+            return self.download_file(filename, **kwargs)
+
+        else:
+            return response.data
 
     def process_csv(
         self,
