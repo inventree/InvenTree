@@ -23,6 +23,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - ../:/home/inventree:z
+      - /tmp/.X11-unix:/tmp/.X11-unix
 
     environment:
       INVENTREE_DB_ENGINE: postgresql
