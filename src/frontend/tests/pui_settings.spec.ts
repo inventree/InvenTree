@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
-import { navigate } from './helpers.js';
+import { getRowFromCell, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
@@ -91,8 +91,12 @@ test('Settings - Admin', async ({ page }) => {
   // Adjust some "location type" items
   await page.getByRole('tab', { name: 'Location Types' }).click();
 
-  // Edit first item
-  await page.getByLabel('row-action-menu-0').click();
+  // Edit first item ('Room')
+  const roomCell = await page.getByRole('cell', { name: 'Room', exact: true });
+  const roomRow = await getRowFromCell(roomCell);
+
+  await roomRow.getByLabel(/row-action-menu-/i).click();
+
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
 
@@ -100,14 +104,22 @@ test('Settings - Admin', async ({ page }) => {
   const oldDescription = await page
     .getByLabel('text-field-description')
     .inputValue();
+
   const newDescription = `${oldDescription} (edited)`;
 
   await page.getByLabel('text-field-description').fill(newDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // Edit second item
-  await page.getByLabel('row-action-menu-1').click();
+  // Edit second item - 'Box (Large)'
+  const boxCell = await page.getByRole('cell', {
+    name: 'Box (Large)',
+    exact: true
+  });
+  const boxRow = await getRowFromCell(boxCell);
+
+  await boxRow.getByLabel(/row-action-menu-/i).click();
+
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await expect(page.getByLabel('text-field-name')).toHaveValue('Box (Large)');
   await expect(page.getByLabel('text-field-description')).toHaveValue(
@@ -116,11 +128,13 @@ test('Settings - Admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Edit first item again (revert values)
-  await page.getByLabel('row-action-menu-0').click();
+  await roomRow.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await page.getByLabel('text-field-name').fill('Room');
   await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill(oldDescription);
+  await page
+    .getByLabel('text-field-description')
+    .fill(newDescription.replaceAll(' (edited)', ''));
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 });

@@ -97,7 +97,7 @@ The easiest way for plugin developing is by using the InvenTree devcontainer. Ju
    }
    ```
 
-Your plugin should now be activateable from the InvenTree settings. You can also use breakpoints for debugging.
+Your plugin should now be able to be activated from the InvenTree settings. You can also use breakpoints for debugging.
 
 ### Troubleshooting
 
@@ -125,4 +125,8 @@ You can also refer to the [Improve disk performance guide](https://code.visualst
 
 ### Redis Caching
 
-The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is enabled, but it can be easily disabled by adjusting the environment variabiles in the [docker compose file]({{ sourcefile('.devcontainer/docker-compose.yml') }}).
+The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is enabled, but it can be easily disabled by adjusting the environment variables in the [docker compose file]({{ sourcefile('.devcontainer/docker-compose.yml') }}).
+
+### Frontend Testing
+
+By default, the required packages for running frontend tests (via playwright) are not installed. Refer to the [installation instructions](./react-frontend.md#install-playwright) for instructions on installing these packages within the devcontainer environment.
