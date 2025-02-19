@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Divider,
+  Group,
   Paper,
   Stack,
   Tabs,
@@ -222,7 +223,14 @@ function BasePanelGroup({
                   <Stack gap='md'>
                     {panel.showHeadline !== false && (
                       <>
-                        <StylishText size='xl'>{panel.label}</StylishText>
+                        <Group justify='space-between'>
+                          <StylishText size='xl'>{panel.label}</StylishText>
+                          {panel.controls && (
+                            <Group justify='right' wrap='nowrap'>
+                              {panel.controls}
+                            </Group>
+                          )}
+                        </Group>
                         <Divider />
                       </>
                     )}
