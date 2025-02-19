@@ -66,7 +66,7 @@ export default function AdminButton(props: Readonly<AdminButtonProps>) {
         `${server.server.django_admin}${modelDef.admin_url}${props.id}/`
       );
 
-      if (event?.ctrlKey || event?.shiftKey) {
+      if (event?.ctrlKey || event?.shiftKey || event?.metaKey) {
         // Open the link in a new tab
         window.open(url, '_blank');
       } else {

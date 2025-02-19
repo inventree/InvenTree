@@ -360,7 +360,7 @@ export function SearchDrawer({
       return;
     }
 
-    if (event?.ctrlKey || event?.shiftKey) {
+    if (event?.ctrlKey || event?.shiftKey || event?.metaKey) {
       // Keep the drawer open in this condition
     } else {
       closeDrawer();

@@ -9,7 +9,7 @@ import { cancelEvent } from './events';
 export const navigateToLink = (link: string, navigate: any, event: any) => {
   cancelEvent(event);
 
-  if (event?.ctrlKey || event?.shiftKey) {
+  if (event?.ctrlKey || event?.shiftKey || event?.metaKey) {
     // Open the link in a new tab
     const url = `/${base_url}${link}`;
     window.open(url, '_blank');
