@@ -36,6 +36,35 @@ test('Exporting - Orders', async ({ page }) => {
   await openExportDialog(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByText('Data exported successfully').waitFor();
+
+  // Download a list of build orders
+  await navigate(page, 'manufacturing/index/buildorders/');
+  await openExportDialog(page);
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Data exported successfully').waitFor();
+
+  // Finally, navigate to the admin center and ensure the export data is available
+  await navigate(page, 'settings/admin/export/');
+
+  // Check for expected outputs
+  await page
+    .getByRole('link', { name: /InvenTree_Build_.*\.csv/ })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('link', { name: /InvenTree_PurchaseOrder_.*\.xlsx/ })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('link', { name: /InvenTree_PurchaseOrderLineItem_.*\.csv/ })
+    .first()
+    .waitFor();
+
+  // Delete all exported file outputs
+  await page.getByRole('cell', { name: 'Select all records' }).click();
+  await page.getByLabel('action-button-delete-selected').click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByText('Item Deleted').waitFor();
 });
 
 // Test for custom BOM exporter
