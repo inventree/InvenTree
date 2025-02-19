@@ -121,10 +121,6 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
             for key, value in self.parameters.items():
                 headers[f'parameter_{key}'] = value
 
-        print('Custom Headers:')
-        for k, v in headers.items():
-            print(f'  {k}: {v}')
-
         return headers
 
     def prefetch_queryset(self, queryset):
