@@ -2,7 +2,7 @@
 
 from datetime import timedelta
 
-from exporter.models import ExportOutput
+from data_exporter.models import ExportOutput
 from InvenTree.helpers import current_time
 from InvenTree.tasks import ScheduledTask, scheduled_task
 

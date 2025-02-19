@@ -12,9 +12,9 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from taggit.serializers import TagListSerializerField
 
-import exporter.serializers
+import data_exporter.serializers
 import InvenTree.exceptions
-from exporter.models import ExportOutput
+from data_exporter.models import ExportOutput
 from InvenTree.helpers import str2bool
 from plugin import PluginMixinEnum, registry
 
@@ -282,7 +282,7 @@ class DataExportViewMixin:
             except AttributeError:
                 export_kwargs['model_class'] = None
 
-            return exporter.serializers.DataExportOptionsSerializer(
+            return data_exporter.serializers.DataExportOptionsSerializer(
                 *args, **export_kwargs
             )
         else:
@@ -383,13 +383,14 @@ class DataExportViewMixin:
             output=ContentFile(datafile, filename),
         )
 
-        data = exporter.serializers.DataExportOutputSerializer(output).data
+        data = data_exporter.serializers.DataExportOutputSerializer(output).data
 
         output.refresh_from_db()
 
         # Return a serialized response
         return Response(
-            exporter.serializers.DataExportOutputSerializer(output).data, status=200
+            data_exporter.serializers.DataExportOutputSerializer(output).data,
+            status=200,
         )
 
     def post(self, request, *args, **kwargs):

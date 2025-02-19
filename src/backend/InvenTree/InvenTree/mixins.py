@@ -5,7 +5,7 @@ from django.core.exceptions import FieldDoesNotExist
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
-import exporter.mixins
+import data_exporter.mixins
 import importer.mixins
 from InvenTree.fields import InvenTreeNotesField
 from InvenTree.helpers import (
@@ -202,6 +202,7 @@ class UpdateAPI(CleanMixin, generics.UpdateAPIView):
 
 
 class DataImportExportSerializerMixin(
-    exporter.mixins.DataExportSerializerMixin, importer.mixins.DataImportSerializerMixin
+    data_exporter.mixins.DataExportSerializerMixin,
+    importer.mixins.DataImportSerializerMixin,
 ):
     """Mixin class for adding data import/export functionality to a DRF serializer."""

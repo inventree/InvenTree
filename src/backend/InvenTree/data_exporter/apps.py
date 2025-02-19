@@ -3,11 +3,11 @@
 from django.apps import AppConfig
 
 
-class ExporterConfig(AppConfig):
+class DataExporterConfig(AppConfig):
     """Configuration class for the 'exporter' app."""
 
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'exporter'
+    name = 'data_exporter'
 
     def ready(self):
         """Run any code that needs to be executed when the app is loaded."""
@@ -18,7 +18,7 @@ class ExporterConfig(AppConfig):
     def cleanup(self):
         """Cleanup any old export files."""
         try:
-            from exporter.tasks import cleanup_old_export_outputs
+            from data_exporter.tasks import cleanup_old_export_outputs
 
             cleanup_old_export_outputs()
         except Exception:

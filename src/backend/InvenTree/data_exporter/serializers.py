@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
-import exporter.models
+import data_exporter.models
 import InvenTree.helpers
 import InvenTree.serializers
 from plugin import PluginMixinEnum, registry
@@ -76,7 +76,20 @@ class DataExportOutputSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     class Meta:
         """Metaclass options for this serializer."""
 
-        model = exporter.models.ExportOutput
-        fields = ['pk', 'created', 'user', 'plugin', 'complete', 'progress', 'output']
+        model = data_exporter.models.ExportOutput
+        fields = [
+            'pk',
+            'created',
+            'user',
+            'user_detail',
+            'plugin',
+            'complete',
+            'progress',
+            'output',
+        ]
+
+    user_detail = InvenTree.serializers.UserSerializer(
+        source='user', read_only=True, many=False
+    )
 
     output = InvenTree.serializers.InvenTreeAttachmentSerializerField()

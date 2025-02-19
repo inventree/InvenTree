@@ -19,7 +19,7 @@ from rest_framework.response import Response
 import common.models
 import common.settings
 import company.models
-from exporter.mixins import DataExportViewMixin
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (

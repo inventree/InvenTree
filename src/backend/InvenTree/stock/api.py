@@ -25,7 +25,7 @@ from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
-from exporter.mixins import DataExportViewMixin
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
