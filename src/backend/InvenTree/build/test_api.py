@@ -449,7 +449,6 @@ class BuildTest(BuildAPITest):
             'Build Status',
             'Completed items',
             'Batch Code',
-            'Notes',
             'Description',
             'Part',
             'Part Name',
@@ -459,9 +458,9 @@ class BuildTest(BuildAPITest):
 
         excluded_cols = ['lft', 'rght', 'tree_id', 'level', 'metadata']
 
-        with self.download_file(reverse('api-build-list'), {'export': 'csv'}) as file:
+        with self.export_data(reverse('api-build-list')) as data_file:
             data = self.process_csv(
-                file,
+                data_file,
                 required_cols=required_cols,
                 excluded_cols=excluded_cols,
                 required_rows=Build.objects.count(),

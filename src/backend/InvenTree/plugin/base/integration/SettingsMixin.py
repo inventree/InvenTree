@@ -6,6 +6,8 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import structlog
 
+from plugin import PluginMixinEnum
+
 logger = structlog.get_logger('inventree')
 
 # import only for typechecking, otherwise this throws a model is unready error
@@ -30,7 +32,7 @@ class SettingsMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('settings', 'has_settings', __class__)
+        self.add_mixin(PluginMixinEnum.SETTINGS, 'has_settings', __class__)
         self.settings = getattr(self, 'SETTINGS', {})
 
     @classmethod

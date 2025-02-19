@@ -23,7 +23,7 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import hash_barcode
 from InvenTree.mixins import ListAPI, RetrieveDestroyAPI
 from InvenTree.permissions import IsStaffOrReadOnly
-from plugin import registry
+from plugin import PluginMixinEnum, registry
 from users.models import RuleSet
 
 from . import serializers as barcode_serializers
@@ -143,7 +143,7 @@ class BarcodeView(CreateAPIView):
 
         Check each loaded plugin, and return the first valid match
         """
-        plugins = registry.with_mixin('barcode')
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
@@ -521,7 +521,7 @@ class BarcodePOReceive(BarcodeView):
             except Exception:
                 pass
 
-        plugins = registry.with_mixin('barcode')
+        plugins = registry.with_mixin(PluginMixinEnum.BARCODE)
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
@@ -539,7 +539,7 @@ class BarcodePOReceive(BarcodeView):
                 raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
-        plugins = registry.with_mixin('supplier-barcode')
+        plugins = registry.with_mixin(PluginMixinEnum.SUPPLIER_BARCODE)
 
         plugin_response = None
 
