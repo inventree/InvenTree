@@ -2628,6 +2628,46 @@ class BomItemTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['available_variant_stock'], 1000)
 
+    def test_bom_export(self):
+        """Test for exporting BOM data."""
+        url = reverse('api-bom-list')
+
+        required_cols = [
+            'Assembly',
+            'Component',
+            'Reference',
+            'Quantity',
+            'Component.Name',
+            'Component.Description',
+            'Available Stock',
+        ]
+
+        excluded_cols = ['BOM Level', 'Supplier 1']
+
+        # First, download *all* BOM data, with the default exporter
+        with self.export_data(url, expected_code=200) as data_file:
+            self.process_csv(
+                data_file,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=BomItem.objects.all().count(),
+            )
+
+        # Check that the correct exporter plugin has been used
+        required_cols.extend(['BOM Level'])
+
+        # Next, download BOM data for a specific sub-assembly, and use the BOM exporter
+        with self.export_data(
+            url, {'part': 100}, export_plugin='bom-exporter'
+        ) as data_file:
+            data = self.process_csv(
+                data_file, required_cols=required_cols, required_rows=4
+            )
+
+            for row in data:
+                self.assertEqual(str(row['Assembly']), '100')
+                self.assertEqual(str(row['BOM Level']), '1')
+
 
 class PartAttachmentTest(InvenTreeAPITestCase):
     """Unit tests for the PartAttachment API endpoint."""

@@ -584,6 +584,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             # Response failed
             return response.data
 
+        self.assertEqual(data['plugin'], export_plugin)
         self.assertTrue(data['complete'])
         filename = data.get('output')
         self.assertIsNotNone(filename)
