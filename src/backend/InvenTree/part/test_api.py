@@ -1181,7 +1181,6 @@ class PartAPITest(PartAPITestBase):
             'Virtual',
             'Trackable',
             'Active',
-            'Notes',
             'Creation Date',
             'On Order',
             'In Stock',
@@ -1190,9 +1189,9 @@ class PartAPITest(PartAPITestBase):
 
         excluded_cols = ['lft', 'rght', 'level', 'tree_id', 'metadata']
 
-        with self.download_file(url, {'export': 'csv'}) as file:
+        with self.export_data(url, export_format='csv') as data_file:
             data = self.process_csv(
-                file,
+                data_file,
                 excluded_cols=excluded_cols,
                 required_cols=required_cols,
                 required_rows=Part.objects.count(),

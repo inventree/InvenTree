@@ -486,7 +486,13 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         )
 
     def download_file(
-        self, url, data, expected_code=None, expected_fn=None, decode=True, **kwargs
+        self,
+        url,
+        data=None,
+        expected_code=None,
+        expected_fn=None,
+        decode=True,
+        **kwargs,
     ):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
@@ -502,7 +508,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
+        result = re.search(
+            r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
+        )
 
         fn = result.groups()[0]
 
@@ -523,6 +531,57 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         file.seek(0)
 
         return file
+
+    def export_data(
+        self,
+        url,
+        params=None,
+        export_format='csv',
+        export_plugin='inventree-exporter',
+        **kwargs,
+    ):
+        """Perform a data export operation against the provided URL.
+
+        Uses the 'data_exporter' functionality to override the POST response.
+
+        Arguments:
+            url: URL to perform the export operation against
+            params: Dictionary of parameters to pass to the export operation
+            export_format: Export format (default = 'csv')
+            export_plugin: Export plugin (default = 'inventree-exporter')
+
+        Returns:
+            A file object containing the exported dataset
+        """
+        if not params:
+            params = {}
+
+        data = {
+            'export': True,
+            'export_format': export_format,
+            'export_plugin': export_plugin,
+        }
+
+        # Add in any other export specific kwargs
+        for key, value in kwargs.items():
+            if key.startswith('export_'):
+                data[key] = value
+
+        # Append URL params
+        url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
+
+        response = self.client.post(url, data, format='json')
+        self.check_response(url, response, expected_code=200)
+
+        # Check that the response is of the correct type
+        data = response.data
+
+        self.assertTrue(data['complete'])
+
+        filename = data.get('output')
+        self.assertIsNotNone(filename)
+
+        return self.download_file(filename, expected_code=200)
 
     def process_csv(
         self,
