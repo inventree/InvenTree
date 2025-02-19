@@ -80,6 +80,7 @@ export const navigate = async (page, url: string) => {
   }
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle');
 };
 
 /**

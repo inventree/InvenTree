@@ -4,6 +4,7 @@ import { doQuickLogin } from './login';
 
 // Helper function to open the export data dialog
 const openExportDialog = async (page) => {
+  await page.waitForLoadState('networkidle');
   await page.getByLabel('table-export-data').click();
   await page.getByText('Export Format *', { exact: true }).waitFor();
   await page.getByText('Export Plugin *', { exact: true }).waitFor();
@@ -73,16 +74,19 @@ test('Exporting - BOM', async ({ page }) => {
 
   await globalSearch(page, 'MAST');
   await page.getByLabel('search-group-results-part').locator('a').click();
+  await page.waitForLoadState('networkidle');
   await page.getByRole('tab', { name: 'Bill of Materials' }).click();
   await openExportDialog(page);
 
   // Select export format
   await page.getByLabel('choice-field-export_format').click();
   await page.getByRole('option', { name: 'TSV' }).click();
+  await page.waitForLoadState('networkidle');
 
   // Select BOM plugin
   await page.getByLabel('choice-field-export_plugin').click();
   await page.getByRole('option', { name: 'BOM Exporter' }).click();
+  await page.waitForLoadState('networkidle');
 
   // Now, adjust the settings specific to the BOM exporter
   await page.getByLabel('number-field-export_levels').fill('3');
@@ -101,4 +105,13 @@ test('Exporting - BOM', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByText('Data exported successfully').waitFor();
+
+  // Finally, navigate to the admin center and ensure the export data is available
+  await navigate(page, 'settings/admin/export/');
+
+  await page.getByRole('cell', { name: 'bom-exporter' }).first().waitFor();
+  await page
+    .getByRole('link', { name: /InvenTree_BomItem_.*\.tsv/ })
+    .first()
+    .waitFor();
 });
