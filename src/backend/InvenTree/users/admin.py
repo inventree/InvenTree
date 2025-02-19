@@ -290,6 +290,8 @@ class InvenTreeUserAdmin(UserAdmin):
 class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
 
+    search_fields = ['name']
+
 
 admin.site.unregister(Group)
 admin.site.register(Group, RoleGroupAdmin)
