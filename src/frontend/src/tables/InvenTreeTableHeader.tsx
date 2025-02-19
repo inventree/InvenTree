@@ -65,9 +65,12 @@ export default function InvenTreeTableHeader({
   // Construct the URL for the export request
   const exportParams = useMemo(() => {
     const queryParams: Record<string, any> = {
-      export: true,
-      export_plugin: pluginKey || undefined
+      export: true
     };
+
+    if (!!pluginKey) {
+      queryParams.export_plugin = pluginKey;
+    }
 
     // Add in any additional parameters which have a defined value
     for (const [key, value] of Object.entries(tableProps.params ?? {})) {
@@ -120,7 +123,7 @@ export default function InvenTreeTableHeader({
           params: exportParams
         })
         .then((response: any) => {
-          return extractAvailableFields(response, 'POST') || {};
+          return extractAvailableFields(response, 'GET') || {};
         })
         .catch(() => {
           return {};
@@ -158,18 +161,18 @@ export default function InvenTreeTableHeader({
     url: tableUrl ?? '',
     queryParams: new URLSearchParams(exportParams),
     title: t`Export Data`,
-    method: 'POST',
+    method: 'GET',
     fields: exportFields,
     submitText: t`Export`,
     successMessage: t`Data exported successfully`,
     onFormSuccess: (response: any) => {
-      setPluginKey('');
-
       if (response.complete && response.output) {
         // Download the generated file
         const url = generateUrl(response.output);
         window.open(url.toString(), '_blank');
       }
+
+      setPluginKey('inventree-exporter');
     }
   });
 

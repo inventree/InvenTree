@@ -211,7 +211,7 @@ class DataExportViewMixin:
     """An API view mixin for directly exporting selected data.
 
     To perform a data export against an API endpoint which inherits from this mixin,
-    perform a POST request with 'export=True'.
+    perform a GET request with 'export=True'.
 
     This will run validation against the DataExportOptionsSerializer.
 
@@ -252,9 +252,9 @@ class DataExportViewMixin:
     def get_serializer(self, *args, **kwargs):
         """Return the serializer instance for the view.
 
-        - Only applies for OPTIONS or POST requests
+        - Only applies for OPTIONS or GET requests
         - OPTIONS requests to determine plugin serializer options
-        - POST request to perform the data export
+        - GET request to perform the data export
         - If the view is exporting data, return the DataExportOptionsSerializer.
         - Otherwise, return the default serializer.
         """
@@ -262,7 +262,7 @@ class DataExportViewMixin:
 
         if exporting is None:
             exporting = (
-                self.request.method.lower() in ['options', 'post']
+                self.request.method.lower() in ['options', 'get']
                 and self.is_exporting()
             )
 
@@ -393,17 +393,27 @@ class DataExportViewMixin:
             status=200,
         )
 
-    def post(self, request, *args, **kwargs):
-        """Override the POST method to determine export options."""
+    def get(self, request, *args, **kwargs):
+        """Override the GET method to determine export options."""
         # If we are not exporting data, return the default response
         if self.is_exporting():
             # Determine if the export options are valid
-            serializer = self.get_serializer(exporting=True, data=request.data)
+
+            # Extract the export options from the provided query parameters
+            export_options = {}
+
+            for key in request.query_params:
+                if key.startswith('export_'):
+                    export_options[key] = request.query_params.get(key)
+
+            # Construct the options serializer with the provided data
+            serializer = self.get_serializer(exporting=True, data=export_options)
+
             serializer.is_valid(raise_exception=True)
             serializer_data = serializer.validated_data
 
             export_format = serializer_data.pop('export_format', 'csv')
-            plugin_slug = serializer_data.pop('export_plugin', None)
+            plugin_slug = serializer_data.pop('export_plugin', 'inventree-exporter')
             export_plugin = self.get_plugin(plugin_slug)
 
             export_context = {}
@@ -412,7 +422,7 @@ class DataExportViewMixin:
             if export_plugin:
                 if hasattr(export_plugin, 'get_export_options_serializer'):
                     if plugin_serializer := export_plugin.get_export_options_serializer(
-                        data=request.data
+                        data=export_options
                     ):
                         plugin_serializer.is_valid(raise_exception=True)
                         export_context = plugin_serializer.validated_data
@@ -427,4 +437,4 @@ class DataExportViewMixin:
                 export_context=export_context,
             )
 
-        return super().post(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)

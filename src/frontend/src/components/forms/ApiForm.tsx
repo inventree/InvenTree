@@ -131,7 +131,7 @@ export function OptionsApiForm({
         props.pathParams,
         props.queryParams
       ),
-    [props.url, props.pk, props.pathParams]
+    [props.url, props.pk, props.pathParams, props.queryParams]
   );
 
   const optionsQuery = useQuery({
