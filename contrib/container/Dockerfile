@@ -10,7 +10,6 @@
 # - Monitors source files for any changes, and live-reloads server
 
 FROM python:3.11-alpine3.21 AS inventree_base
-ARG base_image
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -19,8 +18,8 @@ ARG commit_date=""
 
 ARG data_dir="data"
 
-ENV PYTHONUNBUFFERED 1
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV INVOKE_RUN_SHELL="/bin/ash"
 
 ENV INVENTREE_DOCKER="true"
@@ -48,8 +47,7 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.opencontainers.image.created=${DATE} \
-      org.opencontainers.image.vendor="inventree" \
+LABEL org.opencontainers.image.vendor="inventree" \
       org.opencontainers.image.title="InvenTree backend server" \
       org.opencontainers.image.description="InvenTree is the open-source inventory management system" \
       org.opencontainers.image.url="https://inventree.org" \
@@ -57,7 +55,6 @@ LABEL org.opencontainers.image.created=${DATE} \
       org.opencontainers.image.source="https://github.com/inventree/InvenTree" \
       org.opencontainers.image.revision=${commit_hash} \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.base.name="docker.io/library/${base_image}" \
       org.opencontainers.image.version=${commit_tag}
 
 
