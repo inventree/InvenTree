@@ -927,7 +927,7 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     update_group_roles(instance)
 
 
-class UserProfile(InvenTree.models.InvenTreeMetadataModel):
+class UserProfile(InvenTree.models.MetadataMixin):
     """Model to store additional user profile information."""
 
     class UserType(models.TextChoices):
