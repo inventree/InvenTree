@@ -1115,9 +1115,6 @@ def test(
         # Run all tests
         cmd += f' {tested_apps}'
 
-    if report:
-        cmd += ' --slowreport'
-
     if migrations:
         cmd += ' --tag migration_test'
     else:
