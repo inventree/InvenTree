@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
 from django.urls import reverse
@@ -927,39 +927,6 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     update_group_roles(instance)
 
 
-@receiver(post_save, sender=Group)
-def validate_primary_group_on_save(sender, instance, **kwargs):
-    """Validate primary_group on user profiles when a group is created or updated."""
-    for user in instance.user_set.all():
-        profile = user.profile
-        if profile.primary_group and profile.primary_group not in user.groups.all():
-            profile.primary_group = None
-            profile.save()
-
-
-@receiver(post_delete, sender=Group)
-def validate_primary_group_on_delete(sender, instance, **kwargs):
-    """Validate primary_group on user profiles when a group is deleted."""
-    for user in instance.user_set.all():
-        profile = user.profile
-        if profile.primary_group == instance:
-            profile.primary_group = None
-            profile.save()
-
-
-from django.db.models.signals import m2m_changed
-
-
-@receiver(m2m_changed, sender=User.groups.through)
-def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
-    """Validate primary_group on user profiles when a group is added or removed."""
-    if action in ['post_add', 'post_remove']:
-        profile = instance.profile
-        if profile.primary_group and profile.primary_group not in instance.groups.all():
-            profile.primary_group = None
-            profile.save()
-
-
 class UserProfile(InvenTree.models.InvenTreeMetadataModel):
     """Model to store additional user profile information."""
 
@@ -1010,3 +977,34 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
     instance.profile.save()
+
+
+# Validate groups
+@receiver(post_save, sender=Group)
+def validate_primary_group_on_save(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is created or updated."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group and profile.primary_group not in user.groups.all():
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(post_delete, sender=Group)
+def validate_primary_group_on_delete(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is deleted."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group == instance:
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
+    """Validate primary_group on user profiles when a group is added or removed."""
+    if action in ['post_add', 'post_remove']:
+        profile = instance.profile
+        if profile.primary_group and profile.primary_group not in instance.groups.all():
+            profile.primary_group = None
+            profile.save()
