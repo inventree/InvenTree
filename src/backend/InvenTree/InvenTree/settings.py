@@ -43,10 +43,6 @@ if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
     PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
-    # Enable slow-test-runner
-    TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
-    NUM_SLOW_TESTS = 25
-
     # Note: The following fix is "required" for docker build workflow
     # Note: 2022-12-12 still unsure why...
     if os.getenv('INVENTREE_DOCKER'):
