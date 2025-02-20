@@ -2,7 +2,11 @@ import type { DataTableSortStatus } from 'mantine-datatable';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { api } from '../App';
 import type { UiSizeType } from '../defaults/formatters';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from './ApiState';
+import { useUserState } from './UserState';
 import type { HostList } from './states';
 
 interface LocalStateProps {
@@ -56,7 +60,16 @@ export const useLocalState = create<LocalStateProps>()(
       hostList: {},
       setHostList: (newHostList) => set({ hostList: newHostList }),
       language: 'en',
-      setLanguage: (newLanguage) => set({ language: newLanguage }),
+      setLanguage: (newLanguage) => {
+        set({ language: newLanguage });
+        // patch info to user profile - if active
+        const uid = useUserState.getState().userId();
+        if (uid) {
+          api.patch(apiUrl(ApiEndpoints.user_profile), {
+            language: newLanguage
+          });
+        }
+      },
       //theme
       primaryColor: 'indigo',
       whiteColor: '#fff',
