@@ -43,16 +43,6 @@ if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
     PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
-    # Note: The following fix is "required" for docker build workflow
-    # Note: 2022-12-12 still unsure why...
-    if os.getenv('INVENTREE_DOCKER'):
-        # Ensure that sys.path includes global python libs
-        site_packages = '/usr/local/lib/python3.9/site-packages'
-
-        if site_packages not in sys.path:
-            print('Adding missing site-packages path:', site_packages)
-            sys.path.append(site_packages)
-
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
