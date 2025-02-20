@@ -224,6 +224,7 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
+                'users_userprofile',
                 'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
