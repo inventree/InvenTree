@@ -947,6 +947,19 @@ def validate_primary_group_on_delete(sender, instance, **kwargs):
             profile.save()
 
 
+from django.db.models.signals import m2m_changed
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
+    """Validate primary_group on user profiles when a group is added or removed."""
+    if action in ['post_add', 'post_remove']:
+        profile = instance.profile
+        if profile.primary_group and profile.primary_group not in instance.groups.all():
+            profile.primary_group = None
+            profile.save()
+
+
 class UserProfile(InvenTree.models.InvenTreeMetadataModel):
     """Model to store additional user profile information."""
 
