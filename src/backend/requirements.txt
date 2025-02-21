@@ -1217,9 +1217,7 @@ pycparser==2.22 \
 pydyf==0.11.0 \
     --hash=sha256:0aaf9e2ebbe786ec7a78ec3fbffa4cdcecde53fd6f563221d53c6bc1328848a3 \
     --hash=sha256:394dddf619cca9d0c55715e3c55ea121a9bf9cbc780cdc1201a2427917b86b64
-    # via
-    #   -r src/backend/requirements.in
-    #   weasyprint
+    # via weasyprint
 pyjwt[crypto]==2.10.1 \
     --hash=sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953 \
     --hash=sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb
