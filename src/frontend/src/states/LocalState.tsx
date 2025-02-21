@@ -62,13 +62,7 @@ export const useLocalState = create<LocalStateProps>()(
       language: 'en',
       setLanguage: (newLanguage) => {
         set({ language: newLanguage });
-        // patch info to user profile - if active
-        const uid = useUserState.getState().userId();
-        if (uid) {
-          api.patch(apiUrl(ApiEndpoints.user_profile), {
-            language: newLanguage
-          });
-        }
+        patchUser(newLanguage);
       },
       //theme
       primaryColor: 'indigo',
@@ -142,3 +136,18 @@ export const useLocalState = create<LocalStateProps>()(
     }
   )
 );
+
+/*
+pushes changes in user profile to backend
+*/
+function patchUser(lang: string) {
+  const uid = useUserState.getState().userId();
+  if (uid) {
+    console.log('patching user');
+    api.patch(apiUrl(ApiEndpoints.user_profile), {
+      language: lang
+    });
+  } else {
+    console.log('user not logged in, not patching');
+  }
+}
