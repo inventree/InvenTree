@@ -9,8 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-alpine3.21 AS inventree_base
-ARG base_image
+FROM python:3.11-alpine3.20 AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -68,8 +67,8 @@ RUN apk add --no-cache \
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # Postgres client (note: backwards compatible with postgres server <= 17)
-    postgresql17-client \
+    # Postgres client (note: backwards compatible with postgres server <= 16)
+    postgresql16-client \
     # MySQL / MariaDB client
     mariadb-client mariadb-connector-c \
     && \
