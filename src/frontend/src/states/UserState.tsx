@@ -44,7 +44,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   token: undefined,
   setToken: (newToken: string | undefined) => {
-    get().setToken(newToken);
+    set({ token: newToken });
     setApiDefaults();
   },
   clearToken: () => {
@@ -64,7 +64,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps | undefined) => get().setUser(newUser),
+  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
   clearUserState: () => {
     get().setUser(undefined);
     get().setToken(undefined);
