@@ -65,6 +65,12 @@ export const getRowFromCell = async (cell) => {
   return cell.locator('xpath=ancestor::tr').first();
 };
 
+export const clickOnRowMenu = async (cell) => {
+  const row = await getRowFromCell(cell);
+
+  await row.getByLabel(/row-action-menu-/i).click();
+};
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
