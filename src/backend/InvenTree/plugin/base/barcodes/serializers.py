@@ -11,7 +11,11 @@ import order.models
 import plugin.base.barcodes.helper
 import stock.models
 from InvenTree.serializers import UserSerializer
-from order.status_codes import PurchaseOrderStatus, SalesOrderStatusGroups
+from order.status_codes import (
+    PurchaseOrderStatus,
+    PurchaseOrderStatusGroups,
+    SalesOrderStatusGroups,
+)
 
 
 class BarcodeScanResultSerializer(serializers.ModelSerializer):
@@ -135,8 +139,8 @@ class BarcodePOAllocateSerializer(BarcodeSerializer):
 
     def validate_purchase_order(self, order: order.models.PurchaseOrder):
         """Validate the provided order."""
-        if order.status != PurchaseOrderStatus.PENDING.value:
-            raise ValidationError(_('Purchase order is not pending'))
+        if order.status not in PurchaseOrderStatusGroups.OPEN:
+            raise ValidationError(_('Purchase order is not open'))
 
         return order
 
