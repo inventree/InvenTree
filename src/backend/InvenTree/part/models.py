@@ -62,7 +62,6 @@ from order import models as OrderModels
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
-    SalesOrderStatus,
     SalesOrderStatusGroups,
 )
 from stock import models as StockModels
@@ -3134,9 +3133,12 @@ class PartPricing(common.models.MetaMixin):
         min_sell_history = None
         max_sell_history = None
 
+        # Calculate sale price history too
+        parts = self.part.get_descendants(include_self=True)
+
         # Find all line items for shipped sales orders which reference this part
         line_items = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status=SalesOrderStatus.SHIPPED, part=self.part
+            order__status__in=SalesOrderStatusGroups.COMPLETE, part__in=parts
         )
 
         # Exclude line items which do not have associated pricing data

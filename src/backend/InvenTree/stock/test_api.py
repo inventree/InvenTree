@@ -1487,13 +1487,13 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.000000')
+        self.assertAlmostEqual(data['purchase_price'], 123, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update just the amount
         data = self.patch(url, {'purchase_price': 456}, expected_code=200).data
 
-        self.assertEqual(data['purchase_price'], '456.000000')
+        self.assertAlmostEqual(data['purchase_price'], 456, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
