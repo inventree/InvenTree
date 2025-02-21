@@ -1,16 +1,15 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  Accordion,
   ActionIcon,
   Alert,
   Anchor,
   Center,
   Checkbox,
-  Divider,
   Drawer,
   Group,
   Loader,
   Menu,
-  Paper,
   Space,
   Stack,
   Text,
@@ -69,14 +68,8 @@ function QueryResultGroup({
   const model = getModelInfo(query.model);
 
   return (
-    <Paper
-      withBorder
-      shadow='sm'
-      p='md'
-      key={`paper-${query.model}`}
-      aria-label={`search-group-${query.model}`}
-    >
-      <Stack key={`stack-${query.model}`}>
+    <Accordion.Item key={query.model} value={query.model}>
+      <Accordion.Control>
         <Group justify='space-between' wrap='nowrap'>
           <Group justify='left' gap={5} wrap='nowrap'>
             <Text size='lg'>{model.label_multiple}</Text>
@@ -97,7 +90,8 @@ function QueryResultGroup({
             <IconX />
           </ActionIcon>
         </Group>
-        <Divider />
+      </Accordion.Control>
+      <Accordion.Panel>
         <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
@@ -111,9 +105,8 @@ function QueryResultGroup({
             </Anchor>
           ))}
         </Stack>
-        <Space />
-      </Stack>
-    </Paper>
+      </Accordion.Panel>
+    </Accordion.Item>
   );
 }
 
@@ -443,16 +436,21 @@ export function SearchDrawer({
         )}
         {!searchQuery.isFetching && !searchQuery.isError && (
           <Stack gap='md'>
-            {queryResults.map((query, idx) => (
-              <QueryResultGroup
-                key={idx}
-                query={query}
-                onRemove={(query) => removeResults(query)}
-                onResultClick={(query, pk, event) =>
-                  onResultClick(query, pk, event)
-                }
-              />
-            ))}
+            <Accordion
+              multiple
+              defaultValue={searchQueries.map((q) => q.model)}
+            >
+              {queryResults.map((query, idx) => (
+                <QueryResultGroup
+                  key={idx}
+                  query={query}
+                  onRemove={(query) => removeResults(query)}
+                  onResultClick={(query, pk, event) =>
+                    onResultClick(query, pk, event)
+                  }
+                />
+              ))}
+            </Accordion>
           </Stack>
         )}
         {searchQuery.isError && (
