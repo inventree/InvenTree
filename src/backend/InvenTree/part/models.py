@@ -2838,6 +2838,9 @@ class PartPricing(common.models.MetaMixin):
             for sub_part in bom_item.get_valid_parts_for_allocation():
                 # Check each part which *could* be used
 
+                if sub_part != bom_item.sub_part and not sub_part.active:
+                    continue
+
                 sub_part_pricing = sub_part.pricing
 
                 sub_part_min = self.convert(sub_part_pricing.overall_min)
