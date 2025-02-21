@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-14 08:16+0000\n"
-"PO-Revision-Date: 2025-02-14 08:19\n"
+"POT-Creation-Date: 2025-02-21 08:10+0000\n"
+"PO-Revision-Date: 2025-02-21 08:13\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -84,7 +84,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "Nije moguće konvertovati {original} u {unit}"
 
 #: InvenTree/conversion.py:208 InvenTree/conversion.py:222
-#: InvenTree/helpers.py:513 order/models.py:647 order/models.py:913
+#: InvenTree/helpers.py:496 order/models.py:647 order/models.py:913
 msgid "Invalid quantity provided"
 msgstr "Isporučena nevažeća količina"
 
@@ -100,9 +100,9 @@ msgstr "Unesite datum"
 msgid "Invalid decimal value"
 msgstr "Neispravna decimalna vrednost"
 
-#: InvenTree/fields.py:208 InvenTree/models.py:942 build/serializers.py:517
+#: InvenTree/fields.py:208 InvenTree/models.py:887 build/serializers.py:517
 #: build/serializers.py:592 company/models.py:829 order/models.py:1538
-#: part/models.py:3302
+#: part/models.py:3304
 #: report/templates/report/inventree_build_order_report.html:172
 #: stock/models.py:2636 stock/models.py:2760 stock/serializers.py:727
 #: stock/serializers.py:889 stock/serializers.py:994 stock/serializers.py:1048
@@ -120,42 +120,42 @@ msgstr "Vrednost '{name}' se ne pojavljuje u formatu obrasca"
 msgid "Provided value does not match required pattern: "
 msgstr "Navedena vrednost ne odgovara traženom obrascu: "
 
-#: InvenTree/helpers.py:517
+#: InvenTree/helpers.py:500
 msgid "Cannot serialize more than 1000 items at once"
 msgstr "Nije moguće dati više od 1000 serijskih brojeva stavkama odjednom"
 
-#: InvenTree/helpers.py:523
+#: InvenTree/helpers.py:506
 msgid "Empty serial number string"
 msgstr "Serijski broj nije popunjen"
 
-#: InvenTree/helpers.py:552
+#: InvenTree/helpers.py:535
 msgid "Duplicate serial"
 msgstr "Dupliciraj serijski broj"
 
-#: InvenTree/helpers.py:584 InvenTree/helpers.py:627 InvenTree/helpers.py:645
-#: InvenTree/helpers.py:652 InvenTree/helpers.py:671
+#: InvenTree/helpers.py:567 InvenTree/helpers.py:610 InvenTree/helpers.py:628
+#: InvenTree/helpers.py:635 InvenTree/helpers.py:654
 #, python-brace-format
 msgid "Invalid group: {group}"
 msgstr "Nevažeća grupa: {group}"
 
-#: InvenTree/helpers.py:615
+#: InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Raspon grupe {group} prelazi dozvoljenu količinu ({expected_quantity})"
 
-#: InvenTree/helpers.py:681
+#: InvenTree/helpers.py:664
 msgid "No serial numbers found"
 msgstr "Nisu pronađeni serijski brojevi"
 
-#: InvenTree/helpers.py:686
+#: InvenTree/helpers.py:669
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "Broj jedinstvenih serijskih brojeva ({len(serials)}) mora odgovarati količini ({expected_quantity})"
 
-#: InvenTree/helpers.py:805
+#: InvenTree/helpers.py:788
 msgid "Remove HTML tags from this value"
 msgstr "Uklonite HTML oznake iz ove vrednosti"
 
-#: InvenTree/helpers.py:884
+#: InvenTree/helpers.py:867
 msgid "Data contains prohibited markdown content"
 msgstr "Podatak sadrži zabranjen jezički sadržaj"
 
@@ -347,7 +347,7 @@ msgstr "Kineski (Tradicionalni)"
 msgid "Log in to the app"
 msgstr "Prijavljivanje na aplikaciju"
 
-#: InvenTree/magic_login.py:38 InvenTree/serializers.py:416
+#: InvenTree/magic_login.py:38 InvenTree/serializers.py:425
 #: company/models.py:133
 msgid "Email"
 msgstr "E-Pošta"
@@ -368,247 +368,205 @@ msgstr "Metapodaci dodatka"
 msgid "JSON metadata field, for use by external plugins"
 msgstr "Polje metapodataka JSON, za korištenje eksternih dodataka"
 
-#: InvenTree/models.py:429
+#: InvenTree/models.py:374
 msgid "Improperly formatted pattern"
 msgstr "Neispravno formatiran obrazac"
 
-#: InvenTree/models.py:436
+#: InvenTree/models.py:381
 msgid "Unknown format key specified"
 msgstr "Naveden je ključ nepoznatog formata"
 
-#: InvenTree/models.py:442
+#: InvenTree/models.py:387
 msgid "Missing required format key"
 msgstr "Nedostaje potreban ključ formata"
 
-#: InvenTree/models.py:453
+#: InvenTree/models.py:398
 msgid "Reference field cannot be empty"
 msgstr "Polje za reference ne može biti prazno"
 
-#: InvenTree/models.py:461
+#: InvenTree/models.py:406
 msgid "Reference must match required pattern"
 msgstr "Referenca mora odgovarati traženom obrascu"
 
-#: InvenTree/models.py:492
+#: InvenTree/models.py:437
 msgid "Reference number is too large"
 msgstr "Broj reference je predugačak"
 
-#: InvenTree/models.py:743
+#: InvenTree/models.py:688
 msgid "Duplicate names cannot exist under the same parent"
 msgstr "Dvostruka imena ne mogu postojati pod istom nadredjenom grupom"
 
-#: InvenTree/models.py:760
+#: InvenTree/models.py:705
 msgid "Invalid choice"
 msgstr "Nevažeći izvor"
 
-#: InvenTree/models.py:789 common/models.py:1310 common/models.py:1737
+#: InvenTree/models.py:734 common/models.py:1310 common/models.py:1737
 #: common/models.py:1989 common/models.py:2114 common/serializers.py:484
 #: company/models.py:588 generic/states/serializers.py:20 machine/models.py:24
-#: part/models.py:998 part/models.py:3773 plugin/models.py:52
+#: part/models.py:997 part/models.py:3775 plugin/models.py:52
 #: report/models.py:165 stock/models.py:83
 msgid "Name"
 msgstr "Ime"
 
-#: InvenTree/models.py:795 build/models.py:257 common/models.py:108
+#: InvenTree/models.py:740 build/models.py:257 common/models.py:108
 #: common/models.py:2121 common/models.py:2234 company/models.py:516
 #: company/models.py:820 order/models.py:343 order/models.py:1571
-#: part/models.py:1021 part/models.py:3788 report/models.py:171
-#: report/models.py:714 report/models.py:740
+#: part/models.py:1020 part/models.py:3790 report/models.py:171
+#: report/models.py:712 report/models.py:738
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/models.py:89
 msgid "Description"
 msgstr "Opis"
 
-#: InvenTree/models.py:796 stock/models.py:90
+#: InvenTree/models.py:741 stock/models.py:90
 msgid "Description (optional)"
 msgstr "Opis (Opciono)"
 
-#: InvenTree/models.py:811 common/models.py:2287
+#: InvenTree/models.py:756 common/models.py:2287
 msgid "Path"
 msgstr "Putanja"
 
-#: InvenTree/models.py:942
+#: InvenTree/models.py:887
 msgid "Markdown notes (optional)"
 msgstr "Zabeleške (Opciono)"
 
-#: InvenTree/models.py:973
+#: InvenTree/models.py:918
 msgid "Barcode Data"
 msgstr "Podaci sa barkoda"
 
-#: InvenTree/models.py:974
+#: InvenTree/models.py:919
 msgid "Third party barcode data"
 msgstr "Podaci sa barkoda trećih lica"
 
-#: InvenTree/models.py:980
+#: InvenTree/models.py:925
 msgid "Barcode Hash"
 msgstr "Heš barkoda"
 
-#: InvenTree/models.py:981
+#: InvenTree/models.py:926
 msgid "Unique hash of barcode data"
 msgstr "Jedinstveni hash barkoda"
 
-#: InvenTree/models.py:1048
+#: InvenTree/models.py:993
 msgid "Existing barcode found"
 msgstr "Postojeći barkod pronađen"
 
-#: InvenTree/models.py:1129
+#: InvenTree/models.py:1074
 msgid "Task Failure"
 msgstr "Neuspešan zadatak"
 
-#: InvenTree/models.py:1130
+#: InvenTree/models.py:1075
 #, python-brace-format
 msgid "Background worker task '{f}' failed after {n} attempts"
 msgstr "Pozadinski proces '{f}' neuspešan posle {n} pokušaja"
 
-#: InvenTree/models.py:1157
+#: InvenTree/models.py:1102
 msgid "Server Error"
 msgstr "Greška servera"
 
-#: InvenTree/models.py:1158
+#: InvenTree/models.py:1103
 msgid "An error has been logged by the server."
 msgstr "Server je zabležio grešku."
 
-#: InvenTree/serializers.py:63 part/models.py:4412
+#: InvenTree/serializers.py:68 part/models.py:4393
 msgid "Must be a valid number"
 msgstr "Mora biti važeći broj"
 
-#: InvenTree/serializers.py:100 company/models.py:183 part/models.py:3120
+#: InvenTree/serializers.py:109 company/models.py:183 part/models.py:3122
 msgid "Currency"
 msgstr "Valuta"
 
-#: InvenTree/serializers.py:103
+#: InvenTree/serializers.py:112
 msgid "Select currency from available options"
 msgstr "Odaberite valutu među dostupnim opcijama"
 
-#: InvenTree/serializers.py:405
+#: InvenTree/serializers.py:414
 msgid "Username"
 msgstr "Korisničko ime"
 
-#: InvenTree/serializers.py:408
+#: InvenTree/serializers.py:417
 msgid "First Name"
 msgstr "Ime"
 
-#: InvenTree/serializers.py:408
+#: InvenTree/serializers.py:417
 msgid "First name of the user"
 msgstr "Ime korisnika"
 
-#: InvenTree/serializers.py:412
+#: InvenTree/serializers.py:421
 msgid "Last Name"
 msgstr "Prezime"
 
-#: InvenTree/serializers.py:412
+#: InvenTree/serializers.py:421
 msgid "Last name of the user"
 msgstr "Prezime korisnika"
 
-#: InvenTree/serializers.py:416
+#: InvenTree/serializers.py:425
 msgid "Email address of the user"
 msgstr "Adresa E-pošte korisnika"
 
-#: InvenTree/serializers.py:441
+#: InvenTree/serializers.py:450
 msgid "Staff"
 msgstr "Osoblje"
 
-#: InvenTree/serializers.py:441
+#: InvenTree/serializers.py:450
 msgid "Does this user have staff permissions"
 msgstr "Da li ovaj korisnik ima dozvole koje ima osoblje?"
 
-#: InvenTree/serializers.py:445
+#: InvenTree/serializers.py:454
 msgid "Superuser"
 msgstr "Super korisnik"
 
-#: InvenTree/serializers.py:445
+#: InvenTree/serializers.py:454
 msgid "Is this user a superuser"
 msgstr "Da li je ovaj korisnik Super korisnik?"
 
-#: InvenTree/serializers.py:449 common/models.py:1315 common/models.py:2134
+#: InvenTree/serializers.py:458 common/models.py:1315 common/models.py:2134
 #: common/models.py:2241 company/models.py:160 company/models.py:794
-#: machine/models.py:39 part/models.py:1204 plugin/models.py:67
-#: stock/api.py:595 users/models.py:182
+#: machine/models.py:39 part/models.py:1203 plugin/models.py:67
+#: stock/api.py:588 users/models.py:182
 msgid "Active"
 msgstr "Aktivan"
 
-#: InvenTree/serializers.py:449
+#: InvenTree/serializers.py:458
 msgid "Is this user account active"
 msgstr "Da li je nalog ovog korisnika aktivan?"
 
-#: InvenTree/serializers.py:467
+#: InvenTree/serializers.py:476
 msgid "You do not have permission to change this user role."
 msgstr "Nemate dozvolu za promenu ove korisničke uloge."
 
-#: InvenTree/serializers.py:503
+#: InvenTree/serializers.py:512
 msgid "Only superusers can create new users"
 msgstr "Samo superkorisnici mogu kreirati nove korisnike"
 
-#: InvenTree/serializers.py:523
+#: InvenTree/serializers.py:532
 msgid "Your account has been created."
 msgstr "Vaš nalog je kreiran"
 
-#: InvenTree/serializers.py:525
+#: InvenTree/serializers.py:534
 msgid "Please use the password reset function to login"
 msgstr "Molimo vas koristite opciju resetovanja lozinke da biste se prijavili"
 
-#: InvenTree/serializers.py:531
+#: InvenTree/serializers.py:540
 msgid "Welcome to InvenTree"
 msgstr "Dobrodošli u InvenTree"
 
-#: InvenTree/serializers.py:594
+#: InvenTree/serializers.py:603
 msgid "Invalid value"
 msgstr "Nevažeća vrednost"
 
-#: InvenTree/serializers.py:614 importer/models.py:64
-msgid "Data File"
-msgstr "Datoteka"
-
-#: InvenTree/serializers.py:615
-msgid "Select data file for upload"
-msgstr "Odaberite datoteku za učitavanje"
-
-#: InvenTree/serializers.py:632
-msgid "Unsupported file format"
-msgstr "Format datoteke nike podržan"
-
-#: InvenTree/serializers.py:638
-msgid "File is too large"
-msgstr "Prevelika datoteka"
-
-#: InvenTree/serializers.py:659
-msgid "No columns found in file"
-msgstr "Nisu pronađene kolone podataka u datoteci"
-
-#: InvenTree/serializers.py:662
-msgid "No data rows found in file"
-msgstr "Nisu pronađeni redovi podataka u datoteci"
-
-#: InvenTree/serializers.py:774
-msgid "No data rows provided"
-msgstr "Nisu navedeni redovi podataka"
-
-#: InvenTree/serializers.py:777
-msgid "No data columns supplied"
-msgstr "Nisu obezbeđene kolone podataka"
-
-#: InvenTree/serializers.py:843
-#, python-brace-format
-msgid "Missing required column: '{name}'"
-msgstr "Nedostaje potrebna kolona: '{name}'"
-
-#: InvenTree/serializers.py:852
-#, python-brace-format
-msgid "Duplicate column: '{col}'"
-msgstr "Duplicirana kolona: '{col}'"
-
-#: InvenTree/serializers.py:891
+#: InvenTree/serializers.py:637
 msgid "Remote Image"
 msgstr "Udaljena slika"
 
-#: InvenTree/serializers.py:892
+#: InvenTree/serializers.py:638
 msgid "URL of remote image file"
 msgstr "URL udaljene slike"
 
-#: InvenTree/serializers.py:910
+#: InvenTree/serializers.py:656
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Preuzimanje slika s udaljenog URL-a nije omogućeno"
 
-#: InvenTree/serializers.py:917
+#: InvenTree/serializers.py:663
 msgid "Failed to download image from remote URL"
 msgstr "Neuspešno preuzimanje slike sa udaljene URL"
 
@@ -641,7 +599,7 @@ msgid "Parent Build"
 msgstr "Roditeljski proizvod"
 
 #: build/api.py:67 build/api.py:733 order/api.py:484 order/api.py:701
-#: order/api.py:1089 order/api.py:1316 stock/api.py:526
+#: order/api.py:1089 order/api.py:1316 stock/api.py:519
 msgid "Include Variants"
 msgstr "Uključi varijante"
 
@@ -649,12 +607,11 @@ msgstr "Uključi varijante"
 #: build/serializers.py:1246 build/serializers.py:1356
 #: build/serializers.py:1407 company/models.py:1039 company/serializers.py:417
 #: order/api.py:250 order/api.py:863 order/api.py:1102 order/models.py:1660
-#: order/models.py:1819 order/models.py:1820 part/api.py:1447 part/api.py:1515
-#: part/api.py:1822 part/models.py:417 part/models.py:3131 part/models.py:3275
-#: part/models.py:3423 part/models.py:3444 part/models.py:3466
-#: part/models.py:3602 part/models.py:3963 part/models.py:4126
-#: part/models.py:4256 part/models.py:4622 part/serializers.py:1257
-#: part/serializers.py:1890
+#: order/models.py:1819 order/models.py:1820 part/api.py:1450 part/api.py:1518
+#: part/api.py:1825 part/models.py:416 part/models.py:3133 part/models.py:3277
+#: part/models.py:3425 part/models.py:3446 part/models.py:3468
+#: part/models.py:3604 part/models.py:3965 part/models.py:4237
+#: part/models.py:4603 part/serializers.py:1257 part/serializers.py:1890
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
 #: report/templates/report/inventree_build_order_report.html:109
@@ -663,7 +620,7 @@ msgstr "Uključi varijante"
 #: report/templates/report/inventree_sales_order_report.html:27
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: report/templates/report/inventree_stock_location_report.html:102
-#: stock/api.py:539 stock/serializers.py:112 stock/serializers.py:160
+#: stock/api.py:532 stock/serializers.py:112 stock/serializers.py:160
 #: stock/serializers.py:464 stock/serializers.py:618 stock/serializers.py:919
 #: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -672,9 +629,9 @@ msgstr "Uključi varijante"
 msgid "Part"
 msgstr "Deo"
 
-#: build/api.py:103 part/api.py:1529 part/models.py:1039 part/models.py:3494
-#: part/models.py:4072 part/serializers.py:483 part/serializers.py:1267
-#: stock/api.py:822
+#: build/api.py:103 part/api.py:1532 part/models.py:1038 part/models.py:3496
+#: part/models.py:4074 part/serializers.py:483 part/serializers.py:1267
+#: stock/api.py:815
 msgid "Category"
 msgstr "Kategorija"
 
@@ -739,16 +696,16 @@ msgstr "Završeno nakon"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Proizvod mora biti poništen pre nego što se izbriše"
 
-#: build/api.py:418 build/serializers.py:1372 part/models.py:4290
+#: build/api.py:418 build/serializers.py:1372 part/models.py:4271
 msgid "Consumable"
 msgstr "Potrošni materijal"
 
-#: build/api.py:421 build/serializers.py:1375 part/models.py:4284
+#: build/api.py:421 build/serializers.py:1375 part/models.py:4265
 msgid "Optional"
 msgstr "Opciono"
 
-#: build/api.py:424 common/setting/system.py:409 part/models.py:1169
-#: part/serializers.py:1645 part/serializers.py:1652 stock/api.py:592
+#: build/api.py:424 common/setting/system.py:429 part/models.py:1168
+#: part/serializers.py:1645 part/serializers.py:1652 stock/api.py:585
 msgid "Assembly"
 msgstr "Sklapanje"
 
@@ -756,7 +713,7 @@ msgstr "Sklapanje"
 msgid "Tracked"
 msgstr "Praćeno"
 
-#: build/api.py:430 build/serializers.py:1378 part/models.py:1187
+#: build/api.py:430 build/serializers.py:1378 part/models.py:1186
 msgid "Testable"
 msgstr "Proverljivo"
 
@@ -819,7 +776,7 @@ msgstr "Reference naloga za pravljenje"
 
 #: build/models.py:251 build/serializers.py:1369 order/models.py:534
 #: order/models.py:1106 order/models.py:1531 order/models.py:2321
-#: part/models.py:4305
+#: part/models.py:4286
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
 #: report/templates/report/inventree_return_order_report.html:26
@@ -897,7 +854,7 @@ msgid "Batch code for this build output"
 msgstr "Kod izgradnje za ovaj izlaz"
 
 #: build/models.py:350 order/models.py:377 order/serializers.py:159
-#: part/models.py:1244
+#: part/models.py:1243
 msgid "Creation Date"
 msgstr "datum kreiranja"
 
@@ -934,7 +891,7 @@ msgid "User who issued this build order"
 msgstr "Korisnik koji je izdao nalog za izgradnju"
 
 #: build/models.py:397 common/models.py:117 order/api.py:169
-#: order/models.py:395 part/models.py:1261
+#: order/models.py:395 part/models.py:1260
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "Odgovoran"
@@ -947,7 +904,7 @@ msgstr "Korisnik ili grupa koja je odgovorna za ovaj nalog za izgradnju"
 msgid "External Link"
 msgstr "Spoljašnja konekcija"
 
-#: build/models.py:403 common/models.py:1878 part/models.py:1073
+#: build/models.py:403 common/models.py:1878 part/models.py:1072
 #: stock/models.py:937
 msgid "Link to external URL"
 msgstr "Link za eksterni URL"
@@ -1000,8 +957,8 @@ msgstr "Izlaz izgradnje se ne slaže sa Nalogom za izgradnju"
 
 #: build/models.py:1082 build/serializers.py:294 build/serializers.py:343
 #: build/serializers.py:967 order/models.py:644 order/serializers.py:591
-#: order/serializers.py:758 part/serializers.py:1639 part/serializers.py:2052
-#: stock/models.py:784 stock/models.py:1655 stock/serializers.py:698
+#: order/serializers.py:758 part/serializers.py:1639 stock/models.py:784
+#: stock/models.py:1655 stock/serializers.py:698
 msgid "Quantity must be greater than zero"
 msgstr "Količina mora biti veća od nule"
 
@@ -1025,7 +982,7 @@ msgstr "Objekat izgradnje"
 #: build/models.py:1548 build/models.py:1807 build/serializers.py:282
 #: build/serializers.py:328 build/serializers.py:1390 common/models.py:1240
 #: order/models.py:1514 order/models.py:2221 order/serializers.py:1634
-#: order/serializers.py:2094 part/models.py:3289 part/models.py:4278
+#: order/serializers.py:2094 part/models.py:3291 part/models.py:4259
 #: part/serializers.py:264
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:113
@@ -1098,7 +1055,7 @@ msgstr "Stavka zaliha odredišta"
 msgid "Build Level"
 msgstr "Nivo izgradnje"
 
-#: build/serializers.py:124 part/models.py:4128 part/stocktake.py:219
+#: build/serializers.py:124 part/stocktake.py:219
 msgid "Part Name"
 msgstr "Ime dela"
 
@@ -1176,7 +1133,7 @@ msgstr "Automatski alociraj serijske brojeve"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatski alociraj tražene stavke sa odgovarajućim serijskim brojevima"
 
-#: build/serializers.py:431 order/serializers.py:876 stock/api.py:1081
+#: build/serializers.py:431 order/serializers.py:876 stock/api.py:1074
 #: stock/models.py:1678
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Sledeći serijski brojevi već postoje ili su neispravni"
@@ -1411,7 +1368,7 @@ msgstr "Referenca izgradnje"
 msgid "Part Category Name"
 msgstr "Ime kategorije dela"
 
-#: build/serializers.py:1381 common/setting/system.py:433 part/models.py:1181
+#: build/serializers.py:1381 common/setting/system.py:453 part/models.py:1180
 msgid "Trackable"
 msgstr "Može da se prati"
 
@@ -1419,12 +1376,12 @@ msgstr "Može da se prati"
 msgid "Inherited"
 msgstr "Nasleđen"
 
-#: build/serializers.py:1387 part/models.py:4338
+#: build/serializers.py:1387 part/models.py:4319
 msgid "Allow Variants"
 msgstr "Dozvoli varijante"
 
-#: build/serializers.py:1392 build/serializers.py:1396 part/models.py:4136
-#: part/models.py:4614 stock/api.py:835
+#: build/serializers.py:1392 build/serializers.py:1396 part/models.py:4117
+#: part/models.py:4595 stock/api.py:828
 msgid "BOM Item"
 msgstr "BOM stavka"
 
@@ -1479,7 +1436,7 @@ msgstr "Otkazano"
 
 #: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:521
 #: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:83 report/models.py:648
+#: order/status_codes.py:52 order/status_codes.py:83 report/models.py:646
 msgid "Complete"
 msgstr "Gotovo"
 
@@ -1583,8 +1540,8 @@ msgstr "Tekstualni ključ mora da bude jedinstven"
 #: common/models.py:1218 common/models.py:1219 common/models.py:1323
 #: common/models.py:1324 common/models.py:1569 common/models.py:1570
 #: common/models.py:1893 common/models.py:1894 common/models.py:2275
-#: importer/models.py:89 part/models.py:3312 part/models.py:3399
-#: part/models.py:3473 part/models.py:3501 plugin/models.py:316
+#: importer/models.py:89 part/models.py:3314 part/models.py:3401
+#: part/models.py:3475 part/models.py:3503 plugin/models.py:316
 #: plugin/models.py:317 report/templates/report/inventree_test_report.html:105
 #: users/models.py:111
 msgid "User"
@@ -1690,7 +1647,7 @@ msgstr "Naslov"
 #: common/models.py:1622 common/models.py:1877 company/models.py:146
 #: company/models.py:441 company/models.py:507 company/models.py:811
 #: order/models.py:357 order/models.py:1543 order/models.py:1991
-#: part/models.py:1072
+#: part/models.py:1071
 #: report/templates/report/inventree_build_order_report.html:164
 msgid "Link"
 msgstr "Link"
@@ -1715,7 +1672,7 @@ msgstr "Čitaj"
 msgid "Was this news item read?"
 msgstr "Da li je ova stavka vesti pročitana"
 
-#: common/models.py:1648 company/models.py:156 part/models.py:1082
+#: common/models.py:1648 company/models.py:156 part/models.py:1081
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:35
@@ -1906,7 +1863,7 @@ msgstr "Logički ključ mora biti među logičkim ključevima referentnog status
 msgid "Name must be different from the names of the reference status"
 msgstr "Naziv mora biti različit od naziva u statusu reference"
 
-#: common/models.py:2109 common/models.py:2216 part/models.py:3812
+#: common/models.py:2109 common/models.py:2216 part/models.py:3814
 msgid "Selection List"
 msgstr "Lista odabira"
 
@@ -1922,7 +1879,7 @@ msgstr "Ime liste odabira"
 msgid "Description of the selection list"
 msgstr "Opis liste odabira"
 
-#: common/models.py:2128 part/models.py:1209
+#: common/models.py:2128 part/models.py:1208
 msgid "Locked"
 msgstr "Zaključano"
 
@@ -2006,7 +1963,7 @@ msgstr "Da li je unos ove liste odabira aktivan?"
 msgid "Barcode Scan"
 msgstr "Skeniranje bar koda"
 
-#: common/models.py:2264 importer/models.py:515 part/models.py:3977
+#: common/models.py:2264 importer/models.py:515 part/models.py:3979
 msgid "Data"
 msgstr "Podaci"
 
@@ -2165,1065 +2122,1081 @@ msgstr "Korisnik nema dozvolu da napravi ili izmeni priloge za ovaj model"
 msgid "Selection list is locked"
 msgstr "Lista odabira je zaključana"
 
-#: common/setting/system.py:96
+#: common/setting/system.py:97
 msgid "No group"
 msgstr "Nema grupe"
 
-#: common/setting/system.py:150
+#: common/setting/system.py:156
 msgid "Site URL is locked by configuration"
 msgstr "URL sajta je zaključan od strane konfiguracije"
 
-#: common/setting/system.py:161
+#: common/setting/system.py:167
 msgid "Restart required"
 msgstr "Ponovno pokretanje potrebno"
 
-#: common/setting/system.py:162
+#: common/setting/system.py:168
 msgid "A setting has been changed which requires a server restart"
 msgstr "Podešavanje je izmenjeno i zahteva ponovno pokretanje servera"
 
-#: common/setting/system.py:168
+#: common/setting/system.py:174
 msgid "Pending migrations"
 msgstr "Migracije na čekanju"
 
-#: common/setting/system.py:169
+#: common/setting/system.py:175
 msgid "Number of pending database migrations"
 msgstr "Broj migracija baze podataka koje su na čekanju"
 
-#: common/setting/system.py:174
+#: common/setting/system.py:180
+msgid "Instance ID"
+msgstr ""
+
+#: common/setting/system.py:181
+msgid "Unique identifier for this InvenTree instance"
+msgstr ""
+
+#: common/setting/system.py:186
+msgid "Announce ID"
+msgstr ""
+
+#: common/setting/system.py:188
+msgid "Announce the instance ID of the server in the server status info (unauthenticated)"
+msgstr ""
+
+#: common/setting/system.py:194
 msgid "Server Instance Name"
 msgstr "Ime instance servera"
 
-#: common/setting/system.py:176
+#: common/setting/system.py:196
 msgid "String descriptor for the server instance"
 msgstr "Stringovni opis instance servera"
 
-#: common/setting/system.py:180
+#: common/setting/system.py:200
 msgid "Use instance name"
 msgstr "Ime instance korisnika"
 
-#: common/setting/system.py:181
+#: common/setting/system.py:201
 msgid "Use the instance name in the title-bar"
 msgstr "Koristi ime instance u naslovnoj liniji"
 
-#: common/setting/system.py:186
+#: common/setting/system.py:206
 msgid "Restrict showing `about`"
 msgstr "Zabrani prikazivanje `O nama`"
 
-#: common/setting/system.py:187
+#: common/setting/system.py:207
 msgid "Show the `about` modal only to superusers"
 msgstr "Prikaži `O nama` samo superkorisnicima"
 
-#: common/setting/system.py:192 company/models.py:108 company/models.py:109
+#: common/setting/system.py:212 company/models.py:108 company/models.py:109
 msgid "Company name"
 msgstr "Ime kompanije"
 
-#: common/setting/system.py:193
+#: common/setting/system.py:213
 msgid "Internal company name"
 msgstr "Interno ime kompanije"
 
-#: common/setting/system.py:197
+#: common/setting/system.py:217
 msgid "Base URL"
 msgstr "Osnovni URL"
 
-#: common/setting/system.py:198
+#: common/setting/system.py:218
 msgid "Base URL for server instance"
 msgstr "Osnovni URL za instancu servera"
 
-#: common/setting/system.py:204
+#: common/setting/system.py:224
 msgid "Default Currency"
 msgstr "Podrazumevana valuta"
 
-#: common/setting/system.py:205
+#: common/setting/system.py:225
 msgid "Select base currency for pricing calculations"
 msgstr "Izaberi osnovnu valutu za određivanje cena"
 
-#: common/setting/system.py:211
+#: common/setting/system.py:231
 msgid "Supported Currencies"
 msgstr "Podržane valute"
 
-#: common/setting/system.py:212
+#: common/setting/system.py:232
 msgid "List of supported currency codes"
 msgstr "Lista kodova podržanih valuta"
 
-#: common/setting/system.py:218
+#: common/setting/system.py:238
 msgid "Currency Update Interval"
 msgstr "Interval ažuriranja valuta"
 
-#: common/setting/system.py:219
+#: common/setting/system.py:239
 msgid "How often to update exchange rates (set to zero to disable)"
 msgstr "Koliko često ažurirati devizne kurseve (podesi na nulu za onemogućti)"
 
-#: common/setting/system.py:221 common/setting/system.py:261
-#: common/setting/system.py:274 common/setting/system.py:282
-#: common/setting/system.py:289 common/setting/system.py:298
-#: common/setting/system.py:547 common/setting/system.py:567
-#: common/setting/system.py:664 common/setting/system.py:1048
+#: common/setting/system.py:241 common/setting/system.py:281
+#: common/setting/system.py:294 common/setting/system.py:302
+#: common/setting/system.py:309 common/setting/system.py:318
+#: common/setting/system.py:567 common/setting/system.py:587
+#: common/setting/system.py:684 common/setting/system.py:1068
 msgid "days"
 msgstr "dani"
 
-#: common/setting/system.py:225
+#: common/setting/system.py:245
 msgid "Currency Update Plugin"
 msgstr "Dodatak za ažuriranje valute"
 
-#: common/setting/system.py:226
+#: common/setting/system.py:246
 msgid "Currency update plugin to use"
 msgstr "Dodatak za ažuriranje valute koji će se koristiti"
 
-#: common/setting/system.py:231
+#: common/setting/system.py:251
 msgid "Download from URL"
 msgstr "Skini sa URL"
 
-#: common/setting/system.py:232
+#: common/setting/system.py:252
 msgid "Allow download of remote images and files from external URL"
 msgstr "Dozvoli skidanje sa udaljenih lokacija slika i datoteka"
 
-#: common/setting/system.py:237
+#: common/setting/system.py:257
 msgid "Download Size Limit"
 msgstr "Ograničenje veličine skidanja"
 
-#: common/setting/system.py:238
+#: common/setting/system.py:258
 msgid "Maximum allowable download size for remote image"
 msgstr "Maksimalna dozvoljena veličina slike koja se skida"
 
-#: common/setting/system.py:244
+#: common/setting/system.py:264
 msgid "User-agent used to download from URL"
 msgstr "Korisnik-agent koji se koristi za skidanje sa URL"
 
-#: common/setting/system.py:246
+#: common/setting/system.py:266
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
 msgstr "Dozvoli premošćavanje koji će se korisnik-agent koristiti za skidanje slika i datoteka sa spoljašnjeg URL (ostavi prazno da se podesi kao podrazumevano)"
 
-#: common/setting/system.py:251
+#: common/setting/system.py:271
 msgid "Strict URL Validation"
 msgstr "Stroga validacija URL"
 
-#: common/setting/system.py:252
+#: common/setting/system.py:272
 msgid "Require schema specification when validating URLs"
 msgstr "Traži specifikaciju za validaciju URL-ova"
 
-#: common/setting/system.py:257
+#: common/setting/system.py:277
 msgid "Update Check Interval"
 msgstr "Ažuriraj interval provere"
 
-#: common/setting/system.py:258
+#: common/setting/system.py:278
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "Koliko često da proveravam za nova ažuriranja? (podesi na nulu da bi isključio)"
 
-#: common/setting/system.py:264
+#: common/setting/system.py:284
 msgid "Automatic Backup"
 msgstr "Automatsko pravljenje rezervne kopije"
 
-#: common/setting/system.py:265
+#: common/setting/system.py:285
 msgid "Enable automatic backup of database and media files"
 msgstr "Omogući automatsko pravljenje rezervne kopije baze podataka i medijskih datoteka"
 
-#: common/setting/system.py:270
+#: common/setting/system.py:290
 msgid "Auto Backup Interval"
 msgstr "Automatski interval pravljenja rezervnih kopija"
 
-#: common/setting/system.py:271
+#: common/setting/system.py:291
 msgid "Specify number of days between automated backup events"
 msgstr "Odredi broj dana između automatskih pravljenja rezervnih kopija"
 
-#: common/setting/system.py:277
+#: common/setting/system.py:297
 msgid "Task Deletion Interval"
 msgstr "Interval brisanja zadataka"
 
-#: common/setting/system.py:279
+#: common/setting/system.py:299
 msgid "Background task results will be deleted after specified number of days"
 msgstr "Rezultati pozadinskih zadataka biće izbrisani nakon određenog broja dana "
 
-#: common/setting/system.py:286
+#: common/setting/system.py:306
 msgid "Error Log Deletion Interval"
 msgstr "Interval brisanja evidencije grešaka"
 
-#: common/setting/system.py:287
+#: common/setting/system.py:307
 msgid "Error logs will be deleted after specified number of days"
 msgstr "Evidencija grešaka biće izbrisana nakon određenog broja dana"
 
-#: common/setting/system.py:293
+#: common/setting/system.py:313
 msgid "Notification Deletion Interval"
 msgstr "Interval brisanja obaveštenja"
 
-#: common/setting/system.py:295
+#: common/setting/system.py:315
 msgid "User notifications will be deleted after specified number of days"
 msgstr "Korisnička obaveštenja biće izbrisana nakon određenog broja dana"
 
-#: common/setting/system.py:302
+#: common/setting/system.py:322
 msgid "Barcode Support"
 msgstr "Podrška za bar kod"
 
-#: common/setting/system.py:303
+#: common/setting/system.py:323
 msgid "Enable barcode scanner support in the web interface"
 msgstr "Omogući podršku za bar kod skener preko interfejsa stranice"
 
-#: common/setting/system.py:308
+#: common/setting/system.py:328
 msgid "Store Barcode Results"
 msgstr "Uskladišti rezultate bar koda"
 
-#: common/setting/system.py:309
+#: common/setting/system.py:329
 msgid "Store barcode scan results in the database"
 msgstr "Uskladišti rezultate bar koda u bazu podataka"
 
-#: common/setting/system.py:314
+#: common/setting/system.py:334
 msgid "Barcode Scans Maximum Count"
 msgstr "Maksimalan broj skeniranja bar koda"
 
-#: common/setting/system.py:315
+#: common/setting/system.py:335
 msgid "Maximum number of barcode scan results to store"
 msgstr "Maksimalan broj rezultata skeniranja bar koda koji treba da se skladišti"
 
-#: common/setting/system.py:320
+#: common/setting/system.py:340
 msgid "Barcode Input Delay"
 msgstr "Kašnjenje unosa bar koda"
 
-#: common/setting/system.py:321
+#: common/setting/system.py:341
 msgid "Barcode input processing delay time"
 msgstr "Vreme kašnjena obrađivanja ulaza bar koda"
 
-#: common/setting/system.py:327
+#: common/setting/system.py:347
 msgid "Barcode Webcam Support"
 msgstr "Podrška za bar kod veb kameru"
 
-#: common/setting/system.py:328
+#: common/setting/system.py:348
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "Omogući skeniranje bar koda pomoću veb kamere u pretraživaču"
 
-#: common/setting/system.py:333
+#: common/setting/system.py:353
 msgid "Barcode Show Data"
 msgstr "Prikaži podatke bar koda"
 
-#: common/setting/system.py:334
+#: common/setting/system.py:354
 msgid "Display barcode data in browser as text"
 msgstr "Prikaži podatke bar koda u pretraživaču kao tekst"
 
-#: common/setting/system.py:339
+#: common/setting/system.py:359
 msgid "Barcode Generation Plugin"
 msgstr "Dodatak za generisanje bar koda"
 
-#: common/setting/system.py:340
+#: common/setting/system.py:360
 msgid "Plugin to use for internal barcode data generation"
 msgstr "Dodatak koji će se koristiti kao interni generator podataka bar koda"
 
-#: common/setting/system.py:345
+#: common/setting/system.py:365
 msgid "Part Revisions"
 msgstr "Revizije dela"
 
-#: common/setting/system.py:346
+#: common/setting/system.py:366
 msgid "Enable revision field for Part"
 msgstr "Omogući polje za reviziju dela"
 
-#: common/setting/system.py:351
+#: common/setting/system.py:371
 msgid "Assembly Revision Only"
 msgstr "Jedino revizija sastavljanja "
 
-#: common/setting/system.py:352
+#: common/setting/system.py:372
 msgid "Only allow revisions for assembly parts"
 msgstr "Dozvoli jedino revizije za sastavne delove"
 
-#: common/setting/system.py:357
+#: common/setting/system.py:377
 msgid "Allow Deletion from Assembly"
 msgstr "Dozvoli brisanje iz sastavljanja"
 
-#: common/setting/system.py:358
+#: common/setting/system.py:378
 msgid "Allow deletion of parts which are used in an assembly"
 msgstr "Dozvoli brisanje delova koji su korišćeni u sastavljanju"
 
-#: common/setting/system.py:363
+#: common/setting/system.py:383
 msgid "IPN Regex"
 msgstr "Interni broj dela regex"
 
-#: common/setting/system.py:364
+#: common/setting/system.py:384
 msgid "Regular expression pattern for matching Part IPN"
 msgstr "Regularni obrazac izraza za podudaranje IPN dela"
 
-#: common/setting/system.py:367
+#: common/setting/system.py:387
 msgid "Allow Duplicate IPN"
 msgstr "Dozvoli duple IPN"
 
-#: common/setting/system.py:368
+#: common/setting/system.py:388
 msgid "Allow multiple parts to share the same IPN"
 msgstr "Dozvoli da više delova dele isti IPN"
 
-#: common/setting/system.py:373
+#: common/setting/system.py:393
 msgid "Allow Editing IPN"
 msgstr "Dozvoli izmenu IPN"
 
-#: common/setting/system.py:374
+#: common/setting/system.py:394
 msgid "Allow changing the IPN value while editing a part"
 msgstr "Dozvoli izmenu IPN vrednosti u toku izmene dela"
 
-#: common/setting/system.py:379
+#: common/setting/system.py:399
 msgid "Copy Part BOM Data"
 msgstr "Kopiraj BOM podatke dela"
 
-#: common/setting/system.py:380
+#: common/setting/system.py:400
 msgid "Copy BOM data by default when duplicating a part"
 msgstr "Podrazumevaj kopiranje BOM podataka prilikom pravljenja duplikata dela "
 
-#: common/setting/system.py:385
+#: common/setting/system.py:405
 msgid "Copy Part Parameter Data"
 msgstr "Kopiraj podatke parametara dela"
 
-#: common/setting/system.py:386
+#: common/setting/system.py:406
 msgid "Copy parameter data by default when duplicating a part"
 msgstr "Podrazumevaj kopiranje podataka parametara dela prilikom pravljenja duplikata dela"
 
-#: common/setting/system.py:391
+#: common/setting/system.py:411
 msgid "Copy Part Test Data"
 msgstr "Kopiraj podatke testiranja dela"
 
-#: common/setting/system.py:392
+#: common/setting/system.py:412
 msgid "Copy test data by default when duplicating a part"
 msgstr "Podrazumevaj kopiranje podataka testiranja dela prilikom pravljenja duplikata dela"
 
-#: common/setting/system.py:397
+#: common/setting/system.py:417
 msgid "Copy Category Parameter Templates"
 msgstr "Kopiraj šablone parametara kategorije"
 
-#: common/setting/system.py:398
+#: common/setting/system.py:418
 msgid "Copy category parameter templates when creating a part"
 msgstr "Kopiraj šablone parametara kategorije prilikom pravljenja dela"
 
-#: common/setting/system.py:403 part/models.py:3971 report/models.py:317
+#: common/setting/system.py:423 part/models.py:3973 report/models.py:317
 #: report/models.py:502 report/serializers.py:91 report/serializers.py:132
 #: stock/serializers.py:233
 msgid "Template"
 msgstr "Šablon"
 
-#: common/setting/system.py:404
+#: common/setting/system.py:424
 msgid "Parts are templates by default"
 msgstr "Podrazumevano je da su delovi šabloni"
 
-#: common/setting/system.py:410
+#: common/setting/system.py:430
 msgid "Parts can be assembled from other components by default"
 msgstr "Podrazumevano je da se delovi mogu sastavljati od drugih komponenti"
 
-#: common/setting/system.py:415 part/models.py:1175 part/serializers.py:1657
+#: common/setting/system.py:435 part/models.py:1174 part/serializers.py:1657
 #: part/serializers.py:1662
 msgid "Component"
 msgstr "Komponenta"
 
-#: common/setting/system.py:416
+#: common/setting/system.py:436
 msgid "Parts can be used as sub-components by default"
 msgstr "Podrazumevano je da se delovi mogu koristi kao pod-komponente"
 
-#: common/setting/system.py:421 part/models.py:1193
+#: common/setting/system.py:441 part/models.py:1192
 msgid "Purchaseable"
 msgstr "Može da se kupi"
 
-#: common/setting/system.py:422
+#: common/setting/system.py:442
 msgid "Parts are purchaseable by default"
 msgstr "Podrazumevano je da se delovi mogu kupiti"
 
-#: common/setting/system.py:427 part/models.py:1199 stock/api.py:596
+#: common/setting/system.py:447 part/models.py:1198 stock/api.py:589
 msgid "Salable"
 msgstr "Može da se proda"
 
-#: common/setting/system.py:428
+#: common/setting/system.py:448
 msgid "Parts are salable by default"
 msgstr "podrazumevano je da delovi mogu da se prodaju"
 
-#: common/setting/system.py:434
+#: common/setting/system.py:454
 msgid "Parts are trackable by default"
 msgstr "Podrazumevano je da delovi mogu da se prate"
 
-#: common/setting/system.py:439 part/models.py:1215
+#: common/setting/system.py:459 part/models.py:1214
 msgid "Virtual"
 msgstr "Virtuelni"
 
-#: common/setting/system.py:440
+#: common/setting/system.py:460
 msgid "Parts are virtual by default"
 msgstr "Podrazumevano je da su delovi virtuelni"
 
-#: common/setting/system.py:445
+#: common/setting/system.py:465
 msgid "Show Import in Views"
 msgstr "Prikaži ulaze u Pregledima"
 
-#: common/setting/system.py:446
+#: common/setting/system.py:466
 msgid "Display the import wizard in some part views"
 msgstr "Prikaži čarobnjaka za importovanje u nekim pregledima delova"
 
-#: common/setting/system.py:451
+#: common/setting/system.py:471
 msgid "Show related parts"
 msgstr "Prikaži povezane delove"
 
-#: common/setting/system.py:452
+#: common/setting/system.py:472
 msgid "Display related parts for a part"
 msgstr "Prikaži povezane delove za deo"
 
-#: common/setting/system.py:457
+#: common/setting/system.py:477
 msgid "Initial Stock Data"
 msgstr "Inicijalni podaci zaliha"
 
-#: common/setting/system.py:458
+#: common/setting/system.py:478
 msgid "Allow creation of initial stock when adding a new part"
 msgstr "Dozvoli kreiranje inicijalne alihe prilikom dodavanja novog dela"
 
-#: common/setting/system.py:463
+#: common/setting/system.py:483
 msgid "Initial Supplier Data"
 msgstr "Podaci inicijalnog dobavljača"
 
-#: common/setting/system.py:465
+#: common/setting/system.py:485
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr "Dozvoli kreiranje inicijalnog dobavljača prilikom dodavanja novog dela"
 
-#: common/setting/system.py:471
+#: common/setting/system.py:491
 msgid "Part Name Display Format"
 msgstr "Format prikazivanja imena dela"
 
-#: common/setting/system.py:472
+#: common/setting/system.py:492
 msgid "Format to display the part name"
 msgstr "Format u kome će se prikazivati ime dela"
 
-#: common/setting/system.py:478
+#: common/setting/system.py:498
 msgid "Part Category Default Icon"
 msgstr "Podrazumevana ikona za kategoriju dela"
 
-#: common/setting/system.py:479
+#: common/setting/system.py:499
 msgid "Part category default icon (empty means no icon)"
 msgstr "Podrazumevana ikona za kategoriju dela (prazno znači bez ikone)"
 
-#: common/setting/system.py:484
+#: common/setting/system.py:504
 msgid "Enforce Parameter Units"
 msgstr "Zahtevaj jedinice parametara"
 
-#: common/setting/system.py:486
+#: common/setting/system.py:506
 msgid "If units are provided, parameter values must match the specified units"
 msgstr "Ako su jedinice date, vrednosti parametara moraju odgovarati datim jedinicama"
 
-#: common/setting/system.py:492
+#: common/setting/system.py:512
 msgid "Minimum Pricing Decimal Places"
 msgstr "Minimalan broj decimalnih mesta za cene"
 
-#: common/setting/system.py:494
+#: common/setting/system.py:514
 msgid "Minimum number of decimal places to display when rendering pricing data"
 msgstr "Minimalan broj decimalnih mesta prilikom generisanja cenovnih podataka"
 
-#: common/setting/system.py:505
+#: common/setting/system.py:525
 msgid "Maximum Pricing Decimal Places"
 msgstr "Maksimalan broj decimalnih mesta za cene"
 
-#: common/setting/system.py:507
+#: common/setting/system.py:527
 msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr "Maksimalan broj decimalnih mesta prilikom generisanja cenovnih podataka"
 
-#: common/setting/system.py:518
+#: common/setting/system.py:538
 msgid "Use Supplier Pricing"
 msgstr "Koristi cene dobavljača"
 
-#: common/setting/system.py:520
+#: common/setting/system.py:540
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "Uključi pauziranje cene dobavljača u sveukupnom računanju cene"
 
-#: common/setting/system.py:526
+#: common/setting/system.py:546
 msgid "Purchase History Override"
 msgstr "Premosti istorijat kupovina"
 
-#: common/setting/system.py:528
+#: common/setting/system.py:548
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr "Prethodne cene narudžbenice zamenjuje pauze cena dobavljača"
 
-#: common/setting/system.py:534
+#: common/setting/system.py:554
 msgid "Use Stock Item Pricing"
 msgstr "Koristi cene stavki u zalihama"
 
-#: common/setting/system.py:536
+#: common/setting/system.py:556
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr "Koristi cene koje su ručno unete u podatke zaliha"
 
-#: common/setting/system.py:542
+#: common/setting/system.py:562
 msgid "Stock Item Pricing Age"
 msgstr "Godina cena stavki u zalihama"
 
-#: common/setting/system.py:544
+#: common/setting/system.py:564
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr "Odstrani stavke zaliha iz kalkulacija cena, koje su starije od ovog broja dana"
 
-#: common/setting/system.py:551
+#: common/setting/system.py:571
 msgid "Use Variant Pricing"
 msgstr "Koristi drugačije cene"
 
-#: common/setting/system.py:552
+#: common/setting/system.py:572
 msgid "Include variant pricing in overall pricing calculations"
 msgstr "Uključi drugačije cene u sveukupnim kalkulacijama cene"
 
-#: common/setting/system.py:557
+#: common/setting/system.py:577
 msgid "Active Variants Only"
 msgstr "Samo aktivne varijante"
 
-#: common/setting/system.py:559
+#: common/setting/system.py:579
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr "Koristi samo aktivne varijante za određivanje varijante cene"
 
-#: common/setting/system.py:565
+#: common/setting/system.py:585
 msgid "Pricing Rebuild Interval"
 msgstr "Vremenski period za ponovno određivanje cena"
 
-#: common/setting/system.py:566
+#: common/setting/system.py:586
 msgid "Number of days before part pricing is automatically updated"
 msgstr "Broj dana koji treba da prođe da bi se cene delova automatski ažurirale"
 
-#: common/setting/system.py:572
+#: common/setting/system.py:592
 msgid "Internal Prices"
 msgstr "Interne cene"
 
-#: common/setting/system.py:573
+#: common/setting/system.py:593
 msgid "Enable internal prices for parts"
 msgstr "Omogući interne cene za delove"
 
-#: common/setting/system.py:578
+#: common/setting/system.py:598
 msgid "Internal Price Override"
 msgstr "Premošćavanje internih cena"
 
-#: common/setting/system.py:580
+#: common/setting/system.py:600
 msgid "If available, internal prices override price range calculations"
 msgstr "Ako su dostupne, interne cene premošćuju kalkulacije opsega cena"
 
-#: common/setting/system.py:586
+#: common/setting/system.py:606
 msgid "Enable label printing"
 msgstr "Omogući štampanje etiketa"
 
-#: common/setting/system.py:587
+#: common/setting/system.py:607
 msgid "Enable label printing from the web interface"
 msgstr "Omogući štampanje etiketa preko web interfejsa"
 
-#: common/setting/system.py:592
+#: common/setting/system.py:612
 msgid "Label Image DPI"
 msgstr "DPI slike etikete"
 
-#: common/setting/system.py:594
+#: common/setting/system.py:614
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "DPI rezolucija prilikom generisanja slikovne datoteke za dodatak koji štampa etikete"
 
-#: common/setting/system.py:600
+#: common/setting/system.py:620
 msgid "Enable Reports"
 msgstr "Omogući izveštaje"
 
-#: common/setting/system.py:601
+#: common/setting/system.py:621
 msgid "Enable generation of reports"
 msgstr "Omogući generisanje izveštaja"
 
-#: common/setting/system.py:606
+#: common/setting/system.py:626
 msgid "Debug Mode"
 msgstr "Mod otklanjanja grešaka"
 
-#: common/setting/system.py:607
+#: common/setting/system.py:627
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Generiši izveštaje u modu za otklanjanje grešaka (izlaz je u HTML)"
 
-#: common/setting/system.py:612
+#: common/setting/system.py:632
 msgid "Log Report Errors"
 msgstr "Greške evidencije izveštaja"
 
-#: common/setting/system.py:613
+#: common/setting/system.py:633
 msgid "Log errors which occur when generating reports"
 msgstr "Greške evidentiranja koje se dese prilikom generisanja izveštaja"
 
-#: common/setting/system.py:618 plugin/builtin/labels/label_sheet.py:28
+#: common/setting/system.py:638 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:325
 msgid "Page Size"
 msgstr "Veličina stranice"
 
-#: common/setting/system.py:619
+#: common/setting/system.py:639
 msgid "Default page size for PDF reports"
 msgstr "Podrazumevana veličina strane za izveštaje u PDF formatu"
 
-#: common/setting/system.py:624
+#: common/setting/system.py:644
 msgid "Globally Unique Serials"
 msgstr "Globalno jedinstveni serijski brojevi"
 
-#: common/setting/system.py:625
+#: common/setting/system.py:645
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "Serijski brojevi za stavke zaliha moraju da budu globalno jedinstveni"
 
-#: common/setting/system.py:630
+#: common/setting/system.py:650
 msgid "Autofill Serial Numbers"
 msgstr "Automatski popuni serijske brojeve"
 
-#: common/setting/system.py:631
+#: common/setting/system.py:651
 msgid "Autofill serial numbers in forms"
 msgstr "Automatski popuni serijske brojeve u obrascima"
 
-#: common/setting/system.py:636
+#: common/setting/system.py:656
 msgid "Delete Depleted Stock"
 msgstr "Obriši ispražnjene zalihe"
 
-#: common/setting/system.py:637
+#: common/setting/system.py:657
 msgid "Determines default behavior when a stock item is depleted"
 msgstr "Ovo određuje podrazumevano ponašanje kada je stavka zaliha istrošena"
 
-#: common/setting/system.py:642
+#: common/setting/system.py:662
 msgid "Batch Code Template"
 msgstr "Šablon koda serije"
 
-#: common/setting/system.py:643
+#: common/setting/system.py:663
 msgid "Template for generating default batch codes for stock items"
 msgstr "Šablon za generisanje podrazumevanih kodova serije stavki u zalihama"
 
-#: common/setting/system.py:647
+#: common/setting/system.py:667
 msgid "Stock Expiry"
 msgstr "Datum isteka zaliha"
 
-#: common/setting/system.py:648
+#: common/setting/system.py:668
 msgid "Enable stock expiry functionality"
 msgstr "Omogući funkcionalnost isteka zaliha"
 
-#: common/setting/system.py:653
+#: common/setting/system.py:673
 msgid "Sell Expired Stock"
 msgstr "Prodaja isteklih zaliha"
 
-#: common/setting/system.py:654
+#: common/setting/system.py:674
 msgid "Allow sale of expired stock"
 msgstr "Dozvoli prodaju isteklih zaliha"
 
-#: common/setting/system.py:659
+#: common/setting/system.py:679
 msgid "Stock Stale Time"
 msgstr "Vreme zastarevanja zaliha"
 
-#: common/setting/system.py:661
+#: common/setting/system.py:681
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Broj dana tokom kojih će se stavke zaliha smatrati zastarelim pre isteka"
 
-#: common/setting/system.py:668
+#: common/setting/system.py:688
 msgid "Build Expired Stock"
 msgstr "Izrada sa isteklim zalihama"
 
-#: common/setting/system.py:669
+#: common/setting/system.py:689
 msgid "Allow building with expired stock"
 msgstr "Dozvoli izradu sa isteklim zalihama"
 
-#: common/setting/system.py:674
+#: common/setting/system.py:694
 msgid "Stock Ownership Control"
 msgstr "Vlasnička kontrola zaliha"
 
-#: common/setting/system.py:675
+#: common/setting/system.py:695
 msgid "Enable ownership control over stock locations and items"
 msgstr "Omogući vlasničku kontrolu nad lokacijama zaliha i stavkama"
 
-#: common/setting/system.py:680
+#: common/setting/system.py:700
 msgid "Stock Location Default Icon"
 msgstr "Podrazumevana ikonica lokacije zaliha"
 
-#: common/setting/system.py:681
+#: common/setting/system.py:701
 msgid "Stock location default icon (empty means no icon)"
 msgstr "Podrazumevana ikonica lokacije zaliha (prazno znači da nema ikonice)"
 
-#: common/setting/system.py:686
+#: common/setting/system.py:706
 msgid "Show Installed Stock Items"
 msgstr "Prikaži instalirane stavke sa zaliha"
 
-#: common/setting/system.py:687
+#: common/setting/system.py:707
 msgid "Display installed stock items in stock tables"
 msgstr "Prikaži instalirane stavke sa zaliha u stok tabelama"
 
-#: common/setting/system.py:692
+#: common/setting/system.py:712
 msgid "Check BOM when installing items"
 msgstr "Proveri spisak materijala pri instalaciji stavki"
 
-#: common/setting/system.py:694
+#: common/setting/system.py:714
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr "Instalirane stavke sa zaliha moraju postojati u spisku materijala nadređenog dela"
 
-#: common/setting/system.py:700
+#: common/setting/system.py:720
 msgid "Allow Out of Stock Transfer"
 msgstr "Dozvoli transfer van zaliha"
 
-#: common/setting/system.py:702
+#: common/setting/system.py:722
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr "Dozvoli da stavke sa zaliha koje nisu na zalihama budu premeštane između lokacija zaliha"
 
-#: common/setting/system.py:708
+#: common/setting/system.py:728
 msgid "Build Order Reference Pattern"
 msgstr "Referentni šablon naloga za izradu"
 
-#: common/setting/system.py:709
+#: common/setting/system.py:729
 msgid "Required pattern for generating Build Order reference field"
 msgstr "Potreban šablon za generisanje referentnog polja naloga za izradu"
 
-#: common/setting/system.py:714 common/setting/system.py:768
-#: common/setting/system.py:788 common/setting/system.py:824
+#: common/setting/system.py:734 common/setting/system.py:788
+#: common/setting/system.py:808 common/setting/system.py:844
 msgid "Require Responsible Owner"
 msgstr "Potreban odgovoran vlasnik"
 
-#: common/setting/system.py:715 common/setting/system.py:769
-#: common/setting/system.py:789 common/setting/system.py:825
+#: common/setting/system.py:735 common/setting/system.py:789
+#: common/setting/system.py:809 common/setting/system.py:845
 msgid "A responsible owner must be assigned to each order"
 msgstr "Odgovoran vlasnik mora biti dodeljen svakom nalogu"
 
-#: common/setting/system.py:720
+#: common/setting/system.py:740
 msgid "Require Active Part"
 msgstr "Potreban aktivan deo"
 
-#: common/setting/system.py:721
+#: common/setting/system.py:741
 msgid "Prevent build order creation for inactive parts"
 msgstr "Spreči kreiranje naloga za izradu za neaktivne delove"
 
-#: common/setting/system.py:726
+#: common/setting/system.py:746
 msgid "Require Locked Part"
 msgstr "Potreban zaključan deo"
 
-#: common/setting/system.py:727
+#: common/setting/system.py:747
 msgid "Prevent build order creation for unlocked parts"
 msgstr "Spreči kreiranje nalogaza izradu za otključane delove"
 
-#: common/setting/system.py:732
+#: common/setting/system.py:752
 msgid "Require Valid BOM"
 msgstr "Potreban validan spisak materijala"
 
-#: common/setting/system.py:733
+#: common/setting/system.py:753
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "Spreči kreiranje naloga za izradu pre validacije spiska materijala"
 
-#: common/setting/system.py:738
+#: common/setting/system.py:758
 msgid "Require Closed Child Orders"
 msgstr "Potrebno završavanje podređenih naloga"
 
-#: common/setting/system.py:740
+#: common/setting/system.py:760
 msgid "Prevent build order completion until all child orders are closed"
 msgstr "Spreči završavanje naloga za izradu pre završavanja svih podređenih naloga"
 
-#: common/setting/system.py:746
+#: common/setting/system.py:766
 msgid "Block Until Tests Pass"
 msgstr "Blokiraj dok ne prođe test"
 
-#: common/setting/system.py:748
+#: common/setting/system.py:768
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "Spreči završavanje naloga za izradu pre uspešnog završetka svih testova"
 
-#: common/setting/system.py:754
+#: common/setting/system.py:774
 msgid "Enable Return Orders"
 msgstr "Omogući naloge za vraćanje"
 
-#: common/setting/system.py:755
+#: common/setting/system.py:775
 msgid "Enable return order functionality in the user interface"
 msgstr "Omogući funkcionalnost vraćana u korisničkom interfejsu"
 
-#: common/setting/system.py:760
+#: common/setting/system.py:780
 msgid "Return Order Reference Pattern"
 msgstr "Referentni šablon naloga za vraćanje"
 
-#: common/setting/system.py:762
+#: common/setting/system.py:782
 msgid "Required pattern for generating Return Order reference field"
 msgstr "Potreban šablon pri generisanju referentnog polja naloga za vraćanje"
 
-#: common/setting/system.py:774
+#: common/setting/system.py:794
 msgid "Edit Completed Return Orders"
 msgstr "Izmeni završene naloge za vraćanje"
 
-#: common/setting/system.py:776
+#: common/setting/system.py:796
 msgid "Allow editing of return orders after they have been completed"
 msgstr "Dozvoli izmenu naloga za vraćanje nakon što su završeni"
 
-#: common/setting/system.py:782
+#: common/setting/system.py:802
 msgid "Sales Order Reference Pattern"
 msgstr "Referentni šablon naloga za prodaju"
 
-#: common/setting/system.py:783
+#: common/setting/system.py:803
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "Potreban šablon pri generisanju referentnog polja naloga za prodaju"
 
-#: common/setting/system.py:794
+#: common/setting/system.py:814
 msgid "Sales Order Default Shipment"
 msgstr "Podrazumevana isporuka naloga za prodaju"
 
-#: common/setting/system.py:795
+#: common/setting/system.py:815
 msgid "Enable creation of default shipment with sales orders"
 msgstr "Omogućava kreiranje podrazumevane isporuke sa nalozima za prodaju"
 
-#: common/setting/system.py:800
+#: common/setting/system.py:820
 msgid "Edit Completed Sales Orders"
 msgstr "Izmeni završene naloge za prodaju"
 
-#: common/setting/system.py:802
+#: common/setting/system.py:822
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Dozvoli izmenu naloga za prodaju nakon što su isporučeni ili završeni"
 
-#: common/setting/system.py:808
+#: common/setting/system.py:828
 msgid "Mark Shipped Orders as Complete"
 msgstr "Označi isporučene naloge kao završene"
 
-#: common/setting/system.py:810
+#: common/setting/system.py:830
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "Nalozi za prodaju označeni kao isporučeni će automatski biti završeni, zaobilazeći status isporučen"
 
-#: common/setting/system.py:816
+#: common/setting/system.py:836
 msgid "Purchase Order Reference Pattern"
 msgstr "Referentni šablon naloga za kupovinu"
 
-#: common/setting/system.py:818
+#: common/setting/system.py:838
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "Potreban šablon pri generisanju referentnog polja naloga za kupovinu"
 
-#: common/setting/system.py:830
+#: common/setting/system.py:850
 msgid "Edit Completed Purchase Orders"
 msgstr "Izmeni završene naloge za kupovinu"
 
-#: common/setting/system.py:832
+#: common/setting/system.py:852
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "Dozvoli izmenu naloga za kupovinu nakon što su isporučeni ili završeni"
 
-#: common/setting/system.py:838
+#: common/setting/system.py:858
 msgid "Convert Currency"
 msgstr ""
 
-#: common/setting/system.py:839
+#: common/setting/system.py:859
 msgid "Convert item value to base currency when receiving stock"
 msgstr ""
 
-#: common/setting/system.py:844
+#: common/setting/system.py:864
 msgid "Auto Complete Purchase Orders"
 msgstr "Automatski završi naloge za kupovinu"
 
-#: common/setting/system.py:846
+#: common/setting/system.py:866
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "Automatski označi naloge za kupovinu kao završene kada su primljene sve stavke porudžbine"
 
-#: common/setting/system.py:853
+#: common/setting/system.py:873
 msgid "Enable password forgot"
 msgstr "Omogući zaboravljenu lozinku"
 
-#: common/setting/system.py:854
+#: common/setting/system.py:874
 msgid "Enable password forgot function on the login pages"
 msgstr "Omogući funkcionalnost zaboravljene lozinke na stranicama za prijavljivanje"
 
-#: common/setting/system.py:859
+#: common/setting/system.py:879
 msgid "Enable registration"
 msgstr "Omogući registraciju"
 
-#: common/setting/system.py:860
+#: common/setting/system.py:880
 msgid "Enable self-registration for users on the login pages"
 msgstr "Omogući registraciju korisnicima na stranicama za prijavljivanje"
 
-#: common/setting/system.py:865
+#: common/setting/system.py:885
 msgid "Enable SSO"
 msgstr "Omogući SSO"
 
-#: common/setting/system.py:866
+#: common/setting/system.py:886
 msgid "Enable SSO on the login pages"
 msgstr "Omogući SSO na stranicama za prijavljivanje"
 
-#: common/setting/system.py:871
+#: common/setting/system.py:891
 msgid "Enable SSO registration"
 msgstr "Omogući SSO registraciju"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:893
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Omogući registraciju preko SSO za korisnike na stranicaa za prijavljivanje"
 
-#: common/setting/system.py:879
+#: common/setting/system.py:899
 msgid "Enable SSO group sync"
 msgstr "Omogući SSO sinhronizaciju grupa"
 
-#: common/setting/system.py:881
+#: common/setting/system.py:901
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr "Omogući sinhronizaciju grupa aplikacije sa grupama IdP-a"
 
-#: common/setting/system.py:887
+#: common/setting/system.py:907
 msgid "SSO group key"
 msgstr "SSO ključ grupe"
 
-#: common/setting/system.py:888
+#: common/setting/system.py:908
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr "Nazivi grupa dobijaju atribute od IdP-a"
 
-#: common/setting/system.py:893
+#: common/setting/system.py:913
 msgid "SSO group map"
 msgstr "Mapiranje SSO grupa"
 
-#: common/setting/system.py:895
+#: common/setting/system.py:915
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr "Mapiranje SSO grupa u lokalne grupe aplikacije. Ukoliko lokalna grupa ne postoji, biće kreirana."
 
-#: common/setting/system.py:901
+#: common/setting/system.py:921
 msgid "Remove groups outside of SSO"
 msgstr "Ukloni grupe van SSO"
 
-#: common/setting/system.py:903
+#: common/setting/system.py:923
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr "Da li će grupe dodeljene korisnicima biti uklonjene ukoliko nisu podržane IdP-om. Onemogućavanje ovoga može dovesti do problema."
 
-#: common/setting/system.py:909
+#: common/setting/system.py:929
 msgid "Email required"
 msgstr "Email neophodan"
 
-#: common/setting/system.py:910
+#: common/setting/system.py:930
 msgid "Require user to supply mail on signup"
 msgstr "Zahtevaj od korisnika da dostavi mejl prilikom registracije"
 
-#: common/setting/system.py:915
+#: common/setting/system.py:935
 msgid "Auto-fill SSO users"
 msgstr "Automatski popuni SSO korisnike"
 
-#: common/setting/system.py:916
+#: common/setting/system.py:936
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "Automatski popuni korisnikove podatke iz SSO naloga"
 
-#: common/setting/system.py:921
+#: common/setting/system.py:941
 msgid "Mail twice"
 msgstr "Email dva puta"
 
-#: common/setting/system.py:922
+#: common/setting/system.py:942
 msgid "On signup ask users twice for their mail"
 msgstr "Pitaj korisnika dva puta za email prilikom registracije"
 
-#: common/setting/system.py:927
+#: common/setting/system.py:947
 msgid "Password twice"
 msgstr "Lozinka dva puta"
 
-#: common/setting/system.py:928
+#: common/setting/system.py:948
 msgid "On signup ask users twice for their password"
 msgstr "Pitaj korisnika dva puta za lozinku prilikom registracije"
 
-#: common/setting/system.py:933
+#: common/setting/system.py:953
 msgid "Allowed domains"
 msgstr "Dozvoljeni domeni"
 
-#: common/setting/system.py:935
+#: common/setting/system.py:955
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "Ograniči registraciju na određene domene (razdvojeni zapetom, počinju sa @)"
 
-#: common/setting/system.py:941
+#: common/setting/system.py:961
 msgid "Group on signup"
 msgstr "Grupa pri registrovanju"
 
-#: common/setting/system.py:943
+#: common/setting/system.py:963
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr "Grupa kojoj se novi korisnici dodeljuju pri registraciji. Ukoliko je SSO group sync omogućen, ova grupa će se dodavati ukoliko korisnik ne može da dobije grupu iz IdP-a."
 
-#: common/setting/system.py:949
+#: common/setting/system.py:969
 msgid "Enforce MFA"
 msgstr "Nametni MFA"
 
-#: common/setting/system.py:950
+#: common/setting/system.py:970
 msgid "Users must use multifactor security."
 msgstr "Korisnici moraju koristiti multifaktorsku bezbednost"
 
-#: common/setting/system.py:955
+#: common/setting/system.py:975
 msgid "Check plugins on startup"
 msgstr "Proveri plugine pri pokretanju"
 
-#: common/setting/system.py:957
+#: common/setting/system.py:977
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "Proveri da li su svi pluginovi instalirani pri pokretanju - omogućeni u kontejnerskim okruženjima"
 
-#: common/setting/system.py:964
+#: common/setting/system.py:984
 msgid "Check for plugin updates"
 msgstr "Proveri ažuriranja pluginova"
 
-#: common/setting/system.py:965
+#: common/setting/system.py:985
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "Omogući periodično proveranje pluginova"
 
-#: common/setting/system.py:971
+#: common/setting/system.py:991
 msgid "Enable URL integration"
 msgstr "Omogući URL integraciju"
 
-#: common/setting/system.py:972
+#: common/setting/system.py:992
 msgid "Enable plugins to add URL routes"
 msgstr "Omogući da pluginovi dodaju URL rute"
 
-#: common/setting/system.py:978
+#: common/setting/system.py:998
 msgid "Enable navigation integration"
 msgstr "Omogući integraciju u navigaciju"
 
-#: common/setting/system.py:979
+#: common/setting/system.py:999
 msgid "Enable plugins to integrate into navigation"
 msgstr "Omogući integraciju pluginova u navigaciju"
 
-#: common/setting/system.py:985
+#: common/setting/system.py:1005
 msgid "Enable app integration"
 msgstr "Omogući integraciju aplikacija"
 
-#: common/setting/system.py:986
+#: common/setting/system.py:1006
 msgid "Enable plugins to add apps"
 msgstr "Omogući pluginovima da dodaju aplikacije"
 
-#: common/setting/system.py:992
+#: common/setting/system.py:1012
 msgid "Enable schedule integration"
 msgstr "Omogući integraciju planiranja"
 
-#: common/setting/system.py:993
+#: common/setting/system.py:1013
 msgid "Enable plugins to run scheduled tasks"
 msgstr "Omogući da plugini izvršavaju planirane zadatke"
 
-#: common/setting/system.py:999
+#: common/setting/system.py:1019
 msgid "Enable event integration"
 msgstr "Omogući integraciju događaja"
 
-#: common/setting/system.py:1000
+#: common/setting/system.py:1020
 msgid "Enable plugins to respond to internal events"
 msgstr "Omogući da plugini odgovaraju na unutrašnje događaje"
 
-#: common/setting/system.py:1006
+#: common/setting/system.py:1026
 msgid "Enable interface integration"
 msgstr "Omogući integraciju interfejsa"
 
-#: common/setting/system.py:1007
+#: common/setting/system.py:1027
 msgid "Enable plugins to integrate into the user interface"
 msgstr "Omogući integraciju pluginova u korisnički interfejs"
 
-#: common/setting/system.py:1013
+#: common/setting/system.py:1033
 msgid "Enable project codes"
 msgstr ""
 
-#: common/setting/system.py:1014
+#: common/setting/system.py:1034
 msgid "Enable project codes for tracking projects"
 msgstr ""
 
-#: common/setting/system.py:1019
+#: common/setting/system.py:1039
 msgid "Stocktake Functionality"
 msgstr "Funkcionalnost popisa"
 
-#: common/setting/system.py:1021
+#: common/setting/system.py:1041
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
 msgstr "Omogući funkcionalnost popisa za praćenje nivoa zaliha i računanje vrednosti zaliha"
 
-#: common/setting/system.py:1027
+#: common/setting/system.py:1047
 msgid "Exclude External Locations"
 msgstr "Ne uključuj eksterne lokacije"
 
-#: common/setting/system.py:1029
+#: common/setting/system.py:1049
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "Ne uključuj stavke sa zaliha na eksternim lokacijama u proračune popisa"
 
-#: common/setting/system.py:1035
+#: common/setting/system.py:1055
 msgid "Automatic Stocktake Period"
 msgstr "Period automatskog popisa"
 
-#: common/setting/system.py:1037
+#: common/setting/system.py:1057
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
 msgstr "Broj dana između automatskih beleženja popisa (postaviti na nulu za isključivanje ove mogućnosti)"
 
-#: common/setting/system.py:1043
+#: common/setting/system.py:1063
 msgid "Report Deletion Interval"
 msgstr "Interval brisana izveštaja"
 
-#: common/setting/system.py:1045
+#: common/setting/system.py:1065
 msgid "Stocktake reports will be deleted after specified number of days"
 msgstr "Izveštaji o popisu će biti obrisani nakon određenog broja dana"
 
-#: common/setting/system.py:1052
+#: common/setting/system.py:1072
 msgid "Display Users full names"
 msgstr "Prikaži puna imena korisnika"
 
-#: common/setting/system.py:1053
+#: common/setting/system.py:1073
 msgid "Display Users full names instead of usernames"
 msgstr "Prikaži puna imena korisnika umesto korisničkih imena"
 
-#: common/setting/system.py:1058
+#: common/setting/system.py:1078
 msgid "Enable Test Station Data"
 msgstr "Omogući podatke test stanica"
 
-#: common/setting/system.py:1059
+#: common/setting/system.py:1079
 msgid "Enable test station data collection for test results"
 msgstr "Omogući prikupljanje podataka sa test stanica radi rezultata testova"
 
-#: common/setting/system.py:1064
+#: common/setting/system.py:1084
 msgid "Create Template on Upload"
 msgstr "Kreiraj šablon pri dodavanju"
 
-#: common/setting/system.py:1066
+#: common/setting/system.py:1086
 msgid "Create a new test template when uploading test data which does not match an existing template"
 msgstr "Kreiraj novi test šablon prilikom dodavanja test podataka koji se ne poklapa sa postojećim šablonom"
 
@@ -3550,7 +3523,7 @@ msgid "Manufacturer"
 msgstr "Proizvođač"
 
 #: company/api.py:306 company/models.py:97 company/models.py:366
-#: stock/api.py:853
+#: stock/api.py:846
 msgid "Company"
 msgstr "Kompanija"
 
@@ -3773,7 +3746,7 @@ msgstr "Naziv parametra"
 msgid "Parameter value"
 msgstr "Vrednost parametra"
 
-#: company/models.py:603 part/models.py:1162 part/models.py:3780
+#: company/models.py:603 part/models.py:1161 part/models.py:3782
 msgid "Units"
 msgstr "Jedinice"
 
@@ -3797,7 +3770,7 @@ msgstr "Povezani delovi dobavljača moraju referencirati isti osnovni deo"
 #: order/models.py:559 part/serializers.py:591
 #: plugin/builtin/suppliers/digikey.py:25 plugin/builtin/suppliers/lcsc.py:26
 #: plugin/builtin/suppliers/mouser.py:24 plugin/builtin/suppliers/tme.py:26
-#: stock/api.py:520 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:513 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Dobavljač"
 
@@ -3826,7 +3799,7 @@ msgid "Supplier part description"
 msgstr "Opis dela dobavljača"
 
 #: company/models.py:828 order/serializers.py:801 order/serializers.py:1995
-#: part/models.py:4313 part/models.py:4654
+#: part/models.py:4294 part/models.py:4635
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
 #: report/templates/report/inventree_return_order_report.html:27
@@ -3836,11 +3809,11 @@ msgstr "Opis dela dobavljača"
 msgid "Note"
 msgstr "Beleška"
 
-#: company/models.py:837 part/models.py:2131
+#: company/models.py:837 part/models.py:2130
 msgid "base cost"
 msgstr "osnovni trošak"
 
-#: company/models.py:838 part/models.py:2132
+#: company/models.py:838 part/models.py:2131
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Minimalna naplata (npr. taksa za slaganje)"
 
@@ -3861,7 +3834,7 @@ msgstr "Količina pakovanja"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Ukupna količina dostavljena u jednom pakovanju. Ostaviti prazno za pojedinačne stavke."
 
-#: company/models.py:872 part/models.py:2138
+#: company/models.py:872 part/models.py:2137
 msgid "multiple"
 msgstr "više"
 
@@ -3932,6 +3905,10 @@ msgstr "Nevažeći statusni kod"
 #: importer/mixins.py:326
 msgid "Invalid export format"
 msgstr "Nevažeći format za izvoz"
+
+#: importer/models.py:64
+msgid "Data File"
+msgstr "Datoteka"
 
 #: importer/models.py:65
 msgid "Data file to import"
@@ -4009,7 +3986,7 @@ msgstr "Originalni podaci vrste"
 msgid "Errors"
 msgstr "Greške"
 
-#: importer/models.py:519 part/api.py:856
+#: importer/models.py:519 part/api.py:859
 msgid "Valid"
 msgstr "Važeće"
 
@@ -4839,7 +4816,7 @@ msgstr "Spoj stavke sa istim delom, odredištem i ciljanim datumom u jednu stavk
 msgid "SKU"
 msgstr "Jedinica za praćenje zaliha"
 
-#: order/serializers.py:652 part/models.py:1048 part/serializers.py:396
+#: order/serializers.py:652 part/models.py:1047 part/serializers.py:396
 msgid "Internal Part Number"
 msgstr "Interni broj dela"
 
@@ -5061,7 +5038,7 @@ msgstr "Označeno zvezdicom"
 msgid "Filter by starred categories"
 msgstr "Filtiraj po kategorijama označenim zvezdicom"
 
-#: part/api.py:122 stock/api.py:261
+#: part/api.py:122 stock/api.py:254
 msgid "Depth"
 msgstr "Dubina"
 
@@ -5069,7 +5046,7 @@ msgstr "Dubina"
 msgid "Filter by category depth"
 msgstr "Filtriraj po dubini kategorije"
 
-#: part/api.py:140 stock/api.py:279
+#: part/api.py:140 stock/api.py:272
 msgid "Top Level"
 msgstr "Vrhovni"
 
@@ -5077,7 +5054,7 @@ msgstr "Vrhovni"
 msgid "Filter by top-level categories"
 msgstr "Filtriraj po vrhovnim kategorijama"
 
-#: part/api.py:155 stock/api.py:294
+#: part/api.py:155 stock/api.py:287
 msgid "Cascade"
 msgstr "Kaskadno"
 
@@ -5105,866 +5082,838 @@ msgstr "Ne uključuj pod-kategorije pod specifičnom kategorijom"
 msgid "Has Results"
 msgstr "Ima rezultate"
 
-#: part/api.py:603
+#: part/api.py:606
 msgid "Incoming Purchase Order"
 msgstr "Dolazeći nalozi za kupovinu"
 
-#: part/api.py:617
+#: part/api.py:620
 msgid "Outgoing Sales Order"
 msgstr "Odlazeći nalozi za prodaju"
 
-#: part/api.py:629
+#: part/api.py:632
 msgid "Stock produced by Build Order"
 msgstr "Zalihe proizvedene od strane naloga za izradu"
 
-#: part/api.py:711
+#: part/api.py:714
 msgid "Stock required for Build Order"
 msgstr "Zalihe potrebne za nalog za izradu"
 
-#: part/api.py:857
+#: part/api.py:860
 msgid "Validate entire Bill of Materials"
 msgstr "Validiraj ceo spisak materijala"
 
-#: part/api.py:863
+#: part/api.py:866
 msgid "This option must be selected"
 msgstr "Ova opcija mora biti selektovana"
 
-#: part/api.py:899
+#: part/api.py:902
 msgid "Is Variant"
 msgstr ""
 
-#: part/api.py:907
+#: part/api.py:910
 msgid "Is Revision"
 msgstr "Je revizija"
 
-#: part/api.py:917
+#: part/api.py:920
 msgid "Has Revisions"
 msgstr "Ima revizije"
 
-#: part/api.py:1108
+#: part/api.py:1111
 msgid "BOM Valid"
 msgstr "Spisak materijala validan"
 
-#: part/api.py:1770
+#: part/api.py:1773
 msgid "Assembly part is testable"
 msgstr "Deo sklopa se može testirati"
 
-#: part/api.py:1779
+#: part/api.py:1782
 msgid "Component part is testable"
 msgstr "Deo komponente se može testirati"
 
-#: part/api.py:1830
+#: part/api.py:1833
 msgid "Uses"
 msgstr "Koristi"
 
-#: part/models.py:90 part/models.py:4073
+#: part/models.py:89 part/models.py:4075
 msgid "Part Category"
 msgstr "Kategorija dela"
 
-#: part/models.py:91 users/models.py:202
+#: part/models.py:90 users/models.py:202
 msgid "Part Categories"
 msgstr "Kategorije delova"
 
-#: part/models.py:109 part/models.py:1092
+#: part/models.py:108 part/models.py:1091
 msgid "Default Location"
 msgstr "Podrazumevana lokacija"
 
-#: part/models.py:110
+#: part/models.py:109
 msgid "Default location for parts in this category"
 msgstr "Podrazumevana lokacija za delove ove kategorije"
 
-#: part/models.py:115 stock/models.py:193
+#: part/models.py:114 stock/models.py:193
 msgid "Structural"
 msgstr "Strukturno"
 
-#: part/models.py:117
+#: part/models.py:116
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
 msgstr "Delovi ne mogu biti direktno dodeljene strukturnoj kategoriji, ali mogu biti dodeljeni podređenim kategorijama."
 
-#: part/models.py:126
+#: part/models.py:125
 msgid "Default keywords"
 msgstr "Podrazumevane ključne reči"
 
-#: part/models.py:127
+#: part/models.py:126
 msgid "Default keywords for parts in this category"
 msgstr "Podrazumevane ključne reči za delove ove kategorije"
 
-#: part/models.py:133 stock/models.py:96 stock/models.py:175
+#: part/models.py:132 stock/models.py:96 stock/models.py:175
 msgid "Icon"
 msgstr "Ikonica"
 
-#: part/models.py:134 part/serializers.py:142 part/serializers.py:160
+#: part/models.py:133 part/serializers.py:142 part/serializers.py:160
 #: stock/models.py:176
 msgid "Icon (optional)"
 msgstr "Ikonica (opciono)"
 
-#: part/models.py:178
+#: part/models.py:177
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
 msgstr "Ova kategorija dela se ne može podesiti kao strukturna jer već ima dodeljene neke delove!"
 
-#: part/models.py:418 part/serializers.py:129 part/serializers.py:331
+#: part/models.py:417 part/serializers.py:129 part/serializers.py:331
 #: part/serializers.py:468 users/models.py:203
 msgid "Parts"
 msgstr "Delovi"
 
-#: part/models.py:470
+#: part/models.py:469
 msgid "Cannot delete this part as it is locked"
 msgstr "Ovaj deo se ne može izbrisati jer je zaključan"
 
-#: part/models.py:473
+#: part/models.py:472
 msgid "Cannot delete this part as it is still active"
 msgstr "Ovaj deo se ne može izbrisati jer je i dalje aktivan"
 
-#: part/models.py:478
+#: part/models.py:477
 msgid "Cannot delete this part as it is used in an assembly"
 msgstr "Ovaj deo se ne može obrisati jer se koristi u sklopu"
 
-#: part/models.py:516
+#: part/models.py:515
 msgid "Invalid choice for parent part"
 msgstr "Nevažeći izbor za nadređeni deo"
 
-#: part/models.py:564 part/models.py:571
+#: part/models.py:563 part/models.py:570
 #, python-brace-format
 msgid "Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
 msgstr "Deo '{self}' ne može biti korišćen u spisku materijala za '{parent}' (recursive)"
 
-#: part/models.py:583
+#: part/models.py:582
 #, python-brace-format
 msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
 msgstr "Deo '{parent}' se koristi u spisku materijala za '{self}' (recursive)"
 
-#: part/models.py:650
+#: part/models.py:649
 #, python-brace-format
 msgid "IPN must match regex pattern {pattern}"
 msgstr "Interni broj dela se mora slagati sa regex šablonom {pattern}"
 
-#: part/models.py:658
+#: part/models.py:657
 msgid "Part cannot be a revision of itself"
 msgstr "Deo ne može biti revizija samog sebe"
 
-#: part/models.py:665
+#: part/models.py:664
 msgid "Cannot make a revision of a part which is already a revision"
 msgstr "Ne može se kreirati revizija dela koji je već revizija"
 
-#: part/models.py:672
+#: part/models.py:671
 msgid "Revision code must be specified"
 msgstr "Šifra revizije mora biti dostavljena"
 
-#: part/models.py:679
+#: part/models.py:678
 msgid "Revisions are only allowed for assembly parts"
 msgstr "Revizije su dozvoljene samo za delove sklopove"
 
-#: part/models.py:686
+#: part/models.py:685
 msgid "Cannot make a revision of a template part"
 msgstr "Ne može se izvršiti revizija šablonskog dela"
 
-#: part/models.py:692
+#: part/models.py:691
 msgid "Parent part must point to the same template"
 msgstr "Nadređeni deo mora biti vezan sa istim šablonom"
 
-#: part/models.py:788
+#: part/models.py:787
 msgid "Stock item with this serial number already exists"
 msgstr "Stavka sa ovim serijskim brojem već postoji"
 
-#: part/models.py:930
+#: part/models.py:929
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "Duplirani interni brojevi dela nisu dozvoljeni u podešavanjima dela"
 
-#: part/models.py:942
+#: part/models.py:941
 msgid "Duplicate part revision already exists."
 msgstr "Identična revizija dela već postoji"
 
-#: part/models.py:951
+#: part/models.py:950
 msgid "Part with this Name, IPN and Revision already exists."
 msgstr "Deo sa ovim nazivom, internim brojem dela i revizijom već postoji"
 
-#: part/models.py:966
+#: part/models.py:965
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "Delovi ne mogu biti dodeljeni strukturnim kategorijama delova!"
 
-#: part/models.py:998 part/models.py:4128
+#: part/models.py:997
 msgid "Part name"
 msgstr "Naziv dela"
 
-#: part/models.py:1003
+#: part/models.py:1002
 msgid "Is Template"
 msgstr "Jeste šablon"
 
-#: part/models.py:1004
+#: part/models.py:1003
 msgid "Is this part a template part?"
 msgstr "Da li je ovaj deo šablonski deo?"
 
-#: part/models.py:1014
+#: part/models.py:1013
 msgid "Is this part a variant of another part?"
 msgstr "Da li je ovaj deo varijanta drugog dela?"
 
-#: part/models.py:1015
+#: part/models.py:1014
 msgid "Variant Of"
 msgstr "Varijanta od"
 
-#: part/models.py:1022
+#: part/models.py:1021
 msgid "Part description (optional)"
 msgstr "Opis dela (opciono)"
 
-#: part/models.py:1029
+#: part/models.py:1028
 msgid "Keywords"
 msgstr "Ključne reči"
 
-#: part/models.py:1030
+#: part/models.py:1029
 msgid "Part keywords to improve visibility in search results"
 msgstr "Ključne reči dela da bi se poboljšala vidljivost u rezultatima pretrage"
 
-#: part/models.py:1040
+#: part/models.py:1039
 msgid "Part category"
 msgstr "Kategorija dela"
 
-#: part/models.py:1047 part/serializers.py:948
+#: part/models.py:1046 part/serializers.py:948
 #: report/templates/report/inventree_stock_location_report.html:103
 msgid "IPN"
 msgstr "Interni broj dela"
 
-#: part/models.py:1055
+#: part/models.py:1054
 msgid "Part revision or version number"
 msgstr "Revizija dela ili broj verzije"
 
-#: part/models.py:1056 report/models.py:177
+#: part/models.py:1055 report/models.py:177
 msgid "Revision"
 msgstr "Revizija"
 
-#: part/models.py:1065
+#: part/models.py:1064
 msgid "Is this part a revision of another part?"
 msgstr "Da li je ovaj deo revizija drugog dela?"
 
-#: part/models.py:1066
+#: part/models.py:1065
 msgid "Revision Of"
 msgstr "Revizija od"
 
-#: part/models.py:1090
+#: part/models.py:1089
 msgid "Where is this item normally stored?"
 msgstr "Gde je ova stavka inače skladištena?"
 
-#: part/models.py:1136
+#: part/models.py:1135
 msgid "Default Supplier"
 msgstr "Podrazumevani dobavljač"
 
-#: part/models.py:1137
+#: part/models.py:1136
 msgid "Default supplier part"
 msgstr "Podrazumevani deo dobavljača"
 
-#: part/models.py:1144
+#: part/models.py:1143
 msgid "Default Expiry"
 msgstr "Podrazumevani istek"
 
-#: part/models.py:1145
+#: part/models.py:1144
 msgid "Expiry time (in days) for stock items of this part"
 msgstr "Vreme isteka (u danima) za stavke sa zaliha ovog dela"
 
-#: part/models.py:1153 part/serializers.py:975
+#: part/models.py:1152 part/serializers.py:975
 msgid "Minimum Stock"
 msgstr "Minimalne zalihe"
 
-#: part/models.py:1154
+#: part/models.py:1153
 msgid "Minimum allowed stock level"
 msgstr "Minimalni dozvoljen nivo zaliha"
 
-#: part/models.py:1163
+#: part/models.py:1162
 msgid "Units of measure for this part"
 msgstr "Jedinice mere za ovaj deo"
 
-#: part/models.py:1170
+#: part/models.py:1169
 msgid "Can this part be built from other parts?"
 msgstr "Da li ovaj deo može biti izgrađen od drugih delova?"
 
-#: part/models.py:1176
+#: part/models.py:1175
 msgid "Can this part be used to build other parts?"
 msgstr "Da li ovaj deo može biti korišćen za izradu drugih delova?"
 
-#: part/models.py:1182
+#: part/models.py:1181
 msgid "Does this part have tracking for unique items?"
 msgstr "Da li ovaj deo ima praćenje za više stavki?"
 
-#: part/models.py:1188
+#: part/models.py:1187
 msgid "Can this part have test results recorded against it?"
 msgstr "Da li ovaj deo može imati svoje rezultate testa?"
 
-#: part/models.py:1194
+#: part/models.py:1193
 msgid "Can this part be purchased from external suppliers?"
 msgstr "Da li ovaj deo može biti kupljen od eksternih dobavljača?"
 
-#: part/models.py:1200
+#: part/models.py:1199
 msgid "Can this part be sold to customers?"
 msgstr "Da li ovaj deo može biti prodat mušterijama?"
 
-#: part/models.py:1204
+#: part/models.py:1203
 msgid "Is this part active?"
 msgstr "Da li je ovaj deo aktivan?"
 
-#: part/models.py:1210
+#: part/models.py:1209
 msgid "Locked parts cannot be edited"
 msgstr "Zaključani delovi se ne mogu menjati"
 
-#: part/models.py:1216
+#: part/models.py:1215
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr "Da li je ovo virtuelni deo, kao na primer softver ili licenca?"
 
-#: part/models.py:1222
+#: part/models.py:1221
 msgid "BOM checksum"
 msgstr "Suma spiska materijala"
 
-#: part/models.py:1223
+#: part/models.py:1222
 msgid "Stored BOM checksum"
 msgstr "Uskladištena suma spiska materijala"
 
-#: part/models.py:1231
+#: part/models.py:1230
 msgid "BOM checked by"
 msgstr "Spisak materijala proveren od strane"
 
-#: part/models.py:1236
+#: part/models.py:1235
 msgid "BOM checked date"
 msgstr "Spisak materijala proveren datuma"
 
-#: part/models.py:1252
+#: part/models.py:1251
 msgid "Creation User"
 msgstr "Korisnik koji je kreirao"
 
-#: part/models.py:1262
+#: part/models.py:1261
 msgid "Owner responsible for this part"
 msgstr "Vlasnik odgovoran za ovaj deo"
 
-#: part/models.py:1267
+#: part/models.py:1266
 msgid "Last Stocktake"
 msgstr "Poslednji popis"
 
-#: part/models.py:2139
+#: part/models.py:2138
 msgid "Sell multiple"
 msgstr "Prodaj više"
 
-#: part/models.py:3121
+#: part/models.py:3123
 msgid "Currency used to cache pricing calculations"
 msgstr "Valuta korišćena za vršenje proračuna o cenama"
 
-#: part/models.py:3137
+#: part/models.py:3139
 msgid "Minimum BOM Cost"
 msgstr "Minimalna vrednost spiska materijala"
 
-#: part/models.py:3138
+#: part/models.py:3140
 msgid "Minimum cost of component parts"
 msgstr "Minimalna vrednost komponenti delova"
 
-#: part/models.py:3144
+#: part/models.py:3146
 msgid "Maximum BOM Cost"
 msgstr "Maksimalna vrednost spiska materijala"
 
-#: part/models.py:3145
+#: part/models.py:3147
 msgid "Maximum cost of component parts"
 msgstr "Maksimalna vrednost komponenti delova"
 
-#: part/models.py:3151
+#: part/models.py:3153
 msgid "Minimum Purchase Cost"
 msgstr "Minimalna kupovna vrednost"
 
-#: part/models.py:3152
+#: part/models.py:3154
 msgid "Minimum historical purchase cost"
 msgstr "Minimalna istorijska kupovna vrednost"
 
-#: part/models.py:3158
+#: part/models.py:3160
 msgid "Maximum Purchase Cost"
 msgstr "Maksimalna kupovna vrednost"
 
-#: part/models.py:3159
+#: part/models.py:3161
 msgid "Maximum historical purchase cost"
 msgstr "Maksimalna istorijska kupovna vrednost"
 
-#: part/models.py:3165
+#: part/models.py:3167
 msgid "Minimum Internal Price"
 msgstr "Minimalna interna cena"
 
-#: part/models.py:3166
+#: part/models.py:3168
 msgid "Minimum cost based on internal price breaks"
 msgstr "Minimalna cena bazirana na internim sniženjima cena"
 
-#: part/models.py:3172
+#: part/models.py:3174
 msgid "Maximum Internal Price"
 msgstr "Maksimalna interna cena"
 
-#: part/models.py:3173
+#: part/models.py:3175
 msgid "Maximum cost based on internal price breaks"
 msgstr "Maksimalna vrednost bazirana na internim sniženjima cena"
 
-#: part/models.py:3179
+#: part/models.py:3181
 msgid "Minimum Supplier Price"
 msgstr "Minimalna cena dobavljača"
 
-#: part/models.py:3180
+#: part/models.py:3182
 msgid "Minimum price of part from external suppliers"
 msgstr "Minimalna cena dela od eksternih dobavljača"
 
-#: part/models.py:3186
+#: part/models.py:3188
 msgid "Maximum Supplier Price"
 msgstr "Maksimalna cena dobavljača"
 
-#: part/models.py:3187
+#: part/models.py:3189
 msgid "Maximum price of part from external suppliers"
 msgstr "Maksimalna cena dela od eksternih dobavljača"
 
-#: part/models.py:3193
+#: part/models.py:3195
 msgid "Minimum Variant Cost"
 msgstr "Minimalna vrednost varijanti"
 
-#: part/models.py:3194
+#: part/models.py:3196
 msgid "Calculated minimum cost of variant parts"
 msgstr "Izračunata minimalna vrednost varijanti delova"
 
-#: part/models.py:3200
+#: part/models.py:3202
 msgid "Maximum Variant Cost"
 msgstr "Maksimalna vrednost varijanti"
 
-#: part/models.py:3201
+#: part/models.py:3203
 msgid "Calculated maximum cost of variant parts"
 msgstr "Izračunata maksimalna vrednost varijanti delova"
 
-#: part/models.py:3207 part/models.py:3221
+#: part/models.py:3209 part/models.py:3223
 msgid "Minimum Cost"
 msgstr "Minimalna vrednost"
 
-#: part/models.py:3208
+#: part/models.py:3210
 msgid "Override minimum cost"
 msgstr "Promeni minimalnu vrednost"
 
-#: part/models.py:3214 part/models.py:3228
+#: part/models.py:3216 part/models.py:3230
 msgid "Maximum Cost"
 msgstr "Maksimalna vrednost"
 
-#: part/models.py:3215
+#: part/models.py:3217
 msgid "Override maximum cost"
 msgstr "Promeni maksimalnu vrednost"
 
-#: part/models.py:3222
+#: part/models.py:3224
 msgid "Calculated overall minimum cost"
 msgstr "Ukupna izračunata minimalna vrednost"
 
-#: part/models.py:3229
+#: part/models.py:3231
 msgid "Calculated overall maximum cost"
 msgstr "Ukupna izračunata maksimalna vrednost"
 
-#: part/models.py:3235
+#: part/models.py:3237
 msgid "Minimum Sale Price"
 msgstr "Minimalna prodajna cena"
 
-#: part/models.py:3236
+#: part/models.py:3238
 msgid "Minimum sale price based on price breaks"
 msgstr "Minimalna prodajna cena bazirana na osnovu sniženja cena"
 
-#: part/models.py:3242
+#: part/models.py:3244
 msgid "Maximum Sale Price"
 msgstr "Maksimalna prodajna cena"
 
-#: part/models.py:3243
+#: part/models.py:3245
 msgid "Maximum sale price based on price breaks"
 msgstr "Maksimalna prodajna cena bazirana na osnovu sniženja cena"
 
-#: part/models.py:3249
+#: part/models.py:3251
 msgid "Minimum Sale Cost"
 msgstr "Minimalna prodajna vrednost"
 
-#: part/models.py:3250
+#: part/models.py:3252
 msgid "Minimum historical sale price"
 msgstr "Minimalna istorijska prodajna cena"
 
-#: part/models.py:3256
+#: part/models.py:3258
 msgid "Maximum Sale Cost"
 msgstr "Maksimalna prodajna vrednost"
 
-#: part/models.py:3257
+#: part/models.py:3259
 msgid "Maximum historical sale price"
 msgstr "Maksimalna istorijska prodajna cena"
 
-#: part/models.py:3276
+#: part/models.py:3278
 msgid "Part for stocktake"
 msgstr "Deo za popis"
 
-#: part/models.py:3281
+#: part/models.py:3283
 msgid "Item Count"
 msgstr "Broj stavki"
 
-#: part/models.py:3282
+#: part/models.py:3284
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "Broj individualnih unosa zaliha u vreme popisa"
 
-#: part/models.py:3290
+#: part/models.py:3292
 msgid "Total available stock at time of stocktake"
 msgstr "Ukupne dostupne zalihe za vreme popisa"
 
-#: part/models.py:3294 part/models.py:3377 part/serializers.py:262
+#: part/models.py:3296 part/models.py:3379 part/serializers.py:262
 #: report/templates/report/inventree_test_report.html:106
 msgid "Date"
 msgstr "Datum"
 
-#: part/models.py:3295
+#: part/models.py:3297
 msgid "Date stocktake was performed"
 msgstr "Datum kada je izvršen popis"
 
-#: part/models.py:3303
+#: part/models.py:3305
 msgid "Additional notes"
 msgstr "Dodatne beleške"
 
-#: part/models.py:3313
+#: part/models.py:3315
 msgid "User who performed this stocktake"
 msgstr "Korisnik koji je izvršio ovaj popis"
 
-#: part/models.py:3319
+#: part/models.py:3321
 msgid "Minimum Stock Cost"
 msgstr "Minimalna vrednost zaliha"
 
-#: part/models.py:3320
+#: part/models.py:3322
 msgid "Estimated minimum cost of stock on hand"
 msgstr "Procenjena minimalna vrednost trenutnih zaliha"
 
-#: part/models.py:3326
+#: part/models.py:3328
 msgid "Maximum Stock Cost"
 msgstr "Maksimalna vrednost zaliha"
 
-#: part/models.py:3327
+#: part/models.py:3329
 msgid "Estimated maximum cost of stock on hand"
 msgstr "Procenjena maksimalna vrednost trenutnih zaliha"
 
-#: part/models.py:3383
+#: part/models.py:3385
 msgid "Report"
 msgstr "Izveštaj"
 
-#: part/models.py:3384
+#: part/models.py:3386
 msgid "Stocktake report file (generated internally)"
 msgstr "Fajl izveštaja o popisu (interno generisan)"
 
-#: part/models.py:3389
+#: part/models.py:3391
 msgid "Part Count"
 msgstr "Broj delova"
 
-#: part/models.py:3390
+#: part/models.py:3392
 msgid "Number of parts covered by stocktake"
 msgstr "Broj delova pokrivenih popisom"
 
-#: part/models.py:3400
+#: part/models.py:3402
 msgid "User who requested this stocktake report"
 msgstr "Korisnik koji je tražio ovaj izveštaj o popisu"
 
-#: part/models.py:3410
+#: part/models.py:3412
 msgid "Part Sale Price Break"
 msgstr "Smanjenje prodajne cene dela"
 
-#: part/models.py:3522
+#: part/models.py:3524
 msgid "Part Test Template"
 msgstr "Šablon testa dela"
 
-#: part/models.py:3548
+#: part/models.py:3550
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "Nevažeći naziv šablona - mora da uključuje bar jedan alfanumerički karakter"
 
-#: part/models.py:3569 part/models.py:3739
+#: part/models.py:3571 part/models.py:3741
 msgid "Choices must be unique"
 msgstr "Izbori moraju biti jedinstveni"
 
-#: part/models.py:3580
+#: part/models.py:3582
 msgid "Test templates can only be created for testable parts"
 msgstr "Test šabloni mogu biti kreirani samo za delove koje je moguće testirati"
 
-#: part/models.py:3591
+#: part/models.py:3593
 msgid "Test template with the same key already exists for part"
 msgstr "Test šablon sa istim ključem već postoji za ovaj deo"
 
-#: part/models.py:3608
+#: part/models.py:3610
 msgid "Test Name"
 msgstr "Naziv testa"
 
-#: part/models.py:3609
+#: part/models.py:3611
 msgid "Enter a name for the test"
 msgstr "Unesi naziv za ovaj test"
 
-#: part/models.py:3615
+#: part/models.py:3617
 msgid "Test Key"
 msgstr "Test ključ"
 
-#: part/models.py:3616
+#: part/models.py:3618
 msgid "Simplified key for the test"
 msgstr "Pojednostavljen ključ za test"
 
-#: part/models.py:3623
+#: part/models.py:3625
 msgid "Test Description"
 msgstr "Opis testa"
 
-#: part/models.py:3624
+#: part/models.py:3626
 msgid "Enter description for this test"
 msgstr "Unesi opis za ovaj test"
 
-#: part/models.py:3628 report/models.py:232
+#: part/models.py:3630 report/models.py:232
 msgid "Enabled"
 msgstr "Omogućen"
 
-#: part/models.py:3628
+#: part/models.py:3630
 msgid "Is this test enabled?"
 msgstr "Da li je ovaj test omogućen?"
 
-#: part/models.py:3633
+#: part/models.py:3635
 msgid "Required"
 msgstr "Neophodno"
 
-#: part/models.py:3634
+#: part/models.py:3636
 msgid "Is this test required to pass?"
 msgstr "Da li je neophodno da ovaj test prođe?"
 
-#: part/models.py:3639
+#: part/models.py:3641
 msgid "Requires Value"
 msgstr "Zahteva vrednost"
 
-#: part/models.py:3640
+#: part/models.py:3642
 msgid "Does this test require a value when adding a test result?"
 msgstr "Da li ovaj test zahteva vrednost prilikom dodavanja rezultata testa?"
 
-#: part/models.py:3645
+#: part/models.py:3647
 msgid "Requires Attachment"
 msgstr "Zahteva prilog"
 
-#: part/models.py:3647
+#: part/models.py:3649
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "Da li ovaj test zahteva fajl kao prilog prilikom dodavanja rezultata testa?"
 
-#: part/models.py:3653 part/models.py:3801
+#: part/models.py:3655 part/models.py:3803
 msgid "Choices"
 msgstr "Izbori"
 
-#: part/models.py:3654
+#: part/models.py:3656
 msgid "Valid choices for this test (comma-separated)"
 msgstr "Validni izbori za ovaj test (razdvojeni zapetom)"
 
-#: part/models.py:3687
+#: part/models.py:3689
 msgid "Part Parameter Template"
 msgstr "Šablon parametra dela"
 
-#: part/models.py:3714
+#: part/models.py:3716
 msgid "Checkbox parameters cannot have units"
 msgstr "Checkbox parametri ne mogu imati jedinice"
 
-#: part/models.py:3719
+#: part/models.py:3721
 msgid "Checkbox parameters cannot have choices"
 msgstr "Checkbox parametri ne mogu imati izbore"
 
-#: part/models.py:3756
+#: part/models.py:3758
 msgid "Parameter template name must be unique"
 msgstr "Ime šablona parametra mora biti jedinstveno"
 
-#: part/models.py:3774
+#: part/models.py:3776
 msgid "Parameter Name"
 msgstr "Naziv parametra"
 
-#: part/models.py:3781
+#: part/models.py:3783
 msgid "Physical units for this parameter"
 msgstr "Fizičke jedinice za ovaj parametar"
 
-#: part/models.py:3789
+#: part/models.py:3791
 msgid "Parameter description"
 msgstr "Opis parametra"
 
-#: part/models.py:3795
+#: part/models.py:3797
 msgid "Checkbox"
 msgstr "Polje za potvrdu"
 
-#: part/models.py:3796
+#: part/models.py:3798
 msgid "Is this parameter a checkbox?"
 msgstr "Da li je ovaj parametar checkbox?"
 
-#: part/models.py:3802
+#: part/models.py:3804
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Validni izbori za ovaj parametar (razdvojeni zapetom)"
 
-#: part/models.py:3813
+#: part/models.py:3815
 msgid "Selection list for this parameter"
 msgstr "Lista izbora za ovaj parametar"
 
-#: part/models.py:3849
+#: part/models.py:3851
 msgid "Part Parameter"
 msgstr "Parametar dela"
 
-#: part/models.py:3875
+#: part/models.py:3877
 msgid "Parameter cannot be modified - part is locked"
 msgstr "Parametar se ne može modifikovati - deo je zaključan"
 
-#: part/models.py:3913
+#: part/models.py:3915
 msgid "Invalid choice for parameter value"
 msgstr "Nije validan izbor za vrednost parametra"
 
-#: part/models.py:3964
+#: part/models.py:3966
 msgid "Parent Part"
 msgstr "Nadređeni deo"
 
-#: part/models.py:3972 part/models.py:4080 part/models.py:4081
+#: part/models.py:3974 part/models.py:4082 part/models.py:4083
 msgid "Parameter Template"
 msgstr "Šablon parametra"
 
-#: part/models.py:3978
+#: part/models.py:3980
 msgid "Parameter Value"
 msgstr "Vrednost parametra"
 
-#: part/models.py:4028
+#: part/models.py:4030
 msgid "Part Category Parameter Template"
 msgstr "Šablon parametara kategorije dela"
 
-#: part/models.py:4087
+#: part/models.py:4089
 msgid "Default Value"
 msgstr "Podrazumevana vrednost"
 
-#: part/models.py:4088
+#: part/models.py:4090
 msgid "Default Parameter Value"
 msgstr "Podrazumevana vrednost parametra"
 
-#: part/models.py:4126
-msgid "Part ID or part name"
-msgstr "ID dela ili ime dela"
-
-#: part/models.py:4127 part/stocktake.py:218
-msgid "Part ID"
-msgstr "ID dela"
-
-#: part/models.py:4127
-msgid "Unique part ID value"
-msgstr "Vrednost jedinstvenog ID-ja dela"
-
-#: part/models.py:4129
-msgid "Part IPN"
-msgstr "IPN dela"
-
-#: part/models.py:4129
-msgid "Part IPN value"
-msgstr "Vrednost internog broja dela"
-
-#: part/models.py:4130
-msgid "Level"
-msgstr "Nivo"
-
-#: part/models.py:4130
-msgid "BOM level"
-msgstr "Nivo spiska materijala"
-
-#: part/models.py:4240
+#: part/models.py:4221
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "Stavke sa spiska materijala se ne mogu modifikovati - sklapanje je zaključano"
 
-#: part/models.py:4247
+#: part/models.py:4228
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "Stavke sa spiska materijala se ne mogu modifikovati - sklapanje varijanti je zaključano"
 
-#: part/models.py:4257
+#: part/models.py:4238
 msgid "Select parent part"
 msgstr "Izaberi nadređeni deo"
 
-#: part/models.py:4267
+#: part/models.py:4248
 msgid "Sub part"
 msgstr "Pod-deo"
 
-#: part/models.py:4268
+#: part/models.py:4249
 msgid "Select part to be used in BOM"
 msgstr "Izaberi deo koji će biti korišćen u spisku materijala"
 
-#: part/models.py:4279
+#: part/models.py:4260
 msgid "BOM quantity for this BOM item"
 msgstr "Količina spiskova materijala za ovu stavku sa spiska materijala"
 
-#: part/models.py:4285
+#: part/models.py:4266
 msgid "This BOM item is optional"
 msgstr "Ova stavka sa spiska materijala je opciona"
 
-#: part/models.py:4291
+#: part/models.py:4272
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Ova stavka sa spiska materijala se može potrošiti (nije praćena u nalozima za izradu)"
 
-#: part/models.py:4298
+#: part/models.py:4279
 msgid "Overage"
 msgstr "Prestarelo"
 
-#: part/models.py:4299
+#: part/models.py:4280
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Procenjena količina otpada prilikom izrade (apsolutna ili u procentima)"
 
-#: part/models.py:4306
+#: part/models.py:4287
 msgid "BOM item reference"
 msgstr "Referenca stavke sa spiska materijala"
 
-#: part/models.py:4314
+#: part/models.py:4295
 msgid "BOM item notes"
 msgstr "Beleške stavki sa spiska materijala"
 
-#: part/models.py:4320
+#: part/models.py:4301
 msgid "Checksum"
 msgstr "Suma"
 
-#: part/models.py:4321
+#: part/models.py:4302
 msgid "BOM line checksum"
 msgstr "Suma spiska materijala"
 
-#: part/models.py:4326
+#: part/models.py:4307
 msgid "Validated"
 msgstr "Validirano"
 
-#: part/models.py:4327
+#: part/models.py:4308
 msgid "This BOM item has been validated"
 msgstr "Ova stavka sa spiska materijala je validirana"
 
-#: part/models.py:4332
+#: part/models.py:4313
 msgid "Gets inherited"
 msgstr "Biva nasleđeno"
 
-#: part/models.py:4333
+#: part/models.py:4314
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Ova stavka sa spiska materijala je nasleđivana od spiska materijala za varijante delova"
 
-#: part/models.py:4339
+#: part/models.py:4320
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Stavke sa zaliha za varijante delova se mogu koristiti za ovu stavku sa spiska materijala"
 
-#: part/models.py:4424 stock/models.py:769
+#: part/models.py:4405 stock/models.py:769
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Količina mora biti ceo broj za delove koji se mogu pratiti"
 
-#: part/models.py:4434 part/models.py:4436
+#: part/models.py:4415 part/models.py:4417
 msgid "Sub part must be specified"
 msgstr "Zamenski deo mora biti određen"
 
-#: part/models.py:4581
+#: part/models.py:4562
 msgid "BOM Item Substitute"
 msgstr "Zamenska stavka sa spiska materijala"
 
-#: part/models.py:4602
+#: part/models.py:4583
 msgid "Substitute part cannot be the same as the master part"
 msgstr "Zamenski deo ne može biti isti kao glavni deo"
 
-#: part/models.py:4615
+#: part/models.py:4596
 msgid "Parent BOM item"
 msgstr "Nadređena stavka sa spiska materijala"
 
-#: part/models.py:4623
+#: part/models.py:4604
 msgid "Substitute part"
 msgstr "Zamenski deo"
 
-#: part/models.py:4639
+#: part/models.py:4620
 msgid "Part 1"
 msgstr "Deo 1"
 
-#: part/models.py:4647
+#: part/models.py:4628
 msgid "Part 2"
 msgstr "Deo 2"
 
-#: part/models.py:4648
+#: part/models.py:4629
 msgid "Select Related Part"
 msgstr "Izaberi povezan deo"
 
-#: part/models.py:4655
+#: part/models.py:4636
 msgid "Note for this relationship"
 msgstr "Beleška za ovu relaciju"
 
-#: part/models.py:4674
+#: part/models.py:4655
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Relacija između delova ne može biti kreirana između jednog istog dela"
 
-#: part/models.py:4679
+#: part/models.py:4660
 msgid "Duplicate relationship already exists"
 msgstr "Identična veza već postoji"
 
@@ -6314,41 +6263,9 @@ msgstr "Kopiraj zamenske delove"
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Kopiraj zamenske delove prilikom duplikacije stavki sa spiska materijala"
 
-#: part/serializers.py:1955
-msgid "Clear Existing BOM"
-msgstr "Obriši postojeći spisak materijala"
-
-#: part/serializers.py:1956
-msgid "Delete existing BOM items before uploading"
-msgstr "Obriši postojeće stavke sa spiska materijala pre dodavanja"
-
-#: part/serializers.py:1988
-msgid "No part column specified"
-msgstr "Nije izabrana kolona dela"
-
-#: part/serializers.py:2032
-msgid "Multiple matching parts found"
-msgstr "VIše pronađenih podudarajućih delova"
-
-#: part/serializers.py:2035
-msgid "No matching part found"
-msgstr "Nema pronađenih podudarajućih delova"
-
-#: part/serializers.py:2037
-msgid "Part is not designated as a component"
-msgstr "Deo nije namenjen za korišćenje kao komponenta"
-
-#: part/serializers.py:2046
-msgid "Quantity not provided"
-msgstr "Količina nije dostavljena"
-
-#: part/serializers.py:2054
-msgid "Invalid quantity"
-msgstr "Nije validna količina"
-
-#: part/serializers.py:2077
-msgid "At least one BOM item is required"
-msgstr "Bar jedna stavka sa spiska materijala je neophodna"
+#: part/stocktake.py:218
+msgid "Part ID"
+msgstr "ID dela"
 
 #: part/stocktake.py:220
 msgid "Part Description"
@@ -6936,7 +6853,7 @@ msgstr "Ugrađen plugin"
 msgid "Package Plugin"
 msgstr "Paket plugin"
 
-#: plugin/models.py:262 report/models.py:679
+#: plugin/models.py:262 report/models.py:677
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -7155,7 +7072,7 @@ msgstr "Obriši konfiguraciju"
 msgid "Delete the plugin configuration from the database"
 msgstr "Obriši konfiguraciju plugina iz baze podataka"
 
-#: report/api.py:46 report/models.py:643 report/serializers.py:99
+#: report/api.py:46 report/models.py:641 report/serializers.py:99
 #: report/serializers.py:149
 msgid "Items"
 msgstr "Stavke"
@@ -7281,67 +7198,67 @@ msgstr "Visina (u milimetrima)"
 msgid "Label height, specified in mm"
 msgstr "Visina natpisa, u milimetrima"
 
-#: report/models.py:612
+#: report/models.py:610
 msgid "Error printing labels"
 msgstr ""
 
-#: report/models.py:643
+#: report/models.py:641
 msgid "Number of items to process"
 msgstr "Broj stavki koje će biti obrađene"
 
-#: report/models.py:649
+#: report/models.py:647
 msgid "Report generation is complete"
 msgstr "Generisanje izveštaja završeno"
 
-#: report/models.py:653
+#: report/models.py:651
 msgid "Progress"
 msgstr "Napredak"
 
-#: report/models.py:653
+#: report/models.py:651
 msgid "Report generation progress"
 msgstr "Napredak generisanja izveštaja"
 
-#: report/models.py:661
+#: report/models.py:659
 msgid "Report Template"
 msgstr "Šablon izveštaja"
 
-#: report/models.py:668 report/models.py:691
+#: report/models.py:666 report/models.py:689
 msgid "Output File"
 msgstr "Izlazni fajl"
 
-#: report/models.py:669 report/models.py:692
+#: report/models.py:667 report/models.py:690
 msgid "Generated output file"
 msgstr "Generisan izlazni fajl"
 
-#: report/models.py:680
+#: report/models.py:678
 msgid "Label output plugin"
 msgstr "Plugin za izlaz natpisa"
 
-#: report/models.py:684
+#: report/models.py:682
 msgid "Label Template"
 msgstr "Šablon natpisa"
 
-#: report/models.py:707
+#: report/models.py:705
 msgid "Snippet"
 msgstr "Isečak"
 
-#: report/models.py:708
+#: report/models.py:706
 msgid "Report snippet file"
 msgstr "Izveštaj isečka fajla"
 
-#: report/models.py:715
+#: report/models.py:713
 msgid "Snippet file description"
 msgstr "Opis isečka fajla"
 
-#: report/models.py:733
+#: report/models.py:731
 msgid "Asset"
 msgstr "Sredstvo"
 
-#: report/models.py:734
+#: report/models.py:732
 msgid "Report asset file"
 msgstr "Izveštaj fajla sredstva"
 
-#: report/models.py:741
+#: report/models.py:739
 msgid "Asset file description"
 msgstr "Opis fajla sredstva"
 
@@ -7493,123 +7410,123 @@ msgstr "part_image tag zahteva instancu dela"
 msgid "company_image tag requires a Company instance"
 msgstr "company_image tag zahteva instancu kompanije"
 
-#: stock/api.py:261
+#: stock/api.py:254
 msgid "Filter by location depth"
 msgstr "Filtriraj po dubini lokacije"
 
-#: stock/api.py:281
+#: stock/api.py:274
 msgid "Filter by top-level locations"
 msgstr "Filtriraj po nadređenim lokacijama"
 
-#: stock/api.py:296
+#: stock/api.py:289
 msgid "Include sub-locations in filtered results"
 msgstr "Uključi podlokacije u filtriranim rezultatima"
 
-#: stock/api.py:317 stock/serializers.py:1205
+#: stock/api.py:310 stock/serializers.py:1205
 msgid "Parent Location"
 msgstr "Nadređena lokacija"
 
-#: stock/api.py:318
+#: stock/api.py:311
 msgid "Filter by parent location"
 msgstr "Filtriraj po nadređenoj lokaciji"
 
-#: stock/api.py:558
+#: stock/api.py:551
 msgid "Part name (case insensitive)"
 msgstr "Ime dela"
 
-#: stock/api.py:564
+#: stock/api.py:557
 msgid "Part name contains (case insensitive)"
 msgstr "Ime dela sadrži"
 
-#: stock/api.py:570
+#: stock/api.py:563
 msgid "Part name (regex)"
 msgstr "Ime dela (regex)"
 
-#: stock/api.py:575
+#: stock/api.py:568
 msgid "Part IPN (case insensitive)"
 msgstr "Interni deo broja"
 
-#: stock/api.py:581
+#: stock/api.py:574
 msgid "Part IPN contains (case insensitive)"
 msgstr "Interni deo broja sadrži (osetljivo na velika i mala slova)"
 
-#: stock/api.py:587
+#: stock/api.py:580
 msgid "Part IPN (regex)"
 msgstr "Interni broj dela (regex)"
 
-#: stock/api.py:599
+#: stock/api.py:592
 msgid "Minimum stock"
 msgstr "Minimalne zalihe"
 
-#: stock/api.py:603
+#: stock/api.py:596
 msgid "Maximum stock"
 msgstr "Maksimalne zalihe"
 
-#: stock/api.py:606
+#: stock/api.py:599
 msgid "Status Code"
 msgstr "Statusni kod"
 
-#: stock/api.py:646
+#: stock/api.py:639
 msgid "External Location"
 msgstr "Eksterna lokacija"
 
-#: stock/api.py:745
+#: stock/api.py:738
 msgid "Consumed by Build Order"
 msgstr "Potrošeno od strane naloga za izradu"
 
-#: stock/api.py:755
+#: stock/api.py:748
 msgid "Installed in other stock item"
 msgstr "Instalirano u drugu stavku sa zaliha"
 
-#: stock/api.py:844
+#: stock/api.py:837
 msgid "Part Tree"
 msgstr "Stablo dela"
 
-#: stock/api.py:866
+#: stock/api.py:859
 msgid "Updated before"
 msgstr "Ažurirano pre"
 
-#: stock/api.py:870
+#: stock/api.py:863
 msgid "Updated after"
 msgstr "Ažurirano nakon"
 
-#: stock/api.py:874
+#: stock/api.py:867
 msgid "Stocktake Before"
 msgstr "Popis pre"
 
-#: stock/api.py:878
+#: stock/api.py:871
 msgid "Stocktake After"
 msgstr "Popis nakon"
 
-#: stock/api.py:883
+#: stock/api.py:876
 msgid "Expiry date before"
 msgstr "Datum isteka pre"
 
-#: stock/api.py:887
+#: stock/api.py:880
 msgid "Expiry date after"
 msgstr "Datum isteka nakon"
 
-#: stock/api.py:890 stock/serializers.py:644
+#: stock/api.py:883 stock/serializers.py:644
 msgid "Stale"
 msgstr "Zastarelo"
 
-#: stock/api.py:991
+#: stock/api.py:984
 msgid "Quantity is required"
 msgstr "Količina je neophodna"
 
-#: stock/api.py:996
+#: stock/api.py:989
 msgid "Valid part must be supplied"
 msgstr "Validan deo mora biti dosavljen"
 
-#: stock/api.py:1023
+#: stock/api.py:1016
 msgid "The given supplier part does not exist"
 msgstr "Dati dobavljač ne postoji"
 
-#: stock/api.py:1033
+#: stock/api.py:1026
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "Deo dobavljača ima definisanu veličinu pakovanja, ali fleg use_pack_size nije postavljen"
 
-#: stock/api.py:1060
+#: stock/api.py:1053
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Serijski brojevi ne mogu biti dostavljeni za deo koji nije moguće pratiti"
 

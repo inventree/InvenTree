@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-14 08:19\n"
+"PO-Revision-Date: 2025-02-21 08:13\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1179,7 +1179,7 @@ msgstr "No clasificado"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:77
-#: src/tables/part/PartThumbTable.tsx:193
+#: src/tables/part/PartThumbTable.tsx:200
 msgid "Search..."
 msgstr "Búsqueda..."
 
@@ -1745,8 +1745,8 @@ msgstr "Ajustes de la cuenta"
 #: src/components/nav/MainMenu.tsx:67
 #: src/components/nav/NavigationDrawer.tsx:141
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/pages/Index/Settings/SystemSettings.tsx:306
-#: src/pages/Index/Settings/SystemSettings.tsx:311
+#: src/pages/Index/Settings/SystemSettings.tsx:308
+#: src/pages/Index/Settings/SystemSettings.tsx:313
 msgid "System Settings"
 msgstr "Ajustes del sistema"
 
@@ -1791,7 +1791,7 @@ msgstr "Cerrar sesión"
 #: src/components/nav/NavigationDrawer.tsx:77
 #: src/components/render/ModelType.tsx:30
 #: src/defaults/links.tsx:12
-#: src/pages/Index/Settings/SystemSettings.tsx:171
+#: src/pages/Index/Settings/SystemSettings.tsx:173
 #: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/CategoryDetail.tsx:265
 #: src/pages/part/CategoryDetail.tsx:304
@@ -1803,7 +1803,7 @@ msgstr "Piezas"
 #: src/components/render/Part.tsx:30
 #: src/defaults/links.tsx:13
 #: src/forms/StockForms.tsx:700
-#: src/pages/Index/Settings/SystemSettings.tsx:204
+#: src/pages/Index/Settings/SystemSettings.tsx:206
 #: src/pages/part/PartDetail.tsx:497
 #: src/pages/stock/LocationDetail.tsx:351
 #: src/pages/stock/StockDetail.tsx:547
@@ -1841,7 +1841,7 @@ msgstr "Ventas"
 
 #: src/components/nav/NavigationDrawer.tsx:129
 #: src/components/nav/NotificationDrawer.tsx:179
-#: src/pages/Index/Settings/SystemSettings.tsx:109
+#: src/pages/Index/Settings/SystemSettings.tsx:111
 #: src/pages/Index/Settings/UserSettings.tsx:97
 #: src/pages/Notifications.tsx:66
 #: src/pages/Notifications.tsx:158
@@ -2308,7 +2308,7 @@ msgid "Purchase Order"
 msgstr "Pedido de compra"
 
 #: src/components/render/ModelType.tsx:152
-#: src/pages/Index/Settings/SystemSettings.tsx:248
+#: src/pages/Index/Settings/SystemSettings.tsx:250
 #: src/pages/company/CompanyDetail.tsx:199
 #: src/pages/company/SupplierPartDetail.tsx:266
 #: src/pages/part/PartDetail.tsx:573
@@ -2338,7 +2338,7 @@ msgid "Sales Order"
 msgstr "Orden de venta"
 
 #: src/components/render/ModelType.tsx:167
-#: src/pages/Index/Settings/SystemSettings.tsx:264
+#: src/pages/Index/Settings/SystemSettings.tsx:266
 #: src/pages/company/CompanyDetail.tsx:219
 #: src/pages/part/PartDetail.tsx:585
 #: src/pages/sales/SalesIndex.tsx:26
@@ -2361,7 +2361,7 @@ msgid "Return Order"
 msgstr "Orden de devolución"
 
 #: src/components/render/ModelType.tsx:184
-#: src/pages/Index/Settings/SystemSettings.tsx:280
+#: src/pages/Index/Settings/SystemSettings.tsx:282
 #: src/pages/company/CompanyDetail.tsx:226
 #: src/pages/part/PartDetail.tsx:592
 #: src/pages/sales/SalesIndex.tsx:33
@@ -4220,7 +4220,7 @@ msgstr "Ninguna selección"
 #~ msgstr "Register below"
 
 #: src/pages/Auth/Login.tsx:134
-#: src/pages/Index/Settings/SystemSettings.tsx:65
+#: src/pages/Index/Settings/SystemSettings.tsx:67
 msgid "Login"
 msgstr "Ingresar"
 
@@ -5112,11 +5112,11 @@ msgstr "Todas las unidades"
 #~ msgid "System settings"
 #~ msgstr "System settings"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:91
+#: src/pages/Index/Settings/SystemSettings.tsx:93
 msgid "Barcodes"
 msgstr "Códigos de barras"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:115
+#: src/pages/Index/Settings/SystemSettings.tsx:117
 msgid "Pricing"
 msgstr "Precios"
 
@@ -5128,16 +5128,16 @@ msgstr "Precios"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:150
+#: src/pages/Index/Settings/SystemSettings.tsx:152
 msgid "Labels"
 msgstr "Etiquetas"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:156
+#: src/pages/Index/Settings/SystemSettings.tsx:158
 #: src/pages/Index/Settings/UserSettings.tsx:103
 msgid "Reporting"
 msgstr "Informes"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:230
+#: src/pages/Index/Settings/SystemSettings.tsx:232
 #: src/pages/build/BuildIndex.tsx:27
 #: src/pages/part/PartDetail.tsx:540
 #: src/pages/sales/SalesOrderDetail.tsx:373
@@ -5722,7 +5722,7 @@ msgstr "Existencias recibidas"
 
 #: src/pages/company/SupplierPartDetail.tsx:276
 #: src/pages/part/PartPricingPanel.tsx:113
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:208
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:232
 msgid "Supplier Pricing"
 msgstr "Precios del Proveedor"
 
@@ -6003,7 +6003,7 @@ msgstr "Proveedor Predeterminado"
 
 #: src/pages/part/PartDetail.tsx:424
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
-#: src/pages/part/pricing/VariantPricingPanel.tsx:95
+#: src/pages/part/pricing/VariantPricingPanel.tsx:97
 #: src/tables/part/PartTable.tsx:163
 msgid "Price Range"
 msgstr "Rango de Precios"
@@ -6127,7 +6127,7 @@ msgid "No pricing data found for this part."
 msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:87
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:292
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:325
 msgid "Pricing Overview"
 msgstr ""
 
@@ -6136,33 +6136,33 @@ msgid "Purchase History"
 msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:107
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:187
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:204
 msgid "Internal Pricing"
 msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:122
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:194
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:214
 msgid "BOM Pricing"
 msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:129
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:215
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:242
 msgid "Variant Pricing"
 msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:141
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:222
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:251
 msgid "Sale Pricing"
 msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:147
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:229
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:260
 msgid "Sale History"
 msgstr ""
 
 #: src/pages/part/PartSchedulingDetail.tsx:47
 #: src/pages/part/PartSchedulingDetail.tsx:301
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:155
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:170
 msgid "Maximum"
 msgstr "Máximo"
 
@@ -6173,7 +6173,7 @@ msgstr "Programado"
 
 #: src/pages/part/PartSchedulingDetail.tsx:53
 #: src/pages/part/PartSchedulingDetail.tsx:296
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:143
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:158
 msgid "Minimum"
 msgstr "Mínimo"
 
@@ -6236,12 +6236,12 @@ msgid "New Stocktake Report"
 msgstr "Nuevo informe de inventario"
 
 #: src/pages/part/PartStocktakeDetail.tsx:268
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:294
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:327
 msgid "Minimum Value"
 msgstr "Valor Mínimo"
 
 #: src/pages/part/PartStocktakeDetail.tsx:274
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:295
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:328
 msgid "Maximum Value"
 msgstr "Valor Máximo"
 
@@ -6277,13 +6277,13 @@ msgstr "Componente"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:115
 #: src/pages/part/pricing/VariantPricingPanel.tsx:37
-#: src/pages/part/pricing/VariantPricingPanel.tsx:97
+#: src/pages/part/pricing/VariantPricingPanel.tsx:99
 msgid "Minimum Price"
 msgstr "Precio mínimo"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:116
 #: src/pages/part/pricing/VariantPricingPanel.tsx:45
-#: src/pages/part/pricing/VariantPricingPanel.tsx:98
+#: src/pages/part/pricing/VariantPricingPanel.tsx:100
 msgid "Maximum Price"
 msgstr "Precio Máximo"
 
@@ -6344,65 +6344,65 @@ msgstr ""
 msgid "Price"
 msgstr "Precio"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:67
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:72
 msgid "Refreshing pricing data"
 msgstr "Refrescando datos de precios"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:87
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:92
 msgid "Pricing data updated"
 msgstr "Datos de precios actualizados"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:94
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:99
 msgid "Failed to update pricing data"
 msgstr "Error al actualizar los datos de precios"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:103
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:127
 msgid "Edit Pricing"
 msgstr "Editar precios"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:124
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:139
 msgid "Pricing Category"
 msgstr "Categoría de precios"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:173
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:188
 msgid "Override Pricing"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:180
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:196
 msgid "Overall Pricing"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:201
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:222
 msgid "Purchase Pricing"
 msgstr "Precio de Compra"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:248
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:281
 #: src/pages/stock/StockDetail.tsx:164
 #: src/tables/stock/StockItemTable.tsx:284
 msgid "Last Updated"
 msgstr "Última Actualización"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:252
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:285
 msgid "Pricing Not Set"
 msgstr "Precios no establecidos"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:253
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:286
 msgid "Pricing data has not been calculated for this part"
 msgstr "Los datos de precios no se han calculado para esta pieza"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:257
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:290
 msgid "Pricing Actions"
 msgstr "Acciones de precios"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:260
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:293
 msgid "Refresh"
 msgstr "Refrescar"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:261
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:294
 msgid "Refresh pricing data"
 msgstr "Refrescar datos de precios"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:276
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:309
 msgid "Edit pricing data"
 msgstr "Editar datos de precios"
 
@@ -6441,7 +6441,7 @@ msgid "Supplier Price"
 msgstr ""
 
 #: src/pages/part/pricing/VariantPricingPanel.tsx:30
-#: src/pages/part/pricing/VariantPricingPanel.tsx:94
+#: src/pages/part/pricing/VariantPricingPanel.tsx:96
 msgid "Variant Part"
 msgstr ""
 
@@ -8603,7 +8603,7 @@ msgstr ""
 msgid "Part templates cannot be edited, as the part is locked"
 msgstr ""
 
-#: src/tables/part/PartThumbTable.tsx:202
+#: src/tables/part/PartThumbTable.tsx:223
 msgid "Select"
 msgstr ""
 
