@@ -27,7 +27,7 @@ RUN apt update && apt install -y \
    postgresql-client \
    libldap2-dev libsasl2-dev \
    libpango1.0-0 libcairo2 \
-   weasyprint
+   poppler-utils weasyprint
 
 # Install packages required for frontend development
 RUN apt install -y \
