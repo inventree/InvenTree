@@ -45,6 +45,12 @@ class InvenTreeMoneySerializer(MoneyField):
 
         super().__init__(*args, **kwargs)
 
+    def to_representation(self, obj):
+        """Convert the Money object to a decimal value for representation."""
+        val = super().to_representation(obj)
+
+        return float(val)
+
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
         amount = super(DecimalField, self).get_value(data)
@@ -73,7 +79,11 @@ class InvenTreeMoneySerializer(MoneyField):
         ):
             return Money(amount, currency)
 
-        return amount
+        try:
+            fp_amount = float(amount)
+            return fp_amount
+        except Exception:
+            return amount
 
 
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
