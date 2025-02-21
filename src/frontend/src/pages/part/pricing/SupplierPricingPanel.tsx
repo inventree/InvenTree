@@ -36,7 +36,7 @@ export default function SupplierPricingPanel({
       table.records?.map((record: any) => {
         return {
           quantity: record.quantity,
-          supplier_price: record.price,
+          supplier_price: Number.parseFloat(record.price),
           unit_price: calculateSupplierPartUnitPrice(record),
           name: record.part_detail?.SKU
         };
