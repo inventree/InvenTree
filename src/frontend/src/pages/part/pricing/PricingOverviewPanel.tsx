@@ -43,6 +43,7 @@ interface PricingOverviewEntry {
   icon: ReactNode;
   name: panelOptions;
   title: string;
+  valid: boolean;
   min_value: number | null | undefined;
   max_value: number | null | undefined;
   visible?: boolean;
@@ -186,67 +187,85 @@ export default function PricingOverviewPanel({
         name: panelOptions.override,
         title: t`Override Pricing`,
         icon: <IconExclamationCircle />,
-        min_value: pricing?.override_min,
-        max_value: pricing?.override_max
+        min_value: Number.parseFloat(pricing?.override_min),
+        max_value: Number.parseFloat(pricing?.override_max),
+        valid: pricing?.override_min != null && pricing?.override_max != null
       },
       {
         name: panelOptions.overall,
         title: t`Overall Pricing`,
         icon: <IconReportAnalytics />,
-        min_value: pricing?.overall_min,
-        max_value: pricing?.overall_max
+        min_value: Number.parseFloat(pricing?.overall_min),
+        max_value: Number.parseFloat(pricing?.overall_max),
+        valid: pricing?.overall_min != null && pricing?.overall_max != null
       },
       {
         name: panelOptions.internal,
         title: t`Internal Pricing`,
         icon: <IconList />,
-        min_value: pricing?.internal_cost_min,
-        max_value: pricing?.internal_cost_max
+        min_value: Number.parseFloat(pricing?.internal_cost_min),
+        max_value: Number.parseFloat(pricing?.internal_cost_max),
+        valid:
+          pricing?.internal_cost_min != null &&
+          pricing?.internal_cost_max != null
       },
       {
         name: panelOptions.bom,
         title: t`BOM Pricing`,
         icon: <IconChartDonut />,
-        min_value: pricing?.bom_cost_min,
-        max_value: pricing?.bom_cost_max
+        min_value: Number.parseFloat(pricing?.bom_cost_min),
+        max_value: Number.parseFloat(pricing?.bom_cost_max),
+        valid: pricing?.bom_cost_min != null && pricing?.bom_cost_max != null
       },
       {
         name: panelOptions.purchase,
         title: t`Purchase Pricing`,
         icon: <IconShoppingCart />,
-        min_value: pricing?.purchase_cost_min,
-        max_value: pricing?.purchase_cost_max
+        min_value: Number.parseFloat(pricing?.purchase_cost_min),
+        max_value: Number.parseFloat(pricing?.purchase_cost_max),
+        valid:
+          pricing?.purchase_cost_min != null &&
+          pricing?.purchase_cost_max != null
       },
       {
         name: panelOptions.supplier,
         title: t`Supplier Pricing`,
         icon: <IconBuildingWarehouse />,
-        min_value: pricing?.supplier_price_min,
-        max_value: pricing?.supplier_price_max
+        min_value: Number.parseFloat(pricing?.supplier_price_min),
+        max_value: Number.parseFloat(pricing?.supplier_price_max),
+        valid:
+          pricing?.supplier_price_min != null &&
+          pricing?.supplier_price_max != null
       },
       {
         name: panelOptions.variant,
         title: t`Variant Pricing`,
         icon: <IconTriangleSquareCircle />,
-        min_value: pricing?.variant_cost_min,
-        max_value: pricing?.variant_cost_max
+        min_value: Number.parseFloat(pricing?.variant_cost_min),
+        max_value: Number.parseFloat(pricing?.variant_cost_max),
+        valid:
+          pricing?.variant_cost_min != null && pricing?.variant_cost_max != null
       },
       {
         name: panelOptions.sale_pricing,
         title: t`Sale Pricing`,
         icon: <IconTriangleSquareCircle />,
-        min_value: pricing?.sale_price_min,
-        max_value: pricing?.sale_price_max
+        min_value: Number.parseFloat(pricing?.sale_price_min),
+        max_value: Number.parseFloat(pricing?.sale_price_max),
+        valid:
+          pricing?.sale_price_min != null && pricing?.sale_price_max != null
       },
       {
         name: panelOptions.sale_history,
         title: t`Sale History`,
         icon: <IconTriangleSquareCircle />,
-        min_value: pricing?.sale_history_min,
-        max_value: pricing?.sale_history_max
+        min_value: Number.parseFloat(pricing?.sale_history_min),
+        max_value: Number.parseFloat(pricing?.sale_history_max),
+        valid:
+          pricing?.sale_history_min != null && pricing?.sale_history_max != null
       }
     ].filter((entry) => {
-      return !(entry.min_value == null || entry.max_value == null);
+      return entry.valid;
     });
   }, [part, pricing]);
 
