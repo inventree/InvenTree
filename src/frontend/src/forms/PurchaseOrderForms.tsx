@@ -611,6 +611,7 @@ function LineItemFormRow({
         onValueChange={(value) => {
           props.changeFn(props.idx, 'batch_code', value);
         }}
+        fieldName='batch_code'
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
@@ -624,6 +625,7 @@ function LineItemFormRow({
         onValueChange={(value) =>
           props.changeFn(props.idx, 'serial_numbers', value)
         }
+        fieldName='serial_numbers'
         fieldDefinition={{
           field_type: 'string',
           label: t`Serial Numbers`,
@@ -638,6 +640,7 @@ function LineItemFormRow({
           onValueChange={(value) =>
             props.changeFn(props.idx, 'expiry_date', value)
           }
+          fieldName='expiry_date'
           fieldDefinition={{
             field_type: 'date',
             label: t`Expiry Date`,
@@ -650,6 +653,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={packagingOpen}
         onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
+        fieldName='packaging'
         fieldDefinition={{
           field_type: 'string',
           label: t`Packaging`
@@ -660,6 +664,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={statusOpen}
         defaultValue={10}
+        fieldName='status'
         onValueChange={(value) => props.changeFn(props.idx, 'status', value)}
         fieldDefinition={{
           field_type: 'choice',
@@ -671,6 +676,7 @@ function LineItemFormRow({
       />
       <TableFieldExtraRow
         visible={noteOpen}
+        fieldName='note'
         onValueChange={(value) => props.changeFn(props.idx, 'note', value)}
         fieldDefinition={{
           field_type: 'string',
@@ -771,6 +777,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
     initialData: {
       location: props.destinationPk
     },
-    size: '80%'
+    size: '80%',
+    successMessage: t`Items received`
   });
 }
