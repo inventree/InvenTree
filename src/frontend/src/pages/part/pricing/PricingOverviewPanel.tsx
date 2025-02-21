@@ -26,6 +26,7 @@ import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import type { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import {
   EditItemAction,
   OptionsActionDropdown
@@ -35,6 +36,7 @@ import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
 import { apiUrl } from '../../../states/ApiState';
+import { useGlobalSettingsState } from '../../../states/SettingsState';
 import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {
@@ -58,6 +60,8 @@ export default function PricingOverviewPanel({
   pricingQuery: UseQueryResult;
   doNavigation: (panel: panelOptions) => void;
 }>): ReactNode {
+  const globalSettings = useGlobalSettingsState();
+
   const refreshPricing = useCallback(() => {
     const url = apiUrl(ApiEndpoints.part_pricing, part.pk);
 
@@ -99,19 +103,29 @@ export default function PricingOverviewPanel({
       });
   }, [part]);
 
-  const editPricing = useEditApiFormModal({
-    title: t`Edit Pricing`,
-    url: apiUrl(ApiEndpoints.part_pricing, part.pk),
-    fields: {
+  const pricingFields: ApiFormFieldSet = useMemo(() => {
+    return {
       override_min: {},
-      override_min_currency: {},
+      override_min_currency: {
+        default:
+          globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY') ?? 'USD'
+      },
       override_max: {},
-      override_max_currency: {},
+      override_max_currency: {
+        default:
+          globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY') ?? 'USD'
+      },
       update: {
         hidden: true,
         value: true
       }
-    },
+    };
+  }, [globalSettings]);
+
+  const editPricing = useEditApiFormModal({
+    title: t`Edit Pricing`,
+    url: apiUrl(ApiEndpoints.part_pricing, part.pk),
+    fields: pricingFields,
     onFormSuccess: () => {
       pricingQuery.refetch();
     }
