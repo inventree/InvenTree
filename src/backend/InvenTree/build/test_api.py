@@ -449,7 +449,7 @@ class BuildTest(BuildAPITest):
 
         from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin(PluginMixinEnum.EXPORT, active=None):
+        for plugin in registry.with_mixin(PluginMixinEnum.EXPORTER, active=None):
             print('- plugin:', plugin, '->', plugin.active)
 
         required_cols = [
