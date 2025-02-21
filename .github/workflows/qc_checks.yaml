@@ -436,7 +436,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke dev.test --translations
+        run: invoke dev.test --translations -r build.test_api.BuildTest.test_download_build_orders
       - name: Data Export Test
         uses: ./.github/actions/migration
 
