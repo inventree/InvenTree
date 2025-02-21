@@ -35,6 +35,45 @@ from .version import inventreeApiText
 logger = structlog.get_logger('inventree')
 
 
+def read_license_file(path: Path) -> list:
+    """Extract license information from the provided file.
+
+    Arguments:
+        path: Path to the license file
+
+    Returns: A list of items containing the license information
+    """
+    # Check if the file exists
+    if not path.exists():
+        logger.error("License file not found at '%s'", path)
+        return []
+
+    try:
+        data = json.loads(path.read_text())
+    except Exception as e:
+        logger.exception("Failed to parse license file '%s': %s", path, e)
+        return []
+
+    output = []
+    names = set()
+
+    # Ensure we do not have any duplicate 'name' values in the list
+    for entry in data:
+        name = None
+        for key in entry:
+            if key.lower() == 'name':
+                name = entry[key]
+                break
+
+        if name is None or name in names:
+            continue
+
+        names.add(name)
+        output.append({key.lower(): value for key, value in entry.items()})
+
+    return output
+
+
 class LicenseViewSerializer(serializers.Serializer):
     """Serializer for license information."""
 
@@ -49,47 +88,6 @@ class LicenseView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def read_license_file(self, path: Path) -> list:
-        """Extract license information from the provided file.
-
-        Arguments:
-            path: Path to the license file
-
-        Returns: A list of items containing the license information
-        """
-        # Check if the file exists
-        if not path.exists():
-            logger.error("License file not found at '%s'", path)
-            return []
-
-        try:
-            data = json.loads(path.read_text())
-        except json.JSONDecodeError as e:
-            logger.exception("Failed to parse license file '%s': %s", path, e)
-            return []
-        except Exception as e:
-            logger.exception("Exception while reading license file '%s': %s", path, e)
-            return []
-
-        output = []
-        names = set()
-
-        # Ensure we do not have any duplicate 'name' values in the list
-        for entry in data:
-            name = None
-            for key in entry:
-                if key.lower() == 'name':
-                    name = entry[key]
-                    break
-
-            if name is None or name in names:
-                continue
-
-            names.add(name)
-            output.append({key.lower(): value for key, value in entry.items()})
-
-        return output
-
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
@@ -98,8 +96,8 @@ class LicenseView(APIView):
             'web/static/web/.vite/dependencies.json'
         )
         return JsonResponse({
-            'backend': self.read_license_file(backend),
-            'frontend': self.read_license_file(frontend),
+            'backend': read_license_file(backend),
+            'frontend': read_license_file(frontend),
         })
 
 
@@ -208,6 +206,7 @@ class InfoApiSerializer(serializers.Serializer):
         navbar_message = serializers
 
     server = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True)
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -260,6 +259,7 @@ class InfoView(APIView):
 
         data = {
             'server': 'InvenTree',
+            'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
@@ -595,7 +595,7 @@ class MetadataView(RetrieveUpdateAPI):
         if model is None:
             raise ValidationError(
                 f"MetadataView called without '{self.MODEL_REF}' parameter"
-            )
+            )  # pragma: no cover
 
         return model
 
@@ -611,5 +611,5 @@ class MetadataView(RetrieveUpdateAPI):
         """Return MetadataSerializer instance."""
         # Detect if we are currently generating the OpenAPI schema
         if 'spectacular' in sys.argv:
-            return MetadataSerializer(Part, *args, **kwargs)
+            return MetadataSerializer(Part, *args, **kwargs)  # pragma: no cover
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)

@@ -47,15 +47,6 @@ if TESTING:
     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
     NUM_SLOW_TESTS = 25
 
-    # Note: The following fix is "required" for docker build workflow
-    # Note: 2022-12-12 still unsure why...
-    if os.getenv('INVENTREE_DOCKER'):
-        # Ensure that sys.path includes global python libs
-        site_packages = '/usr/local/lib/python3.9/site-packages'
-
-        if site_packages not in sys.path:
-            print('Adding missing site-packages path:', site_packages)
-            sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
@@ -205,6 +196,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
+PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
