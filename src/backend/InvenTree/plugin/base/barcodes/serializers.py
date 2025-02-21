@@ -204,7 +204,7 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
 
 
 class BarcodeSOAllocateSerializer(BarcodeSerializer):
-    """Serializer for allocating stock items to a sales order.
+    """Serializr for allocating stock items to a sales order.
 
     The scanned barcode must map to a StockItem object
     """
