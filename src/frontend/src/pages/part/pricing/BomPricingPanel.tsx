@@ -68,7 +68,7 @@ function BomPieChart({
           return {
             // Note: Replace '.' in name to avoid issues with tooltip
             name: entry?.name?.replace('.', '') ?? '',
-            value: entry?.total_price_max,
+            value: Number.parseFloat(entry?.total_price_max),
             color: `${CHART_COLORS[index % CHART_COLORS.length]}.5`
           };
         }) ?? []

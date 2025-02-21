@@ -62,7 +62,6 @@ from order import models as OrderModels
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
-    SalesOrderStatus,
     SalesOrderStatusGroups,
 )
 from stock import models as StockModels
@@ -2793,6 +2792,9 @@ class PartPricing(common.models.MetaMixin):
             for sub_part in bom_item.get_valid_parts_for_allocation():
                 # Check each part which *could* be used
 
+                if sub_part != bom_item.sub_part and not sub_part.active:
+                    continue
+
                 sub_part_pricing = sub_part.pricing
 
                 sub_part_min = self.convert(sub_part_pricing.overall_min)
@@ -3088,9 +3090,12 @@ class PartPricing(common.models.MetaMixin):
         min_sell_history = None
         max_sell_history = None
 
+        # Calculate sale price history too
+        parts = self.part.get_descendants(include_self=True)
+
         # Find all line items for shipped sales orders which reference this part
         line_items = OrderModels.SalesOrderLineItem.objects.filter(
-            order__status=SalesOrderStatus.SHIPPED, part=self.part
+            order__status__in=SalesOrderStatusGroups.COMPLETE, part__in=parts
         )
 
         # Exclude line items which do not have associated pricing data
