@@ -22,12 +22,10 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
@@ -42,6 +40,7 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
+import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
@@ -701,23 +700,10 @@ type LineItemsForm = {
 };
 
 export function useReceiveLineItems(props: LineItemsForm) {
-  const { data } = useQuery({
-    queryKey: ['stock', 'status'],
-    queryFn: async () => {
-      return api.get(apiUrl(ApiEndpoints.stock_status)).then((response) => {
-        if (response.status === 200) {
-          const entries = Object.values(response.data.values);
-          const mapped = entries.map((item: any) => {
-            return {
-              value: item.key,
-              display_name: item.label
-            };
-          });
-          return mapped;
-        }
-      });
-    }
-  });
+  const stockStatusCodes = useMemo(
+    () => getStatusCodeOptions(ModelType.stockitem),
+    []
+  );
 
   const records = Object.fromEntries(
     props.items.map((item) => [item.pk, item])
@@ -754,7 +740,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
             <LineItemFormRow
               props={row}
               record={record}
-              statuses={data}
+              statuses={stockStatusCodes}
               key={record.pk}
             />
           );
@@ -767,7 +753,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }
       }
     };
-  }, [filteredItems, props]);
+  }, [filteredItems, props, stockStatusCodes]);
 
   return useCreateApiFormModal({
     ...props.formProps,
