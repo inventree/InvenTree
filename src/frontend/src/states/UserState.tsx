@@ -53,7 +53,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   userId: () => {
     const user: UserProps = get().user as UserProps;
-    return user.pk;
+    return user?.pk;
   },
   username: () => {
     const user: UserProps = get().user as UserProps;
