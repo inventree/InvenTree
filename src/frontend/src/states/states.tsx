@@ -128,6 +128,7 @@ export interface Setting {
   units: string;
   choices: SettingChoice[];
   model_name: string | null;
+  model_filters: Record<string, any> | null;
   api_url: string | null;
   typ: SettingTyp;
   plugin?: string;

@@ -30,6 +30,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
+from common.settings import get_global_setting
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase, in_env_context
@@ -1244,6 +1245,18 @@ class TestSettings(InvenTreeTestCase):
         # test typecasting to dict - invalid JSON string should be mapped to empty dict
         with in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {})
+
+    def test_instance_id(self):
+        """Test get_instance_id."""
+        val = get_global_setting('INVENTREE_INSTANCE_ID')
+        self.assertGreater(len(val), 10)
+
+        # version helper
+        self.assertIsNone(version.inventree_identifier())
+
+        # with env set
+        with in_env_context({'INVENTREE_ANNOUNCE_ID': 'True'}):
+            self.assertEqual(val, version.inventree_identifier())
 
 
 class TestInstanceName(InvenTreeTestCase):

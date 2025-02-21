@@ -3369,7 +3369,7 @@ class PartStocktakeReport(models.Model):
         return os.path.basename(self.report.name)
 
     def get_absolute_url(self):
-        """Return the URL for the associaed report file for download."""
+        """Return the URL for the associated report file for download."""
         if self.report:
             return self.report.url
         return None
@@ -4089,11 +4089,7 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class BomItem(
-    InvenTree.models.DataImportMixin,
-    InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModel,
-):
+class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -4112,23 +4108,6 @@ class BomItem(
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
-
-    # Fields available for bulk import
-    IMPORT_FIELDS = {
-        'quantity': {'required': True},
-        'reference': {},
-        'overage': {},
-        'allow_variants': {},
-        'inherited': {},
-        'optional': {},
-        'consumable': {},
-        'note': {},
-        'part': {'label': _('Part'), 'help_text': _('Part ID or part name')},
-        'part_id': {'label': _('Part ID'), 'help_text': _('Unique part ID value')},
-        'part_name': {'label': _('Part Name'), 'help_text': _('Part name')},
-        'part_ipn': {'label': _('Part IPN'), 'help_text': _('Part IPN value')},
-        'level': {'label': _('Level'), 'help_text': _('BOM level')},
-    }
 
     class Meta:
         """Metaclass providing extra model definition."""

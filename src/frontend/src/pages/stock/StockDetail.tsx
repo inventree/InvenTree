@@ -916,6 +916,12 @@ export default function StockDetail() {
           breadcrumbs={
             user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
           }
+          lastCrumb={[
+            {
+              name: stockitem.name,
+              url: `/stock/item/${stockitem.pk}/`
+            }
+          ]}
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}

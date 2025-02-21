@@ -305,7 +305,7 @@ function ImageActionButtons({
 
                 modals.open({
                   title: <StylishText size='xl'>{t`Select Image`}</StylishText>,
-                  size: 'xxl',
+                  size: '80%',
                   children: <PartThumbTable pk={pk} setImage={setImage} />
                 });
               }}
