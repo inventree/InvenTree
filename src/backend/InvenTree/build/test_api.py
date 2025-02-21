@@ -450,7 +450,7 @@ class BuildTest(BuildAPITest):
         from plugin import PluginMixinEnum, registry
 
         for plugin in registry.with_mixin(PluginMixinEnum.EXPORTER, active=None):
-            print('- plugin:', plugin, '->', plugin.active)
+            print('- plugin:', plugin, '->', plugin.is_active())
 
         required_cols = [
             'Reference',
