@@ -304,10 +304,14 @@ function LineItemFormRow({
         order: record?.order
       });
       // Generate new serial numbers
-      serialNumberGenerator.update({
-        part: record?.supplier_part_detail?.part,
-        quantity: props.item.quantity
-      });
+      if (trackable) {
+        serialNumberGenerator.update({
+          part: record?.supplier_part_detail?.part,
+          quantity: props.item.quantity
+        });
+      } else {
+        props.changeFn(props.idx, 'serial_numbers', undefined);
+      }
     }
   });
 
@@ -604,7 +608,9 @@ function LineItemFormRow({
       )}
       <TableFieldExtraRow
         visible={batchOpen}
-        onValueChange={(value) => props.changeFn(props.idx, 'batch', value)}
+        onValueChange={(value) => {
+          props.changeFn(props.idx, 'batch_code', value);
+        }}
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
@@ -715,45 +721,47 @@ export function useReceiveLineItems(props: LineItemsForm) {
     (elem) => elem.quantity !== elem.received
   );
 
-  const fields: ApiFormFieldSet = {
-    id: {
-      value: props.orderPk,
-      hidden: true
-    },
-    items: {
-      field_type: 'table',
-      value: filteredItems.map((elem, idx) => {
-        return {
-          line_item: elem.pk,
-          location: elem.destination ?? elem.destination_detail?.pk ?? null,
-          quantity: elem.quantity - elem.received,
-          expiry_date: null,
-          batch_code: '',
-          serial_numbers: '',
-          status: 10,
-          barcode: null
-        };
-      }),
-      modelRenderer: (row: TableFieldRowProps) => {
-        const record = records[row.item.line_item];
-
-        return (
-          <LineItemFormRow
-            props={row}
-            record={record}
-            statuses={data}
-            key={record.pk}
-          />
-        );
+  const fields: ApiFormFieldSet = useMemo(() => {
+    return {
+      id: {
+        value: props.orderPk,
+        hidden: true
       },
-      headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
-    },
-    location: {
-      filters: {
-        structural: false
+      items: {
+        field_type: 'table',
+        value: filteredItems.map((elem, idx) => {
+          return {
+            line_item: elem.pk,
+            location: elem.destination ?? elem.destination_detail?.pk ?? null,
+            quantity: elem.quantity - elem.received,
+            expiry_date: null,
+            batch_code: '',
+            serial_numbers: '',
+            status: 10,
+            barcode: null
+          };
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = records[row.item.line_item];
+
+          return (
+            <LineItemFormRow
+              props={row}
+              record={record}
+              statuses={data}
+              key={record.pk}
+            />
+          );
+        },
+        headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
+      },
+      location: {
+        filters: {
+          structural: false
+        }
       }
-    }
-  };
+    };
+  }, [filteredItems, props]);
 
   return useCreateApiFormModal({
     ...props.formProps,
