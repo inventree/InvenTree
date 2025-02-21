@@ -10,6 +10,8 @@ import {
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+
+import { useShallow } from 'zustand/react/shallow';
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import {
@@ -30,15 +32,12 @@ import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
 export default function Login() {
-  const [hostKey, setHost, hostList] = useLocalState((state) => [
-    state.hostKey,
-    state.setHost,
-    state.hostList
-  ]);
-  const [server, fetchServerApiState] = useServerApiState((state) => [
-    state.server,
-    state.fetchServerApiState
-  ]);
+  const [hostKey, setHost, hostList] = useLocalState(
+    useShallow((state) => [state.hostKey, state.setHost, state.hostList])
+  );
+  const [server, fetchServerApiState] = useServerApiState(
+    useShallow((state) => [state.server, state.fetchServerApiState])
+  );
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
