@@ -95,7 +95,7 @@ export function getStatusCodeOptions(type: ModelType | string): any[] {
     return [];
   }
 
-  return Object.values(statusCodes.values).map((entry) => {
+  return Object.values(statusCodes?.values ?? []).map((entry) => {
     return {
       value: entry.key,
       display_name: entry.label
