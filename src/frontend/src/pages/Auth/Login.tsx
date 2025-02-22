@@ -1,16 +1,10 @@
 import { t } from '@lingui/macro';
-import {
-  BackgroundImage,
-  Center,
-  Container,
-  Divider,
-  Paper,
-  Text
-} from '@mantine/core';
+import { Center, Container, Divider, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { setApiDefaults } from '../../App';
+import SplashScreen from '../../components/SplashScreen';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import {
   AuthenticationForm,
@@ -25,7 +19,6 @@ import {
   doBasicLogin,
   followRedirect
 } from '../../functions/auth';
-import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
@@ -73,16 +66,6 @@ export default function Login() {
     return null;
   }, [server.customize]);
 
-  const SplashComponent = useMemo(() => {
-    const temp = server.customize?.splash;
-    if (temp) {
-      return ({ children }: { children: React.ReactNode }) => (
-        <BackgroundImage src={generateUrl(temp)}>{children}</BackgroundImage>
-      );
-    }
-    return ({ children }: { children: React.ReactNode }) => <>{children}</>;
-  }, [server.customize]);
-
   // Data manipulation functions
   function ChangeHost(newHost: string | null): void {
     if (newHost === null) return;
@@ -120,7 +103,7 @@ export default function Login() {
 
   // Main rendering block
   return (
-    <SplashComponent>
+    <SplashScreen>
       <Center mih='100vh'>
         <div
           style={{
@@ -159,6 +142,6 @@ export default function Login() {
           </Container>
         </div>
       </Center>
-    </SplashComponent>
+    </SplashScreen>
   );
 }

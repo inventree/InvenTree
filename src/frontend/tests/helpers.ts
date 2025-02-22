@@ -37,6 +37,7 @@ export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
   await closeFilterDrawer(page);
+  await page.waitForLoadState('networkidle');
 };
 
 export const setTableChoiceFilter = async (page, filter, value) => {
@@ -86,6 +87,17 @@ export const navigate = async (page, url: string) => {
   }
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle');
+};
+
+/**
+ * CLick on the 'tab' element with the provided name
+ */
+export const loadTab = async (page, tabName) => {
+  await page
+    .getByLabel(/panel-tabs-/)
+    .getByRole('tab', { name: tabName })
+    .click();
   await page.waitForLoadState('networkidle');
 };
 
