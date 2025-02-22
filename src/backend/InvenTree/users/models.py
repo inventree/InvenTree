@@ -239,6 +239,7 @@ class RuleSet(models.Model):
                 'otp_totp_totpdevice',
                 'otp_static_statictoken',
                 'otp_static_staticdevice',
+                'mfa_authenticator',
                 'plugin_pluginconfig',
                 'plugin_pluginsetting',
                 'plugin_notificationusersetting',
@@ -354,7 +355,8 @@ class RuleSet(models.Model):
             'error_report_error',
             'exchange_rate',
             'exchange_exchangebackend',
-            'user_sessions_session',
+            'usersessions_usersession',
+            'sessions_session',
             # Django-q
             'django_q_ormq',
             'django_q_failure',

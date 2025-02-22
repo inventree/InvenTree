@@ -1,15 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 314
+INVENTREE_API_VERSION = 315
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v314 - 2025-02-25 : https://github.com/inventree/InvenTree/pull/xxxx
+v315 - 2025-02-25 : https://github.com/inventree/InvenTree/pull/9116
     - Adds user profile API endpoints
+
+v314 - 2025-02-17 : https://github.com/inventree/InvenTree/pull/6293
+    - Removes a considerable amount of old auth endpoints
+    - Introduces allauth-provided auth endpoints
 
 v313 - 2025-02-17 : https://github.com/inventree/InvenTree/pull/9087
     - Adds instance id optionally to the info view endpoint

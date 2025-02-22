@@ -7,13 +7,6 @@
 {% endblock page_title %}
 
 {% block content %}
-
-<div class='container-fluid'>
-    <h3>{% trans "Page Not Found" %}</h3>
-
-    <div class='alert alert-danger alert-block'>
-        {% trans "The requested page does not exist" %}
-    </div>
-</div>
-
+<h3>{% trans "Page Not Found" %}</h3>
+{% trans "The requested page does not exist" %}
 {% endblock content %}
