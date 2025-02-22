@@ -1,6 +1,6 @@
 import test from 'playwright/test';
 
-import { navigate } from './helpers.js';
+import { loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
@@ -29,19 +29,18 @@ test('Plugins - Panels', async ({ page, request }) => {
   await navigate(page, 'part/69/');
 
   // Ensure basic part tab is available
-  await page.getByRole('tab', { name: 'Part Details' }).waitFor();
+  await loadTab(page, 'Part Details');
 
   // Allow time for the plugin panels to load (they are loaded asynchronously)
   await page.waitForTimeout(1000);
 
   // Check out each of the plugin panels
-
-  await page.getByRole('tab', { name: 'Broken Panel' }).click();
+  await loadTab(page, 'Broken Panel');
   await page.waitForTimeout(500);
 
   await page.getByText('Error occurred while loading plugin content').waitFor();
 
-  await page.getByRole('tab', { name: 'Dynamic Panel' }).click();
+  await loadTab(page, 'Dynamic Panel');
   await page.waitForTimeout(500);
 
   await page.getByText('Instance ID: 69');
@@ -49,7 +48,7 @@ test('Plugins - Panels', async ({ page, request }) => {
     .getByText('This panel has been dynamically rendered by the plugin system')
     .waitFor();
 
-  await page.getByRole('tab', { name: 'Part Panel', exact: true }).click();
+  await loadTab(page, 'Part Panel');
   await page.waitForTimeout(500);
   await page.getByText('This content has been rendered by a custom plugin');
 

@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { navigate } from './helpers.js';
+import { loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -14,7 +14,7 @@ test('Label Printing', async ({ page }) => {
   await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/platform/stock/location/**');
 
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await loadTab(page, 'Stock Items');
 
   // Select some labels
   await page.getByLabel('Select record 1', { exact: true }).click();
@@ -59,8 +59,8 @@ test('Report Printing', async ({ page }) => {
   await page.waitForURL('**/platform/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
-  await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await loadTab(page, 'Purchasing');
+  await loadTab(page, 'Purchase Orders');
 
   await page.getByRole('cell', { name: 'PO0009' }).click();
 
@@ -98,7 +98,7 @@ test('Report Editing', async ({ page, request }) => {
   // Navigate to the admin center
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
-  await page.getByRole('tab', { name: 'Label Templates' }).click();
+  await loadTab(page, 'Label Templates');
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();
@@ -116,7 +116,7 @@ test('Report Editing', async ({ page, request }) => {
   await page.getByText('The preview has been updated').waitFor();
 
   // Test plugin provided editors
-  await page.getByRole('tab', { name: 'Sample Template Editor' }).click();
+  await loadTab(page, 'Sample Template Editor');
   const textarea = page.locator('#sample-template-editor-textarea');
   const textareaValue = await textarea.inputValue();
   expect(textareaValue).toContain(
@@ -126,14 +126,14 @@ test('Report Editing', async ({ page, request }) => {
 
   // Switch back and forth to see if the changed contents get correctly passed between the hooks
   await page.getByRole('tab', { name: 'Code', exact: true }).click();
-  await page.getByRole('tab', { name: 'Sample Template Editor' }).click();
+  await loadTab(page, 'Sample Template Editor');
   const newTextareaValue = await page
     .locator('#sample-template-editor-textarea')
     .inputValue();
   expect(newTextareaValue).toMatch(/\nHello world$/);
 
   // Test plugin provided previews
-  await page.getByRole('tab', { name: 'Sample Template Preview' }).click();
+  await loadTab(page, 'Sample Template Preview');
   await page.getByRole('heading', { name: 'Hello world' }).waitFor();
   const consoleLogPromise = page.waitForEvent('console');
   await page
