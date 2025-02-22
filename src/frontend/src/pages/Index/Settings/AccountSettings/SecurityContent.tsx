@@ -210,10 +210,12 @@ function EmailSection() {
           label={t`E-Mail`}
           placeholder={t`E-Mail address`}
           leftSection={<IconAt />}
+          aria-label='email-address-input'
           value={newEmailValue}
           onChange={(event) => setNewEmailValue(event.currentTarget.value)}
         />
         <Button
+          aria-label='email-address-submit'
           onClick={() =>
             runServerAction('post', { email: newEmailValue }).catch((err) => {
               if (err.status == 400) {

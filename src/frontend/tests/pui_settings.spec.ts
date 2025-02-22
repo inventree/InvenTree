@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { apiUrl } from './defaults.js';
-import { getRowFromCell, navigate } from './helpers.js';
+import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
@@ -204,4 +204,26 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
   await page
     .getByRole('button', { name: 'Return to the index page' })
     .waitFor();
+});
+
+// Test for user auth configuration
+test('Settings - Auth - Email', async ({ page }) => {
+  await doQuickLogin(page, 'allaccess', 'nolimits');
+  await navigate(page, 'settings/user/');
+
+  await loadTab(page, 'Security');
+
+  await page.getByText('Currently no email addresses are registered').waitFor();
+  await page.getByLabel('email-address-input').fill('test-email@domain.org');
+  await page.getByLabel('email-address-submit').click();
+
+  await page.getByText('Unverified', { exact: true }).waitFor();
+  await page.getByLabel('test-email@domain.').click();
+  await page.getByRole('button', { name: 'Make Primary' }).click();
+  await page.getByText('Primary', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Remove' }).click();
+
+  await page.getByText('Currently no email addresses are registered').waitFor();
+
+  await page.waitForTimeout(2500);
 });
