@@ -549,6 +549,7 @@ function StockOperationsRow({
         <Table.Td>
           {record.location ? record.location_detail?.pathstring : '-'}
         </Table.Td>
+        <Table.Td>{record.batch ? record.batch : '-'}</Table.Td>
         <Table.Td>
           <Group grow justify='space-between' wrap='nowrap'>
             <Text>{stockString}</Text>
@@ -734,7 +735,14 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Remove`, t`Actions`]
+      headers: [
+        t`Part`,
+        t`Location`,
+        t`Batch`,
+        t`In Stock`,
+        t`Remove`,
+        t`Actions`
+      ]
     },
     notes: {}
   };
