@@ -444,14 +444,6 @@ class BuildTest(BuildAPITest):
 
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API."""
-        print('test_download_build_orders:')
-        print('Available Export Plugins:')
-
-        from plugin import PluginMixinEnum, registry
-
-        for plugin in registry.with_mixin(PluginMixinEnum.EXPORTER, active=None):
-            print('- plugin:', plugin, '->', plugin.is_active())
-
         required_cols = [
             'Reference',
             'Build Status',
