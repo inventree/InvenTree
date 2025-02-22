@@ -22,10 +22,7 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-
-import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
@@ -40,6 +37,7 @@ import {
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
+import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
@@ -291,10 +289,14 @@ function LineItemFormRow({
         order: record?.order
       });
       // Generate new serial numbers
-      serialNumberGenerator.update({
-        part: record?.supplier_part_detail?.part,
-        quantity: props.item.quantity
-      });
+      if (trackable) {
+        serialNumberGenerator.update({
+          part: record?.supplier_part_detail?.part,
+          quantity: props.item.quantity
+        });
+      } else {
+        props.changeFn(props.idx, 'serial_numbers', undefined);
+      }
     }
   });
 
@@ -564,7 +566,10 @@ function LineItemFormRow({
       )}
       <TableFieldExtraRow
         visible={batchOpen}
-        onValueChange={(value) => props.changeFn(props.idx, 'batch', value)}
+        onValueChange={(value) => {
+          props.changeFn(props.idx, 'batch_code', value);
+        }}
+        fieldName='batch_code'
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
@@ -578,6 +583,7 @@ function LineItemFormRow({
         onValueChange={(value) =>
           props.changeFn(props.idx, 'serial_numbers', value)
         }
+        fieldName='serial_numbers'
         fieldDefinition={{
           field_type: 'string',
           label: t`Serial Numbers`,
@@ -589,6 +595,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={packagingOpen}
         onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
+        fieldName='packaging'
         fieldDefinition={{
           field_type: 'string',
           label: t`Packaging`
@@ -599,6 +606,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={statusOpen}
         defaultValue={10}
+        fieldName='status'
         onValueChange={(value) => props.changeFn(props.idx, 'status', value)}
         fieldDefinition={{
           field_type: 'choice',
@@ -610,6 +618,7 @@ function LineItemFormRow({
       />
       <TableFieldExtraRow
         visible={noteOpen}
+        fieldName='note'
         onValueChange={(value) => props.changeFn(props.idx, 'note', value)}
         fieldDefinition={{
           field_type: 'string',
@@ -634,23 +643,10 @@ type LineItemsForm = {
 };
 
 export function useReceiveLineItems(props: LineItemsForm) {
-  const { data } = useQuery({
-    queryKey: ['stock', 'status'],
-    queryFn: async () => {
-      return api.get(apiUrl(ApiEndpoints.stock_status)).then((response) => {
-        if (response.status === 200) {
-          const entries = Object.values(response.data.values);
-          const mapped = entries.map((item: any) => {
-            return {
-              value: item.key,
-              display_name: item.label
-            };
-          });
-          return mapped;
-        }
-      });
-    }
-  });
+  const stockStatusCodes = useMemo(
+    () => getStatusCodeOptions(ModelType.stockitem),
+    []
+  );
 
   const records = Object.fromEntries(
     props.items.map((item) => [item.pk, item])
@@ -660,44 +656,46 @@ export function useReceiveLineItems(props: LineItemsForm) {
     (elem) => elem.quantity !== elem.received
   );
 
-  const fields: ApiFormFieldSet = {
-    id: {
-      value: props.orderPk,
-      hidden: true
-    },
-    items: {
-      field_type: 'table',
-      value: filteredItems.map((elem, idx) => {
-        return {
-          line_item: elem.pk,
-          location: elem.destination ?? elem.destination_detail?.pk ?? null,
-          quantity: elem.quantity - elem.received,
-          batch_code: '',
-          serial_numbers: '',
-          status: 10,
-          barcode: null
-        };
-      }),
-      modelRenderer: (row: TableFieldRowProps) => {
-        const record = records[row.item.line_item];
-
-        return (
-          <LineItemFormRow
-            props={row}
-            record={record}
-            statuses={data}
-            key={record.pk}
-          />
-        );
+  const fields: ApiFormFieldSet = useMemo(() => {
+    return {
+      id: {
+        value: props.orderPk,
+        hidden: true
       },
-      headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
-    },
-    location: {
-      filters: {
-        structural: false
+      items: {
+        field_type: 'table',
+        value: filteredItems.map((elem, idx) => {
+          return {
+            line_item: elem.pk,
+            location: elem.destination ?? elem.destination_detail?.pk ?? null,
+            quantity: elem.quantity - elem.received,
+            batch_code: '',
+            serial_numbers: '',
+            status: 10,
+            barcode: null
+          };
+        }),
+        modelRenderer: (row: TableFieldRowProps) => {
+          const record = records[row.item.line_item];
+
+          return (
+            <LineItemFormRow
+              props={row}
+              record={record}
+              statuses={stockStatusCodes}
+              key={record.pk}
+            />
+          );
+        },
+        headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
+      },
+      location: {
+        filters: {
+          structural: false
+        }
       }
-    }
-  };
+    };
+  }, [filteredItems, props, stockStatusCodes]);
 
   return useCreateApiFormModal({
     ...props.formProps,
@@ -707,6 +705,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
     initialData: {
       location: props.destinationPk
     },
-    size: '80%'
+    size: '80%',
+    successMessage: t`Items received`
   });
 }

@@ -83,6 +83,26 @@ export function getStatusCodes(type: ModelType | string) {
   return statusCodes;
 }
 
+/**
+ * Return a list of status codes select options for a given model type
+ * returns an array of objects with keys "value" and "display_name"
+ *
+ */
+export function getStatusCodeOptions(type: ModelType | string): any[] {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return [];
+  }
+
+  return Object.values(statusCodes?.values ?? []).map((entry) => {
+    return {
+      value: entry.key,
+      display_name: entry.label
+    };
+  });
+}
+
 /*
  * Return the name of a status code, based on the key
  */
