@@ -262,7 +262,12 @@ export function useAllocateToSalesOrderForm({
       items: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        headers: [
+          { title: t`Part`, style: { minWidth: '200px' } },
+          { title: t`Allocated`, style: { minWidth: '200px' } },
+          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`Quantity`, style: { width: '200px' } }
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record =
             lineItems.find((item) => item.pk == row.item.line_item) ?? {};

@@ -7,13 +7,6 @@
 {% endblock page_title %}
 
 {% block content %}
-
-<div class='container-fluid'>
-    <h3>{% trans "Permission Denied" %}</h3>
-
-    <div class='alert alert-danger alert-block'>
-        {% trans "You do not have permission to view this page." %}
-    </div>
-</div>
-
+<h3>{% trans "Permission Denied" %}</h3>
+{% trans "You do not have permission to view this page." %}
 {% endblock content %}
