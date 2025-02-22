@@ -100,7 +100,12 @@ export function selectionListFields(): ApiFormFieldSet {
       description: t`List of entries to choose from`,
       field_type: 'table',
       value: [],
-      headers: [t`Value`, t`Label`, t`Description`, t`Active`],
+      headers: [
+        { title: t`Value` },
+        { title: t`Label` },
+        { title: t`Description` },
+        { title: t`Active` }
+      ],
       modelRenderer: (row: TableFieldRowProps) => (
         <BuildAllocateLineRow props={row} />
       ),
