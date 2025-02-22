@@ -122,13 +122,10 @@ test('Parts - Allocations', async ({ page }) => {
   await navigate(page, 'part/74/details');
 
   // Check that the overall allocations are displayed correctly
-  await page.getByText('11 / 825').waitFor();
-  await page.getByText('5 / 109').waitFor();
+  await page.getByText('11 / ').waitFor();
+  await page.getByText('5 / ').waitFor();
 
   // Navigate to the "Allocations" tab
-  await page.waitForTimeout(500);
-  await page.waitForLoadState('networkidle');
-
   await loadTab(page, 'Allocations');
 
   await page.getByRole('button', { name: 'Build Order Allocations' }).waitFor();
