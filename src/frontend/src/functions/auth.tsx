@@ -342,7 +342,7 @@ export async function ProviderLogin(
 export function authApi(
   url: string,
   config: AxiosRequestConfig | undefined = undefined,
-  method: 'get' | 'post' | 'put' | 'delete' = 'get',
+  method: 'get' | 'patch' | 'post' | 'put' | 'delete' = 'get',
   data?: any
 ) {
   const requestConfig = config || {};

@@ -2,6 +2,7 @@ import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
   getRowFromCell,
+  loadTab,
   navigate,
   setTableChoiceFilter
 } from '../helpers.ts';
@@ -12,7 +13,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
 
   // Navigate to the correct build order
   await page.getByRole('tab', { name: 'Manufacturing', exact: true }).click();
-  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+  await loadTab(page, 'Build Orders');
 
   await clearTableFilters(page);
 
@@ -57,11 +58,11 @@ test('Build Order - Basic Tests', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Click on some tabs
-  await page.getByRole('tab', { name: 'Attachments' }).click();
-  await page.getByRole('tab', { name: 'Notes' }).click();
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
-  await page.getByRole('tab', { name: 'Line Items' }).click();
-  await page.getByRole('tab', { name: 'Allocated Stock' }).click();
+  await loadTab(page, 'Attachments');
+  await loadTab(page, 'Notes');
+  await loadTab(page, 'Incomplete Outputs');
+  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Allocated Stock');
 
   // Check for expected text in the table
   await page.getByText('R_10R_0402_1%').waitFor();
@@ -70,7 +71,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
     .waitFor();
 
   // Check "test results"
-  await page.getByRole('tab', { name: 'Test Results' }).click();
+  await loadTab(page, 'Test Results');
   await page.getByText('Quantity: 25').waitFor();
   await page.getByText('Continuity Checks').waitFor();
   await page
@@ -80,7 +81,7 @@ test('Build Order - Basic Tests', async ({ page }) => {
   await page.getByText('Add Test Result').waitFor();
 
   // Click through to the "parent" build
-  await page.getByRole('tab', { name: 'Build Details' }).click();
+  await loadTab(page, 'Build Details');
   await page.getByRole('link', { name: 'BO0010' }).click();
   await page
     .getByLabel('Build Details')
@@ -119,7 +120,7 @@ test('Build Order - Build Outputs', async ({ page }) => {
   await doQuickLogin(page);
 
   await navigate(page, 'manufacturing/index/');
-  await page.getByRole('tab', { name: 'Build Orders', exact: true }).click();
+  await loadTab(page, 'Build Orders');
 
   await clearTableFilters(page);
 
@@ -128,7 +129,7 @@ test('Build Order - Build Outputs', async ({ page }) => {
   await page.getByText('Pending').first().waitFor();
 
   await page.getByRole('cell', { name: 'BO0011' }).click();
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
+  await loadTab(page, 'Incomplete Outputs');
 
   // Create a new build output
   await page.getByLabel('action-button-add-build-output').click();
@@ -213,7 +214,7 @@ test('Build Order - Allocation', async ({ page }) => {
   await page.getByRole('cell', { name: 'Reel Storage', exact: true }).waitFor();
 
   // Navigate to the "Incomplete Outputs" tab
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
+  await loadTab(page, 'Incomplete Outputs');
 
   // Find output #7
   const output7 = await page
