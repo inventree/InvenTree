@@ -381,14 +381,20 @@ export default function BuildDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateBuildOrderInitialData = useMemo(() => {
+    const data = { ...build };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [build]);
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
     fields: buildOrderFields,
-    initialData: {
-      ...build,
-      reference: undefined
-    },
+    initialData: duplicateBuildOrderInitialData,
     follow: true,
     modelType: ModelType.build
   });
