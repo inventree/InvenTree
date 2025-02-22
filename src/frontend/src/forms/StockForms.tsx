@@ -206,9 +206,6 @@ export function useStockFields({
       delete_on_deplete: {}
     };
 
-    // TODO: Handle custom field management based on provided options
-    // TODO: refer to stock.py in original codebase
-
     // Remove the expiry date field if it is not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields.expiry_date;
