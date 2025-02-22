@@ -48,6 +48,9 @@ import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 // Define type for handling individual search queries
 type SearchQuery = {
   model: ModelType;
+  searchKey?: string;
+  title?: string;
+  overviewUrl?: string;
   enabled: boolean;
   parameters: any;
   results?: any;
@@ -75,15 +78,24 @@ function QueryResultGroup({
     return null;
   }
 
+  const overviewUrl: string | undefined = useMemo(() => {
+    // Query has a custom overview URL
+    if (query.overviewUrl) {
+      return query.overviewUrl;
+    }
+
+    // Default to the model overview URL
+    const modelInfo = getModelInfo(query.model);
+    return modelInfo.url_overview;
+  }, [query.model]);
+
   // Callback function to view all results for a given query
   const viewResults = useCallback(
     (event: any) => {
       cancelEvent(event);
 
-      const modelInfo = getModelInfo(query.model);
-
-      if (modelInfo.url_overview) {
-        const url = `${modelInfo.url_overview}?search=${searchText}`;
+      if (overviewUrl) {
+        const url = `${overviewUrl}?search=${searchText}`;
 
         // Close drawer if opening in the same tab
         if (!(event?.ctrlKey || event?.shiftKey)) {
@@ -100,7 +112,7 @@ function QueryResultGroup({
         });
       }
     },
-    [query.model, searchText]
+    [overviewUrl, searchText]
   );
 
   const model = getModelInfo(query.model);
@@ -116,12 +128,13 @@ function QueryResultGroup({
                 variant='transparent'
                 radius='xs'
                 aria-label={`view-all-results-${query.model}`}
+                disabled={!overviewUrl}
                 onClick={viewResults}
               >
                 <IconTableExport />
               </ActionIcon>
             </Tooltip>
-            <Text size='lg'>{model.label_multiple}</Text>
+            <Text size='lg'>{query.title ?? model.label_multiple}</Text>
             <Text size='sm' style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
@@ -259,10 +272,32 @@ export function SearchDrawer({
       },
       {
         model: ModelType.company,
+        overviewUrl: '/purchasing/index/suppliers',
+        searchKey: 'supplier',
+        title: t`Suppliers`,
         parameters: {},
         enabled:
-          (user.hasViewRole(UserRoles.sales_order) ||
-            user.hasViewRole(UserRoles.purchase_order)) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.company,
+        overviewUrl: '/purchasing/index/manufacturers',
+        searchKey: 'manufacturer',
+        title: t`Manufacturers`,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.company,
+        overviewUrl: '/sales/index/customers',
+        searchKey: 'customer',
+        title: t`Customers`,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -318,7 +353,9 @@ export function SearchDrawer({
   }, [user, userSettings]);
 
   // Construct a list of search queries based on user permissions
-  const searchQueries: SearchQuery[] = searchQueryList.filter((q) => q.enabled);
+  const searchQueries: SearchQuery[] = useMemo(() => {
+    return searchQueryList.filter((q) => q.enabled);
+  }, [searchQueryList]);
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
@@ -342,7 +379,8 @@ export function SearchDrawer({
 
     // Add in custom query parameters
     searchQueries.forEach((query) => {
-      params[query.model] = query.parameters;
+      const key = query.searchKey || query.model;
+      params[key] = query.parameters;
     });
 
     return api
@@ -367,11 +405,12 @@ export function SearchDrawer({
   useEffect(() => {
     if (searchQuery.data) {
       let queries = searchQueries.filter(
-        (query) => query.model in searchQuery.data
+        (query) => (query.searchKey ?? query.model) in searchQuery.data
       );
 
       for (const key in searchQuery.data) {
-        const query = queries.find((q) => q.model == key);
+        const query = queries.find((q) => q.searchKey == key || q.model == key);
+        console.log('result key:', key, '->', query);
         if (query) {
           query.results = searchQuery.data[key];
         }
