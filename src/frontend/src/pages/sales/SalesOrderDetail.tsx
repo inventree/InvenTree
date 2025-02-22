@@ -272,14 +272,20 @@ export default function SalesOrderDetail() {
     duplicateOrderId: order.pk
   });
 
+  const duplicateSalesOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
     fields: duplicateOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicateSalesOrderInitialData,
     follow: true,
     modelType: ModelType.salesorder
   });
