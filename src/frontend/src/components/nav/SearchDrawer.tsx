@@ -60,12 +60,14 @@ function QueryResultGroup({
   searchText,
   query,
   navigate,
+  onClose,
   onRemove,
   onResultClick
 }: Readonly<{
   searchText: string;
   query: SearchQuery;
   navigate: NavigateFunction;
+  onClose: () => void;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
 }>) {
@@ -82,6 +84,12 @@ function QueryResultGroup({
 
       if (modelInfo.url_overview) {
         const url = `${modelInfo.url_overview}?search=${searchText}`;
+
+        // Close drawer if opening in the same tab
+        if (!(event?.ctrlKey || event?.shiftKey)) {
+          onClose();
+        }
+
         navigateToLink(url, navigate, event);
       } else {
         showNotification({
@@ -491,6 +499,7 @@ export function SearchDrawer({
                   searchText={searchText}
                   query={query}
                   navigate={navigate}
+                  onClose={closeDrawer}
                   onRemove={(query) => removeResults(query)}
                   onResultClick={(query, pk, event) =>
                     onResultClick(query, pk, event)
