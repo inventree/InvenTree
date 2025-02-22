@@ -14,7 +14,9 @@ export default function MFASetup() {
   const [totpQr, setTotpQr] = useState<{ totp_url: string; secret: string }>();
   const [value, setValue] = useState('');
 
-  useEffect(() => getTotpSecret(setTotpQr), []);
+  useEffect(() => {
+    getTotpSecret(setTotpQr);
+  }, []);
 
   return (
     <Wrapper titleText={t`MFA Setup Required`} logOff>

@@ -1,14 +1,16 @@
 import { t } from '@lingui/macro';
 import { notifications, showNotification } from '@mantine/notifications';
 import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
-import { fetchGlobalStates } from '../states/states';
+import { type Provider, fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
+import { generateUrl } from './urls';
 
 export function followRedirect(navigate: NavigateFunction, redirect: any) {
   let url = redirect?.redirectUrl ?? '/home';
