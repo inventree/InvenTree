@@ -37,6 +37,7 @@ export const clearTableFilters = async (page) => {
   await openFilterDrawer(page);
   await clickButtonIfVisible(page, 'Clear Filters');
   await closeFilterDrawer(page);
+  await page.waitForLoadState('networkidle');
 };
 
 export const setTableChoiceFilter = async (page, filter, value) => {
