@@ -9,7 +9,7 @@ from plugin.base.integration.APICallMixin import APICallMixin
 from plugin.base.integration.AppMixin import AppMixin
 from plugin.base.integration.CurrencyExchangeMixin import CurrencyExchangeMixin
 from plugin.base.integration.DataExport import DataExportMixin
-from plugin.base.integration.mixins import NavigationMixin, SettingsContentMixin
+from plugin.base.integration.NavigationMixin import NavigationMixin
 from plugin.base.integration.ReportMixin import ReportMixin
 from plugin.base.integration.ScheduleMixin import ScheduleMixin
 from plugin.base.integration.SettingsMixin import SettingsMixin
@@ -34,7 +34,6 @@ __all__ = [
     'NavigationMixin',
     'ReportMixin',
     'ScheduleMixin',
-    'SettingsContentMixin',
     'SettingsMixin',
     'SingleNotificationMethod',
     'SupplierBarcodeMixin',

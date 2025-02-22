@@ -23,7 +23,7 @@ class BaseMixinDefinition:
     """Mixin to test the meta functions of all mixins."""
 
     def test_mixin_name(self):
-        """Test that the mixin registers itseld correctly."""
+        """Test that the mixin registers itself correctly."""
         # mixin name
         self.assertIn(
             self.MIXIN_NAME,

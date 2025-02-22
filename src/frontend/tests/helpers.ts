@@ -90,6 +90,17 @@ export const navigate = async (page, url: string) => {
 };
 
 /**
+ * CLick on the 'tab' element with the provided name
+ */
+export const loadTab = async (page, tabName) => {
+  await page
+    .getByLabel(/panel-tabs-/)
+    .getByRole('tab', { name: tabName })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+/**
  * Perform a 'global search' on the provided page, for the provided query text
  */
 export const globalSearch = async (page, query) => {
@@ -97,4 +108,5 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
 };
