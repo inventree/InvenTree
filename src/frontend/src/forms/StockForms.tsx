@@ -698,7 +698,14 @@ function stockTransferFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`Stock`, t`Move`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`Stock` },
+        { title: t`Move`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     location: {
       filters: {
@@ -736,12 +743,12 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        t`Part`,
-        t`Location`,
-        t`Batch`,
-        t`In Stock`,
-        t`Remove`,
-        t`Actions`
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Remove`, style: { width: '200px' } },
+        { title: t`Actions` }
       ]
     },
     notes: {}
@@ -774,7 +781,14 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Add`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Add`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -803,7 +817,14 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Count`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Count`, style: { width: '200px' } },
+        { title: t`Actions` }
+      ]
     },
     notes: {}
   };
@@ -834,7 +855,13 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     status: {},
     note: {}
@@ -870,7 +897,13 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: t`Actions` }
+      ]
     },
     location: {
       default: items[0]?.part_detail.default_location,
@@ -912,7 +945,13 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     },
     customer: {
       filters: {
@@ -950,7 +989,13 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
           />
         );
       },
-      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+      headers: [
+        { title: t`Part` },
+        { title: t`Location` },
+        { title: t`Batch` },
+        { title: t`In Stock` },
+        { title: '', style: { width: '50px' } }
+      ]
     }
   };
 

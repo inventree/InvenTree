@@ -66,7 +66,7 @@ export function RenderStockItem(
   let batch_string = '';
 
   if (!!instance.batch) {
-    batch_string = `${t`Batch Code`}: ${instance.batch}`;
+    batch_string = `${t`Batch`}: ${instance.batch}`;
   }
 
   return (
