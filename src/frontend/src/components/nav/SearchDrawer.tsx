@@ -74,9 +74,7 @@ function QueryResultGroup({
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
 }>) {
-  if (query.results.count == 0) {
-    return null;
-  }
+  const modelInfo = useMemo(() => getModelInfo(query.model), [query.model]);
 
   const overviewUrl: string | undefined = useMemo(() => {
     // Query has a custom overview URL
@@ -84,10 +82,8 @@ function QueryResultGroup({
       return query.overviewUrl;
     }
 
-    // Default to the model overview URL
-    const modelInfo = getModelInfo(query.model);
     return modelInfo.url_overview;
-  }, [query.model]);
+  }, [query, modelInfo]);
 
   // Callback function to view all results for a given query
   const viewResults = useCallback(
@@ -115,27 +111,28 @@ function QueryResultGroup({
     [overviewUrl, searchText]
   );
 
-  const model = getModelInfo(query.model);
+  if (query.results.count == 0) {
+    return null;
+  }
 
   return (
     <Accordion.Item key={query.model} value={query.model}>
-      <Accordion.Control>
+      <Accordion.Control component='div'>
         <Group justify='space-between'>
           <Group justify='left' gap={5} wrap='nowrap'>
             <Tooltip label={t`View all results`} position='top-start'>
               <ActionIcon
                 size='sm'
                 variant='transparent'
-                component='div'
                 radius='xs'
-                aria-label={`view-all-results-${query.model}`}
+                aria-label={`view-all-results-${query.searchKey ?? query.model}`}
                 disabled={!overviewUrl}
                 onClick={viewResults}
               >
                 <IconTableExport />
               </ActionIcon>
             </Tooltip>
-            <Text size='lg'>{query.title ?? model.label_multiple}</Text>
+            <Text size='lg'>{query.title ?? modelInfo.label_multiple}</Text>
             <Text size='sm' style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
@@ -146,7 +143,6 @@ function QueryResultGroup({
               <ActionIcon
                 size='sm'
                 color='red'
-                component='div'
                 variant='transparent'
                 radius='xs'
                 aria-label={`remove-search-group-${query.model}`}
