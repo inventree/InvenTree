@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import { baseUrl } from '../defaults.ts';
 import { clearTableFilters, setTableChoiceFilter } from '../helpers.ts';
@@ -148,4 +149,23 @@ test('Purchase Orders', async ({ page }) => {
   await page.getByRole('cell', { name: 'PO0013' }).click();
 
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+});
+
+test('Sales Orders - Duplicate', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'sales/sales-order/11/detail');
+  await page.getByLabel('action-menu-order-actions').click();
+  await page.getByLabel('action-menu-order-actions-duplicate').click();
+
+  // Ensure a new reference is suggested
+  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+  await page.getByRole('tab', { name: 'Order Details' }).click();
+
+  await page.getByText('Pending').first().waitFor();
 });
