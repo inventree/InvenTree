@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
@@ -198,4 +199,23 @@ test('Sales Orders - Shipments', async ({ page }) => {
     .getByText(/SO0025/)
     .first()
     .click();
+});
+
+test('Sales Orders - Duplicate', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'sales/sales-order/11/detail');
+  await page.getByLabel('action-menu-order-actions').click();
+  await page.getByLabel('action-menu-order-actions-duplicate').click();
+
+  // Ensure a new reference is suggested
+  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+  await page.getByRole('tab', { name: 'Order Details' }).click();
+
+  await page.getByText('Pending').first().waitFor();
 });

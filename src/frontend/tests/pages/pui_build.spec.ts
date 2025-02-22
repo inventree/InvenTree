@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
@@ -298,14 +299,21 @@ test('Build Order - Filters', async ({ page }) => {
   await navigate(page, 'manufacturing/index/buildorders');
 
   await clearTableFilters(page);
-  await page.getByText('1 - 24 / 24').waitFor();
+
+  // Check for expected pagination text i.e. (1 - 24 / 24)
+  // Note: Due to other concurrent tests, the number of build orders may vary
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+  await page.getByRole('cell', { name: 'BO0023' }).waitFor();
 
   // Toggle 'Outstanding' filter
   await setTableChoiceFilter(page, 'Outstanding', 'Yes');
-  await page.getByText('1 - 18 / 18').waitFor();
+  await page.getByRole('cell', { name: 'BO0017' }).waitFor();
+
   await clearTableFilters(page);
   await setTableChoiceFilter(page, 'Outstanding', 'No');
+
   await page.getByText('1 - 6 / 6').waitFor();
+
   await clearTableFilters(page);
 
   // Filter by custom status code
@@ -317,4 +325,23 @@ test('Build Order - Filters', async ({ page }) => {
 
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending Approval').first().waitFor();
+});
+
+test('Build Order - Duplicate', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'manufacturing/build-order/24/details');
+  await page.getByLabel('action-menu-build-order-').click();
+  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  // Ensure a new reference is suggested
+  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
+  await page.getByRole('tab', { name: 'Build Details' }).click();
+
+  await page.getByText('Pending').first().waitFor();
 });
