@@ -79,16 +79,18 @@ function QueryResultGroup({
             </Text>
           </Group>
           <Space />
-          <ActionIcon
-            size='sm'
-            color='red'
-            variant='transparent'
-            radius='xs'
-            aria-label={`remove-search-group-${query.model}`}
-            onClick={() => onRemove(query.model)}
-          >
-            <IconX />
-          </ActionIcon>
+          <Tooltip label={t`Remove search group`} position='top-end'>
+            <ActionIcon
+              size='sm'
+              color='red'
+              variant='transparent'
+              radius='xs'
+              aria-label={`remove-search-group-${query.model}`}
+              onClick={() => onRemove(query.model)}
+            >
+              <IconX />
+            </ActionIcon>
+          </Tooltip>
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
