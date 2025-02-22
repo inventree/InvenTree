@@ -73,7 +73,7 @@ export function SupplierPartTable({
       DescriptionColumn({}),
       {
         accessor: 'manufacturer',
-
+        title: t`Manufacturer`,
         sortable: true,
         render: (record: any) => {
           const manufacturer = record?.manufacturer_detail ?? {};
