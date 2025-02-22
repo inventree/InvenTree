@@ -397,7 +397,7 @@ export function SearchDrawer({
               <IconRefresh />
             </ActionIcon>
           </Tooltip>
-          <Menu>
+          <Menu position='bottom-end'>
             <Menu.Target>
               <Tooltip label={t`Search Options`} position='bottom-end'>
                 <ActionIcon size='lg' variant='transparent'>
