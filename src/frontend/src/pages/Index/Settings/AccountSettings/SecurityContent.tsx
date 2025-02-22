@@ -1,5 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  Accordion,
   Alert,
   Badge,
   Button,
@@ -9,11 +10,13 @@ import {
   Loader,
   Modal,
   Radio,
+  SimpleGrid,
   Stack,
   Table,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { hideNotification, showNotification } from '@mantine/notifications';
@@ -43,91 +46,116 @@ export function SecurityContent() {
 
   return (
     <Stack>
-      <Title order={5}>
-        <Trans>Email Addresses</Trans>
-      </Title>
-      <EmailSection />
-      <Title order={5}>
-        <Trans>Single Sign On</Trans>
-      </Title>
-      {sso_enabled() ? (
-        <ProviderSection auth_config={auth_config} />
-      ) : (
-        <Alert
-          icon={<IconAlertCircle size='1rem' />}
-          title={t`Not enabled`}
-          color='yellow'
-        >
-          <Trans>Single Sign On is not enabled for this server </Trans>
-        </Alert>
-      )}
-      <Title order={5}>
-        <Trans>Multifactor authentication</Trans>
-      </Title>
-      <MfaSection />
-      <Title order={5}>
-        <Trans>Access Tokens</Trans>
-      </Title>
-      <TokenSection />
+      <Accordion multiple defaultValue={['email', 'sso', 'mfa', 'token']}>
+        <Accordion.Item value='email'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Email Addresses`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <EmailSection />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='sso'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Single Sign On`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            {sso_enabled() ? (
+              <ProviderSection auth_config={auth_config} />
+            ) : (
+              <Alert
+                icon={<IconAlertCircle size='1rem' />}
+                title={t`Not enabled`}
+                color='yellow'
+              >
+                <Trans>Single Sign On is not enabled for this server </Trans>
+              </Alert>
+            )}
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='mfa'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Multi-Factor Authentication`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <MfaSection />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='token'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`Access Tokens`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <TokenSection />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   );
 }
 
 function EmailSection() {
-  const [value, setValue] = useState<string>('');
+  const [selectedEmail, setSelectedEmail] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () =>
       authApi(apiUrl(ApiEndpoints.auth_email)).then((res) => res.data.data)
   });
+
   const emailAvailable = useMemo(() => {
     return data == undefined || data.length == 0;
   }, [data]);
 
   function runServerAction(
-    action: 'post' | 'put' | 'delete' = 'post',
+    action: 'patch' | 'post' | 'put' | 'delete' = 'post',
     data?: any
   ) {
-    const vals: any = data || { email: value };
-    return authApi(
-      apiUrl(ApiEndpoints.auth_email),
-      undefined,
-      action,
-      vals
-    ).then(() => {
-      refetch();
-    });
+    const vals: any = data || { email: selectedEmail };
+    return authApi(apiUrl(ApiEndpoints.auth_email), undefined, action, vals)
+      .then(() => {
+        refetch();
+      })
+      .catch((err) => {
+        hideNotification('email-error');
+
+        showNotification({
+          id: 'email-error',
+          title: t`Error`,
+          message: t`Error while updating email`,
+          color: 'red'
+        });
+      });
   }
 
   if (isLoading) return <Loader />;
 
   return (
-    <Grid>
-      <Grid.Col span={6}>
-        {emailAvailable ? (
-          <Alert
-            icon={<IconAlertCircle size='1rem' />}
-            title={t`Not configured`}
-            color='yellow'
-          >
-            <Trans>Currently no email addresses are registered.</Trans>
-          </Alert>
-        ) : (
-          <Radio.Group
-            value={value}
-            onChange={setValue}
-            name='email_accounts'
-            label={t`The following email addresses are associated with your account:`}
-          >
-            <Stack mt='xs'>
-              {data.map((email: any) => (
-                <Radio
-                  key={email.email}
-                  value={String(email.email)}
-                  label={
-                    <Group justify='space-between'>
-                      {email.email}
+    <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
+      {emailAvailable ? (
+        <Alert
+          icon={<IconAlertCircle size='1rem' />}
+          title={t`Not Configured`}
+          color='yellow'
+        >
+          <Trans>Currently no email addresses are registered.</Trans>
+        </Alert>
+      ) : (
+        <Radio.Group
+          value={selectedEmail}
+          onChange={setSelectedEmail}
+          name='email_accounts'
+          label={t`The following email addresses are associated with your account:`}
+        >
+          <Stack mt='xs'>
+            {data.map((email: any) => (
+              <Radio
+                key={email.email}
+                value={String(email.email)}
+                label={
+                  <Group justify='space-apart'>
+                    {email.email}
+                    <Group justify='right'>
                       {email.primary && (
                         <Badge color='blue'>
                           <Trans>Primary</Trans>
@@ -143,52 +171,48 @@ function EmailSection() {
                         </Badge>
                       )}
                     </Group>
-                  }
-                />
-              ))}
-            </Stack>
-          </Radio.Group>
-        )}
-      </Grid.Col>
-      <Grid.Col span={6}>
-        <Stack>
-          <Text>
-            <Trans>Add Email Address</Trans>
-          </Text>
-          <TextInput
-            label={t`E-Mail`}
-            placeholder={t`E-Mail address`}
-            leftSection={<IconAt />}
-            value={newEmailValue}
-            onChange={(event) => setNewEmailValue(event.currentTarget.value)}
-          />
-        </Stack>
-      </Grid.Col>
-      <Grid.Col span={6}>
-        <Group>
-          <Button
-            onClick={() =>
-              runServerAction('post', { email: value, primary: true })
-            }
-            disabled={emailAvailable}
-          >
-            <Trans>Make Primary</Trans>
-          </Button>
-          <Button
-            onClick={() => runServerAction('put')}
-            disabled={emailAvailable}
-          >
-            <Trans>Re-send Verification</Trans>
-          </Button>
-          <Button
-            onClick={() => runServerAction('delete')}
-            disabled={emailAvailable}
-          >
-            <Trans>Remove</Trans>
-          </Button>
-        </Group>
-      </Grid.Col>
-      <Grid.Col span={6}>
+                  </Group>
+                }
+              />
+            ))}
+            <Group>
+              <Button
+                onClick={() =>
+                  runServerAction('patch', {
+                    email: selectedEmail,
+                    primary: true
+                  })
+                }
+                disabled={!selectedEmail}
+              >
+                <Trans>Make Primary</Trans>
+              </Button>
+              <Button
+                onClick={() => runServerAction('put')}
+                disabled={!selectedEmail}
+              >
+                <Trans>Re-send Verification</Trans>
+              </Button>
+              <Button
+                onClick={() => runServerAction('delete')}
+                disabled={!selectedEmail}
+                color='red'
+              >
+                <Trans>Remove</Trans>
+              </Button>
+            </Group>
+          </Stack>
+        </Radio.Group>
+      )}
+      <Stack>
+        <StylishText size='md'>{t`Add Email Address`}</StylishText>
+        <TextInput
+          label={t`E-Mail`}
+          placeholder={t`E-Mail address`}
+          leftSection={<IconAt />}
+          value={newEmailValue}
+          onChange={(event) => setNewEmailValue(event.currentTarget.value)}
+        />
         <Button
           onClick={() =>
             runServerAction('post', { email: newEmailValue }).catch((err) => {
@@ -207,8 +231,8 @@ function EmailSection() {
         >
           <Trans>Add Email</Trans>
         </Button>
-      </Grid.Col>
-    </Grid>
+      </Stack>
+    </SimpleGrid>
   );
 }
 
@@ -263,7 +287,7 @@ function ProviderSection({
         {data.length == 0 ? (
           <Alert
             icon={<IconAlertCircle size='1rem' />}
-            title={t`Not configured`}
+            title={t`Not Configured`}
             color='yellow'
           >
             <Trans>There are no providers connected to this account.</Trans>
@@ -395,61 +419,61 @@ function MfaSection() {
   return (
     <>
       <ReauthModal />
-      <Grid>
-        <Grid.Col span={6}>
-          {data.length == 0 ? (
-            <Alert icon={<IconAlertCircle size='1rem' />} color='yellow'>
-              <Trans>No factors configured</Trans>
-            </Alert>
-          ) : (
-            <Table stickyHeader striped highlightOnHover withTableBorder>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>
-                    <Trans>Type</Trans>
-                  </Table.Th>
-                  <Table.Th>
-                    <Trans>Last used at</Trans>
-                  </Table.Th>
-                  <Table.Th>
-                    <Trans>Created at</Trans>
-                  </Table.Th>
-                  <Table.Th>
-                    <Trans>Actions</Trans>
-                  </Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>{rows}</Table.Tbody>
-            </Table>
-          )}
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <MfaAddSection
-            usedFactors={usedFactors}
-            refetch={refetch}
-            showRecoveryCodes={showRecoveryCodes}
-          />
-          <Modal
-            opened={recoveryCodesOpen}
-            onClose={() => {
-              refetch();
-              closeRecoveryCodes();
-            }}
-            title={t`Recovery Codes`}
-            centered
+      <SimpleGrid cols={{ xs: 1, md: 2 }} spacing='sm'>
+        {data.length == 0 ? (
+          <Alert
+            title={t`Not Configured`}
+            icon={<IconAlertCircle size='1rem' />}
+            color='yellow'
           >
-            <Title order={3}>
-              <Trans>Unused Codes</Trans>
-            </Title>
-            <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
+            <Trans>No multi-factor tokens configured for this account</Trans>
+          </Alert>
+        ) : (
+          <Table stickyHeader striped highlightOnHover withTableBorder>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>
+                  <Trans>Type</Trans>
+                </Table.Th>
+                <Table.Th>
+                  <Trans>Last used at</Trans>
+                </Table.Th>
+                <Table.Th>
+                  <Trans>Created at</Trans>
+                </Table.Th>
+                <Table.Th>
+                  <Trans>Actions</Trans>
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        )}
+        <MfaAddSection
+          usedFactors={usedFactors}
+          refetch={refetch}
+          showRecoveryCodes={showRecoveryCodes}
+        />
+        <Modal
+          opened={recoveryCodesOpen}
+          onClose={() => {
+            refetch();
+            closeRecoveryCodes();
+          }}
+          title={t`Recovery Codes`}
+          centered
+        >
+          <Title order={3}>
+            <Trans>Unused Codes</Trans>
+          </Title>
+          <Code>{recoveryCodes?.unused_codes?.join('\n')}</Code>
 
-            <Title order={3}>
-              <Trans>Used Codes</Trans>
-            </Title>
-            <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
-          </Modal>
-        </Grid.Col>
-      </Grid>
+          <Title order={3}>
+            <Trans>Used Codes</Trans>
+          </Title>
+          <Code>{recoveryCodes?.used_codes?.join('\n')}</Code>
+        </Modal>
+      </SimpleGrid>
     </>
   );
 }
@@ -554,16 +578,17 @@ function MfaAddSection({
   return (
     <Stack>
       <ReauthModal />
-      <Text>Add Factor</Text>
+      <StylishText size='md'>{t`Add Token`}</StylishText>
       {possibleFactors.map((factor) => (
-        <Button
-          key={factor.type}
-          onClick={factor.function}
-          disabled={factor.used}
-          variant='outline'
-        >
-          {factor.name}
-        </Button>
+        <Tooltip label={factor.description} key={factor.type}>
+          <Button
+            onClick={factor.function}
+            disabled={factor.used}
+            variant='outline'
+          >
+            {factor.name}
+          </Button>
+        </Tooltip>
       ))}
       <Modal
         opened={totpQrOpen}
