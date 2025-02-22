@@ -20,8 +20,11 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
+from common.settings import get_global_setting
 from InvenTree import helpers
+from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.sso import sso_registration_enabled
 from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
@@ -197,6 +200,13 @@ class VersionTextView(ListAPI):
 class InfoApiSerializer(serializers.Serializer):
     """InvenTree server information - some information might be blanked if called without elevated credentials."""
 
+    class SettingsSerializer(serializers.Serializer):
+        """Serializer for InfoApiSerializer."""
+
+        sso_registration = serializers.BooleanField()
+        registration_enabled = serializers.BooleanField()
+        password_forgotten_enabled = serializers.BooleanField()
+
     class CustomizeSerializer(serializers.Serializer):
         """Serializer for customize field."""
 
@@ -229,6 +239,7 @@ class InfoApiSerializer(serializers.Serializer):
     installer = serializers.CharField(read_only=True)
     target = serializers.CharField(read_only=True)
     django_admin = serializers.CharField(read_only=True)
+    settings = SettingsSerializer(read_only=True, many=False)
 
 
 class InfoView(APIView):
@@ -288,6 +299,13 @@ class InfoView(APIView):
             'django_admin': settings.INVENTREE_ADMIN_URL
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
             else None,
+            'settings': {
+                'sso_registration': sso_registration_enabled(),
+                'registration_enabled': registration_enabled(),
+                'password_forgotten_enabled': get_global_setting(
+                    'LOGIN_ENABLE_PWD_FORGOT'
+                ),
+            },
         }
 
         return JsonResponse(data)
@@ -504,6 +522,9 @@ class APISearchView(GenericAPIView):
         return {
             'build': build.api.BuildList,
             'company': company.api.CompanyList,
+            'supplier': company.api.CompanyList,
+            'manufacturer': company.api.CompanyList,
+            'customer': company.api.CompanyList,
             'manufacturerpart': company.api.ManufacturerPartList,
             'supplierpart': company.api.SupplierPartList,
             'part': part.api.PartList,
@@ -514,6 +535,14 @@ class APISearchView(GenericAPIView):
             'salesordershipment': order.api.SalesOrderShipmentList,
             'stockitem': stock.api.StockList,
             'stocklocation': stock.api.StockLocationList,
+        }
+
+    def get_result_filters(self):
+        """Provide extra filtering options for particular search groups."""
+        return {
+            'supplier': {'is_supplier': True},
+            'manufacturer': {'is_manufacturer': True},
+            'customer': {'is_customer': True},
         }
 
     def post(self, request, *args, **kwargs):
@@ -534,6 +563,8 @@ class APISearchView(GenericAPIView):
         if 'search' not in data:
             raise ValidationError({'search': 'Search term must be provided'})
 
+        search_filters = self.get_result_filters()
+
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:
@@ -541,6 +572,11 @@ class APISearchView(GenericAPIView):
 
                 for k, v in pass_through_params.items():
                     params[k] = request.data.get(k, v)
+
+                # Add in any extra filters for this particular search type
+                if key in search_filters:
+                    for k, v in search_filters[key].items():
+                        params[k] = v
 
                 # Enforce json encoding
                 params['format'] = 'json'

@@ -65,6 +65,12 @@ export const getRowFromCell = async (cell) => {
   return cell.locator('xpath=ancestor::tr').first();
 };
 
+export const clickOnRowMenu = async (cell) => {
+  const row = await getRowFromCell(cell);
+
+  await row.getByLabel(/row-action-menu-/i).click();
+};
+
 /**
  * Navigate to the provided page, and wait for loading to complete
  * @param page
@@ -80,6 +86,7 @@ export const navigate = async (page, url: string) => {
   }
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle');
 };
 
 /**
@@ -90,4 +97,5 @@ export const globalSearch = async (page, query) => {
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
   await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
 };

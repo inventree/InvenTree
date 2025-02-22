@@ -3,6 +3,7 @@ import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
   clickButtonIfVisible,
+  clickOnRowMenu,
   navigate,
   openFilterDrawer,
   setTableChoiceFilter
@@ -258,7 +259,6 @@ test('Purchase Orders - Receive Items', async ({ page }) => {
   await page.getByRole('cell', { name: 'PO0014' }).click();
 
   await page.getByRole('tab', { name: 'Order Details' }).click();
-  await page.getByText('0 / 3').waitFor();
 
   // Select all line items to receive
   await page.getByRole('tab', { name: 'Line Items' }).click();
@@ -279,6 +279,44 @@ test('Purchase Orders - Receive Items', async ({ page }) => {
   await page.getByText('Mechanical Lab').waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Let's actually receive an item (with custom values)
+  await navigate(page, 'purchasing/purchase-order/2/line-items');
+
+  const cell = await page.getByText('Red Paint', { exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Receive line item' }).click();
+
+  // Select destination location
+  await page.getByLabel('related-field-location').click();
+  await page.getByRole('option', { name: 'Factory', exact: true }).click();
+
+  // Receive only a *single* item
+  await page.getByLabel('number-field-quantity').fill('1');
+
+  // Assign custom information
+  await page.getByLabel('action-button-assign-batch-').click();
+  await page.getByLabel('action-button-adjust-packaging').click();
+  await page.getByLabel('action-button-change-status').click();
+  await page.getByLabel('action-button-add-note').click();
+
+  await page.getByLabel('text-field-batch_code').fill('my-batch-code');
+  await page.getByLabel('text-field-packaging').fill('bucket');
+  await page.getByLabel('text-field-note').fill('The quick brown fox');
+  await page.getByLabel('choice-field-status').click();
+  await page.getByRole('option', { name: 'Destroyed' }).click();
+
+  // Short timeout to allow for debouncing
+  await page.waitForTimeout(200);
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Items received').waitFor();
+
+  await page.getByRole('tab', { name: 'Received Stock' }).click();
+  await clearTableFilters(page);
+
+  await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
+  await page.getByRole('cell', { name: 'bucket' }).first().waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ page }) => {
