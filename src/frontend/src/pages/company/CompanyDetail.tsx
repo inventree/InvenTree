@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconBuildingFactory2,
   IconBuildingWarehouse,
   IconInfoCircle,
   IconMap2,
@@ -177,21 +176,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         content: detailsPanel
       },
       {
-        name: 'manufactured-parts',
-        label: t`Manufactured Parts`,
-        icon: <IconBuildingFactory2 />,
-        hidden: !company?.is_manufacturer,
-        content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
-        )
-      },
-      {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
-        icon: <IconBuildingWarehouse />,
+        icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
         content: company?.pk && (
           <SupplierPartTable params={{ supplier: company.pk }} />
+        )
+      },
+      {
+        name: 'manufactured-parts',
+        label: t`Manufactured Parts`,
+        icon: <IconBuildingWarehouse />,
+        hidden: !company?.is_manufacturer,
+        content: company?.pk && (
+          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
         )
       },
       {

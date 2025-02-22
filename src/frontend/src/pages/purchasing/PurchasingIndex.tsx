@@ -3,6 +3,8 @@ import { Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingStore,
+  IconBuildingWarehouse,
+  IconPackageExport,
   IconShoppingCart
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -13,7 +15,9 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
+import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
+import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
 export default function PurchasingIndex() {
   const user = useUserState();
@@ -39,6 +43,12 @@ export default function PurchasingIndex() {
         )
       },
       {
+        name: 'supplier-parts',
+        label: t`Supplier Parts`,
+        icon: <IconPackageExport />,
+        content: <SupplierPartTable params={{}} />
+      },
+      {
         name: 'manufacturer',
         label: t`Manufacturers`,
         icon: <IconBuildingFactory2 />,
@@ -48,6 +58,12 @@ export default function PurchasingIndex() {
             params={{ is_manufacturer: true }}
           />
         )
+      },
+      {
+        name: 'manufacturer-parts',
+        label: t`Manufacturer Parts`,
+        icon: <IconBuildingWarehouse />,
+        content: <ManufacturerPartTable params={{}} />
       }
     ];
   }, [user]);

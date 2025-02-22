@@ -53,7 +53,7 @@ export const ModelInformationDict: ModelDict = {
   supplierpart: {
     label: () => t`Supplier Part`,
     label_multiple: () => t`Supplier Parts`,
-    url_overview: '/supplierpart',
+    url_overview: '/purchasing/index/supplier-parts',
     url_detail: '/purchasing/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
     admin_url: '/company/supplierpart/',
@@ -62,7 +62,7 @@ export const ModelInformationDict: ModelDict = {
   manufacturerpart: {
     label: () => t`Manufacturer Part`,
     label_multiple: () => t`Manufacturer Parts`,
-    url_overview: '/manufacturerpart',
+    url_overview: '/purchasing/index/manufacturer-parts',
     url_detail: '/purchasing/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,
     admin_url: '/company/manufacturerpart/',
