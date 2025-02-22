@@ -523,8 +523,10 @@ function LineItemFormRow({
                 onClick={() => open()}
               />
             )}
-            <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
           </Flex>
+        </Table.Td>
+        <Table.Td>
+          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
         </Table.Td>
       </Table.Tr>
       {locationOpen && (
@@ -745,7 +747,14 @@ export function useReceiveLineItems(props: LineItemsForm) {
             />
           );
         },
-        headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
+        headers: [
+          { title: t`Part`, style: { minWidth: '200px' } },
+          { title: t`SKU`, style: { minWidth: '200px' } },
+          { title: t`Received`, style: { minWidth: '200px' } },
+          { title: t`Quantity`, style: { width: '200px' } },
+          { title: t`Actions` },
+          { title: '', style: { width: '50px' } }
+        ]
       },
       location: {
         filters: {
