@@ -5,6 +5,7 @@ asgiref==3.8.1 \
     --hash=sha256:c343bd80a0bec947a9860adb4c432ffa7db769836c64238fc34bdc3fec84d590
     # via
     #   django
+    #   django-allauth
     #   django-cors-headers
     #   django-structlog
 async-timeout==5.0.1 \
@@ -366,6 +367,7 @@ cryptography==44.0.1 \
     # via
     #   -r src/backend/requirements.in
     #   djangorestframework-simplejwt
+    #   fido2
     #   pyjwt
 cssselect2==0.7.0 \
     --hash=sha256:1ccd984dab89fc68955043aca4e1b03e0cf29cad9880f6e28e3ba7a74b14aa5a \
@@ -383,17 +385,12 @@ deprecated==1.2.18 \
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-semantic-conventions
-dj-rest-auth==7.0.1 \
-    --hash=sha256:3f8c744cbcf05355ff4bcbef0c8a63645da38e29a0fdef3c3332d4aced52fb90
-    # via -r src/backend/requirements.in
 django==4.2.19 \
     --hash=sha256:6c833be4b0ca614f0a919472a1028a3bbdeb6f056fa04023aeb923346ba2c306 \
     --hash=sha256:a104e13f219fc55996a4e416ef7d18ab4eeb44e0aa95174c192f16cda9f94e75
     # via
     #   -r src/backend/requirements.in
-    #   dj-rest-auth
     #   django-allauth
-    #   django-allauth-2fa
     #   django-cors-headers
     #   django-dbbackup
     #   django-error-report-2
@@ -414,20 +411,13 @@ django==4.2.19 \
     #   django-stdimage
     #   django-structlog
     #   django-taggit
-    #   django-user-sessions
     #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[openid, saml]==0.57.2 \
-    --hash=sha256:51c400f61bfb15bd08e22543a65d551c8f563254064620c37c49766b1ba7e1ae
-    # via
-    #   -r src/backend/requirements.in
-    #   django-allauth-2fa
-django-allauth-2fa==0.12.0 \
-    --hash=sha256:4b0c4cfea9c30be7c0971421b9b1f4961a19a69af72b7b5c0c7a3dbbc2537253 \
-    --hash=sha256:ba53f47fd777d13c48842a7b779ab5ad24ad8c50f05aba98c64810263a50382d
+django-allauth[mfa, openid, saml, socialaccount]==65.4.1 \
+    --hash=sha256:60b32aef7dbbcc213319aa4fd8f570e985266ea1162ae6ef7a26a24efca85c8c
     # via -r src/backend/requirements.in
 django-cleanup==9.0.0 \
     --hash=sha256:19f8b0e830233f9f0f683b17181f414672a0f48afe3ea3cc80ba47ae40ad880c \
@@ -481,10 +471,10 @@ django-mptt==0.16.0 \
     --hash=sha256:56c9606bf0b329b5f5afd55dd8bfd073612ea1d5999b10903b09de62bee84c8e \
     --hash=sha256:8716849ba3318d94e2e100ed0923a05c1ffdf8195f8472b690dbaf737d2af3b5
     # via -r src/backend/requirements.in
-django-otp==1.5.4 \
-    --hash=sha256:0d9497ea4fb13fc04d50b49aa53dd1c740fe4bc5dde0ca27fb394f84e5da7bac \
-    --hash=sha256:783dea669ac0eaf5cd336f73839443584ee665af427a84175cca5a9d620366db
-    # via django-allauth-2fa
+django-otp==1.3.0 \
+    --hash=sha256:5277731bc05b6cdbf96aa84ac46018e30ed5fb248086053b0146f925de059060 \
+    --hash=sha256:8f4156a3c14ce2aaa31379385eadf388925cd50fc4b5d20a3b944f454c98ff7c
+    # via -r src/backend/requirements.in
 django-picklefield==3.2 \
     --hash=sha256:aa463f5d79d497dbe789f14b45180f00a51d0d670067d0729f352a3941cdfa4d \
     --hash=sha256:e9a73539d110f69825d9320db18bcb82e5189ff48dbed41821c026a20497764c
@@ -527,10 +517,6 @@ django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
     --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
     # via -r src/backend/requirements.in
-django-user-sessions==2.0.0 \
-    --hash=sha256:0965554279f556b47062965609fa08b3ae45bbc581001dbe84b2ea599cc67748 \
-    --hash=sha256:41b8b1ebeb4736065efbc96437c9cfbf491c39e10fd547a76b98f2312e11fa3e
-    # via -r src/backend/requirements.in
 django-weasyprint==2.3.1 \
     --hash=sha256:09cc1c40c92db34bed80154be7c959fea03d6001dc46fd599f3fd464d6a6dc72 \
     --hash=sha256:cd35b8bd24b28128a17a2416d0e6f3e64cb727f25c53467150b4be16ccd01c19
@@ -543,7 +529,6 @@ djangorestframework==3.14.0 \
     --hash=sha256:eb63f58c9f218e1a7d064d17a70751f528ed4e1d35547fdade9aaf4cd103fd08
     # via
     #   -r src/backend/requirements.in
-    #   dj-rest-auth
     #   djangorestframework-simplejwt
     #   drf-spectacular
 djangorestframework-simplejwt[crypto]==5.4.0 \
@@ -610,6 +595,10 @@ feedparser==6.0.11 \
     --hash=sha256:0be7ee7b395572b19ebeb1d6aafb0028dee11169f1c934e0ed67d54992f4ad45 \
     --hash=sha256:c9d0407b64c6f2a065d0ebb292c2b35c01050cc0dc33757461aaabdc4c4184d5
     # via -r src/backend/requirements.in
+fido2==1.2.0 \
+    --hash=sha256:e39f95920122d64283fda5e5581d95a206e704fa42846bfa4662f86aa0d3333b \
+    --hash=sha256:f7c8ee62e359aa980a45773f9493965bb29ede1b237a9218169dbfe60c80e130
+    # via django-allauth
 flexcache==0.3 \
     --hash=sha256:18743bd5a0621bfe2cf8d519e4c3bfdf57a269c15d1ced3fb4b64e0ff4600656 \
     --hash=sha256:d43c9fea82336af6e0115e308d9d33a185390b8346a017564611f1466dcd2e32
@@ -1328,7 +1317,7 @@ qrcode[pil]==8.0 \
     --hash=sha256:9fc05f03305ad27a709eb742cf3097fa19e6f6f93bb9e2f039c0979190f6f1b1
     # via
     #   -r src/backend/requirements.in
-    #   django-allauth-2fa
+    #   django-allauth
 rapidfuzz==3.12.1 \
     --hash=sha256:00ceb8ff3c44ab0d6014106c71709c85dee9feedd6890eff77c814aa3798952b \
     --hash=sha256:018506a53c3b20dcbda8c93d4484b9eb1764c93d5ea16be103cf6b0d8b11d860 \
