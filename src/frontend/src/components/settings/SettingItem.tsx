@@ -9,11 +9,16 @@ import {
   useMantineColorScheme
 } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { api } from '../../App';
+import { ModelType } from '../../enums/ModelType';
+import { apiUrl } from '../../states/ApiState';
 import type { Setting } from '../../states/states';
 import { vars } from '../../theme';
 import { Boundary } from '../Boundary';
+import { RenderInstance } from '../render/Instance';
+import { ModelInformationDict } from '../render/ModelType';
 
 /**
  * Render a single setting value
@@ -43,6 +48,54 @@ function SettingValue({
 
     return value;
   }, [setting]);
+
+  const [modelInstance, setModelInstance] = useState<any>(null);
+
+  // Does this setting map to an internal database model?
+  const modelType: ModelType | null = useMemo(() => {
+    if (setting.model_name) {
+      const model = setting.model_name.split('.')[1];
+      return ModelType[model as keyof typeof ModelType] || null;
+    }
+    return null;
+  }, [setting]);
+
+  useEffect(() => {
+    setModelInstance(null);
+
+    if (modelType && setting.value) {
+      const endpoint = ModelInformationDict[modelType].api_endpoint;
+
+      api
+        .get(apiUrl(endpoint, setting.value))
+        .then((response) => {
+          if (response.data) {
+            setModelInstance(response.data);
+          } else {
+            setModelInstance(null);
+          }
+        })
+        .catch((error) => {
+          setModelInstance(null);
+        });
+    }
+  }, [setting, modelType]);
+
+  if (modelInstance && modelType && setting.value) {
+    return (
+      <Group justify='right' gap='xs'>
+        <RenderInstance instance={modelInstance} model={modelType} />
+        <Button variant='subtle' onClick={() => onEdit(setting)}>
+          <IconEdit />
+        </Button>
+      </Group>
+    );
+  }
+
+  console.log('Rendering:', setting.key);
+  console.log('- modelInstance:', modelInstance);
+  console.log('- modelType:', modelType);
+  console.log('- setting:', setting.value);
 
   switch (setting?.type || 'string') {
     case 'boolean':
