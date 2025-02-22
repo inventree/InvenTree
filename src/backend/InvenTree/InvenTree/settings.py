@@ -1298,9 +1298,7 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = 'InvenTree.auth_overrides.DRFTokenStrategy'
-MFA_ENABLED = get_boolean_setting(
-    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
-)  # TODO re-implement
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 MFA_SUPPORTED_TYPES = get_setting(
     'INVENTREE_MFA_SUPPORTED_TYPES',
     'mfa_supported_types',
