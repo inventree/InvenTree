@@ -592,22 +592,6 @@ function LineItemFormRow({
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />
-      {settings.isSet('STOCK_ENABLE_EXPIRY') && (
-        <TableFieldExtraRow
-          visible={expiryDateOpen}
-          onValueChange={(value) =>
-            props.changeFn(props.idx, 'expiry_date', value)
-          }
-          fieldName='expiry_date'
-          fieldDefinition={{
-            field_type: 'date',
-            label: t`Expiry Date`,
-            description: t`Enter an expiry date for received items`,
-            value: props.item.expiry_date
-          }}
-          error={props.rowErrors?.expiry_date?.message}
-        />
-      )}
       <TableFieldExtraRow
         visible={packagingOpen}
         onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
@@ -685,7 +669,6 @@ export function useReceiveLineItems(props: LineItemsForm) {
             line_item: elem.pk,
             location: elem.destination ?? elem.destination_detail?.pk ?? null,
             quantity: elem.quantity - elem.received,
-            expiry_date: null,
             batch_code: '',
             serial_numbers: '',
             status: 10,
