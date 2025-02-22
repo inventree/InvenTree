@@ -1,16 +1,10 @@
 import { t } from '@lingui/macro';
-import {
-  BackgroundImage,
-  Center,
-  Container,
-  Divider,
-  Paper,
-  Text
-} from '@mantine/core';
+import { Center, Container, Divider, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { setApiDefaults } from '../../App';
+import SplashScreen from '../../components/SplashScreen';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import {
   AuthenticationForm,
@@ -25,7 +19,6 @@ import {
   doBasicLogin,
   followRedirect
 } from '../../functions/auth';
-import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
@@ -47,6 +40,14 @@ export default function Login() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
+  useEffect(() => {
+    if (location.pathname === '/register') {
+      setMode.close();
+    } else {
+      setMode.open();
+    }
+  }, [location]);
+
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
     if (val) {
@@ -63,16 +64,6 @@ export default function Login() {
       );
     }
     return null;
-  }, [server.customize]);
-
-  const SplashComponent = useMemo(() => {
-    const temp = server.customize?.splash;
-    if (temp) {
-      return ({ children }: { children: React.ReactNode }) => (
-        <BackgroundImage src={generateUrl(temp)}>{children}</BackgroundImage>
-      );
-    }
-    return ({ children }: { children: React.ReactNode }) => <>{children}</>;
   }, [server.customize]);
 
   // Data manipulation functions
@@ -95,7 +86,8 @@ export default function Login() {
     if (searchParams.has('login') && searchParams.has('password')) {
       doBasicLogin(
         searchParams.get('login') ?? '',
-        searchParams.get('password') ?? ''
+        searchParams.get('password') ?? '',
+        navigate
       ).then(() => {
         followRedirect(navigate, location?.state);
       });
@@ -111,7 +103,7 @@ export default function Login() {
 
   // Main rendering block
   return (
-    <SplashComponent>
+    <SplashScreen>
       <Center mih='100vh'>
         <div
           style={{
@@ -135,7 +127,10 @@ export default function Login() {
                   </StylishText>
                   <Divider p='xs' />
                   {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
-                  <ModeSelector loginMode={loginMode} setMode={setMode} />
+                  <ModeSelector
+                    loginMode={loginMode}
+                    changePage={(newPage) => navigate(`/${newPage}`)}
+                  />
                   {LoginMessage}
                 </Paper>
                 <AuthFormOptions
@@ -147,6 +142,6 @@ export default function Login() {
           </Container>
         </div>
       </Center>
-    </SplashComponent>
+    </SplashScreen>
   );
 }

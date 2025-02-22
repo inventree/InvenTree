@@ -46,7 +46,7 @@ InvenTree run-time configuration options described in the [configuration documen
 
 As docker containers are ephemeral, any *persistent* data must be stored in an external [volume](https://docs.docker.com/storage/volumes/). To simplify installation / implementation, all external data are stored in a single volume, arranged as follows:
 
-#### Media FIles
+#### Media Files
 
 Uploaded media files are stored in the `media/` subdirectory of the external data volume.
 
@@ -111,6 +111,23 @@ InvenTree stores any persistent data (e.g. uploaded media files, database data, 
 
 !!! info "Data Directory"
     Make sure you change the path to the local directory where you want persistent data to be stored.
+
+### Database Connection
+
+The `inventree-db` container is configured to use the `postgres:{{ config.extra.docker_postgres_version }}` docker image.
+
+Connecting to a different database container is entirely possible, but requires modification of the `docker-compose.yml` file. This is outside the scope of this documentation.
+
+#### Postgres Version
+
+The `inventree-server` and `inventree-worker` containers support connection to a postgres database up to (and including) version {{ config.extra.docker_postgres_version }}.
+
+!!! warning "Newer Postgres Versions"
+    The InvenTree docker image supports connection to a postgres database up to version {{ config.extra.docker_postgres_version }}. Connecting to a database using a newer version of postgres is not guaranteed.
+
+#### Bypassing Backup Procedure
+
+If you are connecting the docker container to a postgresql database newer than version `{{ config.extra.docker_postgres_version }}`, the [backup and restore commands](../start/backup.md) will fail due to a version mismatch. To bypass this issue when performing the `invoke update` command, add the `--skip-backup` flag.
 
 ## Common Issues
 

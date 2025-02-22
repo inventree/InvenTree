@@ -9,7 +9,7 @@ from .models import Part
 
 # TODO: 2024-12-17 - This entire file is to be removed
 # TODO: Ref: https://github.com/inventree/InvenTree/pull/8685
-# TODO: To be removed as part of https://github.com/inventree/InvenTree/issues/8686
+# TODO: To be removed as part of https://github.com/inventree/InvenTree/issues/9078
 
 
 def ExportBom(

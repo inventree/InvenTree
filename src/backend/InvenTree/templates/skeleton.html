@@ -12,18 +12,14 @@
 
 {% include "favicon.html" %}
 
-<!-- CSS -->
-<link rel="stylesheet" href="{% static 'css/inventree.css' %}">
-
 <title>
 {% block page_title %}
 {% endblock page_title %}
 </title>
 </head>
 
-<body class='{% block body_class %}{% endblock body_class %}'>
+<body>
 {% block body %}
 {% endblock body %}
-
 </body>
 </html>

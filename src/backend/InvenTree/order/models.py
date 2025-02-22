@@ -1720,7 +1720,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         return max(r, 0)
 
     def is_completed(self) -> bool:
-        """Determine if this lien item has been fully received."""
+        """Determine if this line item has been fully received."""
         return self.received >= self.quantity
 
     def update_pricing(self):

@@ -18,12 +18,16 @@ from invoke.exceptions import UnexpectedExit
 
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
-    return os.environ.get('INVENTREE_DOCKER', 'False')
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
 
 
 def is_rtd_environment():
     """Check if the InvenTree environment is running on ReadTheDocs."""
-    return os.environ.get('READTHEDOCS', 'False') == 'True'
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
 def task_exception_handler(t, v, tb):
@@ -181,7 +185,6 @@ def content_excludes(
         'exchange.exchangebackend',
         'common.notificationentry',
         'common.notificationmessage',
-        'user_sessions.session',
         'importer.dataimportsession',
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',
@@ -1226,7 +1229,7 @@ def schema(
 
     info(f"Exporting schema file to '{filename}'")
 
-    cmd = f'spectacular --file {filename} --validate --color'
+    cmd = f'schema --file {filename} --validate --color'
 
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
@@ -1326,6 +1329,10 @@ API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
 
+Environment:
+Docker      {is_docker_environment()}
+RTD         {is_rtd_environment()}
+
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
@@ -1403,7 +1410,7 @@ def frontend_server(c):
     """
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
-    yarn(c, 'yarn run dev')
+    yarn(c, 'yarn run dev --host')
 
 
 @task(
