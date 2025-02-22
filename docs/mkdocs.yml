@@ -130,8 +130,6 @@ nav:
     - Allocating Stock: build/allocate.md
     - Example Build Order: build/example.md
     - Bill of Materials: build/bom.md
-    - Importing BOM Data: build/bom_import.md
-    - Exporting BOM Data: build/bom_export.md
   - Orders:
     - Companies: order/company.md
     - Purchase Orders: order/purchase_order.md

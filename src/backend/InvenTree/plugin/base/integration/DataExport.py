@@ -61,7 +61,6 @@ class DataExportMixin:
         Arguments:
             headers: The current headers for the export
             context: The context for the export (provided by the plugin serializer)
-            kwargs: Additional keyword arguments
 
         Returns: The updated headers
         """
@@ -74,21 +73,25 @@ class DataExportMixin:
         return queryset
 
     def export_data(
-        self, queryset, serializer_class, headers: OrderedDict, context, **kwargs
-    ):
+        self,
+        queryset: QuerySet,
+        serializer_class: serializers.Serializer,
+        headers: OrderedDict,
+        context: dict,
+        **kwargs,
+    ) -> list:
         """Export data from the queryset.
 
         This method should be implemented by the plugin to provide
         the actual data export functionality.
 
-        Args:
+        Arguments:
             queryset: The queryset to export
             serializer_class: The serializer class to use for exporting the data
             headers: The headers for the export
-            context: The context for the export (provided by the plugin serializer)
-            kwargs: Additional keyword arguments
+            context: Any custom context for the export (provided by the plugin serializer)
 
-        Returns: The exported data
+        Returns: The exported data (a list of dict objects)
         """
         # The default implementation simply serializes the queryset
         return serializer_class(queryset, many=True, exporting=True).data
@@ -97,10 +100,6 @@ class DataExportMixin:
         self, **kwargs
     ) -> Union[serializers.Serializer, None]:
         """Return a serializer class with dynamic export options for this plugin.
-
-        Arguments:
-            request: The request made to export data or interfering the available serializer fields via an OPTIONS request
-            *args, **kwargs: need to be passed to the serializer instance
 
         Returns:
             A class instance of a DRF serializer class, by default this an instance of
