@@ -300,7 +300,7 @@ jobs:
 
   coverage:
     name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -549,7 +549,7 @@ jobs:
 
   platform_ui:
     name: Tests - Platform UI
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
