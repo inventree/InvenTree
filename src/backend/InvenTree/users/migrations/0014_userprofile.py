@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("auth", "0012_alter_user_first_name_max_length"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("users", "0012_alter_ruleset_can_view"),
+        ("users", "0013_migrate_mfa_20240408_1659"),
     ]
 
     operations = [

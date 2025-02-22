@@ -30,7 +30,7 @@ class TestBackfillUserProfiles(MigratorTestCase):
     """Test backfill migration for user profiles."""
 
     migrate_from = ('users', '0012_alter_ruleset_can_view')
-    migrate_to = ('users', '0013_userprofile')
+    migrate_to = ('users', '0014_userprofile')
 
     def prepare(self):
         """Setup the initial state of the database before migrations."""
