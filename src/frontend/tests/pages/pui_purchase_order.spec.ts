@@ -102,13 +102,15 @@ test('Purchase Orders - General', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+
   await page.getByRole('cell', { name: 'PO0012' }).click();
   await page.waitForTimeout(200);
 
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Received Stock');
   await loadTab(page, 'Attachments');
-  await loadTab(page, 'Purchasing');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Suppliers');
   await page.getByText('Arrow', { exact: true }).click();
   await page.waitForTimeout(200);
@@ -119,7 +121,8 @@ test('Purchase Orders - General', async ({ page }) => {
   await loadTab(page, 'Contacts');
   await loadTab(page, 'Addresses');
   await loadTab(page, 'Attachments');
-  await loadTab(page, 'Purchasing');
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Manufacturers');
   await page.getByText('AVX Corporation').click();
   await page.waitForTimeout(200);

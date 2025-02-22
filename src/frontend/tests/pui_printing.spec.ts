@@ -59,7 +59,7 @@ test('Report Printing', async ({ page }) => {
   await page.waitForURL('**/platform/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
-  await loadTab(page, 'Purchasing');
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Purchase Orders');
 
   await page.getByRole('cell', { name: 'PO0009' }).click();
@@ -116,7 +116,7 @@ test('Report Editing', async ({ page, request }) => {
   await page.getByText('The preview has been updated').waitFor();
 
   // Test plugin provided editors
-  await loadTab(page, 'Sample Template Editor');
+  await page.getByRole('tab', { name: 'Sample Template Editor' }).click();
   const textarea = page.locator('#sample-template-editor-textarea');
   const textareaValue = await textarea.inputValue();
   expect(textareaValue).toContain(
@@ -126,14 +126,14 @@ test('Report Editing', async ({ page, request }) => {
 
   // Switch back and forth to see if the changed contents get correctly passed between the hooks
   await page.getByRole('tab', { name: 'Code', exact: true }).click();
-  await loadTab(page, 'Sample Template Editor');
+  await page.getByRole('tab', { name: 'Sample Template Editor' }).click();
   const newTextareaValue = await page
     .locator('#sample-template-editor-textarea')
     .inputValue();
   expect(newTextareaValue).toMatch(/\nHello world$/);
 
   // Test plugin provided previews
-  await loadTab(page, 'Sample Template Preview');
+  await page.getByRole('tab', { name: 'Sample Template Preview' }).click();
   await page.getByRole('heading', { name: 'Hello world' }).waitFor();
   const consoleLogPromise = page.waitForEvent('console');
   await page
