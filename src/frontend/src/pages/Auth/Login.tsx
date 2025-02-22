@@ -39,6 +39,14 @@ export default function Login() {
   const both_reg_enabled =
     registration_enabled() || sso_registration() || false;
 
+  useEffect(() => {
+    if (location.pathname === '/register') {
+      setMode.close();
+    } else {
+      setMode.open();
+    }
+  }, [location]);
+
   const LoginMessage = useMemo(() => {
     const val = server.customize?.login_message;
     if (val == undefined) return null;

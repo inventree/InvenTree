@@ -62,9 +62,11 @@ export function SettingList({
     return 'string';
   }, [setting]);
 
+  const key: string = useMemo(() => setting?.key ?? '', [setting]);
+
   const editSettingModal = useEditApiFormModal({
     url: settingsState.endpoint,
-    pk: setting?.key,
+    pk: key,
     pathParams: settingsState.pathParams,
     title: t`Edit Setting`,
     fields: {
@@ -75,10 +77,11 @@ export function SettingList({
         description: setting?.description,
         api_url: setting?.api_url ?? '',
         model: (setting?.model_name?.split('.')[1] as ModelType) ?? null,
+        filters: setting?.model_filters || undefined,
         choices: setting?.choices ?? undefined
       }
     },
-    successMessage: t`Setting ${setting?.key} updated successfully`,
+    successMessage: t`Setting ${key} updated successfully`,
     onFormSuccess: () => {
       settingsState.fetchSettings();
       onChange?.();

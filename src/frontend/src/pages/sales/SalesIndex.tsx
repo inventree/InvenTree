@@ -36,7 +36,7 @@ export default function PurchasingIndex() {
         hidden: !user.hasViewRole(UserRoles.return_order)
       },
       {
-        name: 'suppliers',
+        name: 'customers',
         label: t`Customers`,
         icon: <IconBuildingStore />,
         content: (

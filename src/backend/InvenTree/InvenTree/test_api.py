@@ -1,12 +1,17 @@
 """Low level tests for the InvenTree API."""
 
 from base64 import b64encode
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from django.urls import reverse
 
 from rest_framework import status
 
+from InvenTree.api import read_license_file
+from InvenTree.api_version import INVENTREE_API_VERSION
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.version import inventreeApiText, parse_version_text
 from users.models import RuleSet, update_group_roles
 
 
@@ -53,13 +58,15 @@ class HTMLAPITests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_found(self):
-        """Test that the NotFoundView is working."""
-        response = self.client.get('/api/anc')
-        self.assertEqual(response.status_code, 404)
+        """Test that the NotFoundView is working with all available methods."""
+        methods = ['options', 'get', 'post', 'patch', 'put', 'delete']
+        for method in methods:
+            response = getattr(self.client, method)('/api/anc')
+            self.assertEqual(response.status_code, 404)
 
 
-class APITests(InvenTreeAPITestCase):
-    """Tests for the InvenTree API."""
+class ApiAccessTests(InvenTreeAPITestCase):
+    """Tests for various access scenarios with the InvenTree API."""
 
     fixtures = ['location', 'category', 'part', 'stock']
     roles = ['part.view']
@@ -99,19 +106,6 @@ class APITests(InvenTreeAPITestCase):
         """Test token auth works."""
         self.tokenAuth()
         self.assertIsNotNone(self.token)
-
-    def test_info_view(self):
-        """Test that we can read the 'info-view' endpoint."""
-        url = reverse('api-inventree-info')
-
-        response = self.get(url)
-
-        data = response.json()
-        self.assertIn('server', data)
-        self.assertIn('version', data)
-        self.assertIn('instance', data)
-
-        self.assertEqual('InvenTree', data['server'])
 
     def test_role_view(self):
         """Test that we can access the 'roles' view for the logged in user.
@@ -421,3 +415,91 @@ class SearchTests(InvenTreeAPITestCase):
                 self.assertEqual(
                     result['error'], 'User does not have permission to view this model'
                 )
+
+
+class GeneralApiTests(InvenTreeAPITestCase):
+    """Tests for various api endpoints."""
+
+    def test_api_version(self):
+        """Test that the API text is correct."""
+        url = reverse('api-version-text')
+        response = self.get(url, format='json')
+        data = response.json()
+
+        self.assertEqual(len(data), 10)
+
+        response = self.get(reverse('api-version')).json()
+        self.assertIn('version', response)
+        self.assertIn('dev', response)
+        self.assertIn('up_to_date', response)
+
+    def test_inventree_api_text_fnc(self):
+        """Test that the inventreeApiText function works expected."""
+        # Normal run
+        resp = inventreeApiText()
+        self.assertEqual(len(resp), 10)
+
+        # More responses
+        resp = inventreeApiText(20)
+        self.assertEqual(len(resp), 20)
+
+        # Specific version
+        resp = inventreeApiText(start_version=5)
+        self.assertEqual(list(resp)[0], 'v5')
+
+    def test_parse_version_text_fnc(self):
+        """Test that api version text is correctly parsed."""
+        resp = parse_version_text()
+
+        # Check that all texts are parsed
+        self.assertEqual(len(resp), INVENTREE_API_VERSION - 1)
+
+    def test_api_license(self):
+        """Test that the license endpoint is working."""
+        response = self.get(reverse('api-license')).json()
+        self.assertIn('backend', response)
+        self.assertIn('frontend', response)
+
+        # Various problem cases
+        # File does not exist
+        with self.assertLogs(logger='inventree', level='ERROR') as log:
+            respo = read_license_file(Path('does not exsist'))
+            self.assertEqual(respo, [])
+
+            self.assertIn('License file not found at', str(log.output))
+
+        with TemporaryDirectory() as tmp:
+            sample_file = Path(tmp, 'temp.txt')
+            sample_file.write_text('abc')
+
+            # File is not a json
+            with self.assertLogs(logger='inventree', level='ERROR') as log:
+                respo = read_license_file(sample_file)
+                self.assertEqual(respo, [])
+
+                self.assertIn('Failed to parse license file', str(log.output))
+
+    def test_info_view(self):
+        """Test that we can read the 'info-view' endpoint."""
+        url = reverse('api-inventree-info')
+
+        response = self.get(url)
+
+        data = response.json()
+        self.assertIn('server', data)
+        self.assertIn('version', data)
+        self.assertIn('instance', data)
+
+        self.assertEqual('InvenTree', data['server'])
+
+        # Test with token
+        token = self.get(url=reverse('api-token')).data['token']
+        self.client.logout()
+
+        # Anon
+        response = self.get(url)
+        self.assertEqual(response.json()['database'], None)
+
+        # Staff
+        response = self.get(url, headers={'Authorization': f'Token {token}'})
+        self.assertGreater(len(response.json()['database']), 4)

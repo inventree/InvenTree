@@ -20,9 +20,9 @@ export default function ResetPassword() {
       notifications.show({
         title: t`Key invalid`,
         message: t`You need to provide a valid key to set a new password. Check your inbox for a reset link.`,
-        color: 'red'
+        color: 'red',
+        autoClose: false
       });
-      navigate('/login');
     }
   }, [key]);
 

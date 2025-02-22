@@ -32,7 +32,7 @@ export const doQuickLogin = async (
   password = password ?? user.password;
   url = url ?? baseUrl;
 
-  await navigate(page, `${url}/login/?login=${username}&password=${password}`);
+  await navigate(page, `${url}/login?login=${username}&password=${password}`);
   await page.waitForURL('**/platform/home');
 
   await page.getByLabel('navigation-menu').waitFor({ timeout: 5000 });
