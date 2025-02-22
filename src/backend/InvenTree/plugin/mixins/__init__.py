@@ -1,5 +1,7 @@
 """Utility class to enable simpler imports."""
 
+from backend.InvenTree.plugin.base.integration.NavigationMixin import NavigationMixin
+
 from common.notifications import BulkNotificationMethod, SingleNotificationMethod
 from plugin.base.action.mixins import ActionMixin
 from plugin.base.barcodes.mixins import BarcodeMixin, SupplierBarcodeMixin
@@ -8,7 +10,6 @@ from plugin.base.icons.mixins import IconPackMixin
 from plugin.base.integration.APICallMixin import APICallMixin
 from plugin.base.integration.AppMixin import AppMixin
 from plugin.base.integration.CurrencyExchangeMixin import CurrencyExchangeMixin
-from plugin.base.integration.mixins import NavigationMixin
 from plugin.base.integration.ReportMixin import ReportMixin
 from plugin.base.integration.ScheduleMixin import ScheduleMixin
 from plugin.base.integration.SettingsMixin import SettingsMixin
