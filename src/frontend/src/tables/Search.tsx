@@ -22,6 +22,7 @@ export function TableSearchInput({
     <TextInput
       value={value}
       disabled={disabled}
+      aria-label='table-search-input'
       leftSection={<IconSearch />}
       placeholder={t`Search`}
       onChange={(event) => setValue(event.target.value)}
