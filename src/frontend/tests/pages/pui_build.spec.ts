@@ -297,14 +297,21 @@ test('Build Order - Filters', async ({ page }) => {
   await navigate(page, 'manufacturing/index/buildorders');
 
   await clearTableFilters(page);
-  await page.getByText('1 - 24 / 24').waitFor();
+
+  // Check for expected pagination text i.e. (1 - 24 / 24)
+  // Note: Due to other concurrent tests, the number of build orders may vary
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+  await page.getByRole('cell', { name: 'BO0023' }).waitFor();
 
   // Toggle 'Outstanding' filter
   await setTableChoiceFilter(page, 'Outstanding', 'Yes');
-  await page.getByText('1 - 18 / 18').waitFor();
+  await page.getByRole('cell', { name: 'BO0017' }).waitFor();
+
   await clearTableFilters(page);
   await setTableChoiceFilter(page, 'Outstanding', 'No');
+
   await page.getByText('1 - 6 / 6').waitFor();
+
   await clearTableFilters(page);
 
   // Filter by custom status code
