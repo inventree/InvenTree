@@ -81,21 +81,21 @@ function SettingValue({
     }
   }, [setting, modelType]);
 
+  // If a full model instance is available, render it
   if (modelInstance && modelType && setting.value) {
     return (
       <Group justify='right' gap='xs'>
         <RenderInstance instance={modelInstance} model={modelType} />
-        <Button variant='subtle' onClick={() => onEdit(setting)}>
+        <Button
+          aria-label={`edit-setting-${setting.key}`}
+          variant='subtle'
+          onClick={() => onEdit(setting)}
+        >
           <IconEdit />
         </Button>
       </Group>
     );
   }
-
-  console.log('Rendering:', setting.key);
-  console.log('- modelInstance:', modelInstance);
-  console.log('- modelType:', modelType);
-  console.log('- setting:', setting.value);
 
   switch (setting?.type || 'string') {
     case 'boolean':
@@ -103,6 +103,7 @@ function SettingValue({
         <Switch
           size='sm'
           radius='lg'
+          aria-label={`toggle-setting-${setting.key}`}
           checked={setting.value.toLowerCase() == 'true'}
           onChange={(event) => onToggle(setting, event.currentTarget.checked)}
           style={{
@@ -114,12 +115,20 @@ function SettingValue({
       return valueText ? (
         <Group gap='xs' justify='right'>
           <Space />
-          <Button variant='subtle' onClick={() => onEdit(setting)}>
+          <Button
+            aria-label={`edit-setting-${setting.key}`}
+            variant='subtle'
+            onClick={() => onEdit(setting)}
+          >
             {valueText}
           </Button>
         </Group>
       ) : (
-        <Button variant='subtle' onClick={() => onEdit(setting)}>
+        <Button
+          aria-label={`edit-setting-${setting.key}`}
+          variant='subtle'
+          onClick={() => onEdit(setting)}
+        >
           <IconEdit />
         </Button>
       );
