@@ -20,19 +20,23 @@ import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconBackspace,
+  IconExclamationCircle,
   IconRefresh,
   IconSearch,
   IconSettings,
+  IconTableExport,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
@@ -53,17 +57,43 @@ type SearchQuery = {
  * Render the results for a single search query
  */
 function QueryResultGroup({
+  searchText,
   query,
+  navigate,
   onRemove,
   onResultClick
 }: Readonly<{
+  searchText: string;
   query: SearchQuery;
+  navigate: NavigateFunction;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
 }>) {
   if (query.results.count == 0) {
     return null;
   }
+
+  // Callback function to view all results for a given query
+  const viewResults = useCallback(
+    (event: any) => {
+      cancelEvent(event);
+
+      const modelInfo = getModelInfo(query.model);
+
+      if (modelInfo.url_overview) {
+        const url = `${modelInfo.url_overview}?search=${searchText}`;
+        navigateToLink(url, navigate, event);
+      } else {
+        showNotification({
+          title: t`No Overview Available`,
+          message: t`No overview available for this model type`,
+          color: 'red',
+          icon: <IconExclamationCircle />
+        });
+      }
+    },
+    [query.model, searchText]
+  );
 
   const model = getModelInfo(query.model);
 
@@ -72,25 +102,38 @@ function QueryResultGroup({
       <Accordion.Control>
         <Group justify='space-between' wrap='nowrap'>
           <Group justify='left' gap={5} wrap='nowrap'>
+            <Tooltip label={t`View all results`} position='top-start'>
+              <ActionIcon
+                size='sm'
+                variant='transparent'
+                radius='xs'
+                aria-label={`view-all-results-${query.model}`}
+                onClick={viewResults}
+              >
+                <IconTableExport />
+              </ActionIcon>
+            </Tooltip>
             <Text size='lg'>{model.label_multiple}</Text>
             <Text size='sm' style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>
           </Group>
-          <Space />
-          <Tooltip label={t`Remove search group`} position='top-end'>
-            <ActionIcon
-              size='sm'
-              color='red'
-              variant='transparent'
-              radius='xs'
-              aria-label={`remove-search-group-${query.model}`}
-              onClick={() => onRemove(query.model)}
-            >
-              <IconX />
-            </ActionIcon>
-          </Tooltip>
+          <Group justify='right' wrap='nowrap'>
+            <Tooltip label={t`Remove search group`} position='top-end'>
+              <ActionIcon
+                size='sm'
+                color='red'
+                variant='transparent'
+                radius='xs'
+                aria-label={`remove-search-group-${query.model}`}
+                onClick={() => onRemove(query.model)}
+              >
+                <IconX />
+              </ActionIcon>
+            </Tooltip>
+            <Space />
+          </Group>
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
@@ -445,7 +488,9 @@ export function SearchDrawer({
               {queryResults.map((query, idx) => (
                 <QueryResultGroup
                   key={idx}
+                  searchText={searchText}
                   query={query}
+                  navigate={navigate}
                   onRemove={(query) => removeResults(query)}
                   onResultClick={(query, pk, event) =>
                     onResultClick(query, pk, event)
