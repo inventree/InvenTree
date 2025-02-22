@@ -15,7 +15,8 @@ import {
   Table,
   Text,
   TextInput,
-  Title
+  Title,
+  Tooltip
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { hideNotification, showNotification } from '@mantine/notifications';
