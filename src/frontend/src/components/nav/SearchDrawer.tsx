@@ -120,12 +120,13 @@ function QueryResultGroup({
   return (
     <Accordion.Item key={query.model} value={query.model}>
       <Accordion.Control>
-        <Group justify='space-between' wrap='nowrap'>
+        <Group justify='space-between'>
           <Group justify='left' gap={5} wrap='nowrap'>
             <Tooltip label={t`View all results`} position='top-start'>
               <ActionIcon
                 size='sm'
                 variant='transparent'
+                component='div'
                 radius='xs'
                 aria-label={`view-all-results-${query.model}`}
                 disabled={!overviewUrl}
@@ -145,6 +146,7 @@ function QueryResultGroup({
               <ActionIcon
                 size='sm'
                 color='red'
+                component='div'
                 variant='transparent'
                 radius='xs'
                 aria-label={`remove-search-group-${query.model}`}
