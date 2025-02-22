@@ -409,8 +409,7 @@ export function SearchDrawer({
       );
 
       for (const key in searchQuery.data) {
-        const query = queries.find((q) => q.searchKey == key || q.model == key);
-        console.log('result key:', key, '->', query);
+        const query = queries.find((q) => (q.searchKey ?? q.model) == key);
         if (query) {
           query.results = searchQuery.data[key];
         }
