@@ -43,9 +43,8 @@ export interface InvenTreeCalendarProps extends CalendarOptions {
 export default function Calendar({
   downloadData,
   enableDownload,
-  enableFilters,
+  enableFilters = false,
   enableSearch,
-  isLoading,
   state,
   ...calendarProps
 }: InvenTreeCalendarProps) {
@@ -154,7 +153,7 @@ export default function Calendar({
           </Group>
         </Group>
         <Box pos='relative'>
-          <LoadingOverlay visible={isLoading} />
+          <LoadingOverlay visible={state.query.isFetching} />
           <FullCalendar
             ref={state.ref}
             plugins={[dayGridPlugin, interactionPlugin]}

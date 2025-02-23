@@ -279,6 +279,38 @@ class PurchaseOrderFilter(OrderFilter):
         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(creation_date__gte=value, start_date__isnull=True)
+        q2 = Q(start_date__gte=value)
+        q3 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(creation_date__lte=value, start_date__isnull=True)
+        q2 = Q(start_date__lte=value)
+        q3 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
 
 class PurchaseOrderMixin:
     """Mixin class for PurchaseOrder endpoints."""
@@ -323,23 +355,6 @@ class PurchaseOrderList(
     """
 
     filterset_class = PurchaseOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering."""
-        # Perform basic filtering
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.PurchaseOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_field_aliases = {

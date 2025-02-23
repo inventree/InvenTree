@@ -479,52 +479,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Return the associated barcode model type code for this model."""
         return 'PO'
 
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by 'minimum and maximum date range'.
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist between these dates
-
-        To be "interesting":
-        - A "received" order where the received date lies within the date range
-        - A "pending" order where the target date lies within the date range
-        - TODO: An "overdue" order where the target date is in the past
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Construct a queryset for "received" orders within the range
-        received = (
-            Q(status=PurchaseOrderStatus.COMPLETE.value)
-            & Q(complete_date__gte=min_date)
-            & Q(complete_date__lte=max_date)
-        )
-
-        # Construct a queryset for "pending" orders within the range
-        pending = (
-            Q(status__in=PurchaseOrderStatusGroups.OPEN)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO: Account for the 'start date' of the PurchaseOrder
-
-        # TODO - Construct a queryset for "overdue" orders within the range
-
-        queryset = queryset.filter(received | pending)
-
-        return queryset
-
     def __str__(self):
         """Render a string representation of this PurchaseOrder."""
         return f'{self.reference} - {self.supplier.name if self.supplier else _("deleted")}'

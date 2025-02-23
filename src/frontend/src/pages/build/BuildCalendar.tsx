@@ -59,8 +59,8 @@ export default function BuildCalendar() {
 
     return (
       calendarState.data?.map((build: any) => {
-        const start: string = build.start_date || today;
-        const end: string = build.target_date || build.start_date || today;
+        const start: string = build.start_date || build.creation_date || today;
+        const end: string = build.target_date || start;
 
         // const inProgress =
         //   dayjs(start).isBefore(today) && dayjs(end).isAfter(today);
@@ -203,12 +203,10 @@ export default function BuildCalendar() {
   return (
     <Calendar
       enableDownload
-      enableFilters
       enableSearch
       events={events}
       state={calendarState}
       editable={true}
-      isLoading={calendarState.query.isFetching}
       eventContent={renderBuildOrder}
       eventClick={onClickBuild}
       eventChange={onEditBuild}
