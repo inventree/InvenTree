@@ -10,7 +10,7 @@ export default function Reset() {
   const navigate = useNavigate();
 
   return (
-    <Wrapper titleText={t`Reset password`}>
+    <Wrapper titleText={t`Reset Password`}>
       <TextInput
         required
         label={t`Email`}
