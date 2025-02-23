@@ -119,8 +119,6 @@ export default function PluginListTable() {
         render: (record: any) => {
           return record?.meta.version;
         }
-
-        // TODO: Display date information if available
       },
       {
         accessor: 'meta.author',
