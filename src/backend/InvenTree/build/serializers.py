@@ -62,7 +62,6 @@ class BuildSerializer(
         model = Build
         fields = [
             'pk',
-            'url',
             'title',
             'barcode_hash',
             'batch',
@@ -111,8 +110,6 @@ class BuildSerializer(
     reference = serializers.CharField(required=True)
 
     level = serializers.IntegerField(label=_('Build Level'), read_only=True)
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
@@ -424,7 +421,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             except DjangoValidationError as e:
                 raise ValidationError({'serial_numbers': e.messages})
 
-            # Check for conflicting serial numbesr
+            # Check for conflicting serial numbers
             existing = part.find_conflicting_serial_numbers(self.serials)
 
             if len(existing) > 0:
