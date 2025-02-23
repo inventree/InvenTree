@@ -184,19 +184,19 @@ export default function SystemSettings() {
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
-              'PART_CREATE_SUPPLIER', // TODO: Break here
+              'PART_CREATE_SUPPLIER',
               'PART_TEMPLATE',
               'PART_ASSEMBLY',
               'PART_COMPONENT',
               'PART_TRACKABLE',
               'PART_PURCHASEABLE',
               'PART_SALABLE',
-              'PART_VIRTUAL', // TODO: Break here
+              'PART_VIRTUAL',
               'PART_COPY_BOM',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON' // TODO: Move to part category settings page
+              'PART_CATEGORY_DEFAULT_ICON'
             ]}
           />
         )
