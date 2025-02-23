@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   clearTableFilters,
@@ -324,4 +325,23 @@ test('Build Order - Filters', async ({ page }) => {
 
   await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending Approval').first().waitFor();
+});
+
+test('Build Order - Duplicate', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'manufacturing/build-order/24/details');
+  await page.getByLabel('action-menu-build-order-').click();
+  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  // Ensure a new reference is suggested
+  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Build Details' }).waitFor();
+  await page.getByRole('tab', { name: 'Build Details' }).click();
+
+  await page.getByText('Pending').first().waitFor();
 });

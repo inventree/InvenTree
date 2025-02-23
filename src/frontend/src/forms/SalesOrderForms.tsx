@@ -266,7 +266,8 @@ export function useAllocateToSalesOrderForm({
           { title: t`Part`, style: { minWidth: '200px' } },
           { title: t`Allocated`, style: { minWidth: '200px' } },
           { title: t`Stock Item`, style: { width: '100%' } },
-          { title: t`Quantity`, style: { width: '200px' } }
+          { title: t`Quantity`, style: { minWidth: '200px' } },
+          { title: '', style: { width: '50px' } }
         ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record =

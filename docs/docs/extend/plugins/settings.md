@@ -62,7 +62,7 @@ class PluginWithSettings(SettingsMixin, InvenTreePlugin):
             'name': _('Assembled Part'),
             'description': _('Settings can point to internal database models'),
             'model': 'part.part',
-            'filters': {
+            'model_filters': {
                 'active': True,
                 'assembly': True
             }
