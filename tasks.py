@@ -101,11 +101,14 @@ def chceckInvokePath():
         return
 
     invoke_path = Path(invoke.__file__)
+    env_path = Path(sys.prefix).resolve()
     loc_path = Path(__file__).parent.resolve()
-    if not invoke_path.is_relative_to(loc_path):
+    if not invoke_path.is_relative_to(loc_path) and not invoke_path.is_relative_to(
+        env_path
+    ):
         error('INVE-E2 - Wrong Invoke Path')
         error(
-            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` !'
+            f'The invoke tool `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` or `{env_path}`'
         )
         sys.exit(1)
 
@@ -1301,6 +1304,8 @@ def version(c):
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
+    invoke_path = Path(invoke.__file__).resolve()
+
     # Special output messages
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
     NA = wrap_color('N/A', '93')
@@ -1313,6 +1318,7 @@ The Open-Source Inventory Management System\n
 Python paths:
 Executable  {sys.executable}
 Environment {sys.prefix}
+Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {localDir()}
