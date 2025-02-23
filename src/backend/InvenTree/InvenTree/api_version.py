@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 314
+INVENTREE_API_VERSION = 315
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v315 - 2025-02-23 : https://github.com/inventree/InvenTree/pull/8933
+    - Add min_date and max_date query filters for orders, for use in calendar views
 
 v314 - 2025-02-17 : https://github.com/inventree/InvenTree/pull/6293
     - Removes a considerable amount of old auth endpoints
