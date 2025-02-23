@@ -201,7 +201,7 @@ export default function BuildCalendar() {
   const userFilters = useUserFilters();
   const categoryFilters = useCategoryFilters();
 
-  // Filters available for the calendar
+  // TODO: Implement filters available for the calendar
   const calendarFilters: TableFilter[] = useMemo(() => {
     return [
       OrderStatusFilter({ model: ModelType.build }),
@@ -236,7 +236,6 @@ export default function BuildCalendar() {
       enableFilters
       enableSearch
       events={events}
-      filters={calendarFilters}
       state={calendarState}
       editable={true}
       isLoading={buildQuery.isFetching}

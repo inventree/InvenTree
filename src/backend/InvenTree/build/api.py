@@ -242,6 +242,51 @@ class BuildFilter(rest_filters.FilterSet):
         label=_('Completed after'), field_name='completion_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This filter is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+
+        So, we are interested in orders which are active *after* this date:
+
+        - creation_date is set *after* this date (but there is no start date)
+        - start_date is set *after* this date
+        - target_date is set *after* this date
+
+        """
+        q1 = Q(creation_date__gte=value, start_date__isnull=True)
+        q2 = Q(start_date__gte=value)
+        q3 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This filter is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+
+        So, we are interested in orders which are active *before* this date:
+
+        - creation_date is set *before* this date (but there is no start date)
+        - start_date is set *before* this date
+        - target_date is set *before* this date
+        """
+        q1 = Q(creation_date__lte=value, start_date__isnull=True)
+        q2 = Q(start_date__lte=value)
+        q3 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
 
 class BuildMixin:
     """Mixin class for Build API endpoints."""
@@ -338,13 +383,6 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
 
             except (ValueError, Build.DoesNotExist):
                 pass
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = Build.filterByDate(queryset, min_date, max_date)
 
         return queryset
 

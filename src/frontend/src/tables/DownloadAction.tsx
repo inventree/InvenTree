@@ -34,6 +34,7 @@ export function DownloadAction({
   return (
     <ActionDropdown
       tooltip={t`Download Data`}
+      tooltipPosition='top-end'
       icon={<IconDownload />}
       actions={actions}
     />
