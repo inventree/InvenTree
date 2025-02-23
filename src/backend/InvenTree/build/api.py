@@ -287,6 +287,20 @@ class BuildFilter(rest_filters.FilterSet):
 
         return queryset.filter(q1 | q2 | q3).distinct()
 
+    exclude_tree = rest_filters.ModelChoiceFilter(
+        queryset=Build.objects.all(),
+        method='filter_exclude_tree',
+        label=_('Exclude Tree'),
+    )
+
+    def filter_exclude_tree(self, queryset, name, value):
+        """Filter by excluding a tree of Build objects."""
+        queryset = queryset.exclude(
+            pk__in=[bld.pk for bld in value.get_descendants(include_self=True)]
+        )
+
+        return queryset
+
 
 class BuildMixin:
     """Mixin class for Build API endpoints."""
@@ -361,28 +375,6 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         queryset = super().get_queryset().select_related('part')
 
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BuildList endpoint."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # exclude parent tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                build = Build.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[bld.pk for bld in build.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, Build.DoesNotExist):
-                pass
 
         return queryset
 
