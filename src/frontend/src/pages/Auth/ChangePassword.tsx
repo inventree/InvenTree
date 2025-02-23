@@ -71,6 +71,11 @@ export default function Set_Password() {
             navigate
           )
         }
+        disabled={
+          simpleForm.values.current_password === '' ||
+          simpleForm.values.new_password1 === '' ||
+          simpleForm.values.new_password1 !== simpleForm.values.new_password2
+        }
       >
         <Trans>Confirm</Trans>
       </Button>
