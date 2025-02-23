@@ -13,16 +13,17 @@ import { useMemo } from 'react';
 
 import { useLocalStorage } from '@mantine/hooks';
 import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
+import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
-import PurchaseOrderCalendar from './PurchaseOrderCalendar';
 
 function PurchaseOrderOverview({
   view
@@ -31,7 +32,13 @@ function PurchaseOrderOverview({
 }) {
   switch (view) {
     case 'calendar':
-      return <PurchaseOrderCalendar />;
+      return (
+        <OrderCalendar
+          model={ModelType.purchaseorder}
+          role={UserRoles.purchase_order}
+          params={{ outstanding: true }}
+        />
+      );
     case 'table':
     default:
       return <PurchaseOrderTable />;

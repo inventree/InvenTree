@@ -213,6 +213,44 @@ class OrderFilter(rest_filters.FilterSet):
         label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
     )
 
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include orders *after* a specified date.
+
+        This is used in combination with filter_max_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__gte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__gte=value, start_date__isnull=True)
+        q3 = Q(start_date__gte=value)
+        q4 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include orders *before* a specified date.
+
+        This is used in combination with filter_min_date,
+        to provide a queryset which matches a particular range of dates.
+
+        In particular, this is used in the UI for the calendar view.
+        """
+        q1 = Q(
+            creation_date__lte=value, issue_date__isnull=True, start_date__isnull=True
+        )
+        q2 = Q(issue_date__lte=value, start_date__isnull=True)
+        q3 = Q(start_date__lte=value)
+        q4 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
 
 class LineItemFilter(rest_filters.FilterSet):
     """Base class for custom API filters for order line item list(s)."""
@@ -278,38 +316,6 @@ class PurchaseOrderFilter(OrderFilter):
     completed_after = InvenTreeDateFilter(
         label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
     )
-
-    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
-
-    def filter_min_date(self, queryset, name, value):
-        """Filter the queryset to include orders *after* a specified date.
-
-        This is used in combination with filter_max_date,
-        to provide a queryset which matches a particular range of dates.
-
-        In particular, this is used in the UI for the calendar view.
-        """
-        q1 = Q(creation_date__gte=value, start_date__isnull=True)
-        q2 = Q(start_date__gte=value)
-        q3 = Q(target_date__gte=value)
-
-        return queryset.filter(q1 | q2 | q3).distinct()
-
-    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
-
-    def filter_max_date(self, queryset, name, value):
-        """Filter the queryset to include orders *before* a specified date.
-
-        This is used in combination with filter_min_date,
-        to provide a queryset which matches a particular range of dates.
-
-        In particular, this is used in the UI for the calendar view.
-        """
-        q1 = Q(creation_date__lte=value, start_date__isnull=True)
-        q2 = Q(start_date__lte=value)
-        q3 = Q(target_date__lte=value)
-
-        return queryset.filter(q1 | q2 | q3).distinct()
 
 
 class PurchaseOrderMixin:
@@ -805,21 +811,6 @@ class SalesOrderList(
     """
 
     filterset_class = SalesOrderFilter
-
-    def filter_queryset(self, queryset):
-        """Perform custom filtering operations on the SalesOrder queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by 'date range'
-        min_date = params.get('min_date', None)
-        max_date = params.get('max_date', None)
-
-        if min_date is not None and max_date is not None:
-            queryset = models.SalesOrder.filterByDate(queryset, min_date, max_date)
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 

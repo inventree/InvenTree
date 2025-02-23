@@ -11,31 +11,49 @@ import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
-import Calendar from '../../components/calendar/Calendar';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
+import type { ModelType } from '../../enums/ModelType';
+import type { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { ModelInformationDict } from '../render/ModelType';
+import Calendar from './Calendar';
 
-export default function PurchaseOrderCalenadar() {
+/**
+ * A generic calendar component for displaying orders
+ * This can be used for the following order types:
+ * - BuildOrder
+ * - PurchaseOrder
+ * - SalesOrder
+ * - ReturnOrder
+ */
+
+export default function OrderCalendar({
+  model,
+  role,
+  params
+}: {
+  model: ModelType;
+  role: UserRoles;
+  params: Record<string, any>;
+}) {
   const navigate = useNavigate();
   const user = useUserState();
 
+  const modelInfo = useMemo(() => {
+    return ModelInformationDict[model];
+  }, [model]);
+
   const canEdit = useMemo(() => {
-    return user.hasChangeRole(UserRoles.purchase_order);
-  }, [user]);
+    return user.hasChangeRole(role);
+  }, [user, role]);
 
   const calendarState = useCalendar({
-    endpoint: ApiEndpoints.purchase_order_list,
-    name: 'purchaseorder',
-    queryParams: {
-      supplier_detail: true,
-      outstanding: true
-    }
+    endpoint: modelInfo.api_endpoint,
+    name: model.toString(),
+    queryParams: params
   });
 
   // Build the events
@@ -61,7 +79,7 @@ export default function PurchaseOrderCalenadar() {
     );
   }, [calendarState.data, canEdit]);
 
-  // Callback when PurchaseOrder is edited
+  // Callback when Order is edited
   const onEditOrder = (info: EventChangeArg) => {
     const orderId = info.event.id;
     const patch: Record<string, string> = {};
@@ -76,7 +94,7 @@ export default function PurchaseOrderCalenadar() {
 
     if (!!patch) {
       api
-        .patch(apiUrl(ApiEndpoints.purchase_order_list, orderId), patch)
+        .patch(apiUrl(modelInfo.api_endpoint, orderId), patch)
         .then(() => {
           hideNotification('calendar-edit-success');
           showNotification({
@@ -101,14 +119,14 @@ export default function PurchaseOrderCalenadar() {
   const onClickOrder = (info: EventClickArg) => {
     if (!!info.event.id) {
       navigateToLink(
-        getDetailUrl(ModelType.purchaseorder, info.event.id),
+        getDetailUrl(model, info.event.id),
         navigate,
         info.jsEvent
       );
     }
   };
 
-  const renderPurchaseOrder = useCallback(
+  const renderOrder = useCallback(
     (event: EventContentArg) => {
       const order = calendarState.data?.find(
         (order: any) => order.pk.toString() == event.event.id.toString()
@@ -133,7 +151,7 @@ export default function PurchaseOrderCalenadar() {
           <Text size='sm' fw={700}>
             {order.reference}
           </Text>
-          <Text size='xs'>{order.description}</Text>
+          <Text size='xs'>{order.description ?? order.title}</Text>
         </Group>
       );
     },
@@ -147,7 +165,7 @@ export default function PurchaseOrderCalenadar() {
       events={events}
       state={calendarState}
       editable={true}
-      eventContent={renderPurchaseOrder}
+      eventContent={renderOrder}
       eventClick={onClickOrder}
       eventChange={onEditOrder}
     />

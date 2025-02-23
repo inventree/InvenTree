@@ -1,6 +1,5 @@
 """Order model definitions."""
 
-from datetime import datetime
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -386,6 +385,13 @@ class Order(
         verbose_name=_('Created By'),
     )
 
+    issue_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Issue Date'),
+        help_text=_('Date order was issued'),
+    )
+
     responsible = models.ForeignKey(
         UserModels.Owner,
         on_delete=models.SET_NULL,
@@ -535,13 +541,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         related_name='+',
         verbose_name=_('received by'),
-    )
-
-    issue_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Issue Date'),
-        help_text=_('Date order was issued'),
     )
 
     complete_date = models.DateField(
@@ -1006,52 +1005,6 @@ class SalesOrder(TotalPriceMixin, Order):
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'SO'
-
-    @staticmethod
-    def filterByDate(queryset, min_date, max_date):
-        """Filter by "minimum and maximum date range".
-
-        - Specified as min_date, max_date
-        - Both must be specified for filter to be applied
-        - Determine which "interesting" orders exist between these dates
-
-        To be "interesting":
-        - A "completed" order where the completion date lies within the date range
-        - A "pending" order where the target date lies within the date range
-        - TODO: An "overdue" order where the target date is in the past
-        """
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        # Ensure that both dates are valid
-        try:
-            min_date = datetime.strptime(str(min_date), date_fmt).date()
-            max_date = datetime.strptime(str(max_date), date_fmt).date()
-        except (ValueError, TypeError):
-            # Date processing error, return queryset unchanged
-            return queryset
-
-        # Construct a queryset for "completed" orders within the range
-        completed = (
-            Q(status__in=SalesOrderStatusGroups.COMPLETE)
-            & Q(shipment_date__gte=min_date)
-            & Q(shipment_date__lte=max_date)
-        )
-
-        # TODO: Account for the 'start date' of the SalesOrder
-
-        # Construct a queryset for "pending" orders within the range
-        pending = (
-            Q(status__in=SalesOrderStatusGroups.OPEN)
-            & ~Q(target_date=None)
-            & Q(target_date__gte=min_date)
-            & Q(target_date__lte=max_date)
-        )
-
-        # TODO: Construct a queryset for "overdue" orders within the range
-
-        queryset = queryset.filter(completed | pending)
-
-        return queryset
 
     def __str__(self):
         """Render a string representation of this SalesOrder."""
@@ -2310,13 +2263,6 @@ class ReturnOrder(TotalPriceMixin, Order):
         blank=True,
         verbose_name=_('Customer Reference '),
         help_text=_('Customer order reference code'),
-    )
-
-    issue_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Issue Date'),
-        help_text=_('Date order was issued'),
     )
 
     complete_date = models.DateField(
