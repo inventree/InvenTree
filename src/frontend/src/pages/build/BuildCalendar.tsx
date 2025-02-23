@@ -100,25 +100,27 @@ export default function BuildCalendar() {
       patch['target_date'] = info.event.end.toISOString().split('T')[0];
     }
 
-    api
-      .patch(apiUrl(ApiEndpoints.build_order_list, buildId), patch)
-      .then(() => {
-        hideNotification('calendar-edit-success');
-        showNotification({
-          id: 'calendar-edit-success',
-          message: t`Build order updated`,
-          color: 'green'
+    if (!!patch) {
+      api
+        .patch(apiUrl(ApiEndpoints.build_order_list, buildId), patch)
+        .then(() => {
+          hideNotification('calendar-edit-success');
+          showNotification({
+            id: 'calendar-edit-success',
+            message: t`Order updated`,
+            color: 'green'
+          });
+        })
+        .catch(() => {
+          info.revert();
+          hideNotification('calendar-edit-error');
+          showNotification({
+            id: 'calendar-edit-error',
+            message: t`Error updating order`,
+            color: 'red'
+          });
         });
-      })
-      .catch(() => {
-        info.revert();
-        hideNotification('calendar-edit-error');
-        showNotification({
-          id: 'calendar-edit-error',
-          message: t`Error updating build order`,
-          color: 'red'
-        });
-      });
+    }
   };
 
   // Callback when a build is clicked on

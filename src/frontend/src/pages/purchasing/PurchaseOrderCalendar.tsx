@@ -5,10 +5,12 @@ import type {
 } from '@fullcalendar/core';
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconCalendarExclamation } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../App';
 import Calendar from '../../components/calendar/Calendar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -16,6 +18,7 @@ import { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 export default function PurchaseOrderCalenadar() {
@@ -60,7 +63,38 @@ export default function PurchaseOrderCalenadar() {
 
   // Callback when PurchaseOrder is edited
   const onEditOrder = (info: EventChangeArg) => {
-    // TODO
+    const orderId = info.event.id;
+    const patch: Record<string, string> = {};
+
+    if (info.event.start && info.event.start != info.oldEvent.start) {
+      patch.start_date = info.event.start.toISOString().split('T')[0];
+    }
+
+    if (info.event.end && info.event.end != info.oldEvent.end) {
+      patch.target_date = info.event.end.toISOString().split('T')[0];
+    }
+
+    if (!!patch) {
+      api
+        .patch(apiUrl(ApiEndpoints.purchase_order_list, orderId), patch)
+        .then(() => {
+          hideNotification('calendar-edit-success');
+          showNotification({
+            id: 'calendar-edit-success',
+            message: t`Order Updated`,
+            color: 'green'
+          });
+        })
+        .catch(() => {
+          info.revert();
+          hideNotification('calendar-edit-error');
+          showNotification({
+            id: 'calendar-edit-error',
+            message: t`Error updating order`,
+            color: 'red'
+          });
+        });
+    }
   };
 
   // Callback when PurchaseOrder is clicked
