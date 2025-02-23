@@ -71,7 +71,7 @@ jobs:
 
   pre-commit:
     name: Style [pre-commit]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
@@ -93,7 +93,7 @@ jobs:
 
   mkdocs:
     name: Style [Documentation]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: paths-filter
 
@@ -121,7 +121,7 @@ jobs:
 
   schema:
     name: Tests - API Schema Documentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
@@ -215,7 +215,7 @@ jobs:
 
   schema-push:
     name: Push new schema
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: [paths-filter, schema]
     if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
     env:
@@ -255,7 +255,7 @@ jobs:
 
   python:
     name: Tests - inventree-python
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -346,7 +346,7 @@ jobs:
 
   postgres:
     name: Tests - DB [PostgreSQL]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
@@ -394,7 +394,7 @@ jobs:
 
   mysql:
     name: Tests - DB [MySQL]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
@@ -628,7 +628,7 @@ jobs:
 
   platform_ui_build:
     name: Build - UI Platform
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
 
     steps:
@@ -657,7 +657,7 @@ jobs:
 
   zizmor:
     name: Security [Zizmor]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.cicd == 'true' || needs.paths-filter.outputs.force == 'true'
 
