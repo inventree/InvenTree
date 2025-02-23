@@ -108,7 +108,7 @@ def chceckInvokePath():
     ):
         error('INVE-E2 - Wrong Invoke Path')
         error(
-            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` or `{env_path} !'
+            f'The invoke tool `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` or `{env_path}`'
         )
         sys.exit(1)
 
