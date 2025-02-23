@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { loadTab, navigate } from './helpers.js';
+import { activateTableView, loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -61,6 +61,7 @@ test('Report Printing', async ({ page }) => {
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Purchase Orders');
+  await activateTableView(page);
 
   await page.getByRole('cell', { name: 'PO0009' }).click();
 

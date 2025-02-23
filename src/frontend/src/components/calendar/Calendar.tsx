@@ -102,6 +102,7 @@ export default function Calendar({
                   <Button
                     m={0}
                     variant='transparent'
+                    aria-label='calendar-select-month'
                     onClick={() => {
                       setMonthSelectOpened(!monthSelectOpened);
                     }}
