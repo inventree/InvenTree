@@ -7,7 +7,6 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconCalendarExclamation } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +16,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { navigateToLink } from '../../functions/navigation';
-import { showApiErrorMessage } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import useCalendar from '../../hooks/UseCalendar';
 import {
@@ -46,40 +44,12 @@ export default function BuildCalendar() {
     return user.hasChangeRole(UserRoles.build);
   }, [user]);
 
-  const calendarState = useCalendar('buildorder-index');
-
-  const buildQuery = useQuery({
-    enabled: !!calendarState.startDate && !!calendarState.endDate,
-    queryKey: [
-      'builds',
-      calendarState.startDate,
-      calendarState.endDate,
-      calendarState.searchTerm
-    ],
-    queryFn: async () => {
-      // Expand the
-      const min_date = dayjs(calendarState.startDate).subtract(1, 'month');
-      const max_date = dayjs(calendarState.endDate).add(1, 'month');
-
-      return api
-        .get(apiUrl(ApiEndpoints.build_order_list), {
-          params: {
-            part_detail: true,
-            outstanding: true,
-            min_date: min_date?.toISOString().split('T')[0],
-            max_date: max_date?.toISOString().split('T')[0],
-            search: calendarState.searchTerm
-          }
-        })
-        .then((response) => {
-          return response.data ?? [];
-        })
-        .catch((error) => {
-          showApiErrorMessage({
-            error: error,
-            title: t`Error fetching build orders`
-          });
-        });
+  const calendarState = useCalendar({
+    endpoint: ApiEndpoints.build_order_list,
+    name: 'build',
+    queryParams: {
+      part_detail: true,
+      outstanding: true
     }
   });
 
@@ -88,7 +58,7 @@ export default function BuildCalendar() {
     const today = dayjs().toISOString().split('T')[0];
 
     return (
-      buildQuery.data?.map((build: any) => {
+      calendarState.data?.map((build: any) => {
         const start: string = build.start_date || today;
         const end: string = build.target_date || build.start_date || today;
 
@@ -114,7 +84,7 @@ export default function BuildCalendar() {
         };
       }) ?? []
     );
-  }, [buildQuery.data, canEdit]);
+  }, [calendarState.data, canEdit]);
 
   // Callback when a build is edited
   const onEditBuild = (info: EventChangeArg) => {
@@ -165,7 +135,7 @@ export default function BuildCalendar() {
   const renderBuildOrder = useCallback(
     (event: EventContentArg) => {
       // Find the matching build order
-      const build = buildQuery.data?.find(
+      const build = calendarState.data?.find(
         (b: any) => b.pk.toString() == event.event.id.toString()
       );
 
@@ -193,7 +163,7 @@ export default function BuildCalendar() {
         </Group>
       );
     },
-    [buildQuery.data]
+    [calendarState.data]
   );
 
   const projectCodeFilters = useProjectCodeFilters();
@@ -238,7 +208,7 @@ export default function BuildCalendar() {
       events={events}
       state={calendarState}
       editable={true}
-      isLoading={buildQuery.isFetching}
+      isLoading={calendarState.query.isFetching}
       eventContent={renderBuildOrder}
       eventClick={onClickBuild}
       eventChange={onEditBuild}
