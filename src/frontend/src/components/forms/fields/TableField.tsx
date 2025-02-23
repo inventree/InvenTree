@@ -132,15 +132,21 @@ export function TableField({
   );
 
   return (
-    <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
+    <Table
+      highlightOnHover
+      striped
+      aria-label={`table-field-${field.name}`}
+      style={{ width: '100%' }}
+    >
       <Table.Thead>
         <Table.Tr>
           {definition.headers?.map((header, index) => {
             return (
               <Table.Th
-                key={`table-header-${identifierString(header)}-${index}`}
+                key={`table-header-${identifierString(header.title)}-${index}`}
+                style={header.style}
               >
-                {header}
+                {header.title}
               </Table.Th>
             );
           })}

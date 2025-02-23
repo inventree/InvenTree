@@ -129,8 +129,6 @@ function partTableColumns(): TableColumn[] {
           );
         }
 
-        // TODO: Add extra information on stock "demand"
-
         if (stock <= 0) {
           color = 'red';
           text = t`No stock`;
