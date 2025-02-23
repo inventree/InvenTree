@@ -1,8 +1,53 @@
 import test from 'playwright/test';
 
-import { loadTab, navigate } from './helpers.js';
+import { clearTableFilters, loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
+
+// Unit test for plugin settings
+test('Plugins - Settings', async ({ page, request }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Ensure that the SampleIntegration plugin is enabled
+  await setPluginState({
+    request,
+    plugin: 'sample',
+    state: true
+  });
+
+  // Navigate and select the plugin
+  await navigate(page, 'settings/admin/plugin/');
+  await clearTableFilters(page);
+  await page.getByLabel('table-search-input').fill('integration');
+
+  await page
+    .getByRole('row', { name: 'SampleIntegrationPlugin' })
+    .getByRole('paragraph')
+    .click();
+  await page.getByRole('button', { name: 'Plugin Information' }).click();
+  await page
+    .getByLabel('Plugin Detail -')
+    .getByRole('button', { name: 'Plugin Settings' })
+    .waitFor();
+
+  // Edit numerical value
+  await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
+  const originalValue = await page.getByLabel('number-field-value').innerText();
+  await page
+    .getByLabel('number-field-value')
+    .fill(originalValue == '999' ? '1000' : '999');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Change it back
+  await page.getByLabel('edit-setting-NUMERICAL_SETTING').click();
+  await page.getByLabel('number-field-value').fill(originalValue);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Select supplier
+  await page.getByLabel('edit-setting-SELECT_COMPANY').click();
+  await page.getByLabel('related-field-value').fill('mouser');
+  await page.getByText('Mouser Electronics').click();
+});
 
 test('Plugins - Panels', async ({ page, request }) => {
   await doQuickLogin(page, 'admin', 'inventree');
