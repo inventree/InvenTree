@@ -42,6 +42,8 @@ export default function SystemSettings() {
             keys={[
               'INVENTREE_BASE_URL',
               'INVENTREE_COMPANY_NAME',
+              'INVENTREE_INSTANCE_ID',
+              'INVENTREE_ANNOUNCE_ID',
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
@@ -182,19 +184,19 @@ export default function SystemSettings() {
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
-              'PART_CREATE_SUPPLIER', // TODO: Break here
+              'PART_CREATE_SUPPLIER',
               'PART_TEMPLATE',
               'PART_ASSEMBLY',
               'PART_COMPONENT',
               'PART_TRACKABLE',
               'PART_PURCHASEABLE',
               'PART_SALABLE',
-              'PART_VIRTUAL', // TODO: Break here
+              'PART_VIRTUAL',
               'PART_COPY_BOM',
               'PART_COPY_PARAMETERS',
               'PART_COPY_TESTS',
               'PART_CATEGORY_PARAMETERS',
-              'PART_CATEGORY_DEFAULT_ICON' // TODO: Move to part category settings page
+              'PART_CATEGORY_DEFAULT_ICON'
             ]}
           />
         )
@@ -252,6 +254,7 @@ export default function SystemSettings() {
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
+              'PURCHASEORDER_CONVERT_CURRENCY',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
               'PURCHASEORDER_AUTO_COMPLETE'
             ]}

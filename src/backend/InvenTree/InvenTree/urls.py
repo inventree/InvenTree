@@ -10,11 +10,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.registration.views import (
-    ConfirmEmailView,
-    SocialAccountDisconnectView,
-    SocialAccountListView,
-)
+from allauth.headless.urls import Client, build_urlpatterns
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
 
@@ -29,7 +25,6 @@ import plugin.api
 import report.api
 import stock.api
 import users.api
-from InvenTree.auth_override_views import CustomRegisterView
 from plugin.urls import get_plugin_urls
 from web.urls import urlpatterns as platform_urls
 
@@ -42,14 +37,6 @@ from .api import (
     VersionView,
 )
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import (
-    EmailListView,
-    EmailPrimaryView,
-    EmailRemoveView,
-    EmailVerifyView,
-    SocialProviderListView,
-    get_provider_urls,
-)
 from .views import auth_request
 
 admin.site.site_header = 'InvenTree Admin'
@@ -107,59 +94,17 @@ apipatterns = [
     path(
         'auth/',
         include([
-            re_path(
-                r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$',
-                ConfirmEmailView.as_view(),
-                name='account_confirm_email',
-            ),
-            path('registration/', CustomRegisterView.as_view(), name='rest_register'),
-            path('registration/', include('dj_rest_auth.registration.urls')),
-            path(
-                'providers/', SocialProviderListView.as_view(), name='social_providers'
-            ),
-            path(
-                'emails/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            path(
-                                'primary/',
-                                EmailPrimaryView.as_view(),
-                                name='email-primary',
-                            ),
-                            path(
-                                'verify/',
-                                EmailVerifyView.as_view(),
-                                name='email-verify',
-                            ),
-                            path(
-                                'remove/',
-                                EmailRemoveView().as_view(),
-                                name='email-remove',
-                            ),
-                        ]),
-                    ),
-                    path('', EmailListView.as_view(), name='email-list'),
-                ]),
-            ),
-            path('social/', include(get_provider_urls())),
-            path(
-                'social/', SocialAccountListView.as_view(), name='social_account_list'
-            ),
-            path(
-                'social/<int:pk>/disconnect/',
-                SocialAccountDisconnectView.as_view(),
-                name='social_account_disconnect',
-            ),
-            path('login/', users.api.Login.as_view(), name='api-login'),
-            path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
                 name='api-login-redirect',
             ),
-            path('', include('dj_rest_auth.urls')),
+            path(
+                '',
+                include(
+                    (build_urlpatterns(Client.BROWSER), 'headless'), namespace='browser'
+                ),
+            ),  # Allauth headless logic (only the browser client is included as we only use sessions based auth there)
         ]),
     ),
     # Magic login URLs
@@ -175,8 +120,16 @@ apipatterns = [
 
 
 backendpatterns = [
-    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('auth/', auth_request),
+    path(
+        'auth/', include('rest_framework.urls', namespace='rest_framework')
+    ),  # Used for (DRF) browsable API auth
+    path('auth/', auth_request),  # Used for proxies to check if user is authenticated
+    path('accounts/', include('allauth.urls')),
+    path(
+        'accounts/login/',
+        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
+        name='account_login',
+    ),  # Add a redirect for login views
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
@@ -188,23 +141,12 @@ if settings.INVENTREE_ADMIN_ENABLED:
 
     urlpatterns += [
         path(f'{admin_url}/error_log/', include('error_report.urls')),
+        path(f'{admin_url}/doc/', include('django.contrib.admindocs.urls')),
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
     ]
 
 urlpatterns += backendpatterns
-
-frontendpatterns = [
-    *platform_urls,
-    # Add a redirect for login views
-    path(
-        'accounts/login/',
-        RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
-        name='account_login',
-    ),
-    path('accounts/', include('allauth_2fa.urls')),  # MFA support
-]
-
-urlpatterns += frontendpatterns
+urlpatterns += platform_urls
 
 # Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:

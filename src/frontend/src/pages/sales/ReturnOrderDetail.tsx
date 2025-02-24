@@ -216,6 +216,14 @@ export default function ReturnOrderDetail() {
       },
       {
         type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         copy: true,
@@ -336,14 +344,20 @@ export default function ReturnOrderDetail() {
     }
   });
 
+  const duplicateReturnOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
     title: t`Add Return Order`,
     fields: duplicateReturnOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicateReturnOrderInitialData,
     modelType: ModelType.returnorder,
     follow: true
   });
@@ -481,6 +495,9 @@ export default function ReturnOrderDetail() {
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            lastCrumb={[
+              { name: order.reference, url: `/sales/return-order/${order.pk}` }
+            ]}
             editAction={editReturnOrder.open}
             editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />

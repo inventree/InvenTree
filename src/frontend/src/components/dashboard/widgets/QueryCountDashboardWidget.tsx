@@ -72,18 +72,24 @@ function QueryCountWidget({
     [modelProperties, params]
   );
 
-  // TODO: Improve visual styling
-
   return (
-    <Group gap='xs' wrap='nowrap'>
-      <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-      <Group gap='xs' wrap='nowrap' justify='space-between'>
+    <Group
+      gap='xs'
+      wrap='nowrap'
+      justify='space-between'
+      align='center'
+      style={{ height: '100%' }}
+    >
+      <Group gap='xs'>
+        <InvenTreeIcon icon={icon ?? modelProperties.icon} />
         <StylishText size='md'>{title}</StylishText>
+      </Group>
+      <Group gap='xs' wrap='nowrap' justify='space-apart'>
         <Group gap='xs' wrap='nowrap' justify='right'>
           {query.isFetching ? (
             <Loader size='sm' />
           ) : (
-            <StylishText size='sm'>{query.data?.count ?? '-'}</StylishText>
+            <StylishText size='md'>{query.data?.count ?? '-'}</StylishText>
           )}
           {modelProperties?.url_overview && (
             <ActionIcon size='sm' variant='transparent' onClick={onFollowLink}>

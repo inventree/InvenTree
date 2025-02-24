@@ -81,6 +81,7 @@ js_tmp/
 
 # Development files
 dev/
+dev-db/
 data/
 env/
 
@@ -112,8 +113,7 @@ api.yaml
 src/backend/InvenTree/web/static
 InvenTree/web/static
 
-# Generated docs files
+# Exported interim files
 docs/schema.yml
 docs/docs/api/*.yml
 docs/docs/api/schema/*.yml
-inventree_settings.json

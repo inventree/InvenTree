@@ -227,6 +227,14 @@ export default function SalesOrderDetail() {
       },
       {
         type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        hidden: !order.start_date,
+        copy: true
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         hidden: !order.target_date,
@@ -279,14 +287,20 @@ export default function SalesOrderDetail() {
     duplicateOrderId: order.pk
   });
 
+  const duplicateSalesOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
     fields: duplicateOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicateSalesOrderInitialData,
     follow: true,
     modelType: ModelType.salesorder
   });
@@ -545,6 +559,9 @@ export default function SalesOrderDetail() {
             badges={orderBadges}
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            lastCrumb={[
+              { name: order.reference, url: `/sales/sales-order/${order.pk}` }
+            ]}
             editAction={editSalesOrder.open}
             editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />

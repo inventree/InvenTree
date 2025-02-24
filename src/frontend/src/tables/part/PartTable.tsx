@@ -129,8 +129,6 @@ function partTableColumns(): TableColumn[] {
           );
         }
 
-        // TODO: Add extra information on stock "demand"
-
         if (stock <= 0) {
           color = 'red';
           text = t`No stock`;
@@ -267,6 +265,12 @@ function partTableFilters(): TableFilter[] {
       name: 'is_template',
       label: t`Is Template`,
       description: t`Filter by parts which are templates`,
+      type: 'boolean'
+    },
+    {
+      name: 'is_variant',
+      label: t`Is Variant`,
+      description: t`Filter by parts which are variants`,
       type: 'boolean'
     },
     {

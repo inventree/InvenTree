@@ -667,13 +667,15 @@ export default function StockDetail() {
   });
 
   const stockActions = useMemo(() => {
-    const inStock =
+    // Can this stock item be transferred to a different location?
+    const canTransfer =
       user.hasChangeRole(UserRoles.stock) &&
       !stockitem.sales_order &&
       !stockitem.belongs_to &&
       !stockitem.customer &&
-      !stockitem.consumed_by &&
-      !stockitem.is_building;
+      !stockitem.consumed_by;
+
+    const isBuilding = stockitem.is_building;
 
     const serial = stockitem.serial;
     const serialized =
@@ -704,7 +706,7 @@ export default function StockDetail() {
           {
             name: t`Count`,
             tooltip: t`Count stock`,
-            hidden: serialized || !inStock,
+            hidden: serialized || !canTransfer || isBuilding,
             icon: (
               <InvenTreeIcon icon='stocktake' iconProps={{ color: 'blue' }} />
             ),
@@ -715,7 +717,7 @@ export default function StockDetail() {
           {
             name: t`Add`,
             tooltip: t`Add Stock`,
-            hidden: serialized || !inStock,
+            hidden: serialized || !canTransfer || isBuilding,
             icon: <InvenTreeIcon icon='add' iconProps={{ color: 'green' }} />,
             onClick: () => {
               stockitem.pk && addStockItem.open();
@@ -724,7 +726,11 @@ export default function StockDetail() {
           {
             name: t`Remove`,
             tooltip: t`Remove Stock`,
-            hidden: serialized || !inStock || stockitem.quantity <= 0,
+            hidden:
+              serialized ||
+              !canTransfer ||
+              isBuilding ||
+              stockitem.quantity <= 0,
             icon: <InvenTreeIcon icon='remove' iconProps={{ color: 'red' }} />,
             onClick: () => {
               stockitem.pk && removeStockItem.open();
@@ -733,7 +739,7 @@ export default function StockDetail() {
           {
             name: t`Transfer`,
             tooltip: t`Transfer Stock`,
-            hidden: !inStock,
+            hidden: !canTransfer,
             icon: (
               <InvenTreeIcon icon='transfer' iconProps={{ color: 'blue' }} />
             ),
@@ -745,8 +751,10 @@ export default function StockDetail() {
             name: t`Serialize`,
             tooltip: t`Serialize stock`,
             hidden:
-              !inStock ||
+              !canTransfer ||
+              isBuilding ||
               serialized ||
+              stockitem?.quantity != 1 ||
               stockitem?.part_detail?.trackable != true,
             icon: <InvenTreeIcon icon='serial' iconProps={{ color: 'blue' }} />,
             onClick: () => {
@@ -908,6 +916,12 @@ export default function StockDetail() {
           breadcrumbs={
             user.hasViewRole(UserRoles.stock_location) ? breadcrumbs : undefined
           }
+          lastCrumb={[
+            {
+              name: stockitem.name,
+              url: `/stock/item/${stockitem.pk}/`
+            }
+          ]}
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}

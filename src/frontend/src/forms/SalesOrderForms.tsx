@@ -1,6 +1,11 @@
 import { t } from '@lingui/macro';
 import { Table } from '@mantine/core';
-import { IconAddressBook, IconUser, IconUsers } from '@tabler/icons-react';
+import {
+  IconAddressBook,
+  IconCalendar,
+  IconUser,
+  IconUsers
+} from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
@@ -16,6 +21,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn } from '../tables/ColumnRenderers';
 
 export function useSalesOrderFields({
@@ -23,6 +29,8 @@ export function useSalesOrderFields({
 }: {
   duplicateOrderId?: number;
 }): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {},
@@ -37,7 +45,12 @@ export function useSalesOrderFields({
       customer_reference: {},
       project_code: {},
       order_currency: {},
-      target_date: {},
+      start_date: {
+        icon: <IconCalendar />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
       link: {},
       contact: {
         icon: <IconUser />,
@@ -76,8 +89,12 @@ export function useSalesOrderFields({
       };
     }
 
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
+    }
+
     return fields;
-  }, [duplicateOrderId]);
+  }, [duplicateOrderId, globalSettings]);
 }
 
 export function useSalesOrderLineItemFields({
@@ -245,7 +262,13 @@ export function useAllocateToSalesOrderForm({
       items: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        headers: [
+          { title: t`Part`, style: { minWidth: '200px' } },
+          { title: t`Allocated`, style: { minWidth: '200px' } },
+          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`Quantity`, style: { minWidth: '200px' } },
+          { title: '', style: { width: '50px' } }
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           const record =
             lineItems.find((item) => item.pk == row.item.line_item) ?? {};

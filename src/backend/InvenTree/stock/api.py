@@ -6,7 +6,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import F, Q
-from django.http import JsonResponse
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -35,13 +34,7 @@ from InvenTree.filters import (
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
 )
-from InvenTree.helpers import (
-    extract_serial_numbers,
-    generateTestKey,
-    is_ajax,
-    isNull,
-    str2bool,
-)
+from InvenTree.helpers import extract_serial_numbers, generateTestKey, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -321,7 +314,7 @@ class StockLocationFilter(rest_filters.FilterSet):
     def filter_parent(self, queryset, name, value):
         """Filter by parent location.
 
-        Note that the filtering behaviour here varies,
+        Note that the filtering behavior here varies,
         depending on whether the 'cascade' value is set.
 
         So, we have to check the "cascade" value here.
@@ -347,16 +340,23 @@ class StockLocationFilter(rest_filters.FilterSet):
         return queryset
 
 
-class StockLocationList(DataExportViewMixin, ListCreateAPI):
-    """API endpoint for list view of StockLocation objects.
+class StockLocationMixin:
+    """Mixin class for StockLocation API endpoints."""
 
-    - GET: Return list of StockLocation objects
-    - POST: Create a new StockLocation
-    """
-
-    queryset = StockLocation.objects.all().prefetch_related('tags')
+    queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationSerializer
-    filterset_class = StockLocationFilter
+
+    def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer."""
+        try:
+            params = self.request.query_params
+            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
+        except AttributeError:  # pragma: no cover
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -364,6 +364,15 @@ class StockLocationList(DataExportViewMixin, ListCreateAPI):
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
 
+
+class StockLocationList(DataExportViewMixin, StockLocationMixin, ListCreateAPI):
+    """API endpoint for list view of StockLocation objects.
+
+    - GET: Return list of StockLocation objects
+    - POST: Create a new StockLocation
+    """
+
+    filterset_class = StockLocationFilter
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
@@ -371,6 +380,25 @@ class StockLocationList(DataExportViewMixin, ListCreateAPI):
     ordering_fields = ['name', 'pathstring', 'items', 'level', 'tree_id', 'lft']
 
     ordering = ['tree_id', 'lft', 'name']
+
+
+class StockLocationDetail(StockLocationMixin, CustomRetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of StockLocation object."""
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Stock location instance via the API."""
+        delete_stock_items = str(request.data.get('delete_stock_items', 0)) == '1'
+        delete_sub_locations = str(request.data.get('delete_sub_locations', 0)) == '1'
+
+        return super().destroy(
+            request,
+            *args,
+            **dict(
+                kwargs,
+                delete_sub_locations=delete_sub_locations,
+                delete_stock_items=delete_stock_items,
+            ),
+        )
 
 
 class StockLocationTree(ListAPI):
@@ -1430,8 +1458,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if is_ajax(request):
-            return JsonResponse(data, safe=False)
+
         return Response(data)
 
     def create(self, request, *args, **kwargs):
@@ -1471,52 +1498,6 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
     search_fields = ['title', 'notes']
 
 
-class LocationDetail(CustomRetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of StockLocation object.
-
-    - GET: Return a single StockLocation object
-    - PATCH: Update a StockLocation object
-    - DELETE: Remove a StockLocation object
-    """
-
-    queryset = StockLocation.objects.all()
-    serializer_class = StockSerializers.LocationSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        """Add extra context to serializer based on provided query parameters."""
-        try:
-            params = self.request.query_params
-
-            kwargs['path_detail'] = str2bool(params.get('path_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for the StockLocationList endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
-        return queryset
-
-    def destroy(self, request, *args, **kwargs):
-        """Delete a Stock location instance via the API."""
-        delete_stock_items = str(request.data.get('delete_stock_items', 0)) == '1'
-        delete_sub_locations = str(request.data.get('delete_sub_locations', 0)) == '1'
-
-        return super().destroy(
-            request,
-            *args,
-            **dict(
-                kwargs,
-                delete_sub_locations=delete_sub_locations,
-                delete_stock_items=delete_stock_items,
-            ),
-        )
-
-
 stock_api_urls = [
     path(
         'location/',
@@ -1532,7 +1513,7 @@ stock_api_urls = [
                         {'model': StockLocation},
                         name='api-location-metadata',
                     ),
-                    path('', LocationDetail.as_view(), name='api-location-detail'),
+                    path('', StockLocationDetail.as_view(), name='api-location-detail'),
                 ]),
             ),
             path('', StockLocationList.as_view(), name='api-location-list'),

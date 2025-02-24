@@ -17,7 +17,7 @@ repos:
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.3
+    rev: v0.9.6
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -28,7 +28,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.5.1
+    rev: 0.6.0
     hooks:
       - id: pip-compile
         name: pip-compile backend requirements-dev.in
@@ -55,11 +55,11 @@ repos:
         args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
-    rev: v1.36.1
+    rev: v1.36.4
     hooks:
       - id: djlint-django
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.3.0
+  rev: v2.4.1
   hooks:
   - id: codespell
     additional_dependencies:
@@ -74,15 +74,16 @@ repos:
           src/frontend/vite.config.ts |
       )$
 -   repo: https://github.com/biomejs/pre-commit
-    rev: "v0.5.0"
+    rev: "v0.6.1"
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
+    rev: v8.23.3
     hooks:
     -   id: gitleaks
+        language_version: 1.23.6
 #-   repo: https://github.com/jumanjihouse/pre-commit-hooks
 #    rev: 3.0.0
 #    hooks:

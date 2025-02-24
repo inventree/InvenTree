@@ -19,7 +19,7 @@ threads = 4
 
 
 # Worker timeout (default = 90 seconds)
-timeout = os.environ.get('INVENTREE_GUNICORN_TIMEOUT', 90)
+timeout = os.environ.get('INVENTREE_GUNICORN_TIMEOUT', '90')
 
 # Number of worker processes
 workers = os.environ.get('INVENTREE_GUNICORN_WORKERS', None)

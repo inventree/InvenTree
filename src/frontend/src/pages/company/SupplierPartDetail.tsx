@@ -64,7 +64,8 @@ export default function SupplierPartDetail() {
     hasPrimaryKey: true,
     params: {
       part_detail: true,
-      supplier_detail: true
+      supplier_detail: true,
+      manufacturer_detail: true
     }
   });
 
@@ -406,6 +407,12 @@ export default function SupplierPartDetail() {
             title={t`Supplier Part`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
+            lastCrumb={[
+              {
+                name: supplierPart.SKU,
+                url: `/purchasing/supplier-part/${supplierPart.pk}/`
+              }
+            ]}
             badges={badges}
             actions={supplierPartActions}
             imageUrl={supplierPart?.part_detail?.thumbnail}

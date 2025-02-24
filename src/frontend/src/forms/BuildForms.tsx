@@ -101,6 +101,9 @@ export function useBuildOrderFields({
         value: batchCode,
         onValueChange: (value: any) => setBatchCode(value)
       },
+      start_date: {
+        icon: <IconCalendar />
+      },
       target_date: {
         icon: <IconCalendar />
       },
@@ -130,6 +133,10 @@ export function useBuildOrderFields({
 
     if (create) {
       fields.create_child_builds = {};
+    }
+
+    if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
+      delete fields.project_code;
     }
 
     return fields;
@@ -269,7 +276,13 @@ export function useCompleteBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Build Output`, t`Batch`, t`Status`]
+        headers: [
+          { title: t`Part` },
+          { title: t`Build Output` },
+          { title: t`Batch` },
+          { title: t`Status` },
+          { title: '', style: { width: '50px' } }
+        ]
       },
       status_custom_key: {},
       location: {
@@ -337,7 +350,13 @@ export function useScrapBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
+        headers: [
+          { title: t`Part` },
+          { title: t`Stock Item` },
+          { title: t`Batch` },
+          { title: t`Status` },
+          { title: '', style: { width: '50px' } }
+        ]
       },
       location: {
         value: location,
@@ -385,7 +404,13 @@ export function useCancelBuildOutputsForm({
             <BuildOutputFormRow props={row} record={record} key={record.pk} />
           );
         },
-        headers: [t`Part`, t`Stock Item`, t`Batch`, t`Status`]
+        headers: [
+          { title: t`Part` },
+          { title: t`Stock Item` },
+          { title: t`Batch` },
+          { title: t`Status` },
+          { title: '', style: { width: '50px' } }
+        ]
       }
     };
   }, [outputs]);
@@ -515,7 +540,13 @@ export function useAllocateStockToBuildForm({
       items: {
         field_type: 'table',
         value: [],
-        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        headers: [
+          { title: t`Part`, style: { minWidth: '175px' } },
+          { title: t`Allocated`, style: { minWidth: '175px' } },
+          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`Quantity`, style: { minWidth: '175px' } },
+          { title: '', style: { width: '50px' } }
+        ],
         modelRenderer: (row: TableFieldRowProps) => {
           // Find the matching record from the passed 'lineItems'
           const record =

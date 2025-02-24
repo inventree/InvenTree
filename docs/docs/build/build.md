@@ -49,6 +49,7 @@ The following parameters are available for each Build Order, and can be edited b
 | Sales Order | Link to a *Sales Order* to which the build outputs will be allocated |
 | Source Location | Stock location to source stock items from (blank = all locations) |
 | Destination Location | Stock location where the build outputs will be located |
+| Start Date | The scheduled start date for the build |
 | Target Date | Target date for build completion |
 | Responsible | User (or group of users) who is responsible for the build |
 | External Link | Link to external webpage |
@@ -95,7 +96,7 @@ When a *Build Order* is created, we then have the ability to *allocate* stock it
 !!! info "Example - Stock Allocation"
 	Let's say that to assembly a single "Widget", we require 2 "flanges". So, to complete a build of 10 "Widgets", 20 "flanges" will be required. We *allocate* 20 flanged against this build order.
 
-Allocating stock to a build does not actually subtrack the stock from the database. Allocations signal an *intent* to take that stock for the purpose of this build. Stock allocations are actioned at the completion of a build.
+Allocating stock to a build does not actually subtract the stock from the database. Allocations signal an *intent* to take that stock for the purpose of this build. Stock allocations are subtracted from stock at the completion of a build.
 
 !!! info "Part Allocation Information"
     Any part which has stock allocated to a build order will indicate this on the part information page.
@@ -242,7 +243,7 @@ The form will validate the build order is ready to be completed, and will preven
 	If you wish to complete the build despite the missing parts, toggle the `Accept Unallocated` option to true to override the warning and allow completion with unallocated parts.
 
 !!! info "Overallocated Stock Items"
-	If the warning message `Some stock items have been overallocated` is shown, you have more stock than required by the BOM for the part being built allocated to the build order. By default the `Not permissted` option is selected and you will need to return to the allocation screen and remove the extra items before the build can be completed.
+	If the warning message `Some stock items have been overallocated` is shown, you have more stock than required by the BOM for the part being built allocated to the build order. By default the `Not permitted` option is selected and you will need to return to the allocation screen and remove the extra items before the build can be completed.
 
 	Alternatively, you can select `Accept as consumed by this build order` to continue with the allocation and remove the extra items from stock (e.g. if they were destroyed during build), or select `Deallocate before completing this build order` if you would like the extra items to be returned to stock for use in future builds.
 
@@ -262,12 +263,23 @@ The `Cancel Build` form will be displayed, click on the confirmation switch then
 !!! warning "Cancelled Build"
 	**A cancelled build cannot be re-opened**. Make sure to use the cancel option only if you are certain that the build won't be processed.
 
-## Overdue Builds
+## Build Scheduling
 
-Build orders may (optionally) have a target complete date specified. If this date is reached but the build order remains incomplete, then the build is considered *overdue*.
+Build orders can be scheduled for a future date, to allow for planning of production schedules.
 
-- Builds can be filtered by overdue status in the build list
-- Overdue builds will be displayed on the home page
+### Start Date
+
+Build orders can be optionally scheduled to *start* at a specified date, by setting the *Start Date* field. This field can be left blank if the build is to start immediately.
+
+### Target Date
+
+Build orders can be optionally scheduled to be completed by a certain date, by setting the *Target Date* field. This field can be left blank if the build has no specific deadline.
+
+### Overdue Builds
+
+If the *Target Date* is reached but the build order remains incomplete, then the build is considered *overdue*.
+
+This can be useful for tracking production delays, and can be used to generate reports on build order performance.
 
 ## Build Order Settings
 

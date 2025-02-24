@@ -328,12 +328,12 @@ def default_delete_on_deplete():
     """Return a default value for the 'delete_on_deplete' field.
 
     Prior to 2022-12-24, this field was set to True by default.
-    Now, there is a user-configurable setting to govern default behaviour.
+    Now, there is a user-configurable setting to govern default behavior.
     """
     try:
         return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
-        # Revert to original default behaviour
+        # Revert to original default behavior
         return True
 
 
@@ -442,7 +442,7 @@ class StockItem(
 
     tags = TaggableManager(blank=True)
 
-    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    # A Query filter which will be reused in multiple places to determine if a StockItem is actually "in stock"
     # See also: StockItem.in_stock() method
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
@@ -472,7 +472,7 @@ class StockItem(
         Returns:
             QuerySet: The created StockItem objects
 
-        raises:
+        Raises:
             ValidationError: If any of the provided serial numbers are invalid
 
         This method uses bulk_create to create multiple StockItem objects in a single query,
@@ -1278,13 +1278,7 @@ class StockItem(
 
     def is_allocated(self):
         """Return True if this StockItem is allocated to a SalesOrder or a Build."""
-        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
-        # TODO - In future, once the "build" is working better, check this too
-
-        if self.allocations.count() > 0:
-            return True
-
-        return self.sales_order_allocations.count() > 0
+        return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
         """Return the total quantity allocated to builds, with optional filters."""
@@ -1468,8 +1462,6 @@ class StockItem(
         # If the stock item is not installed in anything, ignore
         if self.belongs_to is None:
             return False
-
-        # TODO - Are there any other checks that need to be performed at this stage?
 
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
@@ -1985,9 +1977,18 @@ class StockItem(
         Returns:
             The new StockItem object
 
+        Raises:
+            ValidationError: If the stock item cannot be split
+
         - The provided quantity will be subtracted from this item and given to the new one.
         - The new item will have a different StockItem ID, while this will remain the same.
         """
+        # Run initial checks to test if the stock item can actually be "split"
+
+        # Cannot split a stock item which is in production
+        if self.is_building:
+            raise ValidationError(_('Stock item is currently in production'))
+
         notes = kwargs.get('notes', '')
 
         # Do not split a serialized part
@@ -2394,9 +2395,6 @@ class StockItem(
         """Remove all test results."""
         # All test results
         results = self.test_results.all()
-
-        # TODO - Perhaps some filtering options supplied by kwargs?
-
         results.delete()
 
     def getTestResults(self, template=None, test=None, result=None, user=None):

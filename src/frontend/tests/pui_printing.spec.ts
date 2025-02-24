@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
+import { loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -11,10 +11,10 @@ import { setPluginState } from './settings.js';
 test('Label Printing', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock/location/index/`);
+  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/platform/stock/location/**');
 
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await loadTab(page, 'Stock Items');
 
   // Select some labels
   await page.getByLabel('Select record 1', { exact: true }).click();
@@ -55,11 +55,13 @@ test('Label Printing', async ({ page }) => {
 test('Report Printing', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock/location/index/`);
+  await navigate(page, 'stock/location/index/');
   await page.waitForURL('**/platform/stock/location/**');
 
   // Navigate to a specific PurchaseOrder
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await loadTab(page, 'Purchase Orders');
+
   await page.getByRole('cell', { name: 'PO0009' }).click();
 
   // Select "print report"
@@ -96,7 +98,7 @@ test('Report Editing', async ({ page, request }) => {
   // Navigate to the admin center
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
-  await page.getByRole('tab', { name: 'Label Templates' }).click();
+  await loadTab(page, 'Label Templates');
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();

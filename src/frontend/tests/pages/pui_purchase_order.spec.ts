@@ -1,14 +1,23 @@
+import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
-import { baseUrl } from '../defaults.ts';
-import { clickButtonIfVisible, openFilterDrawer } from '../helpers.ts';
+import {
+  clearTableFilters,
+  clickButtonIfVisible,
+  clickOnRowMenu,
+  loadTab,
+  navigate,
+  openFilterDrawer,
+  setTableChoiceFilter
+} from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Purchase Orders', async ({ page }) => {
+test('Purchase Orders - List', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await loadTab(page, 'Purchase Orders');
+
+  await clearTableFilters(page);
 
   // Check for expected values
   await page.getByRole('cell', { name: 'PO0014' }).waitFor();
@@ -17,16 +26,23 @@ test('Purchase Orders', async ({ page }) => {
   await page.getByText('Pending').first().waitFor();
   await page.getByText('On Hold').first().waitFor();
 
-  // Click through to a particular purchase order
-  await page.getByRole('cell', { name: 'PO0013' }).click();
+  // Filter by 'has start date'
+  await setTableChoiceFilter(page, 'Has Start Date', 'Yes');
+  await page.getByRole('cell', { name: 'Scheduled purchase order' }).waitFor();
 
+  // Click through to a particular purchase order
+  await page.getByRole('cell', { name: 'PO0015' }).click();
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Expected values
+  await page.getByText('2025-06-12').waitFor(); // Start Date
+  await page.getByText('2025-07-17').waitFor(); // Target Date
 });
 
 test('Purchase Orders - Barcodes', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/purchasing/purchase-order/13/detail`);
+  await navigate(page, 'purchasing/purchase-order/13/detail');
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
@@ -65,7 +81,7 @@ test('Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Ensure we can scan back to this page, with the associated barcode
-  await page.goto(`${baseUrl}/`);
+  await page.getByRole('tab', { name: 'Sales' }).click();
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
   await page.getByPlaceholder('Enter barcode data').fill('1234567890');
@@ -87,29 +103,32 @@ test('Purchase Orders - General', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
+
   await page.getByRole('cell', { name: 'PO0012' }).click();
   await page.waitForTimeout(200);
 
-  await page.getByRole('tab', { name: 'Line Items' }).click();
-  await page.getByRole('tab', { name: 'Received Stock' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await loadTab(page, 'Line Items');
+  await loadTab(page, 'Received Stock');
+  await loadTab(page, 'Attachments');
+
   await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await loadTab(page, 'Suppliers');
   await page.getByText('Arrow', { exact: true }).click();
   await page.waitForTimeout(200);
 
-  await page.getByRole('tab', { name: 'Supplied Parts' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page.getByRole('tab', { name: 'Contacts' }).click();
-  await page.getByRole('tab', { name: 'Addresses' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await loadTab(page, 'Supplied Parts');
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Stock Items');
+  await loadTab(page, 'Contacts');
+  await loadTab(page, 'Addresses');
+  await loadTab(page, 'Attachments');
+
   await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await loadTab(page, 'Manufacturers');
   await page.getByText('AVX Corporation').click();
   await page.waitForTimeout(200);
 
-  await page.getByRole('tab', { name: 'Addresses' }).click();
+  await loadTab(page, 'Addresses');
   await page.getByRole('cell', { name: 'West Branch' }).click();
   await page.locator('.mantine-ScrollArea-root').click();
   await page
@@ -137,7 +156,7 @@ test('Purchase Orders - Filters', async ({ page }) => {
   await doQuickLogin(page, 'reader', 'readonly');
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await loadTab(page, 'Purchase Orders');
 
   // Open filters drawer
   await openFilterDrawer(page);
@@ -183,7 +202,7 @@ test('Purchase Orders - Order Parts', async ({ page }) => {
 
   // Open "Order Parts" wizard from the "Stock Items" table
   await page.getByRole('tab', { name: 'Stock' }).click();
-  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await loadTab(page, 'Stock Items');
 
   // Select multiple stock items
   for (let ii = 2; ii < 7; ii += 2) {
@@ -198,7 +217,7 @@ test('Purchase Orders - Order Parts', async ({ page }) => {
   await page.getByRole('banner').getByRole('button').click();
 
   // Order from the part detail page
-  await page.goto(`${baseUrl}/part/69/`);
+  await navigate(page, 'part/69/');
   await page.waitForURL('**/part/69/**');
 
   await page.getByLabel('action-menu-stock-actions').click();
@@ -243,11 +262,10 @@ test('Purchase Orders - Receive Items', async ({ page }) => {
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('cell', { name: 'PO0014' }).click();
 
-  await page.getByRole('tab', { name: 'Order Details' }).click();
-  await page.getByText('0 / 3').waitFor();
+  await loadTab(page, 'Order Details');
 
   // Select all line items to receive
-  await page.getByRole('tab', { name: 'Line Items' }).click();
+  await loadTab(page, 'Line Items');
 
   await page.getByLabel('Select all records').click();
   await page.waitForTimeout(200);
@@ -265,4 +283,61 @@ test('Purchase Orders - Receive Items', async ({ page }) => {
   await page.getByText('Mechanical Lab').waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Let's actually receive an item (with custom values)
+  await navigate(page, 'purchasing/purchase-order/2/line-items');
+
+  const cell = await page.getByText('Red Paint', { exact: true });
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Receive line item' }).click();
+
+  // Select destination location
+  await page.getByLabel('related-field-location').click();
+  await page.getByRole('option', { name: 'Factory', exact: true }).click();
+
+  // Receive only a *single* item
+  await page.getByLabel('number-field-quantity').fill('1');
+
+  // Assign custom information
+  await page.getByLabel('action-button-assign-batch-').click();
+  await page.getByLabel('action-button-adjust-packaging').click();
+  await page.getByLabel('action-button-change-status').click();
+  await page.getByLabel('action-button-add-note').click();
+
+  await page.getByLabel('text-field-batch_code').fill('my-batch-code');
+  await page.getByLabel('text-field-packaging').fill('bucket');
+  await page.getByLabel('text-field-note').fill('The quick brown fox');
+  await page.getByLabel('choice-field-status').click();
+  await page.getByRole('option', { name: 'Destroyed' }).click();
+
+  // Short timeout to allow for debouncing
+  await page.waitForTimeout(200);
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Items received').waitFor();
+
+  await loadTab(page, 'Received Stock');
+  await clearTableFilters(page);
+
+  await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
+  await page.getByRole('cell', { name: 'bucket' }).first().waitFor();
+});
+
+test('Purchase Orders - Duplicate', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await navigate(page, 'purchasing/purchase-order/13/detail');
+  await page.getByLabel('action-menu-order-actions').click();
+  await page.getByLabel('action-menu-order-actions-duplicate').click();
+
+  // Ensure a new reference is suggested
+  await expect(page.getByLabel('text-field-reference')).not.toBeEmpty();
+
+  // Submit the duplicate request and ensure it completes
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+  await page.getByRole('tab', { name: 'Order Details' }).click();
+
+  await page.getByText('Pending').first().waitFor();
 });

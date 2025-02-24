@@ -171,7 +171,8 @@ export default function BuildDetail() {
         name: 'issued_by',
         label: t`Issued By`,
         icon: 'user',
-        badge: 'user'
+        badge: 'user',
+        hidden: !build.issued_by
       },
       {
         type: 'text',
@@ -181,24 +182,35 @@ export default function BuildDetail() {
         hidden: !build.responsible
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'creation_date',
         label: t`Created`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.creation_date
       },
       {
-        type: 'text',
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !build.start_date
+      },
+      {
+        type: 'date',
         name: 'target_date',
         label: t`Target Date`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.target_date
       },
       {
-        type: 'text',
+        type: 'date',
         name: 'completion_date',
         label: t`Completed`,
         icon: 'calendar',
+        copy: true,
         hidden: !build.completion_date
       },
       {
@@ -369,14 +381,20 @@ export default function BuildDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateBuildOrderInitialData = useMemo(() => {
+    const data = { ...build };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [build]);
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
     fields: buildOrderFields,
-    initialData: {
-      ...build,
-      reference: undefined
-    },
+    initialData: duplicateBuildOrderInitialData,
     follow: true,
     modelType: ModelType.build
   });
@@ -530,8 +548,8 @@ export default function BuildDetail() {
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            breadcrumbs={[
-              { name: t`Manufacturing`, url: '/manufacturing' },
+            breadcrumbs={[{ name: t`Manufacturing`, url: '/manufacturing' }]}
+            lastCrumb={[
               {
                 name: build.reference,
                 url: getDetailUrl(ModelType.build, build.pk)

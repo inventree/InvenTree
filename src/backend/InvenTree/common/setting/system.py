@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import uuid
 
 from django.conf import settings as django_settings
 from django.contrib.auth.models import Group
@@ -29,8 +30,8 @@ def validate_part_name_format(value):
     # Make sure that the field_name exists in Part model
     from part.models import Part
 
-    jinja_template_regex = re.compile('{{.*?}}')
-    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
+    jinja_template_regex = re.compile(r'{{.*?}}')
+    field_name_regex = re.compile(r'(?<=part\.)[A-z]+')
 
     for jinja_template in jinja_template_regex.findall(str(value)):
         # make sure at least one and only one field is present inside the parser
@@ -120,6 +121,11 @@ def barcode_plugins() -> list:
     ]
 
 
+def default_uuid4() -> str:
+    """Return a default UUID4 value."""
+    return str(uuid.uuid4())
+
+
 class BaseURLValidator(URLValidator):
     """Validator for the InvenTree base URL.
 
@@ -169,6 +175,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+    },
+    'INVENTREE_INSTANCE_ID': {
+        'name': _('Instance ID'),
+        'description': _('Unique identifier for this InvenTree instance'),
+        'default': default_uuid4,
+        'hidden': True,
+    },
+    'INVENTREE_ANNOUNCE_ID': {
+        'name': _('Announce ID'),
+        'description': _(
+            'Announce the instance ID of the server in the server status info (unauthenticated)'
+        ),
+        'default': False,
+        'validator': bool,
     },
     'INVENTREE_INSTANCE': {
         'name': _('Server Instance Name'),
@@ -834,6 +854,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PURCHASEORDER_CONVERT_CURRENCY': {
+        'name': _('Convert Currency'),
+        'description': _('Convert item value to base currency when receiving stock'),
+        'default': False,
+        'validator': bool,
+    },
     'PURCHASEORDER_AUTO_COMPLETE': {
         'name': _('Auto Complete Purchase Orders'),
         'description': _(
@@ -1002,6 +1028,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+    },
+    'PROJECT_CODES_ENABLED': {
+        'name': _('Enable project codes'),
+        'description': _('Enable project codes for tracking projects'),
+        'default': False,
+        'validator': bool,
     },
     'STOCKTAKE_ENABLE': {
         'name': _('Stocktake Functionality'),

@@ -8,14 +8,14 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from pathlib import Path
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
-from django.core.files.storage import Storage, default_storage
+from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -25,7 +25,6 @@ import structlog
 from bleach import clean
 from djmoney.money import Money
 from PIL import Image
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from common.currency import currency_code_default
 
@@ -193,6 +192,15 @@ def getSplashScreen(custom=True):
     return static_storage.url('img/inventree_splash.jpg')
 
 
+def getCustomOption(reference: str):
+    """Return the value of a custom option from settings.CUSTOMIZE.
+
+    Args:
+        reference: Reference key for the custom option
+    """
+    return settings.CUSTOMIZE.get(reference, None)
+
+
 def TestIfImageURL(url):
     """Test if an image URL (or filename) looks like a valid image format.
 
@@ -224,22 +232,6 @@ def str2bool(text, test=True):
     if test:
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on']
     return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
-
-
-def str2int(text, default=None):
-    """Convert a string to int if possible.
-
-    Args:
-        text: Int like string
-        default: Return value if str is no int like
-
-    Returns:
-        Converted int value
-    """
-    try:
-        return int(text)
-    except Exception:
-        return default
 
 
 def is_bool(text):
@@ -893,16 +885,6 @@ def hash_barcode(barcode_data: str) -> str:
     return str(barcode_hash.hexdigest())
 
 
-def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
-    """Return the MD5 hash of a file."""
-    content = (
-        open(filename, 'rb').read()  # noqa: SIM115
-        if storage is None
-        else storage.open(str(filename), 'rb').read()
-    )
-    return hashlib.md5(content).hexdigest()
-
-
 def current_time(local=True):
     """Return the current date and time as a datetime object.
 
@@ -1051,13 +1033,25 @@ def inheritors(
     return subcls
 
 
-def is_ajax(request):
-    """Check if the current request is an AJAX request."""
-    return request.headers.get('x-requested-with') == 'XMLHttpRequest'
-
-
 def pui_url(subpath: str) -> str:
     """Return the URL for a PUI subpath."""
     if not subpath.startswith('/'):
         subpath = '/' + subpath
     return f'/{settings.FRONTEND_URL_BASE}{subpath}'
+
+
+def plugins_info(*args, **kwargs):
+    """Return information about activated plugins."""
+    from plugin.registry import registry
+
+    # Check if plugins are even enabled
+    if not settings.PLUGINS_ENABLED:
+        return False
+
+    # Fetch plugins
+    plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
+    # Format list
+    return [
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
+        for plg in plug_list
+    ]

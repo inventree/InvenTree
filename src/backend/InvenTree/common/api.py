@@ -1,7 +1,6 @@
 """Provides a JSON API for common components."""
 
 import json
-from typing import Type
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -557,7 +556,7 @@ class AllUnitList(ListAPI):
         """Parse a unit from the registry."""
         if not hasattr(reg, k):
             return None
-        unit: Type[UnitLike] = getattr(reg, k)
+        unit: type[UnitLike] = getattr(reg, k)
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,

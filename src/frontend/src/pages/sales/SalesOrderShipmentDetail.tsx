@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
-import { IconInfoCircle, IconPackages } from '@tabler/icons-react';
+import { IconBookmark, IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -208,8 +208,8 @@ export default function SalesOrderShipmentDetail() {
       },
       {
         name: 'items',
-        label: t`Assigned Items`,
-        icon: <IconPackages />,
+        label: t`Allocated Stock`,
+        icon: <IconBookmark />,
         content: (
           <SalesOrderAllocationTable
             shipmentId={shipment.pk}

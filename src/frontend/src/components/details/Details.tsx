@@ -146,7 +146,7 @@ function NameBadge({
     return <Skeleton height={12} radius='md' />;
   }
 
-  // Rendering a user's rame for the badge
+  // Rendering a user's name for the badge
   function _render_name() {
     if (!data || !data.pk) {
       return '';

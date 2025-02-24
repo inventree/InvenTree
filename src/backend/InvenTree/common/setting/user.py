@@ -127,6 +127,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': True,
     },
+    'SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS': {
+        'name': _('Search Sales Order Shipments'),
+        'description': _('Display sales order shipments in search preview window'),
+        'default': True,
+        'validator': bool,
+    },
     'SEARCH_PREVIEW_SHOW_RETURN_ORDERS': {
         'name': _('Search Return Orders'),
         'description': _('Display return orders in search preview window'),
@@ -210,6 +216,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Maximum length limit for strings displayed in table views'),
         'validator': [int, MinValueValidator(0)],
         'default': 100,
+    },
+    'ENABLE_LAST_BREADCRUMB': {
+        'name': _('Show Last Breadcrumb'),
+        'description': _('Show the current page in breadcrumbs'),
+        'default': False,
+        'validator': bool,
     },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),

@@ -1,5 +1,6 @@
 import { expect, test } from './baseFixtures.js';
-import { apiUrl, baseUrl } from './defaults.js';
+import { apiUrl } from './defaults.js';
+import { getRowFromCell, loadTab, navigate } from './helpers.js';
 import { doQuickLogin } from './login.js';
 import { setSettingState } from './settings.js';
 
@@ -12,7 +13,7 @@ test('Settings - Language / Color', async ({ page }) => {
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
   await page.getByRole('button', { name: 'Send me an email' }).click();
-  await page.getByRole('button').nth(3).click();
+  await page.getByLabel('Language toggle').click();
   await page.getByLabel('Select language').first().click();
   await page.getByRole('option', { name: 'German' }).click();
   await page.waitForTimeout(200);
@@ -48,61 +49,77 @@ test('Settings - Admin', async ({ page }) => {
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Account settings' }).click();
-  await page.getByRole('tab', { name: 'Security' }).click();
+  await loadTab(page, 'Security');
 
-  await page.getByRole('tab', { name: 'Display Options' }).click();
+  await loadTab(page, 'Display Options');
   await page.getByText('Date Format').waitFor();
-  await page.getByRole('tab', { name: 'Search' }).click();
+  await loadTab(page, 'Search');
   await page.getByText('Regex Search').waitFor();
-  await page.getByRole('tab', { name: 'Notifications' }).click();
-  await page.getByRole('tab', { name: 'Reporting' }).click();
+  await loadTab(page, 'Notifications');
+  await loadTab(page, 'Reporting');
   await page.getByText('Inline report display').waitFor();
 
   // System Settings
   await page.locator('label').filter({ hasText: 'System Settings' }).click();
   await page.getByText('Base URL', { exact: true }).waitFor();
-  await page.getByRole('tab', { name: 'Login' }).click();
-  await page.getByRole('tab', { name: 'Barcodes' }).click();
-  await page.getByRole('tab', { name: 'Notifications' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Labels' }).click();
-  await page.getByRole('tab', { name: 'Reporting' }).click();
+  await loadTab(page, 'Login');
+  await loadTab(page, 'Barcodes');
+  await loadTab(page, 'Notifications');
+  await loadTab(page, 'Pricing');
+  await loadTab(page, 'Labels');
+  await loadTab(page, 'Reporting');
 
-  await page.getByRole('tab', { name: 'Build Orders' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Sales Orders' }).click();
-  await page.getByRole('tab', { name: 'Return Orders' }).click();
+  await loadTab(page, 'Build Orders');
+  await loadTab(page, 'Purchase Orders');
+  await loadTab(page, 'Sales Orders');
+  await loadTab(page, 'Return Orders');
 
   // Admin Center
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
-  await page.getByRole('tab', { name: 'Background Tasks' }).click();
-  await page.getByRole('tab', { name: 'Error Reports' }).click();
-  await page.getByRole('tab', { name: 'Currencies' }).click();
-  await page.getByRole('tab', { name: 'Project Codes' }).click();
-  await page.getByRole('tab', { name: 'Custom Units' }).click();
-  await page.getByRole('tab', { name: 'Part Parameters' }).click();
-  await page.getByRole('tab', { name: 'Category Parameters' }).click();
-  await page.getByRole('tab', { name: 'Label Templates' }).click();
-  await page.getByRole('tab', { name: 'Report Templates' }).click();
-  await page.getByRole('tab', { name: 'Plugins' }).click();
+  await loadTab(page, 'Background Tasks');
+  await loadTab(page, 'Error Reports');
+  await loadTab(page, 'Currencies');
+  await loadTab(page, 'Project Codes');
+  await loadTab(page, 'Custom Units');
+  await loadTab(page, 'Part Parameters');
+  await loadTab(page, 'Category Parameters');
+  await loadTab(page, 'Label Templates');
+  await loadTab(page, 'Report Templates');
+  await loadTab(page, 'Plugins');
 
   // Adjust some "location type" items
-  await page.getByRole('tab', { name: 'Location Types' }).click();
+  await loadTab(page, 'Location Types');
 
-  // Edit first item
-  await page.getByLabel('row-action-menu-0').click();
+  // Edit first item ('Room')
+  const roomCell = await page.getByRole('cell', { name: 'Room', exact: true });
+  const roomRow = await getRowFromCell(roomCell);
+
+  await roomRow.getByLabel(/row-action-menu-/i).click();
+
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
-  await expect(page.getByLabel('text-field-description')).toHaveValue('A room');
-  await page.getByLabel('text-field-name').fill('Large Room');
-  await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill('A large room');
+
+  // Toggle the "description" field
+  const oldDescription = await page
+    .getByLabel('text-field-description')
+    .inputValue();
+
+  const newDescription = `${oldDescription} (edited)`;
+
+  await page.getByLabel('text-field-description').fill(newDescription);
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // Edit second item
-  await page.getByLabel('row-action-menu-1').click();
+  // Edit second item - 'Box (Large)'
+  const boxCell = await page.getByRole('cell', {
+    name: 'Box (Large)',
+    exact: true
+  });
+  const boxRow = await getRowFromCell(boxCell);
+
+  await boxRow.getByLabel(/row-action-menu-/i).click();
+
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await expect(page.getByLabel('text-field-name')).toHaveValue('Box (Large)');
   await expect(page.getByLabel('text-field-description')).toHaveValue(
@@ -111,15 +128,13 @@ test('Settings - Admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Cancel' }).click();
 
   // Edit first item again (revert values)
-  await page.getByLabel('row-action-menu-0').click();
+  await roomRow.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await expect(page.getByLabel('text-field-name')).toHaveValue('Large Room');
-  await expect(page.getByLabel('text-field-description')).toHaveValue(
-    'A large room'
-  );
   await page.getByLabel('text-field-name').fill('Room');
   await page.waitForTimeout(500);
-  await page.getByLabel('text-field-description').fill('A room');
+  await page
+    .getByLabel('text-field-description')
+    .fill(newDescription.replaceAll(' (edited)', ''));
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
 });
@@ -151,7 +166,7 @@ test('Settings - Admin - Barcode History', async ({ page, request }) => {
 
   await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
-  await page.getByRole('tab', { name: 'Barcode Scans' }).click();
+  await loadTab(page, 'Barcode Scans');
 
   await page.waitForTimeout(500);
 
@@ -165,7 +180,7 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
   // Try to access "admin" page with a non-staff user
   await doQuickLogin(page, 'allaccess', 'nolimits');
 
-  await page.goto(`${baseUrl}/settings/admin/`);
+  await navigate(page, 'settings/admin/');
   await page.waitForURL('**/settings/admin/**');
 
   // Should get a permission denied message
@@ -175,18 +190,40 @@ test('Settings - Admin - Unauthorized', async ({ page }) => {
     .waitFor();
 
   // Try to access user settings page (should be accessible)
-  await page.goto(`${baseUrl}/settings/user/`);
+  await navigate(page, 'settings/user/');
   await page.waitForURL('**/settings/user/**');
 
-  await page.getByRole('tab', { name: 'Display Options' }).click();
-  await page.getByRole('tab', { name: 'Account' }).click();
+  await loadTab(page, 'Display Options');
+  await loadTab(page, 'Account');
 
   // Try to access global settings page
-  await page.goto(`${baseUrl}/settings/system/`);
+  await navigate(page, 'settings/system/');
   await page.waitForURL('**/settings/system/**');
 
   await page.getByText('Permission Denied').waitFor();
   await page
     .getByRole('button', { name: 'Return to the index page' })
     .waitFor();
+});
+
+// Test for user auth configuration
+test('Settings - Auth - Email', async ({ page }) => {
+  await doQuickLogin(page, 'allaccess', 'nolimits');
+  await navigate(page, 'settings/user/');
+
+  await loadTab(page, 'Security');
+
+  await page.getByText('Currently no email addresses are registered').waitFor();
+  await page.getByLabel('email-address-input').fill('test-email@domain.org');
+  await page.getByLabel('email-address-submit').click();
+
+  await page.getByText('Unverified', { exact: true }).waitFor();
+  await page.getByLabel('test-email@domain.').click();
+  await page.getByRole('button', { name: 'Make Primary' }).click();
+  await page.getByText('Primary', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Remove' }).click();
+
+  await page.getByText('Currently no email addresses are registered').waitFor();
+
+  await page.waitForTimeout(2500);
 });

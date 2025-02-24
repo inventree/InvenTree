@@ -94,14 +94,20 @@ export default function PurchaseOrderDetail() {
     }
   });
 
+  const duplicatePurchaseOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
     fields: duplicatePurchaseOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicatePurchaseOrderInitialData,
     follow: true,
     modelType: ModelType.purchaseorder
   });
@@ -242,6 +248,14 @@ export default function PurchaseOrderDetail() {
         icon: 'calendar',
         copy: true,
         hidden: !order.issue_date
+      },
+      {
+        type: 'date',
+        name: 'start_date',
+        label: t`Start Date`,
+        icon: 'calendar',
+        copy: true,
+        hidden: !order.start_date
       },
       {
         type: 'date',
@@ -494,6 +508,12 @@ export default function PurchaseOrderDetail() {
             subtitle={order.description}
             imageUrl={order.supplier_detail?.image}
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            lastCrumb={[
+              {
+                name: order.reference,
+                url: `/purchasing/purchase-order/${order.pk}`
+              }
+            ]}
             actions={poActions}
             badges={orderBadges}
             editAction={editPurchaseOrder.open}

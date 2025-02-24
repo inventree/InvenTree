@@ -114,7 +114,6 @@ class StockLocationTest(StockAPITestCase):
             'items',
             'pathstring',
             'owner',
-            'url',
             'icon',
             'location_type',
             'location_type_detail',
@@ -561,7 +560,7 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Return JSON-ified data
+        # Return JSON data
         return response.data
 
     def test_top_level_filtering(self):
@@ -871,10 +870,15 @@ class StockItemListTest(StockAPITestCase):
             'Part',
             'Customer',
             'Stock Location',
-            'Location Name',
             'Parent Item',
             'Quantity',
             'Status',
+            'Part.Name',
+            'Part.Description',
+            'Location.Name',
+            'Location.Path',
+            'Supplier Part.SKU',
+            'Supplier Part.MPN',
         ]
 
         for h in headers:
@@ -886,12 +890,35 @@ class StockItemListTest(StockAPITestCase):
             self.assertNotIn(h, dataset.headers)
 
         # Now, add a filter to the results
-        dataset = self.export_data({'location': 1})
+        dataset = self.export_data({'location': 1, 'cascade': True})
 
         self.assertEqual(len(dataset), 9)
 
-        dataset = self.export_data({'part': 25})
+        # Read out the data
+        idx_id = dataset.headers.index('ID')
+        idx_loc = dataset.headers.index('Stock Location')
+        idx_loc_name = dataset.headers.index('Location.Name')
+        idx_part_name = dataset.headers.index('Part.Name')
 
+        for row in dataset:
+            item_id = int(row[idx_id])
+            item = StockItem.objects.get(pk=item_id)
+
+            loc_id = int(row[idx_loc])
+
+            # Location should match ID
+            self.assertEqual(int(loc_id), item.location.pk)
+
+            # Location name should match
+            loc_name = row[idx_loc_name]
+            self.assertEqual(loc_name, item.location.name)
+
+            # Part name should match
+            part_name = row[idx_part_name]
+            self.assertEqual(part_name, item.part.name)
+
+        # Export stock items with a specific part
+        dataset = self.export_data({'part': 25})
         self.assertEqual(len(dataset), 17)
 
     def test_filter_by_allocated(self):
@@ -1277,7 +1304,7 @@ class StockItemTest(StockAPITestCase):
             expected_code=201,
         )
 
-    def test_stock_item_create_withsupplierpart(self):
+    def test_stock_item_create_with_supplier_part(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
         # POST with non-existent supplier part
         response = self.post(
@@ -1487,13 +1514,13 @@ class StockItemTest(StockAPITestCase):
         data = self.get(url, expected_code=200).data
 
         # Check fixture values
-        self.assertEqual(data['purchase_price'], '123.000000')
+        self.assertAlmostEqual(data['purchase_price'], 123, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update just the amount
         data = self.patch(url, {'purchase_price': 456}, expected_code=200).data
 
-        self.assertEqual(data['purchase_price'], '456.000000')
+        self.assertAlmostEqual(data['purchase_price'], 456, 3)
         self.assertEqual(data['purchase_price_currency'], 'AUD')
 
         # Update the currency
@@ -1515,7 +1542,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
     def test_install(self):
-        """Test that stock item can be installed into antoher item, via the API."""
+        """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
         parent_part = part.models.Part.objects.get(pk=100)
 

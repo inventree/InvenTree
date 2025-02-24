@@ -8,7 +8,9 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { shortenString } from '../../functions/tables';
 import {
+  useFilters,
   useOwnerFilters,
   useProjectCodeFilters,
   useUserFilters
@@ -24,6 +26,7 @@ import {
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
@@ -41,6 +44,8 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
   type TableFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter
@@ -105,6 +110,7 @@ export function BuildOrderTable({
         sortable: true
       },
       CreationDateColumn({}),
+      StartDateColumn({}),
       TargetDateColumn({}),
       DateColumn({
         accessor: 'completion_date',
@@ -126,6 +132,17 @@ export function BuildOrderTable({
   const ownerFilters = useOwnerFilters();
   const userFilters = useUserFilters();
 
+  const categoryFilters = useFilters({
+    url: apiUrl(ApiEndpoints.category_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: shortenString({
+        str: item.pathstring,
+        len: 50
+      })
+    })
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       OutstandingFilter(),
@@ -138,6 +155,20 @@ export function BuildOrderTable({
       CreatedAfterFilter(),
       TargetDateBeforeFilter(),
       TargetDateAfterFilter(),
+      StartDateBeforeFilter(),
+      StartDateAfterFilter(),
+      {
+        name: 'has_target_date',
+        type: 'boolean',
+        label: t`Has Target Date`,
+        description: t`Show orders with a target date`
+      },
+      {
+        name: 'has_start_date',
+        type: 'boolean',
+        label: t`Has Start Date`,
+        description: t`Show orders with a start date`
+      },
       CompletedBeforeFilter(),
       CompletedAfterFilter(),
       ProjectCodeFilter({ choices: projectCodeFilters.choices }),
@@ -148,7 +179,13 @@ export function BuildOrderTable({
         description: t`Filter by user who issued this order`,
         choices: userFilters.choices
       },
-      ResponsibleFilter({ choices: ownerFilters.choices })
+      ResponsibleFilter({ choices: ownerFilters.choices }),
+      {
+        name: 'category',
+        label: t`Category`,
+        description: t`Filter by part category`,
+        choices: categoryFilters.choices
+      }
     ];
 
     // If we are filtering on a specific part, we can include the "include variants" filter
@@ -164,6 +201,7 @@ export function BuildOrderTable({
     return filters;
   }, [
     partId,
+    categoryFilters.choices,
     projectCodeFilters.choices,
     ownerFilters.choices,
     userFilters.choices
