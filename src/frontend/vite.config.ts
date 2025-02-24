@@ -43,9 +43,11 @@ export default defineConfig({
       requireEnv: true
     }),
     codecovVitePlugin({
-      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+      enableBundleAnalysis: true,
       bundleName: 'pui_v1',
-      uploadToken: process.env.CODECOV_TOKEN
+      oidc: {
+        useGitHubOIDC: true
+      }
     })
   ],
   build: {
