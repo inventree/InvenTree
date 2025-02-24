@@ -7,7 +7,6 @@ import {
   Loader,
   PasswordInput,
   Stack,
-  Text,
   TextInput
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -327,49 +326,5 @@ export function RegistrationForm() {
         </Group>
       )}
     </>
-  );
-}
-
-export function ModeSelector({
-  loginMode,
-  changePage
-}: Readonly<{
-  loginMode: boolean;
-  changePage: (state: string) => void;
-}>) {
-  const [sso_registration, registration_enabled] = useServerApiState(
-    (state) => [state.sso_registration_enabled, state.registration_enabled]
-  );
-  const both_reg_enabled =
-    registration_enabled() || sso_registration() || false;
-
-  if (both_reg_enabled === false) return null;
-  return (
-    <Text ta='center' size={'xs'} mt={'md'}>
-      {loginMode ? (
-        <>
-          <Trans>Don&apos;t have an account?</Trans>{' '}
-          <Anchor
-            component='button'
-            type='button'
-            c='dimmed'
-            size='xs'
-            onClick={() => changePage('register')}
-          >
-            <Trans>Register</Trans>
-          </Anchor>
-        </>
-      ) : (
-        <Anchor
-          component='button'
-          type='button'
-          c='dimmed'
-          size='xs'
-          onClick={() => changePage('login')}
-        >
-          <Trans>Go back to login</Trans>
-        </Anchor>
-      )}
-    </Text>
   );
 }
