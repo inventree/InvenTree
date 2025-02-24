@@ -18,15 +18,12 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 
 /**
  * Detail page for a single group
  */
 export default function GroupDetail() {
   const { id } = useParams();
-
-  const user = useUserState();
 
   const { instance, instanceQuery, requestStatus } = useInstance({
     endpoint: ApiEndpoints.group_list,
@@ -80,7 +77,7 @@ export default function GroupDetail() {
         content: detailsPanel
       }
     ];
-  }, [instance, id, user]);
+  }, [instance, id]);
 
   const groupBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading ? [] : ['group info'];

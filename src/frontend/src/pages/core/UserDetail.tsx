@@ -51,18 +51,21 @@ export default function UserDetail() {
         type: 'text',
         name: 'username',
         label: t`Username`,
+        icon: 'info',
         copy: true
       },
       {
         type: 'text',
         name: 'first_name',
         label: t`First Name`,
+        icon: 'info',
         copy: true
       },
       {
         type: 'text',
         name: 'last_name',
         label: t`Last Name`,
+        icon: 'info',
         copy: true
       }
     ];
