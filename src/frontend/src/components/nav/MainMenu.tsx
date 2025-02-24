@@ -13,6 +13,7 @@ import {
 } from '@mantine/core';
 import {
   IconChevronDown,
+  IconInfoCircle,
   IconLogout,
   IconMoonStars,
   IconSettings,
@@ -45,14 +46,19 @@ export function MainMenu() {
 
   return (
     <>
-      <HoverCard shadow='md' openDelay={500} closeDelay={500} withArrow>
-        <HoverCard.Target>
-          <Text>Auth Info</Text>
-        </HoverCard.Target>
-        <HoverCard.Dropdown>
-          <AuthContextInformation server={server} auth_context={auth_context} />
-        </HoverCard.Dropdown>
-      </HoverCard>
+      {user?.is_superuser && (
+        <HoverCard shadow='md' openDelay={500} closeDelay={500} withArrow>
+          <HoverCard.Target>
+            <IconInfoCircle />
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <AuthContextInformation
+              server={server}
+              auth_context={auth_context}
+            />
+          </HoverCard.Dropdown>
+        </HoverCard>
+      )}
 
       <Menu width={260} position='bottom-end'>
         <Menu.Target>
