@@ -15,7 +15,7 @@ export default function RemoveRowButton({
       onClick={onClick}
       icon={<InvenTreeIcon icon='square_x' />}
       tooltip={tooltip}
-      tooltipAlignment='top'
+      tooltipAlignment='top-end'
       color='red'
     />
   );

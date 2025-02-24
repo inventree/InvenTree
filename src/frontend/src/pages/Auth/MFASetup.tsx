@@ -1,12 +1,13 @@
 import { Trans, t } from '@lingui/macro';
+import { getTotpSecret, handleVerifyTotp } from '../../functions/auth';
+import { Wrapper } from './Layout';
+
 import { Button } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getTotpSecret, handleVerifyTotp } from '../../functions/auth';
 import { QrRegistrationForm } from '../Index/Settings/AccountSettings/QrRegistrationForm';
-import { Wrapper } from './Layout';
 
-export default function MfaSetup() {
+export default function MFASetup() {
   const navigate = useNavigate();
   const location = useLocation();
 

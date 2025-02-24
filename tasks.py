@@ -18,12 +18,16 @@ from invoke.exceptions import UnexpectedExit
 
 def is_docker_environment():
     """Check if the InvenTree environment is running in a Docker container."""
-    return os.environ.get('INVENTREE_DOCKER', 'False')
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('INVENTREE_DOCKER', 'False'))
 
 
 def is_rtd_environment():
     """Check if the InvenTree environment is running on ReadTheDocs."""
-    return os.environ.get('READTHEDOCS', 'False') == 'True'
+    from src.backend.InvenTree.InvenTree.config import is_true
+
+    return is_true(os.environ.get('READTHEDOCS', 'False'))
 
 
 def task_exception_handler(t, v, tb):
@@ -97,11 +101,14 @@ def chceckInvokePath():
         return
 
     invoke_path = Path(invoke.__file__)
+    env_path = Path(sys.prefix).resolve()
     loc_path = Path(__file__).parent.resolve()
-    if not invoke_path.is_relative_to(loc_path):
+    if not invoke_path.is_relative_to(loc_path) and not invoke_path.is_relative_to(
+        env_path
+    ):
         error('INVE-E2 - Wrong Invoke Path')
         error(
-            f'The currently used invoke `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` !'
+            f'The invoke tool `{invoke_path}` is not correctly located, ensure you are using the invoke installed in an environment in `{loc_path}` or `{env_path}`'
         )
         sys.exit(1)
 
@@ -1297,6 +1304,8 @@ def version(c):
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
+    invoke_path = Path(invoke.__file__).resolve()
+
     # Special output messages
     NOT_SPECIFIED = wrap_color('NOT SPECIFIED', '91')
     NA = wrap_color('N/A', '93')
@@ -1309,6 +1318,7 @@ The Open-Source Inventory Management System\n
 Python paths:
 Executable  {sys.executable}
 Environment {sys.prefix}
+Invoke Tool {invoke_path}
 
 Installation paths:
 Base        {localDir()}
@@ -1324,6 +1334,10 @@ InvenTree   {InvenTreeVersion.inventreeVersion()}
 API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else NA}
 Yarn        {yarn if yarn else NA}
+
+Environment:
+Docker      {is_docker_environment()}
+RTD         {is_rtd_environment()}
 
 Commit hash: {InvenTreeVersion.inventreeCommitHash()}
 Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
@@ -1402,7 +1416,7 @@ def frontend_server(c):
     """
     info('Starting frontend development server')
     yarn(c, 'yarn run compile')
-    yarn(c, 'yarn run dev')
+    yarn(c, 'yarn run dev --host')
 
 
 @task(

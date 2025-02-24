@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro';
 import {
-  BackgroundImage,
   Button,
   Center,
   Container,
@@ -10,39 +9,14 @@ import {
   Paper,
   Stack
 } from '@mantine/core';
-import { useEffect, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import SplashScreen from '../../components/SplashScreen';
 import { StylishText } from '../../components/items/StylishText';
 import { doLogout } from '../../functions/auth';
-import { generateUrl } from '../../functions/urls';
-import { useServerApiState } from '../../states/ApiState';
 
 export default function Layout() {
-  const [server, fetchServerApiState] = useServerApiState((state) => [
-    state.server,
-    state.fetchServerApiState
-  ]);
-
-  const SplashComponent = useMemo(() => {
-    const temp = server.customize?.splash;
-    if (temp) {
-      return ({ children }: { children: React.ReactNode }) => (
-        <BackgroundImage src={generateUrl(temp)}>{children}</BackgroundImage>
-      );
-    }
-    return ({ children }: { children: React.ReactNode }) => <>{children}</>;
-  }, [server.customize]);
-
-  // Fetch server data on mount if no server data is present
-  useEffect(() => {
-    if (server.server === null) {
-      fetchServerApiState();
-    }
-  }, [server]);
-
-  // Main rendering block
   return (
-    <SplashComponent>
+    <SplashScreen>
       <Center mih='100vh'>
         <div
           style={{
@@ -56,7 +30,7 @@ export default function Layout() {
           </Container>
         </div>
       </Center>
-    </SplashComponent>
+    </SplashScreen>
   );
 }
 

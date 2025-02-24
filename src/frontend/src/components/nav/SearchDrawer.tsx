@@ -1,16 +1,15 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  Accordion,
   ActionIcon,
   Alert,
   Anchor,
   Center,
   Checkbox,
-  Divider,
   Drawer,
   Group,
   Loader,
   Menu,
-  Paper,
   Space,
   Stack,
   Text,
@@ -21,19 +20,23 @@ import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconBackspace,
+  IconExclamationCircle,
   IconRefresh,
   IconSearch,
   IconSettings,
+  IconTableExport,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
@@ -45,6 +48,9 @@ import { ModelInformationDict, getModelInfo } from '../render/ModelType';
 // Define type for handling individual search queries
 type SearchQuery = {
   model: ModelType;
+  searchKey?: string;
+  title?: string;
+  overviewUrl?: string;
   enabled: boolean;
   parameters: any;
   results?: any;
@@ -54,50 +60,102 @@ type SearchQuery = {
  * Render the results for a single search query
  */
 function QueryResultGroup({
+  searchText,
   query,
+  navigate,
+  onClose,
   onRemove,
   onResultClick
 }: Readonly<{
+  searchText: string;
   query: SearchQuery;
+  navigate: NavigateFunction;
+  onClose: () => void;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
 }>) {
+  const modelInfo = useMemo(() => getModelInfo(query.model), [query.model]);
+
+  const overviewUrl: string | undefined = useMemo(() => {
+    // Query has a custom overview URL
+    if (query.overviewUrl) {
+      return query.overviewUrl;
+    }
+
+    return modelInfo.url_overview;
+  }, [query, modelInfo]);
+
+  // Callback function to view all results for a given query
+  const viewResults = useCallback(
+    (event: any) => {
+      cancelEvent(event);
+
+      if (overviewUrl) {
+        const url = `${overviewUrl}?search=${searchText}`;
+
+        // Close drawer if opening in the same tab
+        if (!(event?.ctrlKey || event?.shiftKey)) {
+          onClose();
+        }
+
+        navigateToLink(url, navigate, event);
+      } else {
+        showNotification({
+          title: t`No Overview Available`,
+          message: t`No overview available for this model type`,
+          color: 'red',
+          icon: <IconExclamationCircle />
+        });
+      }
+    },
+    [overviewUrl, searchText]
+  );
+
   if (query.results.count == 0) {
     return null;
   }
 
-  const model = getModelInfo(query.model);
-
   return (
-    <Paper
-      withBorder
-      shadow='sm'
-      p='md'
-      key={`paper-${query.model}`}
-      aria-label={`search-group-${query.model}`}
-    >
-      <Stack key={`stack-${query.model}`}>
-        <Group justify='space-between' wrap='nowrap'>
+    <Accordion.Item key={query.model} value={query.model}>
+      <Accordion.Control component='div'>
+        <Group justify='space-between'>
           <Group justify='left' gap={5} wrap='nowrap'>
-            <Text size='lg'>{model.label_multiple}</Text>
+            <Tooltip label={t`View all results`} position='top-start'>
+              <ActionIcon
+                size='sm'
+                variant='transparent'
+                radius='xs'
+                aria-label={`view-all-results-${query.searchKey ?? query.model}`}
+                disabled={!overviewUrl}
+                onClick={viewResults}
+              >
+                <IconTableExport />
+              </ActionIcon>
+            </Tooltip>
+            <Text size='lg'>{query.title ?? modelInfo.label_multiple}</Text>
             <Text size='sm' style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>
           </Group>
-          <Space />
-          <ActionIcon
-            size='sm'
-            color='red'
-            variant='transparent'
-            radius='xs'
-            aria-label={`remove-search-group-${query.model}`}
-            onClick={() => onRemove(query.model)}
-          >
-            <IconX />
-          </ActionIcon>
+          <Group justify='right' wrap='nowrap'>
+            <Tooltip label={t`Remove search group`} position='top-end'>
+              <ActionIcon
+                size='sm'
+                color='red'
+                variant='transparent'
+                radius='xs'
+                aria-label={`remove-search-group-${query.model}`}
+                onClick={() => onRemove(query.model)}
+              >
+                <IconX />
+              </ActionIcon>
+            </Tooltip>
+            <Space />
+          </Group>
         </Group>
-        <Divider />
+      </Accordion.Control>
+      <Accordion.Panel>
         <Stack aria-label={`search-group-results-${query.model}`}>
           {query.results.results.map((result: any) => (
             <Anchor
@@ -111,9 +169,8 @@ function QueryResultGroup({
             </Anchor>
           ))}
         </Stack>
-        <Space />
-      </Stack>
-    </Paper>
+      </Accordion.Panel>
+    </Accordion.Item>
   );
 }
 
@@ -213,10 +270,32 @@ export function SearchDrawer({
       },
       {
         model: ModelType.company,
+        overviewUrl: '/purchasing/index/suppliers',
+        searchKey: 'supplier',
+        title: t`Suppliers`,
         parameters: {},
         enabled:
-          (user.hasViewRole(UserRoles.sales_order) ||
-            user.hasViewRole(UserRoles.purchase_order)) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.company,
+        overviewUrl: '/purchasing/index/manufacturers',
+        searchKey: 'manufacturer',
+        title: t`Manufacturers`,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.company,
+        overviewUrl: '/sales/index/customers',
+        searchKey: 'customer',
+        title: t`Customers`,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -272,7 +351,9 @@ export function SearchDrawer({
   }, [user, userSettings]);
 
   // Construct a list of search queries based on user permissions
-  const searchQueries: SearchQuery[] = searchQueryList.filter((q) => q.enabled);
+  const searchQueries: SearchQuery[] = useMemo(() => {
+    return searchQueryList.filter((q) => q.enabled);
+  }, [searchQueryList]);
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
@@ -296,7 +377,8 @@ export function SearchDrawer({
 
     // Add in custom query parameters
     searchQueries.forEach((query) => {
-      params[query.model] = query.parameters;
+      const key = query.searchKey || query.model;
+      params[key] = query.parameters;
     });
 
     return api
@@ -321,11 +403,11 @@ export function SearchDrawer({
   useEffect(() => {
     if (searchQuery.data) {
       let queries = searchQueries.filter(
-        (query) => query.model in searchQuery.data
+        (query) => (query.searchKey ?? query.model) in searchQuery.data
       );
 
       for (const key in searchQuery.data) {
-        const query = queries.find((q) => q.model == key);
+        const query = queries.find((q) => (q.searchKey ?? q.model) == key);
         if (query) {
           query.results = searchQuery.data[key];
         }
@@ -402,7 +484,7 @@ export function SearchDrawer({
               <IconRefresh />
             </ActionIcon>
           </Tooltip>
-          <Menu>
+          <Menu position='bottom-end'>
             <Menu.Target>
               <Tooltip label={t`Search Options`} position='bottom-end'>
                 <ActionIcon size='lg' variant='transparent'>
@@ -443,16 +525,24 @@ export function SearchDrawer({
         )}
         {!searchQuery.isFetching && !searchQuery.isError && (
           <Stack gap='md'>
-            {queryResults.map((query, idx) => (
-              <QueryResultGroup
-                key={idx}
-                query={query}
-                onRemove={(query) => removeResults(query)}
-                onResultClick={(query, pk, event) =>
-                  onResultClick(query, pk, event)
-                }
-              />
-            ))}
+            <Accordion
+              multiple
+              defaultValue={searchQueries.map((q) => q.model)}
+            >
+              {queryResults.map((query, idx) => (
+                <QueryResultGroup
+                  key={idx}
+                  searchText={searchText}
+                  query={query}
+                  navigate={navigate}
+                  onClose={closeDrawer}
+                  onRemove={(query) => removeResults(query)}
+                  onResultClick={(query, pk, event) =>
+                    onResultClick(query, pk, event)
+                  }
+                />
+              ))}
+            </Accordion>
           </Stack>
         )}
         {searchQuery.isError && (

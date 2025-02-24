@@ -1,11 +1,11 @@
 services:
   db:
-    image: postgres:13
+    image: postgres:15
     restart: unless-stopped
     expose:
       - 5432/tcp
     volumes:
-      - inventreedatabase:/var/lib/postgresql/data:z
+      - ../dev-db/:/var/lib/postgresql/data:z
     environment:
       POSTGRES_DB: inventree
       POSTGRES_USER: inventree_user
@@ -20,21 +20,18 @@ services:
   inventree:
     build:
       context: ..
-      dockerfile: ../InvenTree/contrib/container/Dockerfile
-      target: dev
-      args:
-        base_image: "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18"
-        data_dir: "dev"
+      dockerfile: .devcontainer/Dockerfile
     volumes:
       - ../:/home/inventree:z
+      - /tmp/.X11-unix:/tmp/.X11-unix
 
     environment:
-      INVENTREE_DEBUG: True
       INVENTREE_DB_ENGINE: postgresql
       INVENTREE_DB_NAME: inventree
       INVENTREE_DB_HOST: db
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
+      INVENTREE_DEBUG: True
       INVENTREE_CACHE_HOST: redis
       INVENTREE_CACHE_PORT: 6379
       INVENTREE_PLUGINS_ENABLED: True
@@ -44,6 +41,3 @@ services:
 
     depends_on:
       - db
-
-volumes:
-  inventreedatabase:
