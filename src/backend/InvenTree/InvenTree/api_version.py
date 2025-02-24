@@ -7,9 +7,6 @@ INVENTREE_API_VERSION = 315
 
 
 INVENTREE_API_TEXT = """
-v310 - 2025-01-29 : https://github.com/inventree/InvenTree/pull/6293
-    - Removes a considerable amount of old auth endpoints
-    - Introduces allauth based REST API
 
 v315 - 2025-02-22 : https://github.com/inventree/InvenTree/pull/9150
     - Remove outdated 'url' field from some API endpoints
