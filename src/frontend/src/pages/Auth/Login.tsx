@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Anchor, Divider, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
