@@ -109,6 +109,13 @@ export const doBasicLogin = async (
           success = true;
           navigate('/mfa');
         }
+      } else if (err?.response?.status == 409) {
+        notifications.show({
+          title: t`Already logged in`,
+          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          color: 'red',
+          autoClose: false
+        });
       }
     });
 
@@ -202,17 +209,38 @@ export function handleReset(
 export function handleMfaLogin(
   navigate: NavigateFunction,
   location: Location<any>,
-  values: { code: string }
+  values: { code: string },
+  setError: (message: string | undefined) => void
 ) {
   const { setToken } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
-  }).then((response) => {
-    setAuthContext(response.data?.data);
-    setToken(response.data.meta.access_token);
-    followRedirect(navigate, location?.state);
-  });
+  })
+    .then((response) => {
+      setError(undefined);
+      setAuthContext(response.data?.data);
+      setToken(response.data.meta.access_token);
+      followRedirect(navigate, location?.state);
+    })
+    .catch((err) => {
+      if (err?.response?.status == 409) {
+        notifications.show({
+          title: t`Already logged in`,
+          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          color: 'red',
+          autoClose: false
+        });
+      } else {
+        const errors = err.response?.data?.errors;
+        let msg = t`An error occurred`;
+
+        if (errors) {
+          msg = errors.map((e: any) => e.message).join(', ');
+        }
+        setError(msg);
+      }
+    });
 }
 
 /**
@@ -316,7 +344,7 @@ export async function ProviderLogin(
 export function authApi(
   url: string,
   config: AxiosRequestConfig | undefined = undefined,
-  method: 'get' | 'post' | 'put' | 'delete' = 'get',
+  method: 'get' | 'patch' | 'post' | 'put' | 'delete' = 'get',
   data?: any
 ) {
   const requestConfig = config || {};

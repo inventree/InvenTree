@@ -10,7 +10,6 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
-
 import { StylishText } from '../../components/items/StylishText';
 import { handleChangePassword } from '../../functions/auth';
 import { useUserState } from '../../states/UserState';
@@ -71,6 +70,10 @@ export default function Set_Password() {
             simpleForm.values.current_password,
             navigate
           )
+        }
+        disabled={
+          simpleForm.values.current_password === '' ||
+          simpleForm.values.new_password1 === ''
         }
       >
         <Trans>Confirm</Trans>

@@ -12,7 +12,7 @@ interface ServerApiStateProps {
   fetchServerApiState: () => void;
   auth_config?: AuthConfig;
   auth_context?: AuthContext;
-  setAuthContext: (auth_context: AuthContext | undefined) => void;
+  setAuthContext: (auth_context: AuthContext) => void;
   sso_enabled: () => boolean;
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;

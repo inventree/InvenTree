@@ -94,14 +94,20 @@ export default function PurchaseOrderDetail() {
     }
   });
 
+  const duplicatePurchaseOrderInitialData = useMemo(() => {
+    const data = { ...order };
+    // if we set the reference to null/undefined, it will be left blank in the form
+    // if we omit the reference altogether, it will be auto-generated via reference pattern
+    // from the OPTIONS response
+    delete data.reference;
+    return data;
+  }, [order]);
+
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
     fields: duplicatePurchaseOrderFields,
-    initialData: {
-      ...order,
-      reference: undefined
-    },
+    initialData: duplicatePurchaseOrderInitialData,
     follow: true,
     modelType: ModelType.purchaseorder
   });

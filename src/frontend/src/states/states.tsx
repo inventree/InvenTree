@@ -64,17 +64,6 @@ export interface ServerAPIProps {
 
 export interface AuthContext {
   status: number;
-  user?: {
-    id: number;
-    display: string;
-    has_usable_password: boolean;
-    username: string;
-  };
-  methods?: {
-    method: string;
-    at: number;
-    username: string;
-  }[];
   data: { flows: Flow[] };
   meta: { is_authenticated: boolean };
 }
