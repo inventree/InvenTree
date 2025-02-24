@@ -111,7 +111,6 @@ class StockLocationTest(StockAPITestCase):
             'items',
             'pathstring',
             'owner',
-            'url',
             'icon',
             'location_type',
             'location_type_detail',

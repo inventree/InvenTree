@@ -178,7 +178,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             'parent',
             'part_count',
             'pathstring',
-            'url',
         ]
 
         response = self.get(url, expected_code=200)
