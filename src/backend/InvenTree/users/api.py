@@ -276,7 +276,6 @@ class TokenListView(DestroyAPIView, ListAPI):
 
     permission_classes = (IsAuthenticated,)
     serializer_class = ApiTokenSerializer
-    filter_backends = SEARCH_ORDER_FILTER
 
     def get_queryset(self):
         """Only return data for current user."""
@@ -286,8 +285,6 @@ class TokenListView(DestroyAPIView, ListAPI):
         """Revoke token."""
         instance.revoked = True
         instance.save()
-
-    ordering_fields = ['name', 'sortable', 'last_seen', 'expiry']
 
 
 class LoginRedirect(RedirectView):

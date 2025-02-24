@@ -720,23 +720,19 @@ function TokenSection() {
   const tableColumns = useMemo(() => {
     return [
       {
-        accessor: 'name',
-        sortable: true
+        accessor: 'name'
       },
       BooleanColumn({
-        accessor: 'active',
-        sortable: true
+        accessor: 'active'
       }),
       {
         accessor: 'token'
       },
       {
-        accessor: 'last_seen',
-        sortable: true
+        accessor: 'last_seen'
       },
       {
-        accessor: 'expiry',
-        sortable: true
+        accessor: 'expiry'
       }
     ];
   }, []);
