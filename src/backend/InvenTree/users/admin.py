@@ -68,7 +68,6 @@ class RuleSetInline(admin.TabularInline):
     max_num = len(RuleSet.RULESET_CHOICES)
     min_num = 1
     extra = 0
-    # TODO: find better way to order inlines
     ordering = ['name']
 
 
