@@ -107,7 +107,6 @@ function EmailSection() {
     queryFn: () =>
       authApi(apiUrl(ApiEndpoints.auth_email)).then((res) => res.data.data)
   });
-
   const emailAvailable = useMemo(() => {
     return data == undefined || data.length == 0;
   }, [data]);
