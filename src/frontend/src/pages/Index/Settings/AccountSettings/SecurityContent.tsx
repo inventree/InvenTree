@@ -33,11 +33,13 @@ import { api } from '../../../../App';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
+import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useTable } from '../../../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
 import { BooleanColumn } from '../../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
+import type { RowAction } from '../../../../tables/RowActions';
 import { QrRegistrationForm } from './QrRegistrationForm';
 import { useReauth } from './useConfirm';
 
@@ -713,29 +715,33 @@ async function runActionWithFallback(
 }
 
 function TokenSection() {
-  const table = useTable('api-tokens');
+  const table = useTable('api-tokens', 'id');
 
   const tableColumns = useMemo(() => {
     return [
       {
-        accessor: 'name'
+        accessor: 'name',
+        sortable: true
       },
       BooleanColumn({
-        accessor: 'active'
+        accessor: 'active',
+        sortable: true
       }),
       {
         accessor: 'token'
       },
       {
-        accessor: 'last_seen'
+        accessor: 'last_seen',
+        sortable: true
       },
       {
-        accessor: 'expiry'
+        accessor: 'expiry',
+        sortable: true
       }
     ];
   }, []);
 
-  const rowActions = useCallback((record: any) => {
+  const rowActions = useCallback((record: any): RowAction[] => {
     return [
       {
         title: t`Revoke`,
@@ -755,20 +761,24 @@ function TokenSection() {
       .then(() => {
         table.refreshTable();
       })
-      .catch((res) => console.log(res.data));
+      .catch((error) => {
+        showApiErrorMessage({
+          error: error,
+          title: t`Error revoking token`
+        });
+      });
   };
 
   return (
-    <>
-      <InvenTreeTable
-        tableState={table}
-        url={apiUrl(ApiEndpoints.user_tokens)}
-        columns={tableColumns}
-        props={{
-          rowActions: rowActions,
-          enableSearch: false
-        }}
-      />
-    </>
+    <InvenTreeTable
+      tableState={table}
+      url={apiUrl(ApiEndpoints.user_tokens)}
+      columns={tableColumns}
+      props={{
+        rowActions: rowActions,
+        enableSearch: false,
+        enableColumnSwitching: false
+      }}
+    />
   );
 }
