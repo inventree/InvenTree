@@ -1,5 +1,5 @@
 import test from '@playwright/test';
-import { globalSearch, navigate } from './helpers';
+import { globalSearch, loadTab, navigate } from './helpers';
 import { doQuickLogin } from './login';
 
 // Helper function to open the export data dialog
@@ -33,7 +33,7 @@ test('Exporting - Orders', async ({ page }) => {
 
   // Download list of purchase order items
   await page.getByRole('cell', { name: 'PO0011' }).click();
-  await page.getByRole('tab', { name: 'Line Items' }).click();
+  await loadTab(page, 'Line Items');
   await openExportDialog(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByText('Data exported successfully').waitFor();
@@ -75,7 +75,7 @@ test('Exporting - BOM', async ({ page }) => {
   await globalSearch(page, 'MAST');
   await page.getByLabel('search-group-results-part').locator('a').click();
   await page.waitForLoadState('networkidle');
-  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await loadTab(page, 'Bill of Materials');
   await openExportDialog(page);
 
   // Select export format
