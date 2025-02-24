@@ -81,7 +81,6 @@ class CategorySerializer(
             'pathstring',
             'path',
             'starred',
-            'url',
             'structural',
             'icon',
             'parent_default_location',
@@ -123,8 +122,6 @@ class CategorySerializer(
         label=_('Parent Category'),
         help_text=_('Parent part category'),
     )
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
 
@@ -1134,11 +1131,11 @@ class PartSerializer(
             mpn = initial_supplier.get('mpn', '')
 
             if manufacturer and mpn:
-                manu_part = company.models.ManufacturerPart.objects.create(
+                manufacturer_part = company.models.ManufacturerPart.objects.create(
                     part=instance, manufacturer=manufacturer, MPN=mpn
                 )
             else:
-                manu_part = None
+                manufacturer_part = None
 
             supplier = initial_supplier.get('supplier', None)
             sku = initial_supplier.get('sku', '')
@@ -1148,7 +1145,7 @@ class PartSerializer(
                     part=instance,
                     supplier=supplier,
                     SKU=sku,
-                    manufacturer_part=manu_part,
+                    manufacturer_part=manufacturer_part,
                 )
 
         return instance

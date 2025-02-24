@@ -51,8 +51,6 @@ def default_token():
 
 def default_token_expiry():
     """Generate an expiry date for a newly created token."""
-    # TODO: Custom value for default expiry timeout
-    # TODO: For now, tokens last for 1 year
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
