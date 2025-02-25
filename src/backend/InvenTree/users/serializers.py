@@ -18,9 +18,10 @@ class OwnerSerializer(InvenTreeModelSerializer):
         """Metaclass defines serializer fields."""
 
         model = Owner
-        fields = ['pk', 'owner_id', 'name', 'label']
+        fields = ['pk', 'owner_id', 'owner_model', 'name', 'label']
 
     name = serializers.CharField(read_only=True)
+    owner_model = serializers.CharField(read_only=True, source='owner._meta.model_name')
 
     label = serializers.CharField(read_only=True)
 
