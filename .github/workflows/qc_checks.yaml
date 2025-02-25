@@ -340,7 +340,7 @@ jobs:
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
-          use_oidc: true
+          token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: backend
 
@@ -483,7 +483,7 @@ jobs:
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
-          use_oidc: true
+          token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: migrations
 
@@ -615,10 +615,12 @@ jobs:
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # pin@v5.3.1
         if: always()
         with:
-          use_oidc: true
+          token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
           flags: pui
       - name: Upload bundler info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           cd src/frontend
           yarn install
