@@ -1,6 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
+  activateCalendarView,
+  activateTableView,
   clearTableFilters,
   clickButtonIfVisible,
   clickOnRowMenu,
@@ -11,11 +13,12 @@ import {
 } from '../helpers.ts';
 import { doQuickLogin } from '../login.ts';
 
-test('Purchase Orders - List', async ({ page }) => {
+test('Purchase Orders - Table', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Purchase Orders');
+  await activateTableView(page);
 
   await clearTableFilters(page);
 
@@ -37,6 +40,30 @@ test('Purchase Orders - List', async ({ page }) => {
   // Expected values
   await page.getByText('2025-06-12').waitFor(); // Start Date
   await page.getByText('2025-07-17').waitFor(); // Target Date
+});
+
+test('Purchase Orders - Calendar', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await loadTab(page, 'Purchase Orders');
+
+  // Ensure view is in "calendar" mode
+  await activateCalendarView(page);
+
+  // Check for expected components
+  await page.getByLabel('action-button-previous-month').waitFor();
+  await page.getByLabel('action-button-next-month').waitFor();
+
+  await page.getByLabel('calendar-select-month').click();
+  await page.getByRole('button', { name: 'Jan' }).waitFor();
+  await page.getByRole('button', { name: 'Feb' }).waitFor();
+  await page.getByRole('button', { name: 'Dec' }).click();
+
+  await page.getByText('December').waitFor();
+
+  // Put back into table view
+  await activateTableView(page);
 });
 
 test('Purchase Orders - Barcodes', async ({ page }) => {
@@ -157,6 +184,7 @@ test('Purchase Orders - Filters', async ({ page }) => {
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await loadTab(page, 'Purchase Orders');
+  await activateTableView(page);
 
   // Open filters drawer
   await openFilterDrawer(page);

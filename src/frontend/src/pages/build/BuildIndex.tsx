@@ -1,14 +1,39 @@
 import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
-import { IconTools } from '@tabler/icons-react';
+import { IconCalendar, IconTable, IconTools } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { useLocalStorage } from '@mantine/hooks';
+import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
+import OrderCalendar from '../../components/calendar/OrderCalendar';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
+import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+
+function BuildOverview({
+  view
+}: {
+  view: string;
+}) {
+  switch (view) {
+    case 'calendar':
+      return (
+        <OrderCalendar
+          model={ModelType.build}
+          role={UserRoles.build}
+          params={{ outstanding: true }}
+        />
+      );
+    case 'table':
+    default:
+      return <BuildOrderTable />;
+  }
+}
 
 /**
  * Build Order index page
@@ -16,20 +41,39 @@ import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 export default function BuildIndex() {
   const user = useUserState();
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.build)) {
-    return <PermissionDenied />;
-  }
+  const [buildOrderView, setBuildOrderView] = useLocalStorage<string>({
+    key: 'buildOrderView',
+    defaultValue: 'table'
+  });
 
-  const panels = useMemo(() => {
+  const panels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'buildorders',
         label: t`Build Orders`,
-        content: <BuildOrderTable />,
-        icon: <IconTools />
+        content: <BuildOverview view={buildOrderView} />,
+        icon: <IconTools />,
+        controls: (
+          <SegmentedIconControl
+            value={buildOrderView}
+            onChange={setBuildOrderView}
+            data={[
+              { value: 'table', label: t`Table View`, icon: <IconTable /> },
+              {
+                value: 'calendar',
+                label: t`Calendar View`,
+                icon: <IconCalendar />
+              }
+            ]}
+          />
+        )
       }
     ];
-  }, []);
+  }, [buildOrderView, setBuildOrderView]);
+
+  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.build)) {
+    return <PermissionDenied />;
+  }
 
   return (
     <Stack>
