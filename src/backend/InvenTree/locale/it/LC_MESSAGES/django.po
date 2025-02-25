@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-23 10:08+0000\n"
-"PO-Revision-Date: 2025-02-23 10:11\n"
+"PO-Revision-Date: 2025-02-24 20:06\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: InvenTree/AllUserRequire2FAMiddleware.py:42
 msgid "You must enable two-factor authentication before doing anything else."
-msgstr ""
+msgstr "Devi abilitare l'autenticazione a due fattori prima di fare qualsiasi altra cosa."
 
 #: InvenTree/api.py:340
 msgid "API endpoint not found"
@@ -90,7 +90,7 @@ msgstr "Inserisci la data"
 
 #: InvenTree/fields.py:159
 msgid "Invalid decimal value"
-msgstr ""
+msgstr "Valore decimale non valido"
 
 #: InvenTree/fields.py:208 InvenTree/models.py:887 build/serializers.py:514
 #: build/serializers.py:589 company/models.py:829 order/models.py:1538
@@ -449,7 +449,7 @@ msgstr "Fallimento Attività"
 #: InvenTree/models.py:1075
 #, python-brace-format
 msgid "Background worker task '{f}' failed after {n} attempts"
-msgstr ""
+msgstr "Attività di lavoro in background '{f}' fallita dopo {n} tentativi"
 
 #: InvenTree/models.py:1102
 msgid "Server Error"
