@@ -31,8 +31,8 @@ import common.serializers
 import InvenTree.conversion
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
+from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER

@@ -2,6 +2,7 @@
 
 import structlog
 
+from plugin import PluginMixinEnum
 from plugin.helpers import MixinNotImplementedError
 
 logger = structlog.get_logger('inventree')
@@ -21,7 +22,7 @@ class NavigationMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin('navigation', 'has_navigation', __class__)
+        self.add_mixin(PluginMixinEnum.NAVIGATION, 'has_navigation', __class__)
         self.navigation = self.setup_navigation()
 
     def setup_navigation(self):

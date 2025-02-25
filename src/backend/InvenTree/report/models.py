@@ -27,7 +27,7 @@ import report.validators
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
-from plugin import InvenTreePlugin
+from plugin import InvenTreePlugin, PluginMixinEnum
 from plugin.registry import registry
 
 try:
@@ -357,7 +357,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
         }
 
         # Pass the context through to the plugin registry for any additional information
-        for plugin in registry.with_mixin('report'):
+        for plugin in registry.with_mixin(PluginMixinEnum.REPORT):
             try:
                 plugin.add_report_context(self, instance, request, context)
             except Exception:
@@ -401,7 +401,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             # Generate a dummy request object
             request = dummy_print_request()
 
-        report_plugins = registry.with_mixin('report')
+        report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
         try:
             for instance in items:
@@ -546,7 +546,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             context['page_style'] = self.generate_page_style()
 
         # Pass the context through to any registered plugins
-        plugins = registry.with_mixin('report')
+        plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
         for plugin in plugins:
             # Let each plugin add its own context data

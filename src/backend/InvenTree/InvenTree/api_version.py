@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 315
+INVENTREE_API_VERSION = 316
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v316 - 2025-02-24 : https://github.com/inventree/InvenTree/pull/9096
+    - Overhaul the data-export API functionality
+    - Allow customization of data exporting via plugins
 
 v315 - 2025-02-22 : https://github.com/inventree/InvenTree/pull/9150
     - Remove outdated 'url' field from some API endpoints

@@ -23,7 +23,7 @@ def generate_batch_code(**kwargs):
     Various kwargs can be passed to the function, which will be passed through to the plugin functions.
     """
     # First, check if any plugins can generate batch codes
-    from plugin.registry import registry
+    from plugin import PluginMixinEnum, registry
 
     now = InvenTree.helpers.current_time()
 
@@ -38,7 +38,7 @@ def generate_batch_code(**kwargs):
         **kwargs,
     }
 
-    for plugin in registry.with_mixin('validation'):
+    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
         generate = getattr(plugin, 'generate_batch_code', None)
 
         if not generate:
