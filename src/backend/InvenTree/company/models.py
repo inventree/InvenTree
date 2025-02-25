@@ -117,7 +117,10 @@ class Company(
     )
 
     website = InvenTreeURLField(
-        blank=True, verbose_name=_('Website'), help_text=_('Company website URL')
+        blank=True,
+        verbose_name=_('Website'),
+        help_text=_('Company website URL'),
+        max_length=2000,
     )
 
     phone = models.CharField(
@@ -145,6 +148,7 @@ class Company(
         blank=True,
         verbose_name=_('Link'),
         help_text=_('Link to external company information'),
+        max_length=2000,
     )
 
     image = StdImageField(
@@ -440,6 +444,7 @@ class Address(InvenTree.models.InvenTreeModel):
         blank=True,
         verbose_name=_('Link'),
         help_text=_('Link to address information (external)'),
+        max_length=2000,
     )
 
 

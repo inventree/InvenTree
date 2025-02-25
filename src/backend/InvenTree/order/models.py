@@ -354,7 +354,10 @@ class Order(
     )
 
     link = InvenTreeURLField(
-        blank=True, verbose_name=_('Link'), help_text=_('Link to external page')
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page'),
+        max_length=2000,
     )
 
     start_date = models.DateField(
@@ -1540,7 +1543,10 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     )
 
     link = InvenTreeURLField(
-        blank=True, verbose_name=_('Link'), help_text=_('Link to external page')
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page'),
+        max_length=2000,
     )
 
     target_date = models.DateField(
@@ -1988,7 +1994,10 @@ class SalesOrderShipment(
     )
 
     link = InvenTreeURLField(
-        blank=True, verbose_name=_('Link'), help_text=_('Link to external page')
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page'),
+        max_length=2000,
     )
 
     def is_complete(self):

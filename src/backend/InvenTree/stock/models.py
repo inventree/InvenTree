@@ -934,7 +934,10 @@ class StockItem(
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     batch = models.CharField(
