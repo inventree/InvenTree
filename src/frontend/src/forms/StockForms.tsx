@@ -365,7 +365,7 @@ function StockItemDefaultMove({
         />
       </Flex>
       <Flex direction='column' gap='sm' align='center'>
-        <Text>{stockItem.location_detail.pathstring}</Text>
+        <Text>{stockItem.location_detail?.pathstring ?? '-'}</Text>
         <InvenTreeIcon icon='arrow_down' />
         <Suspense fallback={<Skeleton width='150px' />}>
           <Text>{data?.pathstring}</Text>
