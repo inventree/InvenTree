@@ -188,7 +188,7 @@ class Company(
     )
 
     @property
-    def address(self):
+    def address(self) -> str | None:
         """Return the string representation for the primary address.
 
         This property exists for backwards compatibility
