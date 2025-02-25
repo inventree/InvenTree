@@ -1298,6 +1298,7 @@ def version(c):
         get_backup_dir,
         get_config_file,
         get_media_dir,
+        get_plugin_file,
         get_static_dir,
     )
 
@@ -1323,6 +1324,7 @@ Invoke Tool {invoke_path}
 Installation paths:
 Base        {localDir()}
 Config      {get_config_file()}
+Plugin File {get_plugin_file() or NOT_SPECIFIED}
 Media       {get_media_dir(error=False) or NOT_SPECIFIED}
 Static      {get_static_dir(error=False) or NOT_SPECIFIED}
 Backup      {get_backup_dir(error=False) or NOT_SPECIFIED}
