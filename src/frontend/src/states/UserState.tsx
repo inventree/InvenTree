@@ -13,8 +13,8 @@ export interface UserStateProps {
   token: string | undefined;
   userId: () => number | undefined;
   username: () => string;
-  setUser: (newUser: UserProps) => void;
-  setToken: (newToken: string) => void;
+  setUser: (newUser: UserProps | undefined) => void;
+  setToken: (newToken: string | undefined) => void;
   clearToken: () => void;
   fetchUserToken: () => void;
   fetchUserState: () => void;
@@ -43,17 +43,17 @@ export interface UserStateProps {
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   token: undefined,
-  setToken: (newToken: string) => {
+  setToken: (newToken: string | undefined) => {
     set({ token: newToken });
     setApiDefaults();
   },
   clearToken: () => {
-    set({ token: undefined });
+    get().setToken(undefined);
     setApiDefaults();
   },
   userId: () => {
     const user: UserProps = get().user as UserProps;
-    return user.pk;
+    return user?.pk;
   },
   username: () => {
     const user: UserProps = get().user as UserProps;
@@ -64,10 +64,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps) => set({ user: newUser }),
+  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
   clearUserState: () => {
-    set({ user: undefined });
-    set({ token: undefined });
+    get().setUser(undefined);
+    get().setToken(undefined);
     clearCsrfCookie();
     setApiDefaults();
   },
@@ -119,7 +119,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             email: response.data.email,
             username: response.data.username
           };
-          set({ user: user });
+          get().setUser(user);
         } else {
           get().clearUserState();
         }
@@ -145,7 +145,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             user.permissions = response.data?.permissions ?? {};
             user.is_staff = response.data?.is_staff ?? false;
             user.is_superuser = response.data?.is_superuser ?? false;
-            set({ user: user });
+            get().setUser(user);
           }
         } else {
           get().clearUserState();

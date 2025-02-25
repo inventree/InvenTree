@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from InvenTree.serializers import InvenTreeModelSerializer
 
-from .models import ApiToken, Owner, RuleSet, check_user_role
+from .models import ApiToken, Owner, RuleSet, UserProfile, check_user_role
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
@@ -18,9 +18,10 @@ class OwnerSerializer(InvenTreeModelSerializer):
         """Metaclass defines serializer fields."""
 
         model = Owner
-        fields = ['pk', 'owner_id', 'name', 'label']
+        fields = ['pk', 'owner_id', 'owner_model', 'name', 'label']
 
     name = serializers.CharField(read_only=True)
+    owner_model = serializers.CharField(read_only=True, source='owner._meta.model_name')
 
     label = serializers.CharField(read_only=True)
 
@@ -147,4 +148,26 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'revoked',
             'user',
             'in_use',
+        ]
+
+
+class UserProfileSerializer(InvenTreeModelSerializer):
+    """Serializer for the UserProfile model."""
+
+    class Meta:
+        """Meta options for UserProfileSerializer."""
+
+        model = UserProfile
+        fields = [
+            'language',
+            'theme',
+            'widgets',
+            'displayname',
+            'status',
+            'location',
+            'active',
+            'contact',
+            'type',
+            'organisation',
+            'primary_group',
         ]

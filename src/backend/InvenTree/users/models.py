@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
 from django.urls import reverse
@@ -222,6 +222,7 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
+                'users_userprofile',
                 'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
@@ -924,3 +925,86 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
     """
     update_group_roles(instance)
+
+
+class UserProfile(InvenTree.models.MetadataMixin):
+    """Model to store additional user profile information."""
+
+    class UserType(models.TextChoices):
+        """Enumeration for user types."""
+
+        BOT = 'bot', _('Bot')
+        INTERNAL = 'internal', _('Internal')
+        EXTERNAL = 'external', _('External')
+        GUEST = 'guest', _('Guest')
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    language = models.CharField(max_length=10, blank=True, null=True)
+    theme = models.JSONField(blank=True, null=True)
+    widgets = models.JSONField(blank=True, null=True)
+    displayname = models.CharField(max_length=255, blank=True, null=True)
+    status = models.CharField(max_length=2000, blank=True, null=True)
+    location = models.CharField(max_length=2000, blank=True, null=True)
+    active = models.BooleanField(default=True)
+    contact = models.CharField(max_length=255, blank=True, null=True)
+    type = models.CharField(
+        max_length=10, choices=UserType.choices, default=UserType.INTERNAL
+    )
+    organisation = models.CharField(max_length=255, blank=True, null=True)
+    primary_group = models.ForeignKey(
+        Group,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='primary_users',
+    )
+
+    def __str__(self):
+        """Return string representation of the user profile."""
+        return f'{self.user.username} user profile'
+
+    def save(self, *args, **kwargs):
+        """Ensure primary_group is a group that the user is a member of."""
+        if self.primary_group and self.primary_group not in self.user.groups.all():
+            self.primary_group = None
+        super().save(*args, **kwargs)
+
+
+# Signal to create or update user profile when user is saved
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    """Create or update user profile when user is saved."""
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.profile.save()
+
+
+# Validate groups
+@receiver(post_save, sender=Group)
+def validate_primary_group_on_save(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is created or updated."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group and profile.primary_group not in user.groups.all():
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(post_delete, sender=Group)
+def validate_primary_group_on_delete(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is deleted."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group == instance:
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
+    """Validate primary_group on user profiles when a group is added or removed."""
+    if action in ['post_add', 'post_remove']:
+        profile = instance.profile
+        if profile.primary_group and profile.primary_group not in instance.groups.all():
+            profile.primary_group = None
+            profile.save()
