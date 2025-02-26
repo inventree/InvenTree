@@ -4,9 +4,11 @@ from typing import Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import structlog
 
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
@@ -30,6 +32,7 @@ class MachineRegistry(
 
         self.base_drivers: list[type[BaseDriver]] = []
 
+        # Keep an internal hash of the machine registry state
         self._hash = None
 
     @property
@@ -284,16 +287,36 @@ class MachineRegistry(
         if not self._hash:
             self._hash = self._calculate_registry_hash()
 
-        last_hash = self.get_shared_state('hash', None)
+        try:
+            reg_hash = get_global_setting('_MACHINE_REGISTRY_HASH', '', create=False)
+        except Exception as exc:
+            logger.exception('Failed to get machine registry hash: %s', str(exc))
+            return False
 
-        if last_hash and last_hash != self._hash:
+        if reg_hash and reg_hash != self._hash:
             logger.info('Machine registry has changed - reloading machines')
             self.reload_machines()
+            return True
+
+        return False
 
     def _update_registry_hash(self):
         """Save the current registry hash."""
         self._hash = self._calculate_registry_hash()
-        self.set_shared_state('hash', self._hash)
+
+        try:
+            old_hash = get_global_setting('_MACHINE_REGISTRY_HASH')
+        except Exception:
+            old_hash = None
+
+        if old_hash != self._hash:
+            try:
+                logger.info('Updating machine registry hash: %s', str(self._hash))
+                set_global_setting('_MACHINE_REGISTRY_HASH', self._hash)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                pass
+            except Exception as exc:
+                logger.exception('Failed to update machine registry hash: %s', str(exc))
 
 
 registry: MachineRegistry = MachineRegistry()
