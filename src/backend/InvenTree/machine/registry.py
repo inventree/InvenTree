@@ -333,7 +333,7 @@ class MachineRegistry(
             machine_id: The UUID of the machine to call the function against
             function_name: The name of the function to call
         """
-        print('Calling call_machine_function:', machine_id, '->', function_name)
+        logger.info('call_machine_function: %s -> %s', machine_id, function_name)
 
         raise_error = kwargs.pop('raise_error', True)
 
@@ -348,18 +348,11 @@ class MachineRegistry(
             return
 
         # Fetch the driver instance based on the machine driver
-        driver_name = machine.driver
-
-        if not driver_name:
-            if raise_error:
-                raise NameError(f"Machine '{machine_id}' has no specified driver")
-            return
-
-        driver = self.get_driver_instance(driver_name)
+        driver = machine.driver
 
         if not driver:
             if raise_error:
-                raise AttributeError(f"Driver '{driver_name}' not found")
+                raise AttributeError(f"Machine '{machine_id}' has no specified driver")
             return
 
         # The function must be registered against the driver
@@ -368,7 +361,7 @@ class MachineRegistry(
         if not func or not callable(func):
             if raise_error:
                 raise AttributeError(
-                    f"Driver '{driver_name}' has no callable method '{function_name}'"
+                    f"Driver '{driver.SLUG}' has no callable method '{function_name}'"
                 )
             return
 
