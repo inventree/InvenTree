@@ -71,9 +71,7 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
         # Check with wrong key
         with self.assertRaises(AttributeError):
-            self.assertEqual(
-                call_plugin_function('does_not_exist', 'member_func'), None
-            )
+            call_plugin_function('does_not_exist', 'member_func'), None
 
 
 class ScheduledTaskPluginTests(TestCase):
