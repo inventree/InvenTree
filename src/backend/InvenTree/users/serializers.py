@@ -175,10 +175,9 @@ class BriefUserProfileSerializer(InvenTreeModelSerializer):
 class UserProfileSerializer(BriefUserProfileSerializer):
     """Serializer for the UserProfile model."""
 
-    class Meta:
+    class Meta(BriefUserProfileSerializer.Meta):
         """Meta options for UserProfileSerializer."""
 
-        model = UserProfile
         fields = [
             'language',
             'theme',
@@ -229,6 +228,7 @@ class ExtendedUserSerializer(UserSerializer):
             'is_staff',
             'is_superuser',
             'is_active',
+            'profile',
         ]
 
         read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
@@ -244,6 +244,8 @@ class ExtendedUserSerializer(UserSerializer):
     is_active = serializers.BooleanField(
         label=_('Active'), help_text=_('Is this user account active')
     )
+
+    profile = BriefUserProfileSerializer(many=False, read_only=True)
 
     def validate(self, attrs):
         """Expanded validation for changing user role."""
@@ -289,8 +291,6 @@ class UserCreateSerializer(ExtendedUserSerializer):
     class Meta(ExtendedUserSerializer.Meta):
         """Metaclass options for the UserCreateSerializer."""
 
-        fields = [*ExtendedUserSerializer.Meta.fields, 'profile']
-
         # Prevent creation of users with superuser or staff permissions
         read_only_fields = ['groups', 'is_staff', 'is_superuser']
 
@@ -334,5 +334,3 @@ class UserCreateSerializer(ExtendedUserSerializer):
         )
 
         return instance
-
-    profile = BriefUserProfileSerializer(many=False, read_only=True)
