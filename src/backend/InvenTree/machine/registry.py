@@ -319,36 +319,42 @@ class MachineRegistry(
                 logger.exception('Failed to update machine registry hash: %s', str(exc))
 
     def call_machine_function(
-        self, driver_name: str, machine_id: str, function_name: str, *args, **kwargs
+        self, machine_id: str, function_name: str, *args, **kwargs
     ):
         """Call a named function against a machine instance.
 
         Arguments:
-            driver_name: The name of the driver to call the function against
             machine_id: The UUID of the machine to call the function against
             function_name: The name of the function to call
         """
-        print('Calling call_machine_function:', driver_name, machine_id, function_name)
+        print('Calling call_machine_function:', machine_id, '->', function_name)
 
         raise_error = kwargs.pop('raise_error', True)
 
         self._check_reload()
+
+        # Fetch the machine instance based on the provided UUID
+        machine = self.get_machine(machine_id)
+
+        if not machine:
+            if raise_error:
+                raise AttributeError(f"Machine '{machine_id}' not found")
+            return
+
+        # Fetch the driver instance based on the machine driver
+        driver_name = machine.driver
+
+        if not driver_name:
+            if raise_error:
+                raise NameError(f"Machine '{machine_id}' has no specified driver")
+            return
 
         driver = self.get_driver_instance(driver_name)
 
         if not driver:
             if raise_error:
                 raise AttributeError(f"Driver '{driver_name}' not found")
-            else:
-                return
-
-        machine = self.get_machine(machine_id)
-
-        if not machine:
-            if raise_error:
-                raise AttributeError(f"Machine '{machine_id}' not found")
-            else:
-                return
+            return
 
         # The function must be registered against the driver
         func = getattr(driver, function_name)
@@ -366,10 +372,6 @@ class MachineRegistry(
 registry: MachineRegistry = MachineRegistry()
 
 
-def call_machine_function(
-    driver_name: str, machine_id: str, function: str, *args, **kwargs
-):
+def call_machine_function(machine_id: str, function: str, *args, **kwargs):
     """Global helper function to call a specific function on a machine instance."""
-    return registry.call_machine_function(
-        driver_name, machine_id, function, *args, **kwargs
-    )
+    return registry.call_machine_function(machine_id, function, *args, **kwargs)

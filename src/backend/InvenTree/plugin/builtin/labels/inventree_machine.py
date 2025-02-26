@@ -97,7 +97,6 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
 
         offload_task(
             call_machine_function,
-            driver.SLUG,
             machine.pk,
             'print_labels',
             label,
