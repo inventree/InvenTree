@@ -2,6 +2,7 @@
 
 from typing import cast
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
@@ -91,25 +92,25 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             user=request.user,
         )
 
-        # Execute the print job
-        if driver.USE_BACKGROUND_WORKER is False:
+        # Execute the print job in the current thread
+        if settings.TESTING or not driver.USE_BACKGROUND_WORKER:
             return driver.print_labels(machine, label, items, **print_kwargs)
+        else:
+            offload_task(
+                call_machine_function,
+                machine.pk,
+                'print_labels',
+                label,
+                items,
+                force_async=True,
+                group='plugin',
+                **print_kwargs,
+            )
 
-        offload_task(
-            call_machine_function,
-            machine.pk,
-            'print_labels',
-            label,
-            items,
-            force_async=True,
-            group='plugin',
-            **print_kwargs,
-        )
-
-        return JsonResponse({
-            'success': True,
-            'message': f'{len(items)} labels printed',
-        })
+            return JsonResponse({
+                'success': True,
+                'message': f'{len(items)} labels printed',
+            })
 
     class PrintingOptionsSerializer(serializers.Serializer):
         """Printing options serializer that adds a machine select and the machines options."""
