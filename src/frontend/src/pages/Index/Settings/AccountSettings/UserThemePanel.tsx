@@ -46,14 +46,13 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
     return SizeMarks[0];
   }
   function getDefaultRadius() {
-    const obj = SizeMarks.find((mark) => mark.label === usertheme.radius);
-    if (obj) return obj.value;
-    return 50;
+    const value = Number.parseInt(usertheme.radius.toString());
+    return SizeMarks.some((mark) => mark.value === value) ? value : 50;
   }
   const [radius, setRadius] = useState(getDefaultRadius());
   function changeRadius(value: number) {
     setRadius(value);
-    setTheme([{ key: 'radius', value: getMark(value).value.toString() }]);
+    setTheme([{ key: 'radius', value: value.toString() }]);
   }
 
   return (
