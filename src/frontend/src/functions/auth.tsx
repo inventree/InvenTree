@@ -298,13 +298,6 @@ export const checkLoginState = async (
     followRedirect(navigate, redirect);
   };
 
-  // Callback function when login fails
-  const loginFailure = () => {
-    if (!no_redirect) {
-      navigate('/login', { state: redirect });
-    }
-  };
-
   if (isLoggedIn()) {
     // Already logged in
     loginSuccess();
@@ -317,8 +310,8 @@ export const checkLoginState = async (
 
   if (isLoggedIn()) {
     loginSuccess();
-  } else {
-    loginFailure();
+  } else if (!no_redirect) {
+    navigate('/login', { state: redirect });
   }
 };
 
