@@ -25,18 +25,16 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import (
-    ExtendedUserSerializer,
-    MeUserSerializer,
-    UserCreateSerializer,
-)
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, UserProfile
 from users.serializers import (
     ApiTokenSerializer,
+    ExtendedUserSerializer,
     GroupSerializer,
+    MeUserSerializer,
     OwnerSerializer,
     RoleSerializer,
+    UserCreateSerializer,
     UserProfileSerializer,
 )
 
