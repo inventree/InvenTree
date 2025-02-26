@@ -91,12 +91,18 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             user=request.user,
         )
 
-        # execute the print job
+        # Execute the print job
         if driver.USE_BACKGROUND_WORKER is False:
             return driver.print_labels(machine, label, items, **print_kwargs)
 
         offload_task(
-            driver.print_labels, machine, label, items, group='plugin', **print_kwargs
+            driver.print_labels,
+            machine,
+            label,
+            items,
+            force_async=True,
+            group='plugin',
+            **print_kwargs,
         )
 
         return JsonResponse({
