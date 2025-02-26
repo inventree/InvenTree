@@ -30,8 +30,6 @@ export default function GroupDetail() {
     pk: id
   });
 
-  console.log('groupOb 1', instance, 'id', id);
-
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
