@@ -126,7 +126,7 @@ class BuildSerializer(
 
     quantity = InvenTreeDecimalField()
 
-    overdue = serializers.BooleanField(required=False, read_only=True, allow_null=True)
+    overdue = serializers.BooleanField(read_only=True, default=False)
 
     issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 

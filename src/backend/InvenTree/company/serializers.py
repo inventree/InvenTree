@@ -161,6 +161,12 @@ class CompanySerializer(
 
         return queryset
 
+    address = serializers.CharField(
+        label='Return the string representation for the primary address. This property exists for backwards compatibility.',
+        allow_null=True,
+        read_only=True,
+    )
+
     primary_address = AddressSerializer(required=False, allow_null=True, read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
