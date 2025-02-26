@@ -9,6 +9,14 @@ import { apiUrl } from './ApiState';
 import { useUserState } from './UserState';
 import type { HostList } from './states';
 
+interface Theme {
+  primaryColor: string;
+  whiteColor: string;
+  blackColor: string;
+  radius: UiSizeType;
+  loader: string;
+}
+
 interface LocalStateProps {
   autoupdate: boolean;
   toggleAutoupdate: () => void;
@@ -20,12 +28,14 @@ interface LocalStateProps {
   language: string;
   setLanguage: (newLanguage: string, noPatch?: boolean) => void;
   // theme
-  primaryColor: string;
-  whiteColor: string;
-  blackColor: string;
-  radius: UiSizeType;
-  loader: string;
-  setLoader: (value: string) => void;
+  usertheme: Theme;
+  setTheme: (
+    newValues: {
+      key: keyof Theme;
+      value: string;
+    }[]
+  ) => void;
+  // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
   tableColumnNames: Record<string, Record<string, string>>;
@@ -65,13 +75,20 @@ export const useLocalState = create<LocalStateProps>()(
         if (!noPatch) patchUser(newLanguage);
       },
       //theme
-      primaryColor: 'indigo',
-      whiteColor: '#fff',
-      blackColor: '#000',
-      radius: 'xs',
-      loader: 'oval',
-      setLoader(value) {
-        set({ loader: value });
+      usertheme: {
+        primaryColor: 'indigo',
+        whiteColor: '#fff',
+        blackColor: '#000',
+        radius: 'xs',
+        loader: 'oval'
+      },
+      setTheme: (newValues) => {
+        const newTheme = { ...get().usertheme };
+        newValues.forEach((val) => {
+          newTheme[val.key] = val.value;
+        });
+        console.log('setting theme', newTheme);
+        set({ usertheme: newTheme });
       },
       // panels
       lastUsedPanels: {},
