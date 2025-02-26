@@ -33,7 +33,8 @@ interface LocalStateProps {
     newValues: {
       key: keyof Theme;
       value: string;
-    }[]
+    }[],
+    noPatch?: boolean
   ) => void;
   // panels
   lastUsedPanels: Record<string, string>;
@@ -72,7 +73,7 @@ export const useLocalState = create<LocalStateProps>()(
       language: 'en',
       setLanguage: (newLanguage, noPatch = false) => {
         set({ language: newLanguage });
-        if (!noPatch) patchUser(newLanguage);
+        if (!noPatch) patchUser('language', newLanguage);
       },
       //theme
       usertheme: {
@@ -82,13 +83,14 @@ export const useLocalState = create<LocalStateProps>()(
         radius: 'xs',
         loader: 'oval'
       },
-      setTheme: (newValues) => {
+      setTheme: (newValues, noPatch = false) => {
         const newTheme = { ...get().usertheme };
         newValues.forEach((val) => {
           newTheme[val.key] = val.value;
         });
-        console.log('setting theme', newTheme);
+        // console.log('setting theme, changed val',newValues.map(a => a.key).join(','), newTheme);
         set({ usertheme: newTheme });
+        if (!noPatch) patchUser('theme', newTheme);
       },
       // panels
       lastUsedPanels: {},
@@ -157,13 +159,10 @@ export const useLocalState = create<LocalStateProps>()(
 /*
 pushes changes in user profile to backend
 */
-function patchUser(lang: string) {
+function patchUser(key: 'language' | 'theme', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
-    console.log('patching user');
-    api.patch(apiUrl(ApiEndpoints.user_profile), {
-      language: lang
-    });
+    api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
   } else {
     console.log('user not logged in, not patching');
   }

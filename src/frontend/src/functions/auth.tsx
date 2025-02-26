@@ -178,7 +178,8 @@ function observeProfile() {
   // overwrite language and theme info in session with profile info
 
   const user = useUserState.getState().getUser();
-  const { language, setLanguage } = useLocalState.getState();
+  const { language, setLanguage, usertheme, setTheme } =
+    useLocalState.getState();
   if (user) {
     if (user.profile?.language && language != user.profile.language) {
       showNotification({
@@ -188,6 +189,23 @@ function observeProfile() {
         icon: 'language'
       });
       setLanguage(user.profile.language, true);
+    }
+
+    // extract keys of usertheme and set them to the values of user.profile.theme
+    const newTheme = Object.keys(usertheme).map((key) => {
+      return {
+        key: key as keyof typeof usertheme,
+        value: user.profile.theme[key] as string
+      };
+    });
+    const diff = newTheme.filter((item) => usertheme[item.key] !== item.value);
+    if (user.profile?.theme && diff.length > 0) {
+      showNotification({
+        title: t`Theme changed`,
+        message: t`Your active theme has been changed to the one set in your profile`,
+        color: 'blue'
+      });
+      setTheme(newTheme);
     }
   }
 }
