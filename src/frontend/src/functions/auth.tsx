@@ -123,6 +123,7 @@ export const doBasicLogin = async (
     await fetchUserState();
     // see if mfa registration is required
     await fetchGlobalStates(navigate);
+    observeProfile();
   } else if (!success) {
     clearUserState();
   }
@@ -173,6 +174,24 @@ export const doSimpleLogin = async (email: string) => {
   return mail;
 };
 
+function observeProfile() {
+  // overwrite language and theme info in session with profile info
+
+  const user = useUserState.getState().getUser();
+  const { language, setLanguage } = useLocalState.getState();
+  if (user) {
+    if (user.profile?.language && language != user.profile.language) {
+      showNotification({
+        title: t`Language changed`,
+        message: t`Your active language has been changed to the one set in your profile`,
+        color: 'blue',
+        icon: 'language'
+      });
+      setLanguage(user.profile.language, true);
+    }
+  }
+}
+
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
@@ -210,8 +229,9 @@ export function handleMfaLogin(
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken } = useUserState.getState();
+  const { setToken, fetchUserState } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
+
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
   })
@@ -219,7 +239,11 @@ export function handleMfaLogin(
       setError(undefined);
       setAuthContext(response.data?.data);
       setToken(response.data.meta.access_token);
-      followRedirect(navigate, location?.state);
+
+      fetchUserState().finally(() => {
+        observeProfile();
+        followRedirect(navigate, location?.state);
+      });
     })
     .catch((err) => {
       if (err?.response?.status == 409) {
@@ -268,8 +292,9 @@ export const checkLoginState = async (
       message: t`Successfully logged in`
     });
 
-    fetchGlobalStates(navigate);
+    observeProfile();
 
+    fetchGlobalStates(navigate);
     followRedirect(navigate, redirect);
   };
 

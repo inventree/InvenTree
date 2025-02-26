@@ -14,10 +14,11 @@ export interface UserStateProps {
   userId: () => number | undefined;
   username: () => string;
   setUser: (newUser: UserProps | undefined) => void;
+  getUser: () => UserProps | undefined;
   setToken: (newToken: string | undefined) => void;
   clearToken: () => void;
   fetchUserToken: () => void;
-  fetchUserState: () => void;
+  fetchUserState: () => Promise<void>;
   clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
   hasDeleteRole: (role: UserRoles) => boolean;
@@ -65,6 +66,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     }
   },
   setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
+  getUser: () => get().user,
   clearUserState: () => {
     get().setUser(undefined);
     get().setToken(undefined);
@@ -117,9 +119,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             first_name: response.data?.first_name ?? '',
             last_name: response.data?.last_name ?? '',
             email: response.data.email,
-            username: response.data.username
+            username: response.data.username,
+            groups: response.data.groups,
+            profile: response.data.profile
           };
           get().setUser(user);
+          // profile info
         } else {
           get().clearUserState();
         }

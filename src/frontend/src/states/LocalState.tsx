@@ -18,7 +18,7 @@ interface LocalStateProps {
   hostList: HostList;
   setHostList: (newHostList: HostList) => void;
   language: string;
-  setLanguage: (newLanguage: string) => void;
+  setLanguage: (newLanguage: string, noPatch?: boolean) => void;
   // theme
   primaryColor: string;
   whiteColor: string;
@@ -60,9 +60,9 @@ export const useLocalState = create<LocalStateProps>()(
       hostList: {},
       setHostList: (newHostList) => set({ hostList: newHostList }),
       language: 'en',
-      setLanguage: (newLanguage) => {
+      setLanguage: (newLanguage, noPatch = false) => {
         set({ language: newLanguage });
-        patchUser(newLanguage);
+        if (!noPatch) patchUser(newLanguage);
       },
       //theme
       primaryColor: 'indigo',
