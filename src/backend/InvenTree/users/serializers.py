@@ -284,6 +284,8 @@ class MeUserSerializer(ExtendedUserSerializer):
             'is_superuser',
         ]
 
+    profile = UserProfileSerializer(many=False, read_only=True)
+
 
 class UserCreateSerializer(ExtendedUserSerializer):
     """Serializer for creating a new User."""
