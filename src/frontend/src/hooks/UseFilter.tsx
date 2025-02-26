@@ -8,6 +8,7 @@ import { useCallback, useMemo } from 'react';
 import { useApi } from '../contexts/ApiContext';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { resolveItem } from '../functions/conversion';
+import { shortenString } from '../functions/tables';
 import { apiUrl } from '../states/ApiState';
 import type { TableFilterChoice } from '../tables/Filter';
 
@@ -103,6 +104,20 @@ export function useOwnerFilters() {
     transform: (item) => ({
       value: item.pk,
       label: item.name
+    })
+  });
+}
+
+// Provide list of category filters
+export function useCategoryFilters() {
+  return useFilters({
+    url: apiUrl(ApiEndpoints.category_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: shortenString({
+        str: item.pathstring,
+        len: 50
+      })
     })
   });
 }

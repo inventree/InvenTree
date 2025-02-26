@@ -101,6 +101,18 @@ export const loadTab = async (page, tabName) => {
   await page.waitForLoadState('networkidle');
 };
 
+// Activate "table" view in certain contexts
+export const activateTableView = async (page) => {
+  await page.getByLabel('segmented-icon-control-table').click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Activate "calendar" view in certain contexts
+export const activateCalendarView = async (page) => {
+  await page.getByLabel('segmented-icon-control-calendar').click();
+  await page.waitForLoadState('networkidle');
+};
+
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */

@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 316
+INVENTREE_API_VERSION = 317
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v317 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/8933
+    - Add min_date and max_date query filters for orders, for use in calendar views
 
 v316 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9185
     - Allow 'icon' field to be nullified in the PartCategory API
