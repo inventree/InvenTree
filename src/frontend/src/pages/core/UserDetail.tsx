@@ -33,8 +33,6 @@ export default function UserDetail() {
     pk: id
   });
 
-  console.log('userOb 1', instance, 'id', id);
-
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -70,6 +68,49 @@ export default function UserDetail() {
       }
     ];
 
+    const tr: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'displayname',
+        label: t`Display Name`,
+        icon: 'user',
+        copy: true
+      },
+      {
+        type: 'boolean',
+        name: 'active',
+        label: t`Active`,
+        icon: 'info'
+      },
+      {
+        type: 'text',
+        name: 'contact',
+        label: t`Contact`,
+        icon: 'email',
+        copy: true
+      },
+      {
+        type: 'text',
+        name: 'organisation',
+        label: t`Organisation`,
+        icon: 'info',
+        copy: true
+      },
+      {
+        type: 'text',
+        name: 'status',
+        label: t`Status`,
+        icon: 'note'
+      },
+      {
+        type: 'text',
+        name: 'location',
+        label: t`Location`,
+        icon: 'location',
+        copy: true
+      }
+    ];
+
     return (
       <ItemDetailsGrid>
         <Grid grow>
@@ -82,6 +123,7 @@ export default function UserDetail() {
             <DetailsTable fields={tl} item={instance} />
           </Grid.Col>
         </Grid>
+        <DetailsTable fields={tr} item={instance} />
       </ItemDetailsGrid>
     );
   }, [instance, instanceQuery]);
