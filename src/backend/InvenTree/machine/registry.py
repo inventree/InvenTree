@@ -270,7 +270,13 @@ class MachineRegistry(
         """Calculate a hash of the machine registry state."""
         from hashlib import md5
 
+        from plugin import registry as plugin_registry
+
         data = md5()
+
+        # If the plugin registry has changed, the machine registry hash will change
+        plugin_registry.update_plugin_hash()
+        data.update(plugin_registry.registry_hash.encode())
 
         for pk, machine in self.machines.items():
             data.update(str(pk).encode())
