@@ -153,7 +153,26 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         ]
 
 
-class UserProfileSerializer(InvenTreeModelSerializer):
+class BriefUserProfileSerializer(InvenTreeModelSerializer):
+    """Brief serializer for the UserProfile model."""
+
+    class Meta:
+        """Meta options for BriefUserProfileSerializer."""
+
+        model = UserProfile
+        fields = [
+            'displayname',
+            'status',
+            'location',
+            'active',
+            'contact',
+            'type',
+            'organisation',
+            'primary_group',
+        ]
+
+
+class UserProfileSerializer(BriefUserProfileSerializer):
     """Serializer for the UserProfile model."""
 
     class Meta:
@@ -164,14 +183,7 @@ class UserProfileSerializer(InvenTreeModelSerializer):
             'language',
             'theme',
             'widgets',
-            'displayname',
-            'status',
-            'location',
-            'active',
-            'contact',
-            'type',
-            'organisation',
-            'primary_group',
+            *BriefUserProfileSerializer.Meta.fields,
         ]
 
 
@@ -323,4 +335,4 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
         return instance
 
-    profile = UserProfileSerializer(many=False, read_only=True)
+    profile = BriefUserProfileSerializer(many=False, read_only=True)
