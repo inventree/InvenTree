@@ -12,7 +12,7 @@ from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
-from plugin.machine import registry
+from plugin.machine import call_machine_function, registry
 from plugin.mixins import LabelPrintingMixin
 from report.models import LabelTemplate
 
@@ -96,8 +96,10 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             return driver.print_labels(machine, label, items, **print_kwargs)
 
         offload_task(
-            driver.print_labels,
-            machine,
+            call_machine_function,
+            driver.SLUG,
+            machine.pk,
+            'print_labels',
             label,
             items,
             force_async=True,

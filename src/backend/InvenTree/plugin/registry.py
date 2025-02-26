@@ -183,9 +183,9 @@ class PluginsRegistry:
 
         plugin_func = getattr(plugin, func)
 
-        if not plugin_func:
+        if not plugin_func or not callable(plugin_func):
             if raise_error:
-                raise NameError(f"Plugin '{slug}' has no function '{func}'")
+                raise NameError(f"Plugin '{slug}' has no callable method '{func}'")
             return
 
         return plugin_func(*args, **kwargs)
