@@ -22,6 +22,7 @@ export function LanguageToggle() {
           onClick={() => toggle.toggle()}
           size='lg'
           variant='transparent'
+          aria-label='Language toggle'
         >
           <IconLanguage />
         </ActionIcon>
