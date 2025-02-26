@@ -338,7 +338,7 @@ class MachineRegistry(
 
         if not driver:
             if raise_error:
-                raise NameError(f"Driver '{driver_name}' not found")
+                raise AttributeError(f"Driver '{driver_name}' not found")
             else:
                 return
 
@@ -346,7 +346,7 @@ class MachineRegistry(
 
         if not machine:
             if raise_error:
-                raise NameError(f"Machine '{machine_id}' not found")
+                raise AttributeError(f"Machine '{machine_id}' not found")
             else:
                 return
 
