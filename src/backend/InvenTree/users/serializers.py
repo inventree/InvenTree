@@ -277,6 +277,8 @@ class UserCreateSerializer(ExtendedUserSerializer):
     class Meta(ExtendedUserSerializer.Meta):
         """Metaclass options for the UserCreateSerializer."""
 
+        fields = [*ExtendedUserSerializer.Meta.fields, 'profile']
+
         # Prevent creation of users with superuser or staff permissions
         read_only_fields = ['groups', 'is_staff', 'is_superuser']
 
@@ -320,3 +322,5 @@ class UserCreateSerializer(ExtendedUserSerializer):
         )
 
         return instance
+
+    profile = UserProfileSerializer(many=False, read_only=True)
