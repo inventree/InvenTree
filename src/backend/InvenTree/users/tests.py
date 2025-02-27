@@ -247,7 +247,8 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response_detail['username'], self.username)
 
         response_me = self.do_request(reverse('api-user-me'), {}, 200)
-        self.assertEqual(response_detail, response_me)
+        self.assertIn('language', response_me['profile'])
+        self.assertIn('theme', response_me['profile'])
 
     def test_token(self):
         """Test token mechanisms."""
