@@ -367,11 +367,12 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return context
 
-    def print(self, items: list, request=None, **kwargs) -> 'ReportOutput':
+    def print(self, items: list, request=None, output=None, **kwargs) -> 'ReportOutput':
         """Print reports for a list of items against this template.
 
         Arguments:
             items: A list of items to print reports for (model instance)
+            output: The ReportOutput object to use (if provided)
             request: The request object (optional)
 
         Returns:
@@ -403,6 +404,23 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         report_plugins = registry.with_mixin('report')
 
+        # If a ReportOutput object is not provided, create a new one
+        if not output:
+            output = ReportOutput.objects.create(
+                template=self,
+                items=len(items),
+                user=request.user
+                if request.user and request.user.is_authenticated
+                else None,
+                progress=0,
+                complete=False,
+                output=None,
+            )
+
+        if output.progress != 0:
+            output.progress = 0
+            output.save()
+
         try:
             for instance in items:
                 context = self.get_context(instance, request)
@@ -413,18 +431,18 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 # Render the report output
                 try:
                     if debug_mode:
-                        output = self.render_as_string(instance, request)
+                        report = self.render_as_string(instance, request)
                     else:
-                        output = self.render(instance, request)
+                        report = self.render(instance, request)
                 except TemplateDoesNotExist as e:
                     t_name = str(e) or self.template
                     raise ValidationError(f'Template file {t_name} does not exist')
 
-                outputs.append(output)
+                outputs.append(report)
 
                 # Attach the generated report to the model instance (if required)
                 if self.attach_to_model and not debug_mode:
-                    data = output.get_document().write_pdf()
+                    data = report.get_document().write_pdf()
                     instance.create_attachment(
                         attachment=ContentFile(data, report_name),
                         comment=_(f'Report generated from template {self.name}'),
@@ -436,11 +454,15 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 # Provide generated report to any interested plugins
                 for plugin in report_plugins:
                     try:
-                        plugin.report_callback(self, instance, output, request)
+                        plugin.report_callback(self, instance, report, request)
                     except Exception:
                         InvenTree.exceptions.log_error(
                             f'plugins.{plugin.slug}.report_callback'
                         )
+
+                # Update the progress of the report generation
+                output.progress += 1
+                output.save()
         except Exception as exc:
             # Something went wrong during the report generation process
             if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
@@ -463,8 +485,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             pages = []
 
             try:
-                for output in outputs:
-                    doc = output.get_document()
+                for report in outputs:
+                    doc = report.get_document()
                     for page in doc.pages:
                         pages.append(page)
 
@@ -474,14 +496,9 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 raise ValidationError(f'Template file {t_name} does not exist')
 
         # Save the generated report to the database
-        output = ReportOutput.objects.create(
-            template=self,
-            items=len(items),
-            user=request.user if request.user.is_authenticated else None,
-            progress=100,
-            complete=True,
-            output=ContentFile(data, report_name),
-        )
+        output.complete = True
+        output.output = ContentFile(data, report_name)
+        output.save()
 
         return output
 
