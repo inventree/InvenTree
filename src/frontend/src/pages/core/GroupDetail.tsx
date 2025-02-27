@@ -38,12 +38,6 @@ export default function GroupDetail() {
     const tl: DetailsField[] = [
       {
         type: 'text',
-        name: 'email',
-        label: t`Email`,
-        copy: true
-      },
-      {
-        type: 'text',
         name: 'name',
         label: t`Group Name`,
         copy: true
