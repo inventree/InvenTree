@@ -102,7 +102,6 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
                 'print_labels',
                 label,
                 items,
-                force_async=True,
                 group='plugin',
                 **print_kwargs,
             )
