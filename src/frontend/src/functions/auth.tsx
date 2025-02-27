@@ -191,21 +191,25 @@ function observeProfile() {
       setLanguage(user.profile.language, true);
     }
 
-    // extract keys of usertheme and set them to the values of user.profile.theme
-    const newTheme = Object.keys(usertheme).map((key) => {
-      return {
-        key: key as keyof typeof usertheme,
-        value: user.profile.theme[key] as string
-      };
-    });
-    const diff = newTheme.filter((item) => usertheme[item.key] !== item.value);
-    if (user.profile?.theme && diff.length > 0) {
-      showNotification({
-        title: t`Theme changed`,
-        message: t`Your active theme has been changed to the one set in your profile`,
-        color: 'blue'
+    if (user.profile?.theme) {
+      // extract keys of usertheme and set them to the values of user.profile.theme
+      const newTheme = Object.keys(usertheme).map((key) => {
+        return {
+          key: key as keyof typeof usertheme,
+          value: user.profile.theme[key] as string
+        };
       });
-      setTheme(newTheme);
+      const diff = newTheme.filter(
+        (item) => usertheme[item.key] !== item.value
+      );
+      if (diff.length > 0) {
+        showNotification({
+          title: t`Theme changed`,
+          message: t`Your active theme has been changed to the one set in your profile`,
+          color: 'blue'
+        });
+        setTheme(newTheme);
+      }
     }
   }
 }
