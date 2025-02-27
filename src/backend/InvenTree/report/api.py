@@ -260,8 +260,8 @@ class ReportPrint(GenericAPIView):
         This functionality is offloaded to the background worker process,
         which will update the status of the ReportOutput object as it progresses.
         """
+        import report.tasks
         from InvenTree.tasks import offload_task
-        from report.tasks import print_report
 
         # Generate a new ReportOutput object
         output = report.models.ReportOutput.objects.create(
@@ -276,7 +276,7 @@ class ReportPrint(GenericAPIView):
         item_ids = [item.pk for item in items_to_print]
 
         # Offload the task to the background worker
-        offload_task(print_report, template.pk, item_ids, output.pk)
+        offload_task(report.tasks.print_report, template.pk, item_ids, output.pk)
 
         output.refresh_from_db()
 
