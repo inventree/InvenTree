@@ -17,6 +17,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import {} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 
 /**
@@ -26,6 +27,7 @@ export default function UserDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const settings = useGlobalSettingsState();
 
   const { instance, instanceQuery, requestStatus } = useInstance({
     endpoint: ApiEndpoints.user_list,
@@ -117,7 +119,9 @@ export default function UserDetail() {
             <DetailsTable fields={tl} item={instance} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={instance} />
+        {settings.isSet('DISPLAY_FULL_NAMES') && (
+          <DetailsTable fields={tr} item={instance} />
+        )}
       </ItemDetailsGrid>
     );
   }, [instance, instanceQuery]);
