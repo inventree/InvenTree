@@ -7,8 +7,9 @@ import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useUserState } from '../../states/UserState';
-import { UserTable } from '../../tables/core/UserTable';
+import { ContactTable } from '../../tables/company/ContactTable';
 import { GroupTable } from '../../tables/settings/GroupTable';
+import { UserTable } from '../../tables/settings/UserTable';
 
 export default function CoreIndex() {
   const user = useUserState();
@@ -26,6 +27,12 @@ export default function CoreIndex() {
         label: t`Groups`,
         icon: <IconUsersGroup />,
         content: <GroupTable directLink />
+      },
+      {
+        name: 'contacts',
+        label: t`Contacts`,
+        icon: <IconUsersGroup />,
+        content: <ContactTable />
       }
     ];
   }, []);
