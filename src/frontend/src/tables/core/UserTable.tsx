@@ -21,16 +21,19 @@ export function UserTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
+        name: 'is_active',
+        label: t`Active`,
+        description: t`Show active users`
       },
       {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
+        name: 'is_staff',
+        label: t`Staff`,
+        description: t`Show staff users`
+      },
+      {
+        name: 'is_superuser',
+        label: t`Superuser`,
+        description: t`Show superusers`
       }
     ];
 
