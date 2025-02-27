@@ -161,7 +161,9 @@ class CompanySerializer(
         return queryset
 
     address = serializers.CharField(
-        label='Return the string representation for the primary address. This property exists for backwards compatibility.',
+        label=_(
+            'Return the string representation for the primary address. This property exists for backwards compatibility.'
+        ),
         allow_null=True,
         read_only=True,
     )
