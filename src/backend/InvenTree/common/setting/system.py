@@ -1076,6 +1076,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'DISPLAY_PROFILE_INFO': {
         'name': _('Display User Profiles'),
+        'description': _('Display Users Profiles on their profile page'),
         'default': True,
         'validator': bool,
     },
