@@ -255,8 +255,30 @@ class ReportPrint(GenericAPIView):
         return self.print(template, instances, request)
 
     def print(self, template, items_to_print, request):
-        """Print this report template against a number of provided items."""
-        output = template.print(items_to_print, request)
+        """Print this report template against a number of provided items.
+
+        This functionality is offloaded to the background worker process,
+        which will update the status of the ReportOutput object as it progresses.
+        """
+        from InvenTree.tasks import offload_task
+        from report.tasks import print_report
+
+        # Generate a new ReportOutput object
+        output = report.models.ReportOutput.objects.create(
+            template=template,
+            user=request.user,
+            progress=0,
+            items=len(items_to_print),
+            complete=False,
+            output=None,
+        )
+
+        item_ids = [item.pk for item in items_to_print]
+
+        # Offload the task to the background worker
+        offload_task(print_report, template.pk, item_ids, output.pk)
+
+        output.refresh_from_db()
 
         return Response(
             report.serializers.ReportOutputSerializer(output).data, status=201

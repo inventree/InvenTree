@@ -463,6 +463,7 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                 # Update the progress of the report generation
                 output.progress += 1
                 output.save()
+
         except Exception as exc:
             # Something went wrong during the report generation process
             if get_global_setting('REPORT_LOG_ERRORS', backup_value=True):
