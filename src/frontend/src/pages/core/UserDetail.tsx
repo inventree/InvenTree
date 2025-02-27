@@ -7,7 +7,6 @@ import {
   type DetailsField,
   DetailsTable
 } from '../../components/details/Details';
-import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -114,11 +113,6 @@ export default function UserDetail() {
     return (
       <ItemDetailsGrid>
         <Grid grow>
-          <DetailsImage
-            apiPath={ApiEndpoints.user_list}
-            src={instance?.image}
-            pk={instance.pk}
-          />
           <Grid.Col span={{ base: 12, sm: 8 }}>
             <DetailsTable fields={tl} item={instance} />
           </Grid.Col>
