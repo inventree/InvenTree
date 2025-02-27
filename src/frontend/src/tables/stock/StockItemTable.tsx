@@ -537,6 +537,7 @@ export function StockItemTable({
       location: params.location
     },
     follow: true,
+    table: table,
     modelType: ModelType.stockitem
   });
 

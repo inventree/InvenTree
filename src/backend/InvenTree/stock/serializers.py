@@ -1157,7 +1157,6 @@ class LocationSerializer(
         fields = [
             'pk',
             'barcode_hash',
-            'url',
             'name',
             'level',
             'description',
@@ -1209,8 +1208,6 @@ class LocationSerializer(
         label=_('Parent Location'),
         help_text=_('Parent stock location'),
     )
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
 
