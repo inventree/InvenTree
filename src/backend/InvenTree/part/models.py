@@ -128,6 +128,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     _icon = models.CharField(
         blank=True,
+        null=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
