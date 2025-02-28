@@ -250,14 +250,15 @@ INSTALLED_APPS = [
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
-    'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
     'web',
     'generic',

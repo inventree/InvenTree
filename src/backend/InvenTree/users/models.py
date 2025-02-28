@@ -364,6 +364,8 @@ class RuleSet(models.Model):
             'importer_dataimportsession',
             'importer_dataimportcolumnmap',
             'importer_dataimportrow',
+            # Exporting
+            'data_exporter_exportoutput',
         ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]

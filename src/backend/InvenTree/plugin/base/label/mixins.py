@@ -12,6 +12,7 @@ from rest_framework.request import Request
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
+from plugin import PluginMixinEnum
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
 from report.models import LabelTemplate, TemplateOutput
@@ -35,7 +36,7 @@ class LabelPrintingMixin:
     def __init__(self):  # pragma: no cover
         """Register mixin."""
         super().__init__()
-        self.add_mixin('labels', True, __class__)
+        self.add_mixin(PluginMixinEnum.LABELS, True, __class__)
 
     BLOCKING_PRINT = True
 
