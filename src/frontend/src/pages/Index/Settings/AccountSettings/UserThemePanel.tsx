@@ -117,6 +117,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ColorInput
+                aria-label='Color Picker White'
                 value={usertheme.whiteColor}
                 onChange={(v) => setTheme([{ key: 'whiteColor', value: v }])}
               />
@@ -138,6 +139,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ColorInput
+                aria-label='Color Picker Black'
                 value={usertheme.blackColor}
                 onChange={(v) => setTheme([{ key: 'blackColor', value: v }])}
               />
@@ -176,6 +178,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <Group justify='left'>
                 <Select
+                  aria-label='Loader Type Selector'
                   data={[
                     { value: 'bars', label: t`Bars` },
                     { value: 'oval', label: t`Oval` },
