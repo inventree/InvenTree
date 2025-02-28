@@ -47,8 +47,13 @@ test('Settings - User theme', async ({ page }) => {
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Account settings' }).click();
 
+  // loader
   await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
   await page.getByRole('option', { name: 'Oval' }).click();
+  await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
+  await page.getByRole('option', { name: 'Bars' }).click();
+
+  // dark / light mode
   await page
     .getByRole('row', { name: 'Color Mode' })
     .getByRole('button')
@@ -58,7 +63,7 @@ test('Settings - User theme', async ({ page }) => {
     .getByRole('button')
     .click();
 
-  //await page.getByRole('cell', { name: '#FFFFFF' }).click();
+  // colors
   await testColorPicker(page, 'Color Picker White');
   await testColorPicker(page, 'Color Picker Black');
 
@@ -72,6 +77,25 @@ test('Settings - User theme', async ({ page }) => {
     .getByRole('row', { name: 'White color #' })
     .getByRole('button')
     .click();
+
+  // radius
+  await page
+    .locator('div')
+    .filter({ hasText: /^xssmmdlgxl$/ })
+    .nth(1)
+    .click();
+  await page
+    .locator('div')
+    .filter({ hasText: /^xssmmdlgxl$/ })
+    .nth(2)
+    .click();
+
+  // primary
+  await page.getByLabel('#fab005').click();
+  await page.getByLabel('#228be6').click();
+
+  // language
+  await page.getByRole('button', { name: 'Use pseudo language' }).click();
 });
 
 test('Settings - Admin', async ({ page }) => {
