@@ -22,7 +22,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 import { type RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function ContactTable({
-  companyId: companyIdAA,
+  companyId,
   params
 }: Readonly<{
   companyId?: number;
@@ -56,7 +56,7 @@ export function ContactTable({
         sortable: false
       }
     ];
-    if (companyIdAA === undefined) {
+    if (companyId === undefined) {
       // Add company column if not in company detail view
       corecols.unshift({
         accessor: 'company_name',
@@ -101,7 +101,7 @@ export function ContactTable({
     url: ApiEndpoints.contact_list,
     title: t`Add Contact`,
     initialData: {
-      company: companyIdAA
+      company: companyId
     },
     fields: contactFields,
     table: table
@@ -173,7 +173,7 @@ export function ContactTable({
           tableActions: tableActions,
           params: {
             ...params,
-            company: companyIdAA
+            company: companyId
           }
         }}
       />
