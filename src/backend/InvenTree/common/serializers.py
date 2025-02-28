@@ -68,11 +68,11 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     choices = serializers.SerializerMethodField()
 
-    model_name = serializers.CharField(read_only=True)
+    model_name = serializers.CharField(read_only=True, allow_null=True)
 
     model_filters = serializers.DictField(read_only=True)
 
-    api_url = serializers.CharField(read_only=True)
+    api_url = serializers.CharField(read_only=True, allow_null=True)
 
     value = SettingsValueField(allow_null=True)
 
