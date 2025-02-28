@@ -2,6 +2,7 @@
 
 from typing import cast
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
@@ -12,7 +13,7 @@ from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
-from plugin.machine import registry
+from plugin.machine import call_machine_function, registry
 from plugin.mixins import LabelPrintingMixin
 from report.models import LabelTemplate
 
@@ -91,12 +92,15 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             user=request.user,
         )
 
-        # execute the print job
-        if driver.USE_BACKGROUND_WORKER is False:
-            return driver.print_labels(machine, label, items, **print_kwargs)
-
         offload_task(
-            driver.print_labels, machine, label, items, group='plugin', **print_kwargs
+            call_machine_function,
+            machine.pk,
+            'print_labels',
+            label,
+            items,
+            force_sync=settings.TESTING or driver.USE_BACKGROUND_WORKER,
+            group='plugin',
+            **print_kwargs,
         )
 
         return JsonResponse({
