@@ -76,11 +76,6 @@ test('Settings - User theme', async ({ page }) => {
   await page
     .locator('div')
     .filter({ hasText: /^xssmmdlgxl$/ })
-    .nth(1)
-    .click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^xssmmdlgxl$/ })
     .nth(2)
     .click();
 
