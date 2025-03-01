@@ -263,7 +263,9 @@ class GetAuthToken(APIView):
 
             # Ensure that the users session is logged in (PUI -> CUI login)
             if not get_user(request).is_authenticated:
-                login(request, user)
+                login(
+                    request, user, backend='django.contrib.auth.backends.ModelBackend'
+                )
 
             return Response(data)
 
