@@ -70,7 +70,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
         );
       }
 
-      return <Text>{location.name}</Text>;
+      return <Text>{location.pathstring}</Text>;
     },
     ...props
   };
