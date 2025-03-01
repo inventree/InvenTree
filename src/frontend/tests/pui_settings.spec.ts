@@ -69,14 +69,8 @@ test('Settings - User theme', async ({ page }) => {
 
   await page.waitForTimeout(500);
 
-  await page
-    .getByRole('row', { name: 'Black color #' })
-    .getByRole('button')
-    .click();
-  await page
-    .getByRole('row', { name: 'White color #' })
-    .getByRole('button')
-    .click();
+  await page.getByLabel('Reset Black Color').click();
+  await page.getByLabel('Reset White Color').click();
 
   // radius
   await page

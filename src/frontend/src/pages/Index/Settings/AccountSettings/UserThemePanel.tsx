@@ -125,6 +125,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ActionIcon
                 variant='default'
+                aria-label='Reset White Color'
                 onClick={() =>
                   setTheme([{ key: 'whiteColor', value: '#FFFFFF' }])
                 }
@@ -147,6 +148,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ActionIcon
                 variant='default'
+                aria-label='Reset Black Color'
                 onClick={() =>
                   setTheme([{ key: 'blackColor', value: '#000000' }])
                 }
