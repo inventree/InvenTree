@@ -8,7 +8,7 @@ msgstr ""
 "Language: fa\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-23 05:35\n"
+"PO-Revision-Date: 2025-02-28 10:12\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -94,10 +94,10 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:87
 #: src/components/nav/SearchDrawer.tsx:553
 #: src/components/render/ModelType.tsx:273
-#: src/pages/Auth/ChangePassword.tsx:55
+#: src/functions/auth.tsx:484
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:124
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:632
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:128
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:636
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
@@ -564,8 +564,8 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:747
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:201
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:401
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:205
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:405
 #: src/pages/stock/StockDetail.tsx:727
 msgid "Remove"
 msgstr ""
@@ -611,7 +611,7 @@ msgstr ""
 #: src/components/details/DetailsImage.tsx:255
 #: src/components/forms/ApiForm.tsx:675
 #: src/contexts/ThemeContext.tsx:47
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:643
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:647
 msgid "Submit"
 msgstr ""
 
@@ -902,11 +902,11 @@ msgstr ""
 #~ msgid "Login successfull"
 #~ msgstr "Login successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:64
+#: src/components/forms/AuthenticationForm.tsx:63
 msgid "Login successful"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:65
+#: src/components/forms/AuthenticationForm.tsx:64
 msgid "Logged in successfully"
 msgstr ""
 
@@ -915,61 +915,56 @@ msgstr ""
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:72
-#: src/components/forms/AuthenticationForm.tsx:80
+#: src/components/forms/AuthenticationForm.tsx:71
+#: src/components/forms/AuthenticationForm.tsx:79
 msgid "Login failed"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:73
-#: src/components/forms/AuthenticationForm.tsx:81
-#: src/components/forms/AuthenticationForm.tsx:97
-#: src/components/forms/AuthenticationForm.tsx:263
+#: src/components/forms/AuthenticationForm.tsx:72
+#: src/components/forms/AuthenticationForm.tsx:80
+#: src/components/forms/AuthenticationForm.tsx:96
+#: src/components/forms/AuthenticationForm.tsx:262
 #: src/functions/auth.tsx:200
 msgid "Check your input and try again."
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:91
+#: src/components/forms/AuthenticationForm.tsx:90
 #: src/functions/auth.tsx:191
 msgid "Mail delivery successful"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:92
+#: src/components/forms/AuthenticationForm.tsx:91
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:96
+#: src/components/forms/AuthenticationForm.tsx:95
 msgid "Mail delivery failed"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:116
+#: src/components/forms/AuthenticationForm.tsx:115
 msgid "Or continue with other methods"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:127
-#: src/components/forms/AuthenticationForm.tsx:278
-#: src/pages/Auth/ChangePassword.tsx:118
+#: src/components/forms/AuthenticationForm.tsx:126
+#: src/components/forms/AuthenticationForm.tsx:277
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:71
 msgid "Username"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:129
-#: src/components/forms/AuthenticationForm.tsx:280
+#: src/components/forms/AuthenticationForm.tsx:128
+#: src/components/forms/AuthenticationForm.tsx:279
 msgid "Your username"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:131
-#~ msgid "Log in"
-#~ msgstr "Log in"
-
-#: src/components/forms/AuthenticationForm.tsx:134
-#: src/components/forms/AuthenticationForm.tsx:293
-#: src/pages/Auth/ResetPassword.tsx:101
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:697
+#: src/components/forms/AuthenticationForm.tsx:133
+#: src/components/forms/AuthenticationForm.tsx:292
+#: src/pages/Auth/ResetPassword.tsx:33
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:701
 msgid "Password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:136
-#: src/components/forms/AuthenticationForm.tsx:295
+#: src/components/forms/AuthenticationForm.tsx:135
+#: src/components/forms/AuthenticationForm.tsx:294
 msgid "Your password"
 msgstr ""
 
@@ -977,84 +972,74 @@ msgstr ""
 #~ msgid "I will use username and password"
 #~ msgstr "I will use username and password"
 
-#: src/components/forms/AuthenticationForm.tsx:148
-#: src/pages/Auth/Reset.tsx:26
+#: src/components/forms/AuthenticationForm.tsx:147
 msgid "Reset password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:157
-#: src/components/forms/AuthenticationForm.tsx:285
-#: src/pages/Auth/Reset.tsx:31
+#: src/components/forms/AuthenticationForm.tsx:156
+#: src/components/forms/AuthenticationForm.tsx:284
+#: src/pages/Auth/Reset.tsx:16
 msgid "Email"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:158
-#: src/pages/Auth/Reset.tsx:32
+#: src/components/forms/AuthenticationForm.tsx:157
+#: src/pages/Auth/Reset.tsx:17
 msgid "We will send you a link to login - if you are registered"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:174
+#: src/components/forms/AuthenticationForm.tsx:173
 msgid "Send me an email"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:176
+#: src/components/forms/AuthenticationForm.tsx:175
 msgid "Use username and password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:185
-#: src/pages/Auth/MFALogin.tsx:54
+#: src/components/forms/AuthenticationForm.tsx:184
 msgid "Log In"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:187
-#: src/pages/Auth/Reset.tsx:41
+#: src/components/forms/AuthenticationForm.tsx:186
+#: src/pages/Auth/Reset.tsx:25
 msgid "Send Email"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:221
+#: src/components/forms/AuthenticationForm.tsx:220
 msgid "Passwords do not match"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:238
+#: src/components/forms/AuthenticationForm.tsx:237
 msgid "Registration successful"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:239
+#: src/components/forms/AuthenticationForm.tsx:238
 msgid "Please confirm your email address to complete the registration"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:262
+#: src/components/forms/AuthenticationForm.tsx:261
 msgid "Input error"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:287
+#: src/components/forms/AuthenticationForm.tsx:286
 msgid "This will be used for a confirmation"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:300
+#: src/components/forms/AuthenticationForm.tsx:299
 msgid "Password repeat"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:302
+#: src/components/forms/AuthenticationForm.tsx:301
 msgid "Repeat password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:314
-#: src/components/forms/AuthenticationForm.tsx:359
-#: src/pages/Auth/Login.tsx:126
+#: src/components/forms/AuthenticationForm.tsx:313
+#: src/pages/Auth/Login.tsx:108
+#: src/pages/Auth/Register.tsx:12
 msgid "Register"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:320
+#: src/components/forms/AuthenticationForm.tsx:319
 msgid "Or use SSO"
-msgstr ""
-
-#: src/components/forms/AuthenticationForm.tsx:351
-msgid "Don't have an account?"
-msgstr ""
-
-#: src/components/forms/AuthenticationForm.tsx:370
-msgid "Go back to login"
 msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:36
@@ -1064,9 +1049,8 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:70
-#: src/components/forms/InstanceOptions.tsx:118
+#: src/components/forms/InstanceOptions.tsx:106
 #: src/components/plugins/PluginDrawer.tsx:68
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:782
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:86
 #: src/pages/part/PartDetail.tsx:164
@@ -1099,7 +1083,7 @@ msgstr ""
 #~ msgid "Select destination instance"
 #~ msgstr "Select destination instance"
 
-#: src/components/forms/InstanceOptions.tsx:59
+#: src/components/forms/InstanceOptions.tsx:49
 msgid "Select Server"
 msgstr ""
 
@@ -1107,13 +1091,19 @@ msgstr ""
 #~ msgid "Edit possible host options"
 #~ msgstr "Edit possible host options"
 
-#: src/components/forms/InstanceOptions.tsx:85
+#: src/components/forms/InstanceOptions.tsx:74
 msgid "Edit host options"
 msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 #~ msgid "Version: {0}"
 #~ msgstr "Version: {0}"
+
+#: src/components/forms/InstanceOptions.tsx:100
+#: src/components/modals/ServerInfoModal.tsx:19
+#: src/pages/Index/Settings/SystemSettings.tsx:38
+msgid "Server"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 #~ msgid "API:{0}"
@@ -1128,31 +1118,25 @@ msgstr ""
 #~ msgstr "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/InstanceOptions.tsx:112
-#: src/components/modals/ServerInfoModal.tsx:19
-#: src/pages/Index/Settings/SystemSettings.tsx:38
-msgid "Server"
-msgstr ""
-
-#: src/components/forms/InstanceOptions.tsx:124
 #: src/components/plugins/PluginDrawer.tsx:88
 #: src/tables/plugin/PluginListTable.tsx:117
 msgid "Version"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:130
+#: src/components/forms/InstanceOptions.tsx:118
 #: src/components/modals/AboutInvenTreeModal.tsx:106
 #: src/components/modals/ServerInfoModal.tsx:37
 msgid "API Version"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:136
+#: src/components/forms/InstanceOptions.tsx:124
 #: src/components/nav/NavigationDrawer.tsx:193
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:205
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:44
 msgid "Plugins"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:137
+#: src/components/forms/InstanceOptions.tsx:125
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/settings/TemplateTable.tsx:248
 #: src/tables/settings/TemplateTable.tsx:364
@@ -1160,19 +1144,19 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:137
+#: src/components/forms/InstanceOptions.tsx:125
 msgid "Disabled"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:143
+#: src/components/forms/InstanceOptions.tsx:131
 msgid "Worker"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:144
+#: src/components/forms/InstanceOptions.tsx:132
 msgid "Running"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:144
+#: src/components/forms/InstanceOptions.tsx:132
 #: src/tables/settings/FailedTasksTable.tsx:48
 msgid "Stopped"
 msgstr ""
@@ -1211,7 +1195,7 @@ msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:321
 #: src/components/modals/AboutInvenTreeModal.tsx:78
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:326
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:330
 msgid "Loading"
 msgstr ""
 
@@ -1870,8 +1854,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:787
 #: src/forms/StockForms.tsx:823
 #: src/forms/StockForms.tsx:902
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:447
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:785
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:451
 #: src/tables/RowActions.tsx:155
 #: src/tables/build/BuildLineTable.tsx:100
 msgid "Actions"
@@ -2047,7 +2030,6 @@ msgstr ""
 
 #: src/components/plugins/PluginDrawer.tsx:93
 #: src/forms/selectionListFields.tsx:107
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:770
 #: src/pages/part/PartDetail.tsx:331
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/company/CompanyTable.tsx:62
@@ -2059,8 +2041,8 @@ msgstr ""
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:95
 #: src/tables/plugin/PluginListTable.tsx:400
-#: src/tables/purchasing/SupplierPartTable.tsx:100
-#: src/tables/purchasing/SupplierPartTable.tsx:192
+#: src/tables/purchasing/SupplierPartTable.tsx:101
+#: src/tables/purchasing/SupplierPartTable.tsx:193
 #: src/tables/settings/UserTable.tsx:283
 #: src/tables/stock/StockItemTable.tsx:306
 msgid "Active"
@@ -2206,7 +2188,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:213
 #: src/tables/build/BuildAllocatedStockTable.tsx:152
 #: src/tables/part/PartPurchaseOrdersTable.tsx:49
-#: src/tables/purchasing/SupplierPartTable.tsx:70
+#: src/tables/purchasing/SupplierPartTable.tsx:71
 #: src/tables/stock/StockItemTable.tsx:236
 msgid "Supplier Part"
 msgstr ""
@@ -2447,6 +2429,7 @@ msgid "Owners"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:214
+#: src/pages/Auth/ChangePassword.tsx:35
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:209
 #: src/tables/settings/ImportSessionTable.tsx:121
@@ -3037,7 +3020,7 @@ msgid "New Supplier Part"
 msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:75
-#: src/tables/purchasing/SupplierPartTable.tsx:174
+#: src/tables/purchasing/SupplierPartTable.tsx:175
 msgid "Supplier part created"
 msgstr ""
 
@@ -3099,7 +3082,7 @@ msgid "Please correct the errors in the selected parts"
 msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
-#: src/tables/build/BuildLineTable.tsx:649
+#: src/tables/build/BuildLineTable.tsx:648
 #: src/tables/part/PartTable.tsx:354
 #: src/tables/sales/SalesOrderLineItemTable.tsx:326
 msgid "Order Parts"
@@ -3651,7 +3634,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:297
 #: src/tables/build/BuildLineTable.tsx:442
 #: src/tables/build/BuildLineTable.tsx:574
-#: src/tables/build/BuildLineTable.tsx:664
+#: src/tables/build/BuildLineTable.tsx:663
 #: src/tables/sales/SalesOrderLineItemTable.tsx:336
 #: src/tables/sales/SalesOrderLineItemTable.tsx:367
 msgid "Allocate Stock"
@@ -3909,7 +3892,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:237
 #: src/pages/stock/StockDetail.tsx:574
 #: src/tables/stock/StockItemTable.tsx:533
-#: src/tables/stock/StockItemTable.tsx:665
+#: src/tables/stock/StockItemTable.tsx:666
 msgid "Add Stock Item"
 msgstr ""
 
@@ -3944,7 +3927,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:371
 #: src/pages/part/PartDetail.tsx:251
 #: src/pages/part/PartDetail.tsx:748
-#: src/tables/purchasing/SupplierPartTable.tsx:207
+#: src/tables/purchasing/SupplierPartTable.tsx:208
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
 msgstr ""
@@ -3963,7 +3946,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:1100
 #: src/pages/stock/StockDetail.tsx:719
-#: src/tables/stock/StockItemTable.tsx:583
+#: src/tables/stock/StockItemTable.tsx:584
 msgid "Add Stock"
 msgstr ""
 
@@ -3973,7 +3956,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:1110
 #: src/pages/stock/StockDetail.tsx:728
-#: src/tables/stock/StockItemTable.tsx:592
+#: src/tables/stock/StockItemTable.tsx:593
 msgid "Remove Stock"
 msgstr ""
 
@@ -3984,7 +3967,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:1120
 #: src/pages/part/PartDetail.tsx:916
 #: src/pages/stock/StockDetail.tsx:741
-#: src/tables/stock/StockItemTable.tsx:601
+#: src/tables/stock/StockItemTable.tsx:602
 msgid "Transfer Stock"
 msgstr ""
 
@@ -3996,8 +3979,8 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:905
 #: src/pages/stock/LocationDetail.tsx:313
 #: src/pages/stock/LocationDetail.tsx:317
-#: src/tables/stock/StockItemTable.tsx:572
-#: src/tables/stock/StockItemTable.tsx:576
+#: src/tables/stock/StockItemTable.tsx:573
+#: src/tables/stock/StockItemTable.tsx:577
 msgid "Count Stock"
 msgstr ""
 
@@ -4030,7 +4013,7 @@ msgid "Stock assigned to customer"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1177
-#: src/tables/stock/StockItemTable.tsx:654
+#: src/tables/stock/StockItemTable.tsx:655
 msgid "Delete Stock Items"
 msgstr ""
 
@@ -4144,7 +4127,7 @@ msgid "Check your inbox for a reset link. This only works if you have an account
 msgstr ""
 
 #: src/functions/auth.tsx:199
-#: src/pages/Auth/ResetPassword.tsx:48
+#: src/functions/auth.tsx:410
 msgid "Reset failed"
 msgstr ""
 
@@ -4154,6 +4137,31 @@ msgstr ""
 
 #: src/functions/auth.tsx:268
 msgid "Successfully logged in"
+msgstr ""
+
+#: src/functions/auth.tsx:370
+msgid "Failed to set up MFA"
+msgstr ""
+
+#: src/functions/auth.tsx:400
+msgid "Password set"
+msgstr ""
+
+#: src/functions/auth.tsx:401
+#: src/functions/auth.tsx:510
+msgid "The password was set successfully. You can now login with your new password"
+msgstr ""
+
+#: src/functions/auth.tsx:475
+msgid "Password could not be changed"
+msgstr ""
+
+#: src/functions/auth.tsx:493
+msgid "The two password fields didn’t match"
+msgstr ""
+
+#: src/functions/auth.tsx:509
+msgid "Password Changed"
 msgstr ""
 
 #: src/functions/forms.tsx:50
@@ -4224,60 +4232,48 @@ msgstr ""
 msgid "Latest serial number"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:46
-msgid "Password could not be changed"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:67
-msgid "The two password fields didn’t match"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:83
-msgid "Password Changed"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:84
-#: src/pages/Auth/ResetPassword.tsx:39
-msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:113
+#: src/pages/Auth/ChangePassword.tsx:31
+#: src/pages/Auth/Reset.tsx:13
 msgid "Reset Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:128
+#: src/pages/Auth/ChangePassword.tsx:45
 msgid "Current Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:129
+#: src/pages/Auth/ChangePassword.tsx:46
 msgid "Enter your current password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:135
+#: src/pages/Auth/ChangePassword.tsx:52
 msgid "New Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:136
+#: src/pages/Auth/ChangePassword.tsx:53
 msgid "Enter your new password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:142
+#: src/pages/Auth/ChangePassword.tsx:59
 msgid "Confirm New Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:143
+#: src/pages/Auth/ChangePassword.tsx:60
 msgid "Confirm your new password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:148
+#: src/pages/Auth/ChangePassword.tsx:79
 msgid "Confirm"
 msgstr ""
 
-#: src/pages/Auth/Logged-In.tsx:25
+#: src/pages/Auth/Layout.tsx:67
+msgid "Log off"
+msgstr ""
+
+#: src/pages/Auth/LoggedIn.tsx:19
 msgid "Checking if you are already logged in"
 msgstr ""
 
-#: src/pages/Auth/Login.tsx:36
+#: src/pages/Auth/Login.tsx:31
 msgid "No selection"
 msgstr ""
 
@@ -4289,43 +4285,47 @@ msgstr ""
 #~ msgid "Register below"
 #~ msgstr "Register below"
 
-#: src/pages/Auth/Login.tsx:126
+#: src/pages/Auth/Login.tsx:96
 #: src/pages/Index/Settings/SystemSettings.tsx:67
 msgid "Login"
 msgstr ""
 
-#: src/pages/Auth/Logout.tsx:22
-msgid "Logging out"
+#: src/pages/Auth/Login.tsx:100
+msgid "Don't have an account?"
 msgstr ""
 
-#: src/pages/Auth/MFALogin.tsx:32
+#: src/pages/Auth/Logout.tsx:22
+#~ msgid "Logging out"
+#~ msgstr "Logging out"
+
+#: src/pages/Auth/MFA.tsx:16
 msgid "Multi-Factor Login"
 msgstr ""
 
-#: src/pages/Auth/MFALogin.tsx:36
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:682
+#: src/pages/Auth/MFA.tsx:19
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:686
 msgid "TOTP Code"
 msgstr ""
 
-#: src/pages/Auth/MFALogin.tsx:38
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:684
+#: src/pages/Auth/MFA.tsx:21
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:688
 msgid "Enter your TOTP or recovery code"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:27
-msgid "Failed to set up MFA"
+#: src/pages/Auth/MFA.tsx:31
+msgid "Log in"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:48
+#: src/pages/Auth/MFASetup.tsx:22
 msgid "MFA Setup Required"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:66
+#: src/pages/Auth/MFASetup.tsx:33
 msgid "Add TOTP"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:69
-msgid "Log off"
+#: src/pages/Auth/Register.tsx:22
+msgid "Go back to login"
 msgstr ""
 
 #: src/pages/Auth/Reset.tsx:41
@@ -4333,13 +4333,17 @@ msgstr ""
 #~ msgid "Send mail"
 #~ msgstr "Send mail"
 
-#: src/pages/Auth/ResetPassword.tsx:29
+#: src/pages/Auth/ResetPassword.tsx:21
 #: src/pages/Auth/VerifyEmail.tsx:18
 msgid "Key invalid"
 msgstr ""
 
-#: src/pages/Auth/ResetPassword.tsx:30
+#: src/pages/Auth/ResetPassword.tsx:22
 msgid "You need to provide a valid key to set a new password. Check your inbox for a reset link."
+msgstr ""
+
+#: src/pages/Auth/ResetPassword.tsx:30
+msgid "Set new password"
 msgstr ""
 
 #: src/pages/Auth/ResetPassword.tsx:30
@@ -4350,19 +4354,11 @@ msgstr ""
 #~ msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
 #~ msgstr "You need to provide a valid token to set a new password. Check your inbox for a reset link."
 
-#: src/pages/Auth/ResetPassword.tsx:38
-msgid "Password set"
-msgstr ""
-
-#: src/pages/Auth/ResetPassword.tsx:96
-msgid "Set new password"
-msgstr ""
-
-#: src/pages/Auth/ResetPassword.tsx:102
+#: src/pages/Auth/ResetPassword.tsx:34
 msgid "The desired new password"
 msgstr ""
 
-#: src/pages/Auth/ResetPassword.tsx:107
+#: src/pages/Auth/ResetPassword.tsx:43
 msgid "Send Password"
 msgstr ""
 
@@ -4378,11 +4374,11 @@ msgstr ""
 msgid "You need to provide a valid key."
 msgstr ""
 
-#: src/pages/Auth/VerifyEmail.tsx:51
+#: src/pages/Auth/VerifyEmail.tsx:27
 msgid "Verify Email"
 msgstr ""
 
-#: src/pages/Auth/VerifyEmail.tsx:54
+#: src/pages/Auth/VerifyEmail.tsx:29
 msgid "Verify"
 msgstr ""
 
@@ -4806,31 +4802,31 @@ msgstr ""
 msgid "Enter the TOTP code to ensure it registered correctly"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:52
-msgid "Email Addresses"
-msgstr ""
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
 #~ msgstr "Single Sign On Accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
-msgid "Single Sign On"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:57
+msgid "Email Addresses"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:68
-msgid "Not enabled"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:65
+msgid "Single Sign On"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:69
 #~ msgid "Multifactor"
 #~ msgstr "Multifactor"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:71
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:73
+msgid "Not enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:76
 msgid "Single Sign On is not enabled for this server"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:83
 msgid "Multi-Factor Authentication"
 msgstr ""
 
@@ -4838,65 +4834,65 @@ msgstr ""
 #~ msgid "Multifactor authentication is not configured for your account"
 #~ msgstr "Multifactor authentication is not configured for your account"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:86
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:91
 msgid "Access Tokens"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:125
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:129
 msgid "Error while updating email"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:138
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:292
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:427
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:142
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:296
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:431
 msgid "Not Configured"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:141
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:145
 msgid "Currently no email addresses are registered."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:148
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:152
 msgid "The following email addresses are associated with your account:"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:161
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:165
 msgid "Primary"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:166
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
 msgid "Verified"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:174
 msgid "Unverified"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:188
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
 msgid "Make Primary"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:194
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:198
 msgid "Re-send Verification"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:208
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:212
 msgid "Add Email Address"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:210
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:214
 msgid "E-Mail"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:211
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:215
 msgid "E-Mail address"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:223
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:227
 msgid "Error while adding email"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:234
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:238
 msgid "Add Email"
 msgstr ""
 
@@ -4916,106 +4912,110 @@ msgstr ""
 #~ msgid "You can sign in to your account using any of the following third party accounts"
 #~ msgstr "You can sign in to your account using any of the following third party accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:295
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 msgid "There are no providers connected to this account."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:303
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:307
 msgid "You can sign in to your account using any of the following providers"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:316
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:320
 msgid "Remove Provider Link"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:406
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:410
 msgid "View"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:431
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:435
 msgid "No multi-factor tokens configured for this account"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:438
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:442
 msgid "Type"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:441
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:445
 msgid "Last used at"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:444
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:448
 msgid "Created at"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:465
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:568
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:469
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:572
 msgid "Recovery Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:469
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:473
 msgid "Unused Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:474
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:478
 msgid "Used Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:527
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:531
 msgid "Error while registering recovery codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:561
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:565
 msgid "TOTP"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:562
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:566
 msgid "Time-based One-Time Password"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:569
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:573
 msgid "One-Time pre-generated recovery codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:583
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:587
 msgid "Add Token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:598
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:602
 msgid "Register TOTP Token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:623
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:627
 msgid "Error registering TOTP token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:699
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:703
 msgid "Enter your password"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:741
-msgid "Token is used - no actions"
-msgstr ""
+#~ msgid "Token is used - no actions"
+#~ msgstr "Token is used - no actions"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:748
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:742
 msgid "Revoke"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:761
-msgid "No tokens configured"
+#~ msgid "No tokens configured"
+#~ msgstr "No tokens configured"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:762
+msgid "Error revoking token"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:773
-msgid "Expiry"
-msgstr ""
+#~ msgid "Expiry"
+#~ msgstr "Expiry"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:776
-msgid "Last Seen"
-msgstr ""
+#~ msgid "Last Seen"
+#~ msgstr "Last Seen"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:779
-msgid "Token"
-msgstr ""
+#~ msgid "Token"
+#~ msgstr "Token"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:65
 #~ msgid "bars"
@@ -5812,7 +5812,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:265
 #: src/pages/company/SupplierPartDetail.tsx:151
 #: src/tables/company/CompanyTable.tsx:106
-#: src/tables/purchasing/SupplierPartTable.tsx:76
+#: src/tables/purchasing/SupplierPartTable.tsx:77
 msgid "Manufacturer"
 msgstr ""
 
@@ -5935,7 +5935,7 @@ msgstr ""
 #: src/tables/part/PartPurchaseOrdersTable.tsx:72
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:163
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:204
-#: src/tables/purchasing/SupplierPartTable.tsx:133
+#: src/tables/purchasing/SupplierPartTable.tsx:134
 msgid "Pack Quantity"
 msgstr ""
 
@@ -5979,17 +5979,17 @@ msgid "Supplier Part Actions"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:325
-#: src/tables/purchasing/SupplierPartTable.tsx:220
+#: src/tables/purchasing/SupplierPartTable.tsx:221
 msgid "Edit Supplier Part"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:333
-#: src/tables/purchasing/SupplierPartTable.tsx:228
+#: src/tables/purchasing/SupplierPartTable.tsx:229
 msgid "Delete Supplier Part"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:341
-#: src/tables/purchasing/SupplierPartTable.tsx:167
+#: src/tables/purchasing/SupplierPartTable.tsx:168
 msgid "Add Supplier Part"
 msgstr ""
 
@@ -6333,7 +6333,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:898
 #: src/pages/stock/LocationDetail.tsx:309
-#: src/tables/stock/StockItemTable.tsx:567
+#: src/tables/stock/StockItemTable.tsx:568
 msgid "Stock Actions"
 msgstr ""
 
@@ -6550,7 +6550,7 @@ msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:193
 #: src/pages/part/pricing/VariantPricingPanel.tsx:53
-#: src/tables/purchasing/SupplierPartTable.tsx:150
+#: src/tables/purchasing/SupplierPartTable.tsx:151
 msgid "Updated"
 msgstr ""
 
@@ -7890,7 +7890,7 @@ msgid "Auto allocation in progress"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:463
-#: src/tables/build/BuildLineTable.tsx:636
+#: src/tables/build/BuildLineTable.tsx:635
 msgid "Auto Allocate Stock"
 msgstr ""
 
@@ -7901,7 +7901,7 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:482
 #: src/tables/build/BuildLineTable.tsx:496
 #: src/tables/build/BuildLineTable.tsx:584
-#: src/tables/build/BuildLineTable.tsx:686
+#: src/tables/build/BuildLineTable.tsx:685
 #: src/tables/build/BuildOutputTable.tsx:315
 #: src/tables/build/BuildOutputTable.tsx:320
 msgid "Deallocate Stock"
@@ -7919,11 +7919,11 @@ msgstr ""
 msgid "Stock has been deallocated"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:605
+#: src/tables/build/BuildLineTable.tsx:604
 msgid "Build Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:618
+#: src/tables/build/BuildLineTable.tsx:617
 #: src/tables/sales/SalesOrderLineItemTable.tsx:356
 msgid "View Part"
 msgstr ""
@@ -8345,6 +8345,9 @@ msgstr ""
 #~ msgstr "Create machine"
 
 #: src/tables/machine/MachineListTable.tsx:517
+msgid "Add Machine"
+msgstr ""
+
 #: src/tables/machine/MachineListTable.tsx:559
 msgid "Add machine"
 msgstr ""
@@ -8867,8 +8870,8 @@ msgstr ""
 msgid "Show trackable variants"
 msgstr ""
 
-#: src/tables/part/RelatedPartTable.tsx:99
-#: src/tables/part/RelatedPartTable.tsx:132
+#: src/tables/part/RelatedPartTable.tsx:100
+#: src/tables/part/RelatedPartTable.tsx:133
 msgid "Add Related Part"
 msgstr ""
 
@@ -8876,11 +8879,11 @@ msgstr ""
 #~ msgid "Add related part"
 #~ msgstr "Add related part"
 
-#: src/tables/part/RelatedPartTable.tsx:114
+#: src/tables/part/RelatedPartTable.tsx:115
 msgid "Delete Related Part"
 msgstr ""
 
-#: src/tables/part/RelatedPartTable.tsx:121
+#: src/tables/part/RelatedPartTable.tsx:122
 msgid "Edit Related Part"
 msgstr ""
 
@@ -9194,39 +9197,39 @@ msgstr ""
 msgid "Receive items"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:95
+#: src/tables/purchasing/SupplierPartTable.tsx:96
 msgid "MPN"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:124
+#: src/tables/purchasing/SupplierPartTable.tsx:125
 msgid "Base units"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:181
+#: src/tables/purchasing/SupplierPartTable.tsx:182
 msgid "Add supplier part"
-msgstr ""
-
-#: src/tables/purchasing/SupplierPartTable.tsx:193
-msgid "Show active supplier parts"
 msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 #~ msgid "Supplier part updated"
 #~ msgstr "Supplier part updated"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:197
-msgid "Active Part"
+#: src/tables/purchasing/SupplierPartTable.tsx:194
+msgid "Show active supplier parts"
 msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:198
+msgid "Active Part"
+msgstr ""
+
+#: src/tables/purchasing/SupplierPartTable.tsx:199
 msgid "Show active internal parts"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:202
+#: src/tables/purchasing/SupplierPartTable.tsx:203
 msgid "Active Supplier"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:203
+#: src/tables/purchasing/SupplierPartTable.tsx:204
 msgid "Show active suppliers"
 msgstr ""
 
@@ -9238,7 +9241,7 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this supplier part?"
 #~ msgstr "Are you sure you want to remove this supplier part?"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:208
+#: src/tables/purchasing/SupplierPartTable.tsx:209
 msgid "Show supplier parts with stock"
 msgstr ""
 
@@ -9322,7 +9325,7 @@ msgid "Build stock"
 msgstr ""
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:414
-#: src/tables/stock/StockItemTable.tsx:630
+#: src/tables/stock/StockItemTable.tsx:631
 msgid "Order stock"
 msgstr ""
 
@@ -10043,47 +10046,47 @@ msgstr ""
 #~ msgid "Delete stock items"
 #~ msgstr "Delete stock items"
 
-#: src/tables/stock/StockItemTable.tsx:585
+#: src/tables/stock/StockItemTable.tsx:586
 msgid "Add a new stock item"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:594
+#: src/tables/stock/StockItemTable.tsx:595
 msgid "Remove some quantity from a stock item"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:605
+#: src/tables/stock/StockItemTable.tsx:606
 msgid "Move Stock items to new locations"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:612
+#: src/tables/stock/StockItemTable.tsx:613
 msgid "Change stock status"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:614
+#: src/tables/stock/StockItemTable.tsx:615
 msgid "Change the status of stock items"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:621
+#: src/tables/stock/StockItemTable.tsx:622
 msgid "Merge stock"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:623
+#: src/tables/stock/StockItemTable.tsx:624
 msgid "Merge stock items"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:632
+#: src/tables/stock/StockItemTable.tsx:633
 msgid "Order new stock"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:643
+#: src/tables/stock/StockItemTable.tsx:644
 msgid "Assign to customer"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:645
+#: src/tables/stock/StockItemTable.tsx:646
 msgid "Assign items to a customer"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:652
+#: src/tables/stock/StockItemTable.tsx:653
 msgid "Delete stock"
 msgstr ""
 
