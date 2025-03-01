@@ -152,7 +152,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
             output.output = ContentFile(document, 'labels.pdf')
 
-        output.progress = 100
+        output.progress = n_labels
         output.complete = True
         output.save()
 

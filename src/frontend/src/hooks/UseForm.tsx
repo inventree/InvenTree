@@ -84,7 +84,10 @@ export function useCreateApiFormModal(props: ApiFormModalProps) {
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? false,
-      successMessage: props.successMessage ?? t`Item Created`,
+      successMessage:
+        props.successMessage == null
+          ? null
+          : (props.successMessage ?? t`Item Created`),
       method: 'POST'
     }),
     [props]
@@ -101,7 +104,10 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      successMessage: props.successMessage ?? t`Item Updated`,
+      successMessage:
+        props.successMessage == null
+          ? null
+          : (props.successMessage ?? t`Item Updated`),
       method: 'PATCH'
     }),
     [props]
@@ -120,7 +126,10 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
       method: 'DELETE',
       submitText: t`Delete`,
       submitColor: 'red',
-      successMessage: props.successMessage ?? t`Item Deleted`,
+      successMessage:
+        props.successMessage == null
+          ? null
+          : (props.successMessage ?? t`Item Deleted`),
       preFormContent: props.preFormContent ?? (
         <Alert
           color={'red'}

@@ -1,10 +1,15 @@
 import { t } from '@lingui/macro';
-import { notifications } from '@mantine/notifications';
-import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
+import { notifications, showNotification } from '@mantine/notifications';
+import {
+  IconCircleCheck,
+  IconPrinter,
+  IconReport,
+  IconTags
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
-
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
+import { useApi } from '../../contexts/ApiContext';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import type { ModelType } from '../../enums/ModelType';
 import { extractAvailableFields } from '../../functions/forms';
@@ -17,6 +22,86 @@ import {
 } from '../../states/SettingsState';
 import type { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
+import { ProgressBar } from '../items/ProgressBar';
+
+/**
+ * Hook to track the progress of a printing operation
+ */
+function usePrintingProgress({
+  outputId,
+  endpoint
+}: {
+  outputId?: number;
+  endpoint: ApiEndpoints;
+}) {
+  const api = useApi();
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!!outputId) {
+      setLoading(true);
+      showNotification({
+        id: `printing-progress-${endpoint}-${outputId}`,
+        title: t`Printing`,
+        loading: true,
+        message: <ProgressBar size='lg' value={0} progressLabel />
+      });
+    } else {
+      setLoading(false);
+    }
+  }, [outputId, endpoint]);
+
+  const progress = useQuery({
+    enabled: !!outputId && loading,
+    refetchInterval: 750,
+    queryKey: ['printingProgress', endpoint, outputId],
+    queryFn: () =>
+      api
+        .get(apiUrl(endpoint, outputId))
+        .then((response) => {
+          const data = response?.data ?? {};
+
+          if (data.pk && data.pk == outputId) {
+            if (data.complete) {
+              setLoading(false);
+              notifications.hide(`printing-progress-${endpoint}-${outputId}`);
+
+              notifications.show({
+                title: t`Printing`,
+                message: t`Printing completed successfully`,
+                autoClose: 5000,
+                color: 'green',
+                icon: <IconCircleCheck />
+              });
+
+              if (data.output) {
+                const url = generateUrl(data.output);
+                window.open(url.toString(), '_blank');
+              }
+            } else {
+              notifications.update({
+                id: `printing-progress-${endpoint}-${outputId}`,
+                message: (
+                  <ProgressBar
+                    size='lg'
+                    value={data.progress}
+                    maximum={data.items}
+                    progressLabel
+                  />
+                )
+              });
+            }
+          }
+
+          return data;
+        })
+        .catch(() => {
+          setLoading(false);
+          return {};
+        })
+  });
+}
 
 export function PrintingActions({
   items,
@@ -45,6 +130,13 @@ export function PrintingActions({
   const reportPrintingEnabled = useMemo(() => {
     return enableReports && globalSettings.isSet('REPORT_ENABLE');
   }, [enableReports, globalSettings]);
+
+  const [reportId, setReportId] = useState<number | undefined>(undefined);
+
+  const reportProgress = usePrintingProgress({
+    outputId: reportId,
+    endpoint: ApiEndpoints.report_output
+  });
 
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
@@ -150,23 +242,9 @@ export function PrintingActions({
       }
     },
     submitText: t`Generate`,
-    successMessage: t`Report printing completed successfully`,
+    successMessage: null,
     onFormSuccess: (response: any) => {
-      if (!response.complete) {
-        // TODO: Periodically check for completion (requires server-side changes)
-        notifications.show({
-          title: t`Error`,
-          message: t`The report could not be generated`,
-          color: 'red'
-        });
-        return;
-      }
-
-      if (response.output) {
-        // An output file was generated
-        const url = generateUrl(response.output);
-        window.open(url.toString(), '_blank');
-      }
+      setReportId(response.pk);
     }
   });
 
