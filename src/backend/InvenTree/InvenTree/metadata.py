@@ -402,6 +402,8 @@ class InvenTreeMetadata(SimpleMetadata):
                 # Special case for special models
                 if field_info['model'] == 'user':
                     field_info['api_url'] = '/api/user/'
+                elif field_info['model'] == 'group':
+                    field_info['api_url'] = '/api/user/group/'
                 elif field_info['model'] == 'contenttype':
                     field_info['api_url'] = '/api/contenttype/'
                 elif hasattr(model, 'get_api_url'):
