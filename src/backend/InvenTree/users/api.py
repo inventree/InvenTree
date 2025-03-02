@@ -302,6 +302,7 @@ class UserProfileDetail(RetrieveUpdateAPI):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
+    rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
 
     def get_object(self):
         """Return the profile of the current user."""
