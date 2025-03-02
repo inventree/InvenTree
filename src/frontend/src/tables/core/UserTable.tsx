@@ -9,14 +9,8 @@ import { BooleanColumn } from '../ColumnRenderers';
 import type { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function UserTable({
-  userId,
-  customerId
-}: Readonly<{
-  userId?: number;
-  customerId?: number;
-}>) {
-  const table = useTable(!!userId ? 'users-part' : 'users-index');
+export function UserTable() {
+  const table = useTable('users-index');
 
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
@@ -37,17 +31,8 @@ export function UserTable({
       }
     ];
 
-    if (!!userId) {
-      filters.push({
-        name: 'include_variants',
-        type: 'boolean',
-        label: t`Include Variants`,
-        description: t`Include orders for part variants`
-      });
-    }
-
     return filters;
-  }, [userId]);
+  }, []);
 
   const tableColumns = useMemo(() => {
     return [
@@ -95,13 +80,8 @@ export function UserTable({
       tableState={table}
       columns={tableColumns}
       props={{
-        params: {
-          user: userId
-        },
         tableFilters: tableFilters,
-        modelType: ModelType.user,
-        enableSelection: true,
-        enableDownload: true
+        modelType: ModelType.user
       }}
     />
   );

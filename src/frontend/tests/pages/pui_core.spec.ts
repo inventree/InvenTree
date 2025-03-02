@@ -16,4 +16,6 @@ test('Core User/Group', async ({ page }) => {
   // users
   await page.getByRole('tab', { name: 'Users' }).click();
   await page.getByRole('cell', { name: 'admin' }).click();
+  await page.getByText('User: admin', { exact: true }).waitFor();
+  await page.getByLabel('User Details').waitFor();
 });
