@@ -77,10 +77,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     }
 
     await api
-      .get(apiUrl(ApiEndpoints.user_token))
+      .get(apiUrl(ApiEndpoints.auth_session))
       .then((response) => {
-        if (response.status == 200 && response.data.token) {
-          get().setAuthenticated(response.data.token);
+        if (response.status == 200 && response.data.meta.is_authenticated) {
+          get().setAuthenticated(true);
         } else {
           get().setAuthenticated(false);
         }
