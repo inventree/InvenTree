@@ -255,8 +255,30 @@ class ReportPrint(GenericAPIView):
         return self.print(template, instances, request)
 
     def print(self, template, items_to_print, request):
-        """Print this report template against a number of provided items."""
-        output = template.print(items_to_print, request)
+        """Print this report template against a number of provided items.
+
+        This functionality is offloaded to the background worker process,
+        which will update the status of the ReportOutput object as it progresses.
+        """
+        import report.tasks
+        from InvenTree.tasks import offload_task
+
+        # Generate a new ReportOutput object
+        output = report.models.ReportOutput.objects.create(
+            template=template,
+            user=request.user,
+            progress=0,
+            items=len(items_to_print),
+            complete=False,
+            output=None,
+        )
+
+        item_ids = [item.pk for item in items_to_print]
+
+        # Offload the task to the background worker
+        offload_task(report.tasks.print_report, template.pk, item_ids, output.pk)
+
+        output.refresh_from_db()
 
         return Response(
             report.serializers.ReportOutputSerializer(output).data, status=201
@@ -317,22 +339,34 @@ class TemplateOutputMixin:
     ordering_field_aliases = {'model_type': 'template__model_type'}
 
 
-class LabelOutputList(
-    TemplatePermissionMixin, TemplateOutputMixin, BulkDeleteMixin, ListAPI
-):
-    """List endpoint for LabelOutput objects."""
+class LabelOutputMixin(TemplatePermissionMixin, TemplateOutputMixin):
+    """Mixin class for a label output API endpoint."""
 
     queryset = report.models.LabelOutput.objects.all()
     serializer_class = report.serializers.LabelOutputSerializer
 
 
-class ReportOutputList(
-    TemplatePermissionMixin, TemplateOutputMixin, BulkDeleteMixin, ListAPI
-):
-    """List endpoint for ReportOutput objects."""
+class LabelOutputList(LabelOutputMixin, BulkDeleteMixin, ListAPI):
+    """List endpoint for LabelOutput objects."""
+
+
+class LabelOutputDetail(LabelOutputMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for LabelOutput objects."""
+
+
+class ReportOutputMixin(TemplatePermissionMixin, TemplateOutputMixin):
+    """Mixin class for a report output API endpoint."""
 
     queryset = report.models.ReportOutput.objects.all()
     serializer_class = report.serializers.ReportOutputSerializer
+
+
+class ReportOutputList(ReportOutputMixin, BulkDeleteMixin, ListAPI):
+    """List endpoint for ReportOutput objects."""
+
+
+class ReportOutputDetail(ReportOutputMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for ReportOutput objects."""
 
 
 label_api_urls = [
@@ -364,7 +398,12 @@ label_api_urls = [
     # Label outputs
     path(
         'output/',
-        include([path('', LabelOutputList.as_view(), name='api-label-output-list')]),
+        include([
+            path(
+                '<int:pk>/', LabelOutputDetail.as_view(), name='api-label-output-detail'
+            ),
+            path('', LabelOutputList.as_view(), name='api-label-output-list'),
+        ]),
     ),
 ]
 
@@ -397,7 +436,14 @@ report_api_urls = [
     # Generated report outputs
     path(
         'output/',
-        include([path('', ReportOutputList.as_view(), name='api-report-output-list')]),
+        include([
+            path(
+                '<int:pk>/',
+                ReportOutputDetail.as_view(),
+                name='api-report-output-detail',
+            ),
+            path('', ReportOutputList.as_view(), name='api-report-output-list'),
+        ]),
     ),
     # Report assets
     path(

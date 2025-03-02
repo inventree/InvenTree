@@ -193,12 +193,12 @@ class LabelPrintingMixin:
                 )
 
             # Update the progress of the print job
-            output.progress += int(100 / N)
+            output.progress += 1
             output.save()
 
         # Mark the output as complete
         output.complete = True
-        output.progress = 100
+        output.progress = N
 
         # Add in the generated file (if applicable)
         output.output = self.get_generated_file(**print_args)
