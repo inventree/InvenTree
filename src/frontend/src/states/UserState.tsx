@@ -10,14 +10,13 @@ import type { UserProps } from './states';
 
 export interface UserStateProps {
   user: UserProps | undefined;
-  token: string | undefined;
+  is_authed: boolean;
   userId: () => number | undefined;
   username: () => string;
   setUser: (newUser: UserProps) => void;
-  setToken: (newToken: string) => void;
-  clearToken: () => void;
-  fetchUserToken: () => void;
-  fetchUserState: () => void;
+  setAuthenticated: (authed?: boolean) => void;
+  fetchUserToken: () => Promise<void>;
+  fetchUserState: () => Promise<void>;
   clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
   hasDeleteRole: (role: UserRoles) => boolean;
@@ -32,6 +31,7 @@ export interface UserStateProps {
   hasChangePermission: (model: ModelType) => boolean;
   hasAddPermission: (model: ModelType) => boolean;
   hasViewPermission: (model: ModelType) => boolean;
+  isAuthed: () => boolean;
   isLoggedIn: () => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
@@ -42,13 +42,9 @@ export interface UserStateProps {
  */
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
-  token: undefined,
-  setToken: (newToken: string) => {
-    set({ token: newToken });
-    setApiDefaults();
-  },
-  clearToken: () => {
-    set({ token: undefined });
+  is_authed: false,
+  setAuthenticated: (authed = true) => {
+    set({ is_authed: authed });
     setApiDefaults();
   },
   userId: () => {
@@ -66,8 +62,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   clearUserState: () => {
-    set({ user: undefined });
-    set({ token: undefined });
+    set({ user: undefined, is_authed: false });
     clearCsrfCookie();
     setApiDefaults();
   },
@@ -77,7 +72,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       !document.cookie.includes('csrftoken') &&
       !document.cookie.includes('sessionid')
     ) {
-      get().clearToken();
+      get().setAuthenticated(false);
       return;
     }
 
@@ -85,22 +80,22 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       .get(apiUrl(ApiEndpoints.user_token))
       .then((response) => {
         if (response.status == 200 && response.data.token) {
-          get().setToken(response.data.token);
+          get().setAuthenticated(response.data.token);
         } else {
-          get().clearToken();
+          get().setAuthenticated(false);
         }
       })
       .catch(() => {
-        get().clearToken();
+        get().setAuthenticated(false);
       });
   },
   fetchUserState: async () => {
-    if (!get().token) {
+    if (!get().isAuthed()) {
       await get().fetchUserToken();
     }
 
     // If we still don't have a token, clear the user state and return
-    if (!get().token) {
+    if (!get().isAuthed()) {
       get().clearUserState();
       return;
     }
@@ -156,8 +151,11 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         get().clearUserState();
       });
   },
+  isAuthed: () => {
+    return get().is_authed;
+  },
   isLoggedIn: () => {
-    if (!get().token) {
+    if (!get().isAuthed()) {
       return false;
     }
     const user: UserProps = get().user as UserProps;

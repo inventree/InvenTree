@@ -66,7 +66,8 @@ export const doBasicLogin = async (
   navigate: NavigateFunction
 ) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
+  const { clearUserState, setAuthenticated, fetchUserState } =
+    useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
@@ -94,7 +95,7 @@ export const doBasicLogin = async (
     .then((response) => {
       setAuthContext(response.data?.data);
       if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setToken(response.data.meta.access_token);
+        setAuthenticated(true);
         loginDone = true;
         success = true;
       }
@@ -176,7 +177,7 @@ export const doSimpleLogin = async (email: string) => {
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.user_token)).catch(() => {});
+    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
   }
 }
 
@@ -210,7 +211,7 @@ export function handleMfaLogin(
   values: { code: string },
   setError: (message: string | undefined) => void
 ) {
-  const { setToken } = useUserState.getState();
+  const { setAuthenticated } = useUserState.getState();
   const { setAuthContext } = useServerApiState.getState();
   authApi(apiUrl(ApiEndpoints.auth_login_2fa), undefined, 'post', {
     code: values.code
@@ -218,7 +219,7 @@ export function handleMfaLogin(
     .then((response) => {
       setError(undefined);
       setAuthContext(response.data?.data);
-      setToken(response.data.meta.access_token);
+      setAuthenticated();
       followRedirect(navigate, location?.state);
     })
     .catch((err) => {
