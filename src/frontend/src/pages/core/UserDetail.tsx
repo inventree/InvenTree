@@ -119,7 +119,7 @@ export default function UserDetail() {
             <DetailsTable fields={tl} item={instance} />
           </Grid.Col>
         </Grid>
-        {settings.isSet('DISPLAY_FULL_NAMES') && (
+        {settings.isSet('DISPLAY_PROFILE_INFO') && (
           <DetailsTable fields={tr} item={instance} />
         )}
       </ItemDetailsGrid>
