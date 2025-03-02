@@ -938,25 +938,85 @@ class UserProfile(InvenTree.models.MetadataMixin):
         EXTERNAL = 'external', _('External')
         GUEST = 'guest', _('Guest')
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    language = models.CharField(max_length=10, blank=True, null=True)
-    theme = models.JSONField(blank=True, null=True)
-    widgets = models.JSONField(blank=True, null=True)
-    displayname = models.CharField(max_length=255, blank=True, null=True)
-    status = models.CharField(max_length=2000, blank=True, null=True)
-    location = models.CharField(max_length=2000, blank=True, null=True)
-    active = models.BooleanField(default=True)
-    contact = models.CharField(max_length=255, blank=True, null=True)
-    type = models.CharField(
-        max_length=10, choices=UserType.choices, default=UserType.INTERNAL
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User')
     )
-    organisation = models.CharField(max_length=255, blank=True, null=True)
+    language = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        verbose_name=_('Language'),
+        help_text=_('Preferred language for the user'),
+    )
+    theme = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Theme'),
+        help_text=_('Settings for the web UI as JSON - do not edit manually!'),
+    )
+    widgets = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Widgets'),
+        help_text=_(
+            'Settings for the dashboard widgets as JSON - do not edit manually!'
+        ),
+    )
+    displayname = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Display Name'),
+        help_text=_('Chosen display name for the user'),
+    )
+    status = models.CharField(
+        max_length=2000,
+        blank=True,
+        null=True,
+        verbose_name=_('Status'),
+        help_text=_('User status message'),
+    )
+    location = models.CharField(
+        max_length=2000,
+        blank=True,
+        null=True,
+        verbose_name=_('Location'),
+        help_text=_('User location information'),
+    )
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('User is actively using the system'),
+    )
+    contact = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Preferred contact information for the user'),
+    )
+    type = models.CharField(
+        max_length=10,
+        choices=UserType.choices,
+        default=UserType.INTERNAL,
+        verbose_name=_('Type'),
+        help_text=_('Which type of user is this?'),
+    )
+    organisation = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Organisation'),
+        help_text=_('Users primary organisation/affiliation'),
+    )
     primary_group = models.ForeignKey(
         Group,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='primary_users',
+        verbose_name=_('Primary Group'),
+        help_text=_('Primary group for the user'),
     )
 
     def __str__(self):
