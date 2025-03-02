@@ -2,6 +2,7 @@
 
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
+from django.urls import reverse
 
 import structlog
 from rest_framework import exceptions, serializers
@@ -401,11 +402,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Special case for special models
                 if field_info['model'] == 'user':
-                    field_info['api_url'] = '/api/user/'
+                    field_info['api_url'] = (reverse('api-user-list'),)
                 elif field_info['model'] == 'group':
-                    field_info['api_url'] = '/api/user/group/'
+                    field_info['api_url'] = reverse('api-group-list')
                 elif field_info['model'] == 'contenttype':
-                    field_info['api_url'] = '/api/contenttype/'
+                    field_info['api_url'] = reverse('api-contenttype-list')
                 elif hasattr(model, 'get_api_url'):
                     field_info['api_url'] = model.get_api_url()
                 else:
