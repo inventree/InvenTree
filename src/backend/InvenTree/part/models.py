@@ -1071,6 +1071,7 @@ class Part(
         null=True,
         verbose_name=_('Link'),
         help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     image = StdImageField(
