@@ -23,10 +23,9 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
-    UserSerializer,
 )
 from plugin import registry as plugin_registry
-from users.serializers import OwnerSerializer
+from users.serializers import OwnerSerializer, UserSerializer
 
 
 class SettingsValueField(serializers.Field):

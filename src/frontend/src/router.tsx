@@ -104,6 +104,15 @@ export const AdminCenter = Loadable(
   lazy(() => import('./pages/Index/Settings/AdminCenter/Index'))
 );
 
+// Core object
+export const CoreIndex = Loadable(lazy(() => import('./pages/core/CoreIndex')));
+export const UserDetail = Loadable(
+  lazy(() => import('./pages/core/UserDetail'))
+);
+export const GroupDetail = Loadable(
+  lazy(() => import('./pages/core/GroupDetail'))
+);
+
 export const NotFound = Loadable(
   lazy(() => import('./components/errors/NotFound'))
 );
@@ -115,7 +124,6 @@ export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
 export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));
 export const MfaSetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
-
 export const ChangePassword = Loadable(
   lazy(() => import('./pages/Auth/ChangePassword'))
 );
@@ -177,6 +185,12 @@ export const routes = (
         <Route path='shipment/:id/*' element={<SalesOrderShipmentDetail />} />
         <Route path='return-order/:id/*' element={<ReturnOrderDetail />} />
         <Route path='customer/:id/*' element={<CustomerDetail />} />
+      </Route>
+      <Route path='core/'>
+        <Route index element={<Navigate to='index/' />} />
+        <Route path='index/*' element={<CoreIndex />} />
+        <Route path='user/:id/*' element={<UserDetail />} />
+        <Route path='group/:id/*' element={<GroupDetail />} />
       </Route>
     </Route>
     <Route

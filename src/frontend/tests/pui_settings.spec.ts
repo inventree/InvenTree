@@ -42,6 +42,51 @@ test('Settings - Language / Color', async ({ page }) => {
   await page.waitForURL('**/platform/home');
 });
 
+test('Settings - User theme', async ({ page }) => {
+  await doQuickLogin(page);
+  await page.getByRole('button', { name: 'Ally Access' }).click();
+  await page.getByRole('menuitem', { name: 'Account settings' }).click();
+
+  // loader
+  await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
+  await page.getByRole('option', { name: 'Oval' }).click();
+  await page.getByRole('textbox', { name: 'Loader Type Selector' }).click();
+  await page.getByRole('option', { name: 'Bars' }).click();
+
+  // dark / light mode
+  await page
+    .getByRole('row', { name: 'Color Mode' })
+    .getByRole('button')
+    .click();
+  await page
+    .getByRole('row', { name: 'Color Mode' })
+    .getByRole('button')
+    .click();
+
+  // colors
+  await testColorPicker(page, 'Color Picker White');
+  await testColorPicker(page, 'Color Picker Black');
+
+  await page.waitForTimeout(500);
+
+  await page.getByLabel('Reset Black Color').click();
+  await page.getByLabel('Reset White Color').click();
+
+  // radius
+  await page
+    .locator('div')
+    .filter({ hasText: /^xssmmdlgxl$/ })
+    .nth(2)
+    .click();
+
+  // primary
+  await page.getByLabel('#fab005').click();
+  await page.getByLabel('#228be6').click();
+
+  // language
+  await page.getByRole('button', { name: 'Use pseudo language' }).click();
+});
+
 test('Settings - Admin', async ({ page }) => {
   // Note here we login with admin access
   await doQuickLogin(page, 'admin', 'inventree');
@@ -227,3 +272,10 @@ test('Settings - Auth - Email', async ({ page }) => {
 
   await page.waitForTimeout(2500);
 });
+async function testColorPicker(page, ref: string) {
+  const element = page.getByLabel(ref);
+  await element.click();
+  const box = (await element.boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height + 25);
+  await page.getByText('Color Mode').click();
+}

@@ -83,8 +83,8 @@ test('Login - Change Password', async ({ page }) => {
 
   // Navigate to the 'change password' page
   await navigate(page, 'settings/user/account');
-  await page.getByLabel('action-menu-user-actions').click();
-  await page.getByLabel('action-menu-user-actions-change-password').click();
+  await page.getByLabel('action-menu-account-actions').click();
+  await page.getByLabel('action-menu-account-actions-change-password').click();
 
   // First attempt with some errors
   await page.getByLabel('password', { exact: true }).fill('youshallnotpass');
