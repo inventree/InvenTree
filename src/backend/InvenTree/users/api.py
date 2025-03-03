@@ -285,7 +285,7 @@ class GetAuthToken(GenericAPIView):
             raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
-class TokenListView(DestroyAPIView, ListAPI):
+class TokenListView(DestroyAPIView, ListCreateAPI):
     """List of registered tokens for current users."""
 
     permission_classes = (IsAuthenticated,)
@@ -299,6 +299,14 @@ class TokenListView(DestroyAPIView, ListAPI):
         """Revoke token."""
         instance.revoked = True
         instance.save()
+
+    def create(self, request, *args, **kwargs):
+        """Create token and show key to user."""
+        resp = super().create(request, *args, **kwargs)
+        resp.data['token'] = self.serializer_class.Meta.model.objects.get(
+            id=resp.data['id']
+        ).key
+        return resp
 
 
 class LoginRedirect(RedirectView):

@@ -30,10 +30,12 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../../../App';
+import { AddItemButton } from '../../../../components/buttons/AddItemButton';
 import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { showApiErrorMessage } from '../../../../functions/notifications';
+import { useCreateApiFormModal } from '../../../../hooks/UseForm';
 import { useTable } from '../../../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import type { AuthConfig, Provider } from '../../../../states/states';
@@ -91,7 +93,7 @@ export function SecurityContent() {
             <StylishText size='lg'>{t`Access Tokens`}</StylishText>
           </Accordion.Control>
           <Accordion.Panel>
-            <TokenSection />
+            <ApiTokenSection />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
@@ -713,25 +715,71 @@ async function runActionWithFallback(
   }
 }
 
-function TokenSection() {
+function ApiTokenSection() {
+  const [token, setToken] = useState<string>('');
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const generateToken = useCreateApiFormModal({
+    url: ApiEndpoints.user_tokens,
+    title: t`Generate Token`,
+    fields: { name: {} },
+    successMessage: t`Token generated`,
+    onFormSuccess: (data: any) => {
+      console.log(data);
+      setToken(data.token);
+      open();
+
+      table.refreshTable();
+    }
+  });
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Generate Token`}
+        onClick={() => generateToken.open()}
+      />
+    ];
+  }, []);
+
   const table = useTable('api-tokens', 'id');
 
   const tableColumns = useMemo(() => {
     return [
       {
-        accessor: 'name'
+        accessor: 'name',
+        title: t`Name`
       },
       BooleanColumn({
-        accessor: 'active'
+        accessor: 'active',
+        title: t`Active`
       }),
       {
-        accessor: 'token'
+        accessor: 'token',
+        title: t`Token`,
+        render: (record: any) => {
+          return (
+            <>
+              {record.token}{' '}
+              {record.in_use ? (
+                <Badge color='green'>
+                  <Trans>In Use</Trans>
+                </Badge>
+              ) : null}
+            </>
+          );
+        }
       },
       {
-        accessor: 'last_seen'
+        accessor: 'last_seen',
+        title: t`Last Seen`
       },
       {
-        accessor: 'expiry'
+        accessor: 'expiry',
+        title: t`Expiry`
+      },
+      {
+        accessor: 'created',
+        title: t`Created`
       }
     ];
   }, []);
@@ -765,15 +813,25 @@ function TokenSection() {
   };
 
   return (
-    <InvenTreeTable
-      tableState={table}
-      url={apiUrl(ApiEndpoints.user_tokens)}
-      columns={tableColumns}
-      props={{
-        rowActions: rowActions,
-        enableSearch: false,
-        enableColumnSwitching: false
-      }}
-    />
+    <>
+      {generateToken.modal}
+      <Modal opened={opened} onClose={close} title={t`Token`} centered>
+        <Text c='dimmed'>
+          <Trans>Tokens are only shown once - make sure to note it down.</Trans>
+        </Text>
+        <Code>{token}</Code>
+      </Modal>
+      <InvenTreeTable
+        tableState={table}
+        url={apiUrl(ApiEndpoints.user_tokens)}
+        columns={tableColumns}
+        props={{
+          rowActions: rowActions,
+          enableSearch: false,
+          enableColumnSwitching: false,
+          tableActions: tableActions
+        }}
+      />
+    </>
   );
 }
