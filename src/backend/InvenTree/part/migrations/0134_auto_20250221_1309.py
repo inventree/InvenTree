@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("part", "0132_partparametertemplate_selectionlist"),
+        ("part", "0133_alter_partcategory__icon"),
     ]
 
     operations = [

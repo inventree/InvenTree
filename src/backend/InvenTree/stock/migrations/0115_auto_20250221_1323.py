@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("stock", "0113_stockitem_status_custom_key_and_more"),
+        ("stock", "0114_alter_stocklocation_custom_icon"),
     ]
 
     operations = [

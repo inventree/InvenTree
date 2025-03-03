@@ -7,19 +7,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("part", "0133_auto_20250221_1309"),
+        ("stock", "0115_auto_20250221_1323"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="part",
+            model_name="stockitem",
             name="link",
             field=InvenTree.fields.InvenTreeURLField(
                 blank=True,
                 help_text="Link to external URL",
                 max_length=2000,
-                null=True,
-                verbose_name="Link",
+                verbose_name="External Link",
             ),
         ),
     ]
