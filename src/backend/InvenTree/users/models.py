@@ -222,7 +222,6 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
-                'users_userprofile',
                 'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
@@ -349,6 +348,7 @@ class RuleSet(models.Model):
             'common_selectionlistentry',
             'common_selectionlist',
             'users_owner',
+            'users_userprofile',  # User profile is handled in the serializer - only own user can change
             # Third-party tables
             'error_report_error',
             'exchange_rate',
