@@ -95,7 +95,7 @@ def registration_enabled():
         if settings.EMAIL_HOST:
             return True
         else:
-            logger.error(
+            logger.warning(
                 'Registration cannot be enabled, because EMAIL_HOST is not configured.'
             )
     return False

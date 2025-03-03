@@ -386,7 +386,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
 
-    category_default_location = serializers.IntegerField(read_only=True)
+    category_default_location = serializers.IntegerField(
+        read_only=True, allow_null=True
+    )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -969,7 +971,9 @@ class PartSerializer(
     unallocated_stock = serializers.FloatField(
         read_only=True, label=_('Unallocated Stock')
     )
-    category_default_location = serializers.IntegerField(read_only=True)
+    category_default_location = serializers.IntegerField(
+        read_only=True, allow_null=True
+    )
     variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
     minimum_stock = serializers.FloatField(
