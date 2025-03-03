@@ -148,3 +148,17 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'user',
             'in_use',
         ]
+
+
+class GetAuthTokenSerializer(serializers.Serializer):
+    """Serializer for the GetAuthToken API endpoint."""
+
+    class Meta:
+        """Meta options for GetAuthTokenSerializer."""
+
+        model = ApiToken
+        fields = ['token', 'name', 'expiry']
+
+    token = serializers.CharField(read_only=True)
+    name = serializers.CharField()
+    expiry = serializers.DateField(read_only=True)

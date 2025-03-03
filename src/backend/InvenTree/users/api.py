@@ -9,11 +9,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions, permissions
-from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import InvenTree.helpers
 import InvenTree.permissions
@@ -34,6 +34,7 @@ from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner
 from users.serializers import (
     ApiTokenSerializer,
+    GetAuthTokenSerializer,
     GroupSerializer,
     OwnerSerializer,
     RoleSerializer,
@@ -215,12 +216,23 @@ class GroupList(GroupMixin, ListCreateAPI):
     ordering_fields = ['name']
 
 
-class GetAuthToken(APIView):
+class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = None
+    serializer_class = GetAuthTokenSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='name',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description='Name of the token',
+            )
+        ],
+        responses={200: OpenApiResponse(response=GetAuthTokenSerializer())},
+    )
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.
 
