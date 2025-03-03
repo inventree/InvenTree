@@ -1,24 +1,6 @@
-import { Trans, t } from '@lingui/macro';
-import { Alert, Badge, Stack, Text, Tooltip } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Alert, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-
-/**
- * Small badge to indicate that a feature is a placeholder.
- */
-export function PlaceholderPill() {
-  return (
-    <Tooltip
-      multiline
-      w={220}
-      withArrow
-      label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing.`}
-    >
-      <Badge color='teal' variant='outline'>
-        <Trans>PLH</Trans>
-      </Badge>
-    </Tooltip>
-  );
-}
 
 /**
  * Placeholder panel for use in a PanelGroup.
