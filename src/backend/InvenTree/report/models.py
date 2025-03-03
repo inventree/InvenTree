@@ -1,6 +1,5 @@
 """Report template model definitions."""
 
-import logging
 import os
 import sys
 
@@ -18,6 +17,8 @@ from django.template.loader import render_to_string
 from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+
+import structlog
 
 import InvenTree.exceptions
 import InvenTree.helpers
@@ -39,7 +40,7 @@ except OSError as err:  # pragma: no cover
     sys.exit(1)
 
 
-logger = logging.getLogger('inventree')
+logger = structlog.getLogger('inventree')
 
 
 def dummy_print_request() -> HttpRequest:
@@ -578,13 +579,20 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         return context
 
     def print(
-        self, items: list, plugin: InvenTreePlugin, options=None, request=None, **kwargs
+        self,
+        items: list,
+        plugin: InvenTreePlugin,
+        output=None,
+        options=None,
+        request=None,
+        **kwargs,
     ) -> 'LabelOutput':
         """Print labels for a list of items against this template.
 
         Arguments:
             items: A list of items to print labels for (model instance)
             plugin: The plugin to use for label rendering
+            output: The LabelOutput object to use (if provided)
             options: Additional options for the label printing plugin (optional)
             request: The request object (optional)
 
@@ -594,14 +602,15 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         Raises:
             ValidationError: If there is an error during label printing
         """
-        output = LabelOutput.objects.create(
-            template=self,
-            items=len(items),
-            plugin=plugin.slug,
-            user=request.user if request else None,
-            progress=0,
-            complete=False,
-        )
+        if not output:
+            output = LabelOutput.objects.create(
+                template=self,
+                items=len(items),
+                plugin=plugin.slug,
+                user=request.user if request else None,
+                progress=0,
+                complete=False,
+            )
 
         if options is None:
             options = {}

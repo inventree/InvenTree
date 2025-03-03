@@ -136,6 +136,10 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
             idx += n_cells
 
+            # Update printing progress
+            output.progress += 1
+            output.save()
+
         if len(pages) == 0:
             raise ValidationError(_('No labels were generated'))
 

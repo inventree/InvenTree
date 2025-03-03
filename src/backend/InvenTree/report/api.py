@@ -194,16 +194,31 @@ class LabelPrint(GenericAPIView):
 
     def print(self, template, items_to_print, plugin, request):
         """Print this label template against a number of provided items."""
+        import report.tasks
+        from InvenTree.tasks import offload_task
+
         if plugin_serializer := plugin.get_printing_options_serializer(
             request, data=request.data, context=self.get_serializer_context()
         ):
             plugin_serializer.is_valid(raise_exception=True)
 
-        output = template.print(
-            items_to_print,
-            plugin,
+        # Generate a new LabelOutput object to print against
+        output = report.models.LabelOutput.objects.create(
+            template=template,
+            user=request.user,
+            progress=0,
+            items=len(items_to_print),
+            complete=False,
+            output=None,
+        )
+
+        offload_task(
+            report.tasks.print_labels,
+            template.pk,
+            [item.pk for item in items_to_print],
+            output.pk,
+            plugin.slug,
             options=(plugin_serializer.data if plugin_serializer else {}),
-            request=request,
         )
 
         output.refresh_from_db()
@@ -276,7 +291,7 @@ class ReportPrint(GenericAPIView):
         item_ids = [item.pk for item in items_to_print]
 
         # Offload the task to the background worker
-        offload_task(report.tasks.print_report, template.pk, item_ids, output.pk)
+        offload_task(report.tasks.print_reports, template.pk, item_ids, output.pk)
 
         output.refresh_from_db()
 

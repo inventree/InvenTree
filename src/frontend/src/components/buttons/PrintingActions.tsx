@@ -28,9 +28,11 @@ import { ProgressBar } from '../items/ProgressBar';
  * Hook to track the progress of a printing operation
  */
 function usePrintingProgress({
+  title,
   outputId,
   endpoint
 }: {
+  title: string;
   outputId?: number;
   endpoint: ApiEndpoints;
 }) {
@@ -43,14 +45,16 @@ function usePrintingProgress({
       setLoading(true);
       showNotification({
         id: `printing-progress-${endpoint}-${outputId}`,
-        title: t`Printing`,
+        title: title,
         loading: true,
+        autoClose: false,
+        withCloseButton: false,
         message: <ProgressBar size='lg' value={0} progressLabel />
       });
     } else {
       setLoading(false);
     }
-  }, [outputId, endpoint]);
+  }, [outputId, endpoint, title]);
 
   const progress = useQuery({
     enabled: !!outputId && loading,
@@ -70,7 +74,6 @@ function usePrintingProgress({
               notifications.show({
                 title: t`Printing`,
                 message: t`Printing completed successfully`,
-                autoClose: 5000,
                 color: 'green',
                 icon: <IconCircleCheck />
               });
@@ -82,6 +85,8 @@ function usePrintingProgress({
             } else {
               notifications.update({
                 id: `printing-progress-${endpoint}-${outputId}`,
+                autoClose: false,
+                withCloseButton: false,
                 message: (
                   <ProgressBar
                     size='lg'
@@ -97,6 +102,7 @@ function usePrintingProgress({
           return data;
         })
         .catch(() => {
+          notifications.hide(`printing-progress-${endpoint}-${outputId}`);
           setLoading(false);
           return {};
         })
@@ -131,9 +137,17 @@ export function PrintingActions({
     return enableReports && globalSettings.isSet('REPORT_ENABLE');
   }, [enableReports, globalSettings]);
 
+  const [labelId, setLabelId] = useState<number | undefined>(undefined);
   const [reportId, setReportId] = useState<number | undefined>(undefined);
 
+  const labelProgress = usePrintingProgress({
+    title: t`Printing Labels`,
+    outputId: labelId,
+    endpoint: ApiEndpoints.label_output
+  });
+
   const reportProgress = usePrintingProgress({
+    title: t`Printing Reports`,
     outputId: reportId,
     endpoint: ApiEndpoints.report_output
   });
@@ -203,23 +217,11 @@ export function PrintingActions({
       setPluginKey('');
     },
     submitText: t`Print`,
-    successMessage: t`Label printing completed successfully`,
+    successMessage: null,
     onFormSuccess: (response: any) => {
       setPluginKey('');
       if (!response.complete) {
-        // TODO: Periodically check for completion (requires server-side changes)
-        notifications.show({
-          title: t`Error`,
-          message: t`The label could not be generated`,
-          color: 'red'
-        });
-        return;
-      }
-
-      if (response.output) {
-        // An output file was generated
-        const url = generateUrl(response.output);
-        window.open(url.toString(), '_blank');
+        setLabelId(response.pk);
       }
     }
   });
@@ -241,7 +243,7 @@ export function PrintingActions({
         value: items
       }
     },
-    submitText: t`Generate`,
+    submitText: t`Print`,
     successMessage: null,
     onFormSuccess: (response: any) => {
       setReportId(response.pk);
