@@ -205,6 +205,7 @@ class LabelPrint(GenericAPIView):
         # Generate a new LabelOutput object to print against
         output = report.models.LabelOutput.objects.create(
             template=template,
+            plugin=plugin.slug,
             user=request.user,
             progress=0,
             items=len(items_to_print),
