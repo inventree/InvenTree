@@ -175,6 +175,7 @@ jobs:
           revision: "src/backend/InvenTree/schema.yml"
           format: "html"
       - name: Echoing diff to step
+        continue-on-error: true
         env:
           DIFF: ${{ steps.breaking_changes.outputs.diff }}
         run: echo "${DIFF}" >> $GITHUB_STEP_SUMMARY
