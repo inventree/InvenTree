@@ -969,6 +969,13 @@ class UserProfile(InvenTree.models.MetadataMixin):
         verbose_name=_('Display Name'),
         help_text=_('Chosen display name for the user'),
     )
+    position = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Position'),
+        help_text=_('Main job title or position'),
+    )
     status = models.CharField(
         max_length=2000,
         blank=True,

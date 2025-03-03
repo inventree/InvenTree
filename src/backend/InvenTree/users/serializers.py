@@ -162,6 +162,7 @@ class BriefUserProfileSerializer(InvenTreeModelSerializer):
         model = UserProfile
         fields = [
             'displayname',
+            'position',
             'status',
             'location',
             'active',

@@ -35,6 +35,7 @@ interface Profile {
   theme: any;
   widgets: any;
   displayname: string | null;
+  position: string | null;
   status: string | null;
   location: string | null;
   active: boolean;

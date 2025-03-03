@@ -38,6 +38,7 @@ export function AccountDetailPanel() {
   const profileFields: ApiFormFieldSet = useMemo(() => {
     return {
       displayname: {},
+      position: {},
       status: {},
       location: {},
       active: {},
@@ -76,6 +77,7 @@ export function AccountDetailPanel() {
   const profileDetailFields = useMemo(
     () => [
       { label: t`Display Name`, value: user?.profile?.displayname },
+      { label: t`Position`, value: user?.profile?.position },
       { label: t`Status`, value: user?.profile?.status },
       { label: t`Location`, value: user?.profile?.location },
       {

@@ -363,6 +363,7 @@ class UserProfileTest(InvenTreeAPITestCase):
         self.assertIn('theme', response.data)
         self.assertIn('widgets', response.data)
         self.assertIn('displayname', response.data)
+        self.assertIn('position', response.data)
         self.assertIn('status', response.data)
         self.assertIn('location', response.data)
         self.assertIn('active', response.data)

@@ -78,6 +78,12 @@ export default function UserDetail() {
         copy: true
       },
       {
+        type: 'text',
+        name: 'position',
+        label: t`Position`,
+        icon: 'info'
+      },
+      {
         type: 'boolean',
         name: 'active',
         label: t`Active`,
