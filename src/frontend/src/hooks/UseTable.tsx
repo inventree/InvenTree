@@ -144,7 +144,10 @@ export function useTable(tableName: string): TableState {
 
   // Pagination data
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(25);
+  const [pageSize, setPageSize] = useLocalStorage<number>({
+    key: 'inventree-table-page-size',
+    defaultValue: 25
+  });
 
   // A list of hidden columns, saved to local storage
   const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
