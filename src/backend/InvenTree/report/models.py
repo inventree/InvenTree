@@ -636,8 +636,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
             raise ValidationError([_('Error printing labels'), str(e)])
 
-        output.complete = True
-        output.save()
+        output.refresh_from_db()
 
         # Return the output object
         return output
