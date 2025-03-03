@@ -1,7 +1,7 @@
 """Provides a JSON API for the Company app."""
 
 from django.db.models import Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
@@ -511,8 +511,8 @@ manufacturer_part_api_urls = [
             ),
         ]),
     ),
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
@@ -533,8 +533,8 @@ manufacturer_part_api_urls = [
 
 
 supplier_part_api_urls = [
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
@@ -557,8 +557,8 @@ company_api_urls = [
     path(
         'price-break/',
         include([
-            re_path(
-                r'^(?P<pk>\d+)/?',
+            path(
+                '<int:pk>/',
                 SupplierPriceBreakDetail.as_view(),
                 name='api-part-supplier-price-detail',
             ),
@@ -569,8 +569,8 @@ company_api_urls = [
             ),
         ]),
     ),
-    re_path(
-        r'^(?P<pk>\d+)/?',
+    path(
+        '<int:pk>/',
         include([
             path(
                 'metadata/',
@@ -584,8 +584,8 @@ company_api_urls = [
     path(
         'contact/',
         include([
-            re_path(
-                r'^(?P<pk>\d+)/?',
+            path(
+                '<int:pk>/',
                 include([
                     path(
                         'metadata/',
