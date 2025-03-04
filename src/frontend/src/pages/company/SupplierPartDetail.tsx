@@ -122,7 +122,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    const tr: DetailsField[] = [
+    const bl: DetailsField[] = [
       {
         type: 'link',
         name: 'supplier',
@@ -165,7 +165,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    const bl: DetailsField[] = [
+    const br: DetailsField[] = [
       {
         type: 'string',
         name: 'packaging',
@@ -183,7 +183,7 @@ export default function SupplierPartDetail() {
       }
     ];
 
-    const br: DetailsField[] = [
+    const tr: DetailsField[] = [
       {
         type: 'string',
         name: 'in_stock',
@@ -232,9 +232,9 @@ export default function SupplierPartDetail() {
             <DetailsTable title={t`Part Details`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable title={t`Supplier`} fields={tr} item={data} />
-        <DetailsTable title={t`Packaging`} fields={bl} item={data} />
-        <DetailsTable title={t`Availability`} fields={br} item={data} />
+        <DetailsTable title={t`Supplier`} fields={bl} item={data} />
+        <DetailsTable title={t`Packaging`} fields={br} item={data} />
+        <DetailsTable title={t`Availability`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [supplierPart, instanceQuery.isFetching]);
