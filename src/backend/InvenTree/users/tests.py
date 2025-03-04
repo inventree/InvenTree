@@ -247,7 +247,8 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response_detail['username'], self.username)
 
         response_me = self.do_request(reverse('api-user-me'), {}, 200)
-        self.assertEqual(response_detail, response_me)
+        self.assertIn('language', response_me['profile'])
+        self.assertIn('theme', response_me['profile'])
 
     def test_token(self):
         """Test token mechanisms."""
@@ -349,3 +350,97 @@ class AdminTest(AdminTestCase):
         )
         # Additionally test str fnc
         self.assertEqual(str(my_token), my_token.token)
+
+
+class UserProfileTest(InvenTreeAPITestCase):
+    """Tests for the user profile API endpoints."""
+
+    def test_profile_retrieve(self):
+        """Test retrieving the user profile."""
+        response = self.client.get(reverse('api-user-profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('language', response.data)
+        self.assertIn('theme', response.data)
+        self.assertIn('widgets', response.data)
+        self.assertIn('displayname', response.data)
+        self.assertIn('position', response.data)
+        self.assertIn('status', response.data)
+        self.assertIn('location', response.data)
+        self.assertIn('active', response.data)
+        self.assertIn('contact', response.data)
+        self.assertIn('type', response.data)
+        self.assertIn('organisation', response.data)
+        self.assertIn('primary_group', response.data)
+
+    def test_profile_update(self):
+        """Test updating the user profile."""
+        data = {
+            'language': 'en',
+            'theme': {'color': 'blue'},
+            'widgets': {'widget1': 'value1'},
+            'displayname': 'Test User',
+            'status': 'Active',
+            'location': 'Test Location',
+            'active': True,
+            'contact': 'test@example.com',
+            'type': 'internal',
+            'organisation': 'Test Organisation',
+            'primary_group': self.group.pk,
+        }
+        response = self.patch(reverse('api-user-profile'), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['language'], data['language'])
+        self.assertEqual(response.data['theme'], data['theme'])
+        self.assertEqual(response.data['widgets'], data['widgets'])
+        self.assertEqual(response.data['displayname'], data['displayname'])
+        self.assertEqual(response.data['status'], data['status'])
+        self.assertEqual(response.data['location'], data['location'])
+        self.assertEqual(response.data['active'], data['active'])
+        self.assertEqual(response.data['contact'], data['contact'])
+        self.assertEqual(response.data['type'], data['type'])
+        self.assertEqual(response.data['organisation'], data['organisation'])
+        self.assertEqual(response.data['primary_group'], data['primary_group'])
+
+    def test_primary_group_validation(self):
+        """Test that primary_group is a group that the user is a member of."""
+        new_group = Group.objects.create(name='New Group')
+        profile = self.user.profile
+        profile.primary_group = new_group
+        profile.save()
+        self.assertIsNone(profile.primary_group)
+
+    def test_validate_primary_group_on_save(self):
+        """Test validate_primary_group_on_save signal handler."""
+        group = Group.objects.create(name='Test Group')
+        self.user.groups.add(group)
+        profile = self.user.profile
+        profile.primary_group = group
+        profile.save()
+
+        # Ensure primary_group is set correctly
+        self.assertEqual(profile.primary_group, group)
+
+        # Remove user from group and save group
+        self.user.groups.remove(group)
+
+        # Ensure primary_group is set to None
+        profile.refresh_from_db()
+        self.assertIsNone(profile.primary_group)
+
+    def test_validate_primary_group_on_delete(self):
+        """Test validate_primary_group_on_delete signal handler."""
+        group = Group.objects.create(name='Test Group')
+        self.user.groups.add(group)
+        profile = self.user.profile
+        profile.primary_group = group
+        profile.save()
+
+        # Ensure primary_group is set correctly
+        self.assertEqual(profile.primary_group, group)
+
+        # Delete group
+        group.delete()
+
+        # Ensure primary_group is set to None
+        profile.refresh_from_db()
+        self.assertIsNone(profile.primary_group)
