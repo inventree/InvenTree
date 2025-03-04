@@ -70,8 +70,10 @@ function usePrintingProgress({
             if (data.complete) {
               setLoading(false);
               notifications.hide(`printing-progress-${endpoint}-${outputId}`);
+              notifications.hide('print-success');
 
               notifications.show({
+                id: 'print-success',
                 title: t`Printing`,
                 message: t`Printing completed successfully`,
                 color: 'green',
@@ -212,7 +214,7 @@ export function PrintingActions({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
     fields: labelFields,
-    timeout: (items.length + 1) * 5000,
+    timeout: 5000,
     onClose: () => {
       setPluginKey('');
     },
@@ -220,16 +222,14 @@ export function PrintingActions({
     successMessage: null,
     onFormSuccess: (response: any) => {
       setPluginKey('');
-      if (!response.complete) {
-        setLabelId(response.pk);
-      }
+      setLabelId(response.pk);
     }
   });
 
   const reportModal = useCreateApiFormModal({
     title: t`Print Report`,
     url: apiUrl(ApiEndpoints.report_print),
-    timeout: (items.length + 1) * 5000,
+    timeout: 5000,
     fields: {
       template: {
         filters: {
