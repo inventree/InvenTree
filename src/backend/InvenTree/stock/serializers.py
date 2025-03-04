@@ -31,6 +31,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
+from users.serializers import UserSerializer
 
 from .models import (
     StockItem,
@@ -223,7 +224,7 @@ class StockItemTestResultSerializer(
         if template_detail is not True:
             self.fields.pop('template_detail', None)
 
-    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
+    user_detail = UserSerializer(source='user', read_only=True)
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=part_models.PartTestTemplate.objects.all(),
@@ -1272,9 +1273,7 @@ class StockTrackingSerializer(
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', many=False, read_only=True
-    )
+    user_detail = UserSerializer(source='user', many=False, read_only=True)
 
     deltas = serializers.JSONField(read_only=True)
 
