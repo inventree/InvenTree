@@ -44,6 +44,11 @@ def isRunningBackup():
     )
 
 
+def isGeneratingSchema():
+    """Return true if schema generation is being executed."""
+    return 'schema' in sys.argv
+
+
 def isInWorkerThread():
     """Returns True if the current thread is a background worker thread."""
     return 'qcluster' in sys.argv
