@@ -10,12 +10,13 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
+import structlog
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.exceptions
 import InvenTree.ready
 
-logger = logging.getLogger('inventree')
+logger = structlog.getLogger('inventree')
 
 
 class ReportConfig(AppConfig):
@@ -26,8 +27,12 @@ class ReportConfig(AppConfig):
     def ready(self):
         """This function is called whenever the app is loaded."""
         # Configure logging for PDF generation (disable "info" messages)
-        logging.getLogger('fontTools').setLevel(logging.WARNING)
-        logging.getLogger('weasyprint').setLevel(logging.WARNING)
+
+        # Reduce log output for fontTools and weasyprint
+        for name, log_manager in logging.root.manager.loggerDict.items():
+            if name.lower().startswith(('fonttools', 'weasyprint')):
+                if hasattr(log_manager, 'setLevel'):
+                    log_manager.setLevel(logging.WARNING)
 
         super().ready()
 
