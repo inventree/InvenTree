@@ -12,6 +12,7 @@ import structlog
 import common.currency
 import common.notifications
 import company.models
+import generic.parameters.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
@@ -196,11 +197,15 @@ def rebuild_parameters(template_id):
     which may cause the base unit to be adjusted.
     """
     try:
-        template = part_models.PartParameterTemplate.objects.get(pk=template_id)
-    except part_models.PartParameterTemplate.DoesNotExist:
+        template = generic.parameters.models.PartParameterTemplate.objects.get(
+            pk=template_id
+        )
+    except generic.parameters.models.PartParameterTemplate.DoesNotExist:
         return
 
-    parameters = part_models.PartParameter.objects.filter(template=template)
+    parameters = generic.parameters.models.PartParameter.objects.filter(
+        template=template
+    )
 
     n = 0
 

@@ -5,6 +5,7 @@ from typing import Optional
 from django.core.exceptions import ValidationError
 from django.db.models import Model
 
+import generic.parameters.models
 import part.models
 import stock.models
 
@@ -227,7 +228,7 @@ class ValidationMixin:
         return None
 
     def validate_part_parameter(
-        self, parameter: part.models.PartParameter, data: str
+        self, parameter: generic.parameters.models.PartParameter, data: str
     ) -> None:
         """Validate a parameter value.
 
