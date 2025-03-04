@@ -392,6 +392,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             - Render using background worker, provide progress updates to UI
             - Run report generation in the background worker process
         """
+        logger.info("Printing %s reports against template '%s'", len(items), self.name)
+
         outputs = []
 
         debug_mode = get_global_setting('REPORT_DEBUG_MODE', False)
@@ -602,6 +604,13 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         Raises:
             ValidationError: If there is an error during label printing
         """
+        logger.info(
+            "Printing %s labels against template '%s' using plugin '%s'",
+            len(items),
+            plugin.slug,
+            self.name,
+        )
+
         if not output:
             output = LabelOutput.objects.create(
                 template=self,
