@@ -10,12 +10,12 @@ import company.models
 import order.models
 import plugin.base.barcodes.helper
 import stock.models
-from InvenTree.serializers import UserSerializer
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     SalesOrderStatusGroups,
 )
+from users.serializers import UserSerializer
 
 
 class BarcodeScanResultSerializer(serializers.ModelSerializer):

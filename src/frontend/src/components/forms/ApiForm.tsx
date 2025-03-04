@@ -92,7 +92,7 @@ export interface ApiFormProps {
   preFormWarning?: string;
   preFormSuccess?: string;
   postFormContent?: JSX.Element;
-  successMessage?: string;
+  successMessage?: string | null;
   onFormSuccess?: (data: any) => void;
   onFormError?: (response: any) => void;
   processFormData?: (data: any) => any;

@@ -1,6 +1,8 @@
 import {
   ActionIcon,
   Divider,
+  Group,
+  Loader,
   Paper,
   Stack,
   Tabs,
@@ -78,7 +80,7 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
-  const pluginPanels = usePluginPanels({
+  const pluginPanelSet = usePluginPanels({
     model: model,
     instance: instance,
     id: id
@@ -89,7 +91,7 @@ function BasePanelGroup({
     const _panels = [...panels];
 
     // Add plugin panels
-    pluginPanels?.forEach((panel) => {
+    pluginPanelSet.panels?.forEach((panel) => {
       let panelKey = panel.name;
 
       // Check if panel with this name already exists
@@ -107,7 +109,7 @@ function BasePanelGroup({
     });
 
     return _panels;
-  }, [panels, pluginPanels]);
+  }, [panels, pluginPanelSet]);
 
   const activePanels = useMemo(
     () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),
@@ -188,20 +190,23 @@ function BasePanelGroup({
                 )
             )}
             {collapsible && (
-              <ActionIcon
-                style={{
-                  paddingLeft: '10px'
-                }}
-                onClick={() => setExpanded(!expanded)}
-                variant='transparent'
-                size='md'
-              >
-                {expanded ? (
-                  <IconLayoutSidebarLeftCollapse opacity={0.5} />
-                ) : (
-                  <IconLayoutSidebarRightCollapse opacity={0.5} />
-                )}
-              </ActionIcon>
+              <Group wrap='nowrap' gap='xs'>
+                <ActionIcon
+                  style={{
+                    paddingLeft: '10px'
+                  }}
+                  onClick={() => setExpanded(!expanded)}
+                  variant='transparent'
+                  size='md'
+                >
+                  {expanded ? (
+                    <IconLayoutSidebarLeftCollapse opacity={0.5} />
+                  ) : (
+                    <IconLayoutSidebarRightCollapse opacity={0.5} />
+                  )}
+                </ActionIcon>
+                {pluginPanelSet.isLoading && <Loader size='xs' />}
+              </Group>
             )}
           </Tabs.List>
           {allPanels.map(
