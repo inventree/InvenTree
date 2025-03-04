@@ -12,8 +12,8 @@ import importer.registry
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
-    UserSerializer,
 )
+from users.serializers import UserSerializer
 
 
 class DataImportColumnMapSerializer(InvenTreeModelSerializer):
