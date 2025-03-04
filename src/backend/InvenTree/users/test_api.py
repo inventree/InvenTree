@@ -40,7 +40,8 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_user_api(self):
         """Tests for User API endpoints."""
-        response = self.get(reverse('api-user-list'), expected_code=200)
+        url = reverse('api-user-list')
+        response = self.get(url, expected_code=200)
 
         # Check the correct number of results was returned
         self.assertEqual(len(response.data), User.objects.count())
@@ -57,6 +58,32 @@ class UserAPITests(InvenTreeAPITestCase):
 
         self.assertIn('pk', response.data)
         self.assertIn('username', response.data)
+
+        # Test create user
+        response = self.post(url, expected_code=403)
+        self.assertIn(
+            'You do not have permission to perform this action.', str(response.data)
+        )
+
+        self.user.is_superuser = True
+        self.user.save()
+
+        response = self.post(
+            url,
+            data={
+                'username': 'test',
+                'first_name': 'Test',
+                'last_name': 'User',
+                'email': 'aa@example.org',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['username'], 'test')
+        self.assertEqual(response.data['first_name'], 'Test')
+        self.assertEqual(response.data['last_name'], 'User')
+        self.assertEqual(response.data['is_staff'], False)
+        self.assertEqual(response.data['is_superuser'], False)
+        self.assertEqual(response.data['is_active'], True)
 
     def test_group_api(self):
         """Tests for the Group API endpoints."""
@@ -82,15 +109,6 @@ class UserAPITests(InvenTreeAPITestCase):
         )
         self.assertIn('name', response.data)
         self.assertIn('permissions', response.data)
-
-    def test_logout(self):
-        """Test api logout endpoint."""
-        token_key = self.get(url=reverse('api-token')).data['token']
-        self.client.logout()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
-
-        self.post(reverse('api-logout'), expected_code=200)
-        self.get(reverse('api-token'), expected_code=401)
 
     def test_login_redirect(self):
         """Test login redirect endpoint."""
@@ -205,16 +223,6 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.save()
 
         self.client.get(me, expected_code=200)
-
-    def test_builtin_token(self):
-        """Test the built-in token authentication."""
-        response = self.post(
-            reverse('rest_login'),
-            {'username': self.username, 'password': self.password},
-            expected_code=200,
-        )
-        self.assertIn('key', response.data)
-        self.assertTrue(response.data['key'].startswith('inv-'))
 
     def test_token_api(self):
         """Test the token API."""

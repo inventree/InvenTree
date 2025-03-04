@@ -56,7 +56,8 @@ export default function UserSettings() {
               'PART_SHOW_QUANTITY_IN_FORMS',
               'DISPLAY_SCHEDULE_TAB',
               'DISPLAY_STOCKTAKE_TAB',
-              'TABLE_STRING_MAX_LENGTH'
+              'TABLE_STRING_MAX_LENGTH',
+              'ENABLE_LAST_BREADCRUMB'
             ]}
           />
         )
@@ -85,6 +86,7 @@ export default function UserSettings() {
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS',
               'SEARCH_PREVIEW_SHOW_SALES_ORDERS',
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS',
+              'SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS',
               'SEARCH_PREVIEW_SHOW_RETURN_ORDERS',
               'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS'
             ]}

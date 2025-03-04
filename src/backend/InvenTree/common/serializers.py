@@ -69,9 +69,11 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     choices = serializers.SerializerMethodField()
 
-    model_name = serializers.CharField(read_only=True)
+    model_name = serializers.CharField(read_only=True, allow_null=True)
 
-    api_url = serializers.CharField(read_only=True)
+    model_filters = serializers.DictField(read_only=True)
+
+    api_url = serializers.CharField(read_only=True, allow_null=True)
 
     value = SettingsValueField(allow_null=True)
 
@@ -185,6 +187,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'type',
                 'choices',
                 'model_name',
+                'model_filters',
                 'api_url',
                 'typ',
                 'required',

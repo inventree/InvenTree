@@ -120,6 +120,18 @@ function detect_local_env() {
     echo "# POI02| Printing local envs - after #++#"
     printenv
   fi
+
+  # Print branch and dir from VERSION file
+  if [ -f "${APP_HOME}/VERSION" ]; then
+    echo "# POI02| Loading environment variables from VERSION file"
+    content=$(cat "${APP_HOME}/VERSION")
+    # use grep to get the branch and target
+    INVENTREE_PKG_BRANCH=($(echo $content | grep -oP 'INVENTREE_PKG_BRANCH=\K[^ ]+'))
+    INVENTREE_PKG_TARGET=($(echo $content | grep -oP 'INVENTREE_PKG_TARGET=\K[^ ]+'))
+    echo "Running in a package environment build on branch $INVENTREE_PKG_BRANCH for target $INVENTREE_PKG_TARGET"
+  else
+    echo "# POI02| VERSION file not found"
+  fi
 }
 
 function detect_envs() {

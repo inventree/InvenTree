@@ -593,13 +593,17 @@ class StockItemSerializer(
     )
 
     SKU = serializers.CharField(
-        source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
+        source='supplier_part.SKU',
+        read_only=True,
+        label=_('Supplier Part Number'),
+        allow_null=True,
     )
 
     MPN = serializers.CharField(
         source='supplier_part.manufacturer_part.MPN',
         read_only=True,
         label=_('Manufacturer Part Number'),
+        allow_null=True,
     )
 
     # Optional detail fields, which can be appended via query parameters
@@ -657,11 +661,11 @@ class StockItemSerializer(
     )
 
     purchase_order_reference = serializers.CharField(
-        source='purchase_order.reference', read_only=True
+        source='purchase_order.reference', read_only=True, allow_null=True
     )
 
     sales_order_reference = serializers.CharField(
-        source='sales_order.reference', read_only=True
+        source='sales_order.reference', read_only=True, allow_null=True
     )
 
     tags = TagListSerializerField(required=False)
@@ -1153,7 +1157,6 @@ class LocationSerializer(
         fields = [
             'pk',
             'barcode_hash',
-            'url',
             'name',
             'level',
             'description',
@@ -1205,8 +1208,6 @@ class LocationSerializer(
         label=_('Parent Location'),
         help_text=_('Parent stock location'),
     )
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
 
