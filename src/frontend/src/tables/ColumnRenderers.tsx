@@ -66,11 +66,14 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
 
       if (!location) {
         return (
-          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
+          <Text
+            size='sm'
+            style={{ fontStyle: 'italic' }}
+          >{t`No location set`}</Text>
         );
       }
 
-      return <Text>{location.name}</Text>;
+      return <Text size='sm'>{location.name}</Text>;
     },
     ...props
   };
