@@ -1,11 +1,12 @@
 import { t } from '@lingui/macro';
-import { Skeleton, Stack } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
+  IconInfoCircle,
   IconPackages,
   IconQrcode,
   IconServerCog,
@@ -18,7 +19,6 @@ import {
 import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
-import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import PageTitle from '../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import type { PanelType } from '../../../components/panels/Panel';
@@ -110,7 +110,17 @@ export default function SystemSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <PlaceholderPanel />
+        content: (
+          <Stack>
+            <Alert
+              color='teal'
+              title={t`This panel is a placeholder.`}
+              icon={<IconInfoCircle />}
+            >
+              <Text c='gray'>This panel has not yet been implemented</Text>
+            </Alert>
+          </Stack>
+        )
       },
       {
         name: 'pricing',
