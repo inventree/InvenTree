@@ -212,6 +212,7 @@ export default function StockDetail() {
         name: 'supplier_part',
         label: t`Supplier Part`,
         type: 'link',
+        model_field: 'SKU',
         model: ModelType.supplierpart,
         hidden: !stockitem.supplier_part
       },
