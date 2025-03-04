@@ -155,7 +155,7 @@ class StockTest(StockTestBase):
             item.full_clean()
 
         # A long URL should fail
-        long_url = 'https://website.co.uk?query=' + 'a' * 173
+        long_url = 'https://website.co.uk?query=' + 'a' * 1973
 
         with self.assertRaises(ValidationError):
             item.link = long_url
