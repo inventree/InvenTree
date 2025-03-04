@@ -50,6 +50,7 @@ export default function UserSettings() {
           <UserSettingList
             keys={[
               'STICKY_HEADER',
+              'STICKY_TABLE_HEADER',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'PART_SHOW_QUANTITY_IN_FORMS',
