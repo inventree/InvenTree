@@ -14,51 +14,51 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchaseorder',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='salesorder',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='returnorder',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='purchaseorderlineitem',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='salesorderlineitem',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='returnorderlineitem',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='purchaseorderextraline',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='salesorderextraline',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='returnorderextraline',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='salesordershipment',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
     ]

@@ -14,26 +14,26 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='company',
             name='website',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='company',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='address',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='supplierpart',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
         migrations.AlterField(
             model_name='manufacturerpart',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(null=True, blank=True)  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
     ]
