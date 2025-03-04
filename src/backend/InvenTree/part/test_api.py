@@ -20,6 +20,11 @@ import order.models
 from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
+from generic.parameters.models import (
+    PartCategoryParameterTemplate,
+    PartParameter,
+    PartParameterTemplate,
+)
 from InvenTree.settings import BASE_DIR
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.status_codes import PurchaseOrderStatusGroups
@@ -28,9 +33,6 @@ from part.models import (
     BomItemSubstitute,
     Part,
     PartCategory,
-    PartCategoryParameterTemplate,
-    PartParameter,
-    PartParameterTemplate,
     PartRelated,
     PartStocktake,
     PartTestTemplate,

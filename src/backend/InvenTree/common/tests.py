@@ -22,6 +22,7 @@ import PIL
 
 import common.validators
 from common.settings import get_global_setting, set_global_setting
+from generic.parameters.models import PartParameterTemplate
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import (
     AdminTestCase,
@@ -29,7 +30,7 @@ from InvenTree.unit_test import (
     InvenTreeTestCase,
     PluginMixin,
 )
-from part.models import Part, PartParameterTemplate
+from part.models import Part
 from plugin import registry
 from plugin.models import NotificationUserSetting
 

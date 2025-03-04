@@ -33,6 +33,11 @@ import part.tasks
 import stock.models
 import users.models
 from build.status_codes import BuildStatusGroups
+from generic.parameters.models import (
+    PartCategoryParameterTemplate,
+    PartParameter,
+    PartParameterTemplate,
+)
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.tasks import offload_task
@@ -43,10 +48,7 @@ from .models import (
     BomItemSubstitute,
     Part,
     PartCategory,
-    PartCategoryParameterTemplate,
     PartInternalPriceBreak,
-    PartParameter,
-    PartParameterTemplate,
     PartPricing,
     PartRelated,
     PartSellPriceBreak,

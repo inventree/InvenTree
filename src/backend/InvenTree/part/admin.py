@@ -2,13 +2,14 @@
 
 from django.contrib import admin
 
+import generic.parameters.models
 from part import models
 
 
 class PartParameterInline(admin.TabularInline):
     """Inline for part parameter data."""
 
-    model = models.PartParameter
+    model = generic.parameters.models.PartParameter
 
 
 @admin.register(models.Part)
@@ -106,7 +107,7 @@ class BomItemAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part', 'sub_part')
 
 
-@admin.register(models.PartParameterTemplate)
+@admin.register(generic.parameters.models.PartParameterTemplate)
 class ParameterTemplateAdmin(admin.ModelAdmin):
     """Admin class for the PartParameterTemplate model."""
 
@@ -115,7 +116,7 @@ class ParameterTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'units')
 
 
-@admin.register(models.PartParameter)
+@admin.register(generic.parameters.models.PartParameter)
 class ParameterAdmin(admin.ModelAdmin):
     """Admin class for the PartParameter model."""
 
@@ -124,7 +125,7 @@ class ParameterAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part', 'template')
 
 
-@admin.register(models.PartCategoryParameterTemplate)
+@admin.register(generic.parameters.models.PartCategoryParameterTemplate)
 class PartCategoryParameterAdmin(admin.ModelAdmin):
     """Admin class for the PartCategoryParameterTemplate model."""
 

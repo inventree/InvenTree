@@ -250,7 +250,7 @@ class RuleSet(models.Model):
             ],
             'part_category': [
                 'part_partcategory',
-                'part_partcategoryparametertemplate',
+                'generic_partcategoryparametertemplate',
                 'part_partcategorystar',
             ],
             'part': [
@@ -261,8 +261,8 @@ class RuleSet(models.Model):
                 'part_partsellpricebreak',
                 'part_partinternalpricebreak',
                 'part_parttesttemplate',
-                'part_partparametertemplate',
-                'part_partparameter',
+                'generic_partparametertemplate',
+                'generic_partparameter',
                 'part_partrelated',
                 'part_partstar',
                 'part_partcategorystar',
@@ -367,7 +367,7 @@ class RuleSet(models.Model):
             'importer_dataimportrow',
         ]
 
-    RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
+    RULESET_CHANGE_INHERIT = [('generic', 'partparameter'), ('part', 'bomitem')]
 
     RULE_OPTIONS = ['can_view', 'can_add', 'can_change', 'can_delete']
 

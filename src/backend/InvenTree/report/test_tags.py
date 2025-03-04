@@ -12,8 +12,9 @@ from djmoney.money import Money
 from PIL import Image
 
 from common.models import InvenTreeSetting
+from generic.parameters.models import PartParameter, PartParameterTemplate
 from InvenTree.unit_test import InvenTreeTestCase
-from part.models import Part, PartParameter, PartParameterTemplate
+from part.models import Part
 from part.test_api import PartImageTestMixin
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
