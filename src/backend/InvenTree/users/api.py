@@ -284,8 +284,8 @@ class GetAuthToken(GenericAPIView):
             raise exceptions.NotAuthenticated()  # pragma: no cover
 
 
-class TokenListView(DestroyAPIView, ListCreateAPI):
-    """List of registered tokens for current users."""
+class TokenMixin:
+    """Mixin for API token endpoints."""
 
     permission_classes = (IsAuthenticated,)
     serializer_class = ApiTokenSerializer
@@ -294,10 +294,9 @@ class TokenListView(DestroyAPIView, ListCreateAPI):
         """Only return data for current user."""
         return ApiToken.objects.filter(user=self.request.user)
 
-    def perform_destroy(self, instance):
-        """Revoke token."""
-        instance.revoked = True
-        instance.save()
+
+class TokenListView(TokenMixin, ListCreateAPI):
+    """List of registered tokens for current user."""
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
@@ -306,6 +305,15 @@ class TokenListView(DestroyAPIView, ListCreateAPI):
             id=resp.data['id']
         ).key
         return resp
+
+
+class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
+    """Details for a token of the current user."""
+
+    def perform_destroy(self, instance):
+        """Revoke token."""
+        instance.revoked = True
+        instance.save()
 
 
 class LoginRedirect(RedirectView):
@@ -334,7 +342,7 @@ user_urls = [
     path(
         'tokens/',
         include([
-            path('<int:pk>/', TokenListView.as_view(), name='api-token-detail'),
+            path('<int:pk>/', TokenDetailView.as_view(), name='api-token-detail'),
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
