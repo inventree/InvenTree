@@ -68,9 +68,9 @@ class GeneralExtraLineList(DataExportViewMixin):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ['quantity', 'note', 'reference']
+    ordering_fields = ['quantity', 'notes', 'reference']
 
-    search_fields = ['quantity', 'note', 'reference', 'description']
+    search_fields = ['quantity', 'notes', 'reference', 'description']
 
     filterset_fields = ['order']
 
