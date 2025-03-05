@@ -32,6 +32,7 @@ from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -177,6 +178,9 @@ class BuildSerializer(
         create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not create:
             self.fields.pop('create_child_builds', None)
@@ -1205,6 +1209,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if not part_detail:
             self.fields.pop('part_detail', None)
 
@@ -1339,6 +1346,9 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         build_detail = kwargs.pop('build_detail', True)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)

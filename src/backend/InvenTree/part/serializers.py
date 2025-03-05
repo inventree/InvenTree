@@ -35,6 +35,7 @@ import users.models
 from build.status_codes import BuildStatusGroups
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.tasks import offload_task
 
 from .models import (
@@ -93,7 +94,7 @@ class CategorySerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not path_detail:
+        if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
     def get_starred(self, category) -> bool:
@@ -382,7 +383,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-        if not pricing:
+        if not pricing and not isGeneratingSchema():
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
 
@@ -442,6 +443,9 @@ class PartParameterSerializer(
         part_detail = kwargs.pop('part_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -780,6 +784,9 @@ class PartSerializer(
         path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not category_detail:
             self.fields.pop('category_detail', None)
@@ -1619,6 +1626,9 @@ class BomItemSerializer(
         substitutes = kwargs.pop('substitutes', True)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)
