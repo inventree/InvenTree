@@ -1461,7 +1461,7 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
 
     ordering_fields = ['date']
 
-    search_fields = ['title', 'notes']
+    search_fields = ['notes']
 
 
 class LocationDetail(CustomRetrieveUpdateDestroyAPI):
