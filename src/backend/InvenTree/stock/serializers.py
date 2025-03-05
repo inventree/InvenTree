@@ -31,6 +31,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
+from users.serializers import UserSerializer
 
 from .models import (
     StockItem,
@@ -223,7 +224,7 @@ class StockItemTestResultSerializer(
         if template_detail is not True:
             self.fields.pop('template_detail', None)
 
-    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
+    user_detail = UserSerializer(source='user', read_only=True)
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=part_models.PartTestTemplate.objects.all(),
@@ -593,13 +594,17 @@ class StockItemSerializer(
     )
 
     SKU = serializers.CharField(
-        source='supplier_part.SKU', read_only=True, label=_('Supplier Part Number')
+        source='supplier_part.SKU',
+        read_only=True,
+        label=_('Supplier Part Number'),
+        allow_null=True,
     )
 
     MPN = serializers.CharField(
         source='supplier_part.manufacturer_part.MPN',
         read_only=True,
         label=_('Manufacturer Part Number'),
+        allow_null=True,
     )
 
     # Optional detail fields, which can be appended via query parameters
@@ -657,11 +662,11 @@ class StockItemSerializer(
     )
 
     purchase_order_reference = serializers.CharField(
-        source='purchase_order.reference', read_only=True
+        source='purchase_order.reference', read_only=True, allow_null=True
     )
 
     sales_order_reference = serializers.CharField(
-        source='sales_order.reference', read_only=True
+        source='sales_order.reference', read_only=True, allow_null=True
     )
 
     tags = TagListSerializerField(required=False)
@@ -1268,9 +1273,7 @@ class StockTrackingSerializer(
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', many=False, read_only=True
-    )
+    user_detail = UserSerializer(source='user', many=False, read_only=True)
 
     deltas = serializers.JSONField(read_only=True)
 

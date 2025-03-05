@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.db.utils import IntegrityError
 from django.dispatch import receiver
 from django.urls import reverse
@@ -137,7 +137,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     )
 
     @staticmethod
-    def sanitize_name(name: str):
+    def sanitize_name(name: str) -> str:
         """Sanitize the provide name value."""
         name = str(name).strip()
 
@@ -155,7 +155,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(description=_('Token'))
-    def token(self):
+    def token(self) -> str:
         """Provide a redacted version of the token.
 
         The *raw* key value should never be displayed anywhere!
@@ -170,7 +170,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
-    def expired(self):
+    def expired(self) -> bool:
         """Test if this token has expired."""
         return (
             self.expiry is not None and self.expiry < InvenTree.helpers.current_date()
@@ -178,7 +178,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @property
     @admin.display(boolean=True, description=_('Active'))
-    def active(self):
+    def active(self) -> bool:
         """Test if this token is active."""
         return not self.revoked and not self.expired
 
@@ -348,6 +348,7 @@ class RuleSet(models.Model):
             'common_selectionlistentry',
             'common_selectionlist',
             'users_owner',
+            'users_userprofile',  # User profile is handled in the serializer - only own user can change
             # Third-party tables
             'error_report_error',
             'exchange_rate',
@@ -926,3 +927,153 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
     """
     update_group_roles(instance)
+
+
+class UserProfile(InvenTree.models.MetadataMixin):
+    """Model to store additional user profile information."""
+
+    class UserType(models.TextChoices):
+        """Enumeration for user types."""
+
+        BOT = 'bot', _('Bot')
+        INTERNAL = 'internal', _('Internal')
+        EXTERNAL = 'external', _('External')
+        GUEST = 'guest', _('Guest')
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User')
+    )
+    language = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        verbose_name=_('Language'),
+        help_text=_('Preferred language for the user'),
+    )
+    theme = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Theme'),
+        help_text=_('Settings for the web UI as JSON - do not edit manually!'),
+    )
+    widgets = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Widgets'),
+        help_text=_(
+            'Settings for the dashboard widgets as JSON - do not edit manually!'
+        ),
+    )
+    displayname = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Display Name'),
+        help_text=_('Chosen display name for the user'),
+    )
+    position = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Position'),
+        help_text=_('Main job title or position'),
+    )
+    status = models.CharField(
+        max_length=2000,
+        blank=True,
+        null=True,
+        verbose_name=_('Status'),
+        help_text=_('User status message'),
+    )
+    location = models.CharField(
+        max_length=2000,
+        blank=True,
+        null=True,
+        verbose_name=_('Location'),
+        help_text=_('User location information'),
+    )
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('User is actively using the system'),
+    )
+    contact = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Preferred contact information for the user'),
+    )
+    type = models.CharField(
+        max_length=10,
+        choices=UserType.choices,
+        default=UserType.INTERNAL,
+        verbose_name=_('Type'),
+        help_text=_('Which type of user is this?'),
+    )
+    organisation = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Organisation'),
+        help_text=_('Users primary organisation/affiliation'),
+    )
+    primary_group = models.ForeignKey(
+        Group,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='primary_users',
+        verbose_name=_('Primary Group'),
+        help_text=_('Primary group for the user'),
+    )
+
+    def __str__(self):
+        """Return string representation of the user profile."""
+        return f'{self.user.username} user profile'
+
+    def save(self, *args, **kwargs):
+        """Ensure primary_group is a group that the user is a member of."""
+        if self.primary_group and self.primary_group not in self.user.groups.all():
+            self.primary_group = None
+        super().save(*args, **kwargs)
+
+
+# Signal to create or update user profile when user is saved
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    """Create or update user profile when user is saved."""
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.profile.save()
+
+
+# Validate groups
+@receiver(post_save, sender=Group)
+def validate_primary_group_on_save(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is created or updated."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group and profile.primary_group not in user.groups.all():
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(post_delete, sender=Group)
+def validate_primary_group_on_delete(sender, instance, **kwargs):
+    """Validate primary_group on user profiles when a group is deleted."""
+    for user in instance.user_set.all():
+        profile = user.profile
+        if profile.primary_group == instance:
+            profile.primary_group = None
+            profile.save()
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
+    """Validate primary_group on user profiles when a group is added or removed."""
+    if action in ['post_add', 'post_remove']:
+        profile = instance.profile
+        if profile.primary_group and profile.primary_group not in instance.groups.all():
+            profile.primary_group = None
+            profile.save()

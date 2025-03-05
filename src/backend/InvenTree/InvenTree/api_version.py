@@ -1,16 +1,28 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 317
+INVENTREE_API_VERSION = 320
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v317 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9096
+v320 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9096
     - Overhaul the data-export API functionality
     - Allow customization of data exporting via plugins
+
+v319 - 2025-03-04 : https://github.com/inventree/InvenTree/pull/9199
+    - Add detail API endpoint for the LabelOutput model
+    - Add detail API endpoint for the ReportOutput model
+
+v318 - 2025-02-25 : https://github.com/inventree/InvenTree/pull/9116
+    - Adds user profile API endpoints
+
+v317 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9143
+    - Default 'overdue' field to False in Build serializer
+    - Add allow_null to various fields in Build, Settings, Order, Part, and Stock serializers
+    - Add type hints to Users model to properly type fields
 
 v316 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9185
     - Allow 'icon' field to be nullified in the PartCategory API

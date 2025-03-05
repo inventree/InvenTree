@@ -1074,6 +1074,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'DISPLAY_PROFILE_INFO': {
+        'name': _('Display User Profiles'),
+        'description': _('Display Users Profiles on their profile page'),
+        'default': True,
+        'validator': bool,
+    },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),
