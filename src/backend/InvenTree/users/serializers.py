@@ -3,13 +3,15 @@
 from django.contrib.auth.models import Group, Permission, User
 from django.core.exceptions import AppRegistryNotReady
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import InvenTreeModelSerializer
 
-from .models import ApiToken, Owner, RuleSet, check_user_role
+from .models import ApiToken, Owner, RuleSet, UserProfile, check_user_role
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
@@ -19,9 +21,10 @@ class OwnerSerializer(InvenTreeModelSerializer):
         """Metaclass defines serializer fields."""
 
         model = Owner
-        fields = ['pk', 'owner_id', 'name', 'label']
+        fields = ['pk', 'owner_id', 'owner_model', 'name', 'label']
 
     name = serializers.CharField(read_only=True)
+    owner_model = serializers.CharField(read_only=True, source='owner._meta.model_name')
 
     label = serializers.CharField(read_only=True)
 
@@ -149,3 +152,189 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'user',
             'in_use',
         ]
+
+
+class BriefUserProfileSerializer(InvenTreeModelSerializer):
+    """Brief serializer for the UserProfile model."""
+
+    class Meta:
+        """Meta options for BriefUserProfileSerializer."""
+
+        model = UserProfile
+        fields = [
+            'displayname',
+            'position',
+            'status',
+            'location',
+            'active',
+            'contact',
+            'type',
+            'organisation',
+            'primary_group',
+        ]
+
+
+class UserProfileSerializer(BriefUserProfileSerializer):
+    """Serializer for the UserProfile model."""
+
+    class Meta(BriefUserProfileSerializer.Meta):
+        """Meta options for UserProfileSerializer."""
+
+        fields = [
+            'language',
+            'theme',
+            'widgets',
+            *BriefUserProfileSerializer.Meta.fields,
+        ]
+
+
+class UserSerializer(InvenTreeModelSerializer):
+    """Serializer for a User."""
+
+    class Meta:
+        """Metaclass defines serializer fields."""
+
+        model = User
+        fields = ['pk', 'username', 'first_name', 'last_name', 'email']
+
+        read_only_fields = ['username', 'email']
+
+    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
+
+    first_name = serializers.CharField(
+        label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
+    )
+
+    last_name = serializers.CharField(
+        label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
+    )
+
+    email = serializers.EmailField(
+        label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
+    )
+
+
+class ExtendedUserSerializer(UserSerializer):
+    """Serializer for a User with a bit more info."""
+
+    from users.serializers import GroupSerializer
+
+    groups = GroupSerializer(read_only=True, many=True)
+
+    class Meta(UserSerializer.Meta):
+        """Metaclass defines serializer fields."""
+
+        fields = [
+            *UserSerializer.Meta.fields,
+            'groups',
+            'is_staff',
+            'is_superuser',
+            'is_active',
+            'profile',
+        ]
+
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
+
+    is_staff = serializers.BooleanField(
+        label=_('Staff'), help_text=_('Does this user have staff permissions')
+    )
+
+    is_superuser = serializers.BooleanField(
+        label=_('Superuser'), help_text=_('Is this user a superuser')
+    )
+
+    is_active = serializers.BooleanField(
+        label=_('Active'), help_text=_('Is this user account active')
+    )
+
+    profile = BriefUserProfileSerializer(many=False, read_only=True)
+
+    def validate(self, attrs):
+        """Expanded validation for changing user role."""
+        # Check if is_staff or is_superuser is in attrs
+        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
+        request_user = self.context['request'].user
+
+        if role_change:
+            if request_user.is_superuser:
+                # Superusers can change any role
+                pass
+            elif request_user.is_staff and 'is_superuser' not in attrs:
+                # Staff can change any role except is_superuser
+                pass
+            else:
+                raise PermissionDenied(
+                    _('You do not have permission to change this user role.')
+                )
+        return super().validate(attrs)
+
+
+class MeUserSerializer(ExtendedUserSerializer):
+    """API serializer specifically for the 'me' endpoint."""
+
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options.
+
+        Extends the ExtendedUserSerializer.Meta options,
+        but ensures that certain fields are read-only.
+        """
+
+        read_only_fields = [
+            *ExtendedUserSerializer.Meta.read_only_fields,
+            'is_active',
+            'is_staff',
+            'is_superuser',
+        ]
+
+    profile = UserProfileSerializer(many=False, read_only=True)
+
+
+class UserCreateSerializer(ExtendedUserSerializer):
+    """Serializer for creating a new User."""
+
+    class Meta(ExtendedUserSerializer.Meta):
+        """Metaclass options for the UserCreateSerializer."""
+
+        # Prevent creation of users with superuser or staff permissions
+        read_only_fields = ['groups', 'is_staff', 'is_superuser']
+
+    def validate(self, attrs):
+        """Expanded valiadation for auth."""
+        # Check that the user trying to create a new user is a superuser
+        if not self.context['request'].user.is_superuser:
+            raise serializers.ValidationError(_('Only superusers can create new users'))
+
+        # Generate a random password
+        password = User.objects.make_random_password(length=14)
+        attrs.update({'password': password})
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        """Send an e email to the user after creation."""
+        from InvenTree.helpers_model import get_base_url
+        from InvenTree.tasks import email_user, offload_task
+
+        base_url = get_base_url()
+
+        instance = super().create(validated_data)
+
+        # Make sure the user cannot login until they have set a password
+        instance.set_unusable_password()
+
+        message = (
+            _('Your account has been created.')
+            + '\n\n'
+            + _('Please use the password reset function to login')
+        )
+
+        if base_url:
+            message += f'\n\nURL: {base_url}'
+
+        subject = _('Welcome to InvenTree')
+
+        # Send the user an onboarding email (from current site)
+        offload_task(
+            email_user, instance.pk, str(subject), str(message), force_async=True
+        )
+
+        return instance

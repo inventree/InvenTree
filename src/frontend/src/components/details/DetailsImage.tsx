@@ -39,7 +39,7 @@ import { StylishText } from '../items/StylishText';
  * Props for detail image
  */
 export type DetailImageProps = {
-  appRole: UserRoles;
+  appRole?: UserRoles;
   src: string;
   apiPath: string;
   refresh?: () => void;
@@ -437,7 +437,8 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
               maw={IMAGE_DIMENSION}
               onClick={expandImage}
             />
-            {permissions.hasChangeRole(props.appRole) &&
+            {props.appRole &&
+              permissions.hasChangeRole(props.appRole) &&
               hasOverlay &&
               hovered && (
                 <Overlay color='black' opacity={0.8} onClick={expandImage}>

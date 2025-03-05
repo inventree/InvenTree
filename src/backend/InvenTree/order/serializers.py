@@ -51,7 +51,6 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     NotesFieldMixin,
-    UserSerializer,
 )
 from order.status_codes import (
     PurchaseOrderStatusGroups,
@@ -61,7 +60,7 @@ from order.status_codes import (
 )
 from part.serializers import PartBriefSerializer
 from stock.status_codes import StockStatus
-from users.serializers import OwnerSerializer
+from users.serializers import OwnerSerializer, UserSerializer
 
 
 class TotalPriceMixin(serializers.Serializer):

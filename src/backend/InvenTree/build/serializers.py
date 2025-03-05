@@ -37,13 +37,12 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     NotesFieldMixin,
-    UserSerializer,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
 from stock.status_codes import StockStatus
-from users.serializers import OwnerSerializer
+from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
