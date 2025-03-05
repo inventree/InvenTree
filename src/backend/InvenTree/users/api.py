@@ -25,19 +25,18 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import (
-    ExtendedUserSerializer,
-    MeUserSerializer,
-    UserCreateSerializer,
-)
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner
+from users.models import ApiToken, Owner, UserProfile
 from users.serializers import (
     ApiTokenSerializer,
+    ExtendedUserSerializer,
     GetAuthTokenSerializer,
     GroupSerializer,
+    MeUserSerializer,
     OwnerSerializer,
     RoleSerializer,
+    UserCreateSerializer,
+    UserProfileSerializer,
 )
 
 logger = structlog.get_logger('inventree')
@@ -317,6 +316,18 @@ class LoginRedirect(RedirectView):
         return f'/{FRONTEND_URL_BASE}/logged-in/'
 
 
+class UserProfileDetail(RetrieveUpdateAPI):
+    """Detail endpoint for the user profile."""
+
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        """Return the profile of the current user."""
+        return self.request.user.profile
+
+
 user_urls = [
     path('roles/', RoleDetails.as_view(), name='api-user-roles'),
     path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
@@ -328,6 +339,7 @@ user_urls = [
         ]),
     ),
     path('me/', MeUserDetail.as_view(), name='api-user-me'),
+    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([

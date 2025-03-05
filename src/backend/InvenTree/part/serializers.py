@@ -36,6 +36,7 @@ from build.status_codes import BuildStatusGroups
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.tasks import offload_task
+from users.serializers import UserSerializer
 
 from .models import (
     BomItem,
@@ -1215,9 +1216,7 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', read_only=True, many=False
-    )
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1245,9 +1244,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
         read_only_fields = ['date', 'report', 'part_count', 'user']
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', read_only=True, many=False
-    )
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     report = InvenTree.serializers.InvenTreeAttachmentSerializerField(read_only=True)
 
