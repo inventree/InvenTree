@@ -725,10 +725,8 @@ function ApiTokenSection() {
     fields: { name: {} },
     successMessage: t`Token generated`,
     onFormSuccess: (data: any) => {
-      console.log(data);
       setToken(data.token);
       open();
-
       table.refreshTable();
     }
   });
