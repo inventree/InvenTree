@@ -7,6 +7,7 @@ from rest_framework import serializers
 import data_exporter.models
 import InvenTree.helpers
 import InvenTree.serializers
+import users.serializers
 from plugin import PluginMixinEnum, registry
 
 
@@ -88,7 +89,7 @@ class DataExportOutputSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'output',
         ]
 
-    user_detail = InvenTree.serializers.UserSerializer(
+    user_detail = users.serializers.UserSerializer(
         source='user', read_only=True, many=False
     )
 
