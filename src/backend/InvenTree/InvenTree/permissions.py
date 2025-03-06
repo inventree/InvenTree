@@ -1,6 +1,7 @@
 """Permission set for InvenTree."""
 
 from functools import wraps
+from typing import Optional
 
 from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
 from rest_framework import permissions
@@ -95,27 +96,38 @@ class RolePermission(permissions.BasePermission):
         return users.models.RuleSet.check_table_permission(user, table, permission)
 
 
+def map_scope(roles: Optional[list[str]] = None, only_read=False) -> dict:
+    """Map the required scopes to the current view."""
+
+    def scope_name(tables, action):
+        if only_read:
+            return ['read']
+        if tables:
+            return [[action, table] for table in tables]
+        return [action]
+
+    return {
+        'GET': scope_name(roles, 'get'),
+        'POST': scope_name(roles, 'post'),
+        'PUT': scope_name(roles, 'put'),
+        'PATCH': scope_name(roles, 'patch'),
+        'DELETE': scope_name(roles, 'delete'),
+        'OPTIONS': ['read'],
+    }
+
+
+# Precalculate the roles mapping
+roles = users.models.RuleSet.get_ruleset_models()
+precalculated_roles = {}
+for role, tables in roles.items():
+    for table in tables:
+        if table not in precalculated_roles:
+            precalculated_roles[table] = []
+        precalculated_roles[table].append(role)
+
+
 class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
     """Permission that discovers the required scopes from the OpenAPI schema."""
-
-    def map_scope(self, roles: str = '', only_read=False) -> dict:
-        """Map the required scopes to the current view."""
-
-        def scope_name(tables, action):
-            if only_read:
-                return ['read']
-            if tables:
-                return [[action, table] for table in tables]
-            return [action]
-
-        return {
-            'GET': scope_name(roles, 'get'),
-            'POST': scope_name(roles, 'post'),
-            'PUT': scope_name(roles, 'put'),
-            'PATCH': scope_name(roles, 'patch'),
-            'DELETE': scope_name(roles, 'delete'),
-            'OPTIONS': ['read'],
-        }
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""
@@ -128,22 +140,19 @@ class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
             model = get_model_for_view(view)
 
             if model is None:
-                return self.map_scope(only_read=True)
+                return map_scope(only_read=True)
 
-            app_label = model._meta.app_label
-            model_name = model._meta.model_name
-            table = f'{app_label}_{model_name}'
-
-            roles = users.models.RuleSet.get_ruleset_models()
-            matched_roles = [role for role in roles if table in roles[role]]
-
-            return self.map_scope(roles=matched_roles)
+            return map_scope(
+                roles=precalculated_roles.get(
+                    f'{model._meta.app_label}_{model._meta.model_name}', []
+                )
+            )
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission
-            return self.map_scope(only_read=True)
+            return map_scope(only_read=True)
         except Exception:
-            return self.map_scope(only_read=True)
+            return map_scope(only_read=True)
 
 
 class IsSuperuser(permissions.IsAdminUser):
