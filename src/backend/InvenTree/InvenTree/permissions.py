@@ -133,8 +133,6 @@ class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
         """Return the required scopes for the current request."""
         if hasattr(view, 'required_alternate_scopes'):
             return view.required_alternate_scopes
-        print(view)
-
         try:
             # Extract the model name associated with this request
             model = get_model_for_view(view)
