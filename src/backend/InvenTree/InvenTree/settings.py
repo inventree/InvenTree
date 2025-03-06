@@ -297,6 +297,7 @@ INSTALLED_APPS = [
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
+    'oauth2_provider',  # OAuth2 provider and API access
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
 ]
@@ -320,6 +321,7 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
+        'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
@@ -352,6 +354,7 @@ QUERYCOUNT = {
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
     [
+        'oauth2_provider.backends.OAuth2Backend',  # OAuth2 provider
         'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
         'django.contrib.auth.backends.ModelBackend',
         'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
@@ -521,6 +524,15 @@ TEMPLATES = [
     }
 ]
 
+OAUTH2_PROVIDER = {
+    # default scopes
+    'SCOPES': {
+        'read': 'Read scope',
+        'write': 'Write scope',
+        # inventree roles
+    }
+}
+
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
@@ -528,11 +540,13 @@ REST_FRAMEWORK = {
         'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
+        'oauth2_provider.contrib.rest_framework.TokenMatchesOASRequirements',
         'InvenTree.permissions.RolePermission',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',

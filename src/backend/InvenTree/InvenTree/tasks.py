@@ -26,6 +26,7 @@ from maintenance_mode.core import (
     maintenance_mode_on,
     set_maintenance_mode,
 )
+from oauth2_provider.models import clear_expired
 
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
@@ -705,3 +706,11 @@ def email_user(user_id: int, subject: str, message: str) -> None:
         return
 
     user.email_user(subject=subject, message=message)
+
+
+@scheduled_task(ScheduledTask.DAILY)
+def run_oauth_maintenance():
+    """Run the OAuth maintenance task(s)."""
+    logger.info('Starting OAuth maintenance task')
+    clear_expired()
+    logger.info('Completed OAuth maintenance task')
