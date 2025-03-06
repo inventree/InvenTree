@@ -13,9 +13,11 @@ from rest_framework.response import Response
 from taggit.serializers import TagListSerializerField
 
 import data_exporter.serializers
+import data_exporter.tasks
 import InvenTree.exceptions
 from data_exporter.models import ExportOutput
 from InvenTree.helpers import str2bool
+from InvenTree.tasks import offload_task
 from plugin import PluginMixinEnum, registry
 
 logger = structlog.get_logger('inventree')
@@ -288,13 +290,14 @@ class DataExportViewMixin:
         else:
             return super().get_serializer(*args, **kwargs)
 
-    def export_data(self, export_plugin, export_format, export_context):
+    def export_data(self, export_plugin, export_format, export_context, output):
         """Export the data in the specified format.
 
         Arguments:
             export_plugin: The plugin instance to use for exporting the data
             export_format: The file format to export the data in
             export_context: Additional context data to pass to the plugin
+            output: The ExportOutput object to write to
 
         - By default, uses the provided serializer to generate the data, and return it as a file download.
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
@@ -345,7 +348,7 @@ class DataExportViewMixin:
         # The returned data *must* be a list of dict objects
         try:
             data = export_plugin.export_data(
-                queryset, serializer_class, headers, export_context
+                queryset, serializer_class, headers, export_context, output
             )
 
         except Exception:
@@ -374,24 +377,11 @@ class DataExportViewMixin:
             InvenTree.exceptions.log_error('export_to_file')
             raise ValidationError(_('Error occurred during data export'))
 
-        # Create a new ExportOutput object
-        output = ExportOutput.objects.create(
-            user=self.request.user,
-            progress=100,
-            complete=True,
-            plugin=export_plugin.slug,
-            output=ContentFile(datafile, filename),
-        )
-
-        data = data_exporter.serializers.DataExportOutputSerializer(output).data
-
-        output.refresh_from_db()
-
-        # Return a serialized response
-        return Response(
-            data_exporter.serializers.DataExportOutputSerializer(output).data,
-            status=200,
-        )
+        # Update the output object with the exported data
+        output.progress = 100
+        output.complete = True
+        output.output = ContentFile(datafile, filename)
+        output.save()
 
     def get(self, request, *args, **kwargs):
         """Override the GET method to determine export options."""
@@ -428,13 +418,37 @@ class DataExportViewMixin:
                         export_context = plugin_serializer.validated_data
 
             # Add in extra context data for the plugin
-            export_context['request'] = request
             export_context['user'] = request.user
 
-            return self.export_data(
-                export_plugin=export_plugin,
-                export_format=export_format,
-                export_context=export_context,
+            # Create an output object to export against
+            output = ExportOutput.objects.create(
+                user=request.user,
+                progress=0,
+                complete=False,
+                plugin=export_plugin.slug,
+                output=None,
+            )
+
+            # Offload the export task to a background worker
+            # This is to avoid blocking the web server
+            # Note: The export task will loop back and call the 'export_data' method on this class
+            offload_task(
+                data_exporter.tasks.export_data,
+                self.__class__,
+                request.user.id,
+                request.query_params,
+                plugin_slug,
+                export_format,
+                export_context,
+                output.id,
+            )
+
+            output.refresh_from_db()
+
+            # Return a response to the frontend
+            return Response(
+                data_exporter.serializers.DataExportOutputSerializer(output).data,
+                status=200,
             )
 
         return super().get(request, *args, **kwargs)

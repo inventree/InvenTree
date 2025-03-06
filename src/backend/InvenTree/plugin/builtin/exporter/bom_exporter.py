@@ -145,7 +145,9 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
         return queryset
 
-    def export_data(self, queryset, serializer_class, headers, context, **kwargs):
+    def export_data(
+        self, queryset, serializer_class, headers, context, output, **kwargs
+    ):
         """Export BOM data from the queryset."""
         self.serializer_class = serializer_class
 
