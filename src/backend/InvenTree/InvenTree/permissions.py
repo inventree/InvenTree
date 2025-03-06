@@ -4,6 +4,7 @@ from functools import wraps
 from typing import Optional
 
 from oauth2_provider.contrib.rest_framework import TokenMatchesOASRequirements
+from oauth2_provider.contrib.rest_framework.authentication import OAuth2Authentication
 from rest_framework import permissions
 
 import users.models
@@ -128,6 +129,19 @@ for role, tables in roles.items():
 
 class InvenTreeTokenMatchesOASRequirements(TokenMatchesOASRequirements):
     """Permission that discovers the required scopes from the OpenAPI schema."""
+
+    def has_permission(self, request, view):
+        """Check if the user has the required scopes or was authenticated another way."""
+        is_authenticated = permissions.IsAuthenticated().has_permission(request, view)
+        oauth2authenticated = False
+        if is_authenticated:
+            oauth2authenticated = isinstance(
+                request.successful_authenticator, OAuth2Authentication
+            )
+
+        return (is_authenticated and not oauth2authenticated) or super().has_permission(
+            request, view
+        )
 
     def get_required_alternate_scopes(self, request, view):
         """Return the required scopes for the current request."""

@@ -561,8 +561,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
-        'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
         'InvenTree.permissions.RolePermission',
+        'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
