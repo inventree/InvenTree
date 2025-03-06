@@ -304,7 +304,7 @@ class DataExportViewMixin:
 
         if not issubclass(serializer_class, DataExportSerializerMixin):
             raise ValidationError(
-                'Serializer class must inherit from DataExportSerialierMixin'
+                'Serializer class must inherit from DataExportSerializerMixin'
             )
 
         export_error = _('Error occurred during data export')
@@ -327,7 +327,7 @@ class DataExportViewMixin:
         serializer = serializer_class(context=context, exporting=True)
         serializer.initial_data = queryset
 
-        # Construct 'defualt' headers (note: may be overridden by plugin)
+        # Construct 'default' headers (note: may be overridden by plugin)
         headers = serializer.generate_headers()
 
         # Generate a filename for the exported data (implemented by the plugin)
