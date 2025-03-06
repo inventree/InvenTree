@@ -530,6 +530,21 @@ OAUTH2_PROVIDER = {
         'read': 'Read scope',
         'write': 'Write scope',
         # inventree roles
+        'admin': 'Role Admin',
+        'part_category': 'Role Part Categories',
+        'part': 'Role Parts',
+        'stocktake': 'Role Stocktake',
+        'stock_location': 'Role Stock Locations',
+        'stock': 'Role Stock Items',
+        'build': 'Role Build Orders',
+        'purchase_order': 'Role Purchase Orders',
+        'sales_order': 'Role Sales Orders',
+        'return_order': 'Role Return Orders',
+        # inventree methods
+        'get': 'Method GET',
+        'post': 'Method POST',
+        'put': 'Method PUT',
+        'delete': 'Method DELETE',
     }
 }
 
@@ -546,7 +561,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
-        'oauth2_provider.contrib.rest_framework.TokenMatchesOASRequirements',
+        'InvenTree.permissions.InvenTreeTokenMatchesOASRequirements',
         'InvenTree.permissions.RolePermission',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
