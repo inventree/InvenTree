@@ -101,10 +101,10 @@ def map_scope(roles: Optional[list[str]] = None, only_read=False) -> dict:
 
     def scope_name(tables, action):
         if only_read:
-            return ['read']
+            return ([['read']],)
         if tables:
             return [[action, table] for table in tables]
-        return [action]
+        return ([[action]],)
 
     return {
         'GET': scope_name(roles, 'get'),
