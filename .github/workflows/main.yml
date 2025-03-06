@@ -1,0 +1,20 @@
+name: Mirror Azure Repo
+
+on:
+  schedule:
+    - cron: "*/500 * * * *"  # Runs every 15 minutes (adjust as needed)
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync repository from Azure
+        uses: dawidd6/action-sync@v2
+        with:
+          source_repo: 'https://<joseph.kubinski.1>:${{ secrets.AZURE_PAT }}@https://dev.azure.com/shelfcontrol1/_git/ShelfControl'
+          source_branch: 'main'
+          destination_branch: 'main'
+        env:
+          DESTINATION_REPO:  'https://github.com/Devboyzteam/ShelfControl'
+          DESTINATION_TOKEN: ${{ secrets.GH_TOKEN }}
