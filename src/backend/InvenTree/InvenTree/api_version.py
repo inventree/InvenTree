@@ -1,16 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 320
+INVENTREE_API_VERSION = 321
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v320 - 2025-03-06 : https://github.com/inventree/InvenTree/pull/9096
+v321 - 2025-03-07 : https://github.com/inventree/InvenTree/pull/9096
     - Overhaul the data-export API functionality
     - Allow customization of data exporting via plugins
+
+v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
+    - Link fields are now up to 2000 chars long
 
 v319 - 2025-03-04 : https://github.com/inventree/InvenTree/pull/9199
     - Add detail API endpoint for the LabelOutput model
