@@ -1,0 +1,106 @@
+import { t } from '@lingui/macro';
+import { notifications, showNotification } from '@mantine/notifications';
+import { IconCircleCheck } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { ProgressBar } from '../components/items/ProgressBar';
+import { useApi } from '../contexts/ApiContext';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { generateUrl } from '../functions/urls';
+import { apiUrl } from '../states/ApiState';
+
+/**
+ * Hook for monitoring a data output process running on the server
+ */
+export default function useDataOutput({
+  title,
+  id
+}: {
+  title: string;
+  id?: number;
+}) {
+  const api = useApi();
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!!id) {
+      setLoading(true);
+      showNotification({
+        id: `data-output-${id}`,
+        title: title,
+        loading: true,
+        autoClose: false,
+        withCloseButton: false,
+        message: <ProgressBar size='lg' value={0} progressLabel />
+      });
+    } else setLoading(false);
+  }, [id, title]);
+
+  const progress = useQuery({
+    enabled: !!id && loading,
+    refetchInterval: 500,
+    queryKey: ['data-output', id, title],
+    queryFn: () =>
+      api
+        .get(apiUrl(ApiEndpoints.data_output, id))
+        .then((response) => {
+          const data = response?.data ?? {};
+
+          if (data.complete) {
+            setLoading(false);
+            notifications.update({
+              id: `data-output-${id}`,
+              loading: false,
+              autoClose: 2500,
+              title: title,
+              message: t`Process completed successfully`,
+              color: 'green',
+              icon: <IconCircleCheck />
+            });
+
+            if (data.output) {
+              const url = generateUrl(data.output);
+              window.open(url.toString(), '_blank');
+            }
+          } else if (!!data.error) {
+            setLoading(false);
+            notifications.update({
+              id: `data-output-${id}`,
+              loading: false,
+              autoClose: 2500,
+              title: title,
+              message: t`Process failed`,
+              color: 'red'
+            });
+          } else {
+            notifications.update({
+              id: `data-output-${id}`,
+              loading: true,
+              autoClose: false,
+              withCloseButton: false,
+              message: (
+                <ProgressBar
+                  size='lg'
+                  maximum={data.total}
+                  value={data.progress}
+                  progressLabel
+                />
+              )
+            });
+          }
+        })
+        .catch(() => {
+          setLoading(false);
+          notifications.update({
+            id: `data-output-${id}`,
+            loading: false,
+            autoClose: 2500,
+            title: title,
+            message: t`Process failed`,
+            color: 'red'
+          });
+          return {};
+        })
+  });
+}

@@ -67,6 +67,9 @@ export enum ApiEndpoints {
   barcode_unlink = 'barcode/unlink/',
   barcode_generate = 'barcode/generate/',
 
+  // Data output endpoints
+  data_output = 'data-output/',
+
   // Data export endpoints
   export_session_list = 'exporter/session/',
 
