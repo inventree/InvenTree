@@ -222,6 +222,14 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
+                # oAuth
+                'oauth2_provider_accesstoken',
+                'oauth2_provider_idtoken',
+                'oauth2_provider_grant',
+                'oauth2_provider_application',
+                'oauth2_provider_refreshtoken',
+                #'oauth2_provider_code',
+                # Report / label stuff
                 'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
