@@ -44,6 +44,7 @@ from InvenTree.helpers import (
     normalize,
     str2bool,
 )
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -275,7 +276,7 @@ class AbstractExtraLineSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if order_detail is not True:
+        if order_detail is not True and not isGeneratingSchema():
             self.fields.pop('order_detail', None)
 
     quantity = serializers.FloatField()
@@ -343,7 +344,7 @@ class PurchaseOrderSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if supplier_detail is not True:
+        if supplier_detail is not True and not isGeneratingSchema():
             self.fields.pop('supplier_detail', None)
 
     def skip_create_fields(self):
@@ -517,6 +518,9 @@ class PurchaseOrderLineItemSerializer(
         order_detail = kwargs.pop('order_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if part_detail is not True:
             self.fields.pop('part_detail', None)
@@ -1025,7 +1029,7 @@ class SalesOrderSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if customer_detail is not True:
+        if customer_detail is not True and not isGeneratingSchema():
             self.fields.pop('customer_detail', None)
 
     def skip_create_fields(self):
@@ -1134,6 +1138,9 @@ class SalesOrderLineItemSerializer(
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if part_detail is not True:
             self.fields.pop('part_detail', None)
@@ -1289,7 +1296,7 @@ class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-        if not order_detail:
+        if not order_detail and not isGeneratingSchema():
             self.fields.pop('order_detail', None)
 
     @staticmethod
@@ -1351,6 +1358,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not order_detail:
             self.fields.pop('order_detail', None)
@@ -1869,7 +1879,7 @@ class ReturnOrderSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if customer_detail is not True:
+        if customer_detail is not True and not isGeneratingSchema():
             self.fields.pop('customer_detail', None)
 
     def skip_create_fields(self):
@@ -2080,6 +2090,9 @@ class ReturnOrderLineItemSerializer(
         part_detail = kwargs.pop('part_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not order_detail:
             self.fields.pop('order_detail', None)

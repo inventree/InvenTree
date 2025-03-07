@@ -14,6 +14,7 @@ import part.filters
 import part.serializers as part_serializers
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -256,6 +257,9 @@ class ManufacturerPartSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if isGeneratingSchema():
+            return
+
         if part_detail is not True:
             self.fields.pop('part_detail', None)
 
@@ -306,7 +310,7 @@ class ManufacturerPartParameterSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not man_detail:
+        if not man_detail and not isGeneratingSchema():
             self.fields.pop('manufacturer_part_detail', None)
 
     manufacturer_part_detail = ManufacturerPartSerializer(
@@ -388,6 +392,9 @@ class SupplierPartSerializer(
         prettify = kwargs.pop('pretty', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if part_detail is not True:
             self.fields.pop('part_detail', None)
@@ -528,6 +535,9 @@ class SupplierPriceBreakSerializer(
         part_detail = kwargs.pop('part_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not supplier_detail:
             self.fields.pop('supplier_detail', None)

@@ -30,6 +30,7 @@ from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
+from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from users.serializers import UserSerializer
 
@@ -217,6 +218,9 @@ class StockItemTestResultSerializer(
         template_detail = kwargs.pop('template_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if user_detail is not True:
             self.fields.pop('user_detail', None)
@@ -441,6 +445,9 @@ class StockItemSerializer(
         tests = kwargs.pop('tests', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -1184,7 +1191,7 @@ class LocationSerializer(
 
         super().__init__(*args, **kwargs)
 
-        if not path_detail:
+        if not path_detail and not isGeneratingSchema():
             self.fields.pop('path', None)
 
     @staticmethod
@@ -1262,6 +1269,9 @@ class StockTrackingSerializer(
         user_detail = kwargs.pop('user_detail', False)
 
         super().__init__(*args, **kwargs)
+
+        if isGeneratingSchema():
+            return
 
         if item_detail is not True:
             self.fields.pop('item_detail', None)
