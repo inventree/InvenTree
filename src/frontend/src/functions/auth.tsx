@@ -117,6 +117,11 @@ export const doBasicLogin = async (
           autoClose: false
         });
       }
+      showNotification({
+        title: t`Login Failed`,
+        message: t`Check the supplied username and password`,
+        color: 'red'
+      });
     });
 
   if (loginDone) {
