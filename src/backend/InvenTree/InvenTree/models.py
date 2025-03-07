@@ -87,11 +87,11 @@ class PluginValidationMixin(DiffMixin):
 
     def run_plugin_validation(self):
         """Throw this model against the plugin validation interface."""
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
         deltas = self.get_field_deltas()
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 if plugin.validate_model_instance(self, deltas=deltas) is True:
                     return
@@ -130,9 +130,9 @@ class PluginValidationMixin(DiffMixin):
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
         from InvenTree.exceptions import log_error
-        from plugin.registry import registry
+        from plugin import PluginMixinEnum, registry
 
-        for plugin in registry.with_mixin('validation'):
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
             try:
                 plugin.validate_model_deletion(self)
             except ValidationError as e:
