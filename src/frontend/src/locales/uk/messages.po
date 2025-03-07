@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-23 05:35\n"
+"PO-Revision-Date: 2025-03-07 03:34\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -83,8 +83,6 @@ msgid "Scan or enter barcode data"
 msgstr ""
 
 #: src/components/barcodes/BarcodeInput.tsx:114
-#: src/components/buttons/PrintingActions.tsx:120
-#: src/components/buttons/PrintingActions.tsx:158
 #: src/components/editors/NotesEditor.tsx:74
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:149
 #: src/components/forms/fields/ApiFormField.tsx:351
@@ -94,10 +92,10 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:87
 #: src/components/nav/SearchDrawer.tsx:553
 #: src/components/render/ModelType.tsx:273
-#: src/pages/Auth/ChangePassword.tsx:55
+#: src/functions/auth.tsx:524
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:124
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:632
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:128
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:639
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
@@ -112,7 +110,7 @@ msgid "Enter barcode data"
 msgstr ""
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:32
-#: src/components/nav/NavigationDrawer.tsx:117
+#: src/components/nav/NavigationDrawer.tsx:129
 #: src/forms/PurchaseOrderForms.tsx:416
 #: src/forms/PurchaseOrderForms.tsx:520
 msgid "Scan Barcode"
@@ -198,47 +196,64 @@ msgstr "Скопійовано"
 msgid "Copy"
 msgstr "Копіювати"
 
-#: src/components/buttons/PrintingActions.tsx:107
+#: src/components/buttons/PrintingActions.tsx:77
+msgid "Printing"
+msgstr ""
+
+#: src/components/buttons/PrintingActions.tsx:78
+msgid "Printing completed successfully"
+msgstr ""
+
+#: src/components/buttons/PrintingActions.tsx:114
+#~ msgid "Label printing completed successfully"
+#~ msgstr "Label printing completed successfully"
+
+#: src/components/buttons/PrintingActions.tsx:121
+#~ msgid "The label could not be generated"
+#~ msgstr "The label could not be generated"
+
+#: src/components/buttons/PrintingActions.tsx:146
+msgid "Printing Labels"
+msgstr ""
+
+#: src/components/buttons/PrintingActions.tsx:152
+msgid "Printing Reports"
+msgstr ""
+
+#: src/components/buttons/PrintingActions.tsx:152
+#~ msgid "Generate"
+#~ msgstr "Generate"
+
+#: src/components/buttons/PrintingActions.tsx:153
+#~ msgid "Report printing completed successfully"
+#~ msgstr "Report printing completed successfully"
+
+#: src/components/buttons/PrintingActions.tsx:159
+#~ msgid "The report could not be generated"
+#~ msgstr "The report could not be generated"
+
+#: src/components/buttons/PrintingActions.tsx:215
 msgid "Print Label"
 msgstr "Друк етикетки"
 
-#: src/components/buttons/PrintingActions.tsx:113
+#: src/components/buttons/PrintingActions.tsx:221
+#: src/components/buttons/PrintingActions.tsx:246
 msgid "Print"
 msgstr "Друк"
 
-#: src/components/buttons/PrintingActions.tsx:114
-msgid "Label printing completed successfully"
-msgstr "Етикетку успішно роздруковано"
-
-#: src/components/buttons/PrintingActions.tsx:121
-msgid "The label could not be generated"
-msgstr "Мітка не може бути створена"
-
-#: src/components/buttons/PrintingActions.tsx:136
+#: src/components/buttons/PrintingActions.tsx:230
 msgid "Print Report"
 msgstr "Надрукувати звіт"
 
-#: src/components/buttons/PrintingActions.tsx:152
-msgid "Generate"
-msgstr "Створити"
-
-#: src/components/buttons/PrintingActions.tsx:153
-msgid "Report printing completed successfully"
-msgstr "Звіт успішно надруковано"
-
-#: src/components/buttons/PrintingActions.tsx:159
-msgid "The report could not be generated"
-msgstr "Не вдалося згенерувати звіт"
-
-#: src/components/buttons/PrintingActions.tsx:187
+#: src/components/buttons/PrintingActions.tsx:267
 msgid "Printing Actions"
 msgstr "Дії друку"
 
-#: src/components/buttons/PrintingActions.tsx:192
+#: src/components/buttons/PrintingActions.tsx:272
 msgid "Print Labels"
 msgstr "Друк етикеток"
 
-#: src/components/buttons/PrintingActions.tsx:198
+#: src/components/buttons/PrintingActions.tsx:278
 msgid "Print Reports"
 msgstr "Друк звітів"
 
@@ -550,7 +565,26 @@ msgstr ""
 msgid "There are no unread news items"
 msgstr ""
 
-#: src/components/details/Details.tsx:305
+#: src/components/details/Details.tsx:115
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:70
+#: src/pages/core/UserDetail.tsx:154
+#: src/tables/core/UserTable.tsx:29
+#: src/tables/settings/UserTable.tsx:293
+msgid "Superuser"
+msgstr ""
+
+#: src/components/details/Details.tsx:116
+#: src/pages/core/UserDetail.tsx:151
+#: src/tables/core/UserTable.tsx:24
+#: src/tables/settings/UserTable.tsx:288
+msgid "Staff"
+msgstr ""
+
+#: src/components/details/Details.tsx:117
+msgid "Email:"
+msgstr ""
+
+#: src/components/details/Details.tsx:384
 msgid "No name defined"
 msgstr "Ім'я не визначено"
 
@@ -564,9 +598,9 @@ msgstr "Видалити пов'язане зображення з цього е
 
 #: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:747
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:201
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:401
-#: src/pages/stock/StockDetail.tsx:727
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:205
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:408
+#: src/pages/stock/StockDetail.tsx:728
 msgid "Remove"
 msgstr "Видалити"
 
@@ -574,7 +608,7 @@ msgstr "Видалити"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:179
 #: src/components/items/ActionDropdown.tsx:268
 #: src/components/items/ActionDropdown.tsx:269
-#: src/contexts/ThemeContext.tsx:47
+#: src/contexts/ThemeContext.tsx:40
 #: src/hooks/UseForm.tsx:40
 #: src/pages/Index/Settings/AccountSettings/useConfirm.tsx:105
 #: src/tables/FilterSelectDrawer.tsx:303
@@ -610,8 +644,8 @@ msgstr "Очистити"
 
 #: src/components/details/DetailsImage.tsx:255
 #: src/components/forms/ApiForm.tsx:675
-#: src/contexts/ThemeContext.tsx:47
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:643
+#: src/contexts/ThemeContext.tsx:40
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:650
 msgid "Submit"
 msgstr "Відправити"
 
@@ -881,7 +915,7 @@ msgstr "Оновити"
 
 #: src/components/forms/ApiForm.tsx:733
 #: src/components/items/ActionDropdown.tsx:248
-#: src/hooks/UseForm.tsx:121
+#: src/hooks/UseForm.tsx:127
 #: src/pages/Notifications.tsx:130
 #: src/tables/RowActions.tsx:75
 #: src/tables/plugin/PluginListTable.tsx:231
@@ -902,11 +936,11 @@ msgstr "Видалити"
 #~ msgid "Login successfull"
 #~ msgstr "Login successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:64
+#: src/components/forms/AuthenticationForm.tsx:63
 msgid "Login successful"
 msgstr "Вхід успішний"
 
-#: src/components/forms/AuthenticationForm.tsx:65
+#: src/components/forms/AuthenticationForm.tsx:64
 msgid "Logged in successfully"
 msgstr "Вхід успішно виконано"
 
@@ -915,61 +949,57 @@ msgstr "Вхід успішно виконано"
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:72
-#: src/components/forms/AuthenticationForm.tsx:80
+#: src/components/forms/AuthenticationForm.tsx:71
+#: src/components/forms/AuthenticationForm.tsx:79
 msgid "Login failed"
 msgstr "Не вдалося увійти"
 
-#: src/components/forms/AuthenticationForm.tsx:73
-#: src/components/forms/AuthenticationForm.tsx:81
-#: src/components/forms/AuthenticationForm.tsx:97
-#: src/components/forms/AuthenticationForm.tsx:263
-#: src/functions/auth.tsx:200
+#: src/components/forms/AuthenticationForm.tsx:72
+#: src/components/forms/AuthenticationForm.tsx:80
+#: src/components/forms/AuthenticationForm.tsx:96
+#: src/components/forms/AuthenticationForm.tsx:262
+#: src/functions/auth.tsx:241
 msgid "Check your input and try again."
 msgstr "Перевірте введені дані та повторіть спробу."
 
-#: src/components/forms/AuthenticationForm.tsx:91
-#: src/functions/auth.tsx:191
+#: src/components/forms/AuthenticationForm.tsx:90
+#: src/functions/auth.tsx:232
 msgid "Mail delivery successful"
 msgstr "Пошту відправлено"
 
-#: src/components/forms/AuthenticationForm.tsx:92
+#: src/components/forms/AuthenticationForm.tsx:91
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "Перевірте вашу поштову скриньку для входу. Якщо у вас є обліковий запис, ви отримаєте посилання для входу. Також перевірте спам."
 
-#: src/components/forms/AuthenticationForm.tsx:96
+#: src/components/forms/AuthenticationForm.tsx:95
 msgid "Mail delivery failed"
 msgstr "Пошту не вдалося відправити"
 
-#: src/components/forms/AuthenticationForm.tsx:116
+#: src/components/forms/AuthenticationForm.tsx:115
 msgid "Or continue with other methods"
 msgstr "Або продовжити з іншими методами"
 
-#: src/components/forms/AuthenticationForm.tsx:127
-#: src/components/forms/AuthenticationForm.tsx:278
-#: src/pages/Auth/ChangePassword.tsx:118
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:71
+#: src/components/forms/AuthenticationForm.tsx:126
+#: src/components/forms/AuthenticationForm.tsx:277
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
+#: src/pages/core/UserDetail.tsx:52
 msgid "Username"
 msgstr "Ім'я користувача"
 
-#: src/components/forms/AuthenticationForm.tsx:129
-#: src/components/forms/AuthenticationForm.tsx:280
+#: src/components/forms/AuthenticationForm.tsx:128
+#: src/components/forms/AuthenticationForm.tsx:279
 msgid "Your username"
 msgstr "Ваше ім’я користувача"
 
-#: src/components/forms/AuthenticationForm.tsx:131
-#~ msgid "Log in"
-#~ msgstr "Log in"
-
-#: src/components/forms/AuthenticationForm.tsx:134
-#: src/components/forms/AuthenticationForm.tsx:293
-#: src/pages/Auth/ResetPassword.tsx:101
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:697
+#: src/components/forms/AuthenticationForm.tsx:133
+#: src/components/forms/AuthenticationForm.tsx:292
+#: src/pages/Auth/ResetPassword.tsx:33
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:704
 msgid "Password"
 msgstr "Пароль"
 
-#: src/components/forms/AuthenticationForm.tsx:136
-#: src/components/forms/AuthenticationForm.tsx:295
+#: src/components/forms/AuthenticationForm.tsx:135
+#: src/components/forms/AuthenticationForm.tsx:294
 msgid "Your password"
 msgstr "Ваш пароль"
 
@@ -977,85 +1007,76 @@ msgstr "Ваш пароль"
 #~ msgid "I will use username and password"
 #~ msgstr "I will use username and password"
 
-#: src/components/forms/AuthenticationForm.tsx:148
-#: src/pages/Auth/Reset.tsx:26
+#: src/components/forms/AuthenticationForm.tsx:147
 msgid "Reset password"
 msgstr "Скинути пароль"
 
-#: src/components/forms/AuthenticationForm.tsx:157
-#: src/components/forms/AuthenticationForm.tsx:285
-#: src/pages/Auth/Reset.tsx:31
+#: src/components/forms/AuthenticationForm.tsx:156
+#: src/components/forms/AuthenticationForm.tsx:284
+#: src/pages/Auth/Reset.tsx:16
+#: src/pages/core/UserDetail.tsx:46
 msgid "Email"
 msgstr "Електронна пошта"
 
-#: src/components/forms/AuthenticationForm.tsx:158
-#: src/pages/Auth/Reset.tsx:32
+#: src/components/forms/AuthenticationForm.tsx:157
+#: src/pages/Auth/Reset.tsx:17
 msgid "We will send you a link to login - if you are registered"
 msgstr "Ми надішлемо вам авторизаційне посилання - якщо ви зареєстровані"
 
-#: src/components/forms/AuthenticationForm.tsx:174
+#: src/components/forms/AuthenticationForm.tsx:173
 msgid "Send me an email"
 msgstr "Надіслати мені ел. листа"
 
-#: src/components/forms/AuthenticationForm.tsx:176
+#: src/components/forms/AuthenticationForm.tsx:175
 msgid "Use username and password"
 msgstr "Використати ім'я користувача та пароль"
 
-#: src/components/forms/AuthenticationForm.tsx:185
-#: src/pages/Auth/MFALogin.tsx:54
+#: src/components/forms/AuthenticationForm.tsx:184
 msgid "Log In"
 msgstr "Увійти"
 
-#: src/components/forms/AuthenticationForm.tsx:187
-#: src/pages/Auth/Reset.tsx:41
+#: src/components/forms/AuthenticationForm.tsx:186
+#: src/pages/Auth/Reset.tsx:25
 msgid "Send Email"
 msgstr "Надіслати листа"
 
-#: src/components/forms/AuthenticationForm.tsx:221
+#: src/components/forms/AuthenticationForm.tsx:220
 msgid "Passwords do not match"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:238
+#: src/components/forms/AuthenticationForm.tsx:237
 msgid "Registration successful"
 msgstr "Реєстрація успішна"
 
-#: src/components/forms/AuthenticationForm.tsx:239
+#: src/components/forms/AuthenticationForm.tsx:238
 msgid "Please confirm your email address to complete the registration"
 msgstr "Будь ласка, перевірте свою електронну адресу для завершення реєстрації"
 
-#: src/components/forms/AuthenticationForm.tsx:262
+#: src/components/forms/AuthenticationForm.tsx:261
 msgid "Input error"
 msgstr "Помилка у вхідних даних"
 
-#: src/components/forms/AuthenticationForm.tsx:287
+#: src/components/forms/AuthenticationForm.tsx:286
 msgid "This will be used for a confirmation"
 msgstr "Це буде використано для підтвердження"
 
-#: src/components/forms/AuthenticationForm.tsx:300
+#: src/components/forms/AuthenticationForm.tsx:299
 msgid "Password repeat"
 msgstr "Повтор пароля"
 
-#: src/components/forms/AuthenticationForm.tsx:302
+#: src/components/forms/AuthenticationForm.tsx:301
 msgid "Repeat password"
 msgstr "Повторіть пароль"
 
-#: src/components/forms/AuthenticationForm.tsx:314
-#: src/components/forms/AuthenticationForm.tsx:359
-#: src/pages/Auth/Login.tsx:126
+#: src/components/forms/AuthenticationForm.tsx:313
+#: src/pages/Auth/Login.tsx:108
+#: src/pages/Auth/Register.tsx:12
 msgid "Register"
 msgstr "Реєстрація"
 
-#: src/components/forms/AuthenticationForm.tsx:320
+#: src/components/forms/AuthenticationForm.tsx:319
 msgid "Or use SSO"
 msgstr "Або використайте SSO"
-
-#: src/components/forms/AuthenticationForm.tsx:351
-msgid "Don't have an account?"
-msgstr "Не маєте облікового запису?"
-
-#: src/components/forms/AuthenticationForm.tsx:370
-msgid "Go back to login"
-msgstr "Повернутися до входу"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
@@ -1064,9 +1085,8 @@ msgstr "Хост"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:70
-#: src/components/forms/InstanceOptions.tsx:118
+#: src/components/forms/InstanceOptions.tsx:106
 #: src/components/plugins/PluginDrawer.tsx:68
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:782
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/CategoryDetail.tsx:86
 #: src/pages/part/PartDetail.tsx:164
@@ -1077,7 +1097,7 @@ msgstr "Хост"
 #: src/tables/machine/MachineTypeTable.tsx:340
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:32
-#: src/tables/settings/GroupTable.tsx:147
+#: src/tables/settings/GroupTable.tsx:149
 #: src/tables/settings/PendingTasksTable.tsx:32
 #: src/tables/stock/LocationTypesTable.tsx:69
 msgid "Name"
@@ -1099,7 +1119,7 @@ msgstr "Зберегти"
 #~ msgid "Select destination instance"
 #~ msgstr "Select destination instance"
 
-#: src/components/forms/InstanceOptions.tsx:59
+#: src/components/forms/InstanceOptions.tsx:49
 msgid "Select Server"
 msgstr ""
 
@@ -1107,13 +1127,19 @@ msgstr ""
 #~ msgid "Edit possible host options"
 #~ msgstr "Edit possible host options"
 
-#: src/components/forms/InstanceOptions.tsx:85
+#: src/components/forms/InstanceOptions.tsx:74
 msgid "Edit host options"
 msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 #~ msgid "Version: {0}"
 #~ msgstr "Version: {0}"
+
+#: src/components/forms/InstanceOptions.tsx:100
+#: src/components/modals/ServerInfoModal.tsx:19
+#: src/pages/Index/Settings/SystemSettings.tsx:38
+msgid "Server"
+msgstr "Сервер"
 
 #: src/components/forms/InstanceOptions.tsx:100
 #~ msgid "API:{0}"
@@ -1128,31 +1154,25 @@ msgstr ""
 #~ msgstr "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/InstanceOptions.tsx:112
-#: src/components/modals/ServerInfoModal.tsx:19
-#: src/pages/Index/Settings/SystemSettings.tsx:38
-msgid "Server"
-msgstr "Сервер"
-
-#: src/components/forms/InstanceOptions.tsx:124
 #: src/components/plugins/PluginDrawer.tsx:88
 #: src/tables/plugin/PluginListTable.tsx:117
 msgid "Version"
 msgstr "Версія"
 
-#: src/components/forms/InstanceOptions.tsx:130
+#: src/components/forms/InstanceOptions.tsx:118
 #: src/components/modals/AboutInvenTreeModal.tsx:106
 #: src/components/modals/ServerInfoModal.tsx:37
 msgid "API Version"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:136
-#: src/components/nav/NavigationDrawer.tsx:193
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:205
+#: src/components/forms/InstanceOptions.tsx:124
+#: src/components/nav/NavigationDrawer.tsx:205
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:204
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:44
 msgid "Plugins"
 msgstr "Плагіни"
 
-#: src/components/forms/InstanceOptions.tsx:137
+#: src/components/forms/InstanceOptions.tsx:125
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/settings/TemplateTable.tsx:248
 #: src/tables/settings/TemplateTable.tsx:364
@@ -1160,19 +1180,19 @@ msgstr "Плагіни"
 msgid "Enabled"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:137
+#: src/components/forms/InstanceOptions.tsx:125
 msgid "Disabled"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:143
+#: src/components/forms/InstanceOptions.tsx:131
 msgid "Worker"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:144
+#: src/components/forms/InstanceOptions.tsx:132
 msgid "Running"
 msgstr ""
 
-#: src/components/forms/InstanceOptions.tsx:144
+#: src/components/forms/InstanceOptions.tsx:132
 #: src/tables/settings/FailedTasksTable.tsx:48
 msgid "Stopped"
 msgstr ""
@@ -1211,7 +1231,7 @@ msgstr "Пошук"
 
 #: src/components/forms/fields/RelatedModelField.tsx:321
 #: src/components/modals/AboutInvenTreeModal.tsx:78
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:326
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:332
 msgid "Loading"
 msgstr "Завантаження"
 
@@ -1301,7 +1321,7 @@ msgstr ""
 #: src/components/importer/ImporterColumnSelector.tsx:185
 #: src/components/items/ErrorItem.tsx:12
 #: src/functions/api.tsx:57
-#: src/functions/auth.tsx:234
+#: src/functions/auth.tsx:280
 msgid "An error occurred"
 msgstr ""
 
@@ -1519,16 +1539,12 @@ msgid "This information is only available for staff users"
 msgstr ""
 
 #: src/components/items/Placeholder.tsx:14
-msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr "Ця функція/кнопка/сайт є наповнювачем для функції, яка не реалізована, тільки часткове або призначене для тестування."
+#~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
+#~ msgstr "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
 
 #: src/components/items/Placeholder.tsx:17
-msgid "PLH"
-msgstr ""
-
-#: src/components/items/Placeholder.tsx:31
-msgid "This panel is a placeholder."
-msgstr ""
+#~ msgid "PLH"
+#~ msgstr "PLH"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:100
 msgid "InvenTree Version"
@@ -1567,7 +1583,7 @@ msgid "Links"
 msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
-#: src/components/nav/NavigationDrawer.tsx:205
+#: src/components/nav/NavigationDrawer.tsx:217
 #: src/defaults/actions.tsx:32
 msgid "Documentation"
 msgstr "Документація"
@@ -1732,7 +1748,7 @@ msgstr "Нічого не знайдено..."
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:52
-#: src/components/nav/NavigationDrawer.tsx:181
+#: src/components/nav/NavigationDrawer.tsx:193
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:31
 msgid "Settings"
 msgstr "Налаштування"
@@ -1748,10 +1764,10 @@ msgstr ""
 #~ msgstr "Account settings"
 
 #: src/components/nav/MainMenu.tsx:67
-#: src/components/nav/NavigationDrawer.tsx:141
+#: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/pages/Index/Settings/SystemSettings.tsx:308
-#: src/pages/Index/Settings/SystemSettings.tsx:313
+#: src/pages/Index/Settings/SystemSettings.tsx:319
+#: src/pages/Index/Settings/SystemSettings.tsx:324
 msgid "System Settings"
 msgstr "Налаштування системи"
 
@@ -1764,11 +1780,11 @@ msgstr "Налаштування системи"
 #~ msgstr "Switch to pseudo language"
 
 #: src/components/nav/MainMenu.tsx:86
-#: src/components/nav/NavigationDrawer.tsx:148
+#: src/components/nav/NavigationDrawer.tsx:160
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:80
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:247
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:252
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:219
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:224
 msgid "Admin Center"
 msgstr "Центр адміністрування"
 
@@ -1796,7 +1812,7 @@ msgstr "Вихід"
 #: src/components/nav/NavigationDrawer.tsx:77
 #: src/components/render/ModelType.tsx:30
 #: src/defaults/links.tsx:12
-#: src/pages/Index/Settings/SystemSettings.tsx:173
+#: src/pages/Index/Settings/SystemSettings.tsx:184
 #: src/pages/part/CategoryDetail.tsx:130
 #: src/pages/part/CategoryDetail.tsx:265
 #: src/pages/part/CategoryDetail.tsx:304
@@ -1808,10 +1824,10 @@ msgstr "Частини"
 #: src/components/render/Part.tsx:30
 #: src/defaults/links.tsx:13
 #: src/forms/StockForms.tsx:702
-#: src/pages/Index/Settings/SystemSettings.tsx:206
+#: src/pages/Index/Settings/SystemSettings.tsx:217
 #: src/pages/part/PartDetail.tsx:497
 #: src/pages/stock/LocationDetail.tsx:351
-#: src/pages/stock/StockDetail.tsx:547
+#: src/pages/stock/StockDetail.tsx:548
 #: src/tables/stock/StockItemTable.tsx:75
 msgid "Stock"
 msgstr "В наявності"
@@ -1844,40 +1860,58 @@ msgstr ""
 msgid "Sales"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:129
+#: src/components/nav/NavigationDrawer.tsx:112
+#: src/components/render/ModelType.tsx:215
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
+#: src/pages/core/CoreIndex.tsx:21
+#: src/pages/core/UserDetail.tsx:177
+msgid "Users"
+msgstr "Користувачі"
+
+#: src/components/nav/NavigationDrawer.tsx:118
+#: src/components/render/ModelType.tsx:222
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
+#: src/pages/core/CoreIndex.tsx:27
+#: src/pages/core/GroupDetail.tsx:81
+#: src/tables/core/UserTable.tsx:58
+#: src/tables/settings/UserTable.tsx:137
+#: src/tables/settings/UserTable.tsx:200
+msgid "Groups"
+msgstr "Групи"
+
+#: src/components/nav/NavigationDrawer.tsx:141
 #: src/components/nav/NotificationDrawer.tsx:179
-#: src/pages/Index/Settings/SystemSettings.tsx:111
+#: src/pages/Index/Settings/SystemSettings.tsx:112
 #: src/pages/Index/Settings/UserSettings.tsx:97
 #: src/pages/Notifications.tsx:66
 #: src/pages/Notifications.tsx:158
 msgid "Notifications"
 msgstr "Сповіщення"
 
-#: src/components/nav/NavigationDrawer.tsx:135
+#: src/components/nav/NavigationDrawer.tsx:147
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/pages/Index/Settings/UserSettings.tsx:120
 msgid "User Settings"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:176
+#: src/components/nav/NavigationDrawer.tsx:188
 msgid "Navigation"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:186
+#: src/components/nav/NavigationDrawer.tsx:198
 #: src/forms/PurchaseOrderForms.tsx:755
 #: src/forms/StockForms.tsx:704
 #: src/forms/StockForms.tsx:748
 #: src/forms/StockForms.tsx:787
 #: src/forms/StockForms.tsx:823
 #: src/forms/StockForms.tsx:902
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:447
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:785
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:454
 #: src/tables/RowActions.tsx:155
 #: src/tables/build/BuildLineTable.tsx:100
 msgid "Actions"
 msgstr "Дії"
 
-#: src/components/nav/NavigationDrawer.tsx:211
+#: src/components/nav/NavigationDrawer.tsx:223
 msgid "About"
 msgstr ""
 
@@ -2015,7 +2049,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:110
 #: src/pages/sales/SalesOrderDetail.tsx:119
 #: src/pages/stock/LocationDetail.tsx:105
-#: src/tables/ColumnRenderers.tsx:93
+#: src/tables/ColumnRenderers.tsx:96
 #: src/tables/bom/UsedInTable.tsx:44
 #: src/tables/build/BuildAllocatedStockTable.tsx:83
 #: src/tables/build/BuildLineTable.tsx:329
@@ -2039,7 +2073,7 @@ msgstr ""
 #: src/pages/part/PartSchedulingDetail.tsx:279
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:41
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:38
-#: src/tables/ColumnRenderers.tsx:238
+#: src/tables/ColumnRenderers.tsx:241
 #: src/tables/build/BuildOrderTestTable.tsx:158
 #: src/tables/settings/StocktakeReportTable.tsx:41
 msgid "Date"
@@ -2047,11 +2081,14 @@ msgstr ""
 
 #: src/components/plugins/PluginDrawer.tsx:93
 #: src/forms/selectionListFields.tsx:107
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:770
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:84
+#: src/pages/core/UserDetail.tsx:89
+#: src/pages/core/UserDetail.tsx:160
 #: src/pages/part/PartDetail.tsx:331
 #: src/tables/bom/UsedInTable.tsx:85
 #: src/tables/company/CompanyTable.tsx:62
 #: src/tables/company/CompanyTable.tsx:96
+#: src/tables/core/UserTable.tsx:19
 #: src/tables/machine/MachineListTable.tsx:336
 #: src/tables/machine/MachineListTable.tsx:606
 #: src/tables/part/ParametricPartTable.tsx:224
@@ -2059,8 +2096,8 @@ msgstr ""
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:95
 #: src/tables/plugin/PluginListTable.tsx:400
-#: src/tables/purchasing/SupplierPartTable.tsx:100
-#: src/tables/purchasing/SupplierPartTable.tsx:192
+#: src/tables/purchasing/SupplierPartTable.tsx:101
+#: src/tables/purchasing/SupplierPartTable.tsx:193
 #: src/tables/settings/UserTable.tsx:283
 #: src/tables/stock/StockItemTable.tsx:306
 msgid "Active"
@@ -2206,7 +2243,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:213
 #: src/tables/build/BuildAllocatedStockTable.tsx:152
 #: src/tables/part/PartPurchaseOrdersTable.tsx:49
-#: src/tables/purchasing/SupplierPartTable.tsx:70
+#: src/tables/purchasing/SupplierPartTable.tsx:71
 #: src/tables/stock/StockItemTable.tsx:236
 msgid "Supplier Part"
 msgstr "Частина від постачальника"
@@ -2243,7 +2280,7 @@ msgstr "Категорії"
 #: src/forms/BuildForms.tsx:409
 #: src/forms/BuildForms.tsx:546
 #: src/forms/SalesOrderForms.tsx:268
-#: src/pages/stock/StockDetail.tsx:910
+#: src/pages/stock/StockDetail.tsx:911
 #: src/tables/stock/StockTrackingTable.tsx:49
 #: src/tables/stock/StockTrackingTable.tsx:56
 msgid "Stock Item"
@@ -2266,7 +2303,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:89
 #: src/pages/stock/LocationDetail.tsx:191
 #: src/pages/stock/LocationDetail.tsx:372
-#: src/pages/stock/StockDetail.tsx:901
+#: src/pages/stock/StockDetail.tsx:902
 msgid "Stock Locations"
 msgstr ""
 
@@ -2313,6 +2350,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:132
 #: src/pages/company/CompanyDetail.tsx:326
+#: src/tables/company/ContactTable.tsx:63
 msgid "Company"
 msgstr ""
 
@@ -2325,14 +2363,14 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:222
 #: src/pages/sales/ReturnOrderDetail.tsx:186
 #: src/pages/sales/SalesOrderDetail.tsx:198
-#: src/tables/ColumnRenderers.tsx:172
+#: src/tables/ColumnRenderers.tsx:175
 #: src/tables/Filter.tsx:258
 #: src/tables/TableHoverCard.tsx:81
 msgid "Project Code"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:141
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:146
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:145
 msgid "Project Codes"
 msgstr ""
 
@@ -2340,7 +2378,7 @@ msgstr ""
 #: src/components/wizards/OrderPartsWizard.tsx:180
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:33
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:507
-#: src/pages/stock/StockDetail.tsx:275
+#: src/pages/stock/StockDetail.tsx:276
 #: src/tables/part/PartPurchaseOrdersTable.tsx:31
 #: src/tables/stock/StockItemTable.tsx:229
 #: src/tables/stock/StockTrackingTable.tsx:121
@@ -2348,7 +2386,7 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:148
-#: src/pages/Index/Settings/SystemSettings.tsx:250
+#: src/pages/Index/Settings/SystemSettings.tsx:261
 #: src/pages/company/CompanyDetail.tsx:198
 #: src/pages/company/SupplierPartDetail.tsx:266
 #: src/pages/part/PartDetail.tsx:573
@@ -2370,7 +2408,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:556
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:95
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:358
-#: src/pages/stock/StockDetail.tsx:284
+#: src/pages/stock/StockDetail.tsx:285
 #: src/tables/part/PartSalesAllocationsTable.tsx:38
 #: src/tables/sales/SalesOrderAllocationTable.tsx:99
 #: src/tables/stock/StockTrackingTable.tsx:132
@@ -2378,7 +2416,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:163
-#: src/pages/Index/Settings/SystemSettings.tsx:266
+#: src/pages/Index/Settings/SystemSettings.tsx:277
 #: src/pages/company/CompanyDetail.tsx:218
 #: src/pages/part/PartDetail.tsx:585
 #: src/pages/sales/SalesIndex.tsx:26
@@ -2401,7 +2439,7 @@ msgid "Return Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:179
-#: src/pages/Index/Settings/SystemSettings.tsx:282
+#: src/pages/Index/Settings/SystemSettings.tsx:293
 #: src/pages/company/CompanyDetail.tsx:225
 #: src/pages/part/PartDetail.tsx:592
 #: src/pages/sales/SalesIndex.tsx:33
@@ -2427,6 +2465,8 @@ msgid "Addresses"
 msgstr "Адреси"
 
 #: src/components/render/ModelType.tsx:200
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
+#: src/pages/core/UserDetail.tsx:95
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:214
 #: src/pages/sales/ReturnOrderDetail.tsx:178
 #: src/pages/sales/SalesOrderDetail.tsx:190
@@ -2435,6 +2475,7 @@ msgstr "Контакт"
 
 #: src/components/render/ModelType.tsx:201
 #: src/pages/company/CompanyDetail.tsx:252
+#: src/pages/core/CoreIndex.tsx:33
 msgid "Contacts"
 msgstr "Контакти"
 
@@ -2447,6 +2488,8 @@ msgid "Owners"
 msgstr "Власники"
 
 #: src/components/render/ModelType.tsx:214
+#: src/pages/Auth/ChangePassword.tsx:35
+#: src/pages/core/UserDetail.tsx:171
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:209
 #: src/tables/settings/ImportSessionTable.tsx:121
@@ -2457,21 +2500,10 @@ msgstr "Власники"
 msgid "User"
 msgstr "Користувач"
 
-#: src/components/render/ModelType.tsx:215
-#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
-msgid "Users"
-msgstr "Користувачі"
-
 #: src/components/render/ModelType.tsx:221
+#: src/pages/core/GroupDetail.tsx:76
 msgid "Group"
 msgstr "Група"
-
-#: src/components/render/ModelType.tsx:222
-#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
-#: src/tables/settings/UserTable.tsx:137
-#: src/tables/settings/UserTable.tsx:200
-msgid "Groups"
-msgstr "Групи"
 
 #: src/components/render/ModelType.tsx:229
 msgid "Import Session"
@@ -2490,7 +2522,7 @@ msgid "Label Template"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:238
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:187
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:186
 #: src/pages/Index/Settings/AdminCenter/LabelTemplatePanel.tsx:32
 msgid "Label Templates"
 msgstr ""
@@ -2500,7 +2532,7 @@ msgid "Report Template"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:246
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:193
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:192
 #: src/pages/Index/Settings/AdminCenter/ReportTemplatePanel.tsx:47
 msgid "Report Templates"
 msgstr ""
@@ -2553,6 +2585,7 @@ msgstr ""
 #: src/components/render/Plugin.tsx:17
 #: src/pages/company/CompanyDetail.tsx:312
 #: src/pages/company/SupplierPartDetail.tsx:366
+#: src/pages/core/UserDetail.tsx:162
 #: src/pages/part/PartDetail.tsx:784
 msgid "Inactive"
 msgstr ""
@@ -2565,7 +2598,7 @@ msgstr "Немає в наявності"
 
 #: src/components/render/Stock.tsx:61
 #: src/pages/stock/StockDetail.tsx:185
-#: src/pages/stock/StockDetail.tsx:837
+#: src/pages/stock/StockDetail.tsx:838
 #: src/tables/build/BuildAllocatedStockTable.tsx:123
 #: src/tables/build/BuildOutputTable.tsx:81
 #: src/tables/sales/SalesOrderAllocationTable.tsx:137
@@ -2587,7 +2620,7 @@ msgstr "Серійний номер"
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
 #: src/pages/stock/StockDetail.tsx:180
-#: src/pages/stock/StockDetail.tsx:843
+#: src/pages/stock/StockDetail.tsx:844
 #: src/tables/build/BuildLineTable.tsx:78
 #: src/tables/build/BuildOrderTestTable.tsx:205
 #: src/tables/part/PartPurchaseOrdersTable.tsx:93
@@ -3037,7 +3070,7 @@ msgid "New Supplier Part"
 msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:75
-#: src/tables/purchasing/SupplierPartTable.tsx:174
+#: src/tables/purchasing/SupplierPartTable.tsx:175
 msgid "Supplier part created"
 msgstr ""
 
@@ -3099,7 +3132,7 @@ msgid "Please correct the errors in the selected parts"
 msgstr ""
 
 #: src/components/wizards/OrderPartsWizard.tsx:383
-#: src/tables/build/BuildLineTable.tsx:649
+#: src/tables/build/BuildLineTable.tsx:648
 #: src/tables/part/PartTable.tsx:354
 #: src/tables/sales/SalesOrderLineItemTable.tsx:326
 msgid "Order Parts"
@@ -3579,7 +3612,9 @@ msgstr ""
 #: src/forms/ReturnOrderForms.tsx:193
 #: src/forms/ReturnOrderForms.tsx:240
 #: src/forms/StockForms.tsx:623
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:81
 #: src/pages/build/BuildDetail.tsx:107
+#: src/pages/core/UserDetail.tsx:109
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:151
 #: src/pages/sales/ReturnOrderDetail.tsx:116
 #: src/pages/sales/SalesOrderDetail.tsx:125
@@ -3651,7 +3686,7 @@ msgstr "Вибір розташування вихідного товару пр
 #: src/forms/SalesOrderForms.tsx:297
 #: src/tables/build/BuildLineTable.tsx:442
 #: src/tables/build/BuildLineTable.tsx:574
-#: src/tables/build/BuildLineTable.tsx:664
+#: src/tables/build/BuildLineTable.tsx:663
 #: src/tables/sales/SalesOrderLineItemTable.tsx:336
 #: src/tables/sales/SalesOrderLineItemTable.tsx:367
 msgid "Allocate Stock"
@@ -3767,7 +3802,9 @@ msgstr ""
 #: src/forms/StockForms.tsx:899
 #: src/forms/StockForms.tsx:947
 #: src/forms/StockForms.tsx:991
-#: src/pages/stock/StockDetail.tsx:221
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:82
+#: src/pages/core/UserDetail.tsx:115
+#: src/pages/stock/StockDetail.tsx:222
 #: src/tables/ColumnRenderers.tsx:61
 #: src/tables/stock/StockTrackingTable.tsx:99
 msgid "Location"
@@ -3792,7 +3829,7 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:618
 #: src/pages/build/BuildDetail.tsx:246
 #: src/pages/stock/StockDetail.tsx:204
-#: src/pages/stock/StockDetail.tsx:859
+#: src/pages/stock/StockDetail.tsx:860
 #: src/tables/build/BuildAllocatedStockTable.tsx:130
 #: src/tables/build/BuildOrderTestTable.tsx:196
 #: src/tables/build/BuildOutputTable.tsx:86
@@ -3815,7 +3852,7 @@ msgid "Enter serial numbers for received items"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:647
-#: src/pages/stock/StockDetail.tsx:305
+#: src/pages/stock/StockDetail.tsx:306
 #: src/tables/stock/StockItemTable.tsx:279
 msgid "Expiry Date"
 msgstr ""
@@ -3832,14 +3869,14 @@ msgstr ""
 #: src/forms/StockForms.tsx:639
 #: src/pages/company/SupplierPartDetail.tsx:172
 #: src/pages/company/SupplierPartDetail.tsx:236
-#: src/pages/stock/StockDetail.tsx:342
+#: src/pages/stock/StockDetail.tsx:343
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:199
 msgid "Packaging"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:684
 #: src/pages/company/SupplierPartDetail.tsx:119
-#: src/tables/ColumnRenderers.tsx:144
+#: src/tables/ColumnRenderers.tsx:147
 msgid "Note"
 msgstr ""
 
@@ -3907,9 +3944,9 @@ msgid "Stock Status"
 msgstr ""
 
 #: src/forms/StockForms.tsx:237
-#: src/pages/stock/StockDetail.tsx:574
+#: src/pages/stock/StockDetail.tsx:575
 #: src/tables/stock/StockItemTable.tsx:533
-#: src/tables/stock/StockItemTable.tsx:665
+#: src/tables/stock/StockItemTable.tsx:666
 msgid "Add Stock Item"
 msgstr ""
 
@@ -3944,26 +3981,26 @@ msgstr "Перемістити"
 #: src/pages/company/SupplierPartDetail.tsx:371
 #: src/pages/part/PartDetail.tsx:251
 #: src/pages/part/PartDetail.tsx:748
-#: src/tables/purchasing/SupplierPartTable.tsx:207
+#: src/tables/purchasing/SupplierPartTable.tsx:208
 #: src/tables/stock/StockItemTable.tsx:342
 msgid "In Stock"
 msgstr ""
 
 #: src/forms/StockForms.tsx:786
-#: src/pages/stock/StockDetail.tsx:718
+#: src/pages/stock/StockDetail.tsx:719
 #: src/tables/stock/StockItemTestResultTable.tsx:350
 msgid "Add"
 msgstr "Додати"
 
 #: src/forms/StockForms.tsx:822
 #: src/pages/Index/Scan.tsx:180
-#: src/pages/stock/StockDetail.tsx:707
+#: src/pages/stock/StockDetail.tsx:708
 msgid "Count"
 msgstr "Кількість"
 
 #: src/forms/StockForms.tsx:1100
-#: src/pages/stock/StockDetail.tsx:719
-#: src/tables/stock/StockItemTable.tsx:583
+#: src/pages/stock/StockDetail.tsx:720
+#: src/tables/stock/StockItemTable.tsx:584
 msgid "Add Stock"
 msgstr ""
 
@@ -3972,8 +4009,8 @@ msgid "Stock added"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1110
-#: src/pages/stock/StockDetail.tsx:728
-#: src/tables/stock/StockItemTable.tsx:592
+#: src/pages/stock/StockDetail.tsx:729
+#: src/tables/stock/StockItemTable.tsx:593
 msgid "Remove Stock"
 msgstr ""
 
@@ -3983,8 +4020,8 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:1120
 #: src/pages/part/PartDetail.tsx:916
-#: src/pages/stock/StockDetail.tsx:741
-#: src/tables/stock/StockItemTable.tsx:601
+#: src/pages/stock/StockDetail.tsx:742
+#: src/tables/stock/StockItemTable.tsx:602
 msgid "Transfer Stock"
 msgstr ""
 
@@ -3996,8 +4033,8 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:905
 #: src/pages/stock/LocationDetail.tsx:313
 #: src/pages/stock/LocationDetail.tsx:317
-#: src/tables/stock/StockItemTable.tsx:572
-#: src/tables/stock/StockItemTable.tsx:576
+#: src/tables/stock/StockItemTable.tsx:573
+#: src/tables/stock/StockItemTable.tsx:577
 msgid "Count Stock"
 msgstr ""
 
@@ -4030,7 +4067,7 @@ msgid "Stock assigned to customer"
 msgstr ""
 
 #: src/forms/StockForms.tsx:1177
-#: src/tables/stock/StockItemTable.tsx:654
+#: src/tables/stock/StockItemTable.tsx:655
 msgid "Delete Stock Items"
 msgstr ""
 
@@ -4114,12 +4151,12 @@ msgstr ""
 #~ msgstr "You have been logged out"
 
 #: src/functions/auth.tsx:114
-#: src/functions/auth.tsx:227
+#: src/functions/auth.tsx:273
 msgid "Already logged in"
 msgstr ""
 
 #: src/functions/auth.tsx:115
-#: src/functions/auth.tsx:228
+#: src/functions/auth.tsx:274
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr ""
 
@@ -4131,29 +4168,70 @@ msgstr ""
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:146
+#: src/functions/auth.tsx:147
 msgid "Logged Out"
 msgstr ""
 
-#: src/functions/auth.tsx:147
+#: src/functions/auth.tsx:148
 msgid "Successfully logged out"
 msgstr ""
 
-#: src/functions/auth.tsx:192
+#: src/functions/auth.tsx:186
+msgid "Language changed"
+msgstr ""
+
+#: src/functions/auth.tsx:187
+msgid "Your active language has been changed to the one set in your profile"
+msgstr ""
+
+#: src/functions/auth.tsx:207
+msgid "Theme changed"
+msgstr ""
+
+#: src/functions/auth.tsx:208
+msgid "Your active theme has been changed to the one set in your profile"
+msgstr ""
+
+#: src/functions/auth.tsx:233
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Перевірте вашу поштову скриньку для скидання посилання. Це працює тільки в тому випадку, якщо у вас є обліковий запис. Перевірити також спам."
 
-#: src/functions/auth.tsx:199
-#: src/pages/Auth/ResetPassword.tsx:48
+#: src/functions/auth.tsx:240
+#: src/functions/auth.tsx:450
 msgid "Reset failed"
 msgstr ""
 
-#: src/functions/auth.tsx:267
+#: src/functions/auth.tsx:313
 msgid "Logged In"
 msgstr ""
 
-#: src/functions/auth.tsx:268
+#: src/functions/auth.tsx:314
 msgid "Successfully logged in"
+msgstr ""
+
+#: src/functions/auth.tsx:410
+msgid "Failed to set up MFA"
+msgstr ""
+
+#: src/functions/auth.tsx:440
+msgid "Password set"
+msgstr ""
+
+#: src/functions/auth.tsx:441
+#: src/functions/auth.tsx:550
+msgid "The password was set successfully. You can now login with your new password"
+msgstr "Пароль успішно встановлено. Тепер ви можете увійти в систему, використовуючи новий пароль"
+
+#: src/functions/auth.tsx:515
+msgid "Password could not be changed"
+msgstr ""
+
+#: src/functions/auth.tsx:533
+msgid "The two password fields didn’t match"
+msgstr ""
+
+#: src/functions/auth.tsx:549
+msgid "Password Changed"
 msgstr ""
 
 #: src/functions/forms.tsx:50
@@ -4204,19 +4282,19 @@ msgstr ""
 msgid "The request timed out"
 msgstr ""
 
-#: src/hooks/UseForm.tsx:87
+#: src/hooks/UseForm.tsx:90
 msgid "Item Created"
 msgstr ""
 
-#: src/hooks/UseForm.tsx:104
+#: src/hooks/UseForm.tsx:110
 msgid "Item Updated"
 msgstr ""
 
-#: src/hooks/UseForm.tsx:123
+#: src/hooks/UseForm.tsx:132
 msgid "Item Deleted"
 msgstr ""
 
-#: src/hooks/UseForm.tsx:127
+#: src/hooks/UseForm.tsx:136
 msgid "Are you sure you want to delete this item?"
 msgstr ""
 
@@ -4224,60 +4302,48 @@ msgstr ""
 msgid "Latest serial number"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:46
-msgid "Password could not be changed"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:67
-msgid "The two password fields didn’t match"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:83
-msgid "Password Changed"
-msgstr ""
-
-#: src/pages/Auth/ChangePassword.tsx:84
-#: src/pages/Auth/ResetPassword.tsx:39
-msgid "The password was set successfully. You can now login with your new password"
-msgstr "Пароль успішно встановлено. Тепер ви можете увійти в систему, використовуючи новий пароль"
-
-#: src/pages/Auth/ChangePassword.tsx:113
+#: src/pages/Auth/ChangePassword.tsx:31
+#: src/pages/Auth/Reset.tsx:13
 msgid "Reset Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:128
+#: src/pages/Auth/ChangePassword.tsx:45
 msgid "Current Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:129
+#: src/pages/Auth/ChangePassword.tsx:46
 msgid "Enter your current password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:135
+#: src/pages/Auth/ChangePassword.tsx:52
 msgid "New Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:136
+#: src/pages/Auth/ChangePassword.tsx:53
 msgid "Enter your new password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:142
+#: src/pages/Auth/ChangePassword.tsx:59
 msgid "Confirm New Password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:143
+#: src/pages/Auth/ChangePassword.tsx:60
 msgid "Confirm your new password"
 msgstr ""
 
-#: src/pages/Auth/ChangePassword.tsx:148
+#: src/pages/Auth/ChangePassword.tsx:79
 msgid "Confirm"
 msgstr ""
 
-#: src/pages/Auth/Logged-In.tsx:25
+#: src/pages/Auth/Layout.tsx:67
+msgid "Log off"
+msgstr ""
+
+#: src/pages/Auth/LoggedIn.tsx:19
 msgid "Checking if you are already logged in"
 msgstr ""
 
-#: src/pages/Auth/Login.tsx:36
+#: src/pages/Auth/Login.tsx:31
 msgid "No selection"
 msgstr ""
 
@@ -4289,57 +4355,65 @@ msgstr ""
 #~ msgid "Register below"
 #~ msgstr "Register below"
 
-#: src/pages/Auth/Login.tsx:126
-#: src/pages/Index/Settings/SystemSettings.tsx:67
+#: src/pages/Auth/Login.tsx:96
+#: src/pages/Index/Settings/SystemSettings.tsx:68
 msgid "Login"
 msgstr ""
 
-#: src/pages/Auth/Logout.tsx:22
-msgid "Logging out"
-msgstr ""
+#: src/pages/Auth/Login.tsx:100
+msgid "Don't have an account?"
+msgstr "Не маєте облікового запису?"
 
-#: src/pages/Auth/MFALogin.tsx:32
+#: src/pages/Auth/Logout.tsx:22
+#~ msgid "Logging out"
+#~ msgstr "Logging out"
+
+#: src/pages/Auth/MFA.tsx:16
 msgid "Multi-Factor Login"
 msgstr ""
 
-#: src/pages/Auth/MFALogin.tsx:36
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:682
+#: src/pages/Auth/MFA.tsx:19
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:689
 msgid "TOTP Code"
 msgstr ""
 
-#: src/pages/Auth/MFALogin.tsx:38
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:684
+#: src/pages/Auth/MFA.tsx:21
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:691
 msgid "Enter your TOTP or recovery code"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:27
-msgid "Failed to set up MFA"
+#: src/pages/Auth/MFA.tsx:31
+msgid "Log in"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:48
+#: src/pages/Auth/MFASetup.tsx:22
 msgid "MFA Setup Required"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:66
+#: src/pages/Auth/MFASetup.tsx:33
 msgid "Add TOTP"
 msgstr ""
 
-#: src/pages/Auth/MFASetup.tsx:69
-msgid "Log off"
-msgstr ""
+#: src/pages/Auth/Register.tsx:22
+msgid "Go back to login"
+msgstr "Повернутися до входу"
 
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:112
 #~ msgid "Send mail"
 #~ msgstr "Send mail"
 
-#: src/pages/Auth/ResetPassword.tsx:29
+#: src/pages/Auth/ResetPassword.tsx:21
 #: src/pages/Auth/VerifyEmail.tsx:18
 msgid "Key invalid"
 msgstr ""
 
-#: src/pages/Auth/ResetPassword.tsx:30
+#: src/pages/Auth/ResetPassword.tsx:22
 msgid "You need to provide a valid key to set a new password. Check your inbox for a reset link."
+msgstr ""
+
+#: src/pages/Auth/ResetPassword.tsx:30
+msgid "Set new password"
 msgstr ""
 
 #: src/pages/Auth/ResetPassword.tsx:30
@@ -4350,19 +4424,11 @@ msgstr ""
 #~ msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
 #~ msgstr "You need to provide a valid token to set a new password. Check your inbox for a reset link."
 
-#: src/pages/Auth/ResetPassword.tsx:38
-msgid "Password set"
-msgstr ""
-
-#: src/pages/Auth/ResetPassword.tsx:96
-msgid "Set new password"
-msgstr ""
-
-#: src/pages/Auth/ResetPassword.tsx:102
+#: src/pages/Auth/ResetPassword.tsx:34
 msgid "The desired new password"
 msgstr ""
 
-#: src/pages/Auth/ResetPassword.tsx:107
+#: src/pages/Auth/ResetPassword.tsx:43
 msgid "Send Password"
 msgstr ""
 
@@ -4378,11 +4444,11 @@ msgstr ""
 msgid "You need to provide a valid key."
 msgstr ""
 
-#: src/pages/Auth/VerifyEmail.tsx:51
+#: src/pages/Auth/VerifyEmail.tsx:27
 msgid "Verify Email"
 msgstr ""
 
-#: src/pages/Auth/VerifyEmail.tsx:54
+#: src/pages/Auth/VerifyEmail.tsx:29
 msgid "Verify"
 msgstr ""
 
@@ -4714,32 +4780,38 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:30
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:52
-msgid "Edit User Information"
-msgstr "Редагувати інформацію про користувача"
+#~ msgid "Edit User Information"
+#~ msgstr "Edit User Information"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:31
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:111
+msgid "Edit Account Information"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:34
-msgid "User details updated"
-msgstr "Деталі користувача оновлено"
+#~ msgid "User details updated"
+#~ msgstr "User details updated"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
-#~ msgid "Account Details"
-#~ msgstr "Account Details"
-
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:43
-msgid "User Details"
-msgstr "Інформація про користувача"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:35
+msgid "Account details updated"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
-msgid "User Actions"
-msgstr "Дії користувача"
+#~ msgid "User Actions"
+#~ msgstr "User Actions"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
-msgid "Edit User"
-msgstr "Редагувати користувача"
+#~ msgid "Edit User"
+#~ msgstr "Edit User"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:50
 #~ msgid "First name"
 #~ msgstr "First name"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:53
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:134
+msgid "Edit Profile Information"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:54
 #~ msgid "Set Password"
@@ -4750,15 +4822,11 @@ msgstr "Редагувати користувача"
 #~ msgstr "Last name"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
-msgid "Change Password"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
 #~ msgid "Set User Password"
 #~ msgstr "Set User Password"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
-msgid "Change User Password"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:57
+msgid "Profile details updated"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
@@ -4769,6 +4837,20 @@ msgstr ""
 #~ msgid "Last name: {0}"
 #~ msgstr "Last name: {0}"
 
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:63
+#: src/pages/core/UserDetail.tsx:59
+msgid "First Name"
+msgstr "Ім`я"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:64
+#: src/pages/core/UserDetail.tsx:66
+msgid "Last Name"
+msgstr "Прізвище"
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:66
+msgid "Staff Access"
+msgstr "Доступ співробітників"
+
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:67
 #~ msgid "First name:"
 #~ msgstr "First name:"
@@ -4777,21 +4859,61 @@ msgstr ""
 #~ msgid "Last name:"
 #~ msgstr "Last name:"
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:77
-msgid "First Name"
-msgstr "Ім`я"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:79
+#: src/pages/core/UserDetail.tsx:76
+#: src/tables/settings/CustomStateTable.tsx:101
+msgid "Display Name"
+msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:83
-msgid "Last Name"
-msgstr "Прізвище"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:80
+#: src/pages/core/UserDetail.tsx:83
+msgid "Position"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:445
+msgid "Type"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
-msgid "Staff Access"
-msgstr "Доступ співробітників"
+#: src/pages/core/UserDetail.tsx:102
+msgid "Organisation"
+msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:97
-#: src/tables/settings/UserTable.tsx:293
-msgid "Superuser"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
+msgid "Primary Group"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:102
+msgid "Account Details"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:105
+msgid "Account Actions"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:109
+msgid "Edit Account"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:115
+msgid "Change Password"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:117
+msgid "Change User Password"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:129
+msgid "Profile Details"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:132
+msgid "Edit Profile"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:151
+msgid "{0}"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/QrRegistrationForm.tsx:23
@@ -4806,31 +4928,31 @@ msgstr ""
 msgid "Enter the TOTP code to ensure it registered correctly"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:52
-msgid "Email Addresses"
-msgstr ""
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:55
 #~ msgid "Single Sign On Accounts"
 #~ msgstr "Single Sign On Accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
-msgid "Single Sign On"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:57
+msgid "Email Addresses"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:68
-msgid "Not enabled"
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:65
+msgid "Single Sign On"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:69
 #~ msgid "Multifactor"
 #~ msgstr "Multifactor"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:71
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:73
+msgid "Not enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:76
 msgid "Single Sign On is not enabled for this server"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:83
 msgid "Multi-Factor Authentication"
 msgstr ""
 
@@ -4838,65 +4960,65 @@ msgstr ""
 #~ msgid "Multifactor authentication is not configured for your account"
 #~ msgstr "Multifactor authentication is not configured for your account"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:86
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:91
 msgid "Access Tokens"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:125
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:129
 msgid "Error while updating email"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:138
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:292
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:427
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:142
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:298
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:434
 msgid "Not Configured"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:141
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:145
 msgid "Currently no email addresses are registered."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:148
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:152
 msgid "The following email addresses are associated with your account:"
 msgstr "Наступні електронні адреси пов'язані з вашим обліковим записом:"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:161
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:165
 msgid "Primary"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:166
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
 msgid "Verified"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:174
 msgid "Unverified"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:188
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
 msgid "Make Primary"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:194
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:198
 msgid "Re-send Verification"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:208
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:212
 msgid "Add Email Address"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:210
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:214
 msgid "E-Mail"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:211
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:215
 msgid "E-Mail address"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:223
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:227
 msgid "Error while adding email"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:234
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:238
 msgid "Add Email"
 msgstr ""
 
@@ -4916,106 +5038,110 @@ msgstr ""
 #~ msgid "You can sign in to your account using any of the following third party accounts"
 #~ msgstr "You can sign in to your account using any of the following third party accounts"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:295
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
 msgid "There are no providers connected to this account."
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:303
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "You can sign in to your account using any of the following providers"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:316
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:322
 msgid "Remove Provider Link"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:406
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:413
 msgid "View"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:431
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:438
 msgid "No multi-factor tokens configured for this account"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:438
-msgid "Type"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:441
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:448
 msgid "Last used at"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:444
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:451
 msgid "Created at"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:465
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:568
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:472
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:575
 msgid "Recovery Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:469
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:476
 msgid "Unused Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:474
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:481
 msgid "Used Codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:527
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:534
 msgid "Error while registering recovery codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:561
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:568
 msgid "TOTP"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:562
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:569
 msgid "Time-based One-Time Password"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:569
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:576
 msgid "One-Time pre-generated recovery codes"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:583
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:590
 msgid "Add Token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:598
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:605
 msgid "Register TOTP Token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:623
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:630
 msgid "Error registering TOTP token"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:699
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:706
 msgid "Enter your password"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:741
-msgid "Token is used - no actions"
-msgstr ""
+#~ msgid "Token is used - no actions"
+#~ msgstr "Token is used - no actions"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:748
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:745
 msgid "Revoke"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:761
-msgid "No tokens configured"
+#~ msgid "No tokens configured"
+#~ msgstr "No tokens configured"
+
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:765
+msgid "Error revoking token"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:773
-msgid "Expiry"
-msgstr ""
+#~ msgid "Expiry"
+#~ msgstr "Expiry"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:776
-msgid "Last Seen"
-msgstr ""
+#~ msgid "Last Seen"
+#~ msgstr "Last Seen"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:779
-msgid "Token"
-msgstr ""
+#~ msgid "Token"
+#~ msgstr "Token"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:61
+msgid "Display Settings"
+msgstr "Налаштування відображення"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:65
 #~ msgid "bars"
@@ -5026,68 +5152,64 @@ msgstr ""
 #~ msgstr "oval"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:67
+msgid "Language"
+msgstr "Мова"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:67
 #~ msgid "dots"
 #~ msgstr "dots"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:78
+msgid "Use pseudo language"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 #~ msgid "Theme"
 #~ msgstr "Theme"
 
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:85
+msgid "Color Mode"
+msgstr ""
+
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 #~ msgid "Primary color"
 #~ msgstr "Primary color"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:88
-msgid "Bars"
-msgstr "Смуги"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:89
-msgid "Oval"
-msgstr "Овал"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:90
-msgid "Dots"
-msgstr "Крапки"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:101
-msgid "Display Settings"
-msgstr "Налаштування відображення"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:107
-msgid "Language"
-msgstr "Мова"
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:115
-msgid "Use pseudo language"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:122
-msgid "Color Mode"
-msgstr ""
-
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:133
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:96
 msgid "Highlight color"
 msgstr "Колір підсвічування"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:145
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:110
 msgid "Example"
 msgstr "Приклад"
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:151
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
 msgid "White color"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:167
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:139
 msgid "Black color"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:183
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:162
 msgid "Border Radius"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:199
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:178
 msgid "Loader"
 msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:185
+msgid "Bars"
+msgstr "Смуги"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:186
+msgid "Oval"
+msgstr "Овал"
+
+#: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:187
+msgid "Dots"
+msgstr "Крапки"
 
 #: src/pages/Index/Settings/AccountSettings/useConfirm.tsx:92
 msgid "Reauthentication"
@@ -5102,7 +5224,7 @@ msgstr ""
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:28
-#: src/tables/ColumnRenderers.tsx:301
+#: src/tables/ColumnRenderers.tsx:304
 msgid "Currency"
 msgstr ""
 
@@ -5130,44 +5252,44 @@ msgstr "Востаннє отримано"
 msgid "Base currency"
 msgstr "Основна валюта"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:110
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:109
 msgid "User Management"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:116
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:115
 msgid "Data Import"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:122
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:121
 msgid "Barcode Scans"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:127
+msgid "Background Tasks"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 #~ msgid "Templates"
 #~ msgstr "Templates"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:128
-msgid "Background Tasks"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:134
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 msgid "Error Reports"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:140
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:139
 msgid "Currencies"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:157
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:156
 msgid "Custom States"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:163
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:162
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
 msgid "Custom Units"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:169
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:168
 #: src/pages/part/CategoryDetail.tsx:294
 msgid "Part Parameters"
 msgstr "Параметри частини"
@@ -5176,35 +5298,35 @@ msgstr "Параметри частини"
 #~ msgid "Location types"
 #~ msgstr "Location types"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:175
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:174
 msgid "Category Parameters"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:181
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:180
 msgid "Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:199
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:198
 msgid "Location Types"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:211
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:210
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:48
 #: src/tables/machine/MachineTypeTable.tsx:308
 msgid "Machines"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:221
-msgid "Quick Actions"
+#~ msgid "Quick Actions"
+#~ msgstr "Quick Actions"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:225
+msgid "Advanced Options"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:226
-msgid "Add a new user"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:253
-msgid "Advanced Options"
-msgstr ""
+#~ msgid "Add a new user"
+#~ msgstr "Add a new user"
 
 #: src/pages/Index/Settings/AdminCenter/LabelTemplatePanel.tsx:40
 msgid "Generated Labels"
@@ -5366,32 +5488,36 @@ msgstr "Всі об'єкти"
 #~ msgid "System settings"
 #~ msgstr "System settings"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:93
+#: src/pages/Index/Settings/SystemSettings.tsx:94
 msgid "Barcodes"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:117
-msgid "Pricing"
+#: src/pages/Index/Settings/SystemSettings.tsx:118
+msgid "This panel is a placeholder."
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
 #~ msgid "Physical Units"
 #~ msgstr "Physical Units"
 
+#: src/pages/Index/Settings/SystemSettings.tsx:128
+msgid "Pricing"
+msgstr ""
+
 #: src/pages/Index/Settings/SystemSettings.tsx:135
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:152
+#: src/pages/Index/Settings/SystemSettings.tsx:163
 msgid "Labels"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:158
+#: src/pages/Index/Settings/SystemSettings.tsx:169
 #: src/pages/Index/Settings/UserSettings.tsx:103
 msgid "Reporting"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:232
+#: src/pages/Index/Settings/SystemSettings.tsx:243
 #: src/pages/build/BuildIndex.tsx:27
 #: src/pages/part/PartDetail.tsx:540
 #: src/pages/sales/SalesOrderDetail.tsx:379
@@ -5479,7 +5605,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:124
 #: src/pages/sales/ReturnOrderDetail.tsx:89
 #: src/pages/sales/SalesOrderDetail.tsx:98
-#: src/tables/ColumnRenderers.tsx:133
+#: src/tables/ColumnRenderers.tsx:136
 #: src/tables/build/BuildAllocatedStockTable.tsx:111
 #: src/tables/build/BuildLineTable.tsx:335
 msgid "Reference"
@@ -5532,7 +5658,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:255
 #: src/pages/sales/ReturnOrderDetail.tsx:220
 #: src/pages/sales/SalesOrderDetail.tsx:231
-#: src/tables/ColumnRenderers.tsx:249
+#: src/tables/ColumnRenderers.tsx:252
 msgid "Start Date"
 msgstr ""
 
@@ -5549,7 +5675,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:263
 #: src/pages/sales/ReturnOrderDetail.tsx:228
 #: src/pages/sales/SalesOrderDetail.tsx:239
-#: src/tables/ColumnRenderers.tsx:257
+#: src/tables/ColumnRenderers.tsx:260
 #: src/tables/part/PartPurchaseOrdersTable.tsx:100
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:123
@@ -5762,7 +5888,7 @@ msgid "Cancel order"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:545
-#: src/pages/stock/StockDetail.tsx:267
+#: src/pages/stock/StockDetail.tsx:268
 #: src/tables/build/BuildAllocatedStockTable.tsx:77
 #: src/tables/part/PartBuildAllocationsTable.tsx:41
 #: src/tables/stock/StockTrackingTable.tsx:110
@@ -5812,7 +5938,7 @@ msgstr "Постачальник"
 #: src/pages/company/ManufacturerPartDetail.tsx:265
 #: src/pages/company/SupplierPartDetail.tsx:151
 #: src/tables/company/CompanyTable.tsx:106
-#: src/tables/purchasing/SupplierPartTable.tsx:76
+#: src/tables/purchasing/SupplierPartTable.tsx:77
 msgid "Manufacturer"
 msgstr ""
 
@@ -5822,7 +5948,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:104
 #: src/pages/sales/SalesOrderDetail.tsx:113
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:103
-#: src/pages/stock/StockDetail.tsx:293
+#: src/pages/stock/StockDetail.tsx:294
 #: src/tables/company/CompanyTable.tsx:111
 #: src/tables/sales/ReturnOrderTable.tsx:126
 #: src/tables/sales/SalesOrderTable.tsx:151
@@ -5935,7 +6061,7 @@ msgstr "Опис частини"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:72
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:163
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:204
-#: src/tables/purchasing/SupplierPartTable.tsx:133
+#: src/tables/purchasing/SupplierPartTable.tsx:134
 msgid "Pack Quantity"
 msgstr ""
 
@@ -5979,23 +6105,45 @@ msgid "Supplier Part Actions"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:325
-#: src/tables/purchasing/SupplierPartTable.tsx:220
+#: src/tables/purchasing/SupplierPartTable.tsx:221
 msgid "Edit Supplier Part"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:333
-#: src/tables/purchasing/SupplierPartTable.tsx:228
+#: src/tables/purchasing/SupplierPartTable.tsx:229
 msgid "Delete Supplier Part"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:341
-#: src/tables/purchasing/SupplierPartTable.tsx:167
+#: src/tables/purchasing/SupplierPartTable.tsx:168
 msgid "Add Supplier Part"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:381
 #: src/pages/part/PartDetail.tsx:760
 msgid "No Stock"
+msgstr ""
+
+#: src/pages/core/CoreIndex.tsx:46
+#: src/pages/core/GroupDetail.tsx:80
+#: src/pages/core/UserDetail.tsx:175
+msgid "System Overview"
+msgstr ""
+
+#: src/pages/core/GroupDetail.tsx:41
+msgid "Group Name"
+msgstr ""
+
+#: src/pages/core/GroupDetail.tsx:61
+msgid "Group Details"
+msgstr ""
+
+#: src/pages/core/UserDetail.tsx:139
+msgid "User Details"
+msgstr "Інформація про користувача"
+
+#: src/pages/core/UserDetail.tsx:157
+msgid "Basic user"
 msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:98
@@ -6078,13 +6226,13 @@ msgid "Category Details"
 msgstr ""
 
 #: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:462
+#: src/pages/stock/StockDetail.tsx:463
 #: src/tables/part/PartTable.tsx:103
 msgid "Build Order Allocations"
 msgstr ""
 
 #: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:477
+#: src/pages/stock/StockDetail.tsx:478
 #: src/tables/part/PartTable.tsx:111
 msgid "Sales Order Allocations"
 msgstr ""
@@ -6174,7 +6322,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:322
 #: src/pages/part/PartDetail.tsx:778
-#: src/pages/stock/StockDetail.tsx:832
+#: src/pages/stock/StockDetail.tsx:833
 #: src/tables/build/BuildOrderTestTable.tsx:227
 #: src/tables/stock/StockItemTable.tsx:347
 msgid "In Production"
@@ -6233,13 +6381,13 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:240
 #: src/pages/sales/ReturnOrderDetail.tsx:204
 #: src/pages/sales/SalesOrderDetail.tsx:216
-#: src/tables/ColumnRenderers.tsx:265
+#: src/tables/ColumnRenderers.tsx:268
 #: src/tables/settings/TemplateTable.tsx:445
 msgid "Creation Date"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:398
-#: src/tables/ColumnRenderers.tsx:213
+#: src/tables/ColumnRenderers.tsx:216
 #: src/tables/Filter.tsx:281
 #: src/tables/settings/TemplateTable.tsx:458
 msgid "Created By"
@@ -6269,7 +6417,7 @@ msgid "Variants"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:522
-#: src/pages/stock/StockDetail.tsx:449
+#: src/pages/stock/StockDetail.tsx:450
 msgid "Allocations"
 msgstr ""
 
@@ -6299,7 +6447,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:754
 #: src/pages/stock/StockDetail.tsx:191
-#: src/pages/stock/StockDetail.tsx:849
+#: src/pages/stock/StockDetail.tsx:850
 #: src/tables/build/BuildLineTable.tsx:186
 #: src/tables/part/PartTable.tsx:119
 #: src/tables/stock/StockItemTable.tsx:172
@@ -6333,7 +6481,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:898
 #: src/pages/stock/LocationDetail.tsx:309
-#: src/tables/stock/StockItemTable.tsx:567
+#: src/tables/stock/StockItemTable.tsx:568
 msgid "Stock Actions"
 msgstr ""
 
@@ -6347,12 +6495,12 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:924
 #: src/pages/part/PartSchedulingDetail.tsx:70
-#: src/pages/stock/StockDetail.tsx:765
+#: src/pages/stock/StockDetail.tsx:766
 msgid "Order"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:925
-#: src/pages/stock/StockDetail.tsx:766
+#: src/pages/stock/StockDetail.tsx:767
 #: src/tables/build/BuildLineTable.tsx:594
 msgid "Order Stock"
 msgstr ""
@@ -6473,7 +6621,7 @@ msgstr ""
 
 #: src/pages/part/PartStocktakeDetail.tsx:121
 #: src/pages/part/PartStocktakeDetail.tsx:239
-#: src/pages/stock/StockDetail.tsx:325
+#: src/pages/stock/StockDetail.tsx:326
 #: src/tables/stock/StockItemTable.tsx:257
 msgid "Stock Value"
 msgstr ""
@@ -6495,7 +6643,7 @@ msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:87
 #: src/pages/part/pricing/BomPricingPanel.tsx:177
-#: src/tables/ColumnRenderers.tsx:315
+#: src/tables/ColumnRenderers.tsx:318
 #: src/tables/bom/BomTable.tsx:187
 #: src/tables/general/ExtraLineItemTable.tsx:64
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:231
@@ -6539,7 +6687,7 @@ msgstr ""
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:71
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:126
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:66
-#: src/pages/stock/StockDetail.tsx:313
+#: src/pages/stock/StockDetail.tsx:314
 #: src/tables/bom/BomTable.tsx:178
 #: src/tables/general/ExtraLineItemTable.tsx:56
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:226
@@ -6550,7 +6698,7 @@ msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:193
 #: src/pages/part/pricing/VariantPricingPanel.tsx:53
-#: src/tables/purchasing/SupplierPartTable.tsx:150
+#: src/tables/purchasing/SupplierPartTable.tsx:151
 msgid "Updated"
 msgstr ""
 
@@ -6746,7 +6894,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:272
 #: src/pages/sales/ReturnOrderDetail.tsx:236
 #: src/pages/sales/SalesOrderDetail.tsx:246
-#: src/tables/ColumnRenderers.tsx:273
+#: src/tables/ColumnRenderers.tsx:276
 #: src/tables/build/BuildOrderTable.tsx:117
 #: src/tables/part/PartPurchaseOrdersTable.tsx:105
 msgid "Completion Date"
@@ -6896,7 +7044,7 @@ msgid "Invoice Number"
 msgstr ""
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:152
-#: src/tables/ColumnRenderers.tsx:281
+#: src/tables/ColumnRenderers.tsx:284
 #: src/tables/sales/SalesOrderAllocationTable.tsx:177
 #: src/tables/sales/SalesOrderShipmentTable.tsx:112
 msgid "Shipment Date"
@@ -7054,71 +7202,71 @@ msgstr ""
 #~ msgid "Delete stock item"
 #~ msgstr "Delete stock item"
 
-#: src/pages/stock/StockDetail.tsx:228
+#: src/pages/stock/StockDetail.tsx:229
 msgid "Installed In"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:248
+#: src/pages/stock/StockDetail.tsx:249
 msgid "Parent Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:252
+#: src/pages/stock/StockDetail.tsx:253
 msgid "Parent stock item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:258
+#: src/pages/stock/StockDetail.tsx:259
 msgid "Consumed By"
-msgstr ""
-
-#: src/pages/stock/StockDetail.tsx:433
-msgid "Stock Details"
 msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:433
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:439
+#: src/pages/stock/StockDetail.tsx:434
+msgid "Stock Details"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:440
 msgid "Stock Tracking"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:494
+#: src/pages/stock/StockDetail.tsx:495
 msgid "Test Data"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:508
+#: src/pages/stock/StockDetail.tsx:509
 msgid "Installed Items"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:515
+#: src/pages/stock/StockDetail.tsx:516
 msgid "Child Items"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:565
+#: src/pages/stock/StockDetail.tsx:566
 msgid "Edit Stock Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:592
+#: src/pages/stock/StockDetail.tsx:593
 msgid "Delete Stock Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:625
+#: src/pages/stock/StockDetail.tsx:626
 msgid "Serialize Stock Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:638
+#: src/pages/stock/StockDetail.tsx:639
 msgid "Stock item serialized"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:644
+#: src/pages/stock/StockDetail.tsx:645
 msgid "Return Stock Item"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:647
+#: src/pages/stock/StockDetail.tsx:648
 msgid "Return this item into stock. This will remove the customer assignment."
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:659
+#: src/pages/stock/StockDetail.tsx:660
 msgid "Item returned to stock"
 msgstr ""
 
@@ -7137,57 +7285,57 @@ msgstr ""
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:703
+#: src/pages/stock/StockDetail.tsx:704
 msgid "Stock Operations"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:708
+#: src/pages/stock/StockDetail.tsx:709
 msgid "Count stock"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:740
+#: src/pages/stock/StockDetail.tsx:741
 msgid "Transfer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:751
+#: src/pages/stock/StockDetail.tsx:752
 msgid "Serialize"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:752
+#: src/pages/stock/StockDetail.tsx:753
 msgid "Serialize stock"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:777
+#: src/pages/stock/StockDetail.tsx:778
 msgid "Return"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:778
+#: src/pages/stock/StockDetail.tsx:779
 msgid "Return from customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:791
+#: src/pages/stock/StockDetail.tsx:792
 msgid "Assign to Customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:792
+#: src/pages/stock/StockDetail.tsx:793
 msgid "Assign to a customer"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:804
+#: src/pages/stock/StockDetail.tsx:805
 msgid "Stock Item Actions"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:873
+#: src/pages/stock/StockDetail.tsx:874
 #: src/tables/stock/StockItemTable.tsx:422
 msgid "Stale"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:879
+#: src/pages/stock/StockDetail.tsx:880
 #: src/tables/stock/StockItemTable.tsx:416
 msgid "Expired"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:885
+#: src/pages/stock/StockDetail.tsx:886
 msgid "Unavailable"
 msgstr ""
 
@@ -7215,7 +7363,7 @@ msgstr ""
 msgid "You are subscribed to notifications for this part"
 msgstr ""
 
-#: src/tables/ColumnRenderers.tsx:69
+#: src/tables/ColumnRenderers.tsx:72
 msgid "No location set"
 msgstr ""
 
@@ -7890,7 +8038,7 @@ msgid "Auto allocation in progress"
 msgstr "Виконується автоматичний розподіл"
 
 #: src/tables/build/BuildLineTable.tsx:463
-#: src/tables/build/BuildLineTable.tsx:636
+#: src/tables/build/BuildLineTable.tsx:635
 msgid "Auto Allocate Stock"
 msgstr ""
 
@@ -7901,7 +8049,7 @@ msgstr "Автоматично виділяти запас для цієї зб�
 #: src/tables/build/BuildLineTable.tsx:482
 #: src/tables/build/BuildLineTable.tsx:496
 #: src/tables/build/BuildLineTable.tsx:584
-#: src/tables/build/BuildLineTable.tsx:686
+#: src/tables/build/BuildLineTable.tsx:685
 #: src/tables/build/BuildOutputTable.tsx:315
 #: src/tables/build/BuildOutputTable.tsx:320
 msgid "Deallocate Stock"
@@ -7919,11 +8067,11 @@ msgstr ""
 msgid "Stock has been deallocated"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:605
+#: src/tables/build/BuildLineTable.tsx:604
 msgid "Build Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:618
+#: src/tables/build/BuildLineTable.tsx:617
 #: src/tables/sales/SalesOrderLineItemTable.tsx:356
 msgid "View Part"
 msgstr ""
@@ -8141,20 +8289,35 @@ msgstr ""
 msgid "Show companies which are customers"
 msgstr ""
 
-#: src/tables/company/ContactTable.tsx:71
+#: src/tables/company/ContactTable.tsx:95
 msgid "Edit Contact"
 msgstr ""
 
-#: src/tables/company/ContactTable.tsx:78
+#: src/tables/company/ContactTable.tsx:102
 msgid "Add Contact"
 msgstr ""
 
-#: src/tables/company/ContactTable.tsx:89
+#: src/tables/company/ContactTable.tsx:113
 msgid "Delete Contact"
 msgstr ""
 
-#: src/tables/company/ContactTable.tsx:130
+#: src/tables/company/ContactTable.tsx:154
 msgid "Add contact"
+msgstr ""
+
+#: src/tables/core/UserTable.tsx:20
+#: src/tables/settings/UserTable.tsx:284
+msgid "Show active users"
+msgstr ""
+
+#: src/tables/core/UserTable.tsx:25
+#: src/tables/settings/UserTable.tsx:289
+msgid "Show staff users"
+msgstr ""
+
+#: src/tables/core/UserTable.tsx:30
+#: src/tables/settings/UserTable.tsx:294
+msgid "Show superusers"
 msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:139
@@ -8345,6 +8508,9 @@ msgstr ""
 #~ msgstr "Create machine"
 
 #: src/tables/machine/MachineListTable.tsx:517
+msgid "Add Machine"
+msgstr ""
+
 #: src/tables/machine/MachineListTable.tsx:559
 msgid "Add machine"
 msgstr ""
@@ -8867,8 +9033,8 @@ msgstr ""
 msgid "Show trackable variants"
 msgstr ""
 
-#: src/tables/part/RelatedPartTable.tsx:99
-#: src/tables/part/RelatedPartTable.tsx:132
+#: src/tables/part/RelatedPartTable.tsx:100
+#: src/tables/part/RelatedPartTable.tsx:133
 msgid "Add Related Part"
 msgstr ""
 
@@ -8876,11 +9042,11 @@ msgstr ""
 #~ msgid "Add related part"
 #~ msgstr "Add related part"
 
-#: src/tables/part/RelatedPartTable.tsx:114
+#: src/tables/part/RelatedPartTable.tsx:115
 msgid "Delete Related Part"
 msgstr ""
 
-#: src/tables/part/RelatedPartTable.tsx:121
+#: src/tables/part/RelatedPartTable.tsx:122
 msgid "Edit Related Part"
 msgstr ""
 
@@ -9194,39 +9360,39 @@ msgstr ""
 msgid "Receive items"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:95
+#: src/tables/purchasing/SupplierPartTable.tsx:96
 msgid "MPN"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:124
+#: src/tables/purchasing/SupplierPartTable.tsx:125
 msgid "Base units"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:181
+#: src/tables/purchasing/SupplierPartTable.tsx:182
 msgid "Add supplier part"
-msgstr ""
-
-#: src/tables/purchasing/SupplierPartTable.tsx:193
-msgid "Show active supplier parts"
 msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 #~ msgid "Supplier part updated"
 #~ msgstr "Supplier part updated"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:197
-msgid "Active Part"
+#: src/tables/purchasing/SupplierPartTable.tsx:194
+msgid "Show active supplier parts"
 msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:198
+msgid "Active Part"
+msgstr ""
+
+#: src/tables/purchasing/SupplierPartTable.tsx:199
 msgid "Show active internal parts"
 msgstr ""
 
-#: src/tables/purchasing/SupplierPartTable.tsx:202
+#: src/tables/purchasing/SupplierPartTable.tsx:203
 msgid "Active Supplier"
 msgstr "Активний постачальник"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:203
+#: src/tables/purchasing/SupplierPartTable.tsx:204
 msgid "Show active suppliers"
 msgstr "Показати активних постачальників"
 
@@ -9238,7 +9404,7 @@ msgstr "Показати активних постачальників"
 #~ msgid "Are you sure you want to remove this supplier part?"
 #~ msgstr "Are you sure you want to remove this supplier part?"
 
-#: src/tables/purchasing/SupplierPartTable.tsx:208
+#: src/tables/purchasing/SupplierPartTable.tsx:209
 msgid "Show supplier parts with stock"
 msgstr ""
 
@@ -9322,7 +9488,7 @@ msgid "Build stock"
 msgstr ""
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:414
-#: src/tables/stock/StockItemTable.tsx:630
+#: src/tables/stock/StockItemTable.tsx:631
 msgid "Order stock"
 msgstr ""
 
@@ -9420,10 +9586,6 @@ msgstr ""
 
 #: src/tables/settings/CustomStateTable.tsx:96
 msgid "Identifier"
-msgstr ""
-
-#: src/tables/settings/CustomStateTable.tsx:101
-msgid "Display Name"
 msgstr ""
 
 #: src/tables/settings/CustomStateTable.tsx:115
@@ -9533,24 +9695,24 @@ msgstr ""
 msgid "Permission set"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:177
+#: src/tables/settings/GroupTable.tsx:179
 msgid "Delete group"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:178
+#: src/tables/settings/GroupTable.tsx:180
 msgid "Group deleted"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:180
+#: src/tables/settings/GroupTable.tsx:182
 msgid "Are you sure you want to delete this group?"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:185
-#: src/tables/settings/GroupTable.tsx:197
+#: src/tables/settings/GroupTable.tsx:187
+#: src/tables/settings/GroupTable.tsx:199
 msgid "Add group"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:210
+#: src/tables/settings/GroupTable.tsx:212
 msgid "Edit group"
 msgstr ""
 
@@ -9742,22 +9904,6 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:261
 msgid "Added user"
-msgstr ""
-
-#: src/tables/settings/UserTable.tsx:284
-msgid "Show active users"
-msgstr ""
-
-#: src/tables/settings/UserTable.tsx:288
-msgid "Staff"
-msgstr ""
-
-#: src/tables/settings/UserTable.tsx:289
-msgid "Show staff users"
-msgstr ""
-
-#: src/tables/settings/UserTable.tsx:294
-msgid "Show superusers"
 msgstr ""
 
 #: src/tables/settings/UserTable.tsx:304
@@ -10043,47 +10189,47 @@ msgstr ""
 #~ msgid "Delete stock items"
 #~ msgstr "Delete stock items"
 
-#: src/tables/stock/StockItemTable.tsx:585
+#: src/tables/stock/StockItemTable.tsx:586
 msgid "Add a new stock item"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:594
+#: src/tables/stock/StockItemTable.tsx:595
 msgid "Remove some quantity from a stock item"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:605
+#: src/tables/stock/StockItemTable.tsx:606
 msgid "Move Stock items to new locations"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:612
+#: src/tables/stock/StockItemTable.tsx:613
 msgid "Change stock status"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:614
+#: src/tables/stock/StockItemTable.tsx:615
 msgid "Change the status of stock items"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:621
+#: src/tables/stock/StockItemTable.tsx:622
 msgid "Merge stock"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:623
+#: src/tables/stock/StockItemTable.tsx:624
 msgid "Merge stock items"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:632
+#: src/tables/stock/StockItemTable.tsx:633
 msgid "Order new stock"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:643
+#: src/tables/stock/StockItemTable.tsx:644
 msgid "Assign to customer"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:645
+#: src/tables/stock/StockItemTable.tsx:646
 msgid "Assign items to a customer"
 msgstr ""
 
-#: src/tables/stock/StockItemTable.tsx:652
+#: src/tables/stock/StockItemTable.tsx:653
 msgid "Delete stock"
 msgstr ""
 
