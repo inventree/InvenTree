@@ -35,15 +35,15 @@ def export_data(
     """
     from plugin import registry
 
-    if plugin := registry.get_plugin(plugin_key) is None:
+    if (plugin := registry.get_plugin(plugin_key)) is None:
         logger.warning("export_data: Plugin '%s' not found", plugin_key)
         return
 
-    if user := User.objects.filter(pk=user_id).first() is None:
+    if (user := User.objects.filter(pk=user_id).first()) is None:
         logger.warning('export_data: User not found: %d', user_id)
         return
 
-    if output := DataOutput.objects.filter(pk=output_id).first() is None:
+    if (output := DataOutput.objects.filter(pk=output_id).first()) is None:
         logger.warning('export_data: Output object not found: %d', output_id)
         return
 

@@ -332,6 +332,10 @@ class DataExportViewMixin:
             )
             raise ValidationError(export_error)
 
+        # Update the output instance with the total number of items to export
+        output.total = queryset.count()
+        output.save()
+
         data = None
         serializer = serializer_class(context=context, exporting=True)
         serializer.initial_data = queryset
@@ -431,11 +435,11 @@ class DataExportViewMixin:
             # Create an output object to export against
             output = DataOutput.objects.create(
                 user=request.user,
-                total=1,  # Note: this should get updated by the export task
+                total=0,  # Note: this should get updated by the export task
                 progress=0,
                 complete=False,
                 output_type=DataOutput.DataOutputTypes.EXPORT,
-                plugin=export_plugin.slug,
+                plugin_key=export_plugin.slug,
                 output=None,
             )
 

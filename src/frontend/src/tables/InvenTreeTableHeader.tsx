@@ -25,7 +25,7 @@ import { PrintingActions } from '../components/buttons/PrintingActions';
 import type { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { useApi } from '../contexts/ApiContext';
 import { extractAvailableFields } from '../functions/forms';
-import { generateUrl } from '../functions/urls';
+import useDataOutput from '../hooks/UseDataOutput';
 import { useCreateApiFormModal, useDeleteApiFormModal } from '../hooks/UseForm';
 import type { TableState } from '../hooks/UseTable';
 import { TableColumnSelect } from './ColumnSelect';
@@ -112,6 +112,13 @@ export default function InvenTreeTableHeader({
     tableState.searchTerm
   ]);
 
+  const [exportId, setExportId] = useState<number | undefined>(undefined);
+
+  const exportProgress = useDataOutput({
+    title: t`Exporting Data`,
+    id: exportId
+  });
+
   // Fetch available export fields via OPTIONS request
   const extraExportFields = useQuery({
     enabled: !!tableUrl && tableProps.enableDownload,
@@ -164,14 +171,9 @@ export default function InvenTreeTableHeader({
     method: 'GET',
     fields: exportFields,
     submitText: t`Export`,
-    successMessage: t`Data exported successfully`,
+    successMessage: null,
     onFormSuccess: (response: any) => {
-      if (response.complete && response.output) {
-        // Download the generated file
-        const url = generateUrl(response.output);
-        window.open(url.toString(), '_blank');
-      }
-
+      setExportId(response.pk);
       setPluginKey('inventree-exporter');
     }
   });

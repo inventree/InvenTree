@@ -84,11 +84,14 @@ export default function useDataOutput({
                   size='lg'
                   maximum={data.total}
                   value={data.progress}
-                  progressLabel
+                  progressLabel={data.total > 0}
+                  animated
                 />
               )
             });
           }
+
+          return data;
         })
         .catch(() => {
           setLoading(false);
