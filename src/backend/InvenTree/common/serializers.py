@@ -755,7 +755,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
     def update(self, instance, validated_data):
         """Update an existing selection list. Save the choices separately."""
         inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-        exsising_ids = {a.get('id') for a in self._choices_validated}
+        existing_ids = {a.get('id') for a in self._choices_validated}
 
         # Perform creations and updates.
         ret = []
@@ -770,7 +770,7 @@ class SelectionListSerializer(InvenTreeModelSerializer):
                 ret.append(SelectionEntrySerializer().update(inst, data))
 
         # Perform deletions.
-        for entry_id in inst_mapping.keys() - exsising_ids:
+        for entry_id in inst_mapping.keys() - existing_ids:
             inst_mapping[entry_id].delete()
 
         return super().update(instance, validated_data)
@@ -781,3 +781,29 @@ class SelectionListSerializer(InvenTreeModelSerializer):
         if self.instance and self.instance.locked:
             raise serializers.ValidationError({'locked': _('Selection list is locked')})
         return ret
+
+
+class DataOutputSerializer(InvenTreeModelSerializer):
+    """Serializer for the DataOutput model."""
+
+    class Meta:
+        """Meta options for DataOutputSerializer."""
+
+        model = common_models.DataOutput
+        fields = [
+            'pk',
+            'created',
+            'user',
+            'total',
+            'progress',
+            'complete',
+            'output_type',
+            'template_name',
+            'plugin_key',
+            'output',
+            'errors',
+        ]
+
+    output = InvenTreeAttachmentSerializerField(
+        required=False, allow_null=True, read_only=True
+    )

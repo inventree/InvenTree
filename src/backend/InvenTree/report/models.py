@@ -4,7 +4,7 @@ import os
 import sys
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -25,6 +25,7 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
+from common.models import DataOutput
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
@@ -368,16 +369,16 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         return context
 
-    def print(self, items: list, request=None, output=None, **kwargs) -> 'ReportOutput':
+    def print(self, items: list, request=None, output=None, **kwargs) -> DataOutput:
         """Print reports for a list of items against this template.
 
         Arguments:
             items: A list of items to print reports for (model instance)
-            output: The ReportOutput object to use (if provided)
+            output: The DataOutput object to use (if provided)
             request: The request object (optional)
 
         Returns:
-            output: The ReportOutput object representing the generated report(s)
+            output: The DataOutput object representing the generated report(s)
 
         Raises:
             ValidationError: If there is an error during report printing
@@ -389,8 +390,6 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
             Further work is required to allow the following extended features:
             - Render a single PDF file with the collated items (optional per template)
             - Render a raw file (do not convert to PDF) - allows for other file types
-            - Render using background worker, provide progress updates to UI
-            - Run report generation in the background worker process
         """
         logger.info("Printing %s reports against template '%s'", len(items), self.name)
 
@@ -407,16 +406,17 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         report_plugins = registry.with_mixin(PluginMixinEnum.REPORT)
 
-        # If a ReportOutput object is not provided, create a new one
+        # If a DataOutput object is not provided, create a new one
         if not output:
-            output = ReportOutput.objects.create(
-                template=self,
-                items=len(items),
+            output = DataOutput.objects.create(
                 user=request.user
                 if request.user and request.user.is_authenticated
                 else None,
+                total=len(items),
                 progress=0,
                 complete=False,
+                output_type=DataOutput.DataOutputTypes.REPORT,
+                template_name=self.name,
                 output=None,
             )
 
@@ -588,18 +588,18 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         options=None,
         request=None,
         **kwargs,
-    ) -> 'LabelOutput':
+    ) -> DataOutput:
         """Print labels for a list of items against this template.
 
         Arguments:
             items: A list of items to print labels for (model instance)
             plugin: The plugin to use for label rendering
-            output: The LabelOutput object to use (if provided)
+            output: The DataOutput object to use (if provided)
             options: Additional options for the label printing plugin (optional)
             request: The request object (optional)
 
         Returns:
-            output: The LabelOutput object representing the generated label(s)
+            output: The DataOutput object representing the generated label(s)
 
         Raises:
             ValidationError: If there is an error during label printing
@@ -612,13 +612,17 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
         )
 
         if not output:
-            output = LabelOutput.objects.create(
-                template=self,
-                items=len(items),
-                plugin=plugin.slug,
-                user=request.user if request else None,
+            output = DataOutput.objects.create(
+                user=request.user
+                if request.user and request.user.is_authenticated
+                else None,
+                total=len(items),
                 progress=0,
                 complete=False,
+                output_type=DataOutput.DataOutputTypes.LABEL,
+                template_name=self.name,
+                plugin_key=plugin.slug,
+                output=None,
             )
 
         if options is None:
@@ -649,81 +653,6 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         # Return the output object
         return output
-
-
-class TemplateOutput(models.Model):
-    """Base class representing a generated file from a template.
-
-    As reports (or labels) may take a long time to render,
-    this process is offloaded to the background worker process.
-
-    The result is either a file made available for download,
-    or a message indicating that the output is handled externally.
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        abstract = True
-
-    created = models.DateField(auto_now_add=True, editable=False)
-
-    user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='+'
-    )
-
-    items = models.PositiveIntegerField(
-        default=0, verbose_name=_('Items'), help_text=_('Number of items to process')
-    )
-
-    complete = models.BooleanField(
-        default=False,
-        verbose_name=_('Complete'),
-        help_text=_('Report generation is complete'),
-    )
-
-    progress = models.PositiveIntegerField(
-        default=0, verbose_name=_('Progress'), help_text=_('Report generation progress')
-    )
-
-
-class ReportOutput(TemplateOutput):
-    """Class representing a generated report output file."""
-
-    template = models.ForeignKey(
-        ReportTemplate, on_delete=models.CASCADE, verbose_name=_('Report Template')
-    )
-
-    output = models.FileField(
-        upload_to='report/output',
-        blank=True,
-        null=True,
-        verbose_name=_('Output File'),
-        help_text=_('Generated output file'),
-    )
-
-
-class LabelOutput(TemplateOutput):
-    """Class representing a generated label output file."""
-
-    plugin = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_('Plugin'),
-        help_text=_('Label output plugin'),
-    )
-
-    template = models.ForeignKey(
-        LabelTemplate, on_delete=models.CASCADE, verbose_name=_('Label Template')
-    )
-
-    output = models.FileField(
-        upload_to='label/output',
-        blank=True,
-        null=True,
-        verbose_name=_('Output File'),
-        help_text=_('Generated output file'),
-    )
 
 
 class ReportSnippet(TemplateUploadMixin, models.Model):

@@ -11,6 +11,7 @@ INVENTREE_API_TEXT = """
 v321 - 2025-03-07 : https://github.com/inventree/InvenTree/pull/9096
     - Overhaul the data-export API functionality
     - Allow customization of data exporting via plugins
+    - Consolidate LabelOutput and ReportOutput API endpoints into single DataOutput endpoint
 
 v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
     - Link fields are now up to 2000 chars long

@@ -1,26 +1,13 @@
 """Background tasks for the exporting app."""
 
-from datetime import timedelta
-
 from django.contrib.auth.models import User
 from django.test.client import RequestFactory
 
 import structlog
 
-from data_exporter.models import ExportOutput
-from InvenTree.helpers import current_time
-from InvenTree.tasks import ScheduledTask, scheduled_task
+from common.models import DataOutput
 
 logger = structlog.get_logger('inventree')
-
-
-@scheduled_task(ScheduledTask.DAILY)
-def cleanup_old_export_outputs():
-    """Remove old export outputs from the database."""
-    # Remove any outputs which are older than 5 days
-    threshold = current_time() - timedelta(days=5)
-
-    ExportOutput.objects.filter(created__lte=threshold).delete()
 
 
 def export_data(
@@ -41,7 +28,7 @@ def export_data(
         plugin_key: The key for the export plugin
         export_format: The output format for the export
         export_context: Additional options for the export
-        output_id: The output object to write to
+        output_id: The ID of the DataOutput instance to write to
 
     This function is designed to be called by the background task,
     to avoid blocking the web server.
@@ -56,7 +43,7 @@ def export_data(
         logger.warning('export_data: User not found: %d', user_id)
         return
 
-    if output := ExportOutput.objects.filter(pk=output_id).first() is None:
+    if output := DataOutput.objects.filter(pk=output_id).first() is None:
         logger.warning('export_data: Output object not found: %d', output_id)
         return
 

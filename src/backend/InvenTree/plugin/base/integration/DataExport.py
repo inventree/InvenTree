@@ -8,7 +8,7 @@ from django.db.models import QuerySet
 
 from rest_framework import serializers
 
-from data_exporter.models import ExportOutput
+from common.models import DataOutput
 from InvenTree.helpers import current_date
 from plugin import PluginMixinEnum
 
@@ -79,7 +79,7 @@ class DataExportMixin:
         serializer_class: serializers.Serializer,
         headers: OrderedDict,
         context: dict,
-        output: ExportOutput,
+        output: DataOutput,
         **kwargs,
     ) -> list:
         """Export data from the queryset.
@@ -92,7 +92,7 @@ class DataExportMixin:
             serializer_class: The serializer class to use for exporting the data
             headers: The headers for the export
             context: Any custom context for the export (provided by the plugin serializer)
-            output: The ExportOutput object for the export
+            output: The DataOutput object for the export
 
         Returns: The exported data (a list of dict objects)
         """

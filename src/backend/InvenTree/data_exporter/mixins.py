@@ -15,7 +15,7 @@ from taggit.serializers import TagListSerializerField
 import data_exporter.serializers
 import data_exporter.tasks
 import InvenTree.exceptions
-from data_exporter.models import ExportOutput
+from common.models import DataOutput
 from InvenTree.helpers import str2bool
 from InvenTree.tasks import offload_task
 from plugin import PluginMixinEnum, registry
@@ -217,7 +217,7 @@ class DataExportViewMixin:
 
     This will run validation against the DataExportOptionsSerializer.
 
-    Once the export options have been validated, a new DataExportOutput object will be created,
+    Once the export options have been validated, a new DataOutput object will be created,
     and this will be returned to the client (including a download link to the exported file).
     """
 
@@ -290,14 +290,20 @@ class DataExportViewMixin:
         else:
             return super().get_serializer(*args, **kwargs)
 
-    def export_data(self, export_plugin, export_format, export_context, output):
+    def export_data(
+        self,
+        export_plugin,
+        export_format: str,
+        export_context: dict,
+        output: DataOutput,
+    ):
         """Export the data in the specified format.
 
         Arguments:
             export_plugin: The plugin instance to use for exporting the data
             export_format: The file format to export the data in
             export_context: Additional context data to pass to the plugin
-            output: The ExportOutput object to write to
+            output: The DataOutput object to write to
 
         - By default, uses the provided serializer to generate the data, and return it as a file download.
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
@@ -385,6 +391,8 @@ class DataExportViewMixin:
 
     def get(self, request, *args, **kwargs):
         """Override the GET method to determine export options."""
+        from common.serializers import DataOutputSerializer
+
         # If we are not exporting data, return the default response
         if self.is_exporting():
             # Determine if the export options are valid
@@ -421,10 +429,12 @@ class DataExportViewMixin:
             export_context['user'] = request.user
 
             # Create an output object to export against
-            output = ExportOutput.objects.create(
+            output = DataOutput.objects.create(
                 user=request.user,
+                total=1,  # Note: this should get updated by the export task
                 progress=0,
                 complete=False,
+                output_type=DataOutput.DataOutputTypes.EXPORT,
                 plugin=export_plugin.slug,
                 output=None,
             )
@@ -446,9 +456,6 @@ class DataExportViewMixin:
             output.refresh_from_db()
 
             # Return a response to the frontend
-            return Response(
-                data_exporter.serializers.DataExportOutputSerializer(output).data,
-                status=200,
-            )
+            return Response(DataOutputSerializer(output).data, status=200)
 
         return super().get(request, *args, **kwargs)

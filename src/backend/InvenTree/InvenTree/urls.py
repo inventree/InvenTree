@@ -17,7 +17,6 @@ from sesame.views import LoginView
 import build.api
 import common.api
 import company.api
-import data_exporter.api
 import importer.api
 import machine.api
 import order.api
@@ -49,7 +48,6 @@ apipatterns = [
     path('bom/', include(part.api.bom_api_urls)),
     path('build/', include(build.api.build_api_urls)),
     path('company/', include(company.api.company_api_urls)),
-    path('exporter/', include(data_exporter.api.exporter_api_urls)),
     path('importer/', include(importer.api.importer_api_urls)),
     path('label/', include(report.api.label_api_urls)),
     path('machine/', include(machine.api.machine_api_urls)),

@@ -854,6 +854,22 @@ class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
 
 
+class DataOutputEndpoint:
+    """Mixin class for DataOutput endpoints."""
+
+    queryset = common.models.DataOutput.objects.all()
+    serializer_class = common.serializers.DataOutputSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class DataOutputList(DataOutputEndpoint, ListAPI):
+    """List view for DataOutput objects."""
+
+
+class DataOutputDetail(DataOutputEndpoint, RetrieveAPI):
+    """Detail view for a DataOutput object."""
+
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1096,6 +1112,16 @@ common_api_urls = [
     path('icons/', IconList.as_view(), name='api-icon-list'),
     # Selection lists
     path('selection/', include(selection_urls)),
+    # Data output
+    path(
+        'data-output/',
+        include([
+            path(
+                '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
+            ),
+            path('', DataOutputList.as_view(), name='api-data-output-list'),
+        ]),
+    ),
 ]
 
 admin_api_urls = [

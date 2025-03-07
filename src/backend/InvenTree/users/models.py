@@ -222,10 +222,8 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
-                'report_labeloutput',
                 'report_labeltemplate',
                 'report_reportasset',
-                'report_reportoutput',
                 'report_reportsnippet',
                 'report_reporttemplate',
                 'account_emailaddress',
@@ -336,6 +334,7 @@ class RuleSet(models.Model):
             # Models which currently do not require permissions
             'common_attachment',
             'common_customunit',
+            'common_dataoutput',
             'common_inventreesetting',
             'common_inventreeusersetting',
             'common_notificationentry',
@@ -365,8 +364,6 @@ class RuleSet(models.Model):
             'importer_dataimportsession',
             'importer_dataimportcolumnmap',
             'importer_dataimportrow',
-            # Exporting
-            'data_exporter_exportoutput',
         ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
