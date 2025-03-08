@@ -108,10 +108,10 @@ def map_scope(roles: Optional[list[str]] = None, only_read=False) -> dict:
         return [[action]]
 
     return {
-        'GET': scope_name(roles, 'get'),
-        'POST': scope_name(roles, 'post'),
-        'PUT': scope_name(roles, 'put'),
-        'PATCH': scope_name(roles, 'patch'),
+        'GET': scope_name(roles, 'view'),
+        'POST': scope_name(roles, 'add'),
+        'PUT': scope_name(roles, 'change'),
+        'PATCH': scope_name(roles, 'change'),
         'DELETE': scope_name(roles, 'delete'),
         'OPTIONS': [['read']],
     }

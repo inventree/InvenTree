@@ -541,9 +541,9 @@ OAUTH2_PROVIDER = {
         'sales_order': 'Role Sales Orders',
         'return_order': 'Role Return Orders',
         # inventree methods
-        'get': 'Method GET',
-        'post': 'Method POST',
-        'put': 'Method PUT',
+        'view': 'Method GET',
+        'create': 'Method POST',
+        'change': 'Method PUT / PATCH',
         'delete': 'Method DELETE',
     }
 }
