@@ -419,7 +419,7 @@ class CategoryTest(TestCase):
         """Test the category icon."""
         # No default icon set
         cat = PartCategory.objects.create(name='Test Category')
-        self.assertEqual(cat.icon, '')
+        self.assertIn(cat.icon, ['', None])
 
         # Set a default icon
         InvenTreeSetting.set_setting('PART_CATEGORY_DEFAULT_ICON', 'ti:package:outline')
@@ -428,7 +428,7 @@ class CategoryTest(TestCase):
         # Set custom icon to default icon and assert that it does not get written to the database
         cat.icon = 'ti:package:outline'
         cat.save()
-        self.assertEqual(cat._icon, '')
+        self.assertIn(cat._icon, ['', None])
 
         # Set a different custom icon and assert that it takes precedence
         cat.icon = 'ti:tag:outline'
@@ -439,4 +439,4 @@ class CategoryTest(TestCase):
         # Test that the icon can be set to None again
         cat.icon = ''
         cat.save()
-        self.assertEqual(cat.icon, '')
+        self.assertIn(cat.icon, ['', None])

@@ -172,12 +172,21 @@ class PluginsRegistry:
         # Check if the registry needs to be reloaded
         self.check_reload()
 
+        raise_error = kwargs.pop('raise_error', True)
+
         plugin = self.get_plugin(slug)
 
         if not plugin:
+            if raise_error:
+                raise AttributeError(f"Plugin '{slug}' not found")
             return
 
         plugin_func = getattr(plugin, func)
+
+        if not plugin_func or not callable(plugin_func):
+            if raise_error:
+                raise AttributeError(f"Plugin '{slug}' has no callable method '{func}'")
+            return
 
         return plugin_func(*args, **kwargs)
 

@@ -125,7 +125,9 @@ export function GroupDrawer({
 /**
  * Table for displaying list of groups
  */
-export function GroupTable() {
+export function GroupTable({
+  directLink = false
+}: Readonly<{ directLink?: boolean }>) {
   const table = useTable('groups');
   const navigate = useNavigate();
   const user = useUserState();
@@ -223,9 +225,13 @@ export function GroupTable() {
         tableState={table}
         columns={columns}
         props={{
-          rowActions: rowActions,
+          rowActions: directLink ? undefined : rowActions,
           tableActions: tableActions,
-          onRowClick: (record) => openDetailDrawer(record.pk)
+          onRowClick: directLink
+            ? undefined
+            : (record) => openDetailDrawer(record.pk),
+
+          modelType: ModelType.group
         }}
       />
     </>

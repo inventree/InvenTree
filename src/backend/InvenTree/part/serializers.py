@@ -36,6 +36,7 @@ from build.status_codes import BuildStatusGroups
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.tasks import offload_task
+from users.serializers import UserSerializer
 
 from .models import (
     BomItem,
@@ -136,7 +137,11 @@ class CategorySerializer(
     )
 
     icon = serializers.CharField(
-        required=False, allow_blank=True, help_text=_('Icon (optional)'), max_length=100
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=_('Icon (optional)'),
+        max_length=100,
     )
 
     parent_default_location = serializers.IntegerField(read_only=True)
@@ -382,7 +387,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             self.fields.pop('pricing_min', None)
             self.fields.pop('pricing_max', None)
 
-    category_default_location = serializers.IntegerField(read_only=True)
+    category_default_location = serializers.IntegerField(
+        read_only=True, allow_null=True
+    )
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -965,7 +972,9 @@ class PartSerializer(
     unallocated_stock = serializers.FloatField(
         read_only=True, label=_('Unallocated Stock')
     )
-    category_default_location = serializers.IntegerField(read_only=True)
+    category_default_location = serializers.IntegerField(
+        read_only=True, allow_null=True
+    )
     variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
     minimum_stock = serializers.FloatField(
@@ -1207,9 +1216,7 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', read_only=True, many=False
-    )
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1237,9 +1244,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
         read_only_fields = ['date', 'report', 'part_count', 'user']
 
-    user_detail = InvenTree.serializers.UserSerializer(
-        source='user', read_only=True, many=False
-    )
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     report = InvenTree.serializers.InvenTreeAttachmentSerializerField(read_only=True)
 

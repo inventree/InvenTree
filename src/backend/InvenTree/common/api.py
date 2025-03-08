@@ -54,7 +54,7 @@ class CsrfExemptMixin:
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
-        """Overwrites dispatch to be extempt from csrf checks."""
+        """Overwrites dispatch to be exempt from CSRF checks."""
         return super().dispatch(*args, **kwargs)
 
 
@@ -462,6 +462,9 @@ class ConfigList(ListAPI):
     queryset = CONFIG_LOOKUPS
     serializer_class = common.serializers.ConfigSerializer
     permission_classes = [IsSuperuser]
+
+    # Specifically disable pagination for this view
+    pagination_class = None
 
 
 class ConfigDetail(RetrieveAPI):
