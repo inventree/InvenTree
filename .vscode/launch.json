@@ -41,6 +41,17 @@
       "justMyCode": false
     },
     {
+      "name": "InvenTree Server - schema",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
+      "args": [
+        "spectacular"
+      ],
+      "django": true,
+      "justMyCode": false
+    },
+    {
       "name": "InvenTree Frontend - Vite",
       "type": "chrome",
       "request": "launch",
