@@ -1,12 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 317
+INVENTREE_API_VERSION = 320
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v320 - 2025-03-05 : https://github.com/inventree/InvenTree/pull/9243
+    - Link fields are now up to 2000 chars long
+
+v319 - 2025-03-04 : https://github.com/inventree/InvenTree/pull/9199
+    - Add detail API endpoint for the LabelOutput model
+    - Add detail API endpoint for the ReportOutput model
+
+v318 - 2025-02-25 : https://github.com/inventree/InvenTree/pull/9116
+    - Adds user profile API endpoints
 
 v317 - 2025-02-26 : https://github.com/inventree/InvenTree/pull/9143
     - Default 'overdue' field to False in Build serializer
