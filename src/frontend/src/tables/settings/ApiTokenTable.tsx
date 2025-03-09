@@ -16,7 +16,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ApiTokenTable({
   only_myself = true
-}: { only_myself: boolean }) {
+}: Readonly<{ only_myself: boolean }>) {
   const [token, setToken] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -32,18 +32,21 @@ export function ApiTokenTable({
     }
   });
   const tableActions = useMemo(() => {
-    return [
-      <AddItemButton
-        tooltip={t`Generate Token`}
-        onClick={() => generateToken.open()}
-      />
-    ];
-  }, []);
+    if (only_myself)
+      return [
+        <AddItemButton
+          key={'generate'}
+          tooltip={t`Generate Token`}
+          onClick={() => generateToken.open()}
+        />
+      ];
+    return [];
+  }, [only_myself]);
 
   const table = useTable('api-tokens', 'id');
 
   const tableColumns = useMemo(() => {
-    return [
+    const cols = [
       {
         accessor: 'name',
         title: t`Name`
@@ -81,7 +84,11 @@ export function ApiTokenTable({
         title: t`Created`
       }
     ];
-  }, []);
+    if (!only_myself) {
+      cols.push({ accessor: 'user', title: t`User` });
+    }
+    return cols;
+  }, [only_myself]);
 
   const rowActions = useCallback((record: any): RowAction[] => {
     return [
@@ -98,8 +105,12 @@ export function ApiTokenTable({
   }, []);
 
   const revokeToken = async (id: string) => {
+    let targetUrl = apiUrl(ApiEndpoints.user_tokens, id);
+    if (!only_myself) {
+      targetUrl += '?all_users=true';
+    }
     api
-      .delete(apiUrl(ApiEndpoints.user_tokens, id))
+      .delete(targetUrl)
       .then(() => {
         table.refreshTable();
       })
@@ -111,20 +122,32 @@ export function ApiTokenTable({
       });
   };
 
+  const urlParams = useMemo(() => {
+    if (only_myself) return {};
+    return { all_users: true };
+  }, [only_myself]);
+
   return (
     <>
-      {generateToken.modal}
-      <Modal opened={opened} onClose={close} title={t`Token`} centered>
-        <Text c='dimmed'>
-          <Trans>Tokens are only shown once - make sure to note it down.</Trans>
-        </Text>
-        <Code>{token}</Code>
-      </Modal>
+      {only_myself && (
+        <>
+          {generateToken.modal}
+          <Modal opened={opened} onClose={close} title={t`Token`} centered>
+            <Text c='dimmed'>
+              <Trans>
+                Tokens are only shown once - make sure to note it down.
+              </Trans>
+            </Text>
+            <Code>{token}</Code>
+          </Modal>
+        </>
+      )}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.user_tokens)}
         columns={tableColumns}
         props={{
+          params: urlParams,
           rowActions: rowActions,
           enableSearch: false,
           enableColumnSwitching: false,
