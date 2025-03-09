@@ -309,12 +309,12 @@ class TokenMixin:
         ]
     )
     def get(self, request, *args, **kwargs):
-        """Return a list of API tokens for the current user."""
+        """Details for a user token."""
         return super().get(request, *args, **kwargs)
 
 
 class TokenListView(TokenMixin, ListCreateAPI):
-    """List of registered tokens for current user."""
+    """List of user tokens for current user."""
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
@@ -324,9 +324,13 @@ class TokenListView(TokenMixin, ListCreateAPI):
         ).key
         return resp
 
+    def get(self, request, *args, **kwargs):
+        """List of user tokens for current user."""
+        return super().get(request, *args, **kwargs)
+
 
 class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
-    """Details for a token of the current user."""
+    """Details for a user token."""
 
     def perform_destroy(self, instance):
         """Revoke token."""
