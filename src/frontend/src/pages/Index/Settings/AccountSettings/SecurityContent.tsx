@@ -263,7 +263,9 @@ function ProviderSection({
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['provider-list'],
     queryFn: () =>
-      authApi(apiUrl(ApiEndpoints.auth_providers)).then((res) => res.data.data)
+      authApi(apiUrl(ApiEndpoints.auth_providers))
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
   });
 
   const availableProviders = useMemo(() => {
@@ -358,7 +360,8 @@ function MfaSection() {
     queryFn: () =>
       api
         .get(apiUrl(ApiEndpoints.auth_authenticators))
-        .then((res) => res.data.data)
+        .then((res) => res?.data?.data ?? [])
+        .catch(() => [])
   });
 
   function showRecoveryCodes(codes: Recoverycodes) {

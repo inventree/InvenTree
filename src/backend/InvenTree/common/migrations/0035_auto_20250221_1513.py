@@ -13,6 +13,8 @@ class Migration(migrations.Migration):
     operations = [migrations.AlterField(
             model_name='attachment',
             name='link',
-            field=models.TextField()  # Temporary change to force new ALTER COLUMN operation in the next migration
+            field=models.TextField(
+                null=True, blank=True
+            )  # Temporary change to force new ALTER COLUMN operation in the next migration
         ),
     ]
