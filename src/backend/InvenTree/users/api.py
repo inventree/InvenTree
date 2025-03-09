@@ -292,7 +292,25 @@ class TokenMixin:
 
     def get_queryset(self):
         """Only return data for current user."""
+        if self.request.user.is_superuser and self.request.query_params.get(
+            'all_users', False
+        ):
+            return ApiToken.objects.all()
         return ApiToken.objects.filter(user=self.request.user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='all_users',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Display tokens for all users (superuser only)',
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """Return a list of API tokens for the current user."""
+        return super().get(request, *args, **kwargs)
 
 
 class TokenListView(TokenMixin, ListCreateAPI):
