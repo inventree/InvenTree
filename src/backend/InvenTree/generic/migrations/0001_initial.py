@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("part", "0133_alter_partcategory__icon"),
+        ("part", "0135_alter_part_link"),
         ("common", "0034_alter_inventreecustomuserstatemodel_unique_together_and_more"),
     ]
 
